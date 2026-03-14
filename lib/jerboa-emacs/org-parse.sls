@@ -63,7 +63,7 @@
           *day-names*
           *org-todo-keywords*
           *org-done-keywords*
-          *org-agenda-files*
+          org-agenda-files org-agenda-files-set!
           *org-buffer-settings*)
   (import (except (chezscheme)
             make-hash-table hash-table? iota 1+ 1- sort sort!)
@@ -237,6 +237,8 @@
   (def *org-todo-keywords* '("TODO" "DONE"))
   (def *org-done-keywords* '("DONE"))
   (def *org-agenda-files* '())
+  (def (org-agenda-files) *org-agenda-files*)
+  (def (org-agenda-files-set! v) (set! *org-agenda-files* v))
   (def *org-buffer-settings* (make-hash-table))
 
   (def (org-parse-heading-line line)
