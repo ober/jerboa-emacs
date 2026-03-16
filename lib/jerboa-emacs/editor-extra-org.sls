@@ -118,7 +118,24 @@
     cmd-toggle-global-diff-auto-refine
     cmd-toggle-global-eldoc-box
     cmd-toggle-global-flyspell-lazy
-    cmd-toggle-global-so-clean)
+    cmd-toggle-global-so-clean
+    ;; Org table stubs
+    cmd-org-table-align
+    cmd-org-table-delete-column
+    cmd-org-table-delete-row
+    cmd-org-table-export-csv
+    cmd-org-table-import-csv
+    cmd-org-table-insert-column
+    cmd-org-table-insert-row
+    cmd-org-table-insert-separator
+    cmd-org-table-move-column-left
+    cmd-org-table-move-column-right
+    cmd-org-table-move-row-down
+    cmd-org-table-move-row-up
+    cmd-org-table-recalculate
+    cmd-org-table-sort
+    cmd-org-table-sum
+    cmd-org-table-transpose)
   (import (except (chezscheme) make-hash-table hash-table? iota 1+ 1- sort sort!
                   path-extension)
           (jerboa core)
@@ -1160,7 +1177,7 @@
       (12 25 "Christmas Day")))
 
   (define *tui-diary-file*
-    (path-expand ".jemacs-diary" (or (getenv "HOME") "/tmp")))
+    (string-append (or (getenv "HOME") "/tmp") "/.jemacs-diary"))
 
   (define (tui-holidays-for-month month)
     "Return holidays in month as list of (day . name)."
@@ -2140,6 +2157,24 @@
   ;;;==========================================================================
   ;;; Register org-mode syntax highlighter
   ;;;==========================================================================
+
+  ;;; Org table stubs
+  (define (cmd-org-table-align app) (echo-message! (app-state-echo app) "org-table-align: not yet implemented"))
+  (define (cmd-org-table-delete-column app) (echo-message! (app-state-echo app) "org-table-delete-column: not yet implemented"))
+  (define (cmd-org-table-delete-row app) (echo-message! (app-state-echo app) "org-table-delete-row: not yet implemented"))
+  (define (cmd-org-table-export-csv app) (echo-message! (app-state-echo app) "org-table-export-csv: not yet implemented"))
+  (define (cmd-org-table-import-csv app) (echo-message! (app-state-echo app) "org-table-import-csv: not yet implemented"))
+  (define (cmd-org-table-insert-column app) (echo-message! (app-state-echo app) "org-table-insert-column: not yet implemented"))
+  (define (cmd-org-table-insert-row app) (echo-message! (app-state-echo app) "org-table-insert-row: not yet implemented"))
+  (define (cmd-org-table-insert-separator app) (echo-message! (app-state-echo app) "org-table-insert-separator: not yet implemented"))
+  (define (cmd-org-table-move-column-left app) (echo-message! (app-state-echo app) "org-table-move-column-left: not yet implemented"))
+  (define (cmd-org-table-move-column-right app) (echo-message! (app-state-echo app) "org-table-move-column-right: not yet implemented"))
+  (define (cmd-org-table-move-row-down app) (echo-message! (app-state-echo app) "org-table-move-row-down: not yet implemented"))
+  (define (cmd-org-table-move-row-up app) (echo-message! (app-state-echo app) "org-table-move-row-up: not yet implemented"))
+  (define (cmd-org-table-recalculate app) (echo-message! (app-state-echo app) "org-table-recalculate: not yet implemented"))
+  (define (cmd-org-table-sort app) (echo-message! (app-state-echo app) "org-table-sort: not yet implemented"))
+  (define (cmd-org-table-sum app) (echo-message! (app-state-echo app) "org-table-sum: not yet implemented"))
+  (define (cmd-org-table-transpose app) (echo-message! (app-state-echo app) "org-table-transpose: not yet implemented"))
 
   (register-custom-highlighter! 'org
     (lambda (ed)

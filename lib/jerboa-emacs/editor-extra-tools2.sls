@@ -146,9 +146,11 @@
           (jerboa runtime)
           (only (jerboa prelude) path-expand path-directory path-strip-directory path-extension)
           (std sugar)
-          (only (std srfi srfi-13) string-join string-prefix? string-contains string-trim string-suffix? string-trim-both)
+          (only (std srfi srfi-13) string-join string-prefix? string-contains string-trim string-trim-right string-suffix? string-trim-both string-index string-tokenize)
           (only (std misc string) string-split)
+          (only (std misc list) filter-map)
           (std misc process)
+          (only (std misc thread) thread-sleep!)
           (only (jerboa-emacs pregexp-compat) pregexp pregexp-match)
           (chez-scintilla constants)
           (chez-scintilla scintilla)
@@ -164,14 +166,36 @@
           (jerboa-emacs editor-cmds-a)
           (except (jerboa-emacs editor-cmds-b) open-output-buffer)
           (jerboa-emacs editor-cmds-c)
-          (only (jerboa-emacs editor-extra-helpers) cmd-flyspell-mode project-current toggle-mode!)
+          (only (jerboa-emacs editor-extra-helpers) cmd-flyspell-mode project-current toggle-mode! open-output-buffer)
           (jerboa-emacs editor-extra-tools))
 
 ;;; -*- Gerbil -*-
 ;;; Bookmarks, rectangles, isearch, semantic, whitespace, highlight,
 ;;; LSP, DAP, snippets, and more tool commands
 
-
+;; Chez compatibility stubs
+(define (input-port-timeout-set! port timeout) (void))
+(define (create-directory* dir)
+  ;; Like Gerbil's create-directory* — creates dir and all parents
+  (system (string-append "mkdir -p " dir)))
+(define (string-subst s from to)
+  ;; Like Gerbil's string-subst — replace all occurrences of from with to
+  (let ((flen (string-length from))
+        (slen (string-length s)))
+    (let loop ((i 0) (parts '()))
+      (cond
+        ((> (+ i flen) slen)
+         (apply string-append (reverse (cons (substring s i slen) parts))))
+        ((string=? (substring s i (+ i flen)) from)
+         (loop (+ i flen) (cons to parts)))
+        (else
+         (let inner ((j (+ i 1)))
+           (cond
+             ((> (+ j flen) slen)
+              (apply string-append (reverse (cons (substring s i slen) parts))))
+             ((string=? (substring s j (+ j flen)) from)
+              (loop j (cons (substring s i j) parts)))
+             (else (inner (+ j 1))))))))))
 
 ;; Bookmark extras
 (define (cmd-bookmark-bmenu-list app)
@@ -632,22 +656,23 @@
               (if (not (and (file-exists? file-mine) (file-exists? file-base)
                             (file-exists? file-theirs)))
                 (echo-error! echo "One or more files do not exist")
-                (guard (e [#t ((lambda (e) (echo-error! echo "diff3 failed")) e)]) (let* ((proc (run-process (list "diff3")))
-                           (output (get-string-all proc))
-                           (status (process-status proc)))
-                      (let* ((win (current-window fr))
-                             (ed (edit-window-editor win))
-                             (buf (buffer-create! "*Ediff Merge*" ed))
-                             (text (string-append
-                                     "Three-way merge: " file-mine " + " file-base " + " file-theirs "\n"
-                                     (make-string 60 #\=) "\n"
-                                     (if (= status 0) "No conflicts.\n\n"
-                                       "Conflicts marked with <<<<<<< / ======= / >>>>>>>.\nUse smerge-keep-mine / smerge-keep-other to resolve.\n\n")
-                                     (or output "Files are identical"))))
-                        (buffer-attach! ed buf)
-                        (edit-window-buffer-set! win buf)
-                        (editor-set-text ed text)
-                        (editor-goto-pos ed 0)))))))))))))
+                (guard (e [#t (echo-error! echo "diff3 failed")])
+                  (let* ((output (run-process (list "diff3" file-mine file-base file-theirs)))
+                         (has-conflicts? (and (string? output) (string-contains output "<<<<<<")))
+                         (win (current-window fr))
+                         (ed (edit-window-editor win))
+                         (buf (buffer-create! "*Ediff Merge*" ed))
+                         (text (string-append
+                                 "Three-way merge: " file-mine " + " file-base " + " file-theirs "\n"
+                                 (make-string 60 #\=) "\n"
+                                 (if has-conflicts?
+                                   "Conflicts marked with <<<<<<< / ======= / >>>>>>>.\nUse smerge-keep-mine / smerge-keep-other to resolve.\n\n"
+                                   "No conflicts.\n\n")
+                                 (or output "Files are identical"))))
+                    (buffer-attach! ed buf)
+                    (edit-window-buffer-set! win buf)
+                    (editor-set-text ed text)
+                    (editor-goto-pos ed 0)))))))))))
 
 (define (diff-refine-words old-line new-line)
   "Compute word-level diff between two lines. Returns annotated string."
@@ -665,13 +690,13 @@
                                 (string=? (list-ref old-words (- old-len 1 i))
                                           (list-ref new-words (- new-len 1 i))))
                          (loop (+ i 1)) i)))
-         (prefix (let take-n ((lst old-words) (n prefix-len) (acc []))
+         (prefix (let take-n ((lst old-words) (n prefix-len) (acc '()))
                    (if (= n 0) (reverse acc) (take-n (cdr lst) (- n 1) (cons (car lst) acc)))))
          (old-mid-len (max 0 (- old-len prefix-len suffix-len)))
          (new-mid-len (max 0 (- new-len prefix-len suffix-len)))
-         (old-mid (let take-n ((lst (list-tail old-words prefix-len)) (n old-mid-len) (acc []))
+         (old-mid (let take-n ((lst (list-tail old-words prefix-len)) (n old-mid-len) (acc '()))
                     (if (= n 0) (reverse acc) (take-n (cdr lst) (- n 1) (cons (car lst) acc)))))
-         (new-mid (let take-n ((lst (list-tail new-words prefix-len)) (n new-mid-len) (acc []))
+         (new-mid (let take-n ((lst (list-tail new-words prefix-len)) (n new-mid-len) (acc '()))
                     (if (= n 0) (reverse acc) (take-n (cdr lst) (- n 1) (cons (car lst) acc)))))
          (suffix (list-tail old-words (+ prefix-len old-mid-len))))
     (let ((out (open-output-string)))
@@ -752,11 +777,9 @@
     (when (and dir1 (not (string=? dir1 "")))
       (let ((dir2 (echo-read-string echo "Second directory: " row width)))
         (when (and dir2 (not (string=? dir2 "")))
-          (if (not (and (directory-exists? dir1) (directory-exists? dir2)))
+          (if (not (and (file-directory? dir1) (file-directory? dir2)))
             (echo-error! echo "One or both directories do not exist")
-            (guard (e [#t ((lambda (e) (echo-error! echo "diff failed")) e)]) (let* ((proc (run-process (list "diff")))
-                       (output (get-string-all proc)))
-                  (process-status proc)
+            (guard (e [#t ((lambda (e) (echo-error! echo "diff failed")) e)]) (let* ((output (run-process (list "diff" "-rq" dir1 dir2))))
                   (let* ((win (current-window fr))
                          (ed (edit-window-editor win))
                          (buf (buffer-create! "*Ediff Directories*" ed))
@@ -769,7 +792,7 @@
                     (edit-window-buffer-set! win buf)
                     (editor-set-text ed text)
                     (editor-goto-pos ed 0)
-                    (editor-set-read-only ed #t)))))))))))
+                    (editor-set-read-only ed #t))))))))))
 
 ;; Window commands extras
 (define (cmd-window-divider-mode app)
@@ -817,7 +840,7 @@
   (let ((expr (app-read-string app "Calc: ")))
     (when (and expr (not (string=? expr "")))
       (let ((result (guard (e [#t ((lambda (e) "Error") e)]) (let ((val (eval (with-input-from-string expr read))))
-                          (with-output-to-string (lambda () (write val))))))))
+                          (with-output-to-string (lambda () (write val)))))))
         (echo-message! (app-state-echo app) (string-append "= " result))))))
 
 (define (cmd-count-words-line app)
@@ -1060,21 +1083,15 @@
             (set! month year)
             (set! year tmp)))
         (if (and month year (> month 0) (<= month 12) (> year 1900))
-          (let* ((cal-text (guard (e [#t ((lambda (e) "Calendar not available") e)]) (let ((p (run-process (list "cal"))
-                                               stdin-redirection: #f stdout-redirection: #t
-                                               stderr-redirection: #f))))
-                                (let ((out (get-string-all p)))
-                                  (process-status p)
-                                  (or out "Error")))))))
+          (let* ((cal-text (guard (e [#t ((lambda (e) "Calendar not available") e)])
+                              (or (run-process (list "cal" (number->string month) (number->string year))) "Error"))))
             (open-output-buffer app "*Calendar*" cal-text))
           (echo-error! echo "Invalid date format"))))))
 
 (define (cmd-calendar-holidays app)
   "Show US holidays for the current year."
-  (let* ((year (guard (e [#t ((lambda (e) 2024) e)]) (let* ((p (run-process (list "date")))
-                          (out (get-line p)))
-                     (process-status p)
-                     (or (string->number (string-trim out)) 2024)))))
+  (let* ((year (guard (e [#t ((lambda (e) 2024) e)])
+                  (or (string->number (string-trim (run-process (list "date" "+%Y")))) 2024)))
          (holidays (string-append
                      "US Holidays for " (number->string year) "\n"
                      (make-string 40 #\=) "\n\n"
@@ -1136,11 +1153,11 @@
     (when (port? proc)
       (when (and (string? cmd) (not (string=? cmd "")))
         (display (string-append cmd "\n") proc)
-        (force-output proc))
+        (flush-output-port proc))
       ;; Read response with timeout
       (input-port-timeout-set! proc 0.3)
       (let loop ((lines '()) (count 0))
-        (let ((line (guard (e [#t ((lambda (e) #f) e)]) (get-line proc)))))
+        (let ((line (guard (e [#t ((lambda (e) #f) e)]) (get-line proc))))
           (cond
             ((not (string? line))
              (input-port-timeout-set! proc +inf.0)
@@ -1189,7 +1206,7 @@
       (begin
         ;; Kill existing session
         (when (and *dap-process* (port? *dap-process*))
-          (guard (e [#t (void e)]) (close-port *dap-process*))))
+          (guard (e [#t (void e)]) (close-port *dap-process*)))
         (guard (e [#t (echo-error! (app-state-echo app) "GDB not available — install gdb")])
           (let ()
             (let* ((proc (run-process (list "gdb")))
@@ -1284,35 +1301,6 @@
 ;; Simple snippet system with $1, $2, etc. placeholders
 
 (def *yas-snippets* (make-hash-table))  ; mode -> (name -> template)
-
-;; Initialize with some default snippets
-(hash-put! *yas-snippets* 'scheme
-  (list->hash-table
-    '(("def" . "(define ($1)\n  $0)")
-      ("defstruct" . "(defstruct $1\n  ($2))")
-      ("let" . "(let (($1 $2))\n  $0)")
-      ("lambda" . "(lambda ($1)\n  $0)")
-      ("if" . "(if $1\n  $2\n  $3)")
-      ("cond" . "(cond\n  ($1 $2)\n  (else $3))")
-      ("for" . "(for (($1 $2))\n  $0)")
-      ("match" . "(match $1\n  ($2 $3))"))))
-
-(hash-put! *yas-snippets* 'python
-  (list->hash-table
-    '(("def" . "def $1($2):\n    $0")
-      ("class" . "class $1:\n    def __init__(self$2):\n        $0")
-      ("for" . "for $1 in $2:\n    $0")
-      ("if" . "if $1:\n    $2\nelse:\n    $3")
-      ("with" . "with $1 as $2:\n    $0")
-      ("try" . "try:\n    $1\nexcept $2:\n    $0"))))
-
-(hash-put! *yas-snippets* 'c
-  (list->hash-table
-    '(("for" . "for (int $1 = 0; $1 < $2; $1++) {\n    $0\n}")
-      ("if" . "if ($1) {\n    $0\n}")
-      ("while" . "while ($1) {\n    $0\n}")
-      ("func" . "$1 $2($3) {\n    $0\n}")
-      ("struct" . "struct $1 {\n    $0\n};"))))
 
 (define (yas-get-mode app)
   "Determine snippet mode from current buffer."
@@ -1439,40 +1427,16 @@
 ;;; --- Memory/GC usage display ---
 
 (define (cmd-memory-usage app)
-  "Show Gambit memory and GC statistics."
+  "Show Chez Scheme runtime statistics."
   (let* ((ed (current-editor app))
          (echo (app-state-echo app))
-         (stats (##process-statistics))
          (report (with-output-to-string
                    (lambda ()
-                     (display "Gerbil Emacs Memory Usage\n")
+                     (display "Jerboa Emacs Runtime Statistics\n")
                      (display (make-string 40 #\-))
                      (display "\n")
-                     (display "User time:    ")
-                     (display (f64vector-ref stats 0))
-                     (display " s\n")
-                     (display "System time:  ")
-                     (display (f64vector-ref stats 1))
-                     (display " s\n")
-                     (display "Real time:    ")
-                     (display (f64vector-ref stats 2))
-                     (display " s\n")
-                     (display "GC user time: ")
-                     (display (f64vector-ref stats 3))
-                     (display " s\n")
-                     (display "GC sys time:  ")
-                     (display (f64vector-ref stats 4))
-                     (display " s\n")
-                     (display "GC real time: ")
-                     (display (f64vector-ref stats 5))
-                     (display " s\n")
-                     (display "Bytes alloc:  ")
-                     (display (exact (f64vector-ref stats 7)))
-                     (display "\n")
-                     (display "GC count:     ")
-                     (let ((minor-gc (exact (f64vector-ref stats 6))))
-                       (display minor-gc))
-                     (display "\n")
+                     (display "Platform: Chez Scheme (R6RS)\n")
+                     (display "GC stats: use (collect) in REPL\n")
                      (display (make-string 40 #\-))
                      (display "\n")))))
     (let* ((fr (app-state-frame app))
@@ -1604,9 +1568,7 @@
       (with-catch
         (lambda (e) (echo-message! echo "Command failed"))
         (lambda ()
-          (let* ((p (run-process (list "/bin/sh")))
-                 (output (get-string-all p))
-                 (status (process-status p)))
+          (let* ((output (run-process (list "/bin/sh" "-c" cmd))))
             (let ((text (or output "")))
               (editor-insert-text ed (editor-get-current-pos ed) text)
               (echo-message! echo
@@ -1692,7 +1654,7 @@
       (let* ((text (editor-get-text ed))
              (region (substring text sel-start sel-end))
              (result (let loop ((chars (string->list region))
-                                (prev-space? #f) (acc []))
+                                (prev-space? #f) (acc '()))
                        (if (null? chars)
                          (list->string (reverse acc))
                          (let ((c (car chars)))
@@ -1723,9 +1685,7 @@
                           (else #f))))
           (if (not pkg-cmd)
             (echo-message! echo "No package manager found")
-            (let* ((p (run-process (list "/bin/sh")))
-                   (output (get-string-all p))
-                   (_ (process-status p))
+            (let* ((output (run-process (list "/bin/sh" "-c" pkg-cmd)))
                    (text (or output ""))
                    (fr (app-state-frame app))
                    (win (current-window fr))
@@ -2216,7 +2176,7 @@
 (define (fill-words words col)
   "Reflow WORDS list to COL width, returning string."
   (if (null? words) ""
-    (let loop ((ws (cdr words)) (line (car words)) (lines []))
+    (let loop ((ws (cdr words)) (line (car words)) (lines '()))
       (if (null? ws)
         (string-join (reverse (cons line lines)) "\n")
         (let ((next (string-append line " " (car ws))))
@@ -2283,7 +2243,7 @@
                  (right (max start-col end-col))
                  ;; Extract rectangle lines
                  (rect-lines
-                   (let loop ((i start-line) (acc []))
+                   (let loop ((i start-line) (acc '()))
                      (if (> i end-line) (reverse acc)
                        (let* ((l (if (< i (length lines)) (list-ref lines i) ""))
                               (llen (string-length l))
@@ -2305,7 +2265,7 @@
          (target-name (app-read-string app "Insert buffer: ")))
     (when (and target-name (> (string-length target-name) 0))
       (let ((target-buf (find (lambda (b) (string=? (buffer-name b) target-name))
-                              *buffer-list*)))
+                              (buffer-list))))
         (if (not target-buf)
           (echo-error! echo (string-append "No buffer: " target-name))
           (let* ((path (buffer-file-path target-buf))
@@ -2314,7 +2274,7 @@
             (if path
               (let ((text (with-catch (lambda (e) #f)
                             (lambda () (call-with-input-file path
-                                         (lambda (port) (read-string 1000000 port)))))))
+                                         (lambda (port) (get-string-n port 1000000)))))))
                 (if text
                   (begin
                     (editor-insert-text ed pos text)
@@ -2327,7 +2287,7 @@
 ;;;============================================================================
 
 (def *tui-session-path*
-  (path-expand ".jemacs-session" (user-info-home (user-info (user-name)))))
+  (string-append (or (getenv "HOME") "/tmp") "/.jemacs-session"))
 
 (define (cmd-session-save app)
   "Save current session (open file buffers + positions) to disk."
@@ -2341,7 +2301,7 @@
                  (lambda (buf)
                    (let ((path (buffer-file-path buf)))
                      (and path (cons path 0))))
-                 *buffer-list*)))
+                 (buffer-list))))
         (call-with-output-file *tui-session-path*
           (lambda (port)
             (display (or (buffer-file-path current-buf) "") port)
@@ -2364,7 +2324,7 @@
       (lambda ()
         (let* ((lines (call-with-input-file *tui-session-path*
                          (lambda (port)
-                           (let loop ((acc []))
+                           (let loop ((acc '()))
                              (let ((line (get-line port)))
                                (if (eof-object? line) (reverse acc)
                                  (loop (cons line acc))))))))
@@ -2398,7 +2358,7 @@
       (if (= n 2)
         (frame-other-window! fr)
         (let* ((labels
-                (let loop ((ws wins) (i 0) (acc []))
+                (let loop ((ws wins) (i 0) (acc '()))
                   (if (null? ws) (reverse acc)
                     (let* ((w (car ws))
                            (bname (buffer-name (edit-window-buffer w)))
@@ -2418,5 +2378,34 @@
              (frame-current-idx-set! fr (- num 1))
              (echo-message! (app-state-echo app)
                (string-append "Window " (number->string num))))))))))
-) ;; end body
+
+;; Initialize default snippets (expressions must follow all defines in R6RS)
+(hash-put! *yas-snippets* 'scheme
+  (list->hash-table
+    '(("def" . "(define ($1)\n  $0)")
+      ("defstruct" . "(defstruct $1\n  ($2))")
+      ("let" . "(let (($1 $2))\n  $0)")
+      ("lambda" . "(lambda ($1)\n  $0)")
+      ("if" . "(if $1\n  $2\n  $3)")
+      ("cond" . "(cond\n  ($1 $2)\n  (else $3))")
+      ("for" . "(for (($1 $2))\n  $0)")
+      ("match" . "(match $1\n  ($2 $3))"))))
+
+(hash-put! *yas-snippets* 'python
+  (list->hash-table
+    '(("def" . "def $1($2):\n    $0")
+      ("class" . "class $1:\n    def __init__(self$2):\n        $0")
+      ("for" . "for $1 in $2:\n    $0")
+      ("if" . "if $1:\n    $2\nelse:\n    $3")
+      ("with" . "with $1 as $2:\n    $0")
+      ("try" . "try:\n    $1\nexcept $2:\n    $0"))))
+
+(hash-put! *yas-snippets* 'c
+  (list->hash-table
+    '(("for" . "for (int $1 = 0; $1 < $2; $1++) {\n    $0\n}")
+      ("if" . "if ($1) {\n    $0\n}")
+      ("while" . "while ($1) {\n    $0\n}")
+      ("func" . "$1 $2($3) {\n    $0\n}")
+      ("struct" . "struct $1 {\n    $0\n};"))))
+
 ) ;; end library

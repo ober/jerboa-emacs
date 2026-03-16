@@ -210,9 +210,10 @@
           (jerboa runtime)
           (only (jerboa prelude) path-expand path-directory path-strip-directory path-extension)
           (std sugar)
-          (only (std srfi srfi-13) string-join string-prefix? string-contains string-trim string-suffix?)
+          (only (std srfi srfi-13) string-join string-prefix? string-contains string-trim string-suffix? string-index)
           (only (std misc string) string-split)
           (std misc process)
+          (only (std misc thread) thread-sleep! thread-start! make-thread)
           (only (jerboa-emacs pregexp-compat) pregexp pregexp-match)
           (chez-scintilla constants)
           (chez-scintilla scintilla)
@@ -222,14 +223,14 @@
           (jerboa-emacs window)
           (jerboa-emacs echo)
           (jerboa-emacs editor-core)
-          (except (jerboa-emacs editor-text) shell-quote)
+          (except (jerboa-emacs editor-text) shell-quote cmd-cycle-spacing)
           (jerboa-emacs editor-ui)
-          (jerboa-emacs editor-advanced)
-          (jerboa-emacs editor-cmds-a)
-          (except (jerboa-emacs editor-cmds-b) open-output-buffer)
-          (jerboa-emacs editor-cmds-c)
-          (only (jerboa-emacs editor-extra-helpers) cmd-flyspell-mode project-current)
-          (except (jerboa-emacs editor-extra-vcs) cmd-desktop-read)
+          (except (jerboa-emacs editor-advanced) cmd-count-lines-region cmd-scratch-buffer)
+          (except (jerboa-emacs editor-cmds-a) cmd-toggle-line-move-visual cmd-goto-last-change)
+          (except (jerboa-emacs editor-cmds-b) open-output-buffer cmd-recentf-cleanup)
+          (except (jerboa-emacs editor-cmds-c) cmd-completion-at-point run-git-command)
+          (except (jerboa-emacs editor-extra-helpers) current-editor app-read-string current-buffer-from-app editor-replace-selection)
+          (except (jerboa-emacs editor-extra-vcs) cmd-desktop-read cmd-desktop-save)
           (jerboa-emacs editor-extra-media)
           (jerboa-emacs editor-extra-media2)
           (only (jerboa-emacs persist) which-key-mode which-key-mode-set!))
@@ -264,11 +265,11 @@
           (let* ((start (min match (- pos 1)))
                  (end (+ (max match (- pos 1)) 1))
                  (text (substring (editor-get-text ed) start end))
-                 (result (with-exception-catcher
-                           (lambda (e) (with-output-to-string (lambda () (display-condition e))))
+                 (result (with-catch
+                           (lambda (e) (call-with-string-output-port (lambda (p) (display-condition e p))))
                            (lambda ()
                              (let ((val (eval (with-input-from-string text read))))
-                               (with-output-to-string (lambda () (write val))))))))
+                               (call-with-string-output-port (lambda (p) (write val p))))))))
             (echo-message! (app-state-echo app) result))
           (echo-message! (app-state-echo app) "No sexp before point"))))))
 
@@ -291,11 +292,11 @@
          (match-pos (send-message ed SCI_BRACEMATCH start 0)))
     (if (>= match-pos 0)
       (let* ((form-text (substring text start (+ match-pos 1)))
-             (result (with-exception-catcher
-                       (lambda (e) (with-output-to-string (lambda () (display-condition e))))
+             (result (with-catch
+                       (lambda (e) (call-with-string-output-port (lambda (p) (display-condition e p))))
                        (lambda ()
                          (let ((val (eval (with-input-from-string form-text read))))
-                           (with-output-to-string (lambda () (write val))))))))
+                           (call-with-string-output-port (lambda (p) (write val p))))))))
         (echo-message! (app-state-echo app) result))
       (echo-message! (app-state-echo app) "No top-level form found"))))
 
@@ -310,11 +311,11 @@
       (let* ((start (min match (- pos 1)))
              (end (+ (max match (- pos 1)) 1))
              (text (substring (editor-get-text ed) start end))
-             (result (with-exception-catcher
-                       (lambda (e) (with-output-to-string (lambda () (display-condition e))))
+             (result (with-catch
+                       (lambda (e) (call-with-string-output-port (lambda (p) (display-condition e p))))
                        (lambda ()
                          (let ((val (eval (with-input-from-string text read))))
-                           (with-output-to-string (lambda () (write val))))))))
+                           (call-with-string-output-port (lambda (p) (write val p))))))))
         (editor-insert-text ed pos (string-append "\n;; => " result)))
       (echo-message! (app-state-echo app) "No sexp before point"))))
 
@@ -349,11 +350,11 @@
     (if (= start end)
       (echo-message! (app-state-echo app) "No region selected")
       (let* ((region (substring (editor-get-text ed) start end))
-             (result (with-exception-catcher
-                       (lambda (e) (with-output-to-string (lambda () (display-condition e))))
+             (result (with-catch
+                       (lambda (e) (call-with-string-output-port (lambda (p) (display-condition e p))))
                        (lambda ()
                          (let ((val (eval (with-input-from-string region read))))
-                           (with-output-to-string (lambda () (write val))))))))
+                           (call-with-string-output-port (lambda (p) (write val p))))))))
         (echo-message! (app-state-echo app) result)))))
 
 (define (cmd-scheme-send-buffer app)
@@ -362,11 +363,11 @@
          (win (current-window fr))
          (ed (edit-window-editor win))
          (text (editor-get-text ed))
-         (result (with-exception-catcher
-                   (lambda (e) (with-output-to-string (lambda () (display-condition e))))
+         (result (with-catch
+                   (lambda (e) (call-with-string-output-port (lambda (p) (display-condition e p))))
                    (lambda ()
                      (let ((val (eval (with-input-from-string text read))))
-                       (with-output-to-string (lambda () (write val))))))))
+                       (call-with-string-output-port (lambda (p) (write val p))))))))
     (echo-message! (app-state-echo app) result)))
 
 ;; Regex builder
@@ -554,7 +555,7 @@
          (words (filter (lambda (w) (> (string-length w) 0))
                         (string-split text #\space)))
          (misspelled 0))
-    (with-exception-catcher
+    (with-catch
       (lambda (e) (echo-error! (app-state-echo app) "aspell not available"))
       (lambda ()
         (for-each
@@ -585,18 +586,16 @@
          (word (substring text word-start word-end)))
     (if (string=? word "")
       (echo-message! (app-state-echo app) "No word at point")
-      (with-exception-catcher
+      (with-catch
         (lambda (e) (echo-error! (app-state-echo app) "aspell not available"))
         (lambda ()
-          (let* ((proc (open-process
-                         (list path: "aspell"
-                               arguments: '("pipe")
-                               stdin-redirection: #t stdout-redirection: #t stderr-redirection: #f)))
-                 (_ (begin (display (string-append word "\n") proc) (force-output proc)))
-                 (banner (get-line proc))
-                 (result (get-line proc)))
-            (close-output-port proc)
-            (process-status proc)
+          (let* ((pp (open-process (list "aspell" "pipe")))
+                 (in-port (process-port-rec-stdin-port pp))
+                 (out-port (process-port-rec-stdout-port pp))
+                 (_ (begin (display (string-append word "\n") in-port) (flush-output-port in-port)))
+                 (banner (get-line out-port))
+                 (result (get-line out-port)))
+            (close-port in-port)
             (cond
               ((or (not result) (string=? result "") (char=? (string-ref result 0) #\*))
                (echo-message! (app-state-echo app) (string-append "'" word "' is correct")))
@@ -624,30 +623,19 @@
 ;; Docker
 (define (cmd-docker app)
   "Docker management interface — shows containers and images."
-  (with-exception-catcher
+  (with-catch
     (lambda (e) (echo-error! (app-state-echo app) "Docker not available"))
     (lambda ()
-      (let* ((proc (open-process
-                     (list path: "docker"
-                           arguments: '("info" "--format" "Server Version: {{.ServerVersion}}\nContainers: {{.Containers}}\nImages: {{.Images}}")
-                           stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-             (out (get-string-all proc)))
-        (process-status proc)
+      (let* ((out (run-process (list "docker" "info" "--format" "Server Version: {{.ServerVersion}}\nContainers: {{.Containers}}\nImages: {{.Images}}"))))
         (open-output-buffer app "*Docker*" (or out "Docker info unavailable"))))))
 
 (define (cmd-docker-containers app)
   "List docker containers."
-  (let ((result (with-exception-catcher
+  (let ((result (with-catch
                   (lambda (e) "Docker not available")
                   (lambda ()
-                    (let ((p (open-process
-                               (list path: "docker"
-                                     arguments: '("ps" "--format" "{{.Names}}\t{{.Status}}\t{{.Image}}")
-                                     stdin-redirection: #f stdout-redirection: #t
-                                     stderr-redirection: #t))))
-                      (let ((out (get-string-all p)))
-                        (process-status p)
-                        (or out "(no containers)")))))))
+                    (let* ((out (run-process (list "docker" "ps" "--format" "{{.Names}}\t{{.Status}}\t{{.Image}}"))))
+                      (or out "(no containers)"))))))
     (let* ((fr (app-state-frame app))
            (win (current-window fr))
            (ed (edit-window-editor win))
@@ -659,15 +647,10 @@
 
 (define (cmd-docker-images app)
   "List docker images."
-  (with-exception-catcher
+  (with-catch
     (lambda (e) (echo-error! (app-state-echo app) "Docker not available"))
     (lambda ()
-      (let* ((proc (open-process
-                     (list path: "docker"
-                           arguments: '("images" "--format" "{{.Repository}}\t{{.Tag}}\t{{.Size}}")
-                           stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-             (out (get-string-all proc)))
-        (process-status proc)
+      (let* ((out (run-process (list "docker" "images" "--format" "{{.Repository}}\t{{.Tag}}\t{{.Size}}"))))
         (open-output-buffer app "*Docker Images*"
           (string-append "Docker Images\n\nRepository\tTag\tSize\n" (or out "(no images)") "\n"))))))
 
@@ -699,15 +682,10 @@
            (url (if (> (length parts) 1) (cadr parts) "")))
       (if (string=? url "")
         (echo-error! (app-state-echo app) "No URL on current line")
-        (with-exception-catcher
+        (with-catch
           (lambda (e) (echo-error! (app-state-echo app) "curl failed"))
           (lambda ()
-            (let* ((proc (open-process
-                           (list path: "curl"
-                                 arguments: (list "-s" "-X" method url)
-                                 stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-                   (out (get-string-all proc)))
-              (process-status proc)
+            (let* ((out (run-process (list "curl" "-s" "-X" method url))))
               (open-output-buffer app "*HTTP Response*"
                 (string-append method " " url "\n\n" (or out "(no response)") "\n")))))))))
 
@@ -814,7 +792,7 @@
   "Collect all words in text that start with prefix, excluding the one at prefix-start."
   (let ((len (string-length text))
         (plen (string-length prefix))
-        (candidates []))
+        (candidates '()))
     (let loop ((i 0))
       (when (< i len)
         (let* ((wstart
@@ -928,26 +906,25 @@
 (define (gdb-send! cmd app)
   "Send command to GDB and display response."
   (let ((proc *gdb-process*))
-    (when (port? proc)
-      (display (string-append cmd "\n") proc)
-      (force-output proc)
-      (thread-sleep! 0.1)
-      (let ((out (with-exception-catcher (lambda (e) #f) (lambda () (get-line proc)))))
-        (when (string? out)
-          (echo-message! (app-state-echo app) out))))))
+    (when (process-port? proc)
+      (let ((in-port (process-port-rec-stdin-port proc))
+            (out-port (process-port-rec-stdout-port proc)))
+        (display (string-append cmd "\n") in-port)
+        (flush-output-port in-port)
+        (thread-sleep! 0.1)
+        (let ((out (with-catch (lambda (e) #f) (lambda () (get-line out-port)))))
+          (when (string? out)
+            (echo-message! (app-state-echo app) out)))))))
 
 (define (cmd-gdb app)
   "Start GDB debugger — spawns gdb subprocess with MI interface."
   (let ((program (app-read-string app "Program to debug: ")))
     (if (or (not program) (string=? program ""))
       (echo-error! (app-state-echo app) "No program specified")
-      (with-exception-catcher
+      (with-catch
         (lambda (e) (echo-error! (app-state-echo app) "GDB not available"))
         (lambda ()
-          (let* ((proc (open-process
-                         (list path: "gdb"
-                               arguments: (list "-q" "--interpreter=mi2" program)
-                               stdin-redirection: #t stdout-redirection: #t stderr-redirection: #t)))
+          (let* ((proc (open-process (list "gdb" "-q" "--interpreter=mi2" program)))
                  (fr (app-state-frame app))
                  (win (current-window fr))
                  (ed (edit-window-editor win))
@@ -1286,18 +1263,10 @@
          (echo (app-state-echo app)))
     (if (not file-path)
       (echo-message! echo "Buffer has no file")
-      (with-exception-catcher
+      (with-catch
         (lambda (e) (echo-message! echo "Not in a git repository"))
         (lambda ()
-          (let* ((proc (open-process
-                         (list path: "git"
-                               arguments: (list "diff" "--no-color" "-U0" "--" file-path)
-                               stdin-redirection: #f
-                               stdout-redirection: #t
-                               stderr-redirection: #f
-                               directory: (path-directory file-path))))
-                 (output (get-string-all proc)))
-            (process-status proc)
+          (let* ((output (run-process (list "git" "diff" "--no-color" "-U0" "--" file-path) 'directory: (path-directory file-path))))
             (let ((hunks (git-gutter-parse-diff (or output ""))))
               (hash-put! *git-gutter-hunks* buf-name hunks)
               (hash-put! *git-gutter-hunk-idx* buf-name 0)
@@ -1441,21 +1410,15 @@
       (let ((hunks (or (hash-get *git-gutter-hunks* buf-name) '())))
         (if (null? hunks)
           (echo-message! echo "No hunks to revert")
-          (with-exception-catcher
+          (with-catch
             (lambda (e) (echo-error! echo "Failed to revert"))
             (lambda ()
               ;; For simplicity, revert entire file and reload
-              (let* ((proc (open-process
-                             (list path: "git"
-                                   arguments: (list "checkout" "--" file-path)
-                                   stdin-redirection: #f
-                                   stdout-redirection: #t
-                                   stderr-redirection: #t
-                                   directory: (path-directory file-path)))))
-                (process-status proc)
+              (begin
+                (run-process (list "git" "checkout" "--" file-path) 'directory: (path-directory file-path))
                 ;; Reload file
                 (let ((ed (edit-window-editor win))
-                      (text (with-exception-catcher
+                      (text (with-catch
                               (lambda (e) #f)
                               (lambda ()
                                 (call-with-input-file file-path
@@ -1475,17 +1438,11 @@
          (echo (app-state-echo app)))
     (if (not file-path)
       (echo-error! echo "Buffer has no file")
-      (with-exception-catcher
+      (with-catch
         (lambda (e) (echo-error! echo "Failed to stage"))
         (lambda ()
-          (let* ((proc (open-process
-                         (list path: "git"
-                               arguments: (list "add" "--" file-path)
-                               stdin-redirection: #f
-                               stdout-redirection: #t
-                               stderr-redirection: #t
-                               directory: (path-directory file-path)))))
-            (process-status proc)
+          (begin
+            (run-process (list "git" "add" "--" file-path) 'directory: (path-directory file-path))
             ;; Refresh hunks
             (git-gutter-refresh! app)
             (echo-message! echo (string-append "Staged: " (path-strip-directory file-path)))))))))
@@ -1705,7 +1662,7 @@
       (if (or (eq? type 'none) (string=? target ""))
         (echo-message! echo "No target at point")
         (let* ((actions (or (assq type *embark-target-actions*) #f))
-               (action-list (if actions (cdr actions) [])))
+               (action-list (if actions (cdr actions) '())))
           (if (null? action-list)
             (echo-message! echo (string-append "No actions for " (symbol->string type)))
             ;; Show actions and prompt for selection
@@ -1781,10 +1738,10 @@
 ;; Which-key extras
 (define (cmd-which-key-mode app)
   "Toggle which-key mode — shows available keybindings after prefix delay."
-  (set! *which-key-mode* (not *which-key-mode*))
+  (which-key-mode-set! (not (which-key-mode)))
   (toggle-mode! 'which-key)  ;; keep mode registry in sync
   (echo-message! (app-state-echo app)
-    (if *which-key-mode* "Which-key mode enabled" "Which-key mode disabled")))
+    (if (which-key-mode) "Which-key mode enabled" "Which-key mode disabled")))
 
 ;; Helpful — enhanced help system
 (define (cmd-helpful-callable app)
@@ -1802,7 +1759,7 @@
     (when (and name (not (string=? name "")))
       (let ((val (hash-get *custom-variables* name)))
         (if val
-          (echo-message! (app-state-echo app) (string-append name " = " (with-output-to-string (lambda () (write val)))))
+          (echo-message! (app-state-echo app) (string-append name " = " (call-with-string-output-port (lambda (p) (write val p)))))
           (echo-message! (app-state-echo app) (string-append "'" name "' not found")))))))
 
 (define (cmd-helpful-key app)
@@ -1871,7 +1828,7 @@
                           (linenum (cadr parsed))
                           (new-content (caddr parsed)))
                       (when (file-exists? filename)
-                        (with-exception-catcher
+                        (with-catch
                           (lambda (e) #f)
                           (lambda ()
                             (let* ((file-text (call-with-input-file filename
@@ -2071,19 +2028,14 @@
   (let ((query (app-read-string app "Devdocs search: ")))
     (when (and query (not (string=? query "")))
       (echo-message! (app-state-echo app) (string-append "Fetching devdocs for: " query "..."))
-      (with-exception-catcher
+      (with-catch
         (lambda (e)
           (echo-message! (app-state-echo app)
             (string-append "Devdocs: https://devdocs.io/#q=" query)))
         (lambda ()
           (let* ((url (string-append "https://devdocs.io/api/search?query=" query))
-                 (proc (open-process
-                         (list path: "curl"
-                               arguments: (list "-s" "-L" "--max-time" "5"
-                                                (string-append "https://devdocs.io/#q=" query))
-                               stdin-redirection: #f stdout-redirection: #t stderr-redirection: #f)))
-                 (out (get-string-all proc)))
-            (process-status proc)
+                 (out (run-process (list "curl" "-s" "-L" "--max-time" "5"
+                                   (string-append "https://devdocs.io/#q=" query)))))
             (if (and out (> (string-length out) 0))
               (let* ((fr (app-state-frame app))
                      (win (current-window fr))
@@ -2171,21 +2123,16 @@
   "Create denote note — creates timestamped note file."
   (let ((title (app-read-string app "Note title: ")))
     (when (and title (not (string=? title "")))
-      (let* ((timestamp (with-exception-catcher
+      (let* ((timestamp (with-catch
                           (lambda (e) "20260213")
                           (lambda ()
-                            (let* ((proc (open-process
-                                           (list path: "date"
-                                                 arguments: '("+%Y%m%dT%H%M%S")
-                                                 stdin-redirection: #f stdout-redirection: #t stderr-redirection: #f)))
-                                   (out (get-line proc)))
-                              (process-status proc)
-                              (or out "20260213")))))
-             (slug (string-map (lambda (c) (if (char-alphabetic? c) (char-downcase c) #\-)) title))
+                            (let* ((raw (run-process (list "date" "+%Y%m%dT%H%M%S"))))
+                              (or (and raw (car (string-split raw #\newline))) "20260213")))))
+             (slug (list->string (map (lambda (c) (if (char-alphabetic? c) (char-downcase c) #\-)) (string->list title))))
              (dir (string-append (getenv "HOME") "/notes/"))
              (fname (string-append dir timestamp "--" slug ".org")))
         ;; Ensure directory exists
-        (with-exception-catcher (lambda (e) #f) (lambda () (create-directory dir)))
+        (with-catch (lambda (e) #f) (lambda () (mkdir dir)))
         (let* ((fr (app-state-frame app))
                (win (current-window fr))
                (ed (edit-window-editor win))
@@ -2216,15 +2163,10 @@
   (let ((query (app-read-string app "Find node: ")))
     (when (and query (not (string=? query "")))
       (let ((notes-dir (string-append (getenv "HOME") "/notes/")))
-        (with-exception-catcher
+        (with-catch
           (lambda (e) (echo-error! (app-state-echo app) "Notes directory not found"))
           (lambda ()
-            (let* ((proc (open-process
-                           (list path: "grep"
-                                 arguments: (list "-rl" query notes-dir)
-                                 stdin-redirection: #f stdout-redirection: #t stderr-redirection: #f)))
-                   (out (get-string-all proc)))
-              (process-status proc)
+            (let* ((out (run-process (list "grep" "-rl" query notes-dir))))
               (if (and out (> (string-length out) 0))
                 (open-output-buffer app "*Org-roam*" out)
                 (echo-message! (app-state-echo app) "No matching nodes found")))))))))
@@ -2370,16 +2312,10 @@
          (dir (if (and buf (buffer-file-path buf))
                 (path-directory (buffer-file-path buf))
                 (current-directory))))
-    (with-exception-catcher
+    (with-catch
       (lambda (e) (echo-error! (app-state-echo app) "Git command failed"))
       (lambda ()
-        (let* ((proc (open-process
-                       (list path: "git"
-                             arguments: args
-                             directory: dir
-                             stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-               (out (get-string-all proc)))
-          (process-status proc)
+        (let* ((out (run-process (append (list "git") args) 'directory: dir)))
           (if buffer-name
             (open-output-buffer app buffer-name (or out "(no output)\n"))
             (echo-message! (app-state-echo app) (or out "Done"))))))))
@@ -2399,15 +2335,10 @@
 
 (define (tui-git-run-in-dir args dir)
   "Run git command synchronously in dir, return output string."
-  (with-exception-catcher
+  (with-catch
     (lambda (e) "")
     (lambda ()
-      (let* ((proc (open-process
-                     (list path: "git" arguments: args directory: dir
-                           stdout-redirection: #t stderr-redirection: #t)))
-             (out (get-string-all proc)))
-        (close-port proc)
-        (or out "")))))
+      (or (run-process (append (list "git") args) 'directory: dir) ""))))
 
 (define (tui-git-dir app)
   "Get git directory from current buffer."
@@ -2738,9 +2669,9 @@
              (region (substring text start end))
              (path (app-read-string app "Append to file: ")))
         (when (and path (not (string=? path "")))
-          (call-with-output-file [path: path append: #t]
-            (lambda (p) (display region p)))
+          (let ((p (open-output-file path 'append)))
+            (display region p)
+            (close-port p))
           (echo-message! (app-state-echo app)
             (string-append "Appended " (number->string (- end start)) " chars to " path)))))))
-) ;; end body
 ) ;; end library

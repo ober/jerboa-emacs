@@ -11,6 +11,8 @@
 
   (import (except (chezscheme) make-hash-table hash-table? iota 1+ 1- sort sort! path-extension)
           (jerboa core)
+          (jerboa runtime)
+          (except (jerboa-emacs core) face-get)
           (jerboa-emacs keymap)
           (jerboa-emacs snippets)
           (jerboa-emacs buffer)
@@ -21,10 +23,10 @@
             cmd-info-reader cmd-project-tree-git)
           (only (jerboa-emacs editor-cmds-a)
             cmd-project-tree-create-file cmd-project-tree-delete-file
-            cmd-project-tree-rename-file cmd-jemacs-doc
+            cmd-project-tree-rename-file cmd-gemacs-doc
             cmd-dired-async-copy cmd-dired-async-move)
           (only (jerboa-emacs editor-cmds-b)
-            cmd-customize cmd-set-variable
+            cmd-customize
             cmd-load-plugin cmd-list-plugins
             cmd-find-file-other-frame cmd-switch-to-buffer-other-frame)
           (jerboa-emacs editor-extra-helpers)
@@ -40,7 +42,7 @@
           (jerboa-emacs editor-extra-modes)
           (jerboa-emacs editor-extra-final)
           (jerboa-emacs editor-extra-regs)
-          (jerboa-emacs editor-extra-ai)
+          (except (jerboa-emacs editor-extra-ai) cmd-wdired-mode)
           (jerboa-emacs editor-extra-regs2))
 
   (define (register-extra-commands!)

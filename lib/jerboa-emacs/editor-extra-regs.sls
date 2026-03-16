@@ -81,8 +81,9 @@
           (jerboa runtime)
           (only (jerboa prelude) path-expand path-directory path-strip-directory)
           (std sugar)
-          (only (std srfi srfi-13) string-join string-prefix? string-contains string-trim)
+          (only (std srfi srfi-13) string-join string-prefix? string-contains string-trim string-index string-suffix?)
           (only (std misc string) string-split)
+          (only (std misc list) take drop filter-map)
           (std misc process)
           (only (jerboa-emacs pregexp-compat) pregexp pregexp-match)
           (chez-scintilla constants)
@@ -97,7 +98,7 @@
                  org-babel-tangle-to-files org-babel-insert-result
                  org-babel-kill-all-sessions)
           (only (jerboa-emacs org-capture)
-                 org-capture-menu-string org-capture-template-key
+                 org-capture-templates org-capture-menu-string org-capture-template-key
                  org-capture-template-template org-capture-cursor-position
                  org-capture-start org-capture-finalize org-capture-abort)
           (only (jerboa-emacs org-parse)
@@ -110,10 +111,11 @@
           (jerboa-emacs editor-cmds-a)
           (except (jerboa-emacs editor-cmds-b) open-output-buffer)
           (jerboa-emacs editor-cmds-c)
-          (only (jerboa-emacs editor-extra-helpers) cmd-flyspell-mode project-current)
+          (only (jerboa-emacs editor-extra-helpers) cmd-flyspell-mode project-current open-output-buffer)
           (only (jerboa-emacs editor-extra-web)
                  eww-display-page eww-fetch-url)
-          (only (jerboa-emacs terminal) terminal-buffer?))
+          (only (jerboa-emacs terminal) terminal-buffer?)
+          (only (jerboa-emacs editor-extra-tools2) cmd-toggle-header-line))
 
   (define (register-parity-commands!)
     ;;; From editor-core.ss
@@ -891,12 +893,9 @@
            (dir (if path (path-directory path) ".")))
       (with-catch
         (lambda (e) (echo-message! (app-state-echo app)
-                      (string-append "Error: " (with-output-to-string (lambda () (display-condition e))))))
+                      (string-append "Error: " (call-with-string-output-port (lambda (p) (display-condition e p))))))
         (lambda ()
-          (let* ((proc (open-process (list path: "ls" arguments: ["-la" dir]
-                          stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-                 (output (get-string-all proc)))
-            (close-port proc)
+          (let ((output (run-process (list "ls" "-la" dir))))
             (open-output-buffer app (string-append "*Dired: " dir "*") (or output "")))))))
 
   (define (cmd-dired-up-directory app)
@@ -911,10 +910,7 @@
       (with-catch
         (lambda (e) (echo-message! (app-state-echo app) "Cannot go up"))
         (lambda ()
-          (let* ((proc (open-process (list path: "ls" arguments: ["-la" dir]
-                          stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-                 (output (get-string-all proc)))
-            (close-port proc)
+          (let ((output (run-process (list "ls" "-la" dir))))
             (open-output-buffer app (string-append "*Dired: " dir "*") (or output "")))))))
 
   (define (cmd-dired-do-shell-command app)
@@ -924,10 +920,7 @@
         (with-catch
           (lambda (e) (echo-message! (app-state-echo app) "Shell command error"))
           (lambda ()
-            (let* ((proc (open-process (list path: "/bin/sh" arguments: ["-c" cmd]
-                            stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-                   (output (get-string-all proc)))
-              (process-status proc) (close-port proc)
+            (let ((output (run-process (list "/bin/sh" "-c" cmd))))
               (open-output-buffer app "*Shell Command*" (or output ""))))))))
 
   ;;; --- Help/Apropos ---
@@ -963,7 +956,7 @@
           (cmd-newline app)
           (let ((ed2 (current-editor app)))
             (editor-insert-text ed2 (editor-get-current-pos ed2) prefix)))
-        (cmd-newline app)))
+        (cmd-newline app))))
 
 
   ;;; --- Search ---
@@ -991,10 +984,11 @@
         (let* ((buf-info (current-buffer-from-app app))
                (source-file (or (buffer-name buf-info) ""))
                (source-path (or (buffer-file-path buf-info) ""))
+               (templates (org-capture-templates))
                (tmpl-str (org-capture-template-template
                            (or (find (lambda (t) (string=? (org-capture-template-key t) key))
-                                     *org-capture-templates*)
-                               (car *org-capture-templates*))))
+                                     templates)
+                               (car templates))))
                (cursor-pos (org-capture-cursor-position tmpl-str))
                (expanded (org-capture-start key source-file source-path)))
           (if (not expanded)
@@ -1002,7 +996,7 @@
             (let* ((ed (current-editor app))
                    (buf (buffer-create! "*Org Capture*" ed)))
               (buffer-attach! ed buf)
-              (set! (edit-window-buffer (current-window fr)) buf)
+              (edit-window-buffer-set! (current-window fr) buf)
               (editor-insert-text ed 0 expanded)
               (when cursor-pos
                 (editor-goto-pos ed (min cursor-pos (string-length expanded))))
@@ -1117,10 +1111,8 @@
     (with-catch
       (lambda (e) (echo-message! (app-state-echo app) "Timestamp error"))
       (lambda ()
-        (let* ((proc (open-process (list path: "date" arguments: '("+<%Y-%m-%d %a>")
-                        stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-               (ts (get-line proc)))
-          (process-status proc) (close-port proc)
+        (let* ((raw (run-process (list "date" "+<%Y-%m-%d %a>")))
+               (ts (and (string? raw) (car (string-split raw #\newline)))))
           (when (string? ts)
             (let ((ed (current-editor app)))
               (editor-insert-text ed (editor-get-current-pos ed) ts)))))))
@@ -1186,7 +1178,7 @@
           (echo-message! echo "Not on an org heading")
           (let* ((child-level (+ parent-level 1))
                  (entries
-                   (let loop ((i (+ cur-line-idx 1)) (current-entry #f) (entries []))
+                   (let loop ((i (+ cur-line-idx 1)) (current-entry #f) (entries '()))
                      (if (>= i (length lines))
                        (if current-entry (append entries (list (reverse current-entry))) entries)
                        (let* ((line (list-ref lines i))
@@ -1213,8 +1205,7 @@
                                   entries))))))))
             (if (< (length entries) 2)
               (echo-message! echo "Nothing to sort (need 2+ child headings)")
-              (let* ((sorted (sort entries
-                       (lambda (a b) (string<? (string-downcase (car a)) (string-downcase (car b))))))
+              (let* ((sorted (list-sort (lambda (a b) (string<? (string-downcase (car a)) (string-downcase (car b)))) entries))
                      (before-lines (take lines (+ cur-line-idx 1)))
                      (after-start (let loop ((i (+ cur-line-idx 1)))
                                     (if (>= i (length lines)) i
@@ -1230,7 +1221,7 @@
                                         (if (and is-heading (<= hl parent-level)) i
                                           (loop (+ i 1)))))))
                      (after-lines (if (< after-start (length lines))
-                                    (list-tail lines after-start) []))
+                                    (list-tail lines after-start) '()))
                      (sorted-text (apply append sorted))
                      (new-lines (append before-lines sorted-text after-lines))
                      (new-text (string-join new-lines "\n")))
@@ -1251,7 +1242,7 @@
         (let* ((bufs (filter (lambda (b)
                                (let ((fp (buffer-file-path b)))
                                  (and fp (string-prefix? root fp))))
-                             *buffer-list*))
+                             (buffer-list)))
                (names (map buffer-name bufs)))
           (if (null? names)
             (echo-message! (app-state-echo app) "No project buffers")
@@ -1260,7 +1251,7 @@
                 (let ((target (find (lambda (b) (string=? (buffer-name b) name)) bufs)))
                   (if target
                     (begin (buffer-attach! (current-editor app) target)
-                           (set! (edit-window-buffer win) target))
+                           (edit-window-buffer-set! win target))
                     (echo-message! (app-state-echo app) "Buffer not found"))))))))))
 
   (define (find-project-root dir)
@@ -1286,9 +1277,9 @@
         (let* ((bufs (filter (lambda (b)
                                (let ((fp (buffer-file-path b)))
                                  (and fp (string-prefix? root fp))))
-                             *buffer-list*))
+                             (buffer-list)))
                (count (length bufs)))
-          (for-each (lambda (b) (set! *buffer-list* (remq b *buffer-list*))) bufs)
+          (for-each buffer-list-remove! bufs)
           (echo-message! (app-state-echo app) (string-append "Killed " (number->string count) " project buffers"))))))
 
   ;;; --- Version control ---
@@ -1302,26 +1293,21 @@
           (lambda (e) (echo-message! (app-state-echo app) "VC error"))
           (lambda ()
             (let* ((dir (path-directory path))
-                   (proc (open-process (list path: "git" arguments: ["status" "--porcelain" "--" path]
-                             directory: dir stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t)))
-                   (status-line (get-line proc)))
-              (process-status proc) (close-port proc)
+                   (raw (run-process (list "git" "status" "--porcelain" "--" path) 'directory: dir))
+                   (status-line (and (string? raw) (not (string=? raw ""))
+                                     (car (string-split raw #\newline)))))
               (cond
-                ((eof-object? status-line)
+                ((not status-line)
                  (echo-message! (app-state-echo app) "File is clean (no changes)"))
                 ((or (string-prefix? "??" status-line) (string-prefix? "A " status-line))
                  ;; Untracked or added — stage it
-                 (let ((p2 (open-process (list path: "git" arguments: ["add" "--" path]
-                                directory: dir stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t))))
-                   (process-status p2) (close-port p2)
-                   (echo-message! (app-state-echo app) (string-append "Staged: " (path-strip-directory path)))))
+                 (run-process/batch (list "git" "add" "--" path) 'directory: dir)
+                 (echo-message! (app-state-echo app) (string-append "Staged: " (path-strip-directory path))))
                 ((or (string-prefix? " M" status-line) (string-prefix? "M " status-line)
                      (string-prefix? "MM" status-line))
                  ;; Modified — stage it
-                 (let ((p2 (open-process (list path: "git" arguments: ["add" "--" path]
-                                directory: dir stdin-redirection: #f stdout-redirection: #t stderr-redirection: #t))))
-                   (process-status p2) (close-port p2)
-                   (echo-message! (app-state-echo app) (string-append "Staged: " (path-strip-directory path)))))
+                 (run-process/batch (list "git" "add" "--" path) 'directory: dir)
+                 (echo-message! (app-state-echo app) (string-append "Staged: " (path-strip-directory path))))
                 (else
                  (echo-message! (app-state-echo app)
                    (string-append "Status: " (string-trim status-line)))))))))))
@@ -1340,7 +1326,7 @@
                             (let ((nums (pregexp-match "[0-9]+" l)))
                               (cons (if nums (string->number (car nums)) 0) l)))
                           lines))
-           (sorted (sort numbered (lambda (a b) (< (car a) (car b)))))
+           (sorted (list-sort (lambda (a b) (< (car a) (car b))) numbered))
            (result (string-join (map cdr sorted) "\n")))
       (editor-set-text ed result)
       (echo-message! (app-state-echo app)
@@ -1357,7 +1343,7 @@
               (lambda (e) (echo-message! (app-state-echo app) "find error"))
               (lambda ()
                 (let* ((cmd-str (string-append "find " dir " " args))
-                       (output (run-process ["bash" "-c" cmd-str] coprocess: read-all-as-string)))
+                       (output (run-process (list "bash" "-c" cmd-str))))
                   (open-output-buffer app "*Find*" (or output ""))))))))))
 
   (define (cmd-find-name-dired app)
@@ -1370,7 +1356,7 @@
               (lambda (e) (echo-message! (app-state-echo app) "find error"))
               (lambda ()
                 (let* ((cmd-str (string-append "find " dir " -name " (string-append "'" pattern "'")))
-                       (output (run-process ["bash" "-c" cmd-str] coprocess: read-all-as-string)))
+                       (output (run-process (list "bash" "-c" cmd-str))))
                   (open-output-buffer app "*Find*" (or output ""))))))))))
 
   ;;; --- Dired details ---
@@ -1382,7 +1368,7 @@
       (if *dired-hide-details* "Details hidden" "Details shown")))
 
   ;;; --- Desktop save mode ---
-  ;; *desktop-save-mode* imported from :jemacs/editor-extra-org
+  (define *desktop-save-mode* #t)
   (define (cmd-desktop-save-mode app)
     "Toggle desktop-save-mode (auto save/restore session)."
     (set! *desktop-save-mode* (not *desktop-save-mode*))
@@ -1404,10 +1390,9 @@
           (with-catch
             (lambda (e) (echo-message! (app-state-echo app)
                           (string-append "Babel error: "
-                            (with-output-to-string (lambda () (display-condition e))))))
+                            (call-with-string-output-port (lambda (p) (display-condition e p))))))
             (lambda ()
-              (let ((output (org-babel-execute lang body header-args
-                              buffer-text: text)))
+              (let ((output (org-babel-execute lang body header-args text)))
                 (org-babel-insert-result ed end-line output
                   (or (hash-get header-args "results") "output"))
                 (echo-message! (app-state-echo app)
@@ -1420,7 +1405,7 @@
       (with-catch
         (lambda (e) (echo-message! (app-state-echo app)
                       (string-append "Tangle error: "
-                        (with-output-to-string (lambda () (display-condition e))))))
+                        (call-with-string-output-port (lambda (p) (display-condition e p))))))
         (lambda ()
           (let ((files (org-babel-tangle-to-files text)))
             (echo-message! (app-state-echo app)
@@ -1442,22 +1427,23 @@
       (echo-message! (app-state-echo app) "Only one frame")
       (begin
         ;; Save current frame config at current slot
-        (let ((config (tui-frame-config-save app)))
-          (let loop ((lst *frame-list*) (i 0) (acc []))
+        (let ((config (tui-frame-config-save app))
+              (cur-idx (current-frame-idx)))
+          (let loop ((lst (frame-list)) (i 0) (acc '()))
             (cond
               ((null? lst)
-               (set! *frame-list* (append (reverse acc) (list config))))
-              ((= i *current-frame-idx*)
-               (set! *frame-list* (append (reverse acc) (list config) (cdr lst))))
+               (frame-list-set! (append (reverse acc) (list config))))
+              ((= i cur-idx)
+               (frame-list-set! (append (reverse acc) (list config) (cdr lst))))
               (else (loop (cdr lst) (+ i 1) (cons (car lst) acc))))))
         ;; Cycle to next frame
-        (set! *current-frame-idx*
-              (modulo (+ *current-frame-idx* 1) (frame-count)))
+        (current-frame-idx-set!
+              (modulo (+ (current-frame-idx) 1) (frame-count)))
         ;; Restore that frame's config
-        (tui-frame-config-restore! app (list-ref *frame-list* *current-frame-idx*))
+        (tui-frame-config-restore! app (list-ref (frame-list) (current-frame-idx)))
         (echo-message! (app-state-echo app)
           (string-append "Frame "
-                         (number->string (+ *current-frame-idx* 1))
+                         (number->string (+ (current-frame-idx) 1))
                          "/" (number->string (frame-count)))))))
 
   ;;; --- Winum mode (stub) ---
@@ -1615,7 +1601,9 @@
                 (lambda (e)
                   (echo-error! echo (string-append "Error writing archive: " (error-message e))))
                 (lambda ()
-                  (call-with-output-file [path: archive-file append: #t]
+                  (call-with-port
+                    (open-file-output-port archive-file
+                      (file-options append) (buffer-mode block) (native-transcoder))
                     (lambda (port)
                       (display archive-entry port)))))
               (let* ((before (let loop ((i 0) (acc '()))
@@ -1666,7 +1654,7 @@
                (buf (edit-window-buffer (current-window fr)))
                (path (and buf (buffer-file-path buf)))
                (dir (if path (path-directory path) ".")))
-          (run-process ["git" "init" dir] coprocess: void)
+          (run-process (list "git" "init" dir))
           (echo-message! (app-state-echo app)
             (string-append "Initialized git repo in " dir))))))
 
@@ -1676,14 +1664,7 @@
     (with-catch
       (lambda (e) "")
       (lambda ()
-        (let* ((proc (open-process
-                       (list path: "git"
-                             arguments: args
-                             stdout-redirection: #t
-                             stderr-redirection: #t)))
-               (output (get-string-all proc)))
-          (close-port proc)
-          (or output "")))))
+        (or (run-process (append (list "git") args)) ""))))
 
   (define (cmd-magit-tag app)
     "Git tag management: create, list, delete, or push tags."
@@ -1709,7 +1690,7 @@
                     (ed (edit-window-editor win))
                     (buf (buffer-create! "*Git Tags*" ed #f)))
                (buffer-attach! ed buf)
-               (set! (edit-window-buffer win) buf)
+               (edit-window-buffer-set! win buf)
                (editor-set-text ed text)
                (editor-goto-pos ed 0)
                (editor-set-read-only ed #t))))
@@ -1852,7 +1833,7 @@
             (with-catch
               (lambda (e) (echo-message! (app-state-echo app) "chmod failed"))
               (lambda ()
-                (run-process ["chmod" mode path] coprocess: void)
+                (run-process (list "chmod" mode path))
                 (echo-message! (app-state-echo app)
                   (string-append "Set " path " to mode " mode)))))))))
 
@@ -1869,7 +1850,7 @@
             (with-catch
               (lambda (e) (echo-message! (app-state-echo app) "chown failed"))
               (lambda ()
-                (run-process ["chown" owner path] coprocess: void)
+                (run-process (list "chown" owner path))
                 (echo-message! (app-state-echo app)
                   (string-append "Changed owner of " path " to " owner)))))))))
 
@@ -2036,14 +2017,14 @@
 
   (define (get-tui-terminal-buffers)
     "Return list of terminal buffers."
-    (filter terminal-buffer? *buffer-list*))
+    (filter terminal-buffer? (buffer-list)))
 
   (define (tui-switch-to-terminal! app buf)
     "Switch to terminal buffer BUF in the current window."
     (let* ((fr (app-state-frame app))
            (ed (current-editor app)))
       (buffer-attach! ed buf)
-      (set! (edit-window-buffer (current-window fr)) buf)))
+      (edit-window-buffer-set! (current-window fr) buf)))
 
   (define (cmd-term-list app)
     "Switch between terminal buffers via completion."
@@ -2105,20 +2086,19 @@
   ;;; EWW Bookmarks
   ;;;============================================================================
 
+  (define *eww-current-url* #f)  ; shared with editor-extra-media
   (define *eww-bookmarks* '())  ; list of (title . url) pairs
-  (define *eww-bookmarks-file* (path-expand ".jemacs-eww-bookmarks" (user-info-home (user-info (user-name)))))
+  (define *eww-bookmarks-file* (string-append (or (getenv "HOME") "/tmp") "/.jemacs-eww-bookmarks"))
 
   (define (eww-load-bookmarks!)
     "Load EWW bookmarks from disk."
     (when (file-exists? *eww-bookmarks-file*)
-      (with-exception-catcher
-        (lambda (e) #f)
-        (lambda ()
-          (set! *eww-bookmarks*
-            (with-input-from-file *eww-bookmarks-file*
-              (lambda ()
+      (guard (e [#t #f])
+        (set! *eww-bookmarks*
+            (call-with-input-file *eww-bookmarks-file*
+              (lambda (port)
                 (let loop ((result '()))
-                  (let ((line (read-line)))
+                  (let ((line (get-line port)))
                     (if (eof-object? line)
                       (reverse result)
                       (let ((tab-pos (string-index line #\tab)))
@@ -2126,21 +2106,20 @@
                           (loop (cons (cons (substring line 0 tab-pos)
                                            (substring line (+ tab-pos 1) (string-length line)))
                                       result))
-                          (loop result)))))))))))))
+                          (loop result))))))))))))
 
   (define (eww-save-bookmarks!)
     "Persist EWW bookmarks to disk."
-    (with-exception-catcher
-      (lambda (e) #f)
-      (lambda ()
-        (with-output-to-file *eww-bookmarks-file*
+    (guard (e [#t #f])
+      (with-output-to-file *eww-bookmarks-file*
           (lambda ()
             (for-each (lambda (bm)
                         (display (car bm))
                         (display "\t")
                         (display (cdr bm))
                         (newline))
-              *eww-bookmarks*))))))
+              *eww-bookmarks*)))))
+
 
   (define (cmd-eww-add-bookmark app)
     "Bookmark the current EWW page."
@@ -2185,20 +2164,8 @@
 
   (define (forge-run-gh args)
     "Run gh CLI command and return output string, or #f on failure."
-    (with-exception-catcher
-      (lambda (e) #f)
-      (lambda ()
-        (let ((proc (open-process
-                      (list path: "gh"
-                            arguments: args
-                            stdin-redirection: #f
-                            stdout-redirection: #t
-                            stderr-redirection: #t))))
-          (let ((output (read-all-as-string proc)))
-            (process-status proc)
-            (if (zero? (process-status proc))
-              output
-              #f))))))
+    (guard (e [#t #f])
+      (run-process (append (list "gh") args))))
 
   (define (forge-show-in-buffer! app buf-name text)
     "Create or reuse a buffer, fill with text, switch to it."
@@ -2207,7 +2174,7 @@
            (existing (buffer-by-name buf-name))
            (buf (or existing (buffer-create! buf-name ed))))
       (buffer-attach! ed buf)
-      (set! (edit-window-buffer (current-window fr)) buf)
+      (edit-window-buffer-set! (current-window fr) buf)
       (send-message ed SCI_CLEARALL 0)
       (editor-insert-text ed 0 text)
       (send-message ed SCI_GOTOPOS 0)))
@@ -2271,13 +2238,13 @@
            (root (project-current app)))
       (if (not root)
         (echo-message! echo "Not in a project")
-        (let ((keyfile (path-expand ".jemacs-keys" root)))
+        (let ((keyfile (string-append root "/.jemacs-keys")))
           (if (not (file-exists? keyfile))
             (echo-message! echo (string-append "No .jemacs-keys in " root))
             (with-catch
               (lambda (e)
                 (echo-message! echo (string-append "Error loading keys: "
-                  (with-output-to-string (lambda () (display-condition e))))))
+                  (call-with-string-output-port (lambda (p) (display-condition e p))))))
               (lambda ()
                 (let* ((content (call-with-input-file keyfile
                           (lambda (p) (get-string-all p))))
@@ -2307,7 +2274,7 @@
            (echo (app-state-echo app))
            (text (editor-get-text ed))
            (lines (string-split text #\newline)))
-      (let loop ((ls lines) (headings []))
+      (let loop ((ls lines) (headings '()))
         (if (null? ls)
           (if (null? headings)
             (echo-message! echo "No org headings found")
@@ -2325,7 +2292,7 @@
                               (string-join rows "\n") "\n"))
                    (cbuf (buffer-create! "*Org Columns*" ed)))
               (buffer-attach! ed cbuf)
-              (set! (edit-window-buffer win) cbuf)
+              (edit-window-buffer-set! win cbuf)
               (editor-set-text ed content)
               (editor-goto-pos ed 0)
               (editor-set-read-only ed #t)))

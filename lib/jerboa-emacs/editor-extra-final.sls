@@ -38,7 +38,6 @@
     cmd-enlarge-window-horizontally
     cmd-shrink-window-horizontally
     ;; Regex search and replace
-    *last-regexp-search*
     cmd-search-forward-regexp
     cmd-query-replace-regexp-interactive
     regexp-query-replace-loop!
@@ -49,14 +48,11 @@
     apply-editorconfig!
     cmd-editorconfig-apply
     ;; Format buffer
-    *formatters*
     detect-language-from-extension
     cmd-format-buffer
     ;; Git blame
     cmd-git-blame-line
     ;; Command history
-    *command-history*
-    *command-history-file*
     command-history-load!
     command-history-save!
     command-history-add!
@@ -68,8 +64,6 @@
     find-url-at-point
     cmd-open-url-at-point
     ;; MRU buffer switching
-    *buffer-access-times*
-    *buffer-access-counter*
     record-buffer-access!
     cmd-switch-buffer-mru
     ;; Shell command on region
@@ -85,13 +79,10 @@
     ;; Sudo save
     cmd-sudo-save-buffer
     ;; Regex builder
-    *regex-builder-pattern*
     cmd-regex-builder
     ;; Web search
     cmd-eww-search-web
     ;; Edit position tracking
-    *last-edit-positions*
-    *max-edit-positions*
     record-edit-position!
     cmd-goto-last-edit
     ;; Eval region and replace
@@ -108,17 +99,9 @@
     ;; Prepend to buffer
     cmd-prepend-to-buffer
     ;; Persistent scratch
-    *persistent-scratch-file*
     cmd-save-persistent-scratch
     cmd-load-persistent-scratch
     ;; Batch 33 toggles
-    *subword-mode*
-    *auto-composition-mode*
-    *bidi-display-reordering*
-    *fill-column-indicator*
-    *pixel-scroll-mode*
-    *auto-highlight-symbol-mode*
-    *lorem-ipsum-text*
     insert-char-by-code-string
     cmd-insert-char-by-code
     cmd-toggle-subword-mode
@@ -132,16 +115,6 @@
     cmd-copy-rectangle-to-clipboard
     cmd-insert-file-contents-at-point
     ;; Batch 39 toggles
-    *read-only-directories*
-    *auto-revert-verbose*
-    *uniquify-buffer-names*
-    *global-so-long-mode*
-    *minibuffer-depth-indicate*
-    *context-menu-mode*
-    *tooltip-mode*
-    *file-name-shadow-mode*
-    *minibuffer-electric-default*
-    *history-delete-duplicates*
     cmd-toggle-read-only-directories
     cmd-toggle-auto-revert-verbose
     cmd-toggle-uniquify-buffer-names
@@ -153,14 +126,6 @@
     cmd-toggle-minibuffer-electric-default
     cmd-toggle-history-delete-duplicates
     ;; Batch 45 toggles
-    *modus-themes*
-    *ef-themes*
-    *nano-theme*
-    *ligature-mode*
-    *pixel-scroll-precision*
-    *tab-line-mode*
-    *scroll-bar-mode*
-    *tool-bar-mode*
     cmd-toggle-modus-themes
     cmd-toggle-ef-themes
     cmd-toggle-nano-theme
@@ -171,13 +136,6 @@
     cmd-toggle-scroll-bar-mode
     cmd-toggle-tool-bar-mode
     ;; Batch 51 toggles
-    *global-auto-revert-non-file*
-    *global-tree-sitter*
-    *global-copilot*
-    *global-lsp-mode*
-    *global-format-on-save*
-    *global-yas*
-    *global-smartparens*
     cmd-toggle-global-auto-revert-non-file
     cmd-toggle-global-tree-sitter
     cmd-toggle-global-copilot
@@ -186,13 +144,6 @@
     cmd-toggle-global-yas
     cmd-toggle-global-smartparens
     ;; Batch 59 toggles
-    *global-helpful*
-    *global-elisp-demos*
-    *global-suggest*
-    *global-buttercup*
-    *global-ert-runner*
-    *global-undercover*
-    *global-benchmark-init*
     cmd-toggle-global-helpful
     cmd-toggle-global-elisp-demos
     cmd-toggle-global-suggest
@@ -201,13 +152,6 @@
     cmd-toggle-global-undercover
     cmd-toggle-global-benchmark-init
     ;; Batch 68 toggles
-    *global-clojure-mode*
-    *global-cider*
-    *global-haskell-mode*
-    *global-lua-mode*
-    *global-ruby-mode*
-    *global-php-mode*
-    *global-swift-mode*
     cmd-toggle-global-clojure-mode
     cmd-toggle-global-cider
     cmd-toggle-global-haskell-mode
@@ -216,14 +160,10 @@
     cmd-toggle-global-php-mode
     cmd-toggle-global-swift-mode
     ;; Scratch buffer new
-    *tui-scratch-counter*
     cmd-scratch-buffer-new
     ;; Swap window
     cmd-swap-window
     ;; Parity batch 9
-    *tui-workspaces*
-    *tui-current-ws*
-    *tui-ws-bufs*
     cmd-workspace-create
     cmd-workspace-switch
     cmd-workspace-delete
@@ -231,10 +171,8 @@
     cmd-workspace-list
     cmd-copy-buffer-filename
     cmd-revert-buffer-confirm
-    *tui-undo-history*
     cmd-undo-history
     cmd-undo-history-restore
-    *tui-xref-stack*
     cmd-xref-back)
 
   (import
@@ -243,13 +181,13 @@
     (jerboa core)
     (jerboa runtime)
     (only (jerboa prelude) path-expand path-directory path-strip-directory
-          path-extension take)
+          path-extension take sort sort!)
     (std sugar)
     (only (std srfi srfi-13)
       string-join string-prefix? string-suffix? string-index
       string-trim string-trim-both)
     (only (std srfi srfi-19)
-      current-date date->string make-time time-utc time-utc->date)
+      current-date date->string make-time time-utc time-utc->date current-time time->seconds)
     (only (std misc string) string-split)
     (std misc process)
     (chez-scintilla constants)

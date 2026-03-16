@@ -128,7 +128,7 @@
             cmd-dired-async-copy cmd-dired-async-move
             cmd-insert-uuid cmd-goto-last-change)
           (only (jerboa-emacs editor-cmds-b)
-            cmd-customize cmd-set-variable
+            cmd-customize
             cmd-load-plugin cmd-list-plugins
             cmd-find-file-other-frame cmd-switch-to-buffer-other-frame)
           (jerboa-emacs editor-extra-helpers)
@@ -142,7 +142,8 @@
           (jerboa-emacs editor-extra-media)
           (jerboa-emacs editor-extra-media2)
           (jerboa-emacs editor-extra-final)
-          (jerboa-emacs editor-extra-ai))
+          (except (jerboa-emacs editor-extra-ai) cmd-wdired-mode)
+          (only (jerboa-emacs editor-extra-regs) register-batch12-aliases!))
 
   ;;;==========================================================================
   ;;; Local state
@@ -983,7 +984,7 @@
   (define (find-tui-dir-locals-file dir)
     "Search DIR and parent directories for .jemacs-config file."
     (let loop ((d dir))
-      (let ((config-path (path-expand ".jemacs-config" d)))
+      (let ((config-path (string-append d "/.jemacs-config")))
         (if (file-exists? config-path) config-path
           (let ((parent (path-directory d)))
             (if (string=? parent d) #f
@@ -1203,7 +1204,9 @@
       (open-output-buffer app "*Snippets*" (get-output-string out))))
 
   ;;; Parity batch 11: GUI-specific, LSP, and multi-cursor stubs
-  ;; --- Calendar navigation (state + rendering in editor-extra-org.ss) ---
+  ;; --- Calendar navigation state (parallel to editor-extra-org) ---
+  (define *tui-calendar-year* #f)
+  (define *tui-calendar-month* #f)
   (define (cmd-calendar-today app)
     "Go to current month in calendar."
     (set! *tui-calendar-year* (tui-current-year))
