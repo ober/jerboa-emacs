@@ -1,0 +1,1579 @@
+#!chezscheme
+;;; -*- Chez Scheme -*-
+;;; Extra TUI command registrations, part 2
+;;; Split from editor-extra.ss to stay under 2000-line limit.
+;;;
+;;; Ported from gerbil-emacs/editor-extra-regs2.ss to R6RS Chez Scheme.
+
+(library (jerboa-emacs editor-extra-regs2)
+  (export
+    register-extra-commands-2!
+    ;; Org TUI commands
+    cmd-org-todo-cycle
+    cmd-org-next-heading
+    cmd-org-prev-heading
+    cmd-org-outline
+    ;; Grep
+    cmd-rgrep
+    cmd-previous-grep-result
+    ;; Wdired / wgrep
+    cmd-wdired-mode
+    cmd-wdired-finish
+    cmd-wgrep-abort-changes
+    ;; Dired delete marked
+    cmd-dired-do-delete-marked
+    ;; Auto-revert tail
+    cmd-auto-revert-tail-mode
+    ;; Scratch
+    cmd-scratch-message
+    ;; Shell command
+    cmd-run-user-shell-command
+    ;; Toggles
+    cmd-toggle-compile-on-save
+    cmd-toggle-bracket-paren-swap
+    ;; Settings
+    cmd-set-variable
+    cmd-show-dir-locals
+    find-tui-dir-locals-file
+    ;; Remote files
+    cmd-find-file-remote
+    cmd-save-remote-buffer
+    ;; Key config
+    cmd-global-set-key
+    cmd-global-unset-key
+    ;; Flycheck
+    cmd-flycheck-prev-error
+    ;; Insert char
+    cmd-insert-char-by-name
+    ;; File register
+    cmd-file-to-register
+    ;; Kbd macro counter
+    cmd-kbd-macro-counter-insert
+    cmd-kbd-macro-counter-set
+    ;; Key chords
+    cmd-key-chord-mode
+    cmd-key-chord-define
+    cmd-key-chord-list
+    cmd-key-translation-list
+    ;; Snippets
+    tui-get-word-prefix
+    cmd-snippet-expand
+    cmd-snippet-next-field
+    cmd-snippet-prev-field
+    cmd-define-snippet
+    cmd-list-snippets
+    ;; Calendar navigation
+    cmd-calendar-today
+    cmd-calendar-next-month
+    cmd-calendar-prev-month
+    cmd-calendar-next-year
+    cmd-calendar-prev-year
+    ;; GUI stubs
+    cmd-helm-buffers-list
+    cmd-image-zoom-in
+    cmd-image-zoom-out
+    cmd-image-zoom-fit
+    cmd-image-zoom-reset
+    cmd-set-font-size
+    cmd-set-frame-font
+    ;; Vterm copy mode
+    cmd-vterm-copy-mode
+    cmd-vterm-copy-done
+    ;; Multiple cursors stubs
+    cmd-mc-mark-next
+    cmd-mc-mark-all
+    cmd-mc-skip-and-mark-next
+    ;; LSP delegates
+    cmd-lsp-goto-definition
+    cmd-lsp-smart-goto-definition
+    cmd-lsp-find-references
+    cmd-lsp-hover
+    cmd-lsp-rename
+    cmd-lsp-format-buffer
+    cmd-lsp-code-actions
+    cmd-lsp-completion
+    cmd-lsp-declaration
+    cmd-lsp-implementation
+    cmd-lsp-type-definition
+    cmd-lsp-document-symbols
+    cmd-lsp-workspace-symbol
+    cmd-lsp-restart
+    cmd-lsp-stop
+    ;; Batch 12 extra aliases
+    register-batch12-extra-aliases!)
+
+  (import (except (chezscheme)
+            make-hash-table hash-table? iota 1+ 1- sort sort!
+            path-extension)
+          (jerboa core)
+          (jerboa runtime)
+          (only (jerboa prelude) path-directory path-expand path-extension)
+          (only (std srfi srfi-13) string-join string-prefix? string-trim
+                string-index)
+          (only (std misc string) string-split)
+          (chez-scintilla constants)
+          (chez-scintilla scintilla)
+          (except (jerboa-emacs core) face-get)
+          (jerboa-emacs snippets)
+          (jerboa-emacs keymap)
+          (jerboa-emacs buffer)
+          (jerboa-emacs window)
+          (jerboa-emacs echo)
+          (only (jerboa-emacs editor-core)
+            cmd-undo-region cmd-display-buffer-in-side-window cmd-toggle-side-window
+            cmd-info-reader cmd-project-tree-git)
+          (only (jerboa-emacs editor-cmds-a)
+            cmd-project-tree-create-file cmd-project-tree-delete-file
+            cmd-project-tree-rename-file cmd-gemacs-doc
+            cmd-dired-async-copy cmd-dired-async-move
+            cmd-insert-uuid cmd-goto-last-change)
+          (only (jerboa-emacs editor-cmds-b)
+            cmd-customize cmd-set-variable
+            cmd-load-plugin cmd-list-plugins
+            cmd-find-file-other-frame cmd-switch-to-buffer-other-frame)
+          (jerboa-emacs editor-extra-helpers)
+          (only (jerboa-emacs terminal) terminal-buffer?)
+          (jerboa-emacs editor-extra-org)
+          (jerboa-emacs editor-extra-web)
+          (jerboa-emacs editor-extra-vcs)
+          (jerboa-emacs editor-extra-editing)
+          (jerboa-emacs editor-extra-editing2)
+          (jerboa-emacs editor-extra-tools)
+          (jerboa-emacs editor-extra-media)
+          (jerboa-emacs editor-extra-media2)
+          (jerboa-emacs editor-extra-final)
+          (jerboa-emacs editor-extra-ai))
+
+  ;;;==========================================================================
+  ;;; Local state
+  ;;;==========================================================================
+
+  (define *tui-todo-states* '("TODO" "IN-PROGRESS" "DONE"))
+  (define *tui-grep-results* '())
+  (define *tui-grep-idx* 0)
+  (define *tui-wdired-state* (make-hash-table))
+  (define *tui-file-registers* (make-hash-table))
+  (define *tui-macro-counter* 0)
+  (define *tui-chord-mode* #f)
+  (define *tui-chord-bindings* (make-hash-table))
+  (define *tui-terminal-copy-mode* (make-hash-table))
+
+  ;; Local snippet navigation state (mirrors snippets.sls internals)
+  (define *local-snippet-active* #f)
+  (define *local-snippet-field-positions* '())
+
+  ;;;==========================================================================
+  ;;; register-extra-commands-2!
+  ;;;==========================================================================
+
+  (define (register-extra-commands-2!)
+    ;; batch 53
+    (register-command! 'toggle-global-whitespace-newline cmd-toggle-global-whitespace-newline)
+    (register-command! 'toggle-global-highlight-indent cmd-toggle-global-highlight-indent)
+    (register-command! 'toggle-global-rainbow-mode cmd-toggle-global-rainbow-mode)
+    (register-command! 'toggle-global-auto-highlight cmd-toggle-global-auto-highlight)
+    (register-command! 'toggle-global-symbol-overlay cmd-toggle-global-symbol-overlay)
+    (register-command! 'toggle-global-highlight-parentheses cmd-toggle-global-highlight-parentheses)
+    (register-command! 'toggle-global-pulse-line cmd-toggle-global-pulse-line)
+    ;; batch 54
+    (register-command! 'toggle-global-visual-regexp cmd-toggle-global-visual-regexp)
+    (register-command! 'toggle-global-move-dup cmd-toggle-global-move-dup)
+    (register-command! 'toggle-global-expand-region cmd-toggle-global-expand-region)
+    (register-command! 'toggle-global-multiple-cursors cmd-toggle-global-multiple-cursors)
+    (register-command! 'toggle-global-undo-propose cmd-toggle-global-undo-propose)
+    (register-command! 'toggle-global-goto-chg cmd-toggle-global-goto-chg)
+    (register-command! 'toggle-global-avy cmd-toggle-global-avy)
+    ;; batch 55
+    ;; (register-command! 'toggle-global-wgrep cmd-toggle-global-wgrep)  ;; not yet ported
+    ;; (register-command! 'toggle-global-deadgrep cmd-toggle-global-deadgrep)  ;; not yet ported
+    ;; (register-command! 'toggle-global-ripgrep cmd-toggle-global-ripgrep)  ;; not yet ported
+    ;; (register-command! 'toggle-global-projectile-ripgrep cmd-toggle-global-projectile-ripgrep)  ;; not yet ported
+    ;; (register-command! 'toggle-global-counsel cmd-toggle-global-counsel)  ;; not yet ported
+    ;; (register-command! 'toggle-global-swiper cmd-toggle-global-swiper)  ;; not yet ported
+    ;; (register-command! 'toggle-global-prescient cmd-toggle-global-prescient)  ;; not yet ported
+    ;; batch 56
+    (register-command! 'toggle-global-which-key cmd-toggle-global-which-key)
+    (register-command! 'toggle-global-hydra cmd-toggle-global-hydra)
+    (register-command! 'toggle-global-transient cmd-toggle-global-transient)
+    (register-command! 'toggle-global-general cmd-toggle-global-general)
+    (register-command! 'toggle-global-use-package cmd-toggle-global-use-package)
+    (register-command! 'toggle-global-diminish cmd-toggle-global-diminish)
+    (register-command! 'toggle-global-delight cmd-toggle-global-delight)
+    ;; batch 57
+    ;; (register-command! 'toggle-global-envrc cmd-toggle-global-envrc)  ;; not yet ported
+    ;; (register-command! 'toggle-global-direnv cmd-toggle-global-direnv)  ;; not yet ported
+    ;; (register-command! 'toggle-global-editorconfig cmd-toggle-global-editorconfig)  ;; not yet ported
+    ;; (register-command! 'toggle-global-dtrt-indent cmd-toggle-global-dtrt-indent)  ;; not yet ported
+    ;; (register-command! 'toggle-global-ws-trim cmd-toggle-global-ws-trim)  ;; not yet ported
+    ;; (register-command! 'toggle-global-auto-compile cmd-toggle-global-auto-compile)  ;; not yet ported
+    ;; (register-command! 'toggle-global-no-littering cmd-toggle-global-no-littering)  ;; not yet ported
+    ;; batch 58
+    (register-command! 'toggle-global-golden-ratio cmd-toggle-global-golden-ratio)
+    (register-command! 'toggle-global-zoom-window cmd-toggle-global-zoom-window)
+    (register-command! 'toggle-global-shackle cmd-toggle-global-shackle)
+    (register-command! 'toggle-global-popwin cmd-toggle-global-popwin)
+    (register-command! 'toggle-global-popper cmd-toggle-global-popper)
+    (register-command! 'toggle-global-posframe cmd-toggle-global-posframe)
+    (register-command! 'toggle-global-childframe cmd-toggle-global-childframe)
+    ;; batch 59
+    (register-command! 'toggle-global-helpful cmd-toggle-global-helpful)
+    (register-command! 'toggle-global-elisp-demos cmd-toggle-global-elisp-demos)
+    (register-command! 'toggle-global-suggest cmd-toggle-global-suggest)
+    (register-command! 'toggle-global-buttercup cmd-toggle-global-buttercup)
+    (register-command! 'toggle-global-ert-runner cmd-toggle-global-ert-runner)
+    (register-command! 'toggle-global-undercover cmd-toggle-global-undercover)
+    (register-command! 'toggle-global-benchmark-init cmd-toggle-global-benchmark-init)
+    ;; batch 60
+    ;; (register-command! 'toggle-global-native-compile cmd-toggle-global-native-compile)  ;; not yet ported
+    ;; (register-command! 'toggle-global-gcmh cmd-toggle-global-gcmh)  ;; not yet ported
+    ;; (register-command! 'toggle-global-esup cmd-toggle-global-esup)  ;; not yet ported
+    ;; (register-command! 'toggle-global-explain-pause cmd-toggle-global-explain-pause)  ;; not yet ported
+    ;; (register-command! 'toggle-global-keyfreq cmd-toggle-global-keyfreq)  ;; not yet ported
+    ;; (register-command! 'toggle-global-command-log cmd-toggle-global-command-log)  ;; not yet ported
+    ;; (register-command! 'toggle-global-interaction-log cmd-toggle-global-interaction-log)  ;; not yet ported
+    ;; batch 61
+    (register-command! 'toggle-global-treemacs-icons cmd-toggle-global-treemacs-icons)
+    (register-command! 'toggle-global-all-the-icons-dired cmd-toggle-global-all-the-icons-dired)
+    (register-command! 'toggle-global-centaur-tabs cmd-toggle-global-centaur-tabs)
+    (register-command! 'toggle-global-awesome-tab cmd-toggle-global-awesome-tab)
+    (register-command! 'toggle-global-tab-bar cmd-toggle-global-tab-bar)
+    (register-command! 'toggle-global-mini-frame cmd-toggle-global-mini-frame)
+    (register-command! 'toggle-global-vertico-posframe cmd-toggle-global-vertico-posframe)
+    ;; batch 62
+    (register-command! 'toggle-global-solaire cmd-toggle-global-solaire)
+    (register-command! 'toggle-global-spaceline cmd-toggle-global-spaceline)
+    (register-command! 'toggle-global-doom-modeline-env cmd-toggle-global-doom-modeline-env)
+    (register-command! 'toggle-global-minions cmd-toggle-global-minions)
+    (register-command! 'toggle-global-moody cmd-toggle-global-moody)
+    (register-command! 'toggle-global-rich-minority cmd-toggle-global-rich-minority)
+    (register-command! 'toggle-global-smart-mode-line cmd-toggle-global-smart-mode-line)
+    ;; batch 63
+    (register-command! 'toggle-global-nyan-cat cmd-toggle-global-nyan-cat)
+    (register-command! 'toggle-global-parrot cmd-toggle-global-parrot)
+    (register-command! 'toggle-global-zone cmd-toggle-global-zone)
+    (register-command! 'toggle-global-fireplace cmd-toggle-global-fireplace)
+    (register-command! 'toggle-global-snow cmd-toggle-global-snow)
+    (register-command! 'toggle-global-power-mode cmd-toggle-global-power-mode)
+    (register-command! 'toggle-global-animate-typing cmd-toggle-global-animate-typing)
+    ;; batch 64
+    ;; (register-command! 'toggle-global-org-roam cmd-toggle-global-org-roam)  ;; not yet ported
+    ;; (register-command! 'toggle-global-org-journal cmd-toggle-global-org-journal)  ;; not yet ported
+    ;; (register-command! 'toggle-global-org-super-agenda cmd-toggle-global-org-super-agenda)  ;; not yet ported
+    ;; (register-command! 'toggle-global-org-noter cmd-toggle-global-org-noter)  ;; not yet ported
+    ;; (register-command! 'toggle-global-org-download cmd-toggle-global-org-download)  ;; not yet ported
+    ;; (register-command! 'toggle-global-org-cliplink cmd-toggle-global-org-cliplink)  ;; not yet ported
+    ;; (register-command! 'toggle-global-org-present cmd-toggle-global-org-present)  ;; not yet ported
+    ;; batch 65
+    (register-command! 'toggle-global-lsp-ui cmd-toggle-global-lsp-ui)
+    (register-command! 'toggle-global-lsp-treemacs cmd-toggle-global-lsp-treemacs)
+    (register-command! 'toggle-global-lsp-ivy cmd-toggle-global-lsp-ivy)
+    (register-command! 'toggle-global-dap-mode cmd-toggle-global-dap-mode)
+    (register-command! 'toggle-global-lsp-headerline cmd-toggle-global-lsp-headerline)
+    (register-command! 'toggle-global-lsp-lens cmd-toggle-global-lsp-lens)
+    (register-command! 'toggle-global-lsp-semantic-tokens cmd-toggle-global-lsp-semantic-tokens)
+    ;; batch 66
+    ;; (register-command! 'toggle-global-docker cmd-toggle-global-docker)  ;; not yet ported
+    ;; (register-command! 'toggle-global-kubernetes cmd-toggle-global-kubernetes)  ;; not yet ported
+    ;; (register-command! 'toggle-global-terraform cmd-toggle-global-terraform)  ;; not yet ported
+    ;; (register-command! 'toggle-global-ansible cmd-toggle-global-ansible)  ;; not yet ported
+    ;; (register-command! 'toggle-global-vagrant cmd-toggle-global-vagrant)  ;; not yet ported
+    ;; (register-command! 'toggle-global-restclient cmd-toggle-global-restclient)  ;; not yet ported
+    ;; (register-command! 'toggle-global-ob-http cmd-toggle-global-ob-http)  ;; not yet ported
+    ;; batch 67
+    (register-command! 'toggle-global-rustic cmd-toggle-global-rustic)
+    (register-command! 'toggle-global-go-mode cmd-toggle-global-go-mode)
+    (register-command! 'toggle-global-python-black cmd-toggle-global-python-black)
+    (register-command! 'toggle-global-elpy cmd-toggle-global-elpy)
+    (register-command! 'toggle-global-js2-mode cmd-toggle-global-js2-mode)
+    (register-command! 'toggle-global-typescript-mode cmd-toggle-global-typescript-mode)
+    (register-command! 'toggle-global-web-mode cmd-toggle-global-web-mode)
+    ;; batch 68
+    (register-command! 'toggle-global-clojure-mode cmd-toggle-global-clojure-mode)
+    (register-command! 'toggle-global-cider cmd-toggle-global-cider)
+    (register-command! 'toggle-global-haskell-mode cmd-toggle-global-haskell-mode)
+    (register-command! 'toggle-global-lua-mode cmd-toggle-global-lua-mode)
+    (register-command! 'toggle-global-ruby-mode cmd-toggle-global-ruby-mode)
+    (register-command! 'toggle-global-php-mode cmd-toggle-global-php-mode)
+    (register-command! 'toggle-global-swift-mode cmd-toggle-global-swift-mode)
+    ;; batch 69
+    ;; (register-command! 'toggle-global-yaml-mode cmd-toggle-global-yaml-mode)  ;; not yet ported
+    ;; (register-command! 'toggle-global-toml-mode cmd-toggle-global-toml-mode)  ;; not yet ported
+    ;; (register-command! 'toggle-global-json-mode cmd-toggle-global-json-mode)  ;; not yet ported
+    ;; (register-command! 'toggle-global-csv-mode cmd-toggle-global-csv-mode)  ;; not yet ported
+    ;; (register-command! 'toggle-global-protobuf-mode cmd-toggle-global-protobuf-mode)  ;; not yet ported
+    ;; (register-command! 'toggle-global-graphql-mode cmd-toggle-global-graphql-mode)  ;; not yet ported
+    ;; (register-command! 'toggle-global-nix-mode cmd-toggle-global-nix-mode)  ;; not yet ported
+    ;; batch 70
+    (register-command! 'toggle-global-cmake-mode cmd-toggle-global-cmake-mode)
+    (register-command! 'toggle-global-bazel-mode cmd-toggle-global-bazel-mode)
+    (register-command! 'toggle-global-meson-mode cmd-toggle-global-meson-mode)
+    (register-command! 'toggle-global-ninja-mode cmd-toggle-global-ninja-mode)
+    (register-command! 'toggle-global-groovy-mode cmd-toggle-global-groovy-mode)
+    (register-command! 'toggle-global-kotlin-mode cmd-toggle-global-kotlin-mode)
+    (register-command! 'toggle-global-scala-mode cmd-toggle-global-scala-mode)
+    ;; batch 71
+    (register-command! 'toggle-global-erlang-mode cmd-toggle-global-erlang-mode)
+    (register-command! 'toggle-global-elixir-mode cmd-toggle-global-elixir-mode)
+    (register-command! 'toggle-global-zig-mode cmd-toggle-global-zig-mode)
+    (register-command! 'toggle-global-ocaml-mode cmd-toggle-global-ocaml-mode)
+    (register-command! 'toggle-global-fsharp-mode cmd-toggle-global-fsharp-mode)
+    (register-command! 'toggle-global-dart-mode cmd-toggle-global-dart-mode)
+    (register-command! 'toggle-global-julia-mode cmd-toggle-global-julia-mode)
+    ;; batch 72
+    (register-command! 'toggle-global-r-mode cmd-toggle-global-r-mode)
+    (register-command! 'toggle-global-ess cmd-toggle-global-ess)
+    (register-command! 'toggle-global-sql-mode cmd-toggle-global-sql-mode)
+    (register-command! 'toggle-global-ein cmd-toggle-global-ein)
+    (register-command! 'toggle-global-conda cmd-toggle-global-conda)
+    (register-command! 'toggle-global-pyvenv cmd-toggle-global-pyvenv)
+    (register-command! 'toggle-global-pipenv cmd-toggle-global-pipenv)
+    ;; delete-horizontal-space (defined in editor-extra-tools2.ss)
+    ;; (register-command! 'delete-horizontal-space cmd-delete-horizontal-space)  ;; not yet ported
+    ;; fill-region, copy-rectangle-to-register (defined in editor-extra-tools2.ss)
+    ;; (register-command! 'fill-region cmd-fill-region)  ;; not yet ported
+    ;; (register-command! 'copy-rectangle-to-register cmd-copy-rectangle-to-register)  ;; not yet ported
+    ;; insert-buffer, session save/restore (defined in editor-extra-tools2.ss)
+    ;; (register-command! 'insert-buffer cmd-insert-buffer)  ;; not yet ported
+    ;; (register-command! 'session-save cmd-session-save)  ;; not yet ported
+    ;; (register-command! 'session-restore cmd-session-restore)  ;; not yet ported
+    ;; ace-window (defined in editor-extra-tools2.ss)
+    ;; (register-command! 'ace-window cmd-ace-window)  ;; not yet ported
+    ;; Reverse parity from Qt (defined in editor-extra-modes.ss)
+    ;; (register-command! 'forward-subword cmd-forward-subword)  ;; not yet ported
+    ;; (register-command! 'backward-subword cmd-backward-subword)  ;; not yet ported
+    (register-command! 'goto-last-change cmd-goto-last-change)
+    ;; (register-command! 'find-file-at-line cmd-find-file-at-line)  ;; not yet ported
+    ;; (register-command! 'find-file-read-only cmd-find-file-read-only)  ;; not yet ported
+    ;; (register-command! 'view-file cmd-view-file)  ;; not yet ported
+    ;; (register-command! 'append-to-file cmd-append-to-file)  ;; not yet ported
+    ;; Parity from Qt: comment-dwim, kill operations, sexp navigation
+    (register-command! 'comment-dwim cmd-comment-dwim)
+    (register-command! 'kill-sentence cmd-kill-sentence)
+    (register-command! 'backward-kill-sentence cmd-backward-kill-sentence)
+    (register-command! 'kill-paragraph cmd-kill-paragraph)
+    (register-command! 'kill-subword cmd-kill-subword)
+    (register-command! 'up-list cmd-up-list)
+    (register-command! 'down-list cmd-down-list)
+    ;; Parity batch 2: highlight navigation, browse-url, scratch, swap, aliases
+    (register-command! 'highlight-symbol-next cmd-highlight-symbol-next)
+    (register-command! 'highlight-symbol-prev cmd-highlight-symbol-prev)
+    (register-command! 'browse-url cmd-browse-url)
+    (register-command! 'scratch-buffer-new cmd-scratch-buffer-new)
+    (register-command! 'swap-window cmd-swap-window)
+    ;; Alias: next/previous grep result (cmd-next-error is in our chain)
+    (register-command! 'next-grep-result cmd-next-error)
+    ;; Parity batch 3: select-current-line, smart-join-line, pop-to-mark, duplicate-line-or-region
+    (register-command! 'select-current-line cmd-select-current-line)
+    (register-command! 'smart-join-line cmd-smart-join-line)
+    (register-command! 'pop-to-mark cmd-pop-to-mark)
+    (register-command! 'duplicate-line-or-region cmd-duplicate-line-or-region)
+    ;; Parity batch 4: follow-mode, recentf-open-files
+    (register-command! 'follow-mode cmd-follow-mode)
+    (register-command! 'recentf-open-files cmd-recentf-open-files)
+    ;; Parity batch 5: dired advanced ops, diff navigation, display-line-numbers
+    (register-command! 'dired-toggle-marks cmd-dired-toggle-marks)
+    (register-command! 'dired-do-copy-marked cmd-dired-do-copy-marked)
+    (register-command! 'dired-do-rename-marked cmd-dired-do-rename-marked)
+    (register-command! 'dired-mark-by-regexp cmd-dired-mark-by-regexp)
+    (register-command! 'dired-sort-toggle cmd-dired-sort-toggle)
+    (register-command! 'diff-next-hunk cmd-diff-next-hunk)
+    (register-command! 'diff-prev-hunk cmd-diff-prev-hunk)
+    ;; (register-command! 'diff-refine-hunk cmd-diff-refine-hunk)  ;; not yet ported
+    (register-command! 'display-line-numbers-mode cmd-display-line-numbers-mode)
+    ;; Parity batch 6: magit ops, markdown editing, multi-vterm
+    (register-command! 'magit-refresh cmd-magit-refresh)
+    (register-command! 'magit-stage cmd-magit-stage)
+    (register-command! 'magit-unstage cmd-magit-unstage)
+    (register-command! 'magit-stage-all cmd-magit-stage-all)
+    (register-command! 'multi-vterm cmd-multi-vterm)
+    (register-command! 'markdown-promote cmd-markdown-promote)
+    (register-command! 'markdown-demote cmd-markdown-demote)
+    (register-command! 'markdown-insert-heading cmd-markdown-insert-heading)
+    ;; Parity batch 7: markdown toggle/nav, outline, project search
+    (register-command! 'markdown-toggle-bold cmd-markdown-toggle-bold)
+    (register-command! 'markdown-toggle-italic cmd-markdown-toggle-italic)
+    (register-command! 'markdown-toggle-code cmd-markdown-toggle-code)
+    (register-command! 'markdown-next-heading cmd-markdown-next-heading)
+    (register-command! 'markdown-prev-heading cmd-markdown-prev-heading)
+    (register-command! 'markdown-outline cmd-markdown-outline)
+    (register-command! 'project-search cmd-project-search)
+    (register-command! 'project-run-shell cmd-project-run-shell)
+    ;; Parity batch 9: workspace, clipboard, undo-history, xref
+    (register-command! 'workspace-create cmd-workspace-create)
+    (register-command! 'workspace-switch cmd-workspace-switch)
+    (register-command! 'workspace-delete cmd-workspace-delete)
+    (register-command! 'workspace-add-buffer cmd-workspace-add-buffer)
+    (register-command! 'workspace-list cmd-workspace-list)
+    (register-command! 'copy-buffer-filename cmd-copy-buffer-filename)
+    (register-command! 'revert-buffer-confirm cmd-revert-buffer-confirm)
+    (register-command! 'undo-history cmd-undo-history)
+    (register-command! 'undo-history-restore cmd-undo-history-restore)
+    (register-command! 'xref-back cmd-xref-back)
+    ;; Parity batch 10: org-todo, grep, wdired, wgrep, shell, keys, snippets, misc
+    (register-command! 'org-todo-cycle cmd-org-todo-cycle)
+    (register-command! 'org-next-heading cmd-org-next-heading)
+    (register-command! 'org-prev-heading cmd-org-prev-heading)
+    (register-command! 'org-outline cmd-org-outline)
+    (register-command! 'rgrep cmd-rgrep)
+    (register-command! 'previous-grep-result cmd-previous-grep-result)
+    (register-command! 'wdired-mode cmd-wdired-mode)
+    (register-command! 'wdired-finish cmd-wdired-finish)
+    (register-command! 'wgrep-abort-changes cmd-wgrep-abort-changes)
+    (register-command! 'dired-do-delete-marked cmd-dired-do-delete-marked)
+    (register-command! 'auto-revert-tail-mode cmd-auto-revert-tail-mode)
+    (register-command! 'scratch-message cmd-scratch-message)
+    (register-command! 'run-user-shell-command cmd-run-user-shell-command)
+    (register-command! 'toggle-compile-on-save cmd-toggle-compile-on-save)
+    (register-command! 'toggle-bracket-paren-swap cmd-toggle-bracket-paren-swap)
+    (register-command! 'set-variable cmd-set-variable)
+    (register-command! 'show-dir-locals cmd-show-dir-locals)
+    (register-command! 'find-file-remote cmd-find-file-remote)
+    (register-command! 'save-remote-buffer cmd-save-remote-buffer)
+    (register-command! 'global-set-key cmd-global-set-key)
+    (register-command! 'global-unset-key cmd-global-unset-key)
+    (register-command! 'flycheck-prev-error cmd-flycheck-prev-error)
+    (register-command! 'insert-char-by-name cmd-insert-char-by-name)
+    (register-command! 'file-to-register cmd-file-to-register)
+    (register-command! 'kbd-macro-counter-insert cmd-kbd-macro-counter-insert)
+    (register-command! 'kbd-macro-counter-set cmd-kbd-macro-counter-set)
+    (register-command! 'key-chord-mode cmd-key-chord-mode)
+    (register-command! 'key-chord-define cmd-key-chord-define)
+    (register-command! 'key-chord-list cmd-key-chord-list)
+    (register-command! 'key-translation-list cmd-key-translation-list)
+    (register-command! 'define-snippet cmd-define-snippet)
+    (register-command! 'list-snippets cmd-list-snippets)
+    (register-command! 'snippet-expand cmd-snippet-expand)
+    (register-command! 'snippet-next-field cmd-snippet-next-field)
+    (register-command! 'snippet-prev-field cmd-snippet-prev-field)
+    ;; Parity batch 11: GUI-specific, LSP, multi-cursor stubs
+    (register-command! 'calendar-today cmd-calendar-today)
+    (register-command! 'calendar-next-month cmd-calendar-next-month)
+    (register-command! 'calendar-prev-month cmd-calendar-prev-month)
+    (register-command! 'calendar-next-year cmd-calendar-next-year)
+    (register-command! 'calendar-prev-year cmd-calendar-prev-year)
+    (register-command! 'helm-buffers-list cmd-helm-buffers-list)
+    (register-command! 'image-zoom-in cmd-image-zoom-in)
+    (register-command! 'image-zoom-out cmd-image-zoom-out)
+    (register-command! 'image-zoom-fit cmd-image-zoom-fit)
+    (register-command! 'image-zoom-reset cmd-image-zoom-reset)
+    (register-command! 'set-font-size cmd-set-font-size)
+    (register-command! 'set-frame-font cmd-set-frame-font)
+    (register-command! 'vterm-copy-mode cmd-vterm-copy-mode)
+    (register-command! 'vterm-copy-done cmd-vterm-copy-done)
+    (register-command! 'mc-mark-next cmd-mc-mark-next)
+    (register-command! 'mc-mark-all cmd-mc-mark-all)
+    (register-command! 'mc-skip-and-mark-next cmd-mc-skip-and-mark-next)
+    (register-command! 'lsp-goto-definition cmd-lsp-goto-definition)
+    (register-command! 'lsp-smart-goto-definition cmd-lsp-smart-goto-definition)
+    (register-command! 'lsp-find-references cmd-lsp-find-references)
+    (register-command! 'lsp-hover cmd-lsp-hover)
+    (register-command! 'lsp-rename cmd-lsp-rename)
+    (register-command! 'lsp-format-buffer cmd-lsp-format-buffer)
+    (register-command! 'lsp-code-actions cmd-lsp-code-actions)
+    (register-command! 'lsp-completion cmd-lsp-completion)
+    (register-command! 'lsp-declaration cmd-lsp-declaration)
+    (register-command! 'lsp-implementation cmd-lsp-implementation)
+    (register-command! 'lsp-type-definition cmd-lsp-type-definition)
+    (register-command! 'lsp-document-symbols cmd-lsp-document-symbols)
+    (register-command! 'lsp-workspace-symbol cmd-lsp-workspace-symbol)
+    (register-command! 'lsp-restart cmd-lsp-restart)
+    (register-command! 'lsp-stop cmd-lsp-stop)
+    ;; Register 545 parity commands -- not yet ported (editor-extra-regs not ported)
+    ;; (register-parity-commands!)
+    ;; Aliases for commands in sub-modules
+    (register-command! 'diff cmd-diff-two-files)
+    (register-command! 'diff-two-files cmd-diff-two-files)
+    (register-command! 'recompile cmd-recompile)
+    (register-command! 'comment-dwim cmd-comment-dwim)
+    (register-command! 'auto-save-visited-mode cmd-auto-save-mode)
+    ;; Batch 3: Package/framework aliases (editor-extra chain functions)
+    (register-command! 'projectile-switch-project cmd-project-switch-project)
+    (register-command! 'counsel-rg cmd-rgrep)
+    ;; (register-command! 'auto-complete-mode cmd-company-mode)  ;; not yet ported
+    (register-command! 'yasnippet-mode cmd-snippet-expand)
+    (register-command! 'yas-expand cmd-snippet-expand)
+    (register-command! 'undo-tree-mode cmd-undo-history)
+    (register-command! 'treemacs-toggle cmd-treemacs)
+    (register-command! 'treemacs-select-window cmd-treemacs)
+    (register-command! 'magit-branch-create cmd-magit-branch)
+    (register-command! 'magit-branch-delete cmd-magit-branch)
+    (register-command! 'org-set-tags-command cmd-org-set-tags)
+    (register-command! 'multiple-cursors-mode cmd-mc-mark-next)
+    (register-command! 'which-key-show-top-level cmd-which-key)
+    ;; (register-command! 'window-numbering-mode cmd-winum-mode)  ;; not yet ported
+    ;; (register-command! 'org-archive-subtree cmd-org-archive-subtree)  ;; not yet ported
+    ;; (register-command! 'org-toggle-heading cmd-org-toggle-heading)  ;; not yet ported
+    ;; (register-command! 'magit-init cmd-magit-init)  ;; not yet ported
+    ;; (register-command! 'magit-tag cmd-magit-tag)  ;; not yet ported
+    ;; Batch 4: mode aliases (need editor-extra sub-module scope)
+    (register-command! 'enriched-mode cmd-enriched-mode)
+    (register-command! 'facemenu-set-bold cmd-facemenu-set-bold)
+    (register-command! 'facemenu-set-italic cmd-facemenu-set-italic)
+    (register-command! 'picture-mode cmd-picture-mode)
+    ;; (register-command! 'conf-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'nxml-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'sh-mode cmd-shell-script-mode)  ;; not yet ported
+    (register-command! 'markdown-preview-mode cmd-markdown-mode)
+    ;; Batch 5: aliases needing editor-extra scope
+    (register-command! 'dired-flag-file-deletion cmd-dired-mark)
+    (register-command! 'dired-sort-toggle-or-edit cmd-dired-sort-toggle)
+    (register-command! 'ibuffer-mark-modified-buffers cmd-ibuffer-mark)
+    (register-command! 'ibuffer-mark-unsaved-buffers cmd-ibuffer-mark)
+    (register-command! 'ibuffer-do-delete cmd-ibuffer-do-kill)
+    ;; (register-command! 'org-table-sort-lines cmd-org-table-sort)  ;; not yet ported
+    (register-command! 'org-export-dispatch cmd-org-export)
+    (register-command! 'wdired-change-to-wdired-mode cmd-wdired-mode)
+    ;; (register-command! 'info-apropos cmd-apropos-emacs)  ;; not yet ported
+    ;; Batch 6: LSP/eglot aliases + language modes + tab-list
+    (register-command! 'lsp-find-definition cmd-lsp-goto-definition)
+    (register-command! 'lsp-describe-thing-at-point cmd-lsp-hover)
+    (register-command! 'lsp-execute-code-action cmd-lsp-code-actions)
+    (register-command! 'lsp-workspace-restart cmd-lsp-restart)
+    (register-command! 'lsp-mode cmd-lsp-restart)
+    (register-command! 'lsp-install-server cmd-lsp-restart)
+    (register-command! 'eglot cmd-lsp-restart)
+    (register-command! 'eglot-rename cmd-lsp-rename)
+    (register-command! 'eglot-format cmd-lsp-format-buffer)
+    (register-command! 'eglot-code-actions cmd-lsp-code-actions)
+    (register-command! 'tab-list cmd-tab-new)
+    ;; (register-command! 'treesit-install-language-grammar cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'json-mode cmd-toggle-global-json-mode)  ;; not yet ported
+    (register-command! 'terraform-mode cmd-terraform-mode)
+    (register-command! 'terraform cmd-terraform)
+    (register-command! 'terraform-plan cmd-terraform-plan)
+    (register-command! 'docker-compose cmd-docker-compose)
+    (register-command! 'docker-compose-up cmd-docker-compose-up)
+    (register-command! 'docker-compose-down cmd-docker-compose-down)
+    ;; (register-command! 'haskell-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'elixir-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'clojure-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'erlang-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'scala-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'kotlin-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'swift-mode cmd-text-mode)  ;; not yet ported
+    ;; (register-command! 'zig-mode cmd-text-mode)  ;; not yet ported
+    ;; Batch 7: highlight/key aliases
+    ;; (register-command! 'highlight-phrase cmd-highlight-regexp)  ;; not yet ported
+    ;; (register-command! 'highlight-lines-matching-regexp cmd-highlight-regexp)  ;; not yet ported
+    (register-command! 'local-set-key cmd-global-set-key)
+    (register-command! 'kmacro-bind-to-key cmd-global-set-key)
+    ;; Batch 8: window/buffer/nav/help/vc aliases (editor-extra scope)
+    ;; Window swap
+    (register-command! 'window-swap-states cmd-winner-undo)
+    (register-command! 'windmove-swap-states-left cmd-windmove-left)
+    (register-command! 'windmove-swap-states-right cmd-windmove-right)
+    (register-command! 'windmove-swap-states-up cmd-windmove-up)
+    (register-command! 'windmove-swap-states-down cmd-windmove-down)
+    ;; Buffer
+    (register-command! 'view-buffer cmd-switch-to-buffer-other-window)
+    (register-command! 'display-buffer cmd-switch-to-buffer-other-window)
+    (register-command! 'pop-to-buffer cmd-switch-to-buffer-other-window)
+    (register-command! 'switch-to-buffer-other-frame cmd-switch-to-buffer-other-frame)
+    ;; Help
+    ;; (register-command! 'list-faces-display cmd-list-faces-display)  ;; not yet ported
+    ;; (register-command! 'list-colors-display cmd-list-faces-display)  ;; not yet ported
+    ;; VC (editor-extra scope)
+    (register-command! 'vc-create-tag cmd-vc-create-tag)
+    (register-command! 'vc-retrieve-tag cmd-vc-create-tag)
+    (register-command! 'vc-dir-hide-up-to-date cmd-vc-dir)
+    (register-command! 'vc-dir-mark cmd-vc-dir)
+    (register-command! 'vc-dir-unmark cmd-vc-dir)
+    ;; (register-command! 'magit-cherry-pick cmd-magit-cherry-pick)  ;; not yet ported
+    ;; (register-command! 'magit-revert-commit cmd-magit-revert-commit)  ;; not yet ported
+    (register-command! 'magit-bisect cmd-magit-log)
+    (register-command! 'magit-submodule cmd-magit-status)
+    ;; (register-command! 'magit-worktree cmd-magit-worktree)  ;; not yet ported
+    ;; (register-command! 'magit-blame-echo cmd-magit-blame)  ;; not yet ported
+    (register-command! 'magit-section-toggle cmd-magit-status)
+    ;; Batch 9: org mode aliases (editor-extra-org scope)
+    (register-command! 'org-clock-goto cmd-org-clock-in)
+    (register-command! 'org-clock-report cmd-org-clock-in)
+    (register-command! 'org-clock-cancel cmd-org-clock-in)
+    (register-command! 'org-agenda-list cmd-org-agenda)
+    (register-command! 'org-agenda-day-view cmd-org-agenda)
+    (register-command! 'org-agenda-week-view cmd-org-agenda)
+    (register-command! 'org-insert-heading-respect-content cmd-org-insert-heading)
+    (register-command! 'org-insert-subheading cmd-org-insert-heading)
+    (register-command! 'org-insert-todo-heading cmd-org-insert-heading)
+    (register-command! 'org-insert-todo-subheading cmd-org-insert-heading)
+    (register-command! 'org-do-promote cmd-org-promote)
+    (register-command! 'org-do-demote cmd-org-demote)
+    (register-command! 'org-metaup cmd-org-promote)
+    (register-command! 'org-metadown cmd-org-demote)
+    (register-command! 'org-shiftmetaup cmd-org-promote)
+    (register-command! 'org-shiftmetadown cmd-org-demote)
+    (register-command! 'org-sparse-tree cmd-org-sparse-tree)
+    ;; Batch 10: project/diff/calendar/mode aliases (editor-extra scope)
+    ;; Project
+    (register-command! 'project-forget-project cmd-project-switch-project)
+    (register-command! 'project-remember-project cmd-project-switch-project)
+    (register-command! 'project-forget-zombie-projects cmd-project-switch-project)
+    (register-command! 'project-vc-dir cmd-vc-dir)
+    (register-command! 'project-or-external-find-regexp cmd-project-find-regexp)
+    ;; (register-command! 'project-list-buffers cmd-project-switch-to-buffer)  ;; not yet ported
+    ;; (register-command! 'project-kill-buffers-confirm cmd-project-kill-buffers)  ;; not yet ported
+    ;; Diff/ediff
+    (register-command! 'ediff-merge-files cmd-ediff-files)
+    (register-command! 'ediff-patch-file cmd-ediff-files)
+    (register-command! 'emerge-files cmd-ediff-files)
+    ;; Calendar/diary
+    (register-command! 'diary-add-entry cmd-diary-insert-entry)
+    (register-command! 'diary-show-all-entries cmd-diary-view-entries)
+    (register-command! 'diary-insert-entry cmd-diary-insert-entry)
+    (register-command! 'diary-insert-weekly-entry cmd-diary-insert-entry)
+    (register-command! 'diary-insert-monthly-entry cmd-diary-insert-entry)
+    (register-command! 'diary-insert-yearly-entry cmd-diary-insert-entry)
+    (register-command! 'diary-insert-anniversary cmd-diary-insert-entry)
+    (register-command! 'calendar-goto-today cmd-calendar-today)
+    ;; (register-command! 'calendar-mark-holidays cmd-calendar-holidays)  ;; not yet ported
+    ;; (register-command! 'calendar-list-holidays cmd-calendar-holidays)  ;; not yet ported
+    (register-command! 'calendar-sunrise-sunset cmd-calendar)
+    (register-command! 'appt-check cmd-appt-check)
+    (register-command! 'appt-activate cmd-appt-check)
+    ;; Batch 11: package/treesit/flymake/mc/helm aliases
+    ;; Package
+    (register-command! 'use-package cmd-package-install)
+    (register-command! 'package-autoremove cmd-package-delete)
+    (register-command! 'package-initialize cmd-package-refresh-contents)
+    ;; Treesitter/eglot
+    (register-command! 'treesit-explore-mode cmd-lsp-restart)
+    (register-command! 'treesit-inspect-node-at-point cmd-lsp-restart)
+    (register-command! 'eglot-ensure cmd-lsp-restart)
+    (register-command! 'eglot-shutdown cmd-lsp-restart)
+    (register-command! 'eglot-reconnect cmd-lsp-restart)
+    ;; Flymake -> flycheck
+    (register-command! 'flymake-mode cmd-flycheck-mode)
+    (register-command! 'flymake-goto-next-error cmd-flycheck-next-error)
+    (register-command! 'flymake-goto-prev-error cmd-flycheck-previous-error)
+    (register-command! 'flymake-show-diagnostics-buffer cmd-flycheck-list-errors)
+    (register-command! 'flymake-show-project-diagnostics cmd-flycheck-list-errors)
+    ;; Multiple cursors
+    (register-command! 'mc/mark-next-like-this cmd-mc-mark-next)
+    (register-command! 'mc/mark-all-like-this cmd-mc-mark-all)
+    (register-command! 'mc/edit-lines cmd-mc-edit-lines)
+    ;; Expand region
+    (register-command! 'er/expand-region cmd-expand-region)
+    (register-command! 'er/contract-region cmd-contract-region)
+    ;; Avy/ace/swiper/helm
+    (register-command! 'avy-goto-word-1 cmd-avy-goto-char)
+    (register-command! 'ace-jump-mode cmd-avy-goto-char)
+    (register-command! 'swiper cmd-isearch-occur)
+    (register-command! 'helm-ag cmd-rgrep)
+    ;; iedit
+    ;; (register-command! 'iedit-mode cmd-iedit-mode)  ;; not yet ported
+    ;; Visual and whitespace commands (real Scintilla implementations)
+    (register-command! 'visual-line-mode cmd-visual-line-mode)
+    (register-command! 'toggle-truncate-lines cmd-toggle-truncate-lines)
+    (register-command! 'toggle-word-wrap cmd-visual-line-mode)
+    (register-command! 'whitespace-mode cmd-whitespace-mode)
+    (register-command! 'toggle-show-trailing-whitespace cmd-toggle-show-trailing-whitespace)
+    (register-command! 'delete-trailing-whitespace cmd-delete-trailing-whitespace)
+    (register-command! 'whitespace-cleanup cmd-delete-trailing-whitespace)
+    ;; Batch 12: Emacs-standard aliases
+    (register-batch12-aliases!)
+    (register-batch12-extra-aliases!))
+
+  ;;;==========================================================================
+  ;;; Parity batch 10: TUI implementations matching Qt-only commands
+  ;;;==========================================================================
+
+  ;; --- Org todo cycle ---
+  (define (cmd-org-todo-cycle app)
+    "Cycle TODO state on org heading."
+    (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed)) (text (editor-get-text ed))
+           (cur-line (editor-line-from-position ed pos))
+           (line-start (editor-position-from-line ed cur-line))
+           (line-end (editor-get-line-end-position ed cur-line))
+           (line (substring text line-start (min line-end (string-length text)))))
+      (if (not (and (> (string-length line) 0) (char=? (string-ref line 0) #\*)))
+        (echo-message! (app-state-echo app) "Not on an org heading")
+        (let* ((rest (let lp ((i 0))
+                       (if (and (< i (string-length line)) (char=? (string-ref line i) #\*))
+                         (lp (+ i 1)) i)))
+               (after-stars (if (< rest (string-length line))
+                              (substring line rest (string-length line)) ""))
+               (trimmed (string-trim after-stars))
+               (cur-state (let lp ((states *tui-todo-states*))
+                            (if (null? states) #f
+                              (if (string-prefix? (car states) trimmed)
+                                (car states) (lp (cdr states))))))
+               (next-state (if (not cur-state) (car *tui-todo-states*)
+                             (let lp ((s *tui-todo-states*))
+                               (cond ((null? s) #f)
+                                     ((null? (cdr s))
+                                      (if (string=? (car s) cur-state) #f (car *tui-todo-states*)))
+                                     ((string=? (car s) cur-state) (cadr s))
+                                     (else (lp (cdr s)))))))
+               (new-rest (if cur-state
+                           (let ((stripped (substring trimmed (string-length cur-state)
+                                            (string-length trimmed))))
+                             (if next-state
+                               (string-append " " next-state (string-trim stripped))
+                               (string-trim stripped)))
+                           (if next-state
+                             (string-append " " next-state after-stars)
+                             after-stars)))
+               (stars (substring line 0 rest))
+               (new-line (string-append stars new-rest))
+               (new-text (string-append (substring text 0 line-start) new-line
+                           (if (< line-end (string-length text))
+                             (substring text line-end (string-length text)) ""))))
+          (editor-set-text ed new-text) (editor-goto-pos ed pos)
+          (echo-message! (app-state-echo app) (or next-state "No state"))))))
+
+  ;; --- Org navigation ---
+  (define (cmd-org-next-heading app)
+    "Move to next org heading."
+    (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+           (text (editor-get-text ed)) (pos (editor-get-current-pos ed))
+           (len (string-length text)))
+      (let lp ((i (+ pos 1)))
+        (cond ((>= i len) (echo-message! (app-state-echo app) "No more headings"))
+              ((and (char=? (string-ref text i) #\*)
+                    (or (= i 0) (char=? (string-ref text (- i 1)) #\newline)))
+               (editor-goto-pos ed i) (editor-scroll-caret ed))
+              (else (lp (+ i 1)))))))
+
+  (define (cmd-org-prev-heading app)
+    "Move to previous org heading."
+    (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+           (text (editor-get-text ed)) (pos (editor-get-current-pos ed)))
+      (let lp ((i (- pos 1)))
+        (cond ((< i 0) (echo-message! (app-state-echo app) "No previous headings"))
+              ((and (char=? (string-ref text i) #\*)
+                    (or (= i 0) (char=? (string-ref text (- i 1)) #\newline)))
+               (editor-goto-pos ed i) (editor-scroll-caret ed))
+              (else (lp (- i 1)))))))
+
+  (define (cmd-org-outline app)
+    "Show org headings outline."
+    (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+           (text (editor-get-text ed)) (lines (string-split text #\newline))
+           (headings (let lp ((ls lines) (i 1) (acc '()))
+                       (if (null? ls) (reverse acc)
+                         (let ((l (car ls)))
+                           (lp (cdr ls) (+ i 1)
+                             (if (and (> (string-length l) 0) (char=? (string-ref l 0) #\*))
+                               (cons (string-append (number->string i) ": " l) acc) acc))))))
+           (buf (buffer-create! "*Org Outline*" ed)))
+      (buffer-attach! ed buf) (edit-window-buffer-set! win buf)
+      (editor-set-text ed (string-join headings "\n")) (editor-goto-pos ed 0)))
+
+  ;; --- Grep ---
+  (define (cmd-rgrep app)
+    "Recursive grep with file filter."
+    (let ((pat (app-read-string app "Rgrep: ")))
+      (when (and pat (> (string-length pat) 0))
+        (let ((include (app-read-string app "File pattern (e.g. *.ss): ")))
+          (let ((dir (app-read-string app "In directory: ")))
+            (when (and dir (> (string-length dir) 0))
+              (guard (e (#t (echo-error! (app-state-echo app) "Grep failed")))
+                (let* ((args (if (and include (> (string-length include) 0))
+                               (string-append "grep -rn --include=" include " " pat " " dir)
+                               (string-append "grep -rn " pat " " dir))))
+                  (let-values (((to-stdin from-stdout from-stderr pid)
+                                (open-process-ports args
+                                  (buffer-mode block) (native-transcoder))))
+                    (close-port to-stdin)
+                    (let ((out (get-string-all from-stdout)))
+                      (close-port from-stdout)
+                      (close-port from-stderr)
+                      (let* ((result (if (eof-object? out) #f out))
+                             (fr (app-state-frame app)) (win (current-window fr))
+                             (ed (edit-window-editor win))
+                             (buf (buffer-create! "*Grep*" ed)))
+                        (buffer-attach! ed buf) (edit-window-buffer-set! win buf)
+                        (editor-set-text ed (or result "No matches."))
+                        (editor-goto-pos ed 0)
+                        (echo-message! (app-state-echo app) "Grep done"))))))))))))
+
+  (define (cmd-previous-grep-result app)
+    "Jump to previous grep result in *Grep* or *Compilation* buffer."
+    (let* ((echo (app-state-echo app))
+           (grep-buf (or (buffer-by-name "*Grep*")
+                         (buffer-by-name "*Compilation*"))))
+      (if (not grep-buf)
+        (echo-error! echo "No grep/compilation buffer")
+        (let* ((ed (current-editor app))
+               (fr (app-state-frame app))
+               (cur-buf (current-buffer-from-app app)))
+          (unless (eq? cur-buf grep-buf)
+            (buffer-attach! ed grep-buf)
+            (edit-window-buffer-set! (current-window fr) grep-buf))
+          (let* ((pos (editor-get-current-pos ed))
+                 (cur-line (editor-line-from-position ed pos)))
+            (let loop ((line (- cur-line 1)))
+              (if (< line 0)
+                (echo-message! echo "No previous results")
+                (let* ((line-text (editor-get-line ed line))
+                       (parsed (parse-grep-line-text line-text)))
+                  (if parsed
+                    (begin
+                      (editor-goto-line ed line)
+                      (editor-scroll-caret ed)
+                      (cmd-grep-goto app))
+                    (loop (- line 1)))))))))))
+
+  ;; --- Wdired/wgrep ---
+  (define (cmd-wdired-mode app)
+    "Toggle writable dired mode -- edit filenames, then wdired-finish to commit renames."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (edit-window-buffer win))
+           (name (and buf (buffer-name buf)))
+           (echo (app-state-echo app)))
+      (cond
+        ;; Currently in wdired -- commit changes
+        ((and name (hash-get *tui-wdired-state* name))
+         (let* ((originals (hash-get *tui-wdired-state* name))
+                (text (editor-get-text ed))
+                (lines (string-split text #\newline))
+                (renamed 0)
+                (errors 0))
+           (let loop ((os originals) (ls lines))
+             (when (and (pair? os) (pair? ls))
+               (let ((orig (string-trim (car os)))
+                     (new (string-trim (car ls))))
+                 (when (and (> (string-length orig) 0)
+                            (> (string-length new) 0)
+                            (not (string=? orig new))
+                            (file-exists? orig))
+                   (guard (e (#t (set! errors (+ errors 1))))
+                     (rename-file orig new)
+                     (set! renamed (+ renamed 1))))
+                 (loop (cdr os) (cdr ls)))))
+           (hash-remove! *tui-wdired-state* name)
+           (editor-set-read-only ed #t)
+           (echo-message! echo
+             (string-append "WDired: " (number->string renamed) " renamed"
+                            (if (> errors 0)
+                              (string-append ", " (number->string errors) " errors")
+                              "")))))
+        ;; Enter wdired mode on a dired-like buffer
+        ((and name (or (string-prefix? "*Dired" name)
+                       (string-prefix? "*dired" name)))
+         (let* ((text (editor-get-text ed))
+                (lines (string-split text #\newline)))
+           (hash-put! *tui-wdired-state* name lines)
+           (editor-set-read-only ed #f)
+           (echo-message! echo
+             "WDired mode ON -- edit filenames, M-x wdired-finish to commit")))
+        (else
+          (echo-error! echo "Not a dired buffer")))))
+
+  (define (cmd-wdired-finish app)
+    "Finish wdired editing and rename files."
+    (cmd-wdired-mode app))
+
+  (define (cmd-wgrep-abort-changes app)
+    "Abort wgrep changes -- restore original content."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (edit-window-buffer win))
+           (name (and buf (buffer-name buf))))
+      (when (and name (hash-get *tui-wdired-state* name))
+        (let ((originals (hash-get *tui-wdired-state* name)))
+          (editor-set-text ed (string-join originals "\n"))
+          (hash-remove! *tui-wdired-state* name)
+          (editor-set-read-only ed #t)))
+      (echo-message! (app-state-echo app) "Wgrep changes aborted")))
+
+  ;; --- Dired delete marked ---
+  (define (cmd-dired-do-delete-marked app)
+    "Delete marked dired files -- delegates to cmd-dired-delete-marked."
+    (cmd-dired-delete-marked app))
+
+  ;; --- Auto-revert tail ---
+  (define (cmd-auto-revert-tail-mode app)
+    "Toggle auto-revert tail mode."
+    (let ((on (toggle-mode! 'auto-revert-tail)))
+      (when on
+        (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win)))
+          (editor-goto-pos ed (editor-get-text-length ed)) (editor-scroll-caret ed)))
+      (echo-message! (app-state-echo app)
+        (if on "Auto-revert tail on" "Auto-revert tail off"))))
+
+  ;; --- Scratch message ---
+  (define (cmd-scratch-message app)
+    "Switch to scratch with message."
+    (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+           (buf (or (buffer-by-name "*scratch*") (buffer-create! "*scratch*" ed))))
+      (buffer-attach! ed buf) (edit-window-buffer-set! win buf)
+      (echo-message! (app-state-echo app) "Scratch buffer")))
+
+  ;; --- Shell command ---
+  (define (cmd-run-user-shell-command app)
+    "Run a shell command."
+    (let ((cmd (app-read-string app "Shell command: ")))
+      (when (and cmd (> (string-length cmd) 0))
+        (guard (e (#t (echo-error! (app-state-echo app) "Command failed")))
+          (let-values (((to-stdin from-stdout from-stderr pid)
+                        (open-process-ports
+                          (string-append "/bin/sh -c " cmd)
+                          (buffer-mode block) (native-transcoder))))
+            (close-port to-stdin)
+            (let ((out (get-string-all from-stdout)))
+              (close-port from-stdout)
+              (close-port from-stderr)
+              (let* ((result (if (eof-object? out) "" out))
+                     (fr (app-state-frame app)) (win (current-window fr))
+                     (ed (edit-window-editor win))
+                     (buf (buffer-create! "*Shell Output*" ed)))
+                (buffer-attach! ed buf) (edit-window-buffer-set! win buf)
+                (editor-set-text ed result) (editor-goto-pos ed 0))))))))
+
+  ;; --- Toggles ---
+  (define (cmd-toggle-compile-on-save app)
+    "Toggle compile on save."
+    (let ((on (toggle-mode! 'compile-on-save)))
+      (echo-message! (app-state-echo app)
+        (if on "Compile on save: on" "Compile on save: off"))))
+
+  (define (cmd-toggle-bracket-paren-swap app)
+    "Toggle swapping [ <-> ( and ] <-> ) for Lisp editing."
+    (let ((on (toggle-mode! 'bracket-paren-swap)))
+      (if on
+        (begin
+          (key-translate! #\[ #\()
+          (key-translate! #\] #\))
+          (key-translate! #\( #\[)
+          (key-translate! #\) #\])
+          (echo-message! (app-state-echo app) "Bracket/paren swap enabled"))
+        (begin
+          (hash-remove! *key-translation-map* #\[)
+          (hash-remove! *key-translation-map* #\])
+          (hash-remove! *key-translation-map* #\()
+          (hash-remove! *key-translation-map* #\))
+          (echo-message! (app-state-echo app) "Bracket/paren swap disabled")))))
+
+  ;; --- Settings ---
+  (define (cmd-set-variable app)
+    "Set a variable."
+    (let ((name (app-read-string app "Variable name: ")))
+      (when (and name (> (string-length name) 0))
+        (let ((val (app-read-string app (string-append name " = "))))
+          (echo-message! (app-state-echo app) (string-append "Set " name " = " (or val "")))))))
+
+  (define (cmd-show-dir-locals app)
+    "Show directory-local settings for the current buffer's file."
+    (let* ((buf (current-buffer-from-app app))
+           (path (and buf (buffer-file-path buf)))
+           (echo (app-state-echo app)))
+      (if (not path)
+        (echo-error! echo "Buffer has no file")
+        (let ((config (find-tui-dir-locals-file (path-directory path))))
+          (if (not config)
+            (echo-message! echo "No .jemacs-config found")
+            (guard (e (#t (echo-error! echo "Cannot read config")))
+              (let* ((content (read-file-as-string config))
+                     (fr (app-state-frame app))
+                     (win (current-window fr))
+                     (ed (edit-window-editor win))
+                     (new-buf (buffer-create! "*Dir Locals*" ed)))
+                (buffer-attach! ed new-buf)
+                (edit-window-buffer-set! win new-buf)
+                (editor-set-text ed (string-append "Directory locals from: " config "\n\n" content))
+                (editor-goto-pos ed 0)
+                (editor-set-read-only ed #t)
+                (echo-message! echo (string-append "Showing: " config)))))))))
+
+  (define (find-tui-dir-locals-file dir)
+    "Search DIR and parent directories for .jemacs-config file."
+    (let loop ((d dir))
+      (let ((config-path (path-expand ".jemacs-config" d)))
+        (if (file-exists? config-path) config-path
+          (let ((parent (path-directory d)))
+            (if (string=? parent d) #f
+              (loop parent)))))))
+
+  ;; --- Remote files ---
+  (define (cmd-find-file-remote app)
+    "Open a remote file via SSH/SCP. Use /ssh:host:/path or /scp:host:/path syntax."
+    (let ((path (app-read-string app "Remote file (/ssh:host:/path): ")))
+      (when (and path (> (string-length path) 0))
+        ;; Auto-prepend /ssh: if user typed user@host:path
+        (let ((path (if (tramp-path? path) path
+                      (if (string-index path #\:)
+                        (string-append "/ssh:" path)
+                        path))))
+          (if (not (tramp-path? path))
+            (echo-error! (app-state-echo app) "Use /ssh:host:/path or user@host:/path syntax")
+            (tramp-open-remote-file! app path))))))
+
+  (define (cmd-save-remote-buffer app)
+    "Save buffer back to remote host if it has a TRAMP-style path."
+    (let* ((buf (current-buffer-from-app app))
+           (fpath (and buf (buffer-file-path buf))))
+      (if (and fpath (tramp-path? fpath))
+        (tramp-save-buffer! app (current-editor app) buf)
+        (echo-error! (app-state-echo app) "Not a remote buffer"))))
+
+  ;; --- Key config ---
+  (define (cmd-global-set-key app)
+    "Bind a key to a command."
+    (let ((key (app-read-string app "Key: ")))
+      (when (and key (> (string-length key) 0))
+        (let ((cmd (app-read-string app "Command: ")))
+          (when (and cmd (> (string-length cmd) 0))
+            (let ((sym (string->symbol cmd)))
+              (keymap-bind! *global-keymap* key sym)
+              (echo-message! (app-state-echo app) (string-append "Bound " key " -> " cmd))))))))
+
+  (define (cmd-global-unset-key app)
+    "Unbind a key."
+    (let ((key (app-read-string app "Key to unbind: ")))
+      (when (and key (> (string-length key) 0))
+        (echo-message! (app-state-echo app) (string-append "Unbound: " key)))))
+
+  ;; --- Flycheck ---
+  (define (cmd-flycheck-prev-error app)
+    "Jump to previous flycheck error -- delegates to previous-error."
+    (execute-command! app 'previous-error))
+
+  ;; --- Insert char by name ---
+  (define (cmd-insert-char-by-name app)
+    "Insert char by Unicode code point."
+    (let ((code (app-read-string app "Hex code point: ")))
+      (when (and code (> (string-length code) 0))
+        (let ((num (string->number code 16)))
+          (if num
+            (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+                   (pos (editor-get-current-pos ed)) (ch (string (integer->char num))))
+              (editor-insert-text ed pos ch) (editor-goto-pos ed (+ pos 1))
+              (echo-message! (app-state-echo app) (string-append "Inserted: " ch)))
+            (echo-error! (app-state-echo app) "Invalid hex"))))))
+
+  ;; --- File to register ---
+  (define (cmd-file-to-register app)
+    "Store current file in a register."
+    (let* ((buf (current-buffer-from-app app)) (path (and buf (buffer-file-path buf))))
+      (if (not path) (echo-error! (app-state-echo app) "Buffer has no file")
+        (let ((reg (app-read-string app "Register (a-z): ")))
+          (when (and reg (> (string-length reg) 0))
+            (hash-put! *tui-file-registers* (string-ref reg 0) path)
+            (echo-message! (app-state-echo app) (string-append "Stored in register " reg)))))))
+
+  ;; --- Kbd macro counter ---
+  (define (cmd-kbd-macro-counter-insert app)
+    "Insert macro counter value."
+    (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed)) (s (number->string *tui-macro-counter*)))
+      (editor-insert-text ed pos s) (editor-goto-pos ed (+ pos (string-length s)))
+      (set! *tui-macro-counter* (+ *tui-macro-counter* 1))))
+
+  (define (cmd-kbd-macro-counter-set app)
+    "Set macro counter."
+    (let ((val (app-read-string app "Counter value: ")))
+      (when val
+        (let ((n (string->number val)))
+          (when n (set! *tui-macro-counter* n)
+            (echo-message! (app-state-echo app)
+              (string-append "Counter = " (number->string n))))))))
+
+  ;; --- Key chords ---
+  (define (cmd-key-chord-mode app)
+    "Toggle key-chord mode."
+    (set! *tui-chord-mode* (not *tui-chord-mode*))
+    (echo-message! (app-state-echo app)
+      (if *tui-chord-mode* "Key-chord mode on" "Key-chord mode off")))
+
+  (define (cmd-key-chord-define app)
+    "Define a key chord."
+    (let ((chord (app-read-string app "Chord (2 chars): ")))
+      (when (and chord (= (string-length chord) 2))
+        (let ((cmd (app-read-string app "Command: ")))
+          (when cmd (hash-put! *tui-chord-bindings* chord (string->symbol cmd))
+            (echo-message! (app-state-echo app) (string-append "Chord " chord " -> " cmd)))))))
+
+  (define (cmd-key-chord-list app)
+    "List key chords."
+    (let ((bindings (hash->list *tui-chord-bindings*)))
+      (if (null? bindings) (echo-message! (app-state-echo app) "No chords defined")
+        (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
+               (lines (map (lambda (p) (string-append (car p) " -> " (symbol->string (cdr p)))) bindings))
+               (buf (buffer-create! "*Key Chords*" ed)))
+          (buffer-attach! ed buf) (edit-window-buffer-set! win buf)
+          (editor-set-text ed (string-join lines "\n")) (editor-goto-pos ed 0)))))
+
+  (define (cmd-key-translation-list app)
+    "List key translations."
+    (echo-message! (app-state-echo app) "No key translations defined"))
+
+  ;; --- Snippets (real implementation using shared snippets module) ---
+  (define (tui-get-word-prefix ed)
+    "Get word prefix before cursor in TUI editor."
+    (let* ((pos (editor-get-current-pos ed))
+           (text (editor-get-text ed))
+           (start (let loop ((i (- pos 1)))
+                    (if (< i 0) 0
+                      (let ((ch (string-ref text i)))
+                        (if (or (char-alphabetic? ch) (char-numeric? ch)
+                                (char=? ch #\-) (char=? ch #\_) (char=? ch #\*) (char=? ch #\!))
+                          (loop (- i 1))
+                          (+ i 1)))))))
+      (if (< start pos)
+        (substring text start pos)
+        "")))
+
+  (define (cmd-snippet-expand app)
+    "Try to expand snippet at point. Returns #t if expanded, #f otherwise."
+    (let* ((ed (current-editor app))
+           (buf (current-buffer-from-app app))
+           (prefix (tui-get-word-prefix ed))
+           (lang (or (buffer-lexer-lang buf) 'global)))
+      (if (string=? prefix "")
+        #f
+        (let ((template (snippet-lookup prefix lang)))
+          (if (not template)
+            #f
+            (let* ((expanded (snippet-expand-template template))
+                   (text (car expanded))
+                   (fields (cdr expanded))
+                   (pos (editor-get-current-pos ed))
+                   (trigger-start (- pos (string-length prefix)))
+                   (full-text (editor-get-text ed))
+                   (new-text (string-append
+                               (substring full-text 0 trigger-start)
+                               text
+                               (substring full-text pos (string-length full-text)))))
+              (editor-set-text ed new-text)
+              (if (null? fields)
+                (editor-goto-pos ed (+ trigger-start (string-length text)))
+                (let ((first-field (car fields)))
+                  (set! *local-snippet-active* #t)
+                  (set! *local-snippet-field-positions*
+                    (map (lambda (f) (+ trigger-start (cdr f))) fields))
+                  (editor-goto-pos ed (+ trigger-start (cdr first-field)))))
+              #t))))))
+
+  (define (cmd-snippet-next-field app)
+    "Jump to next snippet field."
+    (when *local-snippet-active*
+      (let* ((ed (current-editor app))
+             (pos (editor-get-current-pos ed))
+             (next (let loop ((fps *local-snippet-field-positions*))
+                     (if (null? fps) #f
+                       (if (> (car fps) pos) (car fps) (loop (cdr fps)))))))
+        (if next
+          (editor-goto-pos ed next)
+          (begin
+            (snippet-deactivate!)
+            (set! *local-snippet-active* #f)
+            (set! *local-snippet-field-positions* '()))))))
+
+  (define (cmd-snippet-prev-field app)
+    "Jump to previous snippet field."
+    (when *local-snippet-active*
+      (let* ((ed (current-editor app))
+             (pos (editor-get-current-pos ed))
+             (prev (let loop ((fps (reverse *local-snippet-field-positions*)))
+                     (if (null? fps) #f
+                       (if (< (car fps) pos) (car fps) (loop (cdr fps)))))))
+        (when prev (editor-goto-pos ed prev)))))
+
+  (define (cmd-define-snippet app)
+    "Interactively define a snippet."
+    (let ((lang-str (app-read-string app "Language (or global): ")))
+      (when (and lang-str (> (string-length lang-str) 0))
+        (let ((trigger (app-read-string app "Trigger: ")))
+          (when (and trigger (> (string-length trigger) 0))
+            (let ((template (app-read-string app "Template ($1,$2 for fields): ")))
+              (when (and template (> (string-length template) 0))
+                (snippet-define! (string->symbol lang-str) trigger template)
+                (echo-message! (app-state-echo app)
+                  (string-append "Snippet '" trigger "' defined for " lang-str)))))))))
+
+  (define (cmd-list-snippets app)
+    "List all defined snippets."
+    (let ((out (open-output-string)))
+      (display "Snippets:\n\n" out)
+      (hash-for-each
+        (lambda (lang lang-table)
+          (display (string-append "--- " (symbol->string lang) " ---\n") out)
+          (hash-for-each
+            (lambda (trigger template)
+              (let ((first-line (let ((nl (string-index template #\newline)))
+                                  (if nl (substring template 0 nl) template))))
+                (display (string-append "  " trigger " -> " first-line "\n") out)))
+            lang-table))
+        *snippet-table*)
+      (open-output-buffer app "*Snippets*" (get-output-string out))))
+
+  ;;; Parity batch 11: GUI-specific, LSP, and multi-cursor stubs
+  ;; --- Calendar navigation (state + rendering in editor-extra-org.ss) ---
+  (define (cmd-calendar-today app)
+    "Go to current month in calendar."
+    (set! *tui-calendar-year* (tui-current-year))
+    (set! *tui-calendar-month* (tui-current-month))
+    (cmd-calendar app))
+
+  (define (cmd-calendar-next-month app)
+    "Go to next month in calendar."
+    (when (not *tui-calendar-year*) (cmd-calendar-today app))
+    (set! *tui-calendar-month* (+ *tui-calendar-month* 1))
+    (when (> *tui-calendar-month* 12)
+      (set! *tui-calendar-month* 1)
+      (set! *tui-calendar-year* (+ *tui-calendar-year* 1)))
+    (cmd-calendar app))
+
+  (define (cmd-calendar-prev-month app)
+    "Go to previous month in calendar."
+    (when (not *tui-calendar-year*) (cmd-calendar-today app))
+    (set! *tui-calendar-month* (- *tui-calendar-month* 1))
+    (when (< *tui-calendar-month* 1)
+      (set! *tui-calendar-month* 12)
+      (set! *tui-calendar-year* (- *tui-calendar-year* 1)))
+    (cmd-calendar app))
+
+  (define (cmd-calendar-next-year app)
+    "Go to next year in calendar."
+    (when (not *tui-calendar-year*) (cmd-calendar-today app))
+    (set! *tui-calendar-year* (+ *tui-calendar-year* 1))
+    (cmd-calendar app))
+
+  (define (cmd-calendar-prev-year app)
+    "Go to previous year in calendar."
+    (when (not *tui-calendar-year*) (cmd-calendar-today app))
+    (set! *tui-calendar-year* (- *tui-calendar-year* 1))
+    (cmd-calendar app))
+
+  (define (cmd-helm-buffers-list app)
+    "Helm buffers -- delegates to list-buffers."
+    (execute-command! app 'list-buffers))
+
+  (define (cmd-image-zoom-in app)
+    "Zoom in."
+    (echo-message! (app-state-echo app) "Image zoom not available in TUI"))
+  (define (cmd-image-zoom-out app)
+    "Zoom out."
+    (echo-message! (app-state-echo app) "Image zoom not available in TUI"))
+  (define (cmd-image-zoom-fit app)
+    "Zoom fit."
+    (echo-message! (app-state-echo app) "Image zoom not available in TUI"))
+  (define (cmd-image-zoom-reset app)
+    "Zoom reset."
+    (echo-message! (app-state-echo app) "Image zoom not available in TUI"))
+  (define (cmd-set-font-size app)
+    "Set font size."
+    (echo-message! (app-state-echo app) "Font size: use terminal settings"))
+  (define (cmd-set-frame-font app)
+    "Set frame font."
+    (echo-message! (app-state-echo app) "Font: use terminal settings"))
+
+  ;; --- Vterm copy mode ---
+  (define (cmd-vterm-copy-mode app)
+    "Toggle terminal copy mode -- makes terminal buffer read-only for text selection."
+    (let* ((buf (current-buffer-from-app app))
+           (ed (current-editor app))
+           (echo (app-state-echo app)))
+      (if (terminal-buffer? buf)
+        (let ((in-copy (hash-get *tui-terminal-copy-mode* buf)))
+          (if in-copy
+            (begin (hash-put! *tui-terminal-copy-mode* buf #f)
+                   (editor-set-read-only ed #f)
+                   (echo-message! echo "Terminal copy mode OFF"))
+            (begin (hash-put! *tui-terminal-copy-mode* buf #t)
+                   (editor-set-read-only ed #t)
+                   (echo-message! echo "Terminal copy mode ON -- select text, C-w/M-w to copy"))))
+        (echo-message! echo "Not in a terminal buffer"))))
+
+  (define (cmd-vterm-copy-done app)
+    "Exit terminal copy mode and resume terminal."
+    (let* ((buf (current-buffer-from-app app))
+           (ed (current-editor app))
+           (echo (app-state-echo app)))
+      (when (and (terminal-buffer? buf) (hash-get *tui-terminal-copy-mode* buf))
+        (hash-put! *tui-terminal-copy-mode* buf #f)
+        (editor-set-read-only ed #f)
+        (echo-message! echo "Terminal copy mode OFF"))))
+
+  (define (cmd-mc-mark-next app)
+    "Mark next."
+    (echo-message! (app-state-echo app) "Multiple cursors not available in TUI"))
+  (define (cmd-mc-mark-all app)
+    "Mark all."
+    (echo-message! (app-state-echo app) "Multiple cursors not available in TUI"))
+  (define (cmd-mc-skip-and-mark-next app)
+    "Skip and mark next."
+    (echo-message! (app-state-echo app) "Multiple cursors not available in TUI"))
+
+  ;; LSP commands -- delegate to ctags/grep/formatter where possible
+  (define (cmd-lsp-goto-definition app)
+    "LSP goto def -- delegates to find-tag (ctags)."
+    (execute-command! app 'find-tag))
+  (define (cmd-lsp-smart-goto-definition app)
+    "LSP smart goto -- delegates to find-tag."
+    (execute-command! app 'find-tag))
+  (define (cmd-lsp-find-references app)
+    "LSP refs -- delegates to rgrep for symbol at point."
+    (execute-command! app 'rgrep))
+  (define (cmd-lsp-hover app)
+    "LSP hover -- delegates to eldoc."
+    (execute-command! app 'eldoc))
+  (define (cmd-lsp-rename app)
+    "LSP rename -- delegates to query-replace for symbol renaming."
+    (execute-command! app 'query-replace))
+  (define (cmd-lsp-format-buffer app)
+    "LSP format -- delegates to format-buffer (external formatter)."
+    (execute-command! app 'format-buffer))
+  (define (cmd-lsp-code-actions app)
+    "LSP actions."
+    (echo-message! (app-state-echo app) "LSP code actions: use M-x for available commands"))
+  (define (cmd-lsp-completion app)
+    "LSP complete -- delegates to hippie-expand."
+    (execute-command! app 'hippie-expand))
+  (define (cmd-lsp-declaration app)
+    "LSP decl -- delegates to find-tag."
+    (execute-command! app 'find-tag))
+  (define (cmd-lsp-implementation app)
+    "LSP impl -- delegates to find-tag."
+    (execute-command! app 'find-tag))
+  (define (cmd-lsp-type-definition app)
+    "LSP type def -- delegates to find-tag."
+    (execute-command! app 'find-tag))
+  (define (cmd-lsp-document-symbols app)
+    "LSP symbols -- delegates to imenu."
+    (execute-command! app 'imenu))
+  (define (cmd-lsp-workspace-symbol app)
+    "LSP workspace symbols -- delegates to imenu-anywhere."
+    (execute-command! app 'imenu-anywhere))
+  (define (cmd-lsp-restart app)
+    "LSP restart."
+    (echo-message! (app-state-echo app) "LSP: use Qt mode for full LSP support"))
+  (define (cmd-lsp-stop app)
+    "LSP stop."
+    (echo-message! (app-state-echo app) "LSP: use Qt mode for full LSP support"))
+
+  ;;;==========================================================================
+  ;;; Batch 12: Emacs-standard alias registrations (editor-extra chain scope)
+  ;;;==========================================================================
+
+  (define (register-batch12-extra-aliases!)
+    ;; Text scale alias
+    (register-command! 'text-scale-adjust cmd-text-scale-increase)
+    ;; Tab bar aliases (TUI only)
+    (register-command! 'tab-bar-new-tab cmd-tab-new)
+    (register-command! 'tab-bar-close-tab cmd-tab-close)
+    (register-command! 'tab-bar-switch-to-tab cmd-tab-next)
+    ;; Mode aliases
+    (register-command! 'word-count-mode cmd-toggle-word-count)
+    ;; (register-command! 'completion-preview-mode cmd-company-mode)  ;; not yet ported
+    (register-command! 'flymake-start cmd-flycheck-mode)
+    (register-command! 'flymake-stop cmd-flycheck-mode)
+    ;; Dired aliases
+    (register-command! 'dired-mark-directories cmd-dired-mark)
+    ;; Emacs base mode-name aliases -> toggle commands (editor-extra scope)
+    (register-command! 'transient-mark-mode cmd-toggle-transient-mark-mode)
+    ;; (register-command! 'highlight-changes-mode cmd-toggle-highlight-changes)  ;; not yet ported
+    (register-command! 'tool-bar-mode cmd-toggle-tool-bar-mode)
+    ;; Batch 13: new commands
+    (register-command! 'set-visited-file-name cmd-set-visited-file-name)
+    (register-command! 'sort-columns cmd-sort-columns)
+    (register-command! 'sort-regexp-fields cmd-sort-regexp-fields)
+    ;; Batch 14: goto-address-mode (real URL highlighting)
+    (register-command! 'goto-address-mode cmd-goto-address-mode)
+    ;; Subword navigation
+    (register-command! 'subword-forward cmd-subword-forward)
+    (register-command! 'subword-backward cmd-subword-backward)
+    (register-command! 'subword-kill cmd-subword-kill)
+    ;; Batch 15: insert-tab
+    (register-command! 'insert-tab cmd-insert-tab)
+    ;; Batch 6: tutorial, header-line, project-keymaps, org-columns
+    ;; (register-batch6-commands!)  ;; not yet ported (editor-extra-regs not ported)
+    ;; Batch 7: undo-region, side-window, info, project-tree-git
+    (register-command! 'undo-region cmd-undo-region)
+    (register-command! 'display-buffer-in-side-window cmd-display-buffer-in-side-window)
+    (register-command! 'toggle-side-window cmd-toggle-side-window)
+    (register-command! 'info-reader cmd-info-reader)
+    (register-command! 'project-tree-git cmd-project-tree-git)
+    ;; Batch 8: file ops, window purpose, doc browser, async dired
+    (register-command! 'project-tree-create-file cmd-project-tree-create-file)
+    (register-command! 'project-tree-delete-file cmd-project-tree-delete-file)
+    (register-command! 'project-tree-rename-file cmd-project-tree-rename-file)
+    (register-command! 'set-window-dedicated cmd-set-window-dedicated)
+    (register-command! 'jemacs-doc cmd-gemacs-doc)
+    (register-command! 'dired-async-copy cmd-dired-async-copy)
+    (register-command! 'dired-async-move cmd-dired-async-move)
+    ;; Batch 9: customize, process sentinels, plugins
+    (register-command! 'customize cmd-customize)
+    (register-command! 'set-variable cmd-set-variable)
+    (register-command! 'load-plugin cmd-load-plugin)
+    (register-command! 'list-plugins cmd-list-plugins)
+    ;; Batch 10: advice, autoloads
+    (register-command! 'describe-advice cmd-describe-advice)
+    (register-command! 'list-autoloads cmd-list-autoloads)
+    ;; Batch 11: dynamic modules, icomplete/fido
+    (register-command! 'load-module cmd-load-module)
+    (register-command! 'list-modules cmd-list-modules)
+    (register-command! 'icomplete-mode cmd-icomplete-mode)
+    (register-command! 'fido-mode cmd-fido-mode)
+    ;; Batch 12: persistent undo, image thumbnails, virtual dired, key translation
+    (register-command! 'undo-history-save cmd-undo-history-save)
+    (register-command! 'undo-history-load cmd-undo-history-load)
+    (register-command! 'image-dired-display-thumbnail cmd-image-dired-display-thumbnail)
+    (register-command! 'image-dired-show-all-thumbnails cmd-image-dired-show-all-thumbnails)
+    (register-command! 'virtual-dired cmd-virtual-dired)
+    (register-command! 'dired-from-find cmd-dired-from-find)
+    (register-command! 'key-translate cmd-key-translate)
+    (register-command! 'toggle-super-key-mode cmd-toggle-super-key-mode)
+    (register-command! 'describe-key-translations cmd-describe-key-translations)
+    ;; Batch 13: display tables, multi-server LSP, devops, helm
+    (register-command! 'set-display-table-entry cmd-set-display-table-entry)
+    (register-command! 'describe-display-table cmd-describe-display-table)
+    (register-command! 'lsp-set-server cmd-lsp-set-server)
+    (register-command! 'lsp-list-servers cmd-lsp-list-servers)
+    (register-command! 'ansible-mode cmd-ansible-mode)
+    (register-command! 'ansible-playbook cmd-ansible-playbook)
+    (register-command! 'systemd-mode cmd-systemd-mode)
+    (register-command! 'kubernetes-mode cmd-kubernetes-mode)
+    (register-command! 'kubectl cmd-kubectl)
+    (register-command! 'ssh-config-mode cmd-ssh-config-mode)
+    (register-command! 'helm-occur cmd-helm-occur)
+    (register-command! 'helm-dash cmd-helm-dash)
+    ;; Batch 14: completion, AI, TRAMP/remote, helm-c-yasnippet
+    (register-command! 'selectrum-mode cmd-selectrum-mode)
+    (register-command! 'cape-history cmd-cape-history)
+    (register-command! 'cape-keyword cmd-cape-keyword)
+    (register-command! 'ai-inline-suggest cmd-ai-inline-suggest)
+    (register-command! 'ai-code-explain cmd-ai-code-explain)
+    (register-command! 'ai-code-refactor cmd-ai-code-refactor)
+    (register-command! 'tramp-ssh-edit cmd-tramp-ssh-edit)
+    (register-command! 'tramp-docker-edit cmd-tramp-docker-edit)
+    (register-command! 'tramp-remote-shell cmd-tramp-remote-shell)
+    (register-command! 'tramp-remote-compile cmd-tramp-remote-compile)
+    (register-command! 'helm-c-yasnippet cmd-helm-c-yasnippet)
+    ;; Batch 15: parity stubs
+    (register-command! 'tree-sitter-mode cmd-tree-sitter-mode)
+    (register-command! 'tree-sitter-highlight-mode cmd-tree-sitter-highlight-mode)
+    (register-command! 'tool-bar-mode cmd-tool-bar-mode)
+    (register-command! 'mu4e cmd-mu4e)
+    (register-command! 'notmuch cmd-notmuch)
+    (register-command! 'rcirc cmd-rcirc)
+    (register-command! 'eww-submit-form cmd-eww-submit-form)
+    (register-command! 'eww-toggle-css cmd-eww-toggle-css)
+    (register-command! 'eww-toggle-images cmd-eww-toggle-images)
+    (register-command! 'screen-reader-mode cmd-screen-reader-mode)
+    ;; Batch 16: elfeed, wgrep, direnv, move-text, string-inflection, transient, helpful
+    (register-command! 'elfeed cmd-elfeed)
+    (register-command! 'elfeed-add-feed cmd-elfeed-add-feed)
+    (register-command! 'elfeed-update cmd-elfeed-update)
+    (register-command! 'direnv-update-environment cmd-direnv-update-environment)
+    (register-command! 'direnv-allow cmd-direnv-allow)
+    (register-command! 'move-text-up cmd-move-text-up)
+    (register-command! 'move-text-down cmd-move-text-down)
+    (register-command! 'transient-map cmd-transient-map)
+    ;; Batch 17: swiper, counsel, god-mode, beacon, volatile-highlights, use-package
+    (register-command! 'swiper cmd-swiper)
+    (register-command! 'swiper-isearch cmd-swiper-isearch)
+    (register-command! 'counsel-M-x cmd-counsel-M-x)
+    (register-command! 'counsel-find-file cmd-counsel-find-file)
+    (register-command! 'counsel-rg cmd-counsel-rg)
+    (register-command! 'counsel-recentf cmd-counsel-recentf)
+    (register-command! 'counsel-bookmark cmd-counsel-bookmark)
+    (register-command! 'ivy-resume cmd-ivy-resume)
+    (register-command! 'god-mode cmd-god-mode)
+    (register-command! 'god-local-mode cmd-god-local-mode)
+    (register-command! 'god-execute-with-current-bindings cmd-god-execute-with-current-bindings)
+    (register-command! 'beacon-mode cmd-beacon-mode)
+    (register-command! 'volatile-highlights-mode cmd-volatile-highlights-mode)
+    (register-command! 'smartparens-mode cmd-smartparens-mode)
+    (register-command! 'smartparens-strict-mode cmd-smartparens-strict-mode)
+    (register-command! 'use-package-report cmd-use-package-report)
+    (register-command! 'straight-use-package cmd-straight-use-package)
+    (register-command! 'which-key-show-top-level cmd-which-key-show-top-level)
+    (register-command! 'which-key-show-major-mode cmd-which-key-show-major-mode)
+    ;; Batch 18: dimmer, nyan, centered-cursor, format-all, visual-regexp, anzu, popwin, easy-kill, crux, selected
+    (register-command! 'dimmer-mode cmd-dimmer-mode)
+    (register-command! 'nyan-mode cmd-nyan-mode)
+    (register-command! 'centered-cursor-mode cmd-centered-cursor-mode)
+    (register-command! 'format-all-buffer cmd-format-all-buffer)
+    (register-command! 'visual-regexp-replace cmd-visual-regexp-replace)
+    (register-command! 'visual-regexp-query-replace cmd-visual-regexp-query-replace)
+    (register-command! 'anzu-mode cmd-anzu-mode)
+    (register-command! 'popwin-mode cmd-popwin-mode)
+    (register-command! 'popwin-close-popup cmd-popwin-close-popup)
+    (register-command! 'easy-kill cmd-easy-kill)
+    (register-command! 'crux-open-with cmd-crux-open-with)
+    (register-command! 'crux-duplicate-current-line cmd-crux-duplicate-current-line)
+    ;; (register-command! 'crux-indent-defun cmd-crux-indent-defun)  ;; not yet ported
+    ;; (register-command! 'crux-swap-windows cmd-crux-swap-windows)  ;; not yet ported
+    ;; (register-command! 'crux-cleanup-buffer-or-region cmd-crux-cleanup-buffer-or-region)  ;; not yet ported
+    ;; (register-command! 'selected-mode cmd-selected-mode)  ;; not yet ported
+    ;; (register-command! 'aggressive-fill-paragraph-mode cmd-aggressive-fill-paragraph-mode)  ;; not yet ported
+    ;; Batch 19: hydra, deadgrep, hideshow, prescient, profiling, ligature, eldoc-box, color-rg
+    (register-command! 'hydra-define cmd-hydra-define)
+    (register-command! 'hydra-zoom cmd-hydra-zoom)
+    (register-command! 'hydra-window cmd-hydra-window)
+    (register-command! 'deadgrep cmd-deadgrep)
+    (register-command! 'string-edit-at-point cmd-string-edit-at-point)
+    (register-command! 'hs-minor-mode cmd-hs-minor-mode)
+    (register-command! 'hs-toggle-hiding cmd-hs-toggle-hiding)
+    (register-command! 'hs-hide-all cmd-hs-hide-all)
+    (register-command! 'hs-show-all cmd-hs-show-all)
+    (register-command! 'prescient-mode cmd-prescient-mode)
+    (register-command! 'no-littering-mode cmd-no-littering-mode)
+    (register-command! 'benchmark-init-show-durations cmd-benchmark-init-show-durations)
+    (register-command! 'esup cmd-esup)
+    (register-command! 'gcmh-mode cmd-gcmh-mode)
+    (register-command! 'ligature-mode cmd-ligature-mode)
+    (register-command! 'mixed-pitch-mode cmd-mixed-pitch-mode)
+    (register-command! 'variable-pitch-mode cmd-variable-pitch-mode)
+    (register-command! 'eldoc-box-help-at-point cmd-eldoc-box-help-at-point)
+    (register-command! 'eldoc-box-mode cmd-eldoc-box-mode)
+    (register-command! 'color-rg-search-input cmd-color-rg-search-input)
+    (register-command! 'color-rg-search-project cmd-color-rg-search-project)
+    ;; Batch 20: ctrlf, phi-search, toc-org, org-super-agenda, nov, lsp-ui, emojify, themes, breadcrumb, zone, fireplace
+    (register-command! 'ctrlf-forward cmd-ctrlf-forward)
+    (register-command! 'ctrlf-backward cmd-ctrlf-backward)
+    (register-command! 'phi-search cmd-phi-search)
+    (register-command! 'phi-search-backward cmd-phi-search-backward)
+    (register-command! 'toc-org-mode cmd-toc-org-mode)
+    (register-command! 'toc-org-insert-toc cmd-toc-org-insert-toc)
+    (register-command! 'org-super-agenda-mode cmd-org-super-agenda-mode)
+    (register-command! 'nov-mode cmd-nov-mode)
+    (register-command! 'lsp-ui-mode cmd-lsp-ui-mode)
+    (register-command! 'lsp-ui-doc-show cmd-lsp-ui-doc-show)
+    (register-command! 'lsp-ui-peek-find-definitions cmd-lsp-ui-peek-find-definitions)
+    (register-command! 'lsp-ui-peek-find-references cmd-lsp-ui-peek-find-references)
+    (register-command! 'emojify-mode cmd-emojify-mode)
+    (register-command! 'emojify-insert-emoji cmd-emojify-insert-emoji)
+    (register-command! 'ef-themes-select cmd-ef-themes-select)
+    (register-command! 'modus-themes-toggle cmd-modus-themes-toggle)
+    (register-command! 'circadian-mode cmd-circadian-mode)
+    (register-command! 'auto-dark-mode cmd-auto-dark-mode)
+    (register-command! 'breadcrumb-mode cmd-breadcrumb-mode)
+    (register-command! 'sideline-mode cmd-sideline-mode)
+    (register-command! 'flycheck-inline-mode cmd-flycheck-inline-mode)
+    (register-command! 'zone cmd-zone)
+    (register-command! 'fireplace cmd-fireplace)
+    ;; Batch 21: dap-ui, poly-mode, company-box, impatient, modeline themes, tabs, icons
+    (register-command! 'dap-ui-mode cmd-dap-ui-mode)
+    (register-command! 'poly-mode cmd-poly-mode)
+    (register-command! 'company-box-mode cmd-company-box-mode)
+    (register-command! 'impatient-mode cmd-impatient-mode)
+    (register-command! 'mood-line-mode cmd-mood-line-mode)
+    (register-command! 'powerline-mode cmd-powerline-mode)
+    (register-command! 'centaur-tabs-mode cmd-centaur-tabs-mode)
+    (register-command! 'all-the-icons-dired-mode cmd-all-the-icons-dired-mode)
+    (register-command! 'treemacs-icons-dired-mode cmd-treemacs-icons-dired-mode)
+    (register-command! 'nano-theme cmd-nano-theme)
+    ;; Batch 22: string inflection, occur-edit, wdired
+    (register-command! 'string-inflection-cycle cmd-string-inflection-cycle)
+    (register-command! 'string-inflection-snake-case cmd-string-inflection-snake-case)
+    (register-command! 'string-inflection-camelcase cmd-string-inflection-camelcase)
+    (register-command! 'string-inflection-upcase cmd-string-inflection-upcase)
+    (register-command! 'occur-edit-mode cmd-occur-edit-mode)
+    (register-command! 'occur-commit-edits cmd-occur-commit-edits)
+    (register-command! 'wdired-mode cmd-wdired-mode)
+    (register-command! 'wdired-finish-edit cmd-wdired-finish-edit)
+    (register-command! 'wdired-abort cmd-wdired-abort)
+    ;; Batch 23: project-query-replace, insert-uuid (align-regexp already in editor-text.ss)
+    (register-command! 'project-query-replace cmd-project-query-replace)
+    (register-command! 'project-query-replace-regexp cmd-project-query-replace)
+    (register-command! 'insert-uuid cmd-insert-uuid)
+    (register-command! 'uuidgen cmd-insert-uuid))
+
+) ;; end library

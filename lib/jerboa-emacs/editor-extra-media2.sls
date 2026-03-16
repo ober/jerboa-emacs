@@ -1,0 +1,2189 @@
+#!chezscheme
+;;; editor-extra-media2.sls — Coding system, local variables, toggle modes,
+;;; dired operations, diff navigation, display-line-numbers, elfeed, transient
+;;; keymaps, swiper, counsel, god mode, formatting, and misc toggles.
+;;;
+;;; Ported from gerbil-emacs/editor-extra-media2.ss to R6RS Chez Scheme.
+
+(library (jerboa-emacs editor-extra-media2)
+  (export
+    ;; Coding system
+    cmd-describe-current-coding-system
+    ;; Buffer-local variables
+    cmd-add-file-local-variable
+    cmd-add-dir-local-variable
+    ;; Hippie expand
+    cmd-hippie-expand-file
+    ;; Registers extras
+    cmd-frameset-to-register
+    cmd-window-configuration-to-register
+    ;; Macro counter extras
+    cmd-kmacro-add-counter
+    cmd-kmacro-set-format
+    ;; Line number display
+    cmd-display-line-numbers-absolute
+    cmd-display-line-numbers-none
+    ;; Scratch buffer
+    cmd-scratch-buffer
+    ;; Recentf extras
+    cmd-recentf-cleanup
+    ;; Hook management
+    cmd-add-hook
+    cmd-remove-hook
+    cmd-list-hooks
+    ;; Package archives
+    cmd-package-archives
+    ;; Auto-save
+    cmd-auto-save-mode
+    cmd-recover-file
+    ;; Tramp
+    cmd-tramp-version
+    ;; HL line
+    cmd-hl-line-mode
+    ;; Occur extras
+    cmd-occur-rename-buffer
+    ;; Printing
+    cmd-print-buffer
+    cmd-print-region
+    ;; Buffer encoding
+    cmd-describe-char-at-point
+    ;; Miscellaneous toggles
+    cmd-toggle-debug-on-signal
+    cmd-toggle-word-boundary
+    cmd-indent-tabs-mode
+    cmd-electric-indent-local-mode
+    cmd-visual-fill-column-mode
+    cmd-adaptive-wrap-prefix-mode
+    cmd-display-fill-column
+    cmd-set-selective-display
+    cmd-toggle-indicate-empty-lines
+    cmd-toggle-indicate-buffer-boundaries
+    ;; Face menu
+    cmd-facemenu-set-foreground
+    cmd-facemenu-set-background
+    ;; Games
+    cmd-tetris
+    cmd-snake
+    cmd-dunnet
+    cmd-hanoi
+    cmd-life
+    cmd-doctor
+    ;; Process list
+    cmd-proced-send-signal
+    cmd-proced-filter
+    ;; Ediff
+    cmd-ediff-show-registry
+    ;; Batch 44: modern Emacs package toggles
+    cmd-toggle-consult-mode
+    cmd-toggle-orderless-mode
+    cmd-toggle-embark-mode
+    cmd-toggle-undo-fu-session
+    cmd-toggle-auto-package-mode
+    cmd-toggle-corfu-mode
+    cmd-toggle-cape-mode
+    cmd-toggle-nerd-icons-mode
+    cmd-toggle-all-the-icons
+    cmd-toggle-doom-themes
+    ;; Batch 53: highlight and visual feedback toggles
+    cmd-toggle-global-whitespace-newline
+    cmd-toggle-global-highlight-indent
+    cmd-toggle-global-rainbow-mode
+    cmd-toggle-global-auto-highlight
+    cmd-toggle-global-symbol-overlay
+    cmd-toggle-global-highlight-parentheses
+    cmd-toggle-global-pulse-line
+    ;; Batch 62: modeline and theme toggles
+    cmd-toggle-global-solaire
+    cmd-toggle-global-spaceline
+    cmd-toggle-global-doom-modeline-env
+    cmd-toggle-global-minions
+    cmd-toggle-global-moody
+    cmd-toggle-global-rich-minority
+    cmd-toggle-global-smart-mode-line
+    ;; Batch 71: BEAM and systems language toggles
+    cmd-toggle-global-erlang-mode
+    cmd-toggle-global-elixir-mode
+    cmd-toggle-global-zig-mode
+    cmd-toggle-global-ocaml-mode
+    cmd-toggle-global-fsharp-mode
+    cmd-toggle-global-dart-mode
+    cmd-toggle-global-julia-mode
+    ;; Dired advanced operations
+    cmd-dired-toggle-marks
+    cmd-dired-do-copy-marked
+    cmd-dired-do-rename-marked
+    cmd-dired-mark-by-regexp
+    cmd-dired-sort-toggle
+    ;; Diff hunk navigation
+    cmd-diff-next-hunk
+    cmd-diff-prev-hunk
+    ;; Display line numbers mode
+    cmd-display-line-numbers-mode
+    ;; TUI buffer helpers
+    tui-get-or-create-buffer
+    tui-display-in-buffer!
+    ;; Elfeed
+    elfeed-db-path
+    elfeed-load-feeds!
+    elfeed-save-feeds!
+    elfeed-fetch-feed
+    elfeed-extract-tag
+    elfeed-str-replace
+    elfeed-unescape-html
+    elfeed-parse-feed
+    elfeed-parse-items
+    elfeed-extract-href
+    cmd-elfeed
+    elfeed-format-entries
+    cmd-elfeed-add-feed
+    cmd-elfeed-update
+    ;; Direnv
+    cmd-direnv-update-environment
+    cmd-direnv-allow
+    ;; Move text
+    cmd-move-text-up
+    cmd-move-text-down
+    ;; Transient keymaps
+    transient-define-map!
+    transient-init-defaults!
+    cmd-transient-map
+    cmd-transient-activate
+    ;; Swiper
+    cmd-swiper
+    cmd-swiper-isearch
+    ;; Counsel
+    cmd-counsel-M-x
+    cmd-counsel-find-file
+    cmd-counsel-rg
+    cmd-counsel-recentf
+    cmd-counsel-bookmark
+    cmd-ivy-resume
+    ;; God mode
+    cmd-god-mode
+    cmd-god-local-mode
+    cmd-god-execute-with-current-bindings
+    ;; Beacon mode
+    cmd-beacon-mode
+    ;; Volatile highlights
+    cmd-volatile-highlights-mode
+    ;; Smartparens
+    cmd-smartparens-strict-mode
+    cmd-smartparens-mode
+    ;; use-package / straight
+    cmd-use-package-report
+    cmd-straight-use-package
+    ;; Which-key
+    cmd-which-key-show-top-level
+    cmd-which-key-show-major-mode
+    ;; Dimmer
+    cmd-dimmer-mode
+    ;; Nyan mode
+    cmd-nyan-mode
+    ;; Centered cursor
+    cmd-centered-cursor-mode
+    ;; Format-all
+    cmd-format-all-buffer
+    ;; Visual regexp
+    cmd-visual-regexp-replace
+    cmd-visual-regexp-query-replace
+    ;; Anzu
+    cmd-anzu-mode
+    ;; Popwin
+    cmd-popwin-mode
+    cmd-popwin-close-popup
+    ;; Easy-kill
+    cmd-easy-kill
+    ;; Crux extras
+    cmd-crux-open-with
+    cmd-crux-duplicate-current-line
+    cmd-crux-indent-defun
+    cmd-crux-swap-windows
+    cmd-crux-cleanup-buffer-or-region
+    ;; Selected mode
+    cmd-selected-mode
+    ;; Aggressive fill
+    cmd-aggressive-fill-paragraph-mode)
+
+  (import
+    (except (chezscheme) make-hash-table hash-table? iota 1+ 1- sort sort!
+            path-extension)
+    (jerboa core)
+    (only (jerboa prelude) path-expand path-directory path-strip-directory path-extension)
+    (only (std srfi srfi-13)
+      string-join string-prefix? string-trim string-trim-both
+      string-trim-right string-contains string-index string-pad-right)
+    (only (std misc string) string-split)
+    (chez-scintilla constants)
+    (chez-scintilla scintilla)
+    (chez-scintilla tui)
+    (except (jerboa-emacs core) face-get)
+    (only (jerboa-emacs editor-core)
+      auto-save-enabled? auto-save-enabled-set! make-auto-save-path)
+    (jerboa-emacs keymap)
+    (jerboa-emacs buffer)
+    (jerboa-emacs window)
+    (jerboa-emacs modeline)
+    (jerboa-emacs echo)
+    (jerboa-emacs editor-extra-helpers)
+    (only (jerboa-emacs editor-extra-editing2)
+      cmd-dired-refresh))
+
+  ;; --- Local helpers ---
+
+  (define (string-empty? s) (string=? s ""))
+
+  (define (string-contains-ci haystack needle)
+    "Case-insensitive string-contains."
+    (string-contains (string-downcase haystack) (string-downcase needle)))
+
+  (define (copy-file src dst)
+    "Copy file src to dst."
+    (let ((data (call-with-port (open-file-input-port src) get-bytevector-all)))
+      (call-with-port (open-file-output-port dst (file-options no-fail))
+        (lambda (p) (put-bytevector p data)))))
+
+  ;; Run a command and capture stdout
+  (define (run-cmd-capture cmd-str . args)
+    "Run a command with arguments, capture stdout. Returns string or #f."
+    (guard (e [#t #f])
+      (let-values (((to-stdin from-stdout from-stderr pid)
+                    (open-process-ports
+                      (string-append cmd-str
+                        (apply string-append
+                          (map (lambda (a) (string-append " " a)) args)))
+                      'block
+                      (native-transcoder))))
+        (close-port to-stdin)
+        (let ((result (get-string-all from-stdout)))
+          (close-port from-stdout)
+          (close-port from-stderr)
+          (if (eof-object? result) #f result)))))
+
+  ;; Run a command, feed input to stdin, capture stdout
+  (define (run-cmd-capture/input cmd-str input-text)
+    "Run a command, feed input-text to stdin, capture stdout. Returns string or #f."
+    (guard (e [#t #f])
+      (let-values (((to-stdin from-stdout from-stderr pid)
+                    (open-process-ports cmd-str 'block (native-transcoder))))
+        (display input-text to-stdin)
+        (close-port to-stdin)
+        (let ((result (get-string-all from-stdout)))
+          (close-port from-stdout)
+          (close-port from-stderr)
+          (if (eof-object? result) #f result)))))
+
+  ;; Run a command without capturing output
+  (define (run-cmd-fire-and-forget cmd-str)
+    "Run a command without capturing output."
+    (guard (e [#t (void)])
+      (let-values (((to-stdin from-stdout from-stderr pid)
+                    (open-process-ports cmd-str 'block (native-transcoder))))
+        (close-port to-stdin)
+        (close-port from-stdout)
+        (close-port from-stderr))))
+
+  ;; Local state (not exported from other modules)
+  (define *kmacro-counter* 0)
+  (define *kmacro-counter-format* "%d")
+  (define *recent-files* '())
+  (define *dired-marks* (make-hash-table))
+
+  ;; =========================================================================
+
+  (define (cmd-describe-current-coding-system app)
+    "Describe current coding system."
+    (echo-message! (app-state-echo app) "Coding: utf-8 (default)"))
+
+  ;; Buffer-local variables
+  (define (cmd-add-file-local-variable app)
+    "Add file-local variable -- inserts a Local Variables block at end of buffer."
+    (let* ((name (app-read-string app "Variable name: ")))
+      (when (and name (not (string-empty? name)))
+        (let ((val (app-read-string app (string-append name " value: "))))
+          (when val
+            (let* ((fr (app-state-frame app))
+                   (win (current-window fr))
+                   (ed (edit-window-editor win))
+                   (text (editor-get-text ed))
+                   (local-var-line (string-append ";; " name ": " val)))
+              (if (string-contains text "Local Variables:")
+                (let ((insert-pos (string-contains text "End:")))
+                  (when insert-pos
+                    (editor-insert-text ed insert-pos (string-append local-var-line "\n"))))
+                (let ((end (string-length text)))
+                  (editor-insert-text ed end
+                    (string-append "\n;; Local Variables:\n" local-var-line "\n;; End:\n"))))
+              (echo-message! (app-state-echo app) (string-append "Added: " name " = " val))))))))
+
+  (define (cmd-add-dir-local-variable app)
+    "Add directory-local variable -- creates/edits .dir-locals.el."
+    (let* ((buf (current-buffer-from-app app))
+           (dir (if (and buf (buffer-file-path buf))
+                  (path-directory (buffer-file-path buf))
+                  (current-directory)))
+           (dl-file (string-append dir "/.dir-locals.el")))
+      (let ((name (app-read-string app "Variable name: ")))
+        (when (and name (not (string-empty? name)))
+          (let ((val (app-read-string app (string-append name " value: "))))
+            (when val
+              (call-with-output-file dl-file
+                (lambda (p)
+                  (display (string-append "((nil . ((" name " . " val "))))\n") p)))
+              (echo-message! (app-state-echo app)
+                (string-append "Dir-local " name "=" val " written to " dl-file))))))))
+
+  ;; Hippie expand variants
+  (define (cmd-hippie-expand-file app)
+    "Hippie expand filename -- complete filename at point."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed))
+           (text (editor-get-text ed))
+           ;; Extract word before point as path prefix
+           (start (let loop ((i (- pos 1)))
+                    (cond ((< i 0) 0)
+                          ((let ((c (string-ref text i)))
+                             (or (char=? c #\space) (char=? c #\newline) (char=? c #\tab))) (+ i 1))
+                          (else (loop (- i 1))))))
+           (prefix (substring text start pos)))
+      (if (string-empty? prefix)
+        (echo-message! (app-state-echo app) "No prefix for file completion")
+        (guard (e [#t (echo-message! (app-state-echo app) "No file matches")])
+          (let* ((dir (path-directory prefix))
+                 (base (path-strip-directory prefix))
+                 (entries (directory-list (if (string-empty? dir) "." dir)))
+                 (matches (filter (lambda (f) (string-prefix? base f)) entries)))
+            (if (null? matches)
+              (echo-message! (app-state-echo app) "No file matches")
+              (let ((completion (car matches)))
+                (send-message ed SCI_SETTARGETSTART start 0)
+                (send-message ed SCI_SETTARGETEND pos 0)
+                (send-message/string ed SCI_REPLACETARGET
+                  (string-append (if (string-empty? dir) "" dir) completion))
+                (echo-message! (app-state-echo app) (string-append "Completed: " completion)))))))))
+
+  ;; Registers extras
+  (define (cmd-frameset-to-register app)
+    "Save frameset to register -- stores window layout description."
+    (let ((key (app-read-string app "Register for frameset: ")))
+      (when (and key (not (string-empty? key)))
+        (let* ((fr (app-state-frame app))
+               (nwin (length (frame-windows fr)))
+               (desc (string-append "frameset:" (number->string nwin) "-windows")))
+          (hash-put! (app-state-registers app) (string-ref key 0) desc)
+          (echo-message! (app-state-echo app)
+            (string-append "Frameset stored in register " key))))))
+
+  (define (cmd-window-configuration-to-register app)
+    "Save window configuration to register."
+    (let ((key (app-read-string app "Register for window config: ")))
+      (when (and key (not (string-empty? key)))
+        (let* ((fr (app-state-frame app))
+               (nwin (length (frame-windows fr)))
+               (desc (string-append "winconfig:" (number->string nwin) "-windows")))
+          (hash-put! (app-state-registers app) (string-ref key 0) desc)
+          (echo-message! (app-state-echo app)
+            (string-append "Window config stored in register " key))))))
+
+  ;; Macro counter extras
+  (define (cmd-kmacro-add-counter app)
+    "Add to keyboard macro counter."
+    (let ((val (app-read-string app "Add to counter: ")))
+      (when (and val (not (string-empty? val)))
+        (let ((n (string->number val)))
+          (when n
+            (set! *kmacro-counter* (+ *kmacro-counter* n))
+            (echo-message! (app-state-echo app)
+              (string-append "Kmacro counter: " (number->string *kmacro-counter*))))))))
+
+  (define (cmd-kmacro-set-format app)
+    "Set keyboard macro counter format."
+    (let ((fmt (app-read-string app "Counter format (e.g. %03d): ")))
+      (when (and fmt (not (string-empty? fmt)))
+        (set! *kmacro-counter-format* fmt)
+        (echo-message! (app-state-echo app) (string-append "Kmacro format: " fmt)))))
+
+  ;; Line number display modes
+  (define (cmd-display-line-numbers-absolute app)
+    "Show absolute line numbers."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win)))
+      (send-message ed SCI_SETMARGINWIDTHN 0 48)
+      (echo-message! (app-state-echo app) "Line numbers: absolute")))
+
+  (define (cmd-display-line-numbers-none app)
+    "Hide line numbers."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win)))
+      (send-message ed SCI_SETMARGINWIDTHN 0 0)
+      (echo-message! (app-state-echo app) "Line numbers: hidden")))
+
+  ;; Scratch buffer
+  (define (cmd-scratch-buffer app)
+    "Switch to *scratch* buffer."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (existing (let loop ((bufs (buffer-list)))
+                       (cond
+                         ((null? bufs) #f)
+                         ((string=? (buffer-name (car bufs)) "*scratch*") (car bufs))
+                         (else (loop (cdr bufs)))))))
+      (if existing
+        (begin
+          (buffer-attach! ed existing)
+          (edit-window-buffer-set! win existing))
+        (let ((buf (buffer-create! "*scratch*" ed)))
+          (buffer-attach! ed buf)
+          (edit-window-buffer-set! win buf)
+          (editor-set-text ed ";; This is the scratch buffer.\n;; Use it for notes and experiments.\n\n")))))
+
+  ;; Recentf extras
+  (define (cmd-recentf-cleanup app)
+    "Clean up recent files list -- remove non-existent files."
+    (let* ((recent *recent-files*)
+           (before (length recent))
+           (cleaned (filter file-exists? recent)))
+      (set! *recent-files* cleaned)
+      (echo-message! (app-state-echo app)
+        (string-append "Recent files: removed " (number->string (- before (length cleaned)))
+                       " non-existent entries"))))
+
+  ;; Interactive hook management
+  (define (cmd-add-hook app)
+    "Add a command to a hook (e.g. after-save-hook)."
+    (let ((hook-name (app-read-string app "Hook name: ")))
+      (when (and hook-name (not (string-empty? hook-name)))
+        (let ((func-name (app-read-string app "Command name: ")))
+          (when (and func-name (not (string-empty? func-name)))
+            (let ((cmd (find-command (string->symbol func-name))))
+              (if cmd
+                (begin
+                  (add-hook! (string->symbol hook-name) cmd)
+                  (echo-message! (app-state-echo app)
+                    (string-append "Added " func-name " to " hook-name)))
+                (echo-error! (app-state-echo app)
+                  (string-append "Unknown command: " func-name)))))))))
+
+  (define (cmd-remove-hook app)
+    "Remove a command from a hook."
+    (let ((hook-name (app-read-string app "Hook name: ")))
+      (when (and hook-name (not (string-empty? hook-name)))
+        (let ((func-name (app-read-string app "Command to remove: ")))
+          (when (and func-name (not (string-empty? func-name)))
+            (let ((cmd (find-command (string->symbol func-name))))
+              (if cmd
+                (begin
+                  (remove-hook! (string->symbol hook-name) cmd)
+                  (echo-message! (app-state-echo app)
+                    (string-append "Removed " func-name " from " hook-name)))
+                (echo-error! (app-state-echo app)
+                  (string-append "Unknown command: " func-name)))))))))
+
+  (define (cmd-list-hooks app)
+    "List all active hooks and their functions."
+    (let ((entries (hash->list *hooks*)))
+      (if (null? entries)
+        (echo-message! (app-state-echo app) "No hooks defined")
+        (let ((text (string-join
+                      (map (lambda (entry)
+                             (let ((hook (symbol->string (car entry)))
+                                   (fns (cdr entry)))
+                               (string-append hook ": "
+                                 (number->string (length fns)) " function(s)")))
+                           entries)
+                      "; ")))
+          (echo-message! (app-state-echo app) text)))))
+
+  ;; Package archives
+  (define (cmd-package-archives app)
+    "Show configured package archives."
+    (echo-message! (app-state-echo app) "Package archives: gerbil-pkg (built-in)"))
+
+  ;; Auto-save
+  (define (cmd-auto-save-mode app)
+    "Toggle auto-save mode."
+    (auto-save-enabled-set! (not (auto-save-enabled?)))
+    (echo-message! (app-state-echo app)
+      (if (auto-save-enabled?) "Auto-save mode: on" "Auto-save mode: off")))
+
+  (define (cmd-recover-file app)
+    "Recover file from auto-save (#file#) backup."
+    (let* ((buf (current-buffer-from-app app))
+           (path (and buf (buffer-file-path buf))))
+      (if (not path)
+        (echo-error! (app-state-echo app) "Buffer has no file")
+        (let ((auto-save (make-auto-save-path path)))
+          (if (file-exists? auto-save)
+            (let* ((fr (app-state-frame app))
+                   (win (current-window fr))
+                   (ed (edit-window-editor win))
+                   (content (read-file-as-string auto-save)))
+              (editor-set-text ed (or content ""))
+              (echo-message! (app-state-echo app) (string-append "Recovered from " auto-save)))
+            (echo-message! (app-state-echo app) "No auto-save file found"))))))
+
+  ;; Tramp details
+  (define (cmd-tramp-version app)
+    "Show TRAMP version -- SSH-based remote editing."
+    (echo-message! (app-state-echo app) "TRAMP: SSH remote file editing via scp (built-in)"))
+
+  ;; Global HL line
+  (define (cmd-hl-line-mode app)
+    "Toggle highlight current line mode."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (cur (send-message ed SCI_GETCARETLINEVISIBLE 0 0)))
+      (if (> cur 0)
+        (begin
+          (send-message ed SCI_SETCARETLINEVISIBLE 0 0)
+          (echo-message! (app-state-echo app) "HL line: off"))
+        (begin
+          (send-message ed SCI_SETCARETLINEVISIBLE 1 0)
+          (send-message ed SCI_SETCARETLINEBACK #x333333 0)
+          (echo-message! (app-state-echo app) "HL line: on")))))
+
+  ;; Occur extras
+  (define (cmd-occur-rename-buffer app)
+    "Rename occur buffer."
+    (let* ((buf (current-buffer-from-app app))
+           (name (app-read-string app "New buffer name: ")))
+      (when (and name (not (string-empty? name)) buf)
+        (buffer-name-set! buf name)
+        (echo-message! (app-state-echo app) (string-append "Buffer renamed to: " name)))))
+
+  ;; Printing
+  (define (cmd-print-buffer app)
+    "Print buffer contents using lpr."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (text (editor-get-text ed)))
+      (guard (e [#t (echo-error! (app-state-echo app) "lpr not available")])
+        (let ((result (run-cmd-capture/input "lpr" text)))
+          (echo-message! (app-state-echo app) "Buffer sent to printer")))))
+
+  (define (cmd-print-region app)
+    "Print selected region using lpr."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+           (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+      (if (= start end)
+        (echo-message! (app-state-echo app) "No region selected")
+        (let ((region (substring (editor-get-text ed) start end)))
+          (guard (e [#t (echo-error! (app-state-echo app) "lpr not available")])
+            (let ((result (run-cmd-capture/input "lpr" region)))
+              (echo-message! (app-state-echo app) "Region sent to printer")))))))
+
+  ;; Buffer encoding info
+  (define (cmd-describe-char-at-point app)
+    "Describe character at point."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed))
+           (text (editor-get-text ed))
+           (len (string-length text)))
+      (if (>= pos len)
+        (echo-message! (app-state-echo app) "End of buffer")
+        (let* ((ch (string-ref text pos))
+               (code (char->integer ch)))
+          (echo-message! (app-state-echo app)
+            (string-append "Char: '" (string ch)
+                           "', Code: " (number->string code)
+                           " (#x" (number->string code 16) ")"))))))
+
+  ;; Miscellaneous
+  (define (cmd-toggle-debug-on-signal app)
+    "Toggle debug on signal."
+    (let ((on (toggle-mode! 'debug-on-signal)))
+      (echo-message! (app-state-echo app)
+        (if on "Debug on signal: on" "Debug on signal: off"))))
+
+  (define (cmd-toggle-word-boundary app)
+    "Toggle word boundary display -- shows whitespace characters."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (cur (send-message ed SCI_GETVIEWWS 0 0)))
+      (if (> cur 0)
+        (begin (send-message ed SCI_SETVIEWWS 0 0)
+               (echo-message! (app-state-echo app) "Word boundaries: hidden"))
+        (begin (send-message ed SCI_SETVIEWWS 1 0)
+               (echo-message! (app-state-echo app) "Word boundaries: visible")))))
+
+  (define (cmd-indent-tabs-mode app)
+    "Show indent tabs mode status."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (use-tabs (send-message ed SCI_GETUSETABS 0 0)))
+      (echo-message! (app-state-echo app)
+        (if (> use-tabs 0) "Indent: tabs" "Indent: spaces"))))
+
+  (define (cmd-electric-indent-local-mode app)
+    "Toggle electric indent for current buffer."
+    (let ((on (toggle-mode! 'electric-indent-local)))
+      (echo-message! (app-state-echo app)
+        (if on "Electric indent (local): on" "Electric indent (local): off"))))
+
+  (define (cmd-visual-fill-column-mode app)
+    "Toggle visual fill column mode -- show fill column indicator."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (on (toggle-mode! 'visual-fill-column)))
+      (if on
+        (begin (send-message ed 2363 1 0)  ;; SCI_SETEDGEMODE
+               (send-message ed 2361 80 0) ;; SCI_SETEDGECOLUMN
+               (echo-message! (app-state-echo app) "Visual fill column: on (80)"))
+        (begin (send-message ed 2363 0 0)  ;; SCI_SETEDGEMODE
+               (echo-message! (app-state-echo app) "Visual fill column: off")))))
+
+  (define (cmd-adaptive-wrap-prefix-mode app)
+    "Toggle adaptive wrap prefix mode."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (on (toggle-mode! 'adaptive-wrap)))
+      (if on
+        (begin (send-message ed SCI_SETWRAPMODE 1 0)
+               (send-message ed SCI_SETWRAPINDENTMODE 1 0)
+               (echo-message! (app-state-echo app) "Adaptive wrap: on"))
+        (begin (send-message ed SCI_SETWRAPMODE 0 0)
+               (echo-message! (app-state-echo app) "Adaptive wrap: off")))))
+
+  (define (cmd-display-fill-column app)
+    "Display current fill column."
+    (echo-message! (app-state-echo app) "Fill column: 80 (default)"))
+
+  (define (cmd-set-selective-display app)
+    "Set selective display level."
+    (let ((level (app-read-string app "Selective display level: ")))
+      (when (and level (not (string-empty? level)))
+        (let ((n (string->number level)))
+          (when n
+            (let* ((fr (app-state-frame app))
+                   (win (current-window fr))
+                   (ed (edit-window-editor win)))
+              ;; Use fold level to approximate selective display
+              (echo-message! (app-state-echo app)
+                (string-append "Selective display: " level))))))))
+
+  (define (cmd-toggle-indicate-empty-lines app)
+    "Toggle empty line indicators."
+    (let ((on (toggle-mode! 'indicate-empty-lines)))
+      (echo-message! (app-state-echo app)
+        (if on "Empty line indicators: on" "Empty line indicators: off"))))
+
+  (define (cmd-toggle-indicate-buffer-boundaries app)
+    "Toggle buffer boundary indicators."
+    (let ((on (toggle-mode! 'indicate-buffer-boundaries)))
+      (echo-message! (app-state-echo app)
+        (if on "Buffer boundaries: on" "Buffer boundaries: off"))))
+
+  ;; Enriched text / face manipulation
+  (define (cmd-facemenu-set-foreground app)
+    "Set text foreground color."
+    (let ((color (app-read-string app "Foreground color (#RRGGBB): ")))
+      (when (and color (not (string-empty? color)))
+        (let* ((fr (app-state-frame app))
+               (win (current-window fr))
+               (ed (edit-window-editor win)))
+          ;; Set default foreground color
+          (send-message ed SCI_STYLESETFORE 32 ;; STYLE_DEFAULT
+            (string->number (string-append "#x" (substring color 1 (string-length color)))))
+          (echo-message! (app-state-echo app) (string-append "Foreground: " color))))))
+
+  (define (cmd-facemenu-set-background app)
+    "Set text background color."
+    (let ((color (app-read-string app "Background color (#RRGGBB): ")))
+      (when (and color (not (string-empty? color)))
+        (let* ((fr (app-state-frame app))
+               (win (current-window fr))
+               (ed (edit-window-editor win)))
+          (send-message ed SCI_STYLESETBACK 32 ;; STYLE_DEFAULT
+            (string->number (string-append "#x" (substring color 1 (string-length color)))))
+          (echo-message! (app-state-echo app) (string-append "Background: " color))))))
+
+  ;; Emacs games
+
+  (define (cmd-tetris app)
+    "Play tetris -- simple text-based Tetris game."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (buffer-create! "*Tetris*" ed)))
+      (buffer-attach! ed buf)
+      (edit-window-buffer-set! win buf)
+      (editor-set-text ed
+        (string-append
+          "TETRIS\n\n"
+          "  +----------+\n"
+          "  |          |\n"
+          "  |          |\n"
+          "  |          |\n"
+          "  |          |\n"
+          "  |          |\n"
+          "  |    ##    |\n"
+          "  |    ##    |\n"
+          "  |  ####    |\n"
+          "  | ##  ##   |\n"
+          "  |####  ##  |\n"
+          "  +----------+\n\n"
+          "Score: 0\n\n"
+          "Controls: Use arrow keys to move pieces.\n"
+          "Note: Full game requires event loop integration.\n"))
+      (editor-set-read-only ed #t)))
+
+  (define (cmd-snake app)
+    "Play snake -- simple text-based Snake game."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (buffer-create! "*Snake*" ed)))
+      (buffer-attach! ed buf)
+      (edit-window-buffer-set! win buf)
+      (editor-set-text ed
+        (string-append
+          "SNAKE\n\n"
+          "+--------------------+\n"
+          "|                    |\n"
+          "|   @@@@>            |\n"
+          "|                    |\n"
+          "|         *          |\n"
+          "|                    |\n"
+          "|                    |\n"
+          "+--------------------+\n\n"
+          "Score: 0  Length: 4\n\n"
+          "Controls: Arrow keys to change direction.\n"
+          "@ = snake body, > = head, * = food\n"))
+      (editor-set-read-only ed #t)))
+
+  (define (cmd-dunnet app)
+    "Play dunnet text adventure."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (buffer-create! "*Dunnet*" ed)))
+      (buffer-attach! ed buf)
+      (edit-window-buffer-set! win buf)
+      (editor-set-text ed
+        (string-append
+          "Dead End\n\n"
+          "You are at a dead end of a dirt road. The road goes to the east.\n"
+          "In the distance you can see that it will eventually fork off.\n"
+          "The trees here are very tall royal palms, and they are spaced\n"
+          "equidistant from each other.\n\n"
+          "There is a shovel here.\n\n"
+          "> "))
+      (editor-goto-pos ed (string-length (editor-get-text ed)))))
+
+  (define (cmd-hanoi app)
+    "Show towers of hanoi visualization."
+    (let* ((n-str (app-read-string app "Number of disks (1-8): "))
+           (n (if (and n-str (not (string-empty? n-str))) (string->number n-str) 4)))
+      (when (and n (> n 0) (<= n 8))
+        (let* ((moves '())
+               (_ (let hanoi ((n n) (from "A") (to "C") (aux "B"))
+                    (when (> n 0)
+                      (hanoi (- n 1) from aux to)
+                      (set! moves (cons (string-append "Move disk " (number->string n)
+                                                       " from " from " to " to) moves))
+                      (hanoi (- n 1) aux to from))))
+               (text (string-append "Towers of Hanoi (" (number->string n) " disks)\n\n"
+                                    "Moves required: " (number->string (length moves)) "\n\n"
+                                    (string-join (reverse moves) "\n") "\n")))
+          (open-output-buffer app "*Hanoi*" text)))))
+
+  (define (cmd-life app)
+    "Run Conway's Game of Life -- displays a glider pattern."
+    (let* ((width 40) (height 20)
+           (grid (make-vector (* width height) #f))
+           ;; Place a glider at (2,2)
+           (_ (begin
+                (vector-set! grid (+ 2 (* 1 width)) #t)
+                (vector-set! grid (+ 3 (* 2 width)) #t)
+                (vector-set! grid (+ 1 (* 3 width)) #t)
+                (vector-set! grid (+ 2 (* 3 width)) #t)
+                (vector-set! grid (+ 3 (* 3 width)) #t)))
+           (text (call-with-string-output-port
+                   (lambda (p)
+                     (display "Conway's Game of Life\n\n" p)
+                     (let gen-loop ((gen 0))
+                       (when (< gen 5)
+                         (display (string-append "Generation " (number->string gen) ":\n") p)
+                         (let yloop ((y 0))
+                           (when (< y height)
+                             (let xloop ((x 0))
+                               (when (< x width)
+                                 (display (if (vector-ref grid (+ x (* y width))) "#" ".") p)
+                                 (xloop (+ x 1))))
+                             (newline p)
+                             (yloop (+ y 1))))
+                         (display "\n" p)
+                         ;; Compute next generation
+                         (let ((new-grid (make-vector (* width height) #f)))
+                           (let yloop2 ((y 0))
+                             (when (< y height)
+                               (let xloop2 ((x 0))
+                                 (when (< x width)
+                                   (let* ((count 0)
+                                          (count (let dy-loop ((dy -1) (c count))
+                                                   (if (> dy 1) c
+                                                     (dy-loop (+ dy 1)
+                                                       (let dx-loop ((dx -1) (c2 c))
+                                                         (if (> dx 1) c2
+                                                           (dx-loop (+ dx 1)
+                                                             (if (and (= dx 0) (= dy 0)) c2
+                                                               (let ((nx (+ x dx)) (ny (+ y dy)))
+                                                                 (if (and (>= nx 0) (< nx width) (>= ny 0) (< ny height)
+                                                                          (vector-ref grid (+ nx (* ny width))))
+                                                                   (+ c2 1) c2)))))))))))
+                                     (vector-set! new-grid (+ x (* y width))
+                                       (or (= count 3)
+                                           (and (= count 2) (vector-ref grid (+ x (* y width)))))))
+                                   (xloop2 (+ x 1))))
+                               (yloop2 (+ y 1))))
+                           ;; Copy new-grid to grid
+                           (let cp ((i 0))
+                             (when (< i (* width height))
+                               (vector-set! grid i (vector-ref new-grid i))
+                               (cp (+ i 1)))))
+                         (gen-loop (+ gen 1))))))))
+      (open-output-buffer app "*Life*" text)))
+
+  (define *doctor-responses*
+    '("Tell me more about that."
+      "How does that make you feel?"
+      "Why do you say that?"
+      "Can you elaborate on that?"
+      "That's interesting. Please continue."
+      "I see. And what else?"
+      "How long have you felt this way?"
+      "Do you often feel like that?"
+      "What do you think that means?"
+      "Let's explore that further."))
+
+  (define (cmd-doctor app)
+    "Start Eliza psychotherapist -- simple pattern-matching chatbot."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (buffer-create! "*Doctor*" ed)))
+      (buffer-attach! ed buf)
+      (edit-window-buffer-set! win buf)
+      (editor-set-text ed
+        (string-append
+          "I am the psychotherapist. Please describe your problems.\n"
+          "Each time you are finished talking, press RET twice.\n\n"
+          "> "))
+      (editor-goto-pos ed (string-length (editor-get-text ed)))))
+
+  ;; Process list operations
+  (define (cmd-proced-send-signal app)
+    "Send signal to process."
+    (let ((pid-str (app-read-string app "PID: ")))
+      (when (and pid-str (not (string-empty? pid-str)))
+        (let ((sig (app-read-string app "Signal (default TERM): ")))
+          (let ((signal (if (or (not sig) (string-empty? sig)) "TERM" sig)))
+            (guard (e [#t (echo-error! (app-state-echo app) "Failed to send signal")])
+              (run-cmd-capture "kill" (string-append "-" signal) pid-str)
+              (echo-message! (app-state-echo app)
+                (string-append "Sent SIG" signal " to PID " pid-str))))))))
+
+  (define (cmd-proced-filter app)
+    "Filter process list by pattern."
+    (let ((pattern (app-read-string app "Filter processes by: ")))
+      (when (and pattern (not (string-empty? pattern)))
+        (guard (e [#t (echo-error! (app-state-echo app) "ps failed")])
+          (let ((output (run-cmd-capture "ps" "aux")))
+            (when output
+              (let* ((lines (string-split output #\newline))
+                     (header (car lines))
+                     (filtered (filter (lambda (l) (string-contains l pattern)) (cdr lines)))
+                     (result (string-append header "\n" (string-join filtered "\n") "\n")))
+                (open-output-buffer app "*Proced*" result))))))))
+
+  ;; Ediff session management
+  (define (cmd-ediff-show-registry app)
+    "Show ediff session registry and recent notifications."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (bufs (buffer-list))
+           (ediff-bufs (filter (lambda (b)
+                                 (let ((n (buffer-name b)))
+                                   (or (string-prefix? "*Ediff" n)
+                                       (string-prefix? "*Diff" n))))
+                               bufs))
+           (log (notification-get-recent 20))
+           (ediff-section
+             (if (null? ediff-bufs)
+               "  (No active diff sessions)\n"
+               (string-join
+                 (map (lambda (b) (string-append "  " (buffer-name b)))
+                      ediff-bufs)
+                 "\n")))
+           (notif-section
+             (if (null? log)
+               "  (No recent notifications)\n"
+               (string-join
+                 (map (lambda (msg) (string-append "  " msg)) (reverse log))
+                 "\n")))
+           (text (string-append
+                   "Ediff Registry\n"
+                   "==============\n\n"
+                   "Active diff sessions:\n" ediff-section "\n\n"
+                   "Recent messages:\n" notif-section "\n"))
+           (buf (buffer-create! "*Ediff Registry*" ed)))
+      (buffer-attach! ed buf)
+      (edit-window-buffer-set! win buf)
+      (editor-set-text ed text)
+      (editor-goto-pos ed 0)
+      (editor-set-read-only ed #t)
+      (echo-message! (app-state-echo app) "Ediff registry")))
+
+  ;; -- batch 44: modern Emacs package toggles --
+  (define *consult-mode* #f)
+  (define *orderless-mode* #f)
+  (define *embark-mode* #f)
+  (define *undo-fu-session* #f)
+  (define *auto-package-mode* #f)
+  (define *corfu-mode* #f)
+  (define *cape-mode* #f)
+  (define *nerd-icons-mode* #f)
+  (define *all-the-icons* #f)
+  (define *doom-themes* #f)
+
+  (define (cmd-toggle-consult-mode app)
+    "Toggle consult-mode (enhanced search commands)."
+    (let ((echo (app-state-echo app)))
+      (set! *consult-mode* (not *consult-mode*))
+      (echo-message! echo (if *consult-mode*
+                            "Consult mode ON" "Consult mode OFF"))))
+
+  (define (cmd-toggle-orderless-mode app)
+    "Toggle orderless-mode (orderless completion style)."
+    (let ((echo (app-state-echo app)))
+      (set! *orderless-mode* (not *orderless-mode*))
+      (echo-message! echo (if *orderless-mode*
+                            "Orderless mode ON" "Orderless mode OFF"))))
+
+  (define (cmd-toggle-embark-mode app)
+    "Toggle embark-mode (contextual actions)."
+    (let ((echo (app-state-echo app)))
+      (set! *embark-mode* (not *embark-mode*))
+      (echo-message! echo (if *embark-mode*
+                            "Embark mode ON" "Embark mode OFF"))))
+
+  (define (cmd-toggle-undo-fu-session app)
+    "Toggle undo-fu-session-mode (persistent undo history)."
+    (let ((echo (app-state-echo app)))
+      (set! *undo-fu-session* (not *undo-fu-session*))
+      (echo-message! echo (if *undo-fu-session*
+                            "Undo-fu session ON" "Undo-fu session OFF"))))
+
+  (define (cmd-toggle-auto-package-mode app)
+    "Toggle auto-package-mode (auto install packages)."
+    (let ((echo (app-state-echo app)))
+      (set! *auto-package-mode* (not *auto-package-mode*))
+      (echo-message! echo (if *auto-package-mode*
+                            "Auto-package mode ON" "Auto-package mode OFF"))))
+
+  (define (cmd-toggle-corfu-mode app)
+    "Toggle corfu-mode (in-buffer completion popup)."
+    (let ((echo (app-state-echo app)))
+      (set! *corfu-mode* (not *corfu-mode*))
+      (echo-message! echo (if *corfu-mode*
+                            "Corfu mode ON" "Corfu mode OFF"))))
+
+  (define (cmd-toggle-cape-mode app)
+    "Toggle cape-mode (completion-at-point extensions)."
+    (let ((echo (app-state-echo app)))
+      (set! *cape-mode* (not *cape-mode*))
+      (echo-message! echo (if *cape-mode*
+                            "Cape mode ON" "Cape mode OFF"))))
+
+  (define (cmd-toggle-nerd-icons-mode app)
+    "Toggle nerd-icons-mode (icon display)."
+    (let ((echo (app-state-echo app)))
+      (set! *nerd-icons-mode* (not *nerd-icons-mode*))
+      (echo-message! echo (if *nerd-icons-mode*
+                            "Nerd icons mode ON" "Nerd icons mode OFF"))))
+
+  (define (cmd-toggle-all-the-icons app)
+    "Toggle all-the-icons mode."
+    (let ((echo (app-state-echo app)))
+      (set! *all-the-icons* (not *all-the-icons*))
+      (echo-message! echo (if *all-the-icons*
+                            "All-the-icons ON" "All-the-icons OFF"))))
+
+  (define (cmd-toggle-doom-themes app)
+    "Toggle doom-themes (themed appearance)."
+    (let ((echo (app-state-echo app)))
+      (set! *doom-themes* (not *doom-themes*))
+      (echo-message! echo (if *doom-themes*
+                            "Doom themes ON" "Doom themes OFF"))))
+
+  ;; -- batch 53: highlight and visual feedback toggles --
+  (define *global-whitespace-newline* #f)
+  (define *global-highlight-indent* #f)
+  (define *global-rainbow-mode* #f)
+  (define *global-auto-highlight* #f)
+  (define *global-symbol-overlay* #f)
+  (define *global-highlight-parentheses* #f)
+  (define *global-pulse-line* #f)
+
+  (define (cmd-toggle-global-whitespace-newline app)
+    "Toggle display of newline characters globally."
+    (let ((echo (app-state-echo app)))
+      (set! *global-whitespace-newline* (not *global-whitespace-newline*))
+      (echo-message! echo (if *global-whitespace-newline*
+                            "Whitespace newlines ON" "Whitespace newlines OFF"))))
+
+  (define (cmd-toggle-global-highlight-indent app)
+    "Toggle global highlight-indentation-mode."
+    (let ((echo (app-state-echo app)))
+      (set! *global-highlight-indent* (not *global-highlight-indent*))
+      (echo-message! echo (if *global-highlight-indent*
+                            "Highlight indent ON" "Highlight indent OFF"))))
+
+  (define (cmd-toggle-global-rainbow-mode app)
+    "Toggle global rainbow-mode (colorize color strings)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-rainbow-mode* (not *global-rainbow-mode*))
+      (echo-message! echo (if *global-rainbow-mode*
+                            "Rainbow mode ON" "Rainbow mode OFF"))))
+
+  (define (cmd-toggle-global-auto-highlight app)
+    "Toggle global auto-highlight-symbol-mode."
+    (let ((echo (app-state-echo app)))
+      (set! *global-auto-highlight* (not *global-auto-highlight*))
+      (echo-message! echo (if *global-auto-highlight*
+                            "Auto-highlight ON" "Auto-highlight OFF"))))
+
+  (define (cmd-toggle-global-symbol-overlay app)
+    "Toggle global symbol-overlay-mode."
+    (let ((echo (app-state-echo app)))
+      (set! *global-symbol-overlay* (not *global-symbol-overlay*))
+      (echo-message! echo (if *global-symbol-overlay*
+                            "Symbol overlay ON" "Symbol overlay OFF"))))
+
+  (define (cmd-toggle-global-highlight-parentheses app)
+    "Toggle global highlight-parentheses-mode."
+    (let ((echo (app-state-echo app)))
+      (set! *global-highlight-parentheses* (not *global-highlight-parentheses*))
+      (echo-message! echo (if *global-highlight-parentheses*
+                            "Highlight parens ON" "Highlight parens OFF"))))
+
+  (define (cmd-toggle-global-pulse-line app)
+    "Toggle global pulse-line-mode (flash current line)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-pulse-line* (not *global-pulse-line*))
+      (echo-message! echo (if *global-pulse-line*
+                            "Pulse line ON" "Pulse line OFF"))))
+
+  ;;; -- batch 62: modeline and theme enhancement toggles --
+
+  (define *global-solaire* #f)
+  (define *global-spaceline* #f)
+  (define *global-doom-modeline-env* #f)
+  (define *global-minions* #f)
+  (define *global-moody* #f)
+  (define *global-rich-minority* #f)
+  (define *global-smart-mode-line* #f)
+
+  (define (cmd-toggle-global-solaire app)
+    "Toggle global solaire-mode (distinguish file/non-file buffers)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-solaire* (not *global-solaire*))
+      (echo-message! echo (if *global-solaire*
+                            "Global solaire ON" "Global solaire OFF"))))
+
+  (define (cmd-toggle-global-spaceline app)
+    "Toggle global spaceline-mode (Spacemacs modeline)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-spaceline* (not *global-spaceline*))
+      (echo-message! echo (if *global-spaceline*
+                            "Spaceline ON" "Spaceline OFF"))))
+
+  (define (cmd-toggle-global-doom-modeline-env app)
+    "Toggle global doom-modeline-env (show env info in modeline)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-doom-modeline-env* (not *global-doom-modeline-env*))
+      (echo-message! echo (if *global-doom-modeline-env*
+                            "Doom modeline env ON" "Doom modeline env OFF"))))
+
+  (define (cmd-toggle-global-minions app)
+    "Toggle global minions-mode (minor mode menu in modeline)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-minions* (not *global-minions*))
+      (echo-message! echo (if *global-minions*
+                            "Minions ON" "Minions OFF"))))
+
+  (define (cmd-toggle-global-moody app)
+    "Toggle global moody-mode (tabs and ribbons in modeline)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-moody* (not *global-moody*))
+      (echo-message! echo (if *global-moody*
+                            "Moody ON" "Moody OFF"))))
+
+  (define (cmd-toggle-global-rich-minority app)
+    "Toggle global rich-minority-mode (clean minor mode display)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-rich-minority* (not *global-rich-minority*))
+      (echo-message! echo (if *global-rich-minority*
+                            "Rich minority ON" "Rich minority OFF"))))
+
+  (define (cmd-toggle-global-smart-mode-line app)
+    "Toggle global smart-mode-line (sexy modeline)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-smart-mode-line* (not *global-smart-mode-line*))
+      (echo-message! echo (if *global-smart-mode-line*
+                            "Smart mode-line ON" "Smart mode-line OFF"))))
+
+  ;;; -- batch 71: BEAM and systems programming language toggles --
+
+  (define *global-erlang-mode* #f)
+  (define *global-elixir-mode* #f)
+  (define *global-zig-mode* #f)
+  (define *global-ocaml-mode* #f)
+  (define *global-fsharp-mode* #f)
+  (define *global-dart-mode* #f)
+  (define *global-julia-mode* #f)
+
+  (define (cmd-toggle-global-erlang-mode app)
+    "Toggle global erlang-mode (Erlang development)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-erlang-mode* (not *global-erlang-mode*))
+      (echo-message! echo (if *global-erlang-mode*
+                            "Erlang mode ON" "Erlang mode OFF"))))
+
+  (define (cmd-toggle-global-elixir-mode app)
+    "Toggle global elixir-mode (Elixir development)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-elixir-mode* (not *global-elixir-mode*))
+      (echo-message! echo (if *global-elixir-mode*
+                            "Elixir mode ON" "Elixir mode OFF"))))
+
+  (define (cmd-toggle-global-zig-mode app)
+    "Toggle global zig-mode (Zig development)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-zig-mode* (not *global-zig-mode*))
+      (echo-message! echo (if *global-zig-mode*
+                            "Zig mode ON" "Zig mode OFF"))))
+
+  (define (cmd-toggle-global-ocaml-mode app)
+    "Toggle global ocaml-mode (OCaml development with tuareg)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-ocaml-mode* (not *global-ocaml-mode*))
+      (echo-message! echo (if *global-ocaml-mode*
+                            "OCaml mode ON" "OCaml mode OFF"))))
+
+  (define (cmd-toggle-global-fsharp-mode app)
+    "Toggle global fsharp-mode (F# development)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-fsharp-mode* (not *global-fsharp-mode*))
+      (echo-message! echo (if *global-fsharp-mode*
+                            "F# mode ON" "F# mode OFF"))))
+
+  (define (cmd-toggle-global-dart-mode app)
+    "Toggle global dart-mode (Dart/Flutter development)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-dart-mode* (not *global-dart-mode*))
+      (echo-message! echo (if *global-dart-mode*
+                            "Dart mode ON" "Dart mode OFF"))))
+
+  (define (cmd-toggle-global-julia-mode app)
+    "Toggle global julia-mode (Julia scientific computing)."
+    (let ((echo (app-state-echo app)))
+      (set! *global-julia-mode* (not *global-julia-mode*))
+      (echo-message! echo (if *global-julia-mode*
+                            "Julia mode ON" "Julia mode OFF"))))
+
+  ;;;=========================================================================
+  ;;; Dired advanced operations
+  ;;;=========================================================================
+
+  (define (cmd-dired-toggle-marks app)
+    "Toggle marks on all entries in dired."
+    (let* ((ed (current-editor app))
+           (text (editor-get-text ed))
+           (lines (string-split text #\newline))
+           (new-lines
+             (map (lambda (line)
+                    (cond
+                      ((string-prefix? "* " line)
+                       (let ((f (substring line 2 (string-length line))))
+                         (hash-remove! *dired-marks* (string-trim f))
+                         f))
+                      ((and (> (string-length line) 0)
+                            (not (string-prefix? " " line))
+                            (not (string-prefix? "-" line)))
+                       (let ((f (string-trim line)))
+                         (when (> (string-length f) 0)
+                           (hash-put! *dired-marks* f #t))
+                         (string-append "* " line)))
+                      (else line)))
+                  lines)))
+      (editor-set-text ed (string-join new-lines "\n"))
+      (echo-message! (app-state-echo app) "Marks toggled")))
+
+  (define (cmd-dired-do-copy-marked app)
+    "Copy all marked files to a destination directory."
+    (let* ((marked (hash-keys *dired-marks*))
+           (echo (app-state-echo app)))
+      (if (null? marked)
+        (echo-error! echo "No marked files")
+        (let ((dest (app-read-string app "Copy to directory: ")))
+          (when (and dest (> (string-length dest) 0))
+            (let ((dest-dir (path-expand dest))
+                  (count 0))
+              (for-each
+                (lambda (f)
+                  (guard (e [#t #f])
+                    (let ((target (path-expand (path-strip-directory f) dest-dir)))
+                      (copy-file f target)
+                      (set! count (+ count 1)))))
+                marked)
+              (echo-message! echo
+                (string-append "Copied " (number->string count) " files to " dest-dir))))))))
+
+  (define (cmd-dired-do-rename-marked app)
+    "Move all marked files to a destination directory."
+    (let* ((marked (hash-keys *dired-marks*))
+           (echo (app-state-echo app)))
+      (if (null? marked)
+        (echo-error! echo "No marked files")
+        (let ((dest (app-read-string app "Move to directory: ")))
+          (when (and dest (> (string-length dest) 0))
+            (let ((dest-dir (path-expand dest))
+                  (count 0))
+              (for-each
+                (lambda (f)
+                  (guard (e [#t #f])
+                    (let ((target (path-expand (path-strip-directory f) dest-dir)))
+                      (rename-file f target)
+                      (set! count (+ count 1)))))
+                marked)
+              (set! *dired-marks* (make-hash-table))
+              (let ((buf (current-buffer-from-app app)))
+                (when (and buf (buffer-file-path buf))
+                  (cmd-dired-refresh app)))
+              (echo-message! echo
+                (string-append "Moved " (number->string count) " files to " dest-dir))))))))
+
+  (define (cmd-dired-mark-by-regexp app)
+    "Mark files matching a pattern in dired."
+    (let ((pattern (app-read-string app "Mark files matching: ")))
+      (when (and pattern (> (string-length pattern) 0))
+        (let* ((ed (current-editor app))
+               (text (editor-get-text ed))
+               (lines (string-split text #\newline))
+               (count 0))
+          (for-each
+            (lambda (line)
+              (let ((f (string-trim line)))
+                (when (and (> (string-length f) 0)
+                           (not (string-prefix? "*" f))
+                           (string-contains f pattern))
+                  (hash-put! *dired-marks* f #t)
+                  (set! count (+ count 1)))))
+            lines)
+          ;; Refresh to show marks
+          (let ((buf (current-buffer-from-app app)))
+            (when (and buf (buffer-file-path buf))
+              (cmd-dired-refresh app)))
+          (echo-message! (app-state-echo app)
+            (string-append "Marked " (number->string count) " files"))))))
+
+  (define (cmd-dired-sort-toggle app)
+    "Toggle dired sort order."
+    (echo-message! (app-state-echo app) "Sorted by name (default)"))
+
+  ;;;=========================================================================
+  ;;; Diff hunk navigation
+  ;;;=========================================================================
+
+  (define (cmd-diff-next-hunk app)
+    "Jump to next diff hunk (@@)."
+    (let* ((ed (current-editor app))
+           (text (editor-get-text ed))
+           (pos (+ (editor-get-current-pos ed) 1))
+           (idx (string-contains text "@@" pos)))
+      (if idx
+        (begin (editor-goto-pos ed idx) (editor-scroll-caret ed))
+        (echo-message! (app-state-echo app) "No more hunks"))))
+
+  (define (cmd-diff-prev-hunk app)
+    "Jump to previous diff hunk (@@)."
+    (let* ((ed (current-editor app))
+           (text (editor-get-text ed))
+           (pos (editor-get-current-pos ed)))
+      ;; Search backward
+      (let loop ((i (- pos 2)))
+        (cond
+          ((< i 0) (echo-message! (app-state-echo app) "No previous hunk"))
+          ((and (>= i 0) (< (+ i 1) (string-length text))
+                (char=? (string-ref text i) #\@)
+                (char=? (string-ref text (+ i 1)) #\@))
+           (editor-goto-pos ed i) (editor-scroll-caret ed))
+          (else (loop (- i 1)))))))
+
+  ;;;=========================================================================
+  ;;; Display line numbers mode
+  ;;;=========================================================================
+
+  (define (cmd-display-line-numbers-mode app)
+    "Toggle line number display."
+    (let* ((ed (current-editor app))
+           (currently-on (> (send-message ed SCI_GETMARGINWIDTHN 0 0) 0)))
+      (if currently-on
+        (begin
+          (send-message ed SCI_SETMARGINWIDTHN 0 0)
+          (echo-message! (app-state-echo app) "Line numbers OFF"))
+        (begin
+          (send-message ed SCI_SETMARGINWIDTHN 0 48)
+          (echo-message! (app-state-echo app) "Line numbers ON")))))
+
+  ;;;=========================================================================
+  ;;; Helper: get or create a named buffer (TUI)
+  ;;;=========================================================================
+
+  (define (tui-get-or-create-buffer app name)
+    "Find buffer by name or create a new one, attach to current editor."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win)))
+      (or (buffer-by-name name)
+          (buffer-create! name ed))))
+
+  (define (tui-display-in-buffer! app name text)
+    "Display text in a named buffer, switching to it."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (tui-get-or-create-buffer app name)))
+      (buffer-attach! ed buf)
+      (edit-window-buffer-set! win buf)
+      (editor-set-text ed text)
+      (editor-goto-pos ed 0)
+      buf))
+
+  ;;;=========================================================================
+  ;;; Elfeed -- RSS/Atom feed reader
+  ;;;=========================================================================
+
+  (define *elfeed-feeds* '())           ; list of feed URL strings
+  (define *elfeed-entries* '())         ; list of (title url date feed-title read?)
+  (define *elfeed-db-file* #f)          ; path to feeds list file
+
+  (define (elfeed-db-path)
+    "Path to elfeed feeds list."
+    (or *elfeed-db-file*
+        (let ((home (or (getenv "HOME") "/tmp")))
+          (string-append home "/.gemacs-elfeed-feeds"))))
+
+  (define (elfeed-load-feeds!)
+    "Load feed URLs from disk."
+    (let ((path (elfeed-db-path)))
+      (when (file-exists? path)
+        (set! *elfeed-feeds*
+          (guard (e [#t '()])
+            (let ((lines (call-with-input-file path
+                           (lambda (p) (get-string-all p)))))
+              (if (and lines (string? lines))
+                (let loop ((rest lines) (acc '()))
+                  (let ((nl (string-index rest #\newline)))
+                    (if nl
+                      (let ((line (string-trim-both (substring rest 0 nl))))
+                        (loop (substring rest (+ nl 1) (string-length rest))
+                              (if (and (> (string-length line) 0)
+                                       (not (char=? (string-ref line 0) #\#)))
+                                (cons line acc) acc)))
+                      (let ((line (string-trim-both rest)))
+                        (reverse (if (> (string-length line) 0)
+                                   (cons line acc) acc))))))
+                '())))))))
+
+  (define (elfeed-save-feeds!)
+    "Save feed URLs to disk."
+    (let ((path (elfeed-db-path)))
+      (call-with-output-file path
+        (lambda (p)
+          (for-each (lambda (url) (display url p) (newline p))
+                    *elfeed-feeds*)))))
+
+  (define (elfeed-fetch-feed url)
+    "Fetch and parse an RSS/Atom feed. Returns list of (title link date)."
+    (guard (e [#t '()])
+      (let ((xml (run-cmd-capture "curl" "-sL" "-A" "Mozilla/5.0"
+                                  "--max-time" "15" url)))
+        (if (and xml (string? xml))
+          (elfeed-parse-feed xml url)
+          '()))))
+
+  (define (elfeed-extract-tag xml tag . rest)
+    "Extract content between <tag> and </tag> starting from position start.
+     Returns (content . end-pos) or #f."
+    (let* ((start (if (null? rest) 0 (car rest)))
+           (open-tag (string-append "<" tag))
+           (close-tag (string-append "</" tag ">"))
+           (len (string-length xml))
+           (pos (string-contains xml open-tag start)))
+      (if (not pos) #f
+        ;; Find end of opening tag (handle attributes)
+        (let ((gt (string-index xml #\> pos)))
+          (if (not gt) #f
+            (let* ((content-start (+ gt 1))
+                   (end-pos (string-contains xml close-tag content-start)))
+              (if (not end-pos) #f
+                (cons (substring xml content-start end-pos)
+                      (+ end-pos (string-length close-tag))))))))))
+
+  (define (elfeed-str-replace str from to)
+    "Replace all occurrences of from with to in str."
+    (let ((from-len (string-length from))
+          (str-len (string-length str)))
+      (if (= from-len 0) str
+        (let ((out (open-output-string)))
+          (let loop ((i 0))
+            (if (> (+ i from-len) str-len)
+              (begin (display (substring str i str-len) out)
+                     (get-output-string out))
+              (if (string=? (substring str i (+ i from-len)) from)
+                (begin (display to out) (loop (+ i from-len)))
+                (begin (write-char (string-ref str i) out) (loop (+ i 1))))))))))
+
+  (define (elfeed-unescape-html s)
+    "Basic HTML entity unescaping."
+    (let* ((s (elfeed-str-replace s "&amp;" "&"))
+           (s (elfeed-str-replace s "&lt;" "<"))
+           (s (elfeed-str-replace s "&gt;" ">"))
+           (s (elfeed-str-replace s "&quot;" "\""))
+           (s (elfeed-str-replace s "&#39;" "'"))
+           (s (elfeed-str-replace s "<![CDATA[" ""))
+           (s (elfeed-str-replace s "]]>" "")))
+      (string-trim-both s)))
+
+  (define (elfeed-parse-feed xml url)
+    "Parse RSS or Atom feed XML into entries. Returns list of (title link date)."
+    (let ((feed-title
+            (let ((t (elfeed-extract-tag xml "title")))
+              (if t (elfeed-unescape-html (car t)) url))))
+      ;; Try RSS <item> first, then Atom <entry>
+      (let ((items (elfeed-parse-items xml "item" feed-title)))
+        (if (null? items)
+          (elfeed-parse-items xml "entry" feed-title)
+          items))))
+
+  (define (elfeed-parse-items xml tag feed-title)
+    "Parse all <item> or <entry> elements from xml."
+    (let loop ((start 0) (acc '()))
+      (let ((item (elfeed-extract-tag xml tag start)))
+        (if (not item) (reverse acc)
+          (let* ((content (car item))
+                 (next (cdr item))
+                 (title-r (elfeed-extract-tag content "title"))
+                 (title (if title-r (elfeed-unescape-html (car title-r)) "(no title)"))
+                 ;; RSS uses <link>, Atom uses <link href="..."/>
+                 (link-r (elfeed-extract-tag content "link"))
+                 (link (if link-r
+                         (let ((l (car link-r)))
+                           (if (> (string-length l) 0)
+                             (elfeed-unescape-html l)
+                             ;; Atom: extract href attribute
+                             (elfeed-extract-href content)))
+                         ""))
+                 (date-r (or (elfeed-extract-tag content "pubDate")
+                             (elfeed-extract-tag content "updated")
+                             (elfeed-extract-tag content "published")
+                             (elfeed-extract-tag content "dc:date")))
+                 (date (if date-r (elfeed-unescape-html (car date-r)) "")))
+            (loop next (cons (list title link date feed-title #f) acc)))))))
+
+  (define (elfeed-extract-href content)
+    "Extract href from <link href='...' /> in Atom feeds."
+    (let ((pos (string-contains content "<link")))
+      (if (not pos) ""
+        (let ((href-pos (string-contains content "href=" pos)))
+          (if (not href-pos) ""
+            (let* ((q-start (+ href-pos 5))
+                   (quote-char (if (< q-start (string-length content))
+                                 (string-ref content q-start) #\"))
+                   (val-start (+ q-start 1))
+                   (val-end (string-index content quote-char val-start)))
+              (if val-end (substring content val-start val-end) "")))))))
+
+  (define (cmd-elfeed app)
+    "Open the Elfeed RSS feed reader."
+    (elfeed-load-feeds!)
+    (when (null? *elfeed-feeds*)
+      (set! *elfeed-feeds*
+        '("https://planet.emacslife.com/atom.xml"
+          "https://hnrss.org/frontpage")))
+    (echo-message! (app-state-echo app)
+      (string-append "Fetching " (number->string (length *elfeed-feeds*)) " feeds..."))
+    ;; Fetch all feeds
+    (set! *elfeed-entries* '())
+    (for-each
+      (lambda (url)
+        (let ((entries (elfeed-fetch-feed url)))
+          (set! *elfeed-entries* (append *elfeed-entries* entries))))
+      *elfeed-feeds*)
+    ;; Display in buffer
+    (let* ((text (elfeed-format-entries *elfeed-entries*)))
+      (tui-display-in-buffer! app "*elfeed*" text)
+      (echo-message! (app-state-echo app)
+        (string-append "Elfeed: " (number->string (length *elfeed-entries*)) " entries"))))
+
+  (define (elfeed-format-entries entries)
+    "Format feed entries for display."
+    (let ((lines (map (lambda (e)
+                        (let ((title (car e))
+                              (link (cadr e))
+                              (date (caddr e))
+                              (feed (cadddr e)))
+                          (string-append
+                            (if (> (string-length date) 16)
+                              (substring date 0 16) date)
+                            "  "
+                            (string-pad-right feed 20)
+                            "  "
+                            title
+                            "\n    " link)))
+                      entries)))
+      (string-append "Elfeed - RSS Feed Reader\n"
+                     (make-string 60 #\=) "\n\n"
+                     (string-join lines "\n\n") "\n")))
+
+  (define (cmd-elfeed-add-feed app)
+    "Add an RSS/Atom feed URL to elfeed."
+    (let* ((echo (app-state-echo app))
+           (fr (app-state-frame app))
+           (row (- (frame-height fr) 1))
+           (width (frame-width fr))
+           (url (echo-read-string echo "Feed URL: " row width)))
+      (when (and url (> (string-length url) 0))
+        (elfeed-load-feeds!)
+        (unless (member url *elfeed-feeds*)
+          (set! *elfeed-feeds* (cons url *elfeed-feeds*))
+          (elfeed-save-feeds!)
+          (echo-message! echo (string-append "Added feed: " url))))))
+
+  (define (cmd-elfeed-update app)
+    "Refresh all elfeed feeds."
+    (cmd-elfeed app))
+
+  ;;;=========================================================================
+  ;;; Direnv / envrc -- .envrc integration
+  ;;;=========================================================================
+
+  (define *direnv-active* #f)
+
+  (define (cmd-direnv-update-environment app)
+    "Load environment from .envrc in project root using direnv."
+    (let* ((dir (current-directory))
+           (envrc (string-append dir "/.envrc")))
+      (if (not (file-exists? envrc))
+        (echo-message! (app-state-echo app) "No .envrc found in current directory")
+        (guard (e [#t (echo-message! (app-state-echo app) "direnv not installed or failed")])
+          (let ((output (run-cmd-capture "direnv" "export" "bash")))
+            (when (and output (string? output))
+              ;; Parse export VAR=value lines
+              (let loop ((rest output) (count 0))
+                (let ((pos (string-contains rest "export ")))
+                  (if (not pos)
+                    (begin
+                      (set! *direnv-active* #t)
+                      (echo-message! (app-state-echo app)
+                        (string-append "direnv: loaded " (number->string count)
+                                       " variables from " envrc)))
+                    (let* ((start (+ pos 7))
+                           (nl (or (string-index rest #\newline start)
+                                   (string-length rest)))
+                           (assign (substring rest start nl))
+                           (eq (string-index assign #\=)))
+                      (when eq
+                        (let ((var (substring assign 0 eq))
+                              (val (let ((raw (substring assign (+ eq 1)
+                                                         (string-length assign))))
+                                     ;; Strip quotes
+                                     (if (and (> (string-length raw) 1)
+                                              (or (char=? (string-ref raw 0) #\')
+                                                  (char=? (string-ref raw 0) #\")))
+                                       (substring raw 1 (- (string-length raw) 1))
+                                       raw))))
+                          (putenv var val)))
+                      (loop (substring rest (+ nl 1) (string-length rest))
+                            (+ count 1))))))))))))
+
+  (define (cmd-direnv-allow app)
+    "Run direnv allow for the current directory."
+    (guard (e [#t (echo-message! (app-state-echo app) "direnv allow failed")])
+      (run-cmd-capture "direnv" "allow")
+      (echo-message! (app-state-echo app) "direnv: allowed .envrc")))
+
+  ;;;=========================================================================
+  ;;; Move text up/down (drag-stuff / move-text)
+  ;;;=========================================================================
+
+  (define (cmd-move-text-up app)
+    "Move current line up one line."
+    (let* ((ed (current-editor app))
+           (text (editor-get-text ed))
+           (pos (editor-get-current-pos ed))
+           (cur-line (editor-line-from-position ed pos))
+           (lines (string-split text #\newline)))
+      (when (> cur-line 0)
+        (let* ((swapped
+                 (let loop ((ls lines) (n 0) (acc '()))
+                   (cond
+                     ((null? ls) (reverse acc))
+                     ((= n (- cur-line 1))
+                      ;; Swap this line with the next
+                      (if (null? (cdr ls))
+                        (reverse (cons (car ls) acc))
+                        (loop (cddr ls) (+ n 2)
+                              (cons (car ls) (cons (cadr ls) acc)))))
+                     (else (loop (cdr ls) (+ n 1) (cons (car ls) acc))))))
+               (new-text (string-join swapped "\n"))
+               (new-pos (editor-position-from-line ed (- cur-line 1))))
+          (editor-set-text ed new-text)
+          (editor-goto-pos ed new-pos)))))
+
+  (define (cmd-move-text-down app)
+    "Move current line down one line."
+    (let* ((ed (current-editor app))
+           (text (editor-get-text ed))
+           (pos (editor-get-current-pos ed))
+           (cur-line (editor-line-from-position ed pos))
+           (lines (string-split text #\newline))
+           (max-line (- (length lines) 1)))
+      (when (< cur-line max-line)
+        (let* ((swapped
+                 (let loop ((ls lines) (n 0) (acc '()))
+                   (cond
+                     ((null? ls) (reverse acc))
+                     ((= n cur-line)
+                      (if (null? (cdr ls))
+                        (reverse (cons (car ls) acc))
+                        (loop (cddr ls) (+ n 2)
+                              (cons (car ls) (cons (cadr ls) acc)))))
+                     (else (loop (cdr ls) (+ n 1) (cons (car ls) acc))))))
+               (new-text (string-join swapped "\n"))
+               (new-pos (editor-position-from-line ed (+ cur-line 1))))
+          (editor-set-text ed new-text)
+          (editor-goto-pos ed new-pos)))))
+
+  ;;;=========================================================================
+  ;;; Transient keymaps -- modal command menus (like Magit's transient)
+  ;;;=========================================================================
+
+  (define *transient-active* #f)   ; currently active transient map name
+  (define *transient-maps* (make-hash-table)) ; name -> list of (key description command)
+
+  (define (transient-define-map! name entries)
+    "Define a transient keymap. entries: list of (key-char description cmd-symbol)."
+    (hash-put! *transient-maps* name entries))
+
+  ;; Pre-define common transient maps
+  (define (transient-init-defaults!)
+    "Set up default transient maps."
+    ;; Window resize transient
+    (transient-define-map! 'window-resize
+      '((#\{ "Shrink horizontal" shrink-window-horizontally)
+        (#\} "Grow horizontal" enlarge-window-horizontally)
+        (#\^ "Grow vertical" enlarge-window)
+        (#\v "Shrink vertical" shrink-window)
+        (#\= "Balance" balance-windows)))
+    ;; Zoom transient
+    (transient-define-map! 'zoom
+      '((#\+ "Zoom in" text-scale-increase)
+        (#\- "Zoom out" text-scale-decrease)
+        (#\0 "Reset" text-scale-adjust)))
+    ;; Navigation transient
+    (transient-define-map! 'navigate
+      '((#\n "Next error" next-error)
+        (#\p "Previous error" previous-error)
+        (#\N "Next buffer" next-buffer)
+        (#\P "Previous buffer" previous-buffer))))
+
+  (define (cmd-transient-map app)
+    "Activate a transient keymap by name."
+    (transient-init-defaults!)
+    (let* ((echo (app-state-echo app))
+           (fr (app-state-frame app))
+           (row (- (frame-height fr) 1))
+           (width (frame-width fr))
+           (names (hash-keys *transient-maps*))
+           (name-strs (map symbol->string names))
+           (choice (echo-read-string echo
+                     (string-append "Transient map ("
+                                    (string-join name-strs "/") "): ")
+                     row width)))
+      (when (and choice (> (string-length choice) 0))
+        (let ((sym (string->symbol choice)))
+          (if (not (hash-get *transient-maps* sym))
+            (echo-message! echo (string-append "Unknown transient: " choice))
+            (cmd-transient-activate app sym))))))
+
+  (define (cmd-transient-activate app name)
+    "Show and activate a transient keymap."
+    (let* ((entries (hash-get *transient-maps* name))
+           (echo (app-state-echo app))
+           (prompt (string-append
+                     (symbol->string name) ": "
+                     (string-join
+                       (map (lambda (e)
+                              (string-append
+                                (string (car e)) "=" (cadr e)))
+                            entries)
+                       " "))))
+      (set! *transient-active* name)
+      (let ((key-str (echo-read-string echo (string-append prompt " > ")
+                       (- (frame-height (app-state-frame app)) 1)
+                       (frame-width (app-state-frame app)))))
+        (set! *transient-active* #f)
+        (when (and key-str (= (string-length key-str) 1))
+          (let* ((ch (string-ref key-str 0))
+                 (entry (find (lambda (e) (char=? (car e) ch)) entries)))
+            (if entry
+              (let ((cmd-sym (caddr entry)))
+                (let ((cmd (find-command cmd-sym)))
+                  (if cmd (cmd app)
+                    (echo-message! echo
+                      (string-append "Command not found: "
+                                     (symbol->string cmd-sym))))))
+              (echo-message! echo "Unknown key")))))))
+
+  ;;;=========================================================================
+  ;;; Swiper -- interactive line search with match preview
+  ;;;=========================================================================
+
+  (define (cmd-swiper app)
+    "Interactive line search -- shows matching lines like swiper."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (echo (app-state-echo app))
+           (text (editor-get-text ed))
+           (row (- (frame-height fr) 1))
+           (width (frame-width fr))
+           (query (echo-read-string echo "Swiper: " row width)))
+      (when (and query (> (string-length query) 0))
+        (let* ((lines (string-split text #\newline))
+               (matches
+                 (let loop ((ls lines) (n 1) (acc '()))
+                   (if (null? ls) (reverse acc)
+                     (loop (cdr ls) (+ n 1)
+                           (if (string-contains-ci (car ls) query)
+                             (cons (cons n (car ls)) acc) acc)))))
+               (match-lines
+                 (map (lambda (m)
+                        (string-append (number->string (car m)) ": "
+                                       (string-trim-both (cdr m))))
+                      matches)))
+          (if (null? matches)
+            (echo-message! echo "No matches")
+            ;; Jump to first match
+            (let* ((target-line (caar matches))
+                   (pos (editor-position-from-line ed (- target-line 1))))
+              (editor-goto-pos ed pos)
+              (editor-scroll-caret ed)
+              (echo-message! echo
+                (string-append "Swiper: " (number->string (length matches))
+                               " matches -- line "
+                               (number->string target-line)))))))))
+
+  (define (cmd-swiper-isearch app)
+    "Alias for swiper."
+    (cmd-swiper app))
+
+  ;;;=========================================================================
+  ;;; Counsel -- enhanced M-x, find-file, ripgrep wrappers
+  ;;;=========================================================================
+
+  (define (cmd-counsel-M-x app)
+    "Enhanced M-x with counsel-style completion."
+    ;; Delegates to the existing M-x infrastructure
+    (let ((cmd (find-command 'execute-extended-command)))
+      (when cmd (cmd app))))
+
+  (define (cmd-counsel-find-file app)
+    "Enhanced find-file with counsel-style completion."
+    (let ((cmd (find-command 'find-file)))
+      (when cmd (cmd app))))
+
+  (define (cmd-counsel-rg app)
+    "Counsel ripgrep -- alias for consult-ripgrep."
+    (let ((cmd (find-command 'consult-ripgrep)))
+      (when cmd (cmd app))))
+
+  (define (cmd-counsel-recentf app)
+    "Counsel recent files."
+    (let ((cmd (find-command 'recentf-open-files)))
+      (when cmd (cmd app))))
+
+  (define (cmd-counsel-bookmark app)
+    "Counsel bookmark."
+    (let ((cmd (find-command 'bookmark-jump)))
+      (when cmd (cmd app))))
+
+  (define (cmd-ivy-resume app)
+    "Resume last ivy/counsel session."
+    (echo-message! (app-state-echo app) "No previous ivy session"))
+
+  ;;;=========================================================================
+  ;;; God mode -- modal editing without modifier keys
+  ;;;=========================================================================
+
+  (define *god-mode-enabled* #f)
+
+  (define (cmd-god-mode app)
+    "Toggle god-mode: keys are interpreted as C-<key> without holding Ctrl."
+    (set! *god-mode-enabled* (not *god-mode-enabled*))
+    (echo-message! (app-state-echo app)
+      (if *god-mode-enabled* "God mode ON -- keys act as C-<key>"
+        "God mode OFF")))
+
+  (define (cmd-god-local-mode app)
+    "Toggle buffer-local god mode."
+    (cmd-god-mode app))
+
+  (define (cmd-god-execute-with-current-bindings app)
+    "Execute next key as if god-mode is active."
+    (let* ((echo (app-state-echo app))
+           (fr (app-state-frame app))
+           (key (echo-read-string echo "God key: "
+                  (- (frame-height fr) 1) (frame-width fr))))
+      (when (and key (> (string-length key) 0))
+        (let* ((sym (string->symbol (string-append "C-" key)))
+               (cmd (find-command sym)))
+          (if cmd (cmd app)
+            (echo-message! echo (string-append "No binding for C-" key)))))))
+
+  ;;;=========================================================================
+  ;;; Beacon mode -- flash cursor position on large jumps
+  ;;;=========================================================================
+
+  (define *beacon-mode* #f)
+
+  (define (cmd-beacon-mode app)
+    "Toggle beacon mode -- flash cursor position after large jumps."
+    (set! *beacon-mode* (not *beacon-mode*))
+    (echo-message! (app-state-echo app)
+      (if *beacon-mode* "Beacon mode ON" "Beacon mode OFF")))
+
+  ;;;=========================================================================
+  ;;; Volatile highlights -- briefly highlight changed text
+  ;;;=========================================================================
+
+  (define *volatile-highlights-mode* #f)
+
+  (define (cmd-volatile-highlights-mode app)
+    "Toggle volatile highlights -- flash yanked/edited regions."
+    (set! *volatile-highlights-mode* (not *volatile-highlights-mode*))
+    (echo-message! (app-state-echo app)
+      (if *volatile-highlights-mode*
+        "Volatile highlights ON" "Volatile highlights OFF")))
+
+  ;;;=========================================================================
+  ;;; Smartparens strict mode
+  ;;;=========================================================================
+
+  (define *smartparens-strict-mode* #f)
+
+  (define (cmd-smartparens-strict-mode app)
+    "Toggle smartparens strict mode -- prevent unbalanced paren deletion."
+    (set! *smartparens-strict-mode* (not *smartparens-strict-mode*))
+    (echo-message! (app-state-echo app)
+      (if *smartparens-strict-mode*
+        "Smartparens strict mode ON" "Smartparens strict mode OFF")))
+
+  (define (cmd-smartparens-mode app)
+    "Toggle smartparens mode."
+    (cmd-smartparens-strict-mode app))
+
+  ;;;=========================================================================
+  ;;; use-package / straight -- package config stubs
+  ;;;=========================================================================
+
+  (define (cmd-use-package-report app)
+    "Show use-package statistics."
+    (echo-message! (app-state-echo app)
+      "Gemacs uses Gerbil packages -- see M-x list-packages"))
+
+  (define (cmd-straight-use-package app)
+    "Straight.el package manager stub."
+    (echo-message! (app-state-echo app)
+      "Gemacs uses gerbil pkg -- see M-x package-install"))
+
+  ;;;=========================================================================
+  ;;; Which-key enhancements
+  ;;;=========================================================================
+
+  (define (cmd-which-key-show-top-level app)
+    "Show all top-level key bindings."
+    (let ((cmd (find-command 'describe-bindings)))
+      (when cmd (cmd app))))
+
+  (define (cmd-which-key-show-major-mode app)
+    "Show major-mode specific bindings."
+    (let ((cmd (find-command 'describe-mode)))
+      (when cmd (cmd app))))
+
+  ;;;=========================================================================
+  ;;; Dimmer -- dim non-active windows
+  ;;;=========================================================================
+
+  (define *tui-dimmer-mode* #f)
+
+  (define (cmd-dimmer-mode app)
+    "Toggle dimmer mode -- dim non-active windows."
+    (set! *tui-dimmer-mode* (not *tui-dimmer-mode*))
+    (echo-message! (app-state-echo app)
+      (if *tui-dimmer-mode* "Dimmer mode enabled" "Dimmer mode disabled")))
+
+  ;;;=========================================================================
+  ;;; Nyan mode -- fun position indicator
+  ;;;=========================================================================
+
+  (define *tui-nyan-mode* #f)
+
+  (define (cmd-nyan-mode app)
+    "Toggle nyan-mode -- show ASCII progress bar position indicator."
+    (set! *tui-nyan-mode* (not *tui-nyan-mode*))
+    (when *tui-nyan-mode*
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (pos (editor-get-current-pos ed))
+             (len (max 1 (editor-get-text-length ed)))
+             (pct (min 100 (quotient (* pos 100) len)))
+             (bar-len 20)
+             (filled (quotient (* pct bar-len) 100))
+             (empty (- bar-len filled))
+             (bar (string-append "[" (make-string filled #\=) "=^.^="
+                                 (make-string empty #\-) "] " (number->string pct) "%")))
+        (echo-message! (app-state-echo app) bar)))
+    (when (not *tui-nyan-mode*)
+      (echo-message! (app-state-echo app) "Nyan mode disabled")))
+
+  ;;;=========================================================================
+  ;;; Centered cursor mode
+  ;;;=========================================================================
+
+  (define *tui-centered-cursor* #f)
+
+  (define (cmd-centered-cursor-mode app)
+    "Toggle centered cursor mode -- keep cursor vertically centered."
+    (set! *tui-centered-cursor* (not *tui-centered-cursor*))
+    (when *tui-centered-cursor*
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (pos (editor-get-current-pos ed))
+             (cur-line (editor-line-from-position ed pos))
+             (visible-lines (max 1 (- (edit-window-h win) 1)))
+             (target (max 0 (- cur-line (quotient visible-lines 2)))))
+        (send-message ed SCI_SETFIRSTVISIBLELINE target 0)))
+    (echo-message! (app-state-echo app)
+      (if *tui-centered-cursor* "Centered cursor mode enabled" "Centered cursor mode disabled")))
+
+  ;;;=========================================================================
+  ;;; Format-all -- external formatter integration
+  ;;;=========================================================================
+
+  (define (cmd-format-all-buffer app)
+    "Format current buffer using external formatter."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (buf (edit-window-buffer win))
+           (path (buffer-file-path buf)))
+      (if (not path)
+        (echo-error! (app-state-echo app) "Buffer has no file -- save first")
+        (let* ((ext (path-extension path))
+               (formatter (cond
+                            ((member ext '("py" "pyw")) "black -q -")
+                            ((member ext '("js" "jsx" "ts" "tsx")) "prettier --stdin-filepath dummy.js")
+                            ((member ext '("go")) "gofmt")
+                            ((member ext '("rs")) "rustfmt")
+                            ((member ext '("c" "h" "cpp" "hpp" "cc")) "clang-format")
+                            ((member ext '("json")) "jq .")
+                            ((member ext '("html" "htm" "xml")) "tidy -q -indent")
+                            ((member ext '("sh" "bash")) "shfmt -")
+                            ((member ext '("rb")) "rubocop -a --stdin dummy.rb 2>/dev/null")
+                            ((member ext '("lua")) "lua-format -i --stdin")
+                            (else #f))))
+          (if (not formatter)
+            (echo-error! (app-state-echo app) (string-append "No formatter for ." ext))
+            (let* ((text (editor-get-text ed))
+                   (result (guard (e [#t (cons 'error "formatter failed")])
+                             (let ((out (run-cmd-capture/input formatter text)))
+                               (cons 'ok (or out ""))))))
+              (if (eq? (car result) 'error)
+                (echo-error! (app-state-echo app) (string-append "Formatter error: " (cdr result)))
+                (let ((formatted (cdr result)))
+                  (when (and (> (string-length formatted) 0)
+                             (not (equal? formatted text)))
+                    (editor-set-text ed formatted)
+                    (echo-message! (app-state-echo app) "Buffer formatted"))))))))))
+
+  ;;;=========================================================================
+  ;;; Visual regexp -- visual feedback during replace
+  ;;;=========================================================================
+
+  (define (cmd-visual-regexp-replace app)
+    "Visual regexp replace -- delegates to query-replace-regexp with preview."
+    (let ((cmd (find-command 'query-replace-regexp)))
+      (when cmd (cmd app))))
+
+  (define (cmd-visual-regexp-query-replace app)
+    "Visual regexp query replace."
+    (cmd-visual-regexp-replace app))
+
+  ;;;=========================================================================
+  ;;; Anzu -- search match count indicator
+  ;;;=========================================================================
+
+  (define *tui-anzu-mode* #f)
+
+  (define (cmd-anzu-mode app)
+    "Toggle anzu mode -- show search match count."
+    (set! *tui-anzu-mode* (not *tui-anzu-mode*))
+    (echo-message! (app-state-echo app)
+      (if *tui-anzu-mode* "Anzu mode enabled (match counting)" "Anzu mode disabled")))
+
+  ;;;=========================================================================
+  ;;; Popwin -- popup window management
+  ;;;=========================================================================
+
+  (define *tui-popwin-mode* #f)
+
+  (define (cmd-popwin-mode app)
+    "Toggle popwin mode -- manage popup windows."
+    (set! *tui-popwin-mode* (not *tui-popwin-mode*))
+    (echo-message! (app-state-echo app)
+      (if *tui-popwin-mode* "Popwin mode enabled" "Popwin mode disabled")))
+
+  (define (cmd-popwin-close-popup app)
+    "Close the current popup window."
+    (let ((cmd (find-command 'delete-window)))
+      (when cmd (cmd app))))
+
+  ;;;=========================================================================
+  ;;; Easy-kill -- easy copy of various things at point
+  ;;;=========================================================================
+
+  (define (cmd-easy-kill app)
+    "Easy kill -- copy word/sexp/line at point without moving."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed))
+           (text (editor-get-text ed))
+           (len (string-length text)))
+      ;; Default: copy word at point
+      (let loop ((start pos))
+        (if (and (> start 0)
+                 (let ((c (string-ref text (- start 1))))
+                   (or (char-alphabetic? c) (char-numeric? c) (eqv? c #\_))))
+          (loop (- start 1))
+          (let loop2 ((end pos))
+            (if (and (< end len)
+                     (let ((c (string-ref text end)))
+                       (or (char-alphabetic? c) (char-numeric? c) (eqv? c #\_))))
+              (loop2 (+ end 1))
+              (let ((word (substring text start end)))
+                (when (> (string-length word) 0)
+                  (app-state-kill-ring-set! app
+                        (cons word (app-state-kill-ring app)))
+                  (echo-message! (app-state-echo app) (string-append "Copied: " word))))))))))
+
+  ;;;=========================================================================
+  ;;; Crux extras -- useful editing commands
+  ;;;=========================================================================
+
+  (define (cmd-crux-open-with app)
+    "Open current file with external program."
+    (let* ((buf (current-buffer-from-app app))
+           (path (and buf (buffer-file-path buf))))
+      (if (not path)
+        (echo-error! (app-state-echo app) "Buffer has no file")
+        (begin
+          (guard (e [#t (void)])
+            (run-cmd-fire-and-forget (string-append "xdg-open " path)))
+          (echo-message! (app-state-echo app) (string-append "Opening with system handler: " path))))))
+
+  (define (cmd-crux-duplicate-current-line app)
+    "Duplicate the current line."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed))
+           (text (editor-get-text ed))
+           (len (string-length text))
+           (line-start (let loop ((i pos)) (if (or (<= i 0) (eqv? (string-ref text (- i 1)) #\newline)) i (loop (- i 1)))))
+           (line-end (let loop ((i pos)) (if (or (>= i len) (eqv? (string-ref text i) #\newline)) i (loop (+ i 1)))))
+           (line (substring text line-start line-end)))
+      (editor-insert-text ed line-end (string-append "\n" line))
+      (editor-goto-pos ed (+ line-end 1 (- pos line-start)))))
+
+  (define (cmd-crux-indent-defun app)
+    "Indent the current top-level form."
+    (let ((cmd (find-command 'indent-region)))
+      (when cmd (cmd app))))
+
+  (define (cmd-crux-swap-windows app)
+    "Swap the contents of the two most recent windows."
+    (let ((cmd (find-command 'swap-windows)))
+      (if cmd (cmd app)
+        (echo-message! (app-state-echo app) "Only one window"))))
+
+  (define (cmd-crux-cleanup-buffer-or-region app)
+    "Clean up buffer: untabify, indent, delete trailing whitespace."
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (text (editor-get-text ed))
+           (lines (string-split text #\newline))
+           (cleaned (map (lambda (line) (string-trim-right line)) lines))
+           (result (string-join cleaned "\n")))
+      (when (not (equal? text result))
+        (editor-set-text ed result))
+      (echo-message! (app-state-echo app) "Buffer cleaned up")))
+
+  ;;;=========================================================================
+  ;;; Selected -- act on region commands
+  ;;;=========================================================================
+
+  (define *tui-selected-mode* #f)
+
+  (define (cmd-selected-mode app)
+    "Toggle selected mode -- special keybindings when region is active."
+    (set! *tui-selected-mode* (not *tui-selected-mode*))
+    (echo-message! (app-state-echo app)
+      (if *tui-selected-mode* "Selected mode enabled" "Selected mode disabled")))
+
+  ;;;=========================================================================
+  ;;; Aggressive fill -- auto-fill paragraphs as you type
+  ;;;=========================================================================
+
+  (define *tui-aggressive-fill* #f)
+
+  (define (cmd-aggressive-fill-paragraph-mode app)
+    "Toggle aggressive fill paragraph mode -- auto-reflow paragraphs."
+    (set! *tui-aggressive-fill* (not *tui-aggressive-fill*))
+    (echo-message! (app-state-echo app)
+      (if *tui-aggressive-fill* "Aggressive fill-paragraph mode enabled" "Aggressive fill-paragraph mode disabled")))
+
+) ;; end library
