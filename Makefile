@@ -1,13 +1,24 @@
 SCHEME = scheme
-LIBDIRS = --libdirs lib:$(HOME)/mine/jerboa/lib:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src
+JERBOA    = $(HOME)/mine/jerboa
+JSH       = $(HOME)/mine/jerboa-shell/src
+LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src
+JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
 export LD_LIBRARY_PATH := $(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 
-.PHONY: all test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test clean
+.PHONY: all build rebuild test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test clean clean-generated
 
-all: test
+all: build test
 
-test: test-tier0 test-tier2 test-tier3 test-tier4 test-tier5
+# Generate lib/jemacs/*.sls from src/jemacs/*.ss (incremental)
+build:
+	$(JERBUILD) src/ lib/
+
+# Force regenerate all
+rebuild:
+	$(JERBUILD) src/ lib/ --force
+
+test: build test-tier0 test-tier2 test-tier3 test-tier4 test-tier5
 
 test-tier0:
 	$(SCHEME) $(LIBDIRS) --script tests/test-tier0.ss
@@ -26,3 +37,7 @@ test-tier5:
 
 clean:
 	find lib -name '*.so' -delete 2>/dev/null; true
+
+clean-generated:
+	rm -rf lib/jemacs/
+	rm -f src/.jerbuild-hashes
