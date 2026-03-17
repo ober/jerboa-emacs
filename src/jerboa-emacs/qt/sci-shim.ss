@@ -50,7 +50,6 @@
   :std/sugar)
 
 ;; SCI_REPLACESEL constant
-(def SCI_REPLACESEL 2170)
 
 ;; Helpers
 (def (sci-send sci msg (wparam 0) (lparam 0))

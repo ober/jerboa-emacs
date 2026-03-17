@@ -25,6 +25,9 @@ rebuild:
 run: build
 	$(SCHEME) $(LIBDIRS) --script main.ss
 
+run-qt: build
+	$(SCHEME) $(LIBDIRS) --script qt-main.ss
+
 # Qt backend build target
 build-qt: build
 	@echo "╔════════════════════════════════════════════════════════════════╗"

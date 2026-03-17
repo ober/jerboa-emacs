@@ -59,7 +59,6 @@
     (jerboa-emacs core) (chez-scintilla constants)
     (chez-scintilla scintilla) (chez-qt qt) (std sugar)
     (jerboa core) (jerboa runtime))
-  (def SCI_REPLACESEL 2170)
   (def (sci-send sci msg (wparam 0) (lparam 0))
        (qt-scintilla-send-message sci msg wparam lparam))
   (def (sci-send/string sci msg str (wparam 0))
