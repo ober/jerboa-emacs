@@ -1,8 +1,25 @@
 ;;; -*- Gerbil -*-
-;;; Qt main entry point for jerboa-emacs (STUB)
-(export qt-main)
-(import :std/sugar :jerboa-emacs/qt/app)
-(def (qt-main args)
-  (displayln "Jerboa-Emacs Qt (stub)")
-  (displayln "Full implementation pending")
-  0)
+;;; Executable entry point for gemacs Qt backend
+
+(export main)
+(import (only-in :jerboa-emacs/qt/app qt-main))
+
+(include "../manifest.ss")
+
+(def (main . args)
+  (cond
+    ((member "--version" args)
+     (displayln "gemacs " (cdar version-manifest))
+     (for-each (lambda (p)
+                 (when (not (string=? (car p) ""))
+                   (displayln (car p) " " (cdr p))))
+               (cdr version-manifest)))
+    ((member "--help" args)
+     (displayln "Usage: gemacs-qt [OPTIONS] [FILES...]")
+     (displayln "Options:")
+     (displayln "  --version        Show version information")
+     (displayln "  --help           Show this help message")
+     (displayln "  --verbose        Log all Qt calls and commands to ~/.gemacs-verbose.log")
+     (displayln "  --repl <port>    Start TCP debug REPL on given port (0=auto)"))
+    (else
+     (apply qt-main args))))

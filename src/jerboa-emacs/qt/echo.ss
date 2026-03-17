@@ -1,43 +1,692 @@
 ;;; -*- Gerbil -*-
-;;; Qt echo area/minibuffer for jerboa-emacs
+;;; Qt echo area / minibuffer for gemacs
 ;;;
-;;; Ported from gerbil-emacs/qt/echo.ss (STUB VERSION)
-;;; Full implementation: 692 lines - to be completed in later sprint
+;;; Uses a QLabel for displaying messages and an inline QLineEdit
+;;; (in the same echo-area row) for minibuffer prompts — no popup dialog.
 
-(export qt-echo-init!
-        qt-echo-message!
-        qt-echo-clear!
+(export qt-echo-draw!
         qt-echo-read-string
-        qt-echo-read-file
-        qt-echo-read-buffer
-        qt-echo-yes-or-no?
-        qt-echo-completing-read)
+        qt-echo-read-string-with-completion
+        qt-echo-read-file-with-completion
+        qt-echo-read-file-with-narrowing
+        qt-echo-read-with-narrowing
+        qt-minibuffer-init!)
 
 (import :std/sugar
+        :std/sort
+        :std/srfi/1
         :jerboa-emacs/qt/sci-shim
-        :jerboa-emacs/core)
+        :jerboa-emacs/core
+        :jerboa-emacs/qt/window)
 
-;; STUB: Echo area operations
-(def (qt-echo-init! frame)
-  (void))
+;;;============================================================================
+;;; Draw the echo area (QLabel)
+;;;============================================================================
 
-(def (qt-echo-message! app msg)
-  (displayln msg))
+(def (qt-echo-draw! echo label)
+  "Update the echo QLabel with current message."
+  (let ((msg (echo-state-message echo)))
+    (if msg
+      (begin
+        (qt-label-set-text! label msg)
+        ;; Red text for errors, normal for messages
+        (let ((font-css (string-append " font-family: " *default-font-family*
+                                       "; font-size: " (number->string *default-font-size*) "pt;")))
+          (if (echo-state-error? echo)
+            (qt-widget-set-style-sheet!
+              label (string-append "color: #ff4040; background: #282828;" font-css " padding: 2px 4px;"))
+            (qt-widget-set-style-sheet!
+              label (string-append "color: #d8d8d8; background: #282828;" font-css " padding: 2px 4px;")))))
+      (qt-label-set-text! label ""))))
 
-(def (qt-echo-clear! app)
-  (void))
+;;;============================================================================
+;;; Inline minibuffer state
+;;;============================================================================
 
-(def (qt-echo-read-string app prompt (initial ""))
-  initial)
+;; Persistent widgets — created once during app init
+(def *mb-container* #f)   ; QWidget wrapper for the prompt + line-edit row
+(def *mb-prompt* #f)      ; QLabel showing prompt text
+(def *mb-input* #f)       ; QLineEdit for user input
+(def *mb-echo-label* #f)  ; Reference to the echo QLabel (to hide/restore)
+(def *mb-qt-app* #f)      ; Reference to the Qt application for process-events
+(def *mb-editor* #f)      ; Reference to the editor widget (to restore focus)
+(def *mb-result* #f)      ; Box: #f = still running, (list text) = accepted, (list) = cancelled
+(def *mb-completions* []) ; Stored completions for Tab cycling
+(def *mb-tab-idx* 0)      ; Current Tab cycle index
+(def *mb-file-mode* #f)   ; When #t, Tab does directory-aware file completion
+(def *mb-last-tab-input* "")  ; Track input at last Tab press (for cycle vs new-match detection)
+;; Narrowing framework state
+(def *mb-list* #f)            ; QListWidget for candidate display
+(def *mb-narrowing?* #f)      ; When #t, narrowing mode is active
+(def *mb-all-candidates* [])  ; Full unfiltered candidate list
+(def *mb-filtered* [])        ; Currently filtered candidates (vector for O(1) indexing)
+(def *mb-max-visible* 15)     ; Max rows shown in narrowing list
+;; File narrowing state (helm-style find-file)
+(def *mb-file-narrowing?* #f)     ; When #t, narrowing browses filesystem
+(def *mb-file-dir* "")            ; Current directory for file narrowing
+(def *mb-user-selected?* #f)      ; Whether user explicitly navigated the list
 
-(def (qt-echo-read-file app prompt (default #f))
-  default)
+(def (mb-style)
+  "Generate minibuffer Qt stylesheet with current font settings."
+  (let ((font-css (string-append " font-family: " *default-font-family*
+                                 "; font-size: " (number->string *default-font-size*) "pt;")))
+    (string-append
+      "QWidget { background: #1e1e1e; border-top: 1px solid #484848; }\n"
+      "   QLabel { color: #b0b0b0; background: transparent;" font-css " padding: 0 4px; }\n"
+      "   QLineEdit { color: #d8d8d8; background: #1e1e1e; border: none;" font-css " padding: 2px 4px; }\n"
+      "   QListView { color: #d8d8d8; background: #282828; border: 1px solid #484848;" font-css " }")))
 
-(def (qt-echo-read-buffer app prompt)
-  "")
+;;;============================================================================
+;;; Fuzzy matching and Tab completion logic
+;;;============================================================================
 
-(def (qt-echo-yes-or-no? app prompt)
-  #t)
+(def (fuzzy-file-match? pattern name)
+  "Fuzzy match: each character of pattern must appear in order in name.
+   Also supports substring matching. Case-insensitive."
+  (let ((pl (string-downcase pattern))
+        (nl (string-downcase name)))
+    (or (string-contains nl pl)  ;; substring match
+        ;; fuzzy: chars in order
+        (let loop ((pi 0) (ni 0))
+          (cond
+            ((>= pi (string-length pl)) #t)
+            ((>= ni (string-length nl)) #f)
+            ((char=? (string-ref pl pi) (string-ref nl ni))
+             (loop (+ pi 1) (+ ni 1)))
+            (else (loop pi (+ ni 1))))))))
 
-(def (qt-echo-completing-read app prompt candidates)
-  (if (null? candidates) "" (car candidates)))
+(def (common-prefix strings)
+  "Find the longest common prefix of a list of strings (case-insensitive for matching,
+   returns the casing from the first string)."
+  (if (or (null? strings) (null? (cdr strings)))
+    (if (null? strings) "" (car strings))
+    (let* ((first (car strings))
+           (len (string-length first)))
+      (let loop ((i 0))
+        (if (>= i len) first
+          (let ((ch (char-downcase (string-ref first i))))
+            (if (every (lambda (s)
+                         (and (> (string-length s) i)
+                              (char=? (char-downcase (string-ref s i)) ch)))
+                       (cdr strings))
+              (loop (+ i 1))
+              (substring first 0 i))))))))
+
+(def (list-directory-safe dir)
+  "List files in directory, returning empty list on error."
+  (with-catch (lambda (e) [])
+    (lambda ()
+      (sort (directory-files dir) string<?))))
+
+(def (mb-handle-tab! input)
+  "Handle Tab press in minibuffer. Supports both regular and file-mode completion."
+  (if *mb-file-mode*
+    (mb-handle-file-tab! input)
+    (mb-handle-regular-tab! input)))
+
+(def (mb-handle-regular-tab! input)
+  "Regular Tab completion: fuzzy match and cycle through completions."
+  (when (pair? *mb-completions*)
+    (let* ((current (qt-line-edit-text input))
+           (current-lower (string-downcase current))
+           (matches (filter
+                      (lambda (c)
+                        (fuzzy-file-match? current c))
+                      *mb-completions*)))
+      (when (pair? matches)
+        (if (string=? current *mb-last-tab-input*)
+          ;; Same input as last Tab — cycle
+          (let ((idx (modulo *mb-tab-idx* (length matches))))
+            (qt-line-edit-set-text! input (list-ref matches idx))
+            (set! *mb-tab-idx* (+ *mb-tab-idx* 1))
+            (set! *mb-last-tab-input* (list-ref matches idx)))
+          ;; New input — complete common prefix first
+          (let ((prefix (common-prefix matches)))
+            (when (> (string-length prefix) (string-length current))
+              (qt-line-edit-set-text! input prefix))
+            (set! *mb-tab-idx* 0)
+            (set! *mb-last-tab-input* (qt-line-edit-text input))))))))
+
+(def (mb-handle-file-tab! input)
+  "File-mode Tab completion: directory-aware with fuzzy matching."
+  (let* ((current (qt-line-edit-text input))
+         (expanded (cond
+                     ((and (> (string-length current) 0)
+                           (char=? (string-ref current 0) #\~))
+                      (string-append (getenv "HOME" "/")
+                                     (substring current 1 (string-length current))))
+                     (else current)))
+         ;; Split EXPANDED path for directory listing
+         (last-slash (let loop ((i (- (string-length expanded) 1)))
+                       (cond ((< i 0) #f)
+                             ((char=? (string-ref expanded i) #\/) i)
+                             (else (loop (- i 1))))))
+         (dir (if last-slash
+                (substring expanded 0 (+ last-slash 1))
+                (current-directory)))
+         (partial (if last-slash
+                    (substring expanded (+ last-slash 1) (string-length expanded))
+                    expanded))
+         ;; Split ORIGINAL input for display prefix (avoids substring crash with ~)
+         (orig-last-slash (let loop ((i (- (string-length current) 1)))
+                            (cond ((< i 0) #f)
+                                  ((char=? (string-ref current i) #\/) i)
+                                  (else (loop (- i 1))))))
+         (display-prefix (if orig-last-slash
+                           (substring current 0 (+ orig-last-slash 1))
+                           ""))
+         ;; List files in the directory
+         (files (list-directory-safe dir))
+         ;; Filter with fuzzy matching
+         (matches (if (string=? partial "")
+                    files
+                    (filter (lambda (f) (fuzzy-file-match? partial f)) files))))
+    (when (pair? matches)
+      (if (string=? current *mb-last-tab-input*)
+        ;; Same input — cycle through matches
+        (let* ((idx (modulo *mb-tab-idx* (length matches)))
+               (match (list-ref matches idx))
+               (full-path (if orig-last-slash
+                            (string-append display-prefix match)
+                            match)))
+          (qt-line-edit-set-text! input full-path)
+          (set! *mb-tab-idx* (+ *mb-tab-idx* 1))
+          (set! *mb-last-tab-input* full-path))
+        ;; New input — complete common prefix
+        (let* ((prefix (common-prefix matches))
+               (full-prefix (if orig-last-slash
+                              (string-append display-prefix prefix)
+                              prefix)))
+          (when (> (string-length full-prefix) (string-length current))
+            (qt-line-edit-set-text! input full-prefix))
+          (set! *mb-tab-idx* 0)
+          (set! *mb-last-tab-input* (qt-line-edit-text input))
+          ;; If exactly one match and it's a directory, append /
+          (when (and (= (length matches) 1)
+                     (let ((p (string-append dir (car matches))))
+                       (and (file-exists? p)
+                            (eq? 'directory (file-info-type (file-info p))))))
+            (let ((text (qt-line-edit-text input)))
+              (unless (string-suffix? "/" text)
+                (qt-line-edit-set-text! input (string-append text "/"))
+                (set! *mb-last-tab-input* (qt-line-edit-text input))))))))))
+
+;;;============================================================================
+;;; Narrowing framework — real-time candidate filtering + selection
+;;;============================================================================
+
+(def (narrowing-update-list! query)
+  "Filter candidates by fuzzy match and update the QListWidget."
+  (when *mb-narrowing?*
+    (let* ((filtered (if (string=? query "")
+                       *mb-all-candidates*
+                       (fuzzy-filter-sort query *mb-all-candidates*)))
+           (shown (if (> (length filtered) (* *mb-max-visible* 3))
+                    (take filtered (* *mb-max-visible* 3))
+                    filtered)))
+      (set! *mb-filtered* (list->vector shown))
+      ;; Rebuild list widget
+      (qt-list-widget-clear! *mb-list*)
+      (for-each (lambda (c) (qt-list-widget-add-item! *mb-list* c)) shown)
+      ;; Select first item
+      (when (> (vector-length *mb-filtered*) 0)
+        (qt-list-widget-set-current-row! *mb-list* 0))
+      ;; Update prompt with count
+      (let ((total (length *mb-all-candidates*))
+            (matched (length filtered)))
+        (qt-label-set-text! *mb-prompt*
+          (string-append *mb-narrowing-prompt*
+                         " (" (number->string matched)
+                         "/" (number->string total) ") "))))))
+
+(def *mb-narrowing-prompt* "")  ; Base prompt text for narrowing
+
+(def (narrowing-move-selection! delta)
+  "Move the narrowing list selection by delta rows (positive = down)."
+  (when (and *mb-narrowing?* (> (vector-length *mb-filtered*) 0))
+    (let* ((cur (qt-list-widget-current-row *mb-list*))
+           (count (vector-length *mb-filtered*))
+           (next (modulo (+ cur delta) count)))
+      (qt-list-widget-set-current-row! *mb-list* next)
+      (set! *mb-user-selected?* #t))))
+
+(def (narrowing-selected-text)
+  "Return the currently selected candidate text, or the input text if none."
+  (if (and *mb-narrowing?* (> (vector-length *mb-filtered*) 0))
+    (let ((row (qt-list-widget-current-row *mb-list*)))
+      (if (and (>= row 0) (< row (vector-length *mb-filtered*)))
+        (vector-ref *mb-filtered* row)
+        (qt-line-edit-text *mb-input*)))
+    (qt-line-edit-text *mb-input*)))
+
+;;;============================================================================
+;;; File narrowing — Helm-style directory browser
+;;;============================================================================
+
+(def (expand-tilde-path path)
+  "Expand ~ at start of path to home directory."
+  (if (and (> (string-length path) 0)
+           (char=? (string-ref path 0) #\~))
+    (let ((home (getenv "HOME" "/")))
+      (cond
+        ((= (string-length path) 1)
+         (string-append home "/"))
+        ((char=? (string-ref path 1) #\/)
+         (string-append home (substring path 1 (string-length path))))
+        (else path)))
+    path))
+
+(def (file-narrowing-update-list! text)
+  "Parse input path, list directory contents, filter by partial filename."
+  (let* ((expanded (expand-tilde-path text))
+         (slash-pos (let loop ((i (- (string-length expanded) 1)))
+                      (cond ((< i 0) #f)
+                            ((char=? (string-ref expanded i) #\/) i)
+                            (else (loop (- i 1))))))
+         (dir (if slash-pos
+                (substring expanded 0 (+ slash-pos 1))
+                (current-directory)))
+         (partial (if slash-pos
+                    (substring expanded (+ slash-pos 1) (string-length expanded))
+                    expanded))
+         (files (list-directory-safe dir))
+         (annotated (map (lambda (f)
+                           (with-catch (lambda (e) f)
+                             (lambda ()
+                               (let ((full (string-append dir f)))
+                                 (if (and (file-exists? full)
+                                          (eq? 'directory (file-info-type (file-info full))))
+                                   (string-append f "/")
+                                   f)))))
+                         files))
+         (filtered (if (string=? partial "")
+                     annotated
+                     (filter (lambda (f) (fuzzy-file-match? partial f)) annotated)))
+         (shown (if (> (length filtered) (* *mb-max-visible* 3))
+                  (take filtered (* *mb-max-visible* 3))
+                  filtered)))
+    (set! *mb-file-dir* dir)
+    (set! *mb-user-selected?* #f)
+    (set! *mb-filtered* (list->vector shown))
+    (qt-list-widget-clear! *mb-list*)
+    (for-each (lambda (c) (qt-list-widget-add-item! *mb-list* c)) shown)
+    (when (> (vector-length *mb-filtered*) 0)
+      (qt-list-widget-set-current-row! *mb-list* 0))
+    (let ((total (length annotated))
+          (matched (length filtered)))
+      (qt-label-set-text! *mb-prompt*
+        (string-append *mb-narrowing-prompt*
+                       " (" (number->string matched)
+                       "/" (number->string total) ") ")))))
+
+;;;============================================================================
+;;; Initialize inline minibuffer (called once during app startup)
+;;;============================================================================
+
+(def (qt-minibuffer-init! echo-label qt-app parent-layout)
+  "Create the inline minibuffer widgets. Call once during app init.
+   parent-layout is the main VBox layout that already contains echo-label."
+  (let* ((container (qt-widget-create))
+         (hlayout (qt-hbox-layout-create container))
+         (prompt (qt-label-create ""))
+         (input (qt-line-edit-create))
+         ;; Narrowing list widget — added to parent layout (above minibuffer)
+         (list-widget (qt-list-widget-create)))
+    (qt-widget-set-style-sheet! container (mb-style))
+    (qt-widget-set-minimum-height! container 28)
+    (qt-widget-set-size-policy! container QT_SIZE_PREFERRED QT_SIZE_FIXED)
+    (qt-layout-set-margins! hlayout 0 0 0 0)
+    (qt-layout-set-spacing! hlayout 0)
+    (qt-layout-add-widget! hlayout prompt)
+    (qt-layout-add-widget! hlayout input)
+    (qt-layout-set-stretch-factor! hlayout prompt 0)
+    (qt-layout-set-stretch-factor! hlayout input 1)
+    ;; Configure narrowing list widget
+    (let ((font-css (string-append " font-family: " *default-font-family*
+                                   "; font-size: " (number->string *default-font-size*) "pt;")))
+      (qt-widget-set-style-sheet! list-widget
+        (string-append
+          "QListWidget { color: #d8d8d8; background: #1e1e1e; border: none;"
+          font-css " padding: 0; }"
+          "QListWidget::item { padding: 2px 8px; }"
+          "QListWidget::item:selected { background: #3a3a5a; color: #ffffff; }")))
+    (qt-widget-set-maximum-height! list-widget (* *mb-max-visible* 22))
+    ;; Add list widget BEFORE echo-label and container in the parent layout
+    (qt-layout-add-widget! parent-layout list-widget)
+    (qt-layout-set-stretch-factor! parent-layout list-widget 0)
+    (qt-widget-hide! list-widget)
+    ;; Add minibuffer container after the list
+    (qt-layout-add-widget! parent-layout container)
+    (qt-layout-set-stretch-factor! parent-layout container 0)
+    ;; Initially hidden
+    (qt-widget-hide! container)
+    ;; Connect Enter signal
+    (qt-on-return-pressed! input
+      (lambda ()
+        (cond
+          (*mb-file-narrowing?*
+           (if *mb-user-selected?*
+             ;; User explicitly navigated list — use selected item
+             (let ((selected (narrowing-selected-text)))
+               (cond
+                 ((string-suffix? "/" selected)
+                  ;; Directory — descend into it
+                  (qt-line-edit-set-text! *mb-input*
+                    (string-append *mb-file-dir* selected)))
+                 (else
+                  ;; File — return full path
+                  (set! *mb-result*
+                    (list (string-append *mb-file-dir* selected))))))
+             ;; User just pressed Enter on typed input — return as-is
+             (set! *mb-result* (list (qt-line-edit-text *mb-input*)))))
+          (*mb-narrowing?*
+           (set! *mb-result* (list (narrowing-selected-text))))
+          (else
+           (set! *mb-result* (list (qt-line-edit-text input)))))))
+    ;; Connect key handler for Escape, Tab, and arrow keys
+    (qt-on-key-press! input
+      (lambda ()
+        (let ((key (qt-last-key-code))
+              (mods (qt-last-key-modifiers)))
+          (cond
+            ((= key QT_KEY_ESCAPE)
+             (set! *mb-result* (list)))
+            ((= key QT_KEY_TAB)
+             (if *mb-narrowing?*
+               (narrowing-move-selection! 1)
+               (mb-handle-tab! input)))
+            ;; C-n / Down = next candidate
+            ((or (= key QT_KEY_DOWN)
+                 (and (= key QT_KEY_N) (= mods QT_MOD_CTRL)))
+             (when *mb-narrowing?*
+               (narrowing-move-selection! 1)))
+            ;; C-p / Up = previous candidate
+            ((or (= key QT_KEY_UP)
+                 (and (= key QT_KEY_P) (= mods QT_MOD_CTRL)))
+             (when *mb-narrowing?*
+               (narrowing-move-selection! -1)))
+            (else (void))))))
+    ;; Connect text-changed for real-time narrowing filter
+    ;; qt-on-text-changed! dispatches via ffi_qt_callback_string which passes
+    ;; the new text as an argument — handler must accept it.
+    (qt-on-text-changed! input
+      (lambda (text)
+        (when *mb-narrowing?*
+          (if *mb-file-narrowing?*
+            (file-narrowing-update-list! text)
+            (narrowing-update-list! text)))))
+    ;; Double-click on list item selects it
+    (qt-on-item-double-clicked! list-widget
+      (lambda ()
+        (when *mb-narrowing?*
+          (if *mb-file-narrowing?*
+            (let ((selected (narrowing-selected-text)))
+              (if (string-suffix? "/" selected)
+                (qt-line-edit-set-text! *mb-input*
+                  (string-append *mb-file-dir* selected))
+                (set! *mb-result*
+                  (list (string-append *mb-file-dir* selected)))))
+            (set! *mb-result* (list (narrowing-selected-text)))))))
+    ;; Store references
+    (set! *mb-container* container)
+    (set! *mb-prompt* prompt)
+    (set! *mb-input* input)
+    (set! *mb-echo-label* echo-label)
+    (set! *mb-qt-app* qt-app)
+    (set! *mb-list* list-widget)))
+
+;;;============================================================================
+;;; Read a string via inline minibuffer
+;;;============================================================================
+
+(def (qt-echo-read-string app prompt)
+  "Show inline minibuffer for input. Returns string or #f if cancelled."
+  (let ((fr (app-state-frame app)))
+    ;; Set up the minibuffer
+    (qt-label-set-text! *mb-prompt* prompt)
+    (qt-line-edit-set-text! *mb-input* "")
+    ;; Remove any old completer
+    (qt-line-edit-set-completer! *mb-input* #f)
+    ;; Hide echo label, show minibuffer
+    (qt-widget-hide! *mb-echo-label*)
+    (qt-widget-show! *mb-container*)
+    (qt-widget-set-focus! *mb-input*)
+    ;; Blocking event loop
+    (set! *mb-result* #f)
+    (let loop ()
+      (qt-app-process-events! *mb-qt-app*)
+      (qt-drain-pending-callbacks!)   ; execute enqueued signal callbacks (returnPressed, etc.)
+      (thread-sleep! 0.01)
+      (if *mb-result*
+        ;; Done — extract result
+        (let ((text (if (pair? *mb-result*)
+                      (if (null? *mb-result*) #f   ; Escape → cancelled
+                        (let ((t (car *mb-result*)))
+                          (if (string=? t "") #f t)))
+                      #f)))
+          ;; Restore: hide minibuffer, show echo label, refocus editor
+          (qt-widget-hide! *mb-container*)
+          (qt-widget-show! *mb-echo-label*)
+          (let ((ed (qt-current-editor fr)))
+            (when ed (qt-widget-set-focus! ed)))
+          text)
+        (loop)))))
+
+;;;============================================================================
+;;; Read a string with completion via inline minibuffer + QCompleter
+;;;============================================================================
+
+(def (qt-echo-read-string-with-completion app prompt completions)
+  "Show inline minibuffer with QCompleter. Returns string or #f if cancelled."
+  (let ((fr (app-state-frame app)))
+    ;; Set up the minibuffer
+    (qt-label-set-text! *mb-prompt* prompt)
+    (qt-line-edit-set-text! *mb-input* "")
+    ;; Store completions for Tab cycling
+    (set! *mb-completions* completions)
+    (set! *mb-tab-idx* 0)
+    ;; Attach completer
+    (let ((completer (qt-completer-create completions)))
+      ;; Note: QT_CASE_INSENSITIVE is 0, which is truthy in Gerbil.
+      ;; qt-completer-set-case-sensitivity! takes a boolean (sensitive?),
+      ;; so we must pass #f for case-insensitive matching.
+      (qt-completer-set-case-sensitivity! completer #f)
+      (qt-completer-set-filter-mode! completer QT_MATCH_CONTAINS)
+      (qt-completer-set-max-visible-items! completer 15)
+      (qt-completer-set-widget! completer *mb-input*)
+      (qt-line-edit-set-completer! *mb-input* completer)
+      ;; Hide echo label, show minibuffer
+      (qt-widget-hide! *mb-echo-label*)
+      (qt-widget-show! *mb-container*)
+      (qt-widget-set-focus! *mb-input*)
+      ;; Blocking event loop
+      (set! *mb-result* #f)
+      (let loop ()
+        (qt-app-process-events! *mb-qt-app*)
+        (qt-drain-pending-callbacks!)
+        (thread-sleep! 0.01)
+        (if *mb-result*
+          ;; Done — extract result
+          (let ((text (if (pair? *mb-result*)
+                        (if (null? *mb-result*) #f   ; Escape → cancelled
+                          (let ((t (car *mb-result*)))
+                            (if (string=? t "") #f t)))
+                        #f)))
+            ;; Clean up completer and tab state
+            (set! *mb-completions* [])
+            (set! *mb-tab-idx* 0)
+            (qt-line-edit-set-completer! *mb-input* #f)
+            (qt-completer-destroy! completer)
+            ;; Restore: hide minibuffer, show echo label, refocus editor
+            (qt-widget-hide! *mb-container*)
+            (qt-widget-show! *mb-echo-label*)
+            (let ((ed (qt-current-editor fr)))
+              (when ed (qt-widget-set-focus! ed)))
+            text)
+          (loop))))))
+
+;;;============================================================================
+;;; Read a file path with directory-aware fuzzy completion
+;;;============================================================================
+
+(def (qt-echo-read-file-with-completion app prompt)
+  "Show inline minibuffer for file path input with directory-aware Tab completion.
+   Supports fuzzy matching, directory traversal, and ~ expansion."
+  (let ((fr (app-state-frame app)))
+    ;; Set up the minibuffer
+    (qt-label-set-text! *mb-prompt* prompt)
+    (qt-line-edit-set-text! *mb-input* "")
+    ;; Enable file-mode Tab completion (no static completions/QCompleter)
+    (set! *mb-file-mode* #t)
+    (set! *mb-completions* [])
+    (set! *mb-tab-idx* 0)
+    (set! *mb-last-tab-input* "")
+    (qt-line-edit-set-completer! *mb-input* #f)
+    ;; Hide echo label, show minibuffer
+    (qt-widget-hide! *mb-echo-label*)
+    (qt-widget-show! *mb-container*)
+    (qt-widget-set-focus! *mb-input*)
+    ;; Blocking event loop
+    (set! *mb-result* #f)
+    (let loop ()
+      (qt-app-process-events! *mb-qt-app*)
+      (qt-drain-pending-callbacks!)
+      (thread-sleep! 0.01)
+      (if *mb-result*
+        ;; Done — extract result
+        (let ((text (if (pair? *mb-result*)
+                      (if (null? *mb-result*) #f
+                        (let ((t (car *mb-result*)))
+                          (if (string=? t "") #f t)))
+                      #f)))
+          ;; Clean up file-mode state
+          (set! *mb-file-mode* #f)
+          (set! *mb-completions* [])
+          (set! *mb-tab-idx* 0)
+          (set! *mb-last-tab-input* "")
+          ;; Restore
+          (qt-widget-hide! *mb-container*)
+          (qt-widget-show! *mb-echo-label*)
+          (let ((ed (qt-current-editor fr)))
+            (when ed (qt-widget-set-focus! ed)))
+          text)
+        (loop)))))
+
+;;;============================================================================
+;;; Narrowing read — Helm-like candidate selection with real-time filtering
+;;;============================================================================
+
+(def (qt-echo-read-with-narrowing app prompt candidates)
+  "Show a Helm-like narrowing UI: minibuffer input + live-filtered candidate list.
+   candidates is a list of strings. Returns selected string or #f if cancelled.
+   Real-time fuzzy filtering, C-n/C-p or Up/Down to navigate, Enter to select."
+  (let ((fr (app-state-frame app)))
+    ;; Set up the minibuffer
+    (set! *mb-narrowing-prompt* prompt)
+    (qt-label-set-text! *mb-prompt* prompt)
+    (qt-line-edit-set-text! *mb-input* "")
+    (qt-line-edit-set-completer! *mb-input* #f)
+    ;; Set up narrowing state
+    (set! *mb-narrowing?* #t)
+    (set! *mb-all-candidates* candidates)
+    (set! *mb-filtered* (list->vector
+                          (if (> (length candidates) (* *mb-max-visible* 3))
+                            (take candidates (* *mb-max-visible* 3))
+                            candidates)))
+    ;; Populate the list widget
+    (qt-list-widget-clear! *mb-list*)
+    (let ((shown (vector->list *mb-filtered*)))
+      (for-each (lambda (c) (qt-list-widget-add-item! *mb-list* c)) shown))
+    (when (> (vector-length *mb-filtered*) 0)
+      (qt-list-widget-set-current-row! *mb-list* 0))
+    ;; Update prompt with count
+    (let ((total (length candidates)))
+      (qt-label-set-text! *mb-prompt*
+        (string-append prompt " (" (number->string total)
+                       "/" (number->string total) ") ")))
+    ;; Hide echo label, show narrowing list + minibuffer
+    (qt-widget-hide! *mb-echo-label*)
+    (qt-widget-show! *mb-list*)
+    (qt-widget-show! *mb-container*)
+    (qt-widget-set-focus! *mb-input*)
+    ;; Blocking event loop
+    (set! *mb-result* #f)
+    (let loop ()
+      (qt-app-process-events! *mb-qt-app*)
+      (qt-drain-pending-callbacks!)
+      (thread-sleep! 0.01)
+      (if *mb-result*
+        ;; Done — extract result
+        (let ((text (if (pair? *mb-result*)
+                      (if (null? *mb-result*) #f
+                        (let ((t (car *mb-result*)))
+                          (if (string=? t "") #f t)))
+                      #f)))
+          ;; Clean up narrowing state
+          (set! *mb-narrowing?* #f)
+          (set! *mb-all-candidates* [])
+          (set! *mb-filtered* (vector))
+          (qt-list-widget-clear! *mb-list*)
+          ;; Restore: hide list + minibuffer, show echo label
+          (qt-widget-hide! *mb-list*)
+          (qt-widget-hide! *mb-container*)
+          (qt-widget-show! *mb-echo-label*)
+          (let ((ed (qt-current-editor fr)))
+            (when ed (qt-widget-set-focus! ed)))
+          text)
+        (loop)))))
+
+;;;============================================================================
+;;; Helm-style file browser — narrowing list of directory contents
+;;;============================================================================
+
+(def (qt-echo-read-file-with-narrowing app prompt default-dir)
+  "Helm-style file browser: narrowing list of directory contents with path pre-filled.
+   default-dir is the initial directory to browse (with trailing slash).
+   Enter on typed input returns the path as-is (e.g. for dired or new file).
+   Navigate list with C-n/C-p/Up/Down, then Enter to descend into dirs or open files."
+  (let ((fr (app-state-frame app)))
+    ;; Set up minibuffer
+    (set! *mb-narrowing-prompt* prompt)
+    (qt-label-set-text! *mb-prompt* prompt)
+    (qt-line-edit-set-completer! *mb-input* #f)
+    ;; Set up file narrowing state
+    (set! *mb-narrowing?* #t)
+    (set! *mb-file-narrowing?* #t)
+    (set! *mb-file-dir* default-dir)
+    (set! *mb-user-selected?* #f)
+    (set! *mb-all-candidates* [])
+    ;; Pre-fill with default directory — triggers text-changed → file listing
+    (qt-line-edit-set-text! *mb-input* default-dir)
+    ;; Hide echo label, show narrowing list + minibuffer
+    (qt-widget-hide! *mb-echo-label*)
+    (qt-widget-show! *mb-list*)
+    (qt-widget-show! *mb-container*)
+    (qt-widget-set-focus! *mb-input*)
+    ;; Blocking event loop
+    (set! *mb-result* #f)
+    (let loop ()
+      (qt-app-process-events! *mb-qt-app*)
+      (qt-drain-pending-callbacks!)
+      (thread-sleep! 0.01)
+      (if *mb-result*
+        (let ((text (if (pair? *mb-result*)
+                      (if (null? *mb-result*) #f
+                        (let ((t (car *mb-result*)))
+                          (if (string=? t "") #f t)))
+                      #f)))
+          ;; Clean up
+          (set! *mb-narrowing?* #f)
+          (set! *mb-file-narrowing?* #f)
+          (set! *mb-file-dir* "")
+          (set! *mb-user-selected?* #f)
+          (set! *mb-all-candidates* [])
+          (set! *mb-filtered* (vector))
+          (qt-list-widget-clear! *mb-list*)
+          (qt-widget-hide! *mb-list*)
+          (qt-widget-hide! *mb-container*)
+          (qt-widget-show! *mb-echo-label*)
+          (let ((ed (qt-current-editor fr)))
+            (when ed (qt-widget-set-focus! ed)))
+          text)
+        (loop)))))

@@ -1,9 +1,23 @@
 ;;; -*- Gerbil -*-
-;;; Qt frame/window management for jerboa-emacs
+;;; Qt frame/window management for gemacs
 ;;;
-;;; Ported from gerbil-emacs/qt/window.ss
-;;; STUB VERSION - Full implementation to be completed in Sprint 2
-;;; Uses nested QSplitters to hold multiple QPlainTextEdit panes.
+;;; Uses nested QSplitters to hold multiple QPlainTextEdit panes in a
+;;; recursive binary tree. Each split can have a different orientation,
+;;; so horizontal-then-vertical nesting works correctly.
+;;;
+;;; Architecture:
+;;;   qt-frame holds:
+;;;     - splitter   : the permanent root QSplitter (QMainWindow's central widget)
+;;;     - root       : the logical split tree (split-leaf | split-node)
+;;;     - windows    : flat ordered list of qt-edit-window (derived, kept in sync)
+;;;     - current-idx: index of active window in windows list
+;;;     - main-win   : QMainWindow pointer
+;;;
+;;;   split-leaf(win)  : a single editor pane
+;;;   split-node(orientation, splitter, children) : a QSplitter with children
+;;;
+;;; Splits always append the new window AFTER the current one in the flat
+;;; list. This invariant lets winner-undo simply delete the last window.
 
 (export (struct-out qt-edit-window)
         (struct-out qt-frame)
@@ -19,6 +33,7 @@
         qt-frame-delete-other-windows!
         qt-frame-other-window!
         qt-apply-editor-theme!
+        ;; Tree helpers (used by commands-sexp.ss, tests)
         split-tree-flatten
         split-tree-find-parent
         split-tree-find-leaf
@@ -43,14 +58,22 @@
    image-label)     ; QLabel inside scroll area, or #f (lazy)
   transparent: #t)
 
+;;; A split-leaf wraps a single edit window.
 (defstruct split-leaf (edit-window) transparent: #t)
 
+;;; A split-node is a QSplitter with 2+ children (each a split-leaf or split-node).
+;;; orientation is QT_HORIZONTAL or QT_VERTICAL.
 (defstruct split-node
   (orientation   ; QT_HORIZONTAL | QT_VERTICAL
    splitter      ; QSplitter widget pointer
    children)     ; list of split-leaf | split-node
   transparent: #t)
 
+;;; The main frame struct.
+;;; splitter = permanent root QSplitter (QMainWindow central widget).
+;;; root     = logical split tree (split-leaf when single pane).
+;;; windows  = flat ordered list derived from root, kept in sync.
+;;; current-idx = index of active window in windows list.
 (defstruct qt-frame
   (splitter     ; QSplitter pointer (permanent root splitter)
    root         ; split-leaf | split-node
@@ -73,67 +96,472 @@
   (qt-edit-window-buffer (qt-current-window fr)))
 
 ;;;============================================================================
-;;; Split tree helpers (STUB - to be implemented)
+;;; Split tree helpers
 ;;;============================================================================
 
-(def (split-tree-flatten root)
-  ;; STUB: Returns flat list of edit windows from split tree
-  (if (split-leaf? root)
-    (list (split-leaf-edit-window root))
-    '()))
+(def (split-tree-flatten node)
+  "Return ordered flat list of qt-edit-window from tree, left-to-right."
+  (cond
+    ((split-leaf? node) [(split-leaf-edit-window node)])
+    ((split-node? node)
+     (apply append (map split-tree-flatten (split-node-children node))))))
 
-(def (split-tree-find-parent tree target-splitter)
-  ;; STUB: Finds parent of a splitter in tree
-  #f)
+(def (split-tree-find-parent root win)
+  "Return the split-node whose direct children include the leaf for WIN, or #f."
+  (cond
+    ((split-leaf? root) #f)
+    ((split-node? root)
+     (let loop ((children (split-node-children root)))
+       (cond
+         ((null? children) #f)
+         ((and (split-leaf? (car children))
+               (eq? (split-leaf-edit-window (car children)) win))
+          root)
+         (else
+          (let ((found (split-tree-find-parent (car children) win)))
+            (or found (loop (cdr children))))))))))
 
-(def (split-tree-find-leaf tree pred)
-  ;; STUB: Finds first leaf matching predicate
-  #f)
+(def (split-tree-find-leaf root win)
+  "Return the split-leaf node for WIN, or #f."
+  (cond
+    ((split-leaf? root)
+     (if (eq? (split-leaf-edit-window root) win) root #f))
+    ((split-node? root)
+     (let loop ((children (split-node-children root)))
+       (if (null? children) #f
+         (or (split-tree-find-leaf (car children) win)
+             (loop (cdr children))))))))
 
-(def (split-tree-collect-sub-splitters tree)
-  ;; STUB: Collects all sub-splitters
-  '())
+(def (split-tree-find-parent-of-node root child-node)
+  "Return the split-node that contains CHILD-NODE as a direct child, or #f."
+  (cond
+    ((split-leaf? root) #f)
+    ((split-node? root)
+     (if (any (lambda (c) (eq? c child-node)) (split-node-children root))
+       root
+       (let loop ((children (split-node-children root)))
+         (if (null? children) #f
+           (or (split-tree-find-parent-of-node (car children) child-node)
+               (loop (cdr children)))))))))
+
+(def (split-tree-replace-child! node old-child new-child)
+  "Replace OLD-CHILD with NEW-CHILD in NODE's children list."
+  (set! (split-node-children node)
+        (map (lambda (c) (if (eq? c old-child) new-child c))
+             (split-node-children node))))
+
+(def (split-tree-remove-child! node child)
+  "Remove CHILD from NODE's children list."
+  (set! (split-node-children node)
+        (filter (lambda (c) (not (eq? c child)))
+                (split-node-children node))))
+
+(def (split-tree-collect-sub-splitters node root-spl)
+  "Return list of all QSplitter widgets in tree, excluding ROOT-SPL.
+   Returned in depth-first order (innermost first)."
+  (cond
+    ((split-leaf? node) [])
+    ((split-node? node)
+     (let ((spl (split-node-splitter node))
+           (children-spls
+            (apply append
+                   (map (lambda (c) (split-tree-collect-sub-splitters c root-spl))
+                        (split-node-children node)))))
+       (if (eq? spl root-spl)
+         children-spls
+         (append children-spls (list spl)))))))
 
 ;;;============================================================================
-;;; Frame operations (STUB - to be implemented)
+;;; QScintilla editor setup
 ;;;============================================================================
 
-(def (qt-frame-init! main-win buffer)
-  ;; STUB: Initialize frame with initial buffer
-  (let* ((editor (qt-plain-text-edit-create))
-         (container editor)  ; Simplified - should be QStackedWidget
-         (win (make-qt-edit-window editor container buffer #f #f #f))
-         (leaf (make-split-leaf win))
-         (splitter #f)  ; To be created
-         (fr (make-qt-frame splitter leaf (list win) 0 main-win)))
-    (qt-buffer-attach! editor buffer)
-    fr))
+(def (qt-apply-editor-theme! ed)
+  "Apply current theme colors from the face system to a QScintilla editor.
+   Updates background, foreground, line numbers, caret, selection, and cursor line."
+  ;; Background/foreground from 'default face
+  (let ((default-face (face-get 'default)))
+    (if default-face
+      (begin
+        (when (face-bg default-face)
+          (let-values (((r g b) (parse-hex-color (face-bg default-face))))
+            (sci-send ed SCI_STYLESETBACK STYLE_DEFAULT (rgb->sci r g b))))
+        (when (face-fg default-face)
+          (let-values (((r g b) (parse-hex-color (face-fg default-face))))
+            (sci-send ed SCI_STYLESETFORE STYLE_DEFAULT (rgb->sci r g b))
+            ;; Caret color matches text foreground
+            (sci-send ed SCI_SETCARETFORE (rgb->sci r g b)))))
+      ;; Fallback when no face system is initialized yet
+      (begin
+        (sci-send ed SCI_STYLESETBACK STYLE_DEFAULT (rgb->sci #x1e #x1e #x2e))
+        (sci-send ed SCI_STYLESETFORE STYLE_DEFAULT (rgb->sci #xd4 #xd4 #xd4))
+        (sci-send ed SCI_SETCARETFORE (rgb->sci #xd4 #xd4 #xd4)))))
+  ;; Font on STYLE_DEFAULT before STYLECLEARALL so all styles inherit it
+  (sci-send/string ed SCI_STYLESETFONT *default-font-family* STYLE_DEFAULT)
+  (sci-send ed SCI_STYLESETSIZE STYLE_DEFAULT *default-font-size*)
+  ;; Propagate to all styles
+  (sci-send ed SCI_STYLECLEARALL)
+  ;; Line number margin from 'line-number face
+  (let ((ln-face (face-get 'line-number)))
+    (if ln-face
+      (begin
+        (when (face-bg ln-face)
+          (let-values (((r g b) (parse-hex-color (face-bg ln-face))))
+            (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci r g b))))
+        (when (face-fg ln-face)
+          (let-values (((r g b) (parse-hex-color (face-fg ln-face))))
+            (sci-send ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci r g b)))))
+      ;; Fallback
+      (begin
+        (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci #x20 #x20 #x20))
+        (sci-send ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci #x8c #x8c #x8c)))))
+  ;; Cursor line from 'cursor-line face
+  (let ((cl-face (face-get 'cursor-line)))
+    (if (and cl-face (face-bg cl-face))
+      (let-values (((r g b) (parse-hex-color (face-bg cl-face))))
+        (sci-send ed SCI_SETCARETLINEBACK (rgb->sci r g b)))
+      (sci-send ed SCI_SETCARETLINEBACK (rgb->sci #x22 #x22 #x28))))
+  ;; Selection background from 'region face (SCI_SETSELBACK = 2068)
+  (let ((region-face (face-get 'region)))
+    (when (and region-face (face-bg region-face))
+      (let-values (((r g b) (parse-hex-color (face-bg region-face))))
+        (sci-send ed 2068 1 (rgb->sci r g b))))))
 
-(def (qt-frame-split! fr (horizontal? #t))
-  ;; STUB: Split current window
-  (void))
+(def (qt-scintilla-setup-editor! ed)
+  "Configure QScintilla editor: theme, margins, caret, save-point signals."
+  ;; Apply theme colors from face system
+  (qt-apply-editor-theme! ed)
+  ;; Line number margin
+  (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
+  (sci-send ed SCI_SETMARGINWIDTHN 0 50)
+  ;; Caret line highlight
+  (sci-send ed SCI_SETCARETLINEVISIBLE 1)
+  ;; Tab settings
+  (sci-send ed SCI_SETTABWIDTH 4)
+  (sci-send ed SCI_SETINDENT 4)
+  ;; Enable multiple selection and typing into all cursors
+  (sci-send ed 2563 1)  ; SCI_SETMULTIPLESELECTION
+  (sci-send ed 2565 1)  ; SCI_SETADDITIONALSELECTIONTYPING
+  (sci-send ed 2608 1)  ; SCI_SETADDITIONALCARETSVISIBLE
+  (sci-send ed 2567 1)  ; SCI_SETADDITIONALCARETSBLINK
+  ;; Save-point signals for modified state tracking
+  (qt-on-scintilla-save-point-reached! ed
+    (lambda ()
+      (let* ((doc (sci-send ed SCI_GETDOCPOINTER))
+             (buf (hash-get *doc-buffer-map* doc)))
+        (when buf (set! (buffer-modified buf) #f)))))
+  (qt-on-scintilla-save-point-left! ed
+    (lambda ()
+      (let* ((doc (sci-send ed SCI_GETDOCPOINTER))
+             (buf (hash-get *doc-buffer-map* doc)))
+        (when buf (set! (buffer-modified buf) #t))))))
+
+(def (qt-make-new-window! container-parent buf)
+  "Create a new qt-edit-window with a fresh editor in a new container.
+   CONTAINER-PARENT is the QSplitter that will own the container."
+  (let* ((container (qt-stacked-widget-create parent: container-parent))
+         (new-ed (qt-plain-text-edit-create parent: container))
+         (lna (qt-line-number-area-create new-ed))
+         (new-win (make-qt-edit-window new-ed container buf lna #f #f)))
+    (qt-scintilla-setup-editor! new-ed)
+    (qt-buffer-attach! new-ed buf)
+    (qt-stacked-widget-add-widget! container new-ed)
+    (qt-splitter-add-widget! container-parent container)
+    (hash-put! *editor-window-map* new-ed new-win)
+    new-win))
+
+;;;============================================================================
+;;; Frame initialization
+;;;============================================================================
+
+(def (qt-frame-init! main-win splitter)
+  "Create frame with one QScintilla editor in a QStackedWidget in a QSplitter.
+   Returns the frame struct."
+  (let* ((container (qt-stacked-widget-create parent: splitter))
+         (editor (qt-plain-text-edit-create parent: container))
+         (buf (qt-buffer-create! buffer-scratch-name editor))
+         (lna (qt-line-number-area-create editor))
+         (win (make-qt-edit-window editor container buf lna #f #f)))
+    (qt-scintilla-setup-editor! editor)
+    (qt-buffer-attach! editor buf)
+    (qt-stacked-widget-add-widget! container editor)
+    (qt-splitter-add-widget! splitter container)
+    (hash-put! *editor-window-map* editor win)
+    (let* ((root (make-split-leaf win))
+           (fr (make-qt-frame splitter root (list win) 0 main-win)))
+      ;; Set initial visual indicator for active window
+      (qt-frame-update-visual-indicators! fr)
+      fr)))
+
+;;;============================================================================
+;;; Window splitting — the core new architecture
+;;;============================================================================
+
+(def (qt-frame-do-split! fr orientation)
+  "Split the currently focused window with ORIENTATION (QT_HORIZONTAL|QT_VERTICAL).
+   Returns the new editor widget.
+
+   Cases:
+   A. Parent has SAME orientation → append new sibling in same splitter.
+   B. Root is a leaf (first split) → use root splitter, set its orientation.
+   C. No parent or parent has DIFFERENT orientation → create nested QSplitter."
+  (let* ((cur-win   (qt-current-window fr))
+         (root-spl  (qt-frame-splitter fr))
+         (cur-leaf  (split-tree-find-leaf (qt-frame-root fr) cur-win))
+         (parent    (split-tree-find-parent (qt-frame-root fr) cur-win))
+         (cur-buf   (qt-edit-window-buffer cur-win))
+         ;; Save main window geometry — adding widgets to a QSplitter can cause
+         ;; Qt to resize the QMainWindow via sizeHint propagation.
+         (main-win  (qt-frame-main-win fr))
+         (saved-w   (and main-win (qt-widget-width main-win)))
+         (saved-h   (and main-win (qt-widget-height main-win))))
+
+    (let ((result
+      (cond
+        ;; ── Case A: parent has same orientation — add sibling ─────────────────
+        ((and parent (= (split-node-orientation parent) orientation))
+         (let* ((parent-spl (split-node-splitter parent))
+                (new-win    (qt-make-new-window! parent-spl cur-buf))
+                (new-leaf   (make-split-leaf new-win)))
+           ;; Insert new-leaf after cur-leaf in parent's children
+           (set! (split-node-children parent)
+                 (let loop ((cs (split-node-children parent)) (acc []))
+                   (cond
+                     ((null? cs) (reverse (cons new-leaf acc)))
+                     ((eq? (car cs) cur-leaf)
+                      (append (reverse (cons new-leaf (cons cur-leaf acc))) (cdr cs)))
+                     (else (loop (cdr cs) (cons (car cs) acc))))))
+           ;; Rebuild flat list from tree to maintain depth-first order
+           (set! (qt-frame-windows fr) (split-tree-flatten (qt-frame-root fr)))
+           ;; Find new window's index in the rebuilt list
+           (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
+             (set! (qt-frame-current-idx fr) (or new-idx 0)))
+           ;; Equalize all children in the splitter for even sizing
+           (with-catch void
+             (lambda ()
+               (let ((n (length (split-node-children parent))))
+                 (qt-splitter-set-sizes! parent-spl
+                   (let loop ((i 0) (acc '()))
+                     (if (>= i n) (reverse acc)
+                       (loop (+ i 1) (cons 500 acc))))))))
+           (qt-edit-window-editor new-win)))
+
+        ;; ── Case B: root is a leaf (very first split) ─────────────────────────
+        ((split-leaf? (qt-frame-root fr))
+         (qt-splitter-set-orientation! root-spl orientation)
+         (let* ((new-win  (qt-make-new-window! root-spl cur-buf))
+                (new-leaf (make-split-leaf new-win))
+                (new-node (make-split-node orientation root-spl (list cur-leaf new-leaf))))
+           (set! (qt-frame-root fr) new-node)
+           ;; Rebuild flat list from tree to maintain depth-first order
+           (set! (qt-frame-windows fr) (split-tree-flatten (qt-frame-root fr)))
+           ;; Find new window's index in the rebuilt list
+           (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
+             (set! (qt-frame-current-idx fr) (or new-idx 0)))
+           ;; 50/50 split
+           (with-catch void (lambda () (qt-splitter-set-sizes! root-spl (list 500 500))))
+           (qt-edit-window-editor new-win)))
+
+        ;; ── Case C: no parent or different orientation — nest with new splitter ─
+        (else
+         (let* ((parent-spl   (if parent
+                                (split-node-splitter parent)
+                                root-spl))
+                ;; Remember where cur-container sits in parent-spl
+                (cur-container (qt-edit-window-container cur-win))
+                (cur-idx-in-spl (qt-splitter-index-of parent-spl cur-container))
+                ;; Create sub-splitter WITHOUT parent — we'll insert it explicitly
+                (new-spl      (qt-splitter-create orientation))
+                (_ (qt-splitter-set-handle-width! new-spl 3))
+                (_ (qt-widget-set-style-sheet! new-spl
+                     "QSplitter::handle { background: #51afef; }"))
+                ;; Reparent cur-win's container into the new splitter
+                (_ (qt-splitter-add-widget! new-spl cur-container))
+                ;; Create new window in the new splitter
+                (new-win      (qt-make-new-window! new-spl cur-buf))
+                (new-leaf     (make-split-leaf new-win))
+                (new-node     (make-split-node orientation new-spl
+                                               (list cur-leaf new-leaf))))
+           ;; Insert new-spl at the exact position cur-container occupied
+           (qt-splitter-insert-widget! parent-spl cur-idx-in-spl new-spl)
+           ;; Replace cur-leaf with new-node in the parent (or set as root)
+           (cond
+             (parent (split-tree-replace-child! parent cur-leaf new-node))
+             (else   (set! (qt-frame-root fr) new-node)))
+           ;; Rebuild flat list from tree to maintain depth-first order
+           (set! (qt-frame-windows fr) (split-tree-flatten (qt-frame-root fr)))
+           ;; Find new window's index in the rebuilt list
+           (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
+             (set! (qt-frame-current-idx fr) (or new-idx 0)))
+           ;; 50/50 split in nested splitter
+           (with-catch void (lambda () (qt-splitter-set-sizes! new-spl (list 500 500))))
+           ;; Re-equalize parent splitter so all children get equal space
+           (with-catch void
+             (lambda ()
+               (let* ((n (qt-splitter-count parent-spl))
+                      (sizes (let loop ((i 0) (acc '()))
+                               (if (>= i n) (reverse acc)
+                                 (loop (+ i 1) (cons 500 acc))))))
+                 (qt-splitter-set-sizes! parent-spl sizes))))
+           (qt-edit-window-editor new-win))))))
+      ;; Restore main window size — prevent Qt from growing the window
+      (when (and main-win saved-w saved-h)
+        (qt-widget-resize! main-win saved-w saved-h))
+      ;; Focus the new editor
+      (when result (qt-widget-set-focus! result))
+      ;; Update visual indicators
+      (qt-frame-update-visual-indicators! fr)
+      result)))
+
+(def (qt-frame-split! fr)
+  "Split vertically: add a new window below. Returns the new editor."
+  (qt-frame-do-split! fr QT_VERTICAL))
 
 (def (qt-frame-split-right! fr)
-  ;; STUB: Split window vertically (side-by-side)
-  (void))
+  "Split horizontally: add a new window to the right. Returns the new editor."
+  (qt-frame-do-split! fr QT_HORIZONTAL))
+
+;;;============================================================================
+;;; Window deletion
+;;;============================================================================
 
 (def (qt-frame-delete-window! fr)
-  ;; STUB: Delete current window
-  (void))
+  "Delete the current window (if more than one).
+   Automatically unwraps single-child split nodes when they arise."
+  (when (> (length (qt-frame-windows fr)) 1)
+    (let* ((idx       (qt-frame-current-idx fr))
+           (win       (list-ref (qt-frame-windows fr) idx))
+           (ed        (qt-edit-window-editor win))
+           (container (qt-edit-window-container win))
+           (root      (qt-frame-root fr))
+           (cur-leaf  (split-tree-find-leaf root win))
+           (parent    (split-tree-find-parent root win)))
+
+      ;; Safety check
+      (unless cur-leaf
+        (error "qt-frame-delete-window!: could not find leaf for window"))
+
+      ;; Remove the window from tracking before Qt widget destruction
+      (hash-remove! *editor-window-map* ed)
+
+      ;; Update tree: remove cur-leaf from parent
+      (when parent
+        (split-tree-remove-child! parent cur-leaf)
+        (let ((remaining (split-node-children parent)))
+          ;; If parent now has exactly 1 child, unwrap it
+          (when (and remaining (= 1 (length remaining)))
+            (let* ((only-child  (car remaining))
+                   (parent-spl  (split-node-splitter parent))
+                   (grandparent (split-tree-find-parent-of-node root parent))
+                   ;; The Qt widget to add to the grandparent's splitter
+                   (only-qt-w   (if (split-leaf? only-child)
+                                  (qt-edit-window-container
+                                   (split-leaf-edit-window only-child))
+                                  (split-node-splitter only-child)))
+                   ;; Destination splitter
+                   (dest-spl    (if grandparent
+                                  (split-node-splitter grandparent)
+                                  (qt-frame-splitter fr))))
+              ;; Safety checks
+              (unless only-qt-w
+                (error "qt-frame-delete-window!: only-qt-w is null"))
+              (unless dest-spl
+                (error "qt-frame-delete-window!: dest-spl is null"))
+              ;; Insert only-child's widget at parent-spl's position in dest-spl
+              (let ((spl-idx (qt-splitter-index-of dest-spl parent-spl)))
+                (qt-splitter-insert-widget! dest-spl spl-idx only-qt-w))
+              ;; Update tree: replace parent with only-child
+              (if grandparent
+                (split-tree-replace-child! grandparent parent only-child)
+                (set! (qt-frame-root fr) only-child))
+              ;; Destroy the now-redundant sub-splitter (not root-spl)
+              (when (and parent-spl (not (eq? parent-spl (qt-frame-splitter fr))))
+                (qt-widget-destroy! parent-spl))))))
+
+      ;; Destroy the deleted window's Qt container
+      (when container
+        (qt-widget-hide! container)
+        (qt-widget-destroy! container))
+
+      ;; Update flat windows list and current-idx
+      (set! (qt-frame-windows fr) (list-remove-idx (qt-frame-windows fr) idx))
+      (when (>= (qt-frame-current-idx fr) (length (qt-frame-windows fr)))
+        (set! (qt-frame-current-idx fr) (- (length (qt-frame-windows fr)) 1))))
+      ;; Update visual indicators
+      (qt-frame-update-visual-indicators! fr)))
 
 (def (qt-frame-delete-other-windows! fr)
-  ;; STUB: Delete all windows except current
-  (void))
+  "Keep only the current window, destroy all others and all sub-splitters."
+  (let* ((cur     (qt-current-window fr))
+         (root-spl (qt-frame-splitter fr))
+         (all-wins (qt-frame-windows fr))
+         (sub-spls (split-tree-collect-sub-splitters (qt-frame-root fr) root-spl)))
+    ;; 1. Move current window's container to root-spl (reparents it)
+    (qt-splitter-add-widget! root-spl (qt-edit-window-container cur))
+    ;; 2. Destroy all other windows' containers
+    (for-each (lambda (win)
+                (unless (eq? win cur)
+                  (let ((ed        (qt-edit-window-editor win))
+                        (container (qt-edit-window-container win)))
+                    (hash-remove! *editor-window-map* ed)
+                    (qt-widget-hide! container)
+                    (qt-widget-destroy! container))))
+              all-wins)
+    ;; 3. Destroy sub-splitters (innermost first, avoiding double-destroy)
+    (for-each qt-widget-destroy! sub-spls)
+    ;; 4. Update logical tree and flat list
+    (set! (qt-frame-root fr) (make-split-leaf cur))
+    (set! (qt-frame-windows fr) (list cur))
+    (set! (qt-frame-current-idx fr) 0)
+    ;; 5. Update visual indicators
+    (qt-frame-update-visual-indicators! fr)))
 
-(def (qt-frame-other-window! fr (delta 1))
-  ;; STUB: Switch to other window
-  (let* ((wins (qt-frame-windows fr))
-         (n (length wins))
-         (cur (qt-frame-current-idx fr))
-         (new-idx (modulo (+ cur delta) n)))
-    (set! (qt-frame-current-idx fr) new-idx)
-    (qt-current-window fr)))
+;;;============================================================================
+;;; Window navigation
+;;;============================================================================
 
-(def (qt-apply-editor-theme! editor)
-  ;; STUB: Apply theme to editor
-  (void))
+(def (qt-frame-update-visual-indicators! fr)
+  "Update container borders to show which window is active.
+   Active window: blue border; inactive windows: no border."
+  (let ((cur-idx (qt-frame-current-idx fr))
+        (windows (qt-frame-windows fr)))
+    (let loop ((wins windows) (i 0))
+      (when (pair? wins)
+        (let* ((win (car wins))
+               (container (qt-edit-window-container win))
+               (is-current (= i cur-idx))
+               ;; Active: 2px solid blue border; inactive: 1px subtle gray
+               (border-style (if is-current
+                               "border: 2px solid #51afef;"
+                               "border: 1px solid #3a3a3a;")))
+          (qt-widget-set-style-sheet! container border-style))
+        (loop (cdr wins) (+ i 1))))))
+
+(def (qt-frame-other-window! fr)
+  "Switch to the next window (wraps around)."
+  (let ((n (length (qt-frame-windows fr))))
+    (set! (qt-frame-current-idx fr)
+          (modulo (+ (qt-frame-current-idx fr) 1) n))
+    ;; Give keyboard focus to the new active editor
+    (let ((win (list-ref (qt-frame-windows fr) (qt-frame-current-idx fr))))
+      (qt-widget-set-focus! (qt-edit-window-editor win)))
+    ;; Update visual indicators
+    (qt-frame-update-visual-indicators! fr)))
+
+;;;============================================================================
+;;; Helpers
+;;;============================================================================
+
+(def (list-index pred lst)
+  "Find the index of the first element matching pred, or #f."
+  (let loop ((l lst) (i 0))
+    (cond
+      ((null? l) #f)
+      ((pred (car l)) i)
+      (else (loop (cdr l) (+ i 1))))))
+
+(def (list-remove-idx lst idx)
+  (let loop ((l lst) (i 0) (acc []))
+    (cond
+      ((null? l) (reverse acc))
+      ((= i idx) (append (reverse acc) (cdr l)))
+      (else (loop (cdr l) (+ i 1) (cons (car l) acc))))))

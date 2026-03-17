@@ -3,12 +3,70 @@
 ;;; Source: src/jerboa-emacs/qt/helm-qt.ss
 
 (library (jerboa-emacs qt helm-qt)
-  (export helm-qt-read helm-qt-create-source)
+  (export helm-qt-run!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
-      mutex? mutex-name)
-    (std sugar) (jerboa-emacs core) (jerboa core)
-    (jerboa runtime))
-  (def (helm-qt-read app prompt sources) "")
-  (def (helm-qt-create-source name candidates) '()))
+      mutex? mutex-name sort sort!)
+    (std sugar) (std sort) (std srfi srfi-13)
+    (jerboa-emacs core) (jerboa-emacs qt sci-shim)
+    (jerboa-emacs qt window) (jerboa-emacs qt echo)
+    (jerboa-emacs helm) (jerboa core) (jerboa runtime))
+  (def (helm-qt-run! session app)
+       "Run a helm session in Qt mode.\n   Uses the existing narrowing UI with helm's multi-match and sources.\n   Returns the selected candidate's real value, or #f if cancelled."
+       (let* ([sources (helm-session-sources session)]
+              [pattern (helm-session-pattern session)]
+              [multi-source? (> (length sources) 1)]
+              [all-display-strings (list)]
+              [display-to-candidate (make-hash-table)])
+         (for-each
+           (lambda (src)
+             (let* ([raw (let ([c (helm-source-candidates src)])
+                           (if (procedure? c) (c) c))]
+                    [display-fn (helm-source-display-fn src)]
+                    [real-fn (helm-source-real-fn src)]
+                    [src-name (helm-source-name src)])
+               (for-each
+                 (lambda (raw-item)
+                   (let* ([display-str (if display-fn
+                                           (display-fn raw-item)
+                                           raw-item)]
+                          [real-val (if real-fn
+                                        (real-fn raw-item)
+                                        raw-item)]
+                          [shown (if multi-source?
+                                     (string-append
+                                       "["
+                                       src-name
+                                       "] "
+                                       display-str)
+                                     display-str)]
+                          [cand (make-helm-candidate
+                                  display-str
+                                  real-val
+                                  src)])
+                     (set! all-display-strings
+                       (cons shown all-display-strings))
+                     (hash-put! display-to-candidate shown cand)))
+                 raw)))
+           sources)
+         (set! all-display-strings (reverse all-display-strings))
+         (let* ([prompt (if multi-source?
+                            "Helm"
+                            (helm-source-name (car sources)))]
+                [result (qt-echo-read-with-narrowing
+                          app
+                          (string-append prompt ": ")
+                          all-display-strings)])
+           (if result
+               (let ([cand (hash-get display-to-candidate result)])
+                 (if cand
+                     (begin
+                       (helm-session-store! session)
+                       (let* ([src (helm-candidate-source cand)]
+                              [action (helm-default-action src)]
+                              [real (helm-candidate-real cand)])
+                         (when action (action real))
+                         real))
+                     (begin (helm-session-store! session) result)))
+               #f)))))

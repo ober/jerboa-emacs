@@ -3,14 +3,31 @@
 ;;; Source: src/jerboa-emacs/qt/main.ss
 
 (library (jerboa-emacs qt main)
-  (export qt-main)
+  (export main)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
-    (std sugar) (jerboa-emacs qt app) (jerboa core)
+    (only (jerboa-emacs qt app) qt-main)
+    (jerboa core)
     (jerboa runtime))
-  (def (qt-main args)
-       (displayln "Jerboa-Emacs Qt (stub)")
-       (displayln "Full implementation pending")
-       0))
+  (def (main . args)
+       (cond
+         [(member "--version" args)
+          (displayln "gemacs " (cdar version-manifest))
+          (for-each
+            (lambda (p)
+              (when (not (string=? (car p) ""))
+                (displayln (car p) " " (cdr p))))
+            (cdr version-manifest))]
+         [(member "--help" args)
+          (displayln "Usage: gemacs-qt [OPTIONS] [FILES...]")
+          (displayln "Options:")
+          (displayln "  --version        Show version information")
+          (displayln "  --help           Show this help message")
+          (displayln
+            "  --verbose        Log all Qt calls and commands to ~/.gemacs-verbose.log")
+          (displayln
+            "  --repl <port>    Start TCP debug REPL on given port (0=auto)")]
+         [else (apply qt-main args)]))
+  (include "../manifest.ss"))
