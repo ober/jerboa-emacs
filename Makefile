@@ -7,7 +7,10 @@ JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
 export LD_LIBRARY_PATH := $(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 
-.PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test clean clean-generated
+.PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
+        test-org-duration test-org-element test-org-fold test-org-footnote \
+        test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
+        test-vtscreen test-debug-repl test-qt
 
 all: build test
 
@@ -22,7 +25,7 @@ rebuild:
 run: build
 	$(SCHEME) $(LIBDIRS) --script main.ss
 
-test: build test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org
+test: build test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra
 
 test-tier0:
 	$(SCHEME) $(LIBDIRS) --script tests/test-tier0.ss
@@ -69,6 +72,46 @@ test-org-list:
 
 test-persist:
 	$(SCHEME) $(LIBDIRS) --script tests/test-persist.ss
+
+test-extra: test-org-duration test-org-element test-org-fold test-org-footnote \
+            test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
+            test-vtscreen test-debug-repl test-qt
+
+test-org-duration:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-duration.ss
+
+test-org-element:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-element.ss
+
+test-org-fold:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-fold.ss
+
+test-org-footnote:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-footnote.ss
+
+test-org-lint:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-lint.ss
+
+test-org-num:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-num.ss
+
+test-org-property:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-property.ss
+
+test-org-src:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-src.ss
+
+test-org-tempo:
+	$(SCHEME) $(LIBDIRS) --script tests/test-org-tempo.ss
+
+test-vtscreen:
+	$(SCHEME) $(LIBDIRS) --script tests/test-vtscreen.ss
+
+test-debug-repl:
+	$(SCHEME) $(LIBDIRS) --program tests/test-debug-repl.ss
+
+test-qt:
+	$(SCHEME) $(LIBDIRS) --script tests/test-qt.ss
 
 clean:
 	find lib -name '*.so' -delete 2>/dev/null; true
