@@ -9,7 +9,9 @@
 (library (jerboa-emacs debug-repl)
   (export start-debug-repl! stop-debug-repl! debug-repl-port)
   (import (except (chezscheme)
-            make-hash-table hash-table? iota 1+ 1- sort sort!)
+            make-hash-table hash-table? iota 1+ 1- sort sort!
+            make-mutex mutex? mutex-name thread?
+            getenv path-extension path-absolute?)
           (jerboa core)
           (jerboa runtime)
           (std sugar)

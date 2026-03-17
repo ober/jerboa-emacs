@@ -14,7 +14,9 @@
           pty-waitpid
           pty-child-alive?)
   (import (except (chezscheme)
-            make-hash-table hash-table? iota 1+ 1-)
+            make-hash-table hash-table? iota 1+ 1-
+            getenv path-extension path-absolute? thread?
+            make-mutex mutex? mutex-name)
           (jerboa core)
           (jerboa runtime)
           (std sugar)

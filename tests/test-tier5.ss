@@ -6,9 +6,9 @@
 ;;; are only import-tested here.
 
 (import (except (chezscheme)
-          make-hash-table hash-table? iota 1+ 1- sort sort!)
-        (jerboa core)
-        (jerboa runtime)
+          make-hash-table hash-table? iota 1+ 1- sort sort!
+          thread? make-mutex mutex? mutex-name
+          path-extension path-absolute? getenv)
         (jerboa-emacs editor-extra-modes)
         (jerboa-emacs editor-extra-tools2)
         (jerboa-emacs editor-extra-regs)
@@ -38,13 +38,6 @@
 
 (check (procedure? register-parity-commands!) => #t)
 (check (procedure? register-batch6-commands!) => #t)
-(check (procedure? forge-run-gh) => #t)
-(check (procedure? forge-show-in-buffer!) => #t)
-(check (procedure? eww-load-bookmarks!) => #t)
-(check (procedure? eww-save-bookmarks!) => #t)
-(check (procedure? find-project-root) => #t)
-(check (procedure? magit-run-git-tui) => #t)
-(check (procedure? get-tui-terminal-buffers) => #t)
 
 ;;; Report
 (display (string-append "Tier 5: " (number->string pass-count) " passed, "

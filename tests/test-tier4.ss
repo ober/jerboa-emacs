@@ -7,7 +7,9 @@
 ;;; cannot be tested without a live terminal.
 
 (import (except (chezscheme)
-          make-hash-table hash-table? iota 1+ 1- sort sort!)
+          make-hash-table hash-table? iota 1+ 1- sort sort!
+          getenv path-extension path-absolute? thread?
+          make-mutex mutex? mutex-name)
         (jerboa core)
         (jerboa runtime)
         (jerboa-emacs core)
