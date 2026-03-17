@@ -18,7 +18,8 @@
         :jerboa-emacs/echo
         (only-in :jerboa-emacs/editor-core
           cmd-undo-region cmd-display-buffer-in-side-window cmd-toggle-side-window
-          cmd-info-reader cmd-project-tree-git)
+          cmd-info-reader cmd-project-tree-git
+          winner-save-config!)
         (only-in :jerboa-emacs/editor-cmds-a
           cmd-project-tree-create-file cmd-project-tree-delete-file
           cmd-project-tree-rename-file cmd-jemacs-doc

@@ -2043,12 +2043,11 @@
 
 (def *customizable-vars*
   ;; list of (name description getter setter)
-  (list
-   (list "scroll-margin" "Lines of margin for scrolling" (lambda () *scroll-margin*) (lambda (v) (set! *scroll-margin* v)))
-   (list "require-final-newline" "Ensure final newline on save" (lambda () *require-final-newline*) (lambda (v) (set! *require-final-newline* v)))
-   (list "delete-trailing-whitespace-on-save" "Strip trailing whitespace" (lambda () *delete-trailing-whitespace-on-save*) (lambda (v) (set! *delete-trailing-whitespace-on-save* v)))
-   (list "global-auto-revert-mode" "Auto-reload changed files" (lambda () *global-auto-revert-mode*) (lambda (v) (set! *global-auto-revert-mode* v) (set! *auto-revert-mode* v)))
-   (list "flymake-mode" "Syntax checking" (lambda () *flymake-mode*) (lambda (v) (set! *flymake-mode* v)))))
+  [["scroll-margin" "Lines of margin for scrolling" (lambda () *scroll-margin*) (lambda (v) (set! *scroll-margin* v))]
+   ["require-final-newline" "Ensure final newline on save" (lambda () *require-final-newline*) (lambda (v) (set! *require-final-newline* v))]
+   ["delete-trailing-whitespace-on-save" "Strip trailing whitespace" (lambda () *delete-trailing-whitespace-on-save*) (lambda (v) (set! *delete-trailing-whitespace-on-save* v))]
+   ["global-auto-revert-mode" "Auto-reload changed files" (lambda () *global-auto-revert-mode*) (lambda (v) (set! *global-auto-revert-mode* v) (set! *auto-revert-mode* v))]
+   ["flymake-mode" "Syntax checking" (lambda () *flymake-mode*) (lambda (v) (set! *flymake-mode* v))]])
 
 (def (cmd-customize app)
   "Display a customization buffer showing all registered variables by group."
@@ -2058,8 +2057,8 @@
          (win (current-window fr))
          (buf (buffer-create! "*Customize*" ed))
          (groups (custom-groups))
-         (lines (list "Gemacs Customize"
-                     "================" "")))
+         (lines ["Gemacs Customize"
+                 "================" ""]))
     (buffer-attach! ed buf)
     (set! (edit-window-buffer win) buf)
     (for-each

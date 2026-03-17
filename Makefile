@@ -7,17 +7,20 @@ JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
 export LD_LIBRARY_PATH := $(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 
-.PHONY: all build rebuild test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test clean clean-generated
+.PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test clean clean-generated
 
 all: build test
 
-# Generate lib/jemacs/*.sls from src/jemacs/*.ss (incremental)
+# Generate lib/jerboa-emacs/*.sls from src/jerboa-emacs/*.ss (incremental)
 build:
 	$(JERBUILD) src/ lib/
 
 # Force regenerate all
 rebuild:
 	$(JERBUILD) src/ lib/ --force
+
+run: build
+	$(SCHEME) $(LIBDIRS) --script main.ss
 
 test: build test-tier0 test-tier2 test-tier3 test-tier4 test-tier5
 
@@ -40,5 +43,5 @@ clean:
 	find lib -name '*.so' -delete 2>/dev/null; true
 
 clean-generated:
-	rm -rf lib/jemacs/
+	rm -rf lib/jerboa-emacs/
 	rm -f src/.jerbuild-hashes

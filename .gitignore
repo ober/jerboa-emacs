@@ -7,3 +7,6 @@ src/.jerbuild-hashes
 # Compiled Chez artifacts
 lib/**/*.so
 lib/**/*.wpo
+
+# Build symlinks / local artifacts
+libjsh-ffi.so

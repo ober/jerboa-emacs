@@ -20,7 +20,8 @@
         :jerboa-emacs/window
         :jerboa-emacs/modeline
         :jerboa-emacs/echo
-        :jerboa-emacs/editor-extra-helpers)
+        :jerboa-emacs/editor-extra-helpers
+        (only-in :jerboa-emacs/editor-core winner-save-config!))
 
 
 ;; EWW browser - text-mode web browser using litehtml for HTML rendering
@@ -268,35 +269,7 @@
 
 ;; Winner mode (window configuration undo/redo)
 ;; Saves/restores: number of windows, current window index, buffer names per window
-
-(def *winner-max-history* 50) ; Max configs to remember
-
-(def (winner-save-config! app)
-  "Save current window configuration to winner history."
-  (let* ((fr (app-state-frame app))
-         (wins (frame-windows fr))
-         (num-wins (length wins))
-         (current-idx (frame-current-idx fr))
-         (buffers (map (lambda (w)
-                         (let ((buf (edit-window-buffer w)))
-                           (if buf (buffer-name buf) "*scratch*")))
-                       wins))
-         (config (list num-wins current-idx buffers))
-         (history (app-state-winner-history app)))
-    ;; Don't save duplicate consecutive configs
-    (unless (and (not (null? history))
-                 (equal? config (car history)))
-      ;; Truncate future (redo) history when adding new config
-      (let ((idx (app-state-winner-history-idx app)))
-        (when (> idx 0)
-          (set! history (list-tail history idx))
-          (set! (app-state-winner-history-idx app) 0)))
-      ;; Add new config, limit size
-      (let ((new-history (cons config history)))
-        (set! (app-state-winner-history app)
-          (if (> (length new-history) *winner-max-history*)
-            (take new-history *winner-max-history*)
-            new-history))))))
+;; winner-save-config! is defined in editor-core and imported above
 
 (def (winner-restore-config! app config)
   "Restore a window configuration from winner history."
