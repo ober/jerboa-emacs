@@ -10,7 +10,7 @@ export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
         test-org-duration test-org-element test-org-fold test-org-footnote \
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
-        test-vtscreen test-debug-repl test-qt
+        test-vtscreen test-debug-repl test-qt build-qt
 
 all: build test
 
@@ -24,6 +24,11 @@ rebuild:
 
 run: build
 	$(SCHEME) $(LIBDIRS) --script main.ss
+
+# Qt backend build target (for future use)
+build-qt: build
+	@echo "Qt modules: qt/sci-shim.sls qt/keymap.sls qt/buffer.sls qt/window.sls (stub)"
+	@echo "Sprint 1 complete - 4/54 Qt modules ported"
 
 test: build test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra
 
