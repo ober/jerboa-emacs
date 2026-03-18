@@ -56,30 +56,31 @@
    PEEK-EVENT is called with poll-ms to check for C-g (key code 7).
    Returns (values output-string exit-status).
    Raises keyboard-quit-exception on C-g."
-  (let-values (((in-port out-port err-port pid)
+  ;; open-process-ports returns (write-stdin read-stdout read-stderr pid)
+  (let-values (((p-stdin p-stdout p-stderr pid)
                 (open-process-ports cmd (buffer-mode none) (native-transcoder))))
     (dynamic-wind
-      (lambda () (set! *active-subprocess* (cons in-port out-port)))
+      (lambda () (set! *active-subprocess* (cons p-stdin p-stdout)))
       (lambda ()
         ;; Write stdin if provided
         (when stdin-text
-          (put-string out-port stdin-text)
-          (flush-output-port out-port))
-        (close-port out-port)
-        (close-port err-port)
+          (put-string p-stdin stdin-text)
+          (flush-output-port p-stdin))
+        (close-port p-stdin)
+        (close-port p-stderr)
         ;; Poll loop: check for C-g, drain output, repeat
         (let ((out (open-output-string)))
           (let loop ()
             ;; Check for C-g via peek-event
             (let ((ev (peek-event poll-ms)))
               (when (and ev (event-key? ev) (= (event-key ev) 7))
-                (with-catch void (lambda () (close-port in-port)))
+                (with-catch void (lambda () (close-port p-stdout)))
                 (raise (make-keyboard-quit-exception))))
             ;; Drain whatever's available
-            (if (drain-available! in-port out)
+            (if (drain-available! p-stdout out)
               ;; EOF reached — process finished (no process-status in Chez)
               (begin
-                (close-port in-port)
+                (close-port p-stdout)
                 (values (get-output-string out) #f))
               ;; Not done yet — loop
               (loop)))))
@@ -98,17 +99,18 @@
    Returns (values output-string #f).
    Raises keyboard-quit-exception on C-g.
    NOTE: Omits process-status (hangs in Qt due to SIGCHLD race)."
-  (let-values (((in-port out-port err-port pid)
+  ;; open-process-ports returns (write-stdin read-stdout read-stderr pid)
+  (let-values (((p-stdin p-stdout p-stderr pid)
                 (open-process-ports cmd (buffer-mode none) (native-transcoder))))
     (dynamic-wind
-      (lambda () (set! *active-subprocess* (cons in-port out-port)))
+      (lambda () (set! *active-subprocess* (cons p-stdin p-stdout)))
       (lambda ()
         ;; Write stdin if provided
         (when stdin-text
-          (put-string out-port stdin-text)
-          (flush-output-port out-port))
-        (close-port out-port)
-        (close-port err-port)
+          (put-string p-stdin stdin-text)
+          (flush-output-port p-stdin))
+        (close-port p-stdin)
+        (close-port p-stderr)
         ;; Poll loop: pump events, check quit flag, drain output
         (let ((out (open-output-string)))
           (let loop ()
@@ -117,13 +119,13 @@
             ;; Check quit flag
             (when (quit-flag?)
               (quit-flag-clear!)
-              (with-catch void (lambda () (close-port in-port)))
+              (with-catch void (lambda () (close-port p-stdout)))
               (raise (make-keyboard-quit-exception)))
             ;; Drain whatever's available
-            (if (drain-available! in-port out)
+            (if (drain-available! p-stdout out)
               ;; EOF reached — process finished
               (begin
-                (close-port in-port)
+                (close-port p-stdout)
                 (values (get-output-string out) #f))
               ;; Not done yet — sleep briefly to avoid busy-wait, then loop
               (begin

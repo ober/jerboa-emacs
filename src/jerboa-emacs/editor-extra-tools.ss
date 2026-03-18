@@ -900,18 +900,26 @@
 
 ;; Magit-like git operations
 (def (git-output args)
-  "Run a git command and return its stdout as a string, or #f on error."
-  (with-exception-catcher
+  "Run a git command and return its full stdout as a string (trimmed), or #f on error.
+   Uses open-process-ports: returns (stdin-of-child stdout-of-child stderr-of-child pid)."
+  (with-catch
     (lambda (e) #f)
     (lambda ()
-      (let ((p (open-process
-                 (list path: "git"
-                       arguments: args
-                       stdin-redirection: #f stdout-redirection: #t
-                       stderr-redirection: #t))))
-        (let ((out (read-line p #f)))
-          (process-status p)
-          out)))))
+      (let ((cmd (apply string-append
+                    "git" (map (lambda (a) (string-append " " a)) args))))
+        ;; open-process-ports returns (write-to-stdin read-from-stdout read-from-stderr pid)
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports cmd 'block (native-transcoder))))
+          (close-port p-stdin)   ;; close stdin to signal no input
+          (let loop ((acc '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout)
+                  (close-port p-stderr)
+                  (let ((result (string-join (reverse acc) "\n")))
+                    (if (string=? result "") #f result)))
+                (loop (cons line acc))))))))))
 
 (def (cmd-magit-status app)
   "Show git status in magit-like interface with sections."

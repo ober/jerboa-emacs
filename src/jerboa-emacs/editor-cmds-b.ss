@@ -1941,22 +1941,28 @@
          (buf (current-buffer-from-app app))
          (path (buffer-file-path buf))
          (dir (if path (path-directory path) ".")))
-    (let ((output (with-exception-catcher
+    (let ((output (with-catch
                     (lambda (e) "Not a git repository")
                     (lambda ()
                       (let* ((args (if path
                                      (list "log" "--oneline" "-20" path)
                                      (list "log" "--oneline" "-20")))
-                             (proc (open-process
-                                     (list path: "/usr/bin/git"
-                                           arguments: args
-                                           directory: dir
-                                           stdin-redirection: #f
-                                           stdout-redirection: #t
-                                           stderr-redirection: #t))))
-                        (let ((result (read-line proc #f)))
-                          (process-status proc)
-                          (or result "(no commits)")))))))
+                             (cmd (apply string-append
+                                    "cd " dir " && /usr/bin/git"
+                                    (map (lambda (a) (string-append " " a)) args))))
+                        ;; open-process-ports: (stdin-of-child stdout-of-child stderr-of-child pid)
+                        (let-values (((p-stdin p-stdout p-stderr pid)
+                                      (open-process-ports cmd 'block (native-transcoder))))
+                          (close-port p-stdin)
+                          (let loop ((acc '()))
+                            (let ((line (get-line p-stdout)))
+                              (if (eof-object? line)
+                                (begin
+                                  (close-port p-stdout)
+                                  (close-port p-stderr)
+                                  (if (null? acc) "(no commits)"
+                                    (string-join (reverse acc) "\n")))
+                                (loop (cons line acc)))))))))))
       (open-output-buffer app "*git-log*" output)
       (echo-message! echo "git log"))))
 

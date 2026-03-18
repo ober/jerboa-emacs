@@ -6,11 +6,13 @@ LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
 export LD_LIBRARY_PATH := $(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:$(HOME)/mine/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
+export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
 
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
         test-org-duration test-org-element test-org-fold test-org-footnote \
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
-        test-vtscreen test-debug-repl test-qt build-qt
+        test-vtscreen test-debug-repl test-qt build-qt \
+        test-emacs test-functional test-term-hang
 
 all: build test
 
@@ -163,6 +165,15 @@ test-debug-repl:
 
 test-qt:
 	$(SCHEME) $(LIBDIRS) --script tests/test-qt.ss
+
+test-emacs:
+	$(SCHEME) $(LIBDIRS) --program tests/test-emacs.ss
+
+test-functional:
+	$(SCHEME) $(LIBDIRS) --program tests/test-functional.ss
+
+test-term-hang:
+	$(SCHEME) $(LIBDIRS) --program tests/test-term-hang.ss
 
 clean:
 	find lib -name '*.so' -delete 2>/dev/null; true

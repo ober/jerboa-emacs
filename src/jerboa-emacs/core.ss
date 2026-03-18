@@ -510,6 +510,7 @@
 
   ;; Mark
   (keymap-bind! *global-keymap* "C-@" 'set-mark)
+  (keymap-bind! *global-keymap* "C-SPC" 'set-mark)
 
   ;; Search
   (keymap-bind! *global-keymap* "C-s" 'search-forward)
@@ -684,6 +685,7 @@
   ;; Downcase/upcase region
   (keymap-bind! *ctrl-x-map* "C-l" 'downcase-region)
   (keymap-bind! *ctrl-x-map* "C-u" 'upcase-region)
+  (keymap-bind! *ctrl-x-map* "u" 'undo)
 
   ;; Shell command
   (keymap-bind! *global-keymap* "M-!" 'shell-command)
@@ -1527,11 +1529,11 @@
           (lambda (e)
             (if (keyboard-quit-exception? e)
               (echo-message! (app-state-echo app) "Quit")
-              (let ((msg (with-output-to-string ""
+              (let ((msg (with-output-to-string
                            (lambda () (display-exception e (current-output-port))))))
                 (jemacs-log! "COMMAND-ERROR: " (symbol->string name) ": \n" msg)
                 ;; Also log continuation backtrace
-                (let ((bt (with-output-to-string ""
+                (let ((bt (with-output-to-string
                             (lambda () (display-continuation-backtrace
                                          (call/cc (lambda (k) k))
                                          (current-output-port))))))
