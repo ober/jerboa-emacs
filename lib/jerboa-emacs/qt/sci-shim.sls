@@ -4,10 +4,12 @@
 
 (library (jerboa-emacs qt sci-shim)
   (export sci-send sci-send/string sci-recv-string rgb->sci
-   doc-editor-register! doc-buffer-register! SCI_REPLACESEL
-   qt-plain-text-edit-create qt-plain-text-edit-set-text!
-   qt-plain-text-edit-text qt-plain-text-edit-append!
-   qt-plain-text-edit-clear! qt-plain-text-edit-set-read-only!
+   *doc-editor-map* *doc-buffer-map* doc-editor-register!
+   doc-buffer-register! qt-drain-pending-callbacks!
+   SCI_REPLACESEL qt-plain-text-edit-create
+   qt-plain-text-edit-set-text! qt-plain-text-edit-text
+   qt-plain-text-edit-append! qt-plain-text-edit-clear!
+   qt-plain-text-edit-set-read-only!
    qt-plain-text-edit-read-only?
    qt-plain-text-edit-set-placeholder!
    qt-plain-text-edit-line-count
@@ -51,30 +53,213 @@
    qt-syntax-highlighter-rehighlight!
    qt-syntax-highlighter-clear-rules!
    qt-extra-selections-clear! qt-extra-selection-add-line!
-   qt-extra-selection-add-range! qt-extra-selections-apply!)
+   qt-extra-selection-add-range! qt-extra-selections-apply!
+   QT_ALIGN_CENTER QT_CASE_INSENSITIVE QT_HORIZONTAL
+   QT_VERTICAL QT_KEEP_ANCHOR QT_MATCH_CONTAINS
+   QT_PLAIN_NO_WRAP QT_PLAIN_WIDGET_WRAP QT_SIZE_FIXED
+   QT_SIZE_PREFERRED QT_WINDOW_FULL_SCREEN QT_WINDOW_MAXIMIZED
+   qt-action-create qt-action-set-shortcut! qt-app-create
+   qt-app-destroy! qt-app-exec! qt-app-process-events!
+   qt-app-set-style-sheet! qt-clipboard-set-text!
+   qt-clipboard-text qt-completer-complete-rect!
+   qt-completer-create qt-completer-destroy!
+   qt-completer-set-case-sensitivity!
+   qt-completer-set-completion-prefix!
+   qt-completer-set-filter-mode!
+   qt-completer-set-max-visible-items!
+   qt-completer-set-model-strings! qt-completer-set-widget!
+   qt-dialog-create qt-dialog-exec! qt-dialog-reject!
+   qt-dialog-set-title! qt-font-destroy! qt-font-point-size
+   qt-hbox-layout-create qt-vbox-layout-create
+   qt-layout-add-stretch! qt-layout-add-widget!
+   qt-layout-set-margins! qt-layout-set-spacing!
+   qt-layout-set-stretch-factor! qt-label-create
+   qt-label-set-alignment! qt-label-set-pixmap!
+   qt-label-set-text! qt-last-key-code qt-last-key-modifiers
+   qt-last-key-text qt-line-edit-create
+   qt-line-edit-set-completer! qt-line-edit-set-text!
+   qt-line-edit-text qt-list-widget-add-item!
+   qt-list-widget-clear! qt-list-widget-create
+   qt-list-widget-current-row qt-list-widget-set-current-row!
+   qt-main-window-add-toolbar! qt-main-window-create
+   qt-main-window-menu-bar qt-main-window-set-central-widget!
+   qt-main-window-set-status-bar-text!
+   qt-main-window-set-title! qt-menu-add-action!
+   qt-menu-add-separator! qt-menu-bar-add-menu qt-on-clicked!
+   qt-on-completer-activated! qt-on-item-double-clicked!
+   qt-on-key-press! qt-on-key-press-consuming!
+   qt-on-return-pressed! qt-on-scintilla-save-point-left!
+   qt-on-scintilla-save-point-reached!
+   qt-on-scintilla-text-changed! qt-on-text-changed!
+   qt-on-timeout! qt-on-triggered! qt-pixmap-destroy!
+   qt-pixmap-height qt-pixmap-load qt-pixmap-null?
+   qt-pixmap-scaled qt-pixmap-width qt-push-button-create
+   qt-scintilla-create qt-scintilla-get-text
+   qt-scintilla-get-text-length qt-scintilla-receive-string
+   qt-scintilla-send-message qt-scintilla-send-message-string
+   qt-scintilla-set-lexer-language! qt-scintilla-set-text!
+   qt-scroll-area-create qt-scroll-area-set-widget!
+   qt-scroll-area-set-widget-resizable! qt-splitter-add-widget!
+   qt-splitter-count qt-splitter-create qt-splitter-index-of
+   qt-splitter-insert-widget! qt-splitter-set-handle-width!
+   qt-splitter-set-orientation! qt-splitter-set-sizes!
+   qt-splitter-size-at qt-stacked-widget-add-widget!
+   qt-stacked-widget-create
+   qt-stacked-widget-set-current-index! qt-timer-create
+   qt-timer-set-single-shot! qt-timer-start! qt-timer-stop!
+   qt-toolbar-add-action! qt-toolbar-add-separator!
+   qt-toolbar-create qt-toolbar-set-movable! qt-widget-close!
+   qt-widget-create qt-widget-destroy! qt-widget-font
+   qt-widget-height qt-widget-hide! qt-widget-resize!
+   qt-widget-set-focus! qt-widget-set-font-size!
+   qt-widget-set-maximum-height! qt-widget-set-minimum-height!
+   qt-widget-set-minimum-size! qt-widget-set-size-policy!
+   qt-widget-set-style-sheet! qt-widget-show!
+   qt-widget-show-fullscreen! qt-widget-show-maximized!
+   qt-widget-show-minimized! qt-widget-show-normal!
+   qt-widget-width qt-widget-window-state QT_MOD_SHIFT
+   QT_MOD_ALT QT_MOD_META QT_MOD_CTRL QT_KEY_ESCAPE
+   QT_KEY_BACKSPACE QT_KEY_RETURN QT_KEY_ENTER QT_KEY_DELETE
+   QT_KEY_TAB QT_KEY_INSERT QT_KEY_HOME QT_KEY_END QT_KEY_LEFT
+   QT_KEY_RIGHT QT_KEY_UP QT_KEY_DOWN QT_KEY_PAGE_UP
+   QT_KEY_PAGE_DOWN QT_KEY_SPACE QT_KEY_A QT_KEY_G QT_KEY_N
+   QT_KEY_P QT_KEY_R QT_KEY_S QT_KEY_W QT_KEY_Z QT_KEY_F1
+   QT_KEY_F2 QT_KEY_F3 QT_KEY_F4 QT_KEY_F5 QT_KEY_F6 QT_KEY_F7
+   QT_KEY_F8 QT_KEY_F9 QT_KEY_F10 QT_KEY_F11 QT_KEY_F12
+   QT_CURSOR_UP QT_CURSOR_DOWN QT_CURSOR_START QT_CURSOR_END
+   QT_CURSOR_START_OF_BLOCK QT_CURSOR_END_OF_BLOCK
+   QT_CURSOR_NEXT_CHAR QT_CURSOR_NEXT_WORD
+   QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
     (jerboa-emacs core) (chez-scintilla constants)
-    (chez-scintilla scintilla) (chez-qt qt) (std sugar)
-    (jerboa core) (jerboa runtime))
+    (chez-scintilla scintilla)
+    (except (chez-qt qt) qt-plain-text-edit-create
+     qt-plain-text-edit-set-text! qt-plain-text-edit-text
+     qt-plain-text-edit-append! qt-plain-text-edit-clear!
+     qt-plain-text-edit-set-read-only!
+     qt-plain-text-edit-read-only?
+     qt-plain-text-edit-set-placeholder!
+     qt-plain-text-edit-line-count
+     qt-plain-text-edit-set-max-block-count!
+     qt-plain-text-edit-cursor-line
+     qt-plain-text-edit-cursor-column
+     qt-plain-text-edit-set-line-wrap!
+     qt-plain-text-edit-cursor-position
+     qt-plain-text-edit-set-cursor-position!
+     qt-plain-text-edit-move-cursor!
+     qt-plain-text-edit-select-all!
+     qt-plain-text-edit-selected-text
+     qt-plain-text-edit-selection-start
+     qt-plain-text-edit-selection-end
+     qt-plain-text-edit-set-selection!
+     qt-plain-text-edit-has-selection?
+     qt-plain-text-edit-insert-text!
+     qt-plain-text-edit-remove-selected-text!
+     qt-plain-text-edit-undo! qt-plain-text-edit-redo!
+     qt-plain-text-edit-can-undo? qt-plain-text-edit-cut!
+     qt-plain-text-edit-copy! qt-plain-text-edit-paste!
+     qt-plain-text-edit-text-length qt-plain-text-edit-text-range
+     qt-plain-text-edit-line-from-position
+     qt-plain-text-edit-line-end-position
+     qt-plain-text-edit-find-text
+     qt-plain-text-edit-ensure-cursor-visible!
+     qt-plain-text-edit-center-cursor! qt-text-document-create
+     qt-plain-text-document-create qt-text-document-destroy!
+     qt-plain-text-edit-document qt-plain-text-edit-set-document!
+     qt-text-document-modified? qt-text-document-set-modified!
+     qt-syntax-highlighter-create qt-syntax-highlighter-destroy!
+     qt-syntax-highlighter-add-rule!
+     qt-syntax-highlighter-add-keywords!
+     qt-syntax-highlighter-add-multiline-rule!
+     qt-syntax-highlighter-clear-rules!
+     qt-syntax-highlighter-rehighlight!
+     qt-line-number-area-create qt-line-number-area-destroy!
+     qt-line-number-area-set-visible!
+     qt-line-number-area-set-bg-color!
+     qt-line-number-area-set-fg-color! QT_MOD_SHIFT QT_MOD_ALT
+     QT_MOD_META QT_KEY_ESCAPE QT_KEY_BACKSPACE QT_KEY_RETURN
+     QT_KEY_ENTER QT_KEY_DELETE QT_KEY_TAB QT_KEY_INSERT
+     QT_KEY_HOME QT_KEY_END QT_KEY_LEFT QT_KEY_RIGHT QT_KEY_UP
+     QT_KEY_DOWN QT_KEY_PAGE_UP QT_KEY_PAGE_DOWN QT_KEY_SPACE
+     QT_KEY_F1 QT_KEY_F2 QT_KEY_F3 QT_KEY_F4 QT_KEY_F5 QT_KEY_F6
+     QT_KEY_F7 QT_KEY_F8 QT_KEY_F9 QT_KEY_F10 QT_KEY_F11
+     QT_KEY_F12 QT_CURSOR_UP QT_CURSOR_DOWN QT_CURSOR_START
+     QT_CURSOR_END QT_CURSOR_START_OF_BLOCK
+     QT_CURSOR_END_OF_BLOCK QT_CURSOR_NEXT_CHAR
+     QT_CURSOR_NEXT_WORD QT_CURSOR_PREVIOUS_CHAR
+     QT_CURSOR_PREVIOUS_WORD)
+    (std sugar) (jerboa core) (jerboa runtime))
+  (def QT_MOD_SHIFT 33554432)
+  (def QT_MOD_ALT 134217728)
+  (def QT_MOD_META 268435456)
+  (def QT_MOD_CTRL 67108864)
+  (def QT_KEY_ESCAPE 16777216)
+  (def QT_KEY_BACKSPACE 16777219)
+  (def QT_KEY_RETURN 16777220)
+  (def QT_KEY_ENTER 16777221)
+  (def QT_KEY_DELETE 16777223)
+  (def QT_KEY_TAB 16777217)
+  (def QT_KEY_INSERT 16777222)
+  (def QT_KEY_HOME 16777232)
+  (def QT_KEY_END 16777233)
+  (def QT_KEY_LEFT 16777234)
+  (def QT_KEY_UP 16777235)
+  (def QT_KEY_RIGHT 16777236)
+  (def QT_KEY_DOWN 16777237)
+  (def QT_KEY_PAGE_UP 16777238)
+  (def QT_KEY_PAGE_DOWN 16777239)
+  (def QT_KEY_SPACE 32)
+  (def QT_KEY_A 65)
+  (def QT_KEY_G 71)
+  (def QT_KEY_N 78)
+  (def QT_KEY_P 80)
+  (def QT_KEY_R 82)
+  (def QT_KEY_S 83)
+  (def QT_KEY_W 87)
+  (def QT_KEY_Z 90)
+  (def QT_KEY_F1 16777264)
+  (def QT_KEY_F2 16777265)
+  (def QT_KEY_F3 16777266)
+  (def QT_KEY_F4 16777267)
+  (def QT_KEY_F5 16777268)
+  (def QT_KEY_F6 16777269)
+  (def QT_KEY_F7 16777270)
+  (def QT_KEY_F8 16777271)
+  (def QT_KEY_F9 16777272)
+  (def QT_KEY_F10 16777273)
+  (def QT_KEY_F11 16777274)
+  (def QT_KEY_F12 16777275)
+  (def QT_CURSOR_UP 2)
+  (def QT_CURSOR_DOWN 12)
+  (def QT_CURSOR_START 1)
+  (def QT_CURSOR_END 11)
+  (def QT_CURSOR_START_OF_BLOCK 4)
+  (def QT_CURSOR_END_OF_BLOCK 8)
+  (def QT_CURSOR_NEXT_CHAR 9)
+  (def QT_CURSOR_NEXT_WORD 15)
+  (def QT_CURSOR_PREVIOUS_CHAR 5)
+  (def QT_CURSOR_PREVIOUS_WORD 18)
   (def (sci-send sci msg (wparam 0) (lparam 0))
        (qt-scintilla-send-message sci msg wparam lparam))
   (def (sci-send/string sci msg str (wparam 0))
-       (qt-scintilla-send-message/string sci msg str wparam))
+       (qt-scintilla-send-message-string sci msg wparam str))
   (def (sci-recv-string sci msg (wparam 0))
        (qt-scintilla-receive-string sci msg wparam))
   (def (rgb->sci r g b) (+ r (* 256 g) (* 65536 b)))
-  (def *doc-editor-map* (make-hash-table))
-  (def *doc-buffer-map* (make-hash-table))
+  (def (qt-drain-pending-callbacks!) (void))
+  (define *doc-editor-map*--cell (vector (make-hash-table)))
+  (define *doc-buffer-map*--cell (vector (make-hash-table)))
   (def (doc-editor-register! doc editor)
        (hash-put! *doc-editor-map* doc editor))
   (def (doc-buffer-register! doc buf)
        (hash-put! *doc-buffer-map* doc buf))
   (def (qt-plain-text-edit-create parent: (parent #f))
-       (qt-scintilla-create 'parent: parent))
-  (def (qt-plain-text-edit-text sci) (qt-scintilla-text sci))
+       (qt-scintilla-create parent))
+  (def (qt-plain-text-edit-text sci)
+       (qt-scintilla-get-text sci))
   (def (qt-plain-text-edit-set-text! sci text)
        (verbose-log!
          "qt-plain-text-edit-set-text! len="
@@ -100,9 +285,9 @@
   (def (qt-plain-text-edit-remove-selected-text! sci)
        (sci-send/string sci SCI_REPLACESEL ""))
   (def (qt-plain-text-edit-text-length sci)
-       (qt-scintilla-text-length sci))
+       (qt-scintilla-get-text-length sci))
   (def (qt-plain-text-edit-text-range sci start end)
-       (let ([text (qt-scintilla-text sci)])
+       (let ([text (qt-scintilla-get-text sci)])
          (if (and (>= start 0)
                   (<= end (string-length text))
                   (<= start end))
@@ -292,4 +477,15 @@
                    safe-pos
                    safe-len)))))
          *pending-decorations*)
-       (set! *pending-decorations* (list))))
+       (set! *pending-decorations* (list)))
+  (define-syntax *doc-editor-map*
+    (identifier-syntax
+      [id (vector-ref *doc-editor-map*--cell 0)]
+      [(set! id val) (vector-set! *doc-editor-map*--cell 0 val)]))
+  (define-syntax *doc-buffer-map*
+    (identifier-syntax
+      [id (vector-ref *doc-buffer-map*--cell 0)]
+      [(set! id val) (vector-set!
+                       *doc-buffer-map*--cell
+                       0
+                       val)])))

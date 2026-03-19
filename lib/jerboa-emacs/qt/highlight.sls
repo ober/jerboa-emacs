@@ -8,18 +8,20 @@
     qt-org-highlight-buffer-async! qt-update-visual-decorations!
     qt-highlight-search-matches! qt-clear-search-highlights!
     qt-enable-code-folding! detect-language
-    *search-highlight-active* *qt-show-paren-enabled*
-    *qt-delete-selection-enabled*)
+    qt-org-table-separator? *search-highlight-active*
+    *qt-show-paren-enabled* *qt-delete-selection-enabled*)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
-    (std sugar)
+    (std sugar) (chez-scintilla constants)
     (except (std srfi srfi-13) string-join string-trim
       string-prefix? string-suffix? string-contains string-index)
-    (\x2E;./pregexp-compat) (std misc string)
-    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
-    (jerboa-emacs async)
+    (only (jerboa-emacs pregexp-compat) pregexp pregexp-match
+      pregexp-match-positions pregexp-replace pregexp-replace*
+      pregexp-split)
+    (std misc string) (jerboa-emacs qt sci-shim)
+    (jerboa-emacs core) (jerboa-emacs async)
     (only (jerboa-emacs org-parse) org-heading-line?
       org-heading-stars-of-line org-comment-line?
       org-keyword-line? org-table-line? org-block-begin?
@@ -58,17 +60,14 @@
                     'ruby]
                    [else #f])]
                 [(member ext '(".ss" ".scm" ".sld" ".sls" ".rkt")) 'scheme]
+                [(member ext '(".c" ".h")) 'c]
                 [(member
                    ext
-                   '(".c" ".h" ".cpp" ".hpp" ".cc" ".cxx" ".hh" ".hxx"
-                      ".ino"))
-                 'c]
+                   '(".cpp" ".hpp" ".cc" ".cxx" ".hh" ".hxx" ".ino"))
+                 'c++]
                 [(member ext '(".py" ".pyw" ".pyi")) 'python]
-                [(member
-                   ext
-                   '(".js" ".jsx" ".ts" ".tsx" ".mjs" ".cjs" ".mts"
-                      ".cts"))
-                 'javascript]
+                [(member ext '(".js" ".jsx" ".mjs" ".cjs")) 'javascript]
+                [(member ext '(".ts" ".tsx" ".mts" ".cts")) 'typescript]
                 [(member ext '(".org")) 'org]
                 [(member ext '(".md" ".markdown" ".mkd" ".rst")) 'markdown]
                 [(member ext '(".sh" ".bash" ".zsh" ".fish" ".ksh"))
@@ -545,31 +544,6 @@
                 (sci-send ed SCI_STYLESETFORE 4 (rgb->sci r g b)))]
              [else (void)])
            (qt-enable-code-folding! ed))))
-  (def SCI_SETMARGINTYPEN 2240)
-  (def SCI_SETMARGINWIDTHN 2242)
-  (def SCI_SETMARGINMASKN 2244)
-  (def SCI_SETMARGINSENSITIVEN 2246)
-  (def SCI_MARKERDEFINE 2040)
-  (def SCI_MARKERSETFORE 2041)
-  (def SCI_MARKERSETBACK 2042)
-  (def SCI_SETAUTOMATICFOLD 2663)
-  (def SCI_SETINDENTATIONGUIDES 2126)
-  (def SC_MARGIN_SYMBOL 0)
-  (def SC_MASK_FOLDERS 4261412864)
-  (def SC_MARKNUM_FOLDEROPEN 31)
-  (def SC_MARKNUM_FOLDER 30)
-  (def SC_MARKNUM_FOLDERSUB 29)
-  (def SC_MARKNUM_FOLDERTAIL 28)
-  (def SC_MARKNUM_FOLDERMIDTAIL 27)
-  (def SC_MARKNUM_FOLDEROPENMID 26)
-  (def SC_MARKNUM_FOLDEREND 25)
-  (def SC_MARK_BOXMINUS 14)
-  (def SC_MARK_BOXPLUS 12)
-  (def SC_MARK_VLINE 9)
-  (def SC_MARK_LCORNER 10)
-  (def SC_MARK_TCORNER 11)
-  (def SC_MARK_BOXPLUSCONNECTED 13)
-  (def SC_MARK_BOXMINUSCONNECTED 15)
   (def (qt-enable-code-folding! ed)
        "Enable code folding margin and markers for QScintilla editor.\n   Sets up margin 2 as fold margin with box-tree style markers.\n   QScintilla lexers compute fold levels automatically."
        (sci-send ed SCI_SETMARGINTYPEN 2 SC_MARGIN_SYMBOL)

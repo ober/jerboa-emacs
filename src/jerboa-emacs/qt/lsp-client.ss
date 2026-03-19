@@ -11,6 +11,7 @@
 (import :std/sugar
         :std/text/json
         :std/misc/string
+        :std/os/fdio
         (only-in :jerboa-emacs/core *lsp-server-command* gemacs-log!)
         :jerboa-emacs/async)
 
@@ -458,7 +459,7 @@
     (hash-put! workspace "workspaceEdit" ws-edit)
     (hash-put! caps "workspace" workspace)
     ;; params
-    (hash-put! params "processId" (os-getpid))
+    (hash-put! params "processId" (getpid))
     (hash-put! params "rootUri" (file-path->uri workspace-root))
     (hash-put! params "rootPath" workspace-root)
     (hash-put! params "capabilities" caps)
@@ -583,13 +584,4 @@
       ((string=? ext ".go") "go")
       (else "plaintext"))))
 
-(def (bytes->string bv)
-  "Convert a u8vector to a string (UTF-8)."
-  (let ((port (open-input-u8vector bv)))
-    (read-line port #f)))
 
-(def (string->bytes str)
-  "Convert a string to a u8vector (UTF-8)."
-  (let ((port (open-output-u8vector)))
-    (display str port)
-    (get-output-u8vector port)))

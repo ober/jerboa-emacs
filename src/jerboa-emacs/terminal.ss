@@ -286,7 +286,7 @@
     (with-catch
       (lambda (e)
         (jemacs-log! "terminal: startup file error: "
-          (with-output-to-string "" (lambda () (display-exception e (current-output-port))))))
+          (with-output-to-string(lambda () (display-exception e (current-output-port))))))
       (lambda () (load-startup-files! env #f #t)))
     ;; Set PS1 AFTER sourcing startup files so it can't be overridden
     ;; by .bashrc/.profile with bash-specific syntax (\[, \], etc.)
@@ -568,7 +568,7 @@
              (let-values (((mfd pid) (with-catch
                                        (lambda (e)
                                          (jemacs-log! "PTY-SPAWN-ERROR: "
-                                           (with-output-to-string ""
+                                           (with-output-to-string
                                              (lambda () (display-exception e (current-output-port)))))
                                          (values #f #f))
                                        (lambda () (pty-spawn trimmed env-alist rows cols)))))

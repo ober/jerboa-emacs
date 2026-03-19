@@ -6,6 +6,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/json
@@ -47,13 +48,6 @@
 (def *indic-lsp-hint*    15)
 (def *indic-lsp-highlight* 16)
 
-;; Scintilla indicator style constants
-(def INDIC_SQUIGGLE 1)
-(def INDIC_DOTS     4)
-(def INDIC_SQUIGGLEPIXMAP 16)
-(def INDIC_FULLBOX  16)
-(def INDIC_ROUNDBOX  7)
-
 ;;;============================================================================
 ;;; Margin marker IDs for diagnostic gutter icons
 ;;;============================================================================
@@ -63,20 +57,6 @@
 (def *marker-lsp-warning* 9)
 (def *marker-lsp-info*    10)
 (def *marker-lsp-hint*    11)
-
-;; Scintilla message constants for markers
-(def SCI_MARKERDEFINE    2040)
-(def SCI_MARKERSETFORE   2041)
-(def SCI_MARKERSETBACK   2042)
-(def SCI_MARKERADD       2043)
-(def SCI_MARKERDELETEALL 2045)
-(def SCI_SETMARGINWIDTHN 2242)
-(def SCI_SETMARGINTYPEN  2240)
-(def SCI_SETMARGINMASKN  2244)
-;; SC_MARK_CIRCLE = 0, SC_MARK_LEFTRECT = 27
-(def SC_MARK_CIRCLE      0)
-(def SC_MARK_LEFTRECT    27)
-(def SC_MARGIN_SYMBOL    0)
 
 ;;;============================================================================
 ;;; Auto-start

@@ -54,7 +54,7 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort! printf fprintf)
-   (std sugar) (std misc string)
+   (std sugar) (chez-scintilla constants) (std misc string)
    (except (std srfi srfi-13) string-join string-trim
      string-prefix? string-suffix? string-contains string-index)
    (std format) (std sort)
@@ -1666,12 +1666,10 @@
                         ("stop" (list "\n\n\n"))))]
               [resp (http-post *copilot-api-url* 'data: body 'headers:
                       (list
-                        (list "Content-Type" . "application/json")
-                        (list
+                        (cons "Content-Type" "application/json")
+                        (cons
                           "Authorization"
-                          string-append
-                          "Bearer "
-                          *copilot-api-key*)))])
+                          (string-append "Bearer " *copilot-api-key*))))])
          (if (= (request-status resp) 200)
              (let* ([json-str (request-text resp)]
                     [result (call-with-input-string json-str read-json)]

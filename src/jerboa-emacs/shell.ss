@@ -118,7 +118,7 @@
     (with-catch
       (lambda (e)
         (jemacs-log! "shell: startup file error: "
-          (with-output-to-string "" (lambda () (display-exception e (current-output-port))))))
+          (with-output-to-string(lambda () (display-exception e (current-output-port))))))
       (lambda () (load-startup-files! env #f #t)))  ; login?=#f interactive?=#t
     (make-shell-state env 0 #f #f #f #f #f #f)))
 
@@ -297,7 +297,7 @@
              (let-values (((mfd pid) (with-catch
                                        (lambda (e)
                                          (jemacs-log! "PTY-SPAWN-ERROR: "
-                                           (with-output-to-string ""
+                                           (with-output-to-string
                                              (lambda () (display-exception e (current-output-port)))))
                                          (values #f #f))
                                        (lambda () (pty-spawn trimmed env-alist rows cols)))))

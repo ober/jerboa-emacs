@@ -15,6 +15,7 @@
 (import :std/sugar
         :std/sort
         :std/srfi/1
+        (only-in :std/srfi/13 string-contains string-suffix?)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/qt/window)

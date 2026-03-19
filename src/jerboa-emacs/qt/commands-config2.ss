@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :jerboa-emacs/qt/sci-shim
@@ -688,7 +689,8 @@
                               (lambda (v) (set! *undo-history-max* (or (string->number v) 50)))))
     ("hl-todo-keywords" (cons (lambda () *hl-todo-keywords*)
                               (lambda (v) (set! *hl-todo-keywords*
-                                            (string-tokenize v (char-set-complement (char-set #\,)))))))
+                                            (filter (lambda (s) (> (string-length s) 0))
+                                                    (string-split v #\,))))))
     ("so-long-threshold" (cons (lambda () *so-long-threshold*)
                                (lambda (v) (set! *so-long-threshold* (or (string->number v) 10000)))))))
 
@@ -1129,7 +1131,7 @@
              (if (null? output)
                (echo-message! echo "No uncommitted changes")
                ;; Parse hunks and highlight lines
-               (let* ((hunks (filter identity
+               (let* ((hunks (filter (lambda (x) x)
                                (map (lambda (line)
                                       (if (and (>= (string-length line) 3)
                                                (string=? (substring line 0 2) "@@"))

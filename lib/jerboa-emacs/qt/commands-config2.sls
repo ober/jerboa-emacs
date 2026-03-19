@@ -42,8 +42,9 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13)
-   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (jerboa-emacs qt sci-shim)
+   (jerboa-emacs core)
    (only (jerboa-emacs persist) *fill-column*)
    (jerboa-emacs async) (jerboa-emacs editor)
    (jerboa-emacs qt buffer) (jerboa-emacs qt window)
@@ -752,9 +753,9 @@
             (lambda () *hl-todo-keywords*)
             (lambda (v)
               (set! *hl-todo-keywords*
-                (string-tokenize
-                  v
-                  (char-set-complement (char-set #\,)))))))
+                (filter
+                  (lambda (s) (> (string-length s) 0))
+                  (string-split v #\,))))))
         ("so-long-threshold"
           (cons
             (lambda () *so-long-threshold*)
@@ -1236,7 +1237,7 @@
                   (if (null? output)
                       (echo-message! echo "No uncommitted changes")
                       (let* ([hunks (filter
-                                      identity
+                                      (lambda (x) x)
                                       (map (lambda (line)
                                              (if (and (>= (string-length
                                                             line)

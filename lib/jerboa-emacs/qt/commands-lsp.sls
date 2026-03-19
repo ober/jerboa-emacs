@@ -5,39 +5,35 @@
 (library (jerboa-emacs qt commands-lsp)
   (export *indic-lsp-error* *indic-lsp-warning*
    *indic-lsp-info* *indic-lsp-hint* *indic-lsp-highlight*
-   INDIC_SQUIGGLE INDIC_DOTS INDIC_SQUIGGLEPIXMAP INDIC_FULLBOX
-   INDIC_ROUNDBOX *marker-lsp-error* *marker-lsp-warning*
-   *marker-lsp-info* *marker-lsp-hint* SCI_MARKERDEFINE
-   SCI_MARKERSETFORE SCI_MARKERSETBACK SCI_MARKERADD
-   SCI_MARKERDELETEALL SCI_SETMARGINWIDTHN SCI_SETMARGINTYPEN
-   SCI_SETMARGINMASKN SC_MARK_CIRCLE SC_MARK_LEFTRECT
-   SC_MARGIN_SYMBOL lsp-maybe-auto-start! lsp-find-project-root
-   path-strip-trailing-separator lsp-setup-diagnostic-margin!
-   *lsp-margin-setup-done* lsp-ensure-diagnostic-margin!
-   lsp-install-handlers! lsp-handle-diagnostics!
-   lsp-apply-diagnostics-indicators! lsp-range-start->pos
-   lsp-range-end->pos lsp-update-compilation-errors!
-   lsp-current-params cmd-lsp-goto-definition
-   cmd-lsp-declaration cmd-lsp-type-definition
-   cmd-lsp-implementation lsp-handle-location-response!
-   lsp-goto-location! cmd-lsp-hover lsp-show-hover-text!
-   cmd-lsp-completion lsp-insert-completion! cmd-lsp-rename
-   cmd-lsp-code-actions cmd-lsp-find-references
-   cmd-lsp-document-symbols cmd-lsp-workspace-symbol
-   cmd-lsp-format-buffer cmd-lsp-format-region
-   lsp-eldoc-display! lsp-diagnostic-at-cursor!
-   lsp-document-highlight! lsp-apply-workspace-edit!
-   lsp-apply-edits-to-uri! lsp-apply-text-edits!
-   lsp-show-locations! *indic-sem-keyword* *indic-sem-function*
-   *indic-sem-type* *indic-sem-string* *indic-sem-comment*
-   *indic-sem-variable* *indic-sem-number* *indic-sem-macro*
-   *semantic-token-types* semantic-token-type->indicator
-   *lsp-semantic-tokens-enabled* lsp-setup-semantic-indicators!
-   lsp-clear-semantic-tokens! lsp-apply-semantic-tokens!
-   cmd-lsp-semantic-tokens lsp-request-semantic-tokens!
-   cmd-lsp-incoming-calls cmd-lsp-outgoing-calls
-   lsp-call-hierarchy! lsp-show-call-hierarchy! cmd-lsp-restart
-   cmd-lsp-stop lsp-clear-all-indicators! cmd-toggle-lsp
+   *marker-lsp-error* *marker-lsp-warning* *marker-lsp-info*
+   *marker-lsp-hint* lsp-maybe-auto-start!
+   lsp-find-project-root path-strip-trailing-separator
+   lsp-setup-diagnostic-margin! *lsp-margin-setup-done*
+   lsp-ensure-diagnostic-margin! lsp-install-handlers!
+   lsp-handle-diagnostics! lsp-apply-diagnostics-indicators!
+   lsp-range-start->pos lsp-range-end->pos
+   lsp-update-compilation-errors! lsp-current-params
+   cmd-lsp-goto-definition cmd-lsp-declaration
+   cmd-lsp-type-definition cmd-lsp-implementation
+   lsp-handle-location-response! lsp-goto-location!
+   cmd-lsp-hover lsp-show-hover-text! cmd-lsp-completion
+   lsp-insert-completion! cmd-lsp-rename cmd-lsp-code-actions
+   cmd-lsp-find-references cmd-lsp-document-symbols
+   cmd-lsp-workspace-symbol cmd-lsp-format-buffer
+   cmd-lsp-format-region lsp-eldoc-display!
+   lsp-diagnostic-at-cursor! lsp-document-highlight!
+   lsp-apply-workspace-edit! lsp-apply-edits-to-uri!
+   lsp-apply-text-edits! lsp-show-locations!
+   *indic-sem-keyword* *indic-sem-function* *indic-sem-type*
+   *indic-sem-string* *indic-sem-comment* *indic-sem-variable*
+   *indic-sem-number* *indic-sem-macro* *semantic-token-types*
+   semantic-token-type->indicator *lsp-semantic-tokens-enabled*
+   lsp-setup-semantic-indicators! lsp-clear-semantic-tokens!
+   lsp-apply-semantic-tokens! cmd-lsp-semantic-tokens
+   lsp-request-semantic-tokens! cmd-lsp-incoming-calls
+   cmd-lsp-outgoing-calls lsp-call-hierarchy!
+   lsp-show-call-hierarchy! cmd-lsp-restart cmd-lsp-stop
+   lsp-clear-all-indicators! cmd-toggle-lsp
    cmd-lsp-smart-goto-definition lsp-hook-did-open!
    lsp-hook-did-save! lsp-hook-did-close! lsp-hook-did-change!
    *lsp-inlay-hints-enabled* *lsp-inlay-hints-cache*
@@ -52,7 +48,8 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text json)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text json)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs editor) (jerboa-emacs repl)
    (jerboa-emacs eshell) (jerboa-emacs shell)
@@ -79,26 +76,10 @@
   (define *indic-lsp-info*--cell (vector 14))
   (define *indic-lsp-hint*--cell (vector 15))
   (define *indic-lsp-highlight*--cell (vector 16))
-  (def INDIC_SQUIGGLE 1)
-  (def INDIC_DOTS 4)
-  (def INDIC_SQUIGGLEPIXMAP 16)
-  (def INDIC_FULLBOX 16)
-  (def INDIC_ROUNDBOX 7)
   (define *marker-lsp-error*--cell (vector 8))
   (define *marker-lsp-warning*--cell (vector 9))
   (define *marker-lsp-info*--cell (vector 10))
   (define *marker-lsp-hint*--cell (vector 11))
-  (def SCI_MARKERDEFINE 2040)
-  (def SCI_MARKERSETFORE 2041)
-  (def SCI_MARKERSETBACK 2042)
-  (def SCI_MARKERADD 2043)
-  (def SCI_MARKERDELETEALL 2045)
-  (def SCI_SETMARGINWIDTHN 2242)
-  (def SCI_SETMARGINTYPEN 2240)
-  (def SCI_SETMARGINMASKN 2244)
-  (def SC_MARK_CIRCLE 0)
-  (def SC_MARK_LEFTRECT 27)
-  (def SC_MARGIN_SYMBOL 0)
   (def (lsp-maybe-auto-start! app buf)
        "Auto-start LSP when opening a Gerbil/Scheme file if not running."
        (when (and (not (lsp-running?))

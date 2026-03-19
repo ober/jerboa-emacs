@@ -6,6 +6,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/misc/process

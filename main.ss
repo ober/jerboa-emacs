@@ -2,14 +2,16 @@
 #!chezscheme
 ;;; main.ss — Executable entry point for jemacs (jerboa-emacs)
 
-(import (except (chezscheme) make-hash-table hash-table? iota 1+ 1-)
+(import (except (chezscheme) make-hash-table hash-table? iota 1+ 1-
+                getenv path-extension path-absolute? thread?
+                make-mutex mutex? mutex-name)
         (jerboa core)
         (jerboa runtime)
         (std sugar)
         (jerboa-emacs editor)
         (jerboa-emacs window)
         (chez-scintilla tui)
-        (jerboa-emacs app)
+        (except (jerboa-emacs app) main)
         (jerboa-emacs editor-extra-org)
         (jerboa-emacs ipc)
         (jerboa-emacs debug-repl))

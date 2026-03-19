@@ -6,6 +6,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/misc/string
         :std/srfi/13
         :std/format
@@ -1527,8 +1528,8 @@
                        ("stop" ["\n\n\n"]))))
          (resp (http-post *copilot-api-url*
                  data: body
-                 headers: [["Content-Type" . "application/json"]
-                           ["Authorization" . (string-append "Bearer " *copilot-api-key*)]])))
+                 headers: [(cons "Content-Type" "application/json")
+                           (cons "Authorization" (string-append "Bearer " *copilot-api-key*))])))
     (if (= (request-status resp) 200)
       (let* ((json-str (request-text resp))
              (result (call-with-input-string json-str read-json))

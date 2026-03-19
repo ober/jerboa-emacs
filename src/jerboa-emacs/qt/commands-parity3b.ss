@@ -6,9 +6,11 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/misc/string
+        :std/misc/ports
         :std/text/json
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
@@ -281,7 +283,7 @@
         (when (and signal (> (string-length signal) 0))
           (with-catch
             (lambda (e) (echo-message! echo (string-append "Error sending signal: "
-                                              (with-output-to-string "" (lambda () (display-exception e))))))
+                                              (with-output-to-string(lambda () (display-exception e))))))
             (lambda ()
               (let* ((proc (open-process
                              (list path: "kill" arguments: (list (string-append "-" signal) pid-str)
@@ -863,41 +865,16 @@
           (echo-message! (app-state-echo app) (string-append "UTC: " (or out "?"))))))))
 
 (def (cmd-memory-usage app)
-  "Show Gambit memory and GC statistics in *Memory* buffer."
+  "Show memory statistics in *Memory* buffer."
   (let* ((ed (current-qt-editor app))
-         (stats (process-statistics))
          (report (with-output-to-string
                    (lambda ()
                      (display "Gemacs Memory Usage\n")
                      (display (make-string 40 #\-))
                      (display "\n")
-                     (display "User time:    ")
-                     (display (f64vector-ref stats 0))
-                     (display " s\n")
-                     (display "System time:  ")
-                     (display (f64vector-ref stats 1))
-                     (display " s\n")
-                     (display "Real time:    ")
-                     (display (f64vector-ref stats 2))
-                     (display " s\n")
-                     (display "GC user time: ")
-                     (display (f64vector-ref stats 3))
-                     (display " s\n")
-                     (display "GC sys time:  ")
-                     (display (f64vector-ref stats 4))
-                     (display " s\n")
-                     (display "GC real time: ")
-                     (display (f64vector-ref stats 5))
-                     (display " s\n")
-                     (display "Bytes alloc:  ")
-                     (display (inexact->exact (f64vector-ref stats 7)))
+                     (display "Chez: ")
+                     (display (scheme-version))
                      (display "\n")
-                     (display "GC count:     ")
-                     (display (inexact->exact (f64vector-ref stats 6)))
-                     (display "\n")
-                     (display "Heap:         ")
-                     (display (number->string (inexact->exact (floor (/ (f64vector-ref stats 16) 1024)))))
-                     (display " KB\n")
                      (display (make-string 40 #\-))
                      (display "\n"))))
          (fr (app-state-frame app))

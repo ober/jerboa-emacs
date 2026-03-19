@@ -11,7 +11,7 @@
         :std/srfi/13
         :std/misc/string
         (only-in :std/misc/ports read-all-as-string)
-        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match)
+        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match pregexp-match-positions pregexp-replace pregexp-replace* pregexp-split)
         (only-in :jerboa-emacs/persist
                  *which-key-mode* *electric-pair-mode*
                  *copilot-mode* *centered-cursor-mode*

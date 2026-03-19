@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/base64
@@ -29,6 +30,7 @@
         :jerboa-emacs/qt/image
         :jerboa-emacs/qt/commands-core
         :jerboa-emacs/qt/commands-core2)
+
 
 ;;;============================================================================
 ;;; Incremental Search (isearch)
@@ -813,7 +815,7 @@
         (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
         (with-catch
           (lambda (e)
-            (let ((msg (with-output-to-string "" (lambda () (display-exception e)))))
+            (let ((msg (with-output-to-string(lambda () (display-exception e)))))
               (gemacs-log! "cmd-shell: gsh init failed: " msg)
               (echo-error! (app-state-echo app)
                 (string-append "Shell failed: " msg))))

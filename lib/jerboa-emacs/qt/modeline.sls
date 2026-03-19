@@ -110,25 +110,23 @@
               [state-str (cond
                            [(and ro? mod?) "%*"]
                            [ro? "%%"]
-                           [mod?]
-                           "**")
-                (else "--")])
-         (mode (mode-name-for-buffer buf))
-         (eol (buffer-eol-indicator buf))
-         (branch (git-branch-for-file (buffer-file-path buf)))
-         (lsp-provider (unbox *lsp-modeline-provider*))
-         (lsp-str (if lsp-provider (lsp-provider) #f))
-         (ovr-provider (unbox *modeline-overwrite-provider*))
-         (ovr? (and ovr-provider (ovr-provider)))
-         (nar-provider (unbox *modeline-narrow-provider*))
-         (nar? (and nar-provider (nar-provider buf)))
-         (info
-           (string-append "-U:" state-str "-  " (if nar? "Narrow " "")
-            (buffer-name buf) "    " "L" (number->string line) " C"
-            (number->string col) "  " pct "  (" mode
-            (if ovr? " Ovwrt" "") " " eol ")"
-            (if branch (string-append "  " branch) "")
-            (if lsp-str (string-append "  " lsp-str) "")))
+                           [mod? "**"]
+                           [else "--"])]
+              [mode (mode-name-for-buffer buf)]
+              [eol (buffer-eol-indicator buf)]
+              [branch (git-branch-for-file (buffer-file-path buf))]
+              [lsp-provider (unbox *lsp-modeline-provider*)]
+              [lsp-str (if lsp-provider (lsp-provider) #f)]
+              [ovr-provider (unbox *modeline-overwrite-provider*)]
+              [ovr? (and ovr-provider (ovr-provider))]
+              [nar-provider (unbox *modeline-narrow-provider*)]
+              [nar? (and nar-provider (nar-provider buf))]
+              [info (string-append "-U:" state-str "-  "
+                     (if nar? "Narrow " "") (buffer-name buf) "    " "L"
+                     (number->string line) " C" (number->string col) "  "
+                     pct "  (" mode (if ovr? " Ovwrt" "") " " eol ")"
+                     (if branch (string-append "  " branch) "")
+                     (if lsp-str (string-append "  " lsp-str) ""))])
          (qt-main-window-set-status-bar-text!
            (qt-frame-main-win fr)
            info)))

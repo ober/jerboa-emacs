@@ -40,6 +40,7 @@
         split-tree-collect-sub-splitters)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/face
@@ -258,7 +259,7 @@
 (def (qt-make-new-window! container-parent buf)
   "Create a new qt-edit-window with a fresh editor in a new container.
    CONTAINER-PARENT is the QSplitter that will own the container."
-  (let* ((container (qt-stacked-widget-create parent: container-parent))
+  (let* ((container (qt-stacked-widget-create container-parent))
          (new-ed (qt-plain-text-edit-create parent: container))
          (lna (qt-line-number-area-create new-ed))
          (new-win (make-qt-edit-window new-ed container buf lna #f #f)))
@@ -276,7 +277,7 @@
 (def (qt-frame-init! main-win splitter)
   "Create frame with one QScintilla editor in a QStackedWidget in a QSplitter.
    Returns the frame struct."
-  (let* ((container (qt-stacked-widget-create parent: splitter))
+  (let* ((container (qt-stacked-widget-create splitter))
          (editor (qt-plain-text-edit-create parent: container))
          (buf (qt-buffer-create! buffer-scratch-name editor))
          (lna (qt-line-number-area-create editor))

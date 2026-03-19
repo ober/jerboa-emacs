@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/base64
@@ -1307,39 +1308,6 @@
                                   (let ((val (car (app-state-prefix-arg app))))
                                     (if (= val 4) "" (string-append " " (number->string val))))
                                   "-"))))
-
-(def (cmd-digit-argument app digit)
-  "Build a numeric prefix argument."
-  (let ((current (app-state-prefix-arg app)))
-    (cond
-     ((number? current)
-      (set! (app-state-prefix-arg app) (+ (* current 10) digit)))
-     ((eq? current '-)
-      (set! (app-state-prefix-arg app) (- digit)))
-     (else
-      (set! (app-state-prefix-arg app) digit)))
-    (set! (app-state-prefix-digit-mode? app) #t)
-    (echo-message! (app-state-echo app)
-                   (string-append "Arg: " (if (eq? (app-state-prefix-arg app) '-)
-                                            "-"
-                                            (number->string (app-state-prefix-arg app)))))))
-
-(def (cmd-negative-argument app)
-  "Negative prefix argument (M--)."
-  (set! (app-state-prefix-arg app) '-)
-  (set! (app-state-prefix-digit-mode? app) #t)
-  (echo-message! (app-state-echo app) "Arg: -"))
-
-(def (cmd-digit-argument-0 app) (cmd-digit-argument app 0))
-(def (cmd-digit-argument-1 app) (cmd-digit-argument app 1))
-(def (cmd-digit-argument-2 app) (cmd-digit-argument app 2))
-(def (cmd-digit-argument-3 app) (cmd-digit-argument app 3))
-(def (cmd-digit-argument-4 app) (cmd-digit-argument app 4))
-(def (cmd-digit-argument-5 app) (cmd-digit-argument app 5))
-(def (cmd-digit-argument-6 app) (cmd-digit-argument app 6))
-(def (cmd-digit-argument-7 app) (cmd-digit-argument app 7))
-(def (cmd-digit-argument-8 app) (cmd-digit-argument app 8))
-(def (cmd-digit-argument-9 app) (cmd-digit-argument app 9))
 
 ;;;============================================================================
 ;;; Next/previous error (compilation error navigation)

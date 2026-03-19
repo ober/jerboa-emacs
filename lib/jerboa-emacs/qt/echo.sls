@@ -13,6 +13,7 @@
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name sort sort!)
     (std sugar) (std sort) (std srfi srfi-1)
+    (only (std srfi srfi-13) string-contains string-suffix?)
     (jerboa-emacs qt sci-shim) (jerboa-emacs core)
     (jerboa-emacs qt window)
     (except (jerboa core) iota any every filter-map take drop

@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/base64
@@ -52,7 +53,8 @@
                  org-table-column-widths org-table-format-row org-table-format-separator
                  org-table-parse-tblfm org-table-eval-formula org-numeric-cell?
                  org-csv-to-table csv-split-line
-                 swap-list-elements list-insert list-remove-at filter-map))
+                 swap-list-elements list-insert list-remove-at)
+        (only-in :std/misc/list filter-map))
 
 
 (def (cmd-expand-abbrev app)

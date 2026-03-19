@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/base64
@@ -49,7 +50,7 @@
 
 (def (directory-exists? path)
   (and (file-exists? path)
-       (eq? 'directory (file-type path))))
+       (file-directory? path)))
 
 ;;;============================================================================
 ;;; Batch 8: Remaining missing commands

@@ -40,7 +40,8 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text base64)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text base64)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs async) (jerboa-emacs subprocess)
    (jerboa-emacs gsh-subprocess) (jerboa-emacs editor)
@@ -895,7 +896,6 @@
                (with-catch
                  (lambda (e)
                    (let ([msg (with-output-to-string
-                                ""
                                 (lambda () (display-exception e)))])
                      (gemacs-log! "cmd-shell: gsh init failed: " msg)
                      (echo-error!

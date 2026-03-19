@@ -1,12 +1,15 @@
 ;;; -*- Gerbil -*-
 ;;; IPC server for emacsclient-like remote file opening.
-;;; Uses (std net tcp) for cross-platform TCP networking
-;;; to bridge server threads to the UI thread.
+;;;
+;;; THREAD-FREE DESIGN: Uses non-blocking sockets polled from the master
+;;; timer (schedule-periodic!) to avoid GC deadlocks caused by Chez threads
+;;; blocking in foreign calls (accept/read).
 
 (export start-ipc-server! ipc-poll-files! stop-ipc-server! *ipc-server-file*)
 
 (import :std/sugar
-        :std/net/tcp)
+        :jerboa/repl-socket
+        :jerboa-emacs/async)
 
 ;;;============================================================================
 ;;; State
@@ -15,55 +18,35 @@
 (def *ipc-server-file*
   (path-expand ".jemacs-server" (getenv "HOME")))
 
-;; Mutex-protected queue of file paths received from clients
+;; Queue of file paths received from clients (no mutex needed —
+;; everything runs on the master timer thread now)
 (def *ipc-queue* '())
-(def *ipc-mutex* (make-mutex 'ipc-queue))
 
-;; The server (for shutdown)
-(def *ipc-server-port* #f)
+;; Non-blocking listen socket fd
+(def *ipc-listen-fd* #f)
+
+;; Current client state
+(def *ipc-client-fd* #f)
+(def *ipc-line-buf* "")
 
 ;;;============================================================================
-;;; Queue operations (thread-safe)
+;;; Queue operations (single-threaded, no mutex needed)
 ;;;============================================================================
 
 (def (ipc-queue-push! path)
-  "Push a file path onto the IPC queue (called from server threads)."
-  (mutex-lock! *ipc-mutex*)
-  (unwind-protect
-    (set! *ipc-queue* (append *ipc-queue* (list path)))
-    (mutex-unlock! *ipc-mutex*)))
+  "Push a file path onto the IPC queue."
+  (set! *ipc-queue* (append *ipc-queue* (list path))))
 
 (def (ipc-poll-files!)
   "Drain the IPC queue and return a list of file paths.
    Called from the UI thread."
-  (mutex-lock! *ipc-mutex*)
-  (unwind-protect
-    (let ((files *ipc-queue*))
-      (set! *ipc-queue* '())
-      files)
-    (mutex-unlock! *ipc-mutex*)))
+  (let ((files *ipc-queue*))
+    (set! *ipc-queue* '())
+    files))
 
 ;;;============================================================================
-;;; Server
+;;; String helpers
 ;;;============================================================================
-
-(def (ipc-handle-client! in-port out-port)
-  "Handle one client connection: read newline-terminated file paths,
-   push them to the queue, respond with OK for each."
-  (with-catch
-    (lambda (e) (void))  ;; ignore errors from disconnected clients
-    (lambda ()
-      (let loop ()
-        (let ((line (read-line in-port)))
-          (unless (eof-object? line)
-            (let ((path (string-trim-ipc line)))
-              (when (> (string-length path) 0)
-                (ipc-queue-push! path)
-                (display "OK\n" out-port)
-                (force-output out-port)))
-            (loop))))
-      (close-port in-port)
-      (close-port out-port))))
 
 (def (string-trim-ipc s)
   "Remove leading/trailing whitespace and carriage returns."
@@ -86,44 +69,110 @@
                   i))))
     (substring s start end)))
 
+(def (ipc-string-index str ch)
+  "Return the index of the first occurrence of ch in str, or #f."
+  (let ((len (string-length str)))
+    (let loop ((i 0))
+      (cond
+        ((>= i len) #f)
+        ((char=? (string-ref str i) ch) i)
+        (else (loop (+ i 1)))))))
+
+;;;============================================================================
+;;; Client handling
+;;;============================================================================
+
+(def (ipc-disconnect!)
+  "Close the IPC client connection."
+  (when *ipc-client-fd*
+    (with-catch (lambda _ (void))
+      (lambda () (repl-socket-close *ipc-client-fd*))))
+  (set! *ipc-client-fd* #f)
+  (set! *ipc-line-buf* ""))
+
+(def (ipc-process-lines!)
+  "Process complete lines from the IPC client."
+  (let loop ()
+    (let ((nl (ipc-string-index *ipc-line-buf* #\newline)))
+      (when nl
+        (let ((line (substring *ipc-line-buf* 0 nl))
+              (rest (substring *ipc-line-buf* (+ nl 1)
+                               (string-length *ipc-line-buf*))))
+          (set! *ipc-line-buf* rest)
+          (let ((path (string-trim-ipc line)))
+            (when (> (string-length path) 0)
+              (ipc-queue-push! path)
+              ;; Send OK response
+              (repl-socket-write *ipc-client-fd* "OK\n")))
+          (loop))))))
+
+;;;============================================================================
+;;; Tick — called from master timer every 100ms
+;;;============================================================================
+
+(def (ipc-tick!)
+  "Non-blocking IPC poll. Accepts connections and reads file paths."
+  (when *ipc-listen-fd*
+    (with-catch
+      (lambda (e) (void))
+      (lambda ()
+        (cond
+          ;; No client — try to accept one
+          ((not *ipc-client-fd*)
+           (let ((cfd (repl-socket-accept *ipc-listen-fd*)))
+             (when cfd
+               (set! *ipc-client-fd* cfd)
+               (set! *ipc-line-buf* ""))))
+
+          ;; Client connected — try to read data
+          (*ipc-client-fd*
+           (let ((data (repl-socket-read *ipc-client-fd*)))
+             (cond
+               ((string? data)
+                (set! *ipc-line-buf* (string-append *ipc-line-buf* data))
+                (ipc-process-lines!))
+               ((eq? data 'eof)
+                ;; Client disconnected — process any remaining data
+                (when (> (string-length *ipc-line-buf*) 0)
+                  (let ((path (string-trim-ipc *ipc-line-buf*)))
+                    (when (> (string-length path) 0)
+                      (ipc-queue-push! path))))
+                (ipc-disconnect!))))))))))
+
+;;;============================================================================
+;;; Public API
+;;;============================================================================
+
 (def (start-ipc-server!)
   "Start the IPC server on 127.0.0.1 with an OS-assigned port.
-   Writes the host:port to *ipc-server-file*."
-  (let* ((port-num (let ((env (getenv "GERBIL_EMACS_PORT" #f)))
-                     (if env (string->number env) 0)))
-         (srv (tcp-listen "127.0.0.1" port-num))
-         (actual-port (tcp-server-port srv)))
-    (set! *ipc-server-port* srv)
-    ;; Write server file
-    (call-with-output-file *ipc-server-file*
-      (lambda (p)
-        (display "127.0.0.1:" p)
-        (display actual-port p)
-        (newline p)))
-    ;; Accept loop in background thread
-    (thread-start!
-      (make-thread
-        (lambda ()
-          (let loop ()
-            (let ((client (with-catch
-                            (lambda (e) #f)
-                            (lambda ()
-                              (call-with-values
-                                (lambda () (tcp-accept srv))
-                                list)))))
-              (when (and client (pair? client))
-                (let ((in (car client)) (out (cadr client)))
-                  (thread-start!
-                    (make-thread
-                      (lambda () (ipc-handle-client! in out))))
-                  (loop))))))
-        'ipc-accept-loop))
-    (void)))
+   Writes the host:port to *ipc-server-file*.
+
+   THREAD-FREE: Registers a periodic tick with the master timer."
+  (stop-ipc-server!)
+  (let ((port-num (let ((env (getenv "GERBIL_EMACS_PORT" #f)))
+                    (if env (string->number env) 0))))
+    (let-values (((fd actual-port) (repl-socket-listen "127.0.0.1" port-num)))
+      (set! *ipc-listen-fd* fd)
+      ;; Write server file (delete stale file first)
+      (when (file-exists? *ipc-server-file*)
+        (with-catch (lambda _ (void))
+          (lambda () (delete-file *ipc-server-file*))))
+      (call-with-output-file *ipc-server-file*
+        (lambda (p)
+          (display "127.0.0.1:" p)
+          (display actual-port p)
+          (newline p)))
+      ;; Register periodic tick
+      (schedule-periodic! 'ipc-accept 100 ipc-tick!)
+      (void))))
 
 (def (stop-ipc-server!)
   "Stop the IPC server and remove the server file."
-  (when *ipc-server-port*
-    (with-catch void (lambda () (tcp-close *ipc-server-port*)))
-    (set! *ipc-server-port* #f))
+  (ipc-disconnect!)
+  (when *ipc-listen-fd*
+    (with-catch (lambda _ (void))
+      (lambda () (repl-socket-close *ipc-listen-fd*)))
+    (set! *ipc-listen-fd* #f))
   (when (file-exists? *ipc-server-file*)
-    (delete-file *ipc-server-file*)))
+    (with-catch (lambda _ (void))
+      (lambda () (delete-file *ipc-server-file*)))))

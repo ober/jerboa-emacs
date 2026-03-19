@@ -38,6 +38,16 @@
   cmd-self-insert!
   cmd-negative-argument
   cmd-digit-argument
+  cmd-digit-argument-0
+  cmd-digit-argument-1
+  cmd-digit-argument-2
+  cmd-digit-argument-3
+  cmd-digit-argument-4
+  cmd-digit-argument-5
+  cmd-digit-argument-6
+  cmd-digit-argument-7
+  cmd-digit-argument-8
+  cmd-digit-argument-9
   *auto-pair-mode*
   auto-pair-char
   auto-pair-closing?

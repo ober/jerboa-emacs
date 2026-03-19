@@ -10,6 +10,7 @@
         qt-buffer-attach!)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core)
 

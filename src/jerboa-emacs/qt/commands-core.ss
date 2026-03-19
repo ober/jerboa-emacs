@@ -5,11 +5,11 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/base64
         :std/text/json
-        :std/net/uri
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/subprocess
@@ -302,12 +302,6 @@
       (lambda (buf)
         (qt-setup-highlighting! app buf))
       (buffer-list))))
-
-;; Auto-save path: #filename# (Emacs convention)
-(def (make-auto-save-path path)
-  (let* ((dir (path-directory path))
-         (name (path-strip-directory path)))
-    (path-expand (string-append "#" name "#") dir)))
 
 ;; Buffer recency tracking (MRU order for buffer switching)
 (def *buffer-recent* [])  ; list of buffer names, most recent first

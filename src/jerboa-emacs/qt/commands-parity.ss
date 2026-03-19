@@ -5,12 +5,13 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/misc/string
         :std/misc/process
         (only-in :std/misc/ports read-all-as-string)
-        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match)
+        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match pregexp-match-positions pregexp-replace pregexp-replace* pregexp-split)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/async

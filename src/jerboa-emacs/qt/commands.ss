@@ -17,7 +17,6 @@
         session-save!
         session-restore-files
         *tab-bar-visible*
-        *auto-revert-mode*
         *auto-revert-tail-buffers*
         *file-mtimes*
         file-mtime-record!
@@ -54,7 +53,6 @@
         save-place-save!
         auto-fill-check!
         *auto-save-disabled-buffers*
-        *delete-trailing-whitespace-on-save*
         *require-final-newline*
         *save-place-enabled*
         *centered-cursor-mode*
@@ -91,6 +89,7 @@
         qt-aggressive-indent-line!)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/misc/string
@@ -163,7 +162,7 @@
         :jerboa-emacs/qt/commands-parity5
         :jerboa-emacs/qt/commands-aliases
         :jerboa-emacs/qt/commands-aliases2
-        :jerboa-emacs/qt/helm-commands)
+        (except-in :jerboa-emacs/helm-commands cmd-helm-buffers-list cmd-helm-occur))
 
 ;;;============================================================================
 ;;; Cross-cutting functions (moved to facade due to forward references)
@@ -688,17 +687,6 @@
     (and (> (string-length trimmed) 0)
          (char=? (string-ref trimmed 0) #\|))))
 
-(def (qt-org-table-separator? str)
-  "Check if string is a table separator line (|---+---|)."
-  (let ((trimmed (string-trim str)))
-    (and (qt-org-table-row? trimmed)
-         (let loop ((i 0))
-           (if (>= i (string-length trimmed))
-             #t
-             (let ((c (string-ref trimmed i)))
-               (if (memv c '(#\| #\- #\+ #\space))
-                 (loop (+ i 1))
-                 #f)))))))
 
 (def (qt-org-table-parse-row str)
   "Split '| a | b | c |' into (\"a\" \"b\" \"c\")."
@@ -1112,7 +1100,12 @@
                                            (qt-completer-complete-rect!
                                              c 0 0 250 20)))))))))))))))))))))))
 
+(def *cmd-quit-in-progress* #f)
+
 (def (cmd-quit app)
+  ;; Guard against recursive quit (e.g. close event fired during quit save)
+  (unless *cmd-quit-in-progress*
+  (set! *cmd-quit-in-progress* #t)
   ;; Check for unsaved buffers
   (let* ((unsaved (filter
                     (lambda (buf)
@@ -1178,7 +1171,7 @@
            (qt-widget-close! (qt-frame-main-win fr)))
           (else
            ;; Cancel
-           (echo-message! echo "Quit cancelled")))))))
+           (echo-message! echo "Quit cancelled"))))))))  ;; extra ) closes unless
 
 
 ;;; Register all commands
@@ -1851,7 +1844,7 @@
   (register-command! 'native-compile-async cmd-native-compile-async)
   (register-command! 'screen-reader-mode cmd-screen-reader-mode)
   ;; Helm commands (real implementations)
-  (qt-register-helm-commands!)
+  (register-helm-commands!)
   ;; Bulk toggle parity commands (339 toggles)
   (qt-register-parity3-toggles!)
   ;; Parity4: mode toggles, stubs, aliases, functional commands
@@ -2248,30 +2241,6 @@
       (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
       (qt-plain-text-edit-set-cursor-position! ed 0))))
 
-(def (cmd-set-variable app)
-  "Set a customizable variable by name (Qt)."
-  (let* ((echo (app-state-echo app))
-         (names (map car *qt-customizable-vars*))
-         (name (qt-echo-read-string app "Set variable: ")))
-    (when (and name (> (string-length name) 0))
-      (let ((entry (find (lambda (e) (string=? (car e) name)) *qt-customizable-vars*)))
-        (if (not entry)
-          (echo-message! echo (string-append "Unknown variable: " name))
-          (let* ((getter (caddr entry))
-                 (current (getter))
-                 (val-str (qt-echo-read-string app
-                            (string-append name " (" (object->string current) "): "))))
-            (when (and val-str (> (string-length val-str) 0))
-              (let* ((setter (cadddr entry))
-                     (val (cond
-                            ((string=? val-str "#t") #t)
-                            ((string=? val-str "#f") #f)
-                            ((string->number val-str) => values)
-                            (else val-str))))
-                (setter val)
-                (echo-message! echo
-                  (string-append name " = " (object->string val)))))))))))
-
 (def *qt-process-sentinels* (make-hash-table))
 (def *qt-process-filters* (make-hash-table))
 
@@ -2601,8 +2570,8 @@
                        ("temperature" 0.3))))
          (resp (http-post *copilot-api-url*
                  data: body
-                 headers: [["Content-Type" . "application/json"]
-                           ["Authorization" . (string-append "Bearer " *copilot-api-key*)]])))
+                 headers: [(cons "Content-Type" "application/json")
+                           (cons "Authorization" (string-append "Bearer " *copilot-api-key*))])))
     (if (= (request-status resp) 200)
       (let* ((json-str (request-text resp))
              (result (call-with-input-string json-str read-json))
@@ -2898,10 +2867,6 @@
         (sci-send ed SCI_SETVSCROLLBAR 1 0)
         (sci-send ed SCI_SETHSCROLLBAR 1 0)
         (echo-message! (app-state-echo app) "Scroll bars visible")))))
-
-(def (cmd-font-lock-mode app)
-  "Toggle font-lock highlighting (Qt)."
-  (execute-command! app 'toggle-highlighting))
 
 (def (cmd-vterm app)
   "Open vterm terminal (Qt)."

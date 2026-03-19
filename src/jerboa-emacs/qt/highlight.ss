@@ -14,13 +14,15 @@
         qt-clear-search-highlights!
         qt-enable-code-folding!
         detect-language
+        qt-org-table-separator?
         *search-highlight-active*
         *qt-show-paren-enabled*
         *qt-delete-selection-enabled*)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/srfi/13
-        ../pregexp-compat
+        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match pregexp-match-positions pregexp-replace pregexp-replace* pregexp-split)
         :std/misc/string
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
@@ -75,9 +77,11 @@
            ((member base '("Rakefile" "Gemfile" "Vagrantfile")) 'ruby)
            (else #f)))
         ((member ext '(".ss" ".scm" ".sld" ".sls" ".rkt")) 'scheme)
-        ((member ext '(".c" ".h" ".cpp" ".hpp" ".cc" ".cxx" ".hh" ".hxx" ".ino")) 'c)
+        ((member ext '(".c" ".h")) 'c)
+        ((member ext '(".cpp" ".hpp" ".cc" ".cxx" ".hh" ".hxx" ".ino")) 'c++)
         ((member ext '(".py" ".pyw" ".pyi")) 'python)
-        ((member ext '(".js" ".jsx" ".ts" ".tsx" ".mjs" ".cjs" ".mts" ".cts")) 'javascript)
+        ((member ext '(".js" ".jsx" ".mjs" ".cjs")) 'javascript)
+        ((member ext '(".ts" ".tsx" ".mts" ".cts")) 'typescript)
         ((member ext '(".org")) 'org)
         ((member ext '(".md" ".markdown" ".mkd" ".rst")) 'markdown)
         ((member ext '(".sh" ".bash" ".zsh" ".fish" ".ksh")) 'shell)
@@ -649,32 +653,7 @@
 ;;; Code folding margin setup
 ;;;============================================================================
 
-;; Scintilla folding constants
-(def SCI_SETMARGINTYPEN     2240)
-(def SCI_SETMARGINWIDTHN    2242)
-(def SCI_SETMARGINMASKN     2244)
-(def SCI_SETMARGINSENSITIVEN 2246)
-(def SCI_MARKERDEFINE       2040)
-(def SCI_MARKERSETFORE      2041)
-(def SCI_MARKERSETBACK      2042)
-(def SCI_SETAUTOMATICFOLD   2663)
-(def SCI_SETINDENTATIONGUIDES 2126)
-(def SC_MARGIN_SYMBOL       0)
-(def SC_MASK_FOLDERS        #xFE000000)
-(def SC_MARKNUM_FOLDEROPEN  31)
-(def SC_MARKNUM_FOLDER      30)
-(def SC_MARKNUM_FOLDERSUB   29)
-(def SC_MARKNUM_FOLDERTAIL  28)
-(def SC_MARKNUM_FOLDERMIDTAIL 27)
-(def SC_MARKNUM_FOLDEROPENMID 26)
-(def SC_MARKNUM_FOLDEREND   25)
-(def SC_MARK_BOXMINUS       14)
-(def SC_MARK_BOXPLUS        12)
-(def SC_MARK_VLINE          9)
-(def SC_MARK_LCORNER        10)
-(def SC_MARK_TCORNER        11)
-(def SC_MARK_BOXPLUSCONNECTED  13)
-(def SC_MARK_BOXMINUSCONNECTED 15)
+;; Scintilla folding constants (imported from :chez-scintilla/constants)
 
 (def (qt-enable-code-folding! ed)
   "Enable code folding margin and markers for QScintilla editor.

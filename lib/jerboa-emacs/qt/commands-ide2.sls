@@ -47,9 +47,10 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name printf fprintf sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std format)
-   (std misc completion) (jerboa-emacs qt sci-shim)
-   (jerboa-emacs core) (jerboa-emacs async)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std format) (std misc completion)
+   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (jerboa-emacs async)
    (only (jerboa-emacs persist) *fill-column*)
    (jerboa-emacs editor) (jerboa-emacs qt buffer)
    (jerboa-emacs qt window) (jerboa-emacs qt echo)
@@ -595,7 +596,7 @@
                                               "\n")
                                             new-content)])
                              (set! write-jobs
-                               (cons (list file . final) write-jobs))
+                               (cons (cons file final) write-jobs))
                              (set! changes
                                (+ changes (length line-edits)))))))
                      file-changes)
@@ -718,21 +719,23 @@
                              (if (null? bufs)
                                  (reverse acc)
                                  (let ([buf (car bufs)])
-                                   (if (buffer-file-path buf)
-                                       (let ([pos (begin
-                                                    (qt-buffer-attach!
-                                                      ed
-                                                      buf)
-                                                    (qt-plain-text-edit-cursor-position
-                                                      ed))])
-                                         (loop
-                                           (cdr bufs)
-                                           (cons
-                                             (cons
-                                               (buffer-file-path buf)
-                                               pos)
-                                             acc)))
-                                       (loop (cdr bufs) acc)))))])
+                                   (let ([fp (buffer-file-path buf)])
+                                     (if (and fp
+                                              (file-exists? fp)
+                                              (not (eq? 'directory
+                                                        (file-info-type
+                                                          (file-info
+                                                            fp)))))
+                                         (let ([pos (begin
+                                                      (qt-buffer-attach!
+                                                        ed
+                                                        buf)
+                                                      (qt-plain-text-edit-cursor-position
+                                                        ed))])
+                                           (loop
+                                             (cdr bufs)
+                                             (cons (cons fp pos) acc)))
+                                         (loop (cdr bufs) acc))))))])
              (qt-buffer-attach! ed current-buf)
              (call-with-output-file
                *session-path*

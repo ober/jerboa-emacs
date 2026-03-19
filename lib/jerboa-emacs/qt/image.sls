@@ -25,8 +25,8 @@
        "Ensure the qt-edit-window has an image widget at stacked index 1.\n   Creates QScrollArea + QLabel lazily on first call."
        (unless (qt-edit-window-image-scroll win)
          (let* ([container (qt-edit-window-container win)]
-                [scroll (qt-scroll-area-create 'parent: container)]
-                [label (qt-label-create "" 'parent: scroll)])
+                [scroll (qt-scroll-area-create container)]
+                [label (qt-label-create "" scroll)])
            (qt-scroll-area-set-widget! scroll label)
            (qt-scroll-area-set-widget-resizable! scroll #f)
            (qt-widget-set-style-sheet! scroll "background: #202020;")
@@ -139,27 +139,15 @@
                  (app-state-echo app)
                  (string-append "Failed to load image: " filename))
                #f)
-             (let* ([dialog (qt-dialog-create 'parent: parent)]
+             (let* ([dialog (qt-dialog-create parent)]
                     [layout (qt-vbox-layout-create dialog)]
-                    [btn-zoom-in (qt-push-button-create
-                                   "+"
-                                   'parent:
-                                   dialog)]
-                    [btn-zoom-out (qt-push-button-create
-                                    "-"
-                                    'parent:
-                                    dialog)]
-                    [btn-zoom-fit (qt-push-button-create
-                                    "Fit"
-                                    'parent:
-                                    dialog)]
-                    [btn-zoom-100 (qt-push-button-create
-                                    "100%"
-                                    'parent:
-                                    dialog)]
-                    [zoom-label (qt-label-create "100%" 'parent: dialog)]
-                    [scroll-area (qt-scroll-area-create 'parent: dialog)]
-                    [img-label (qt-label-create "" 'parent: scroll-area)]
+                    [btn-zoom-in (qt-push-button-create "+" dialog)]
+                    [btn-zoom-out (qt-push-button-create "-" dialog)]
+                    [btn-zoom-fit (qt-push-button-create "Fit" dialog)]
+                    [btn-zoom-100 (qt-push-button-create "100%" dialog)]
+                    [zoom-label (qt-label-create "100%" dialog)]
+                    [scroll-area (qt-scroll-area-create dialog)]
+                    [img-label (qt-label-create "" scroll-area)]
                     [orig-w (qt-pixmap-width pixmap)]
                     [orig-h (qt-pixmap-height pixmap)]
                     [zoom-ref (box 1.0)])
@@ -227,7 +215,7 @@
                               [new-zoom (min scale-w scale-h)])
                          (set-box! zoom-ref new-zoom)
                          (update-image!))))))
-               (let* ([btn-row (qt-widget-create 'parent: dialog)]
+               (let* ([btn-row (qt-widget-create dialog)]
                       [btn-layout (qt-hbox-layout-create btn-row)])
                  (qt-layout-add-widget! btn-layout btn-zoom-out)
                  (qt-layout-add-widget! btn-layout btn-zoom-in)

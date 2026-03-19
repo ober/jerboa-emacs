@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/format
@@ -421,7 +422,7 @@
                                                  #\newline))
                                    (string-append new-content "\n")
                                    new-content)))
-                      (set! write-jobs (cons [file . final] write-jobs))
+                      (set! write-jobs (cons (cons file final) write-jobs))
                       (set! changes (+ changes (length line-edits)))))))
               file-changes)
             ;; Write all files in background thread
@@ -547,13 +548,16 @@
                (let loop ((bufs *buffer-list*) (acc []))
                  (if (null? bufs) (reverse acc)
                    (let ((buf (car bufs)))
-                     (if (buffer-file-path buf)
-                       ;; Get position: attach temporarily to read cursor pos
-                       (let ((pos (begin
-                                    (qt-buffer-attach! ed buf)
-                                    (qt-plain-text-edit-cursor-position ed))))
-                         (loop (cdr bufs) (cons (cons (buffer-file-path buf) pos) acc)))
-                       (loop (cdr bufs) acc)))))))
+                     (let ((fp (buffer-file-path buf)))
+                       (if (and fp
+                                (file-exists? fp)
+                                (not (eq? 'directory (file-info-type (file-info fp)))))
+                         ;; Get position: attach temporarily to read cursor pos
+                         (let ((pos (begin
+                                      (qt-buffer-attach! ed buf)
+                                      (qt-plain-text-edit-cursor-position ed))))
+                           (loop (cdr bufs) (cons (cons fp pos) acc)))
+                         (loop (cdr bufs) acc))))))))  ;; closes: if-and, let-fp, let-buf, if-null, let-loop, entries-binding, bindings-list
         ;; Restore current buffer
         (qt-buffer-attach! ed current-buf)
         ;; Write session file

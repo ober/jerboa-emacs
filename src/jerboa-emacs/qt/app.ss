@@ -1,11 +1,60 @@
 ;;; -*- Gerbil -*-
 ;;; Qt application and event loop for gemacs
 
-(export qt-main qt-open-file!)
+(export qt-main qt-open-file! qt-do-init!)
 
 (import :std/sugar
         :std/misc/string
+        :chez-scintilla/constants
         :jerboa-emacs/qt/sci-shim
+        ;; Import chez-qt directly for window/menu/toolbar functions not re-exported by sci-shim.
+        ;; Exclude the sci-shim-handled variants to avoid duplicate identifier errors.
+        ;; Note: qt-on-plain-text-edit-text-changed! and qt-extra-selections-* are
+        ;; NOT in chez-qt — they are defined locally in sci-shim, so don't exclude them.
+        (except-in :chez-qt/qt
+                   ;; Exclude Qt constants re-exported by sci-shim (avoid duplicate identifier)
+                   QT_MOD_NONE QT_MOD_SHIFT QT_MOD_CONTROL QT_MOD_ALT QT_MOD_META
+                   QT_KEY_ESCAPE QT_KEY_BACKSPACE QT_KEY_RETURN QT_KEY_ENTER QT_KEY_DELETE
+                   QT_KEY_TAB QT_KEY_BACKTAB QT_KEY_INSERT QT_KEY_HOME QT_KEY_END
+                   QT_KEY_LEFT QT_KEY_RIGHT QT_KEY_UP QT_KEY_DOWN
+                   QT_KEY_PAGE_UP QT_KEY_PAGE_DOWN QT_KEY_SPACE
+                   QT_KEY_F1 QT_KEY_F2 QT_KEY_F3 QT_KEY_F4 QT_KEY_F5 QT_KEY_F6
+                   QT_KEY_F7 QT_KEY_F8 QT_KEY_F9 QT_KEY_F10 QT_KEY_F11 QT_KEY_F12
+                   QT_CURSOR_UP QT_CURSOR_DOWN QT_CURSOR_START QT_CURSOR_END
+                   QT_CURSOR_START_OF_BLOCK QT_CURSOR_END_OF_BLOCK
+                   QT_CURSOR_NEXT_CHAR QT_CURSOR_NEXT_WORD
+                   QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD
+                   qt-plain-text-edit-create qt-plain-text-edit-set-text!
+                   qt-plain-text-edit-text qt-plain-text-edit-append!
+                   qt-plain-text-edit-clear! qt-plain-text-edit-set-read-only!
+                   qt-plain-text-edit-read-only? qt-plain-text-edit-set-placeholder!
+                   qt-plain-text-edit-line-count qt-plain-text-edit-set-max-block-count!
+                   qt-plain-text-edit-cursor-line qt-plain-text-edit-cursor-column
+                   qt-plain-text-edit-set-line-wrap!
+                   qt-plain-text-edit-cursor-position qt-plain-text-edit-set-cursor-position!
+                   qt-plain-text-edit-move-cursor! qt-plain-text-edit-select-all!
+                   qt-plain-text-edit-selected-text qt-plain-text-edit-selection-start
+                   qt-plain-text-edit-selection-end qt-plain-text-edit-set-selection!
+                   qt-plain-text-edit-has-selection? qt-plain-text-edit-insert-text!
+                   qt-plain-text-edit-remove-selected-text!
+                   qt-plain-text-edit-undo! qt-plain-text-edit-redo!
+                   qt-plain-text-edit-can-undo? qt-plain-text-edit-cut!
+                   qt-plain-text-edit-copy! qt-plain-text-edit-paste!
+                   qt-plain-text-edit-text-length qt-plain-text-edit-text-range
+                   qt-plain-text-edit-line-from-position qt-plain-text-edit-line-end-position
+                   qt-plain-text-edit-find-text
+                   qt-plain-text-edit-ensure-cursor-visible! qt-plain-text-edit-center-cursor!
+                   qt-text-document-create qt-plain-text-document-create
+                   qt-text-document-destroy!
+                   qt-plain-text-edit-document qt-plain-text-edit-set-document!
+                   qt-text-document-modified? qt-text-document-set-modified!
+                   qt-syntax-highlighter-create qt-syntax-highlighter-destroy!
+                   qt-syntax-highlighter-add-rule! qt-syntax-highlighter-add-keywords!
+                   qt-syntax-highlighter-add-multiline-rule!
+                   qt-syntax-highlighter-clear-rules! qt-syntax-highlighter-rehighlight!
+                   qt-line-number-area-create qt-line-number-area-destroy!
+                   qt-line-number-area-set-visible!
+                   qt-line-number-area-set-bg-color! qt-line-number-area-set-fg-color!)
         :jerboa-emacs/core
         :jerboa-emacs/async
         :jerboa-emacs/editor
@@ -325,14 +374,13 @@
 
 (def (qt-do-init! qt-app args)
   ;; Initialize runtime error log (~/.gemacs-errors.log)
-  (init-gemacs-log!)
+  (init-jemacs-log!)
   ;; Verbose hang-diagnosis log: --verbose opens ~/.gemacs-verbose.log and
   ;; enables per-BlockingQueuedConnection tracing in the Qt shim.
   (when (member "--verbose" args)
     (let ((vpath (init-verbose-log!)))
-      ;; Also enable the C-level BQC entry/exit logging to the same file.
-      (qt-verbose-log-enable! vpath)
-      (verbose-log! "gemacs-qt verbose mode ON  (C-level BQC tracing also active)")))
+      ;; Note: qt-verbose-log-enable! not available in chez-qt
+      (verbose-log! "gemacs-qt verbose mode ON")))
     ;; Initialize face system with standard faces
     (define-standard-faces!)
     ;; Load saved theme and font settings from ~/.gemacs-theme
@@ -355,20 +403,20 @@
 
     (let* ((win (qt-main-window-create))
            ;; Central widget with vertical layout
-           (central (qt-widget-create parent: win))
+           (central (qt-widget-create win))
            (layout (qt-vbox-layout-create central))
            ;; Tab bar for buffer switching
-           (tab-bar (qt-widget-create parent: central))
+           (tab-bar (qt-widget-create central))
            (tab-layout (qt-hbox-layout-create tab-bar))
            ;; Main content area: splitter for editors
-           (splitter (qt-splitter-create QT_VERTICAL parent: central))
+           (splitter (qt-splitter-create QT_VERTICAL central))
            (_ (begin
                 ;; Window dividers: visible blue handle between split panes
                 (qt-splitter-set-handle-width! splitter 3)
                 (qt-widget-set-style-sheet! splitter
                   "QSplitter::handle { background: #51afef; }")))
            ;; Echo label at bottom
-           (echo-label (qt-label-create "" parent: central))
+           (echo-label (qt-label-create "" central))
            ;; Initialize frame with one editor in the splitter
            (fr (qt-frame-init! win splitter))
            ;; Create app state
@@ -414,7 +462,7 @@
       (setup-default-bindings!)
       (setup-command-docs!)
       (qt-register-all-commands!)
-      (gemacs-log! "commands registered: "
+      (jemacs-log! "commands registered: "
                    (number->string (hash-length *all-commands*)) " total")
 
       ;; Set up post-buffer-attach hook for image/text display toggling
@@ -890,7 +938,7 @@
       (schedule-periodic! 'auto-save 30000
         (lambda ()
           ;; Phase 1: Collect snapshots on UI thread (must access Qt widgets here)
-          (let ((save-jobs []))
+          (let ((save-jobs '()))
             (for-each
               (lambda (buf)
                 (let ((path (buffer-file-path buf)))
@@ -903,7 +951,7 @@
                           (let* ((ed (qt-edit-window-editor (car wins)))
                                  (text (qt-plain-text-edit-text ed))
                                  (auto-path (qt-make-auto-save-path path)))
-                            (set! save-jobs (cons [auto-path . text] save-jobs)))
+                            (set! save-jobs (cons (cons auto-path text) save-jobs)))
                           (loop (cdr wins))))))))
               (buffer-list))
             ;; Phase 2: Write all auto-save files in background thread
@@ -913,7 +961,7 @@
                   (for-each
                     (lambda (job)
                       (with-catch
-                        (lambda (e) (gemacs-log! "Auto-save error: " (object->string e)))
+                        (lambda (e) (jemacs-log! "Auto-save error: " (object->string e)))
                         (lambda ()
                           (call-with-output-file (car job)
                             (lambda (port) (display (cdr job) port))))))
@@ -1102,7 +1150,7 @@
             (lambda (entry)
               (let ((path (car entry))
                     (pos (cdr entry)))
-                (when (file-exists? path)
+                (when (and (file-exists? path) (not (file-directory? path)))
                   (qt-open-file! app path
                     ;; Restore cursor position after async file load
                     (lambda (app buf)
@@ -1209,6 +1257,7 @@
       (stop-ipc-server!)
       (stop-debug-repl!)
       (finally
+        (qt-app-quit! qt-app)
         (qt-app-destroy! qt-app)))))
 
 ;;;============================================================================

@@ -26,11 +26,17 @@
   ;;; Load the C shim shared library
   ;;; ========================================================================
 
+  (define static-build?
+    (let ((v (getenv "JEMACS_STATIC")))
+      (and v (not (string=? v "")) (not (string=? v "0")))))
+
   (define pty-shim-loaded
-    (load-shared-object
-      (let ((dir (or (getenv "JERBOA_EMACS_SUPPORT")
-                     (string-append (or (getenv "HOME") ".") "/mine/jerboa-emacs/support"))))
-        (string-append dir "/pty_shim.so"))))
+    (if static-build?
+        #f  ; symbols already linked in via Sforeign_symbol registration
+        (load-shared-object
+          (let ((dir (or (getenv "JERBOA_EMACS_SUPPORT")
+                         (string-append (or (getenv "HOME") ".") "/mine/jerboa-emacs/support"))))
+            (string-append dir "/pty_shim.so")))))
 
   ;;; ========================================================================
   ;;; FFI bindings

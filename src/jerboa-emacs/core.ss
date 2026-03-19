@@ -109,6 +109,9 @@
   ;; Runtime error log file
   init-jemacs-log!
   jemacs-log!
+  ;; Compatibility aliases (Qt source files use gemacs-* naming)
+  init-gemacs-log!
+  gemacs-log!
 
   ;; Verbose hang-diagnosis log (~/.jemacs-verbose.log)
   init-verbose-log!
@@ -1906,6 +1909,10 @@
       (for-each (lambda (arg) (display arg port)) args)
       (newline port)
       (force-output port))))
+
+;; Compatibility aliases used by Qt source files (ported from gerbil-emacs naming)
+(def gemacs-log!      jemacs-log!)
+(def init-gemacs-log! init-jemacs-log!)
 
 (def (init-verbose-log!)
   "Open ~/.jemacs-verbose.log for append and enable verbose-log!.

@@ -8,7 +8,7 @@
         :std/sort
         :std/srfi/13
         :std/text/base64
-        ../pregexp-compat
+        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match pregexp-match-positions pregexp-replace pregexp-replace* pregexp-split)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/editor

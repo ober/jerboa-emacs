@@ -5,10 +5,11 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/srfi/13
         :std/misc/string
         :std/misc/process
-        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match)
+        (only-in :jerboa-emacs/pregexp-compat pregexp pregexp-match pregexp-match-positions pregexp-replace pregexp-replace* pregexp-split)
         (only-in :jerboa-emacs/org-parse
                  org-heading-line? org-heading-stars-of-line)
         :jerboa-emacs/qt/sci-shim
@@ -412,7 +413,7 @@
 (def (gdb-send! cmd)
   "Send a GDB/MI command to the running GDB process."
   (when *qt-dap-process*
-    (let ((port (process-port *qt-dap-process*)))
+    (let ((port *qt-dap-process*))
       (display cmd port)
       (newline port)
       (force-output port))))
@@ -420,7 +421,7 @@
 (def (gdb-read-until-prompt!)
   "Read GDB output lines until (gdb) prompt."
   (when *qt-dap-process*
-    (let ((port (process-port *qt-dap-process*))
+    (let ((port *qt-dap-process*)
           (lines []))
       (let loop ()
         (let ((line (with-exception-catcher
@@ -468,7 +469,7 @@
           (lambda (e)
             (echo-error! (app-state-echo app)
               (string-append "Failed to start GDB: "
-                (with-output-to-string "" (lambda () (display-exception e))))))
+                (with-output-to-string(lambda () (display-exception e))))))
           (lambda ()
             (set! *qt-dap-process*
               (open-process

@@ -11,11 +11,11 @@
    *qt-app-ptr* *tab-bar-visible* qt-kill-ring-push!
    qt-clipboard-or-kill-ring *current-theme* theme-color
    load-theme! load-theme define-theme! theme-stylesheet
-   apply-theme! make-auto-save-path *buffer-recent*
-   buffer-touch! buffer-names-mru *global-auto-revert-mode*
-   *file-mtimes* *auto-revert-tail-buffers* file-mtime
-   file-mtime-record! file-mtime-changed? *dir-locals-cache*
-   find-dir-locals-file read-dir-locals update-mark-region!
+   apply-theme! *buffer-recent* buffer-touch! buffer-names-mru
+   *global-auto-revert-mode* *file-mtimes*
+   *auto-revert-tail-buffers* file-mtime file-mtime-record!
+   file-mtime-changed? *dir-locals-cache* find-dir-locals-file
+   read-dir-locals update-mark-region!
    collapse-selection-to-caret! cmd-forward-char
    cmd-backward-char eshell-on-input-line? eshell-current-input
    eshell-replace-input! cmd-next-line cmd-previous-line
@@ -42,15 +42,15 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text base64)
-   (std text json) (std net uri) (jerboa-emacs qt sci-shim)
-   (jerboa-emacs core) (jerboa-emacs subprocess)
-   (jerboa-emacs editor) (jerboa-emacs repl)
-   (jerboa-emacs eshell) (jerboa-emacs shell)
-   (jerboa-emacs terminal) (jerboa-emacs qt buffer)
-   (jerboa-emacs qt window) (jerboa-emacs persist)
-   (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
-   (jerboa-emacs qt modeline)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text base64) (std text json)
+   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (jerboa-emacs subprocess) (jerboa-emacs editor)
+   (jerboa-emacs repl) (jerboa-emacs eshell)
+   (jerboa-emacs shell) (jerboa-emacs terminal)
+   (jerboa-emacs qt buffer) (jerboa-emacs qt window)
+   (jerboa-emacs persist) (jerboa-emacs qt echo)
+   (jerboa-emacs qt highlight) (jerboa-emacs qt modeline)
    (only
      (jerboa-emacs editor-core)
      paredit-delimiter?
@@ -285,10 +285,6 @@
          (for-each
            (lambda (buf) (qt-setup-highlighting! app buf))
            (buffer-list))))
-  (def (make-auto-save-path path)
-       (let* ([dir (path-directory path)]
-              [name (path-strip-directory path)])
-         (path-expand (string-append "#" name "#") dir)))
   (define *buffer-recent*--cell (vector (list)))
   (def (buffer-touch! buf)
        "Record buffer as most recently used."

@@ -15,40 +15,38 @@
    *hl-line-mode* cmd-toggle-hl-line *show-tabs*
    cmd-toggle-show-tabs *show-eol* cmd-toggle-show-eol
    *narrowing-indicator* cmd-toggle-narrowing-indicator
-   *debug-on-error* cmd-toggle-debug-on-error SCI_TOGGLEFOLD
-   SCI_FOLDALL SCI_FOLDLINE SCI_GETFOLDLEVEL
-   SC_FOLDACTION_CONTRACT SC_FOLDACTION_EXPAND
-   SC_FOLDLEVELHEADERFLAG cmd-toggle-fold cmd-what-mode
-   cmd-what-encoding cmd-what-line-col cmd-show-file-info
-   cmd-show-buffer-size cmd-show-column-number
-   cmd-emacs-version run-git-command cmd-show-git-status
-   cmd-show-git-log cmd-show-git-diff cmd-show-git-blame
-   *magit-dir* magit-render-status! cmd-magit-status
-   cmd-magit-stage cmd-magit-unstage *magit-commit-separator*
-   cmd-magit-commit magit-open-commit-buffer!
-   cmd-magit-commit-finalize cmd-magit-commit-abort
-   *magit-amend-mode* cmd-magit-amend cmd-magit-diff
-   cmd-magit-stage-all cmd-magit-log magit-log-commit-at-point
-   cmd-magit-log-show-commit cmd-magit-refresh cmd-magit-blame
-   cmd-magit-fetch cmd-magit-pull cmd-magit-push
-   cmd-magit-rebase cmd-magit-merge cmd-magit-stash
-   cmd-magit-stash-show cmd-magit-stash-pop cmd-magit-branch
-   cmd-magit-checkout cmd-magit-cherry-pick
-   cmd-magit-revert-commit cmd-magit-worktree)
+   *debug-on-error* cmd-toggle-debug-on-error cmd-toggle-fold
+   cmd-what-mode cmd-what-encoding cmd-what-line-col
+   cmd-show-file-info cmd-show-buffer-size
+   cmd-show-column-number cmd-emacs-version run-git-command
+   cmd-show-git-status cmd-show-git-log cmd-show-git-diff
+   cmd-show-git-blame *magit-dir* magit-render-status!
+   cmd-magit-status cmd-magit-stage cmd-magit-unstage
+   *magit-commit-separator* cmd-magit-commit
+   magit-open-commit-buffer! cmd-magit-commit-finalize
+   cmd-magit-commit-abort *magit-amend-mode* cmd-magit-amend
+   cmd-magit-diff cmd-magit-stage-all cmd-magit-log
+   magit-log-commit-at-point cmd-magit-log-show-commit
+   cmd-magit-refresh cmd-magit-blame cmd-magit-fetch
+   cmd-magit-pull cmd-magit-push cmd-magit-rebase
+   cmd-magit-merge cmd-magit-stash cmd-magit-stash-show
+   cmd-magit-stash-pop cmd-magit-branch cmd-magit-checkout
+   cmd-magit-cherry-pick cmd-magit-revert-commit
+   cmd-magit-worktree)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name printf fprintf sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std format)
-   (std text base64) (std misc completion)
-   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
-   (jerboa-emacs async) (jerboa-emacs editor)
-   (jerboa-emacs repl) (jerboa-emacs eshell)
-   (jerboa-emacs shell) (jerboa-emacs terminal)
-   (jerboa-emacs qt buffer) (jerboa-emacs qt window)
-   (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
-   (jerboa-emacs qt modeline) (jerboa-emacs qt magit)
-   (jerboa-emacs qt commands-core)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std format) (std text base64)
+   (std misc completion) (jerboa-emacs qt sci-shim)
+   (jerboa-emacs core) (jerboa-emacs async)
+   (jerboa-emacs editor) (jerboa-emacs repl)
+   (jerboa-emacs eshell) (jerboa-emacs shell)
+   (jerboa-emacs terminal) (jerboa-emacs qt buffer)
+   (jerboa-emacs qt window) (jerboa-emacs qt echo)
+   (jerboa-emacs qt highlight) (jerboa-emacs qt modeline)
+   (jerboa-emacs qt magit) (jerboa-emacs qt commands-core)
    (jerboa-emacs qt commands-core2)
    (jerboa-emacs qt commands-edit)
    (jerboa-emacs qt commands-edit2)
@@ -358,13 +356,6 @@
          (if *debug-on-error*
              "Debug on error ON"
              "Debug on error OFF")))
-  (def SCI_TOGGLEFOLD 2231)
-  (def SCI_FOLDALL 2662)
-  (def SCI_FOLDLINE 2237)
-  (def SCI_GETFOLDLEVEL 2223)
-  (def SC_FOLDACTION_CONTRACT 0)
-  (def SC_FOLDACTION_EXPAND 1)
-  (def SC_FOLDLEVELHEADERFLAG 8192)
   (def (cmd-toggle-fold app)
        "Toggle code folding at current line."
        (let* ([ed (current-qt-editor app)]

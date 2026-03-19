@@ -1770,7 +1770,7 @@
         ;; Initialize gsh-backed shell
         (with-catch
           (lambda (e)
-            (let ((msg (with-output-to-string "" (lambda () (display-exception e)))))
+            (let ((msg (with-output-to-string(lambda () (display-exception e)))))
               (jemacs-log! "cmd-shell: gsh init failed: " msg)
               (echo-error! (app-state-echo app)
                 (string-append "Shell failed: " msg))))
@@ -1925,7 +1925,7 @@
     ;; Initialize gsh-backed terminal
     (with-catch
       (lambda (e)
-        (let ((msg (with-output-to-string "" (lambda () (display-exception e)))))
+        (let ((msg (with-output-to-string(lambda () (display-exception e)))))
           (jemacs-log! "cmd-term: gsh init failed: " msg)
           (echo-error! (app-state-echo app)
             (string-append "Terminal failed: " msg))))

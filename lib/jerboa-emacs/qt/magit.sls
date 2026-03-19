@@ -69,7 +69,7 @@
        "Parse git status --porcelain output into list of (status . filename)."
        (let ([lines (string-split output #\newline)])
          (filter
-           identity
+           (lambda (x) x)
            (map (lambda (line)
                   (and (>= (string-length line) 3)
                        (let ([status (substring line 0 2)]

@@ -8,19 +8,18 @@
    *isearch-active* isearch-handle-key! *qreplace-active*
    qreplace-handle-key! recent-files-add! recent-files-load!
    bookmarks-load! session-save! session-restore-files
-   *tab-bar-visible* *auto-revert-mode*
-   *auto-revert-tail-buffers* *file-mtimes* file-mtime-record!
-   file-mtime-changed? *eldoc-mode* eldoc-display!
-   *current-theme* *themes* theme-stylesheet load-theme!
-   apply-theme! load-theme define-theme! buffer-touch!
-   custom-keys-load! abbrevs-load! load-init-file!
-   scratch-save! scratch-restore! scratch-update-text!
-   undo-history-record! winner-save! *follow-mode*
-   *view-mode-buffers* *so-long-buffers* check-so-long!
-   savehist-save! savehist-load! gsh-history-save!
-   gsh-history-load! save-place-load! save-place-save!
-   auto-fill-check! *auto-save-disabled-buffers*
-   *delete-trailing-whitespace-on-save* *require-final-newline*
+   *tab-bar-visible* *auto-revert-tail-buffers* *file-mtimes*
+   file-mtime-record! file-mtime-changed? *eldoc-mode*
+   eldoc-display! *current-theme* *themes* theme-stylesheet
+   load-theme! apply-theme! load-theme define-theme!
+   buffer-touch! custom-keys-load! abbrevs-load!
+   load-init-file! scratch-save! scratch-restore!
+   scratch-update-text! undo-history-record! winner-save!
+   *follow-mode* *view-mode-buffers* *so-long-buffers*
+   check-so-long! savehist-save! savehist-load!
+   gsh-history-save! gsh-history-load! save-place-load!
+   save-place-save! auto-fill-check!
+   *auto-save-disabled-buffers* *require-final-newline*
    *save-place-enabled* *centered-cursor-mode*
    uniquify-buffer-name! shell-command-to-string
    shell-command-to-buffer! register-shell-command!
@@ -36,7 +35,7 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort)
+   (std sugar) (chez-scintilla constants) (std sort)
    (except (std srfi srfi-13) string-join string-trim
      string-prefix? string-suffix? string-contains string-index)
    (std misc string) (std text base64)
@@ -95,8 +94,11 @@
    (jerboa-emacs qt commands-parity5)
    (jerboa-emacs qt commands-aliases)
    (jerboa-emacs qt commands-aliases2)
-   (jerboa-emacs qt helm-commands) (jerboa core)
-   (jerboa runtime))
+   (except
+     (jerboa-emacs helm-commands)
+     cmd-helm-buffers-list
+     cmd-helm-occur)
+   (jerboa core) (jerboa runtime))
   (def (apply-dir-locals! app file-path)
        "Apply directory-local variables for FILE-PATH."
        (when file-path
@@ -704,17 +706,6 @@
        (let ([trimmed (string-trim str)])
          (and (> (string-length trimmed) 0)
               (char=? (string-ref trimmed 0) #\|))))
-  (def (qt-org-table-separator? str)
-       "Check if string is a table separator line (|---+---|)."
-       (let ([trimmed (string-trim str)])
-         (and (qt-org-table-row? trimmed)
-              (let loop ([i 0])
-                (if (>= i (string-length trimmed))
-                    #t
-                    (let ([c (string-ref trimmed i)])
-                      (if (memv c '(#\| #\- #\+ #\space))
-                          (loop (+ i 1))
-                          #f)))))))
   (def (qt-org-table-parse-row str)
        "Split '| a | b | c |' into (\"a\" \"b\" \"c\")."
        (let* ([trimmed (string-trim str)]
@@ -1285,77 +1276,81 @@
                                                               ed))
                                                           (qt-completer-complete-rect! c 0 0 250
                                                             20)))))))))))))))))))])))
+  (def *cmd-quit-in-progress* #f)
   (def (cmd-quit app)
-       (let* ([unsaved (filter
-                         (lambda (buf)
-                           (and (buffer-file-path buf)
-                                (buffer-doc-pointer buf)
-                                (qt-text-document-modified?
-                                  (buffer-doc-pointer buf))))
-                         *buffer-list*)]
-              [echo (app-state-echo app)]
-              [fr (app-state-frame app)])
-         (if (null? unsaved)
-             (begin
-               (scratch-save!)
-               (savehist-save!)
-               (save-place-save!)
-               (gsh-history-save!)
-               (when *qt-desktop-save-mode* (session-save! app))
-               (app-state-running-set! app #f)
-               (qt-widget-close! (qt-frame-main-win fr)))
-             (let* ([names (map buffer-name unsaved)]
-                    [shown-names (if (> (length names) 3)
-                                     (let loop ([l names]
-                                                [n 0]
-                                                [acc (list)])
-                                       (if (or (null? l) (>= n 3))
-                                           (append
-                                             (reverse acc)
-                                             (list "..."))
-                                           (loop
-                                             (cdr l)
-                                             (+ n 1)
-                                             (cons (car l) acc))))
-                                     names)]
-                    [msg (string-append
-                           (number->string (length unsaved))
-                           " unsaved buffer(s): "
-                           (string-join shown-names ", ")
-                           ". Save? (yes/no/cancel) ")]
-                    [answer (qt-echo-read-string app msg)])
-               (cond
-                 [(and answer
-                       (or (string=? answer "yes") (string=? answer "y")))
-                  (let* ([ed (current-qt-editor app)]
-                         [original-buf (current-qt-buffer app)])
-                    (for-each
-                      (lambda (buf)
-                        (let ([path (buffer-file-path buf)])
-                          (when path
-                            (qt-buffer-attach! ed buf)
-                            (let ([text (qt-plain-text-edit-text ed)])
-                              (write-string-to-file path text)
-                              (qt-text-document-set-modified!
-                                (buffer-doc-pointer buf)
-                                #f)))))
-                      unsaved)
-                    (qt-buffer-attach! ed original-buf))
-                  (scratch-save!)
-                  (save-place-save!)
-                  (gsh-history-save!)
-                  (when *qt-desktop-save-mode* (session-save! app))
-                  (app-state-running-set! app #f)
-                  (qt-widget-close! (qt-frame-main-win fr))]
-                 [(and answer
-                       (or (string=? answer "no") (string=? answer "n")))
-                  (scratch-save!)
-                  (save-place-save!)
-                  (gsh-history-save!)
-                  (when *qt-desktop-save-mode* (session-save! app))
-                  (app-state-running-set! app #f)
-                  (qt-widget-close! (qt-frame-main-win fr))]
-                 [else (echo-message! echo "Quit cancelled")])))))
+       (unless *cmd-quit-in-progress*
+         (set! *cmd-quit-in-progress* #t)
+         (let* ([unsaved (filter
+                           (lambda (buf)
+                             (and (buffer-file-path buf)
+                                  (buffer-doc-pointer buf)
+                                  (qt-text-document-modified?
+                                    (buffer-doc-pointer buf))))
+                           *buffer-list*)]
+                [echo (app-state-echo app)]
+                [fr (app-state-frame app)])
+           (if (null? unsaved)
+               (begin
+                 (scratch-save!)
+                 (savehist-save!)
+                 (save-place-save!)
+                 (gsh-history-save!)
+                 (when *qt-desktop-save-mode* (session-save! app))
+                 (app-state-running-set! app #f)
+                 (qt-widget-close! (qt-frame-main-win fr)))
+               (let* ([names (map buffer-name unsaved)]
+                      [shown-names (if (> (length names) 3)
+                                       (let loop ([l names]
+                                                  [n 0]
+                                                  [acc (list)])
+                                         (if (or (null? l) (>= n 3))
+                                             (append
+                                               (reverse acc)
+                                               (list "..."))
+                                             (loop
+                                               (cdr l)
+                                               (+ n 1)
+                                               (cons (car l) acc))))
+                                       names)]
+                      [msg (string-append
+                             (number->string (length unsaved))
+                             " unsaved buffer(s): "
+                             (string-join shown-names ", ")
+                             ". Save? (yes/no/cancel) ")]
+                      [answer (qt-echo-read-string app msg)])
+                 (cond
+                   [(and answer
+                         (or (string=? answer "yes")
+                             (string=? answer "y")))
+                    (let* ([ed (current-qt-editor app)]
+                           [original-buf (current-qt-buffer app)])
+                      (for-each
+                        (lambda (buf)
+                          (let ([path (buffer-file-path buf)])
+                            (when path
+                              (qt-buffer-attach! ed buf)
+                              (let ([text (qt-plain-text-edit-text ed)])
+                                (write-string-to-file path text)
+                                (qt-text-document-set-modified!
+                                  (buffer-doc-pointer buf)
+                                  #f)))))
+                        unsaved)
+                      (qt-buffer-attach! ed original-buf))
+                    (scratch-save!)
+                    (save-place-save!)
+                    (gsh-history-save!)
+                    (when *qt-desktop-save-mode* (session-save! app))
+                    (app-state-running-set! app #f)
+                    (qt-widget-close! (qt-frame-main-win fr))]
+                   [(and answer
+                         (or (string=? answer "no") (string=? answer "n")))
+                    (scratch-save!)
+                    (save-place-save!)
+                    (gsh-history-save!)
+                    (when *qt-desktop-save-mode* (session-save! app))
+                    (app-state-running-set! app #f)
+                    (qt-widget-close! (qt-frame-main-win fr))]
+                   [else (echo-message! echo "Quit cancelled")]))))))
   (def (qt-register-all-commands!) (setup-mode-keymaps!)
    (register-command! 'forward-char cmd-forward-char)
    (register-command! 'backward-char cmd-backward-char)
@@ -2096,7 +2091,7 @@
    (register-command!
      'screen-reader-mode
      cmd-screen-reader-mode)
-   (qt-register-helm-commands!) (qt-register-parity3-toggles!)
+   (register-helm-commands!) (qt-register-parity3-toggles!)
    (qt-register-parity4-commands!)
    (qt-register-parity4-toggles!)
    (qt-register-parity5-commands!)
@@ -2587,42 +2582,6 @@
            (qt-plain-text-edit-set-text! ed text)
            (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
            (qt-plain-text-edit-set-cursor-position! ed 0))))
-  (def (cmd-set-variable app)
-       "Set a customizable variable by name (Qt)."
-       (let* ([echo (app-state-echo app)]
-              [names (map car *qt-customizable-vars*)]
-              [name (qt-echo-read-string app "Set variable: ")])
-         (when (and name (> (string-length name) 0))
-           (let ([entry (find
-                          (lambda (e) (string=? (car e) name))
-                          *qt-customizable-vars*)])
-             (if (not entry)
-                 (echo-message!
-                   echo
-                   (string-append "Unknown variable: " name))
-                 (let* ([getter (caddr entry)]
-                        [current (getter)]
-                        [val-str (qt-echo-read-string
-                                   app
-                                   (string-append
-                                     name
-                                     " ("
-                                     (object->string current)
-                                     "): "))])
-                   (when (and val-str (> (string-length val-str) 0))
-                     (let* ([setter (cadddr entry)]
-                            [val (cond
-                                   [(string=? val-str "#t") #t]
-                                   [(string=? val-str "#f") #f]
-                                   [(string->number val-str) => values]
-                                   [else val-str])])
-                       (setter val)
-                       (echo-message!
-                         echo
-                         (string-append
-                           name
-                           " = "
-                           (object->string val)))))))))))
   (def *qt-process-sentinels* (make-hash-table))
   (def *qt-process-filters* (make-hash-table))
   (def *qt-plugin-directory* "~/.gemacs-plugins")
@@ -3012,12 +2971,10 @@
                         ("temperature" 0.3)))]
               [resp (http-post *copilot-api-url* 'data: body 'headers:
                       (list
-                        (list "Content-Type" . "application/json")
-                        (list
+                        (cons "Content-Type" "application/json")
+                        (cons
                           "Authorization"
-                          string-append
-                          "Bearer "
-                          *copilot-api-key*)))])
+                          (string-append "Bearer " *copilot-api-key*))))])
          (if (= (request-status resp) 200)
              (let* ([json-str (request-text resp)]
                     [result (call-with-input-string json-str read-json)]
@@ -3435,9 +3392,6 @@
                (echo-message!
                  (app-state-echo app)
                  "Scroll bars visible")))))
-  (def (cmd-font-lock-mode app)
-       "Toggle font-lock highlighting (Qt)."
-       (execute-command! app 'toggle-highlighting))
   (def (cmd-vterm app)
        "Open vterm terminal (Qt)."
        (execute-command! app 'term))
@@ -3946,22 +3900,6 @@
          (if *qt-screen-reader*
              "Screen reader: on"
              "Screen reader: off")))
-  (define-syntax *auto-revert-mode*
-    (identifier-syntax
-      [id (vector-ref *auto-revert-mode*--cell 0)]
-      [(set! id val) (vector-set!
-                       *auto-revert-mode*--cell
-                       0
-                       val)]))
-  (define-syntax *delete-trailing-whitespace-on-save*
-    (identifier-syntax
-      [id (vector-ref
-            *delete-trailing-whitespace-on-save*--cell
-            0)]
-      [(set! id val) (vector-set!
-                       *delete-trailing-whitespace-on-save*--cell
-                       0
-                       val)]))
   (hash-put! *qt-lsp-servers* "python" "pylsp")
   (hash-put!
     *qt-lsp-servers*

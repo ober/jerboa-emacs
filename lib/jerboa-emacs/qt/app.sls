@@ -3,12 +3,68 @@
 ;;; Source: src/jerboa-emacs/qt/app.ss
 
 (library (jerboa-emacs qt app)
-  (export qt-main qt-open-file!)
+  (export qt-main qt-open-file! qt-do-init!)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name)
-   (std sugar) (std misc string) (jerboa-emacs qt sci-shim)
+   (std sugar) (std misc string) (chez-scintilla constants)
+   (jerboa-emacs qt sci-shim)
+   (except (chez-qt qt) QT_MOD_NONE QT_MOD_SHIFT QT_MOD_CONTROL
+    QT_MOD_ALT QT_MOD_META QT_KEY_ESCAPE QT_KEY_BACKSPACE
+    QT_KEY_RETURN QT_KEY_ENTER QT_KEY_DELETE QT_KEY_TAB
+    QT_KEY_BACKTAB QT_KEY_INSERT QT_KEY_HOME QT_KEY_END
+    QT_KEY_LEFT QT_KEY_RIGHT QT_KEY_UP QT_KEY_DOWN
+    QT_KEY_PAGE_UP QT_KEY_PAGE_DOWN QT_KEY_SPACE QT_KEY_F1
+    QT_KEY_F2 QT_KEY_F3 QT_KEY_F4 QT_KEY_F5 QT_KEY_F6 QT_KEY_F7
+    QT_KEY_F8 QT_KEY_F9 QT_KEY_F10 QT_KEY_F11 QT_KEY_F12
+    QT_CURSOR_UP QT_CURSOR_DOWN QT_CURSOR_START QT_CURSOR_END
+    QT_CURSOR_START_OF_BLOCK QT_CURSOR_END_OF_BLOCK
+    QT_CURSOR_NEXT_CHAR QT_CURSOR_NEXT_WORD
+    QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD
+    qt-plain-text-edit-create qt-plain-text-edit-set-text!
+    qt-plain-text-edit-text qt-plain-text-edit-append!
+    qt-plain-text-edit-clear! qt-plain-text-edit-set-read-only!
+    qt-plain-text-edit-read-only?
+    qt-plain-text-edit-set-placeholder!
+    qt-plain-text-edit-line-count
+    qt-plain-text-edit-set-max-block-count!
+    qt-plain-text-edit-cursor-line
+    qt-plain-text-edit-cursor-column
+    qt-plain-text-edit-set-line-wrap!
+    qt-plain-text-edit-cursor-position
+    qt-plain-text-edit-set-cursor-position!
+    qt-plain-text-edit-move-cursor!
+    qt-plain-text-edit-select-all!
+    qt-plain-text-edit-selected-text
+    qt-plain-text-edit-selection-start
+    qt-plain-text-edit-selection-end
+    qt-plain-text-edit-set-selection!
+    qt-plain-text-edit-has-selection?
+    qt-plain-text-edit-insert-text!
+    qt-plain-text-edit-remove-selected-text!
+    qt-plain-text-edit-undo! qt-plain-text-edit-redo!
+    qt-plain-text-edit-can-undo? qt-plain-text-edit-cut!
+    qt-plain-text-edit-copy! qt-plain-text-edit-paste!
+    qt-plain-text-edit-text-length qt-plain-text-edit-text-range
+    qt-plain-text-edit-line-from-position
+    qt-plain-text-edit-line-end-position
+    qt-plain-text-edit-find-text
+    qt-plain-text-edit-ensure-cursor-visible!
+    qt-plain-text-edit-center-cursor! qt-text-document-create
+    qt-plain-text-document-create qt-text-document-destroy!
+    qt-plain-text-edit-document qt-plain-text-edit-set-document!
+    qt-text-document-modified? qt-text-document-set-modified!
+    qt-syntax-highlighter-create qt-syntax-highlighter-destroy!
+    qt-syntax-highlighter-add-rule!
+    qt-syntax-highlighter-add-keywords!
+    qt-syntax-highlighter-add-multiline-rule!
+    qt-syntax-highlighter-clear-rules!
+    qt-syntax-highlighter-rehighlight!
+    qt-line-number-area-create qt-line-number-area-destroy!
+    qt-line-number-area-set-visible!
+    qt-line-number-area-set-bg-color!
+    qt-line-number-area-set-fg-color!)
    (jerboa-emacs core) (jerboa-emacs async)
    (jerboa-emacs editor)
    (only (jerboa-emacs persist) init-file-load! detect-major-mode
@@ -338,12 +394,10 @@
                             (string-length (qt-plain-text-edit-text ed)))
                           (qt-plain-text-edit-ensure-cursor-visible! ed)))
                       (loop (cdr wins))))))])))
-  (def (qt-do-init! qt-app args) (init-gemacs-log!)
+  (def (qt-do-init! qt-app args) (init-jemacs-log!)
        (when (member "--verbose" args)
          (let ([vpath (init-verbose-log!)])
-           (qt-verbose-log-enable! vpath)
-           (verbose-log!
-             "gemacs-qt verbose mode ON  (C-level BQC tracing also active)")))
+           (verbose-log! "gemacs-qt verbose mode ON")))
        (define-standard-faces!)
        (let-values ([(saved-theme saved-font-family saved-font-size)
                      (theme-settings-load!)])
@@ -359,17 +413,17 @@
        (load-theme! *current-theme*) (custom-faces-load!)
        (qt-app-set-style-sheet! qt-app (theme-stylesheet))
        (let* ([win (qt-main-window-create)]
-              [central (qt-widget-create 'parent: win)]
+              [central (qt-widget-create win)]
               [layout (qt-vbox-layout-create central)]
-              [tab-bar (qt-widget-create 'parent: central)]
+              [tab-bar (qt-widget-create central)]
               [tab-layout (qt-hbox-layout-create tab-bar)]
-              [splitter (qt-splitter-create QT_VERTICAL 'parent: central)]
+              [splitter (qt-splitter-create QT_VERTICAL central)]
               [_ (begin
                    (qt-splitter-set-handle-width! splitter 3)
                    (qt-widget-set-style-sheet!
                      splitter
                      "QSplitter::handle { background: #51afef; }"))]
-              [echo-label (qt-label-create "" 'parent: central)]
+              [echo-label (qt-label-create "" central)]
               [fr (qt-frame-init! win splitter)]
               [app (new-app-state fr)])
          (qt-widget-set-minimum-height! tab-bar 26)
@@ -411,7 +465,7 @@
          (setup-default-bindings!)
          (setup-command-docs!)
          (qt-register-all-commands!)
-         (gemacs-log!
+         (jemacs-log!
            "commands registered: "
            (number->string (hash-length *all-commands*))
            " total")
@@ -1204,7 +1258,7 @@
            'auto-save
            30000
            (lambda ()
-             (let ([save-jobs (list)])
+             (let ([save-jobs '()])
                (for-each
                  (lambda (buf)
                    (let ([path (buffer-file-path buf)])
@@ -1221,9 +1275,7 @@
                                       [auto-path (qt-make-auto-save-path
                                                    path)])
                                  (set! save-jobs
-                                   (cons
-                                     (list auto-path . text)
-                                     save-jobs)))
+                                   (cons (cons auto-path text) save-jobs)))
                                (loop (cdr wins))))))))
                  (buffer-list))
                (when (pair? save-jobs)
@@ -1234,7 +1286,7 @@
                        (lambda (job)
                          (with-catch
                            (lambda (e)
-                             (gemacs-log!
+                             (jemacs-log!
                                "Auto-save error: "
                                (object->string e)))
                            (lambda ()
@@ -1441,7 +1493,8 @@
              (for-each
                (lambda (entry)
                  (let ([path (car entry)] [pos (cdr entry)])
-                   (when (file-exists? path)
+                   (when (and (file-exists? path)
+                              (not (file-directory? path)))
                      (qt-open-file!
                        app
                        path
@@ -1507,7 +1560,7 @@
        (let ([qt-app (qt-app-create)])
          (try (qt-do-init! qt-app args) (qt-app-exec! qt-app) (lsp-stop!)
               (stop-ipc-server!) (stop-debug-repl!)
-              (finally (qt-app-destroy! qt-app)))))
+              (finally (qt-app-quit! qt-app) (qt-app-destroy! qt-app)))))
   (def (qt-open-file! app filename (on-loaded #f))
        "Open a file or directory in a new buffer, or view an image.\n   Optional on-loaded callback is called with (app buf) after text is loaded."
        (recent-files-add! filename)

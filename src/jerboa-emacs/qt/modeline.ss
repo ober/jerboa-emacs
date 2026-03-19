@@ -101,7 +101,7 @@
          (state-str (cond
                       ((and ro? mod?) "%*")
                       (ro? "%%")
-                      (mod?) "**")
+                      (mod? "**")
                       (else "--")))
          (mode (mode-name-for-buffer buf))
          (eol (buffer-eol-indicator buf))
@@ -127,5 +127,5 @@
                    "")
                  (if lsp-str
                    (string-append "  " lsp-str)
-                   "")))
+                   ""))))
     (qt-main-window-set-status-bar-text! (qt-frame-main-win fr) info)))

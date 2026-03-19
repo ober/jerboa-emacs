@@ -22,13 +22,16 @@
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
    (std sugar) (std sort) (std srfi srfi-13) (std text base64)
-   (\x2E;./pregexp-compat) (jerboa-emacs qt sci-shim)
-   (jerboa-emacs core) (jerboa-emacs editor)
-   (jerboa-emacs repl) (jerboa-emacs eshell)
-   (jerboa-emacs shell) (jerboa-emacs terminal)
-   (jerboa-emacs qt buffer) (jerboa-emacs qt window)
-   (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
-   (jerboa-emacs qt modeline) (jerboa-emacs qt commands-core)
+   (only (jerboa-emacs pregexp-compat) pregexp pregexp-match
+     pregexp-match-positions pregexp-replace pregexp-replace*
+     pregexp-split)
+   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (jerboa-emacs editor) (jerboa-emacs repl)
+   (jerboa-emacs eshell) (jerboa-emacs shell)
+   (jerboa-emacs terminal) (jerboa-emacs qt buffer)
+   (jerboa-emacs qt window) (jerboa-emacs qt echo)
+   (jerboa-emacs qt highlight) (jerboa-emacs qt modeline)
+   (jerboa-emacs qt commands-core)
    (jerboa-emacs qt commands-core2)
    (jerboa-emacs qt commands-edit)
    (jerboa-emacs qt commands-edit2)

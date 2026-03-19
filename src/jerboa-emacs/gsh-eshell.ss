@@ -82,7 +82,7 @@
     (with-catch
       (lambda (e)
         (jemacs-log! "gsh-eshell: startup file error: "
-          (with-output-to-string "" (lambda () (display-exception e (current-output-port))))))
+          (with-output-to-string(lambda () (display-exception e (current-output-port))))))
       (lambda () (load-startup-files! env #f #t)))
     (jemacs-log! "gsh-eshell: PS1=" (or (env-get env "PS1") "<none>"))
     (hash-put! *gsh-eshell-state* buf env)

@@ -73,7 +73,8 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text base64)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text base64)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (only (jerboa-emacs persist) theme-settings-save!
      theme-settings-load! mx-history-save! mx-history-load!
@@ -105,7 +106,7 @@
    (jerboa-emacs qt commands-lsp) (jerboa core)
    (jerboa runtime))
   (def (directory-exists? path)
-       (and (file-exists? path) (eq? 'directory (file-type path))))
+       (and (file-exists? path) (file-directory? path)))
   (def (apply-font-size-to-all-editors! app)
        "Apply the current global font size to all open editors."
        (let ([fr (app-state-frame app)])

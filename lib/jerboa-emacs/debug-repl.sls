@@ -8,152 +8,207 @@
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
-    (std sugar) (std srfi srfi-13) (std net tcp) (jerboa core)
-    (jerboa runtime))
-  (def *debug-repl-server* #f)
-  (def *debug-repl-actual-port* #f)
-  (def *debug-repl-port-file*
+    (std sugar) (std srfi srfi-13) (jerboa repl-socket)
+    (jerboa-emacs async) (jerboa core) (jerboa runtime))
+  (def *repl-listen-fd* #f)
+  (def *repl-client-fd* #f)
+  (def *repl-line-buf* "")
+  (def *repl-actual-port* #f)
+  (def *repl-token* #f)
+  (def *repl-authed* #f)
+  (def *repl-prompted* #f)
+  (def *repl-port-file*
        (string-append (getenv "HOME") "/.jerboa-repl-port"))
   (def (write-repl-port-file! port-num)
        (delete-repl-port-file!)
        (call-with-output-file
-         *debug-repl-port-file*
+         *repl-port-file*
          (lambda (p)
            (display "PORT=" p)
            (display port-num p)
            (newline p))))
   (def (delete-repl-port-file!)
-       (when (file-exists? *debug-repl-port-file*)
+       (when (file-exists? *repl-port-file*)
          (with-catch
            (lambda _ (void))
-           (lambda () (delete-file *debug-repl-port-file*)))))
+           (lambda () (delete-file *repl-port-file*)))))
+  (def (repl-send! str)
+       "Send a string to the connected client.  No-op if no client."
+       (when *repl-client-fd*
+         (unless (repl-socket-write *repl-client-fd* str)
+           (repl-disconnect!))))
+  (def (repl-disconnect!)
+       "Close the client connection and reset state for next accept."
+       (when *repl-client-fd*
+         (with-catch
+           (lambda _ (void))
+           (lambda () (repl-socket-close *repl-client-fd*))))
+       (set! *repl-client-fd* #f) (set! *repl-line-buf* "")
+       (set! *repl-authed* #f) (set! *repl-prompted* #f))
   (def help-text
-       "  ,help           This help message\n  ,threads        List active threads\n  ,buffers        List open buffers\n  ,state          Show state summary\n  ,gc             Force GC and show heap info\n  ,quit           Close this REPL connection\n  <expr>          Evaluate arbitrary Chez Scheme expression\n")
-  (def (read-line-safe port)
-       "Read a line safely; return #f on error or EOF."
-       (with-catch
-         (lambda (e) #f)
-         (lambda ()
-           (let ([line (get-line port)])
-             (if (eof-object? line) #f line)))))
-  (def (write-safe port str)
-       "Write a string to port, flushing afterward; ignore errors."
-       (with-catch
-         (lambda _ (void))
-         (lambda () (put-string port str) (flush-output-port port))))
-  (def (handle-client! in-port out-port token)
-       (when token
-         (let ([line (read-line-safe in-port)])
-           (unless (and (string? line)
-                        (string=? (string-trim-both line) token))
-             (write-safe out-port "Access denied.\n")
-             (with-catch
-               (lambda _ (void))
-               (lambda () (close-port in-port)))
-             (with-catch
-               (lambda _ (void))
-               (lambda () (close-port out-port)))
-             (error "debug-repl" "access denied"))))
-       (write-safe
-         out-port
-         "jerboa debug REPL — type ,help for commands\n")
+       "  ,help           This help message\n  ,threads        List active threads\n  ,state          Show state summary\n  ,gc             Force GC and show heap info\n  ,quit           Close this REPL connection\n  <expr>          Evaluate arbitrary Chez Scheme expression\n")
+  (def (process-repl-line! line)
+       "Process one REPL command line.  Returns #t to continue, #f to disconnect."
+       (let ([cmd (string-trim-both line)])
+         (cond
+           [(string=? cmd "") #t]
+           [(string=? cmd ",quit")
+            (repl-send! "Connection closed.\n")
+            #f]
+           [(string=? cmd ",help") (repl-send! help-text) #t]
+           [(string=? cmd ",threads")
+            (with-catch
+              (lambda (e) (repl-send! "  (error listing threads)\n"))
+              (lambda () (repl-send! "  master-timer (active)\n")))
+            #t]
+           [(string=? cmd ",state")
+            (repl-send!
+              (string-append "  listen-fd: " (number->string (or *repl-listen-fd* -1))
+                "\n  client-fd: " (number->string (or *repl-client-fd* -1))
+                "\n  bytes-allocated: " (number->string (bytes-allocated))
+                "\n"))
+            #t]
+           [(string=? cmd ",gc")
+            (with-catch
+              (lambda (e)
+                (repl-send!
+                  (string-append
+                    "  GC skipped (would deadlock). bytes-allocated: "
+                    (number->string (bytes-allocated))
+                    "\n")))
+              (lambda ()
+                (collect 0)
+                (repl-send!
+                  (string-append
+                    "  GC done (gen 0). bytes-allocated: "
+                    (number->string (bytes-allocated))
+                    "\n"))))
+            #t]
+           [else
+            (with-catch
+              (lambda (e)
+                (let ([msg (with-catch
+                             (lambda (e2) "unknown error")
+                             (lambda ()
+                               (with-output-to-string
+                                 (lambda ()
+                                   (display-condition
+                                     e
+                                     (current-output-port))))))])
+                  (repl-send! (string-append "ERROR: " msg "\n"))))
+              (lambda ()
+                (let* ([result (eval
+                                 (read (open-input-string cmd))
+                                 (interaction-environment))]
+                       [out (open-output-string)])
+                  (write result out)
+                  (repl-send!
+                    (string-append (get-output-string out) "\n")))))
+            #t])))
+  (def (debug-repl-tick!)
+       "Non-blocking REPL poll.  Called from the master timer.\n   Tries to accept a connection or read data from an existing client."
+       (when *repl-listen-fd*
+         (with-catch
+           (lambda (e) (void))
+           (lambda ()
+             (cond
+               [(not *repl-client-fd*)
+                (let ([cfd (repl-socket-accept *repl-listen-fd*)])
+                  (when cfd
+                    (set! *repl-client-fd* cfd)
+                    (set! *repl-line-buf* "")
+                    (set! *repl-prompted* #f)
+                    (if *repl-token*
+                        (begin
+                          (set! *repl-authed* #f)
+                          (repl-send! "token: "))
+                        (begin
+                          (set! *repl-authed* #t)
+                          (repl-send!
+                            "jerboa debug REPL — type ,help for commands\n")))))]
+               [*repl-client-fd*
+                (when (and *repl-authed* (not *repl-prompted*))
+                  (repl-send! "jerboa-dbg> \n")
+                  (set! *repl-prompted* #t))
+                (let ([data (repl-socket-read *repl-client-fd*)])
+                  (cond
+                    [(string? data)
+                     (set! *repl-line-buf*
+                       (string-append *repl-line-buf* data))
+                     (repl-process-lines!)]
+                    [(eq? data 'eof) (repl-disconnect!)]))])))))
+  (def (repl-process-lines!)
+       "Extract and process complete lines from *repl-line-buf*."
        (let loop ()
-         (write-safe out-port "jerboa-dbg> \n")
-         (let ([line (read-line-safe in-port)])
-           (when (and line (not (eof-object? line)))
-             (let ([cmd (string-trim-both line)])
-               (cond
-                 [(string=? cmd "") (loop)]
-                 [(string=? cmd ",quit")
-                  (write-safe out-port "Connection closed.\n")]
-                 [(string=? cmd ",help")
-                  (write-safe out-port help-text)
-                  (loop)]
-                 [(string=? cmd ",threads")
-                  (write-safe out-port "  debug-repl accept (active)\n")
-                  (loop)]
-                 [(string=? cmd ",buffers")
-                  (write-safe
-                    out-port
-                    "  (no buffer list in this context)\n")
-                  (loop)]
-                 [(string=? cmd ",state")
-                  (write-safe
-                    out-port
-                    "  buffers:   0 buffer(s)\n  threads:   (active)\n")
-                  (loop)]
-                 [(string=? cmd ",gc")
-                  (write-safe
-                    out-port
-                    (string-append
-                      "  GC done. bytes-allocated: "
-                      (number->string (bytes-allocated))
-                      "\n"))
-                  (loop)]
-                 [else
-                  (with-catch
-                    (lambda (e)
-                      (let ([msg (with-catch
-                                   (lambda (e2) "unknown error")
-                                   (lambda ()
-                                     (with-output-to-string
-                                       ""
-                                       (lambda ()
-                                         (display-condition
-                                           e
-                                           (current-output-port))))))])
-                        (write-safe
-                          out-port
-                          (string-append "ERROR: " msg "\n"))))
-                    (lambda ()
-                      (let* ([result (eval
-                                       (read (open-input-string cmd))
-                                       (interaction-environment))]
-                             [out (open-output-string)])
-                        (write result out)
-                        (write-safe
-                          out-port
-                          (string-append (get-output-string out) "\n")))))
-                  (loop)]))))))
-  (def (accept-loop srv token)
-       (let loop ()
-         (let ([ok? (with-catch
-                      (lambda (e) *debug-repl-server*)
-                      (lambda ()
-                        (let-values ([(in-port out-port) (tcp-accept srv)])
-                          (fork-thread
-                            (lambda ()
-                              (with-catch
-                                (lambda _ (void))
-                                (lambda ()
-                                  (handle-client! in-port out-port token)
-                                  (with-catch
-                                    (lambda _ (void))
-                                    (lambda () (close-port in-port)))
-                                  (with-catch
-                                    (lambda _ (void))
-                                    (lambda () (close-port out-port)))))))
-                          #t)))])
-           (when ok? (loop)))))
+         (let ([nl (repl-string-index *repl-line-buf* #\newline)])
+           (when nl
+             (let ([line (substring *repl-line-buf* 0 nl)]
+                   [rest (substring
+                           *repl-line-buf*
+                           (+ nl 1)
+                           (string-length *repl-line-buf*))])
+               (set! *repl-line-buf* rest)
+               (let ([line (if (and (> (string-length line) 0)
+                                    (char=?
+                                      (string-ref
+                                        line
+                                        (- (string-length line) 1))
+                                      #\return))
+                               (substring
+                                 line
+                                 0
+                                 (- (string-length line) 1))
+                               line)])
+                 (if *repl-authed*
+                     (let ([continue? (process-repl-line! line)])
+                       (if continue?
+                           (begin (set! *repl-prompted* #f) (loop))
+                           (repl-disconnect!)))
+                     (let ([tok (string-trim-both line)])
+                       (if (string=? tok *repl-token*)
+                           (begin
+                             (set! *repl-authed* #t)
+                             (repl-send!
+                               "jerboa debug REPL — type ,help for commands\n")
+                             (set! *repl-prompted* #f)
+                             (loop))
+                           (begin
+                             (repl-send! "Access denied.\n")
+                             (repl-disconnect!)))))))))))
+  (def (repl-string-index str ch)
+       "Return the index of the first occurrence of ch in str, or #f."
+       (let ([len (string-length str)])
+         (let loop ([i 0])
+           (cond
+             [(>= i len) #f]
+             [(char=? (string-ref str i) ch) i]
+             [else (loop (+ i 1))]))))
   (def (start-debug-repl! port-num . args)
-       "Start the TCP debug REPL on 127.0.0.1:port-num.\n   Optional second argument: token string for authentication.\n   Use port 0 for OS-assigned ephemeral port.\n   Returns the actual port number and writes ~/.jerboa-repl-port."
+       "Start the TCP debug REPL on 127.0.0.1:port-num.\n   Optional second argument: token string for authentication.\n   Use port 0 for OS-assigned ephemeral port.\n   Returns the actual port number and writes ~/.jerboa-repl-port.\n\n   THREAD-FREE: Registers a periodic tick with the master timer instead\n   of creating a background thread.  All socket I/O is non-blocking."
+       (stop-debug-repl!)
        (let ([token (if (null? args) #f (car args))])
-         (let ([srv (tcp-listen "127.0.0.1" port-num)])
-           (set! *debug-repl-server* srv)
-           (let ([actual-port (tcp-server-port srv)])
-             (set! *debug-repl-actual-port* actual-port)
-             (write-repl-port-file! actual-port)
-             (fork-thread (lambda () (accept-loop srv token)))
-             actual-port))))
+         (let-values ([(fd actual-port)
+                       (repl-socket-listen "127.0.0.1" port-num)])
+           (set! *repl-listen-fd* fd)
+           (set! *repl-actual-port* actual-port)
+           (set! *repl-token* token)
+           (set! *repl-authed* (not token))
+           (set! *repl-client-fd* #f)
+           (set! *repl-line-buf* "")
+           (set! *repl-prompted* #f)
+           (write-repl-port-file! actual-port)
+           (schedule-periodic! 'debug-repl 100 debug-repl-tick!)
+           actual-port)))
   (def (stop-debug-repl!)
-       "Stop the debug REPL server and clean up the port file."
-       (when *debug-repl-server*
+       "Stop the debug REPL server and clean up."
+       (repl-disconnect!)
+       (when *repl-listen-fd*
          (with-catch
            (lambda _ (void))
-           (lambda () (tcp-close *debug-repl-server*)))
-         (set! *debug-repl-server* #f)
-         (set! *debug-repl-actual-port* #f))
+           (lambda () (repl-socket-close *repl-listen-fd*)))
+         (set! *repl-listen-fd* #f)
+         (set! *repl-actual-port* #f))
        (delete-repl-port-file!))
   (def (debug-repl-port)
        "Return the actual port number the debug REPL is listening on, or #f if stopped."
-       *debug-repl-actual-port*))
+       *repl-actual-port*))

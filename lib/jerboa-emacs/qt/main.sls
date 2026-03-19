@@ -11,6 +11,10 @@
     (only (jerboa-emacs qt app) qt-main)
     (jerboa core)
     (jerboa runtime))
+  (def version-manifest
+       '(("" . "jerboa-emacs")
+          ("Jerboa" . "master")
+          ("Chez Scheme" . "10.x")))
   (def (main . args)
        (cond
          [(member "--version" args)
@@ -29,5 +33,4 @@
             "  --verbose        Log all Qt calls and commands to ~/.gemacs-verbose.log")
           (displayln
             "  --repl <port>    Start TCP debug REPL on given port (0=auto)")]
-         [else (apply qt-main args)]))
-  (include "../manifest.ss"))
+         [else (apply qt-main args)])))

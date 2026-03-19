@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/base64
@@ -801,8 +802,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
                        ;; Fallback: just show seconds since epoch
                        (number->string (inexact->exact (truncate secs))))
                      (lambda ()
-                       (let* ((utc (seconds->time secs))
-                              (port (open-process
+                       (let* ((port (open-process
                                       (list path: "/bin/date"
                                             arguments: ["+%Y-%m-%d %H:%M:%S"]
                                             stdout-redirection: #t))))

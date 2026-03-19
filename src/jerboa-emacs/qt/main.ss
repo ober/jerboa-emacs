@@ -4,7 +4,11 @@
 (export main)
 (import (only-in :jerboa-emacs/qt/app qt-main))
 
-(include "../manifest.ss")
+;; Version manifest (inlined to avoid include path issues in compiled builds)
+(def version-manifest
+  '(("" . "jerboa-emacs")
+    ("Jerboa" . "master")
+    ("Chez Scheme" . "10.x")))
 
 (def (main . args)
   (cond

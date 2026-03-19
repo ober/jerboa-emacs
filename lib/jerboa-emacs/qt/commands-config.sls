@@ -28,7 +28,8 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text base64)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text base64)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs async) (jerboa-emacs snippets)
    (only (jerboa-emacs persist) record-face-customization!
@@ -790,38 +791,26 @@
   (define *qt-profiler-start-stats*--cell (vector #f))
   (define *profiler-data*--cell (vector (hash)))
   (def (cmd-profiler-start app)
-       "Start profiling (records start time and GC stats)."
+       "Start profiling (records start time)."
        (set! *qt-profiler-running* #t)
-       (set! *qt-profiler-start-stats* (process-statistics))
+       (set! *qt-profiler-start-stats*
+         (time->seconds (current-time)))
        (echo-message! (app-state-echo app) "Profiler started"))
   (def (cmd-profiler-stop app)
        "Stop profiler and show timing report."
        (if *qt-profiler-running*
-           (let* ([end-stats (process-statistics)]
+           (let* ([end-time (time->seconds (current-time))]
                   [start *qt-profiler-start-stats*]
-                  [wall (- (f64vector-ref end-stats 2)
-                           (f64vector-ref start 2))]
-                  [user (- (f64vector-ref end-stats 0)
-                           (f64vector-ref start 0))]
-                  [sys (- (f64vector-ref end-stats 1)
-                          (f64vector-ref start 1))]
-                  [gc (- (f64vector-ref end-stats 5)
-                         (f64vector-ref start 5))]
-                  [alloc (inexact->exact
-                           (- (f64vector-ref end-stats 4)
-                              (f64vector-ref start 4)))]
+                  [wall (- end-time (if (number? start) start end-time))]
                   [fmt (lambda (v)
                          (number->string (/ (round (* v 1000)) 1000.0)))]
-                  [report (string-append "=== Profiler Report ===\n\n" "Wall time:   "
-                            (fmt wall) "s\n" "User CPU:    " (fmt user)
-                            "s\n" "System CPU:  " (fmt sys) "s\n"
-                            "GC time:     " (fmt gc) "s\n" "Allocated:   "
-                            (number->string alloc) " bytes\n")])
+                  [report (string-append
+                            "=== Profiler Report ===\n\n"
+                            "Wall time:   "
+                            (fmt wall)
+                            "s\n")])
              (set! *qt-profiler-running* #f)
              (hash-put! *profiler-data* "wall-time" wall)
-             (hash-put! *profiler-data* "user-cpu" user)
-             (hash-put! *profiler-data* "system-cpu" sys)
-             (hash-put! *profiler-data* "gc-time" gc)
              (let* ([ed (current-qt-editor app)]
                     [fr (app-state-frame app)]
                     [buf (or (buffer-by-name "*Profiler Report*")
@@ -889,7 +878,6 @@
          (with-catch
            (lambda (e)
              (let ([msg (with-output-to-string
-                          ""
                           (lambda () (display-exception e)))])
                (gemacs-log! "cmd-term: gsh init failed: " msg)
                (verbose-log! "cmd-term: gsh init FAILED: " msg)

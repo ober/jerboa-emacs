@@ -46,9 +46,9 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text base64)
-   (gerbil-litehtml html) (jerboa-emacs qt sci-shim)
-   (jerboa-emacs core)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text base64) (gerbil-litehtml html)
+   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (only (jerboa-emacs persist) *abbrev-table*)
    (jerboa-emacs async) (jerboa-emacs editor)
    (jerboa-emacs repl) (jerboa-emacs eshell)
@@ -85,9 +85,10 @@
      org-table-column-widths org-table-format-row
      org-table-format-separator org-table-parse-tblfm
      org-table-eval-formula org-numeric-cell? org-csv-to-table
-     csv-split-line swap-list-elements list-insert list-remove-at
-     filter-map)
-   (jerboa core) (jerboa runtime))
+     csv-split-line swap-list-elements list-insert
+     list-remove-at)
+   (only (std misc list) filter-map) (jerboa core)
+   (jerboa runtime))
   (def (cmd-expand-abbrev app)
        "Expand abbreviation before cursor."
        (let* ([ed (current-qt-editor app)]

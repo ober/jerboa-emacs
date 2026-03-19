@@ -46,11 +46,13 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name)
-   (std sugar)
+   (std sugar) (chez-scintilla constants)
    (except (std srfi srfi-13) string-join string-trim
      string-prefix? string-suffix? string-contains string-index)
    (std misc string) (std misc process)
-   (only (jerboa-emacs pregexp-compat) pregexp pregexp-match)
+   (only (jerboa-emacs pregexp-compat) pregexp pregexp-match
+     pregexp-match-positions pregexp-replace pregexp-replace*
+     pregexp-split)
    (only
      (jerboa-emacs org-parse)
      org-heading-line?
@@ -475,14 +477,14 @@
   (def (gdb-send! cmd)
        "Send a GDB/MI command to the running GDB process."
        (when *qt-dap-process*
-         (let ([port (process-port *qt-dap-process*)])
+         (let ([port *qt-dap-process*])
            (display cmd port)
            (newline port)
            (force-output port))))
   (def (gdb-read-until-prompt!)
        "Read GDB output lines until (gdb) prompt."
        (when *qt-dap-process*
-         (let ([port (process-port *qt-dap-process*)] [lines (list)])
+         (let ([port *qt-dap-process*] [lines (list)])
            (let loop ()
              (let ([line (with-exception-catcher
                            (lambda (e) #f)
@@ -533,7 +535,6 @@
                      (string-append
                        "Failed to start GDB: "
                        (with-output-to-string
-                         ""
                          (lambda () (display-exception e))))))
                  (lambda ()
                    (set! *qt-dap-process*

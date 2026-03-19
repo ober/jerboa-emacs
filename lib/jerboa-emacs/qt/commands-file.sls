@@ -29,18 +29,13 @@
    cmd-describe-key qt-describe-key-result!
    cmd-describe-command cmd-toggle-electric-pair
    cmd-paredit-strict-mode cmd-universal-argument
-   cmd-digit-argument cmd-negative-argument
-   cmd-digit-argument-0 cmd-digit-argument-1
-   cmd-digit-argument-2 cmd-digit-argument-3
-   cmd-digit-argument-4 cmd-digit-argument-5
-   cmd-digit-argument-6 cmd-digit-argument-7
-   cmd-digit-argument-8 cmd-digit-argument-9
    compilation-goto-error! cmd-next-error cmd-previous-error)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text base64)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text base64)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs editor) (jerboa-emacs repl)
    (jerboa-emacs eshell) (jerboa-emacs shell)
@@ -1500,37 +1495,6 @@
              (let ([val (car (app-state-prefix-arg app))])
                (if (= val 4) "" (string-append " " (number->string val))))
              "-"))))
-  (def (cmd-digit-argument app digit)
-       "Build a numeric prefix argument."
-       (let ([current (app-state-prefix-arg app)])
-         (cond
-           [(number? current)
-            (app-state-prefix-arg-set! app (+ (* current 10) digit))]
-           [(eq? current '-) (app-state-prefix-arg-set! app (- digit))]
-           [else (app-state-prefix-arg-set! app digit)])
-         (app-state-prefix-digit-mode?-set! app #t)
-         (echo-message!
-           (app-state-echo app)
-           (string-append
-             "Arg: "
-             (if (eq? (app-state-prefix-arg app) '-)
-                 "-"
-                 (number->string (app-state-prefix-arg app)))))))
-  (def (cmd-negative-argument app)
-       "Negative prefix argument (M--)."
-       (app-state-prefix-arg-set! app '-)
-       (app-state-prefix-digit-mode?-set! app #t)
-       (echo-message! (app-state-echo app) "Arg: -"))
-  (def (cmd-digit-argument-0 app) (cmd-digit-argument app 0))
-  (def (cmd-digit-argument-1 app) (cmd-digit-argument app 1))
-  (def (cmd-digit-argument-2 app) (cmd-digit-argument app 2))
-  (def (cmd-digit-argument-3 app) (cmd-digit-argument app 3))
-  (def (cmd-digit-argument-4 app) (cmd-digit-argument app 4))
-  (def (cmd-digit-argument-5 app) (cmd-digit-argument app 5))
-  (def (cmd-digit-argument-6 app) (cmd-digit-argument app 6))
-  (def (cmd-digit-argument-7 app) (cmd-digit-argument app 7))
-  (def (cmd-digit-argument-8 app) (cmd-digit-argument app 8))
-  (def (cmd-digit-argument-9 app) (cmd-digit-argument app 9))
   (def (compilation-goto-error! app index)
        "Jump to the compilation error at INDEX. Opens the file and positions cursor."
        (when (and (>= index 0)

@@ -8,8 +8,9 @@
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
-    (std sugar) (jerboa-emacs qt sci-shim) (jerboa-emacs core)
-    (jerboa core) (jerboa runtime))
+    (std sugar) (chez-scintilla constants)
+    (jerboa-emacs qt sci-shim) (jerboa-emacs core) (jerboa core)
+    (jerboa runtime))
   (def (qt-buffer-create! name editor (file-path #f))
        "Create buffer with a new Scintilla document."
        (verbose-log!

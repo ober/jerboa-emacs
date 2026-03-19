@@ -68,15 +68,15 @@
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
-   (std sugar) (std sort) (std srfi srfi-13) (std text base64)
-   (gerbil-litehtml html) (jerboa-emacs qt sci-shim)
-   (jerboa-emacs core) (jerboa-emacs async)
-   (jerboa-emacs editor) (jerboa-emacs repl)
-   (jerboa-emacs eshell) (jerboa-emacs shell)
-   (jerboa-emacs terminal) (jerboa-emacs qt buffer)
-   (jerboa-emacs qt window) (jerboa-emacs qt echo)
-   (jerboa-emacs qt highlight) (jerboa-emacs qt modeline)
-   (jerboa-emacs qt commands-core)
+   (std sugar) (chez-scintilla constants) (std sort)
+   (std srfi srfi-13) (std text base64) (gerbil-litehtml html)
+   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (jerboa-emacs async) (jerboa-emacs editor)
+   (jerboa-emacs repl) (jerboa-emacs eshell)
+   (jerboa-emacs shell) (jerboa-emacs terminal)
+   (jerboa-emacs qt buffer) (jerboa-emacs qt window)
+   (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
+   (jerboa-emacs qt modeline) (jerboa-emacs qt commands-core)
    (jerboa-emacs qt commands-core2)
    (jerboa-emacs qt commands-edit)
    (jerboa-emacs qt commands-edit2)
@@ -107,9 +107,10 @@
      org-table-column-widths org-table-format-row
      org-table-format-separator org-table-parse-tblfm
      org-table-eval-formula org-numeric-cell? org-csv-to-table
-     csv-split-line swap-list-elements list-insert list-remove-at
-     filter-map)
-   (jerboa core) (jerboa runtime))
+     csv-split-line swap-list-elements list-insert
+     list-remove-at)
+   (only (std misc list) filter-map) (jerboa core)
+   (jerboa runtime))
   (def (md-heading-level line)
        "Return the heading level (1-6) of LINE, or 0 if not a heading."
        (let ([len (string-length line)])
@@ -1281,38 +1282,11 @@
             (number->string (inexact->exact (floor b)))
             " B")]))
   (def (cmd-benchmark-init-show-durations app)
-       "Show Gambit runtime statistics — heap, GC, CPU time."
-       (let* ([ps (process-statistics)]
-              [user-cpu (f64vector-ref ps 0)]
-              [sys-cpu (f64vector-ref ps 1)]
-              [real-time (f64vector-ref ps 2)]
-              [gc-real (f64vector-ref ps 5)]
-              [num-gcs (inexact->exact (floor (f64vector-ref ps 6)))]
-              [heap-size (f64vector-ref ps 7)]
-              [live-heap (f64vector-ref ps 17)]
-              [alloc-total (f64vector-ref ps 15)]
-              [out (string-append "=== Gemacs Runtime Statistics ===\n\n"
-                    "Heap size:       "
-                    (fmt-bytes-short (inexact->exact (floor heap-size)))
-                    "\n" "Live after GC:   "
-                    (fmt-bytes-short (inexact->exact (floor live-heap)))
-                    "\n" "Total allocated: "
-                    (fmt-bytes-short (inexact->exact (floor alloc-total)))
-                    "\n" "GC runs:         " (number->string num-gcs) "\n"
-                    "GC time:         "
-                    (number->string
-                      (inexact->exact (floor (* gc-real 1000))))
-                    " ms\n" "CPU time:        "
-                    (number->string
-                      (inexact->exact (floor (* user-cpu 1000))))
-                    " ms user, "
-                    (number->string
-                      (inexact->exact (floor (* sys-cpu 1000))))
-                    " ms sys\n" "Wall time:       "
-                    (number->string
-                      (inexact->exact (floor (* real-time 1000))))
-                    " ms\n" "Gambit:          " (system-version-string)
-                    "\n" "Platform:        " (system-type-string) "\n")]
+       "Show runtime statistics — Chez version, platform."
+       (let* ([out (string-append "=== Gemacs Runtime Statistics ===\n\n"
+                     "Chez:            " (scheme-version) "\n"
+                     "Platform:        " (symbol->string (machine-type))
+                     "\n")]
               [fr (app-state-frame app)]
               [ed (current-qt-editor app)]
               [buf (or (buffer-by-name "*Runtime Stats*")
@@ -1325,22 +1299,11 @@
        (cmd-benchmark-init-show-durations app))
   (define *qt-gcmh-mode*--cell (vector #f))
   (def (cmd-gcmh-mode app)
-       "Toggle GCMH mode — set Gambit GC live percent higher for fewer pauses."
+       "Toggle GCMH mode (no-op on Chez Scheme)."
        (set! *qt-gcmh-mode* (not *qt-gcmh-mode*))
-       (if *qt-gcmh-mode*
-           (begin
-             (set-live-percent! 90)
-             (echo-message!
-               (app-state-echo app)
-               (string-append
-                 "GCMH: live-percent set to 90% (was "
-                 (number->string (get-live-percent))
-                 "%)")))
-           (begin
-             (set-live-percent! 50)
-             (echo-message!
-               (app-state-echo app)
-               "GCMH disabled: live-percent restored to 50%"))))
+       (echo-message!
+         (app-state-echo app)
+         (if *qt-gcmh-mode* "GCMH mode ON" "GCMH mode OFF")))
   (define *qt-ligature-mode*--cell (vector #f))
   (def (cmd-ligature-mode app)
        "Toggle ligature mode — display font ligatures."

@@ -20,13 +20,12 @@
    lsp-record-sent-content! lsp-start! lsp-stop! lsp-running?
    lsp-send-initialize! lsp-did-open! lsp-did-change!
    lsp-did-save! lsp-did-close! file-path->uri uri->file-path
-   lsp-text-document-position lsp-language-id bytes->string
-   string->bytes)
+   lsp-text-document-position lsp-language-id)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
-    (std sugar) (std text json) (std misc string)
+    (std sugar) (std text json) (std misc string) (std os fdio)
     (only (jerboa-emacs core) *lsp-server-command* gemacs-log!)
     (jerboa-emacs async) (jerboa core) (jerboa runtime))
   (define *lsp-process*--cell (vector #f))
@@ -366,7 +365,7 @@
          (hash-put! ws-edit "documentChanges" #t)
          (hash-put! workspace "workspaceEdit" ws-edit)
          (hash-put! caps "workspace" workspace)
-         (hash-put! params "processId" (os-getpid))
+         (hash-put! params "processId" (getpid))
          (hash-put! params "rootUri" (file-path->uri workspace-root))
          (hash-put! params "rootPath" workspace-root)
          (hash-put! params "capabilities" caps)
@@ -474,14 +473,6 @@
            [(string=? ext ".rs") "rust"]
            [(string=? ext ".go") "go"]
            [else "plaintext"])))
-  (def (bytes->string bv)
-       "Convert a u8vector to a string (UTF-8)."
-       (let ([port (open-input-u8vector bv)]) (read-line port #f)))
-  (def (string->bytes str)
-       "Convert a string to a u8vector (UTF-8)."
-       (let ([port (open-output-u8vector)])
-         (display str port)
-         (get-output-u8vector port)))
   (define-syntax *lsp-process*
     (identifier-syntax
       [id (vector-ref *lsp-process*--cell 0)]

@@ -17,7 +17,9 @@
    (except (std srfi srfi-13) string-join string-trim
      string-prefix? string-suffix? string-contains string-index)
    (std misc string) (only (std misc ports) read-all-as-string)
-   (only (jerboa-emacs pregexp-compat) pregexp pregexp-match)
+   (only (jerboa-emacs pregexp-compat) pregexp pregexp-match
+     pregexp-match-positions pregexp-replace pregexp-replace*
+     pregexp-split)
    (only (jerboa-emacs persist) *which-key-mode*
      *electric-pair-mode* *copilot-mode* *centered-cursor-mode*
      *abbrev-mode-enabled* *auto-fill-mode*)

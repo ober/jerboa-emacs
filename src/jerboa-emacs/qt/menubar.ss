@@ -70,7 +70,7 @@
       (add-menu-command! menu win app "List &Bindings"    "Ctrl+H,B"   'list-bindings))
 
     ;; ---- Toolbar ----
-    (let ((toolbar (qt-toolbar-create "Main" parent: win)))
+    (let ((toolbar (qt-toolbar-create "Main" win)))
       (qt-main-window-add-toolbar! win toolbar)
       (qt-toolbar-set-movable! toolbar #f)
       (add-toolbar-command! toolbar win app "New"   'find-file)
@@ -95,7 +95,7 @@
   (let* ((display-label (if (and (string? shortcut) (> (string-length shortcut) 0))
                           (string-append label "\t" shortcut)
                           label))
-         (action (qt-action-create display-label parent: win)))
+         (action (qt-action-create display-label win)))
     ;; Do NOT call qt-action-set-shortcut! — it conflicts with the custom keymap.
     (qt-on-triggered! action
       (lambda () (execute-command! app command-name)))
@@ -104,7 +104,7 @@
 
 (def (add-toolbar-command! toolbar win app label command-name)
   "Add a toolbar action that executes a named command."
-  (let ((action (qt-action-create label parent: win)))
+  (let ((action (qt-action-create label win)))
     (qt-on-triggered! action
       (lambda () (execute-command! app command-name)))
     (qt-toolbar-add-action! toolbar action)

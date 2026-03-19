@@ -5,6 +5,7 @@
 (export #t)
 
 (import :std/sugar
+        :chez-scintilla/constants
         :std/sort
         :std/srfi/13
         :std/text/base64
@@ -75,7 +76,7 @@
                               (reverse (if (> (string-length s) 0)
                                          (cons s acc) acc)))))
                         []))
-               (parsed (filter identity (map parse-grep-line lines)))
+               (parsed (filter (lambda (x) x) (map parse-grep-line lines)))
                (header (string-append "-*- grep -*-\n"
                          "grep " (string-join args " ") " " pattern " " dir "\n\n")))
           (set! *grep-results* parsed)
