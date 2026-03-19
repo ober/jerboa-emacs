@@ -957,18 +957,15 @@
                             (set! save-jobs (cons (cons auto-path text) save-jobs)))
                           (loop (cdr wins))))))))
               (buffer-list))
-            ;; Phase 2: Write all auto-save files in background thread
-            (when (pair? save-jobs)
-              (spawn/name 'auto-save
-                (lambda ()
-                  (for-each
-                    (lambda (job)
-                      (with-catch
-                        (lambda (e) (jemacs-log! "Auto-save error: " (object->string e)))
-                        (lambda ()
-                          (call-with-output-file (car job)
-                            (lambda (port) (display (cdr job) port))))))
-                    save-jobs)))))
+            ;; Phase 2: Write auto-save files synchronously (avoids GC deadlock)
+            (for-each
+              (lambda (job)
+                (with-catch
+                  (lambda (e) (jemacs-log! "Auto-save error: " (object->string e)))
+                  (lambda ()
+                    (call-with-output-file (car job)
+                      (lambda (port) (display (cdr job) port))))))
+              save-jobs))
           ;; Cache scratch buffer text for persistence (fast, stays on UI thread)
           (let ((scratch (buffer-by-name "*scratch*")))
             (when scratch

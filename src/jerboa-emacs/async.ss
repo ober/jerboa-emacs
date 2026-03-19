@@ -46,7 +46,6 @@
   *git-status-cache*
   start-git-watcher!
   stop-git-watcher!
-  *flycheck-trigger*
   flycheck-trigger!
   start-flycheck-watcher!
   stop-flycheck-watcher!)
@@ -154,96 +153,87 @@
                      callback: callback
                      on-error: (on-error #f)
                      stdin-text: (stdin-text #f))
-  "Run shell command in background thread, deliver result string to callback on UI thread."
-  (spawn/name 'async-process
+  "Run shell command synchronously and call callback with result.
+   Blocks the caller until the subprocess finishes — avoids GC deadlocks
+   caused by background Chez threads blocking in foreign calls."
+  (with-catch
+    (lambda (e)
+      (if on-error (on-error e)
+        (jemacs-log! "async-process error: " (format "~a" e))))
     (lambda ()
-      (with-catch
-        (lambda (e)
-          (ui-queue-push!
-            (lambda ()
-              (if on-error (on-error e)
-                (jemacs-log! "async-process error: " (format "~a" e))))))
-        (lambda ()
-          (let-values (((in-port out-port err-port pid)
-                        (open-process-ports cmd (buffer-mode block) (native-transcoder))))
-            (when stdin-text
-              (put-string out-port stdin-text)
-              (flush-output-port out-port))
-            (close-port out-port)
-            (close-port err-port)
-            ;; Read all output
-            (let ((out (get-string-all in-port)))
-              (close-port in-port)
-              (let ((result (if (eof-object? out) "" out)))
-                (ui-queue-push! (lambda () (callback result)))))))))))
+      (let-values (((in-port out-port err-port pid)
+                    (open-process-ports cmd (buffer-mode block) (native-transcoder))))
+        (when stdin-text
+          (put-string out-port stdin-text)
+          (flush-output-port out-port))
+        (close-port out-port)
+        (close-port err-port)
+        ;; Read all output
+        (let ((out (get-string-all in-port)))
+          (close-port in-port)
+          (let ((result (if (eof-object? out) "" out)))
+            (callback result)))))))
 
 (def (async-process-stream! cmd
                             on-line: on-line
                             on-done: (on-done #f)
                             on-error: (on-error #f))
-  "Run shell command in background, deliver each line to on-line callback on UI thread.
-   Calls on-done (no args) when the process finishes."
-  (spawn/name 'async-process-stream
+  "Run shell command synchronously, deliver each line to on-line callback.
+   Blocks until the subprocess finishes — avoids GC deadlocks."
+  (with-catch
+    (lambda (e)
+      (if on-error (on-error e)
+        (jemacs-log! "async-process-stream error: " (format "~a" e))))
     (lambda ()
-      (with-catch
-        (lambda (e)
-          (ui-queue-push!
-            (lambda ()
-              (if on-error (on-error e)
-                (jemacs-log! "async-process-stream error: " (format "~a" e))))))
-        (lambda ()
-          (let-values (((in-port out-port err-port pid)
-                        (open-process-ports cmd (buffer-mode line) (native-transcoder))))
-            (close-port out-port)
-            (close-port err-port)
-            (let loop ()
-              (let ((line (get-line in-port)))
-                (if (eof-object? line)
-                  (begin
-                    (close-port in-port)
-                    (when on-done
-                      (ui-queue-push! on-done)))
-                  (begin
-                    (ui-queue-push! (lambda () (on-line line)))
-                    (loop)))))))))))
+      (let-values (((in-port out-port err-port pid)
+                    (open-process-ports cmd (buffer-mode line) (native-transcoder))))
+        (close-port out-port)
+        (close-port err-port)
+        (let loop ()
+          (let ((line (get-line in-port)))
+            (if (eof-object? line)
+              (begin
+                (close-port in-port)
+                (when on-done (on-done)))
+              (begin
+                (on-line line)
+                (loop)))))))))
 
 ;;;============================================================================
 ;;; Async File I/O
 ;;;============================================================================
 
 (def (async-read-file! path callback)
-  "Read file in background thread, deliver string (or #f on error) to callback on UI thread."
-  (spawn/name 'async-read-file
-    (lambda ()
-      (let ((content (with-catch (lambda (e) #f)
-                       (lambda ()
-                         (call-with-input-file path
-                           (lambda (port) (get-string-all port)))))))
-        (ui-queue-push! (lambda () (callback content)))))))
+  "Read file synchronously and call callback immediately.
+   Runs on the caller's thread to avoid Chez SMP GC deadlocks caused by
+   background threads blocking in foreign calls (file I/O)."
+  (let ((content (with-catch (lambda (e) #f)
+                   (lambda ()
+                     (call-with-input-file path
+                       (lambda (port) (get-string-all port)))))))
+    (callback content)))
 
 (def (async-write-file! path content callback)
-  "Write string to file in background thread, call callback with #t (success) or #f (error) on UI thread."
-  (spawn/name 'async-write-file
-    (lambda ()
-      (let ((ok (with-catch (lambda (e) #f)
-                  (lambda ()
-                    (call-with-output-file path
-                      (lambda (port) (display content port)))
-                    #t))))
-        (ui-queue-push! (lambda () (callback ok)))))))
+  "Write file synchronously and call callback immediately.
+   Runs on the caller's thread to avoid GC deadlocks."
+  (let ((ok (with-catch (lambda (e) #f)
+              (lambda ()
+                (call-with-output-file path
+                  (lambda (port) (display content port)))
+                #t))))
+    (callback ok)))
 
 ;;;============================================================================
 ;;; Async Eval
 ;;;============================================================================
 
 (def (async-eval! thunk callback)
-  "Evaluate thunk in background thread, deliver result to callback on UI thread."
-  (spawn/name 'async-eval
-    (lambda ()
-      (let ((result (with-catch
-                      (lambda (e) (values 'error e))
-                      thunk)))
-        (ui-queue-push! (lambda () (callback result)))))))
+  "Evaluate thunk synchronously and call callback immediately.
+   Runs on the caller's thread to avoid GC deadlocks."
+  (let ((result (with-catch
+                  (lambda (e) (values 'error e))
+                  thunk)))
+    (callback result)))
 
 ;;;============================================================================
 ;;; Background Services
@@ -252,7 +242,7 @@
 ;;; 8.1 File Indexer — builds file index for fast find-file completion
 
 (def *file-index* (atom (make-hash-table)))
-(def *file-indexer-thread* #f)
+(def *file-indexer-root* #f)
 
 (def (build-file-index root-dir)
   "Walk directory tree and build a hash of basename -> full-path list."
@@ -280,24 +270,19 @@
         index))))
 
 (def (start-file-indexer! root-dir)
-  "Start background file indexer that re-indexes every 30 seconds."
+  "Register file indexer as a periodic task (30s interval).
+   Runs on the master timer thread — no background Chez thread needed."
   (stop-file-indexer!)
-  (set! *file-indexer-thread*
-    (spawn/name 'file-indexer
-      (lambda ()
-        (let loop ()
-          (let ((index (build-file-index root-dir)))
-            (atom-reset! *file-index* index))
-          (thread-sleep! 30)
-          (loop))))))
+  (set! *file-indexer-root* root-dir)
+  (schedule-periodic! 'file-indexer 30000
+    (lambda ()
+      (when *file-indexer-root*
+        (let ((index (build-file-index *file-indexer-root*)))
+          (atom-reset! *file-index* index))))))
 
 (def (stop-file-indexer!)
-  "Stop the file indexer background thread."
-  (when *file-indexer-thread*
-    (with-catch (lambda (e) #f)
-      (lambda () (thread-interrupt! *file-indexer-thread*
-                   (lambda () (raise 'stop)))))
-    (set! *file-indexer-thread* #f)))
+  "Stop the file indexer."
+  (set! *file-indexer-root* #f))
 
 (def (file-index-lookup name)
   "Look up a filename in the index. Returns list of full paths."
@@ -306,7 +291,8 @@
 ;;; 8.2 Git Status Watcher — polls git status for modeline
 
 (def *git-status-cache* (atom (make-hash-table)))
-(def *git-watcher-thread* #f)
+(def *git-watcher-dir* #f)
+(def *git-watcher-callback* #f)
 
 (def (parse-git-status-line line)
   "Parse one line of git status --porcelain output into (status . file)."
@@ -315,97 +301,95 @@
           (file (substring line 3 (string-length line))))
       (cons (string-trim-both status) file))))
 
-(def (start-git-watcher! dir (on-update #f))
-  "Poll git status in background every 5 seconds.
-   Optional on-update callback is called on UI thread with the status hash."
-  (stop-git-watcher!)
-  (set! *git-watcher-thread*
-    (spawn/name 'git-watcher
+(def (git-watcher-tick!)
+  "One git status poll. Called from the periodic scheduler."
+  (when *git-watcher-dir*
+    (with-catch
+      (lambda (e) #f)
       (lambda ()
-        (let loop ()
-          (with-catch
-            (lambda (e) #f)
-            (lambda ()
-              (let-values (((in-port out-port err-port pid)
-                            (open-process-ports
-                              (string-append "git -C \"" dir "\" status --porcelain -b 2>&1")
-                              (buffer-mode line) (native-transcoder))))
-                (close-port out-port)
-                (close-port err-port)
-                (let* ((lines (let rd ((acc '()))
-                                (let ((line (get-line in-port)))
-                                  (if (eof-object? line)
-                                    (reverse acc)
-                                    (rd (cons line acc)))))))
-                (close-port in-port)
-                (let ((status (make-hash-table))
-                      (modified 0) (staged 0) (untracked 0))
-                  (for-each
-                    (lambda (line)
-                      (when (>= (string-length line) 3)
-                        (let ((xy (substring line 0 2)))
-                          (cond
-                            ((string-prefix? "##" xy)
-                             (hash-put! status 'branch
-                               (substring line 3 (string-length line))))
-                            ((string-contains xy "?")
-                             (set! untracked (+ untracked 1)))
-                            ((or (string-contains xy "M")
-                                 (string-contains xy "D"))
-                             (set! modified (+ modified 1)))
-                            ((or (string-contains xy "A")
-                                 (string-contains xy "R"))
-                             (set! staged (+ staged 1)))))))
-                    lines)
-                  (hash-put! status 'modified modified)
-                  (hash-put! status 'staged staged)
-                  (hash-put! status 'untracked untracked)
-                  (atom-reset! *git-status-cache* status)
-                  (when on-update
-                    (ui-queue-push! (lambda () (on-update status)))))))))
-          (thread-sleep! 5)
-          (loop))))))
+        (let-values (((in-port out-port err-port pid)
+                      (open-process-ports
+                        (string-append "git -C \"" *git-watcher-dir* "\" status --porcelain -b 2>&1")
+                        (buffer-mode line) (native-transcoder))))
+          (close-port out-port)
+          (close-port err-port)
+          (let* ((lines (let rd ((acc '()))
+                          (let ((line (get-line in-port)))
+                            (if (eof-object? line)
+                              (reverse acc)
+                              (rd (cons line acc)))))))
+          (close-port in-port)
+          (let ((status (make-hash-table))
+                (modified 0) (staged 0) (untracked 0))
+            (for-each
+              (lambda (line)
+                (when (>= (string-length line) 3)
+                  (let ((xy (substring line 0 2)))
+                    (cond
+                      ((string-prefix? "##" xy)
+                       (hash-put! status 'branch
+                         (substring line 3 (string-length line))))
+                      ((string-contains xy "?")
+                       (set! untracked (+ untracked 1)))
+                      ((or (string-contains xy "M")
+                           (string-contains xy "D"))
+                       (set! modified (+ modified 1)))
+                      ((or (string-contains xy "A")
+                           (string-contains xy "R"))
+                       (set! staged (+ staged 1)))))))
+              lines)
+            (hash-put! status 'modified modified)
+            (hash-put! status 'staged staged)
+            (hash-put! status 'untracked untracked)
+            (atom-reset! *git-status-cache* status)
+            (when *git-watcher-callback*
+              (*git-watcher-callback* status)))))))))
+
+(def (start-git-watcher! dir (on-update #f))
+  "Register git status polling as a periodic task (5s interval).
+   Runs on the master timer thread — no background Chez thread needed."
+  (stop-git-watcher!)
+  (set! *git-watcher-dir* dir)
+  (set! *git-watcher-callback* on-update)
+  (schedule-periodic! 'git-watcher 5000 git-watcher-tick!))
 
 (def (stop-git-watcher!)
   "Stop the git status watcher."
-  (when *git-watcher-thread*
-    (with-catch (lambda (e) #f)
-      (lambda () (thread-interrupt! *git-watcher-thread*
-                   (lambda () (raise 'stop)))))
-    (set! *git-watcher-thread* #f)))
+  (set! *git-watcher-dir* #f)
+  (set! *git-watcher-callback* #f))
 
 ;;; 8.3 Flycheck Watcher — runs linter on save via channel trigger
 
-(def *flycheck-trigger* (make-channel 64))
-(def *flycheck-watcher-thread* #f)
+(def *flycheck-pending* '())
+(def *flycheck-lint-fn* #f)
+(def *flycheck-result-fn* #f)
 
 (def (flycheck-trigger! path)
-  "Trigger a flycheck run for the given file path."
-  (channel-try-put *flycheck-trigger* path))
+  "Queue a flycheck run for the given file path."
+  (unless (member path *flycheck-pending*)
+    (set! *flycheck-pending* (cons path *flycheck-pending*))))
 
 (def (start-flycheck-watcher! lint-fn on-result)
-  "Start flycheck watcher. lint-fn: (path) -> error-list.
-   on-result: (path errors) called on UI thread."
+  "Register flycheck as a periodic task (500ms interval).
+   Runs on the master timer thread — no background Chez thread needed."
   (stop-flycheck-watcher!)
-  (set! *flycheck-watcher-thread*
-    (spawn/name 'flycheck-watcher
-      (lambda ()
-        (let loop ()
-          (let ((path (channel-get *flycheck-trigger*)))
-            (when (string? path)
-              (with-catch
-                (lambda (e)
-                  (jemacs-log! "flycheck error: " (format "~a" e)))
-                (lambda ()
-                  (let ((errors (lint-fn path)))
-                    (ui-queue-push!
-                      (lambda () (on-result path errors))))))))
-          (loop))))))
+  (set! *flycheck-lint-fn* lint-fn)
+  (set! *flycheck-result-fn* on-result)
+  (schedule-periodic! 'flycheck 500
+    (lambda ()
+      (when (and *flycheck-lint-fn* (pair? *flycheck-pending*))
+        (let ((path (car *flycheck-pending*)))
+          (set! *flycheck-pending* (cdr *flycheck-pending*))
+          (when (string? path)
+            (with-catch
+              (lambda (e)
+                (jemacs-log! "flycheck error: " (format "~a" e)))
+              (lambda ()
+                (let ((errors (*flycheck-lint-fn* path)))
+                  (*flycheck-result-fn* path errors))))))))))
 
 (def (stop-flycheck-watcher!)
   "Stop the flycheck watcher."
-  (when *flycheck-watcher-thread*
-    (with-catch (lambda (e) #f)
-      (lambda () (thread-interrupt! *flycheck-watcher-thread*
-                   (lambda () (raise 'stop)))))
-    (set! *flycheck-watcher-thread* #f)))
+  (set! *flycheck-lint-fn* #f)
+  (set! *flycheck-result-fn* #f)
+  (set! *flycheck-pending* '()))
