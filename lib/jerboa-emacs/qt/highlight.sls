@@ -1033,16 +1033,12 @@
              (sci-send ed SCI_SETSTYLING len style)))
          styles))
   (def (qt-org-highlight-buffer-async! ed text)
-       "Async org highlighting: parse text in background, apply styles on UI thread."
-       (spawn/name
-         'org-highlight
-         (lambda ()
-           (let ([collector (box (list))])
-             (parameterize ([*org-style-collector* collector])
-               (qt-org-highlight-buffer! #f text))
-             (let ([styles (reverse (unbox collector))])
-               (ui-queue-push!
-                 (lambda () (qt-org-apply-styles! ed styles))))))))
+       "Org highlighting — runs synchronously to avoid GC deadlocks from\n   background Chez threads that can't respond to stop-the-world GC."
+       (let ([collector (box (list))])
+         (parameterize ([*org-style-collector* collector])
+           (qt-org-highlight-buffer! #f text))
+         (let ([styles (reverse (unbox collector))])
+           (qt-org-apply-styles! ed styles))))
   (def (qt-remove-highlighting! buf)
        (let* ([doc (buffer-doc-pointer buf)]
               [ed (and doc (hash-get *doc-editor-map* doc))])

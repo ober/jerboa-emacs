@@ -49,22 +49,19 @@
                (close-port proc)
                (or out ""))))))
   (def (magit-run-git/async args dir callback)
-       "Run git in background thread, deliver output string to callback on UI thread."
-       (spawn/name
-         'async-git
-         (lambda ()
-           (let ([output (with-catch
-                           (lambda (e) "")
-                           (lambda ()
-                             (let* ([proc (open-process
-                                            (list 'path: "/usr/bin/git"
-                                              'arguments: args 'directory:
-                                              dir 'stdout-redirection: #t
-                                              'stderr-redirection: #t))]
-                                    [out (read-line proc #f)])
-                               (close-port proc)
-                               (or out ""))))])
-             (ui-queue-push! (lambda () (callback output)))))))
+       "Run git synchronously and call callback with output.\n   Avoids GC deadlocks from background Chez threads."
+       (let ([output (with-catch
+                       (lambda (e) "")
+                       (lambda ()
+                         (let* ([proc (open-process
+                                        (list 'path: "/usr/bin/git" 'arguments:
+                                          args 'directory: dir
+                                          'stdout-redirection: #t
+                                          'stderr-redirection: #t))]
+                                [out (read-line proc #f)])
+                           (close-port proc)
+                           (or out ""))))])
+         (callback output)))
   (def (magit-parse-status output)
        "Parse git status --porcelain output into list of (status . filename)."
        (let ([lines (string-split output #\newline)])

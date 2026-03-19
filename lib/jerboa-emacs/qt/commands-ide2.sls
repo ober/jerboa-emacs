@@ -601,21 +601,16 @@
                                (+ changes (length line-edits)))))))
                      file-changes)
                    (when (pair? write-jobs)
-                     (spawn/name
-                       'wgrep-write
-                       (lambda ()
-                         (for-each
-                           (lambda (job)
-                             (with-catch
-                               (lambda (e)
-                                 (gemacs-log!
-                                   "wgrep write error: "
-                                   (object->string e)))
-                               (lambda ()
-                                 (write-string-to-file
-                                   (car job)
-                                   (cdr job)))))
-                           write-jobs))))))
+                     (for-each
+                       (lambda (job)
+                         (with-catch
+                           (lambda (e)
+                             (gemacs-log!
+                               "wgrep write error: "
+                               (object->string e)))
+                           (lambda ()
+                             (write-string-to-file (car job) (cdr job)))))
+                       write-jobs))))
                (set! *wgrep-mode* #f)
                (echo-message!
                  (app-state-echo app)

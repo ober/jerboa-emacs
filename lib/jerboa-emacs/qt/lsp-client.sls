@@ -11,16 +11,16 @@
    lsp-poll-ui-actions! lsp-store-pending! lsp-take-pending!
    lsp-read-message lsp-read-headers lsp-write-message
    lsp-send-request! lsp-send-request/timeout!
-   lsp-send-notification! lsp-reader-loop!
-   lsp-handle-server-notification! lsp-handle-server-request!
-   lsp-send-response! *lsp-diagnostics-handler*
-   *lsp-show-message-handler* *lsp-on-initialized-handler*
-   *lsp-last-sent-content* lsp-store-diagnostics!
-   lsp-store-show-message! lsp-content-changed?
-   lsp-record-sent-content! lsp-start! lsp-stop! lsp-running?
-   lsp-send-initialize! lsp-did-open! lsp-did-change!
-   lsp-did-save! lsp-did-close! file-path->uri uri->file-path
-   lsp-text-document-position lsp-language-id)
+   lsp-send-notification! lsp-poll-one-message!
+   lsp-drain-messages! lsp-handle-server-notification!
+   lsp-handle-server-request! lsp-send-response!
+   *lsp-diagnostics-handler* *lsp-show-message-handler*
+   *lsp-on-initialized-handler* *lsp-last-sent-content*
+   lsp-store-diagnostics! lsp-store-show-message!
+   lsp-content-changed? lsp-record-sent-content! lsp-start!
+   lsp-stop! lsp-running? lsp-send-initialize! lsp-did-open!
+   lsp-did-change! lsp-did-save! lsp-did-close! file-path->uri
+   uri->file-path lsp-text-document-position lsp-language-id)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -131,22 +131,7 @@
   (def (lsp-send-request/timeout! method params callback timeout: (timeout 5.0) on-timeout:
          (on-timeout #f))
        "Send a JSON-RPC request with timeout (seconds). If no response arrives\n   within timeout, remove the pending callback and call on-timeout on UI thread."
-       (let ([id (lsp-send-request! method params callback)])
-         (when id
-           (spawn/name
-             'lsp-timeout
-             (lambda ()
-               (thread-sleep! timeout)
-               (let ([cb (lsp-take-pending! id)])
-                 (when cb
-                   (ui-queue-push!
-                     (lambda ()
-                       (if on-timeout
-                           (on-timeout)
-                           (gemacs-log!
-                             "LSP request timeout: "
-                             method)))))))))
-         id))
+       (let ([id (lsp-send-request! method params callback)]) id))
   (def (lsp-send-notification! method params)
        "Send a JSON-RPC notification (no response expected)."
        (when *lsp-process*
@@ -157,42 +142,48 @@
            (with-catch
              (lambda (e) (void))
              (lambda () (lsp-write-message *lsp-process* msg))))))
-  (def (lsp-reader-loop! port)
-       "Background thread: read LSP messages and dispatch them."
-       (let loop ()
-         (let ([msg (with-catch
-                      (lambda (e) #f)
-                      (lambda () (lsp-read-message port)))])
-           (when (and msg (hash-table? msg))
-             (let ([id (hash-get msg "id")]
-                   [method (hash-get msg "method")]
-                   [result (hash-get msg "result")]
-                   [error (hash-get msg "error")])
-               (cond
-                 [(and id (not method))
-                  (let ([cb (lsp-take-pending! id)])
-                    (when cb (lsp-queue-ui-action! (lambda () (cb msg)))))]
-                 [(and method (not id))
-                  (lsp-handle-server-notification!
-                    method
-                    (hash-get msg "params"))]
-                 [(and id method)
-                  (lsp-handle-server-request!
-                    id
-                    method
-                    (hash-get msg "params"))]
-                 [else (void)]))
-             (loop)))))
+  (def (lsp-poll-one-message! port)
+       "Poll for one LSP message from port (non-blocking). Called from UI thread\n   via schedule-periodic!. Reads and dispatches at most one message per tick.\n   Returns #t if a message was processed, #f otherwise."
+       (if (not (and port (not (port-closed? port))))
+           #f
+           (if (not (char-ready? port))
+               #f
+               (let ([msg (with-catch
+                            (lambda (e) #f)
+                            (lambda () (lsp-read-message port)))])
+                 (if (not (and msg (hash-table? msg)))
+                     #f
+                     (begin
+                       (let ([id (hash-get msg "id")]
+                             [method (hash-get msg "method")]
+                             [result (hash-get msg "result")]
+                             [error (hash-get msg "error")])
+                         (cond
+                           [(and id (not method))
+                            (let ([cb (lsp-take-pending! id)])
+                              (when cb (cb msg)))]
+                           [(and method (not id))
+                            (lsp-handle-server-notification!
+                              method
+                              (hash-get msg "params"))]
+                           [(and id method)
+                            (lsp-handle-server-request!
+                              id
+                              method
+                              (hash-get msg "params"))]
+                           [else (void)]))
+                       #t))))))
+  (def (lsp-drain-messages! port)
+       "Drain all available LSP messages from port (non-blocking). Called from\n   schedule-periodic! on the UI thread. Processes messages until none are ready."
+       (let loop () (when (lsp-poll-one-message! port) (loop))))
   (def (lsp-handle-server-notification! method params)
-       "Handle a notification from the server (dispatched on reader thread,\n   but queues UI actions for actual processing)."
+       "Handle a notification from the server. Now runs directly on UI thread\n   via schedule-periodic! polling — no need for lsp-queue-ui-action!."
        (cond
          [(string=? method "textDocument/publishDiagnostics")
-          (lsp-queue-ui-action!
-            (lambda () (lsp-store-diagnostics! params)))]
+          (lsp-store-diagnostics! params)]
          [(string=? method "window/logMessage") (void)]
          [(string=? method "window/showMessage")
-          (lsp-queue-ui-action!
-            (lambda () (lsp-store-show-message! params)))]
+          (lsp-store-show-message! params)]
          [else (void)]))
   (def (lsp-handle-server-request! id method params)
        "Handle a request from the server — respond immediately."
@@ -255,14 +246,14 @@
              (begin (set! *lsp-initializing* #f) #f)
              (begin
                (set! *lsp-process* proc)
-               (set! *lsp-reader-thread*
-                 (thread-start!
-                   (make-thread
-                     (lambda ()
-                       (with-catch
-                         (lambda (e) (void))
-                         (lambda () (lsp-reader-loop! proc))))
-                     'lsp-reader)))
+               (schedule-periodic!
+                 'lsp-reader
+                 50
+                 (lambda ()
+                   (when *lsp-process*
+                     (with-catch
+                       (lambda (e) (void))
+                       (lambda () (lsp-drain-messages! *lsp-process*))))))
                (lsp-send-initialize! workspace-root)
                #t))))
   (def (lsp-stop!)
@@ -284,8 +275,7 @@
            void
            (lambda ()
              (when *lsp-process* (process-status *lsp-process*)))))
-       (set! *lsp-process* #f) (set! *lsp-reader-thread* #f)
-       (set! *lsp-request-id* 0)
+       (set! *lsp-process* #f) (set! *lsp-request-id* 0)
        (set! *lsp-pending-requests* (make-hash-table))
        (set! *lsp-initialized* #f) (set! *lsp-initializing* #f)
        (set! *lsp-server-capabilities* (make-hash-table))

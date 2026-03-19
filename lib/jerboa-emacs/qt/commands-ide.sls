@@ -526,18 +526,11 @@
              '("rev-parse" "--abbrev-ref" "HEAD")
              dir
              (lambda (output) (completion-post! branch-done output)))
-           (spawn/name
-             'magit-status-join
-             (lambda ()
-               (let ([status-output (completion-wait! status-done)]
-                     [branch-output (completion-wait! branch-done)])
-                 (ui-queue-push!
-                   (lambda ()
-                     (magit-render-status!
-                       app
-                       status-output
-                       branch-output
-                       dir)))))))))
+           (magit-render-status!
+             app
+             (completion-wait! status-done)
+             (completion-wait! branch-done)
+             dir))))
   (def (cmd-magit-stage app)
        "Stage file or hunk at point."
        (let ([buf (current-qt-buffer app)])
@@ -845,56 +838,48 @@
                        (list "diff" "--cached" file)
                        *magit-dir*
                        (lambda (out) (completion-post! staged-done out)))
-                     (spawn/name
-                       'magit-diff-join
-                       (lambda ()
-                         (let ([diff-output (completion-wait!
-                                              unstaged-done)]
-                               [staged-diff (completion-wait!
-                                              staged-done)])
-                           (ui-queue-push!
-                             (lambda ()
-                               (let* ([full-diff (string-append
-                                                   (if (> (string-length
-                                                            staged-diff)
-                                                          0)
-                                                       (string-append
-                                                         "Staged:\n"
-                                                         staged-diff
-                                                         "\n")
-                                                       "")
-                                                   (if (> (string-length
-                                                            diff-output)
-                                                          0)
-                                                       (string-append
-                                                         "Unstaged:\n"
-                                                         diff-output)
-                                                       ""))]
-                                      [ed (current-qt-editor app)]
-                                      [fr (app-state-frame app)]
-                                      [diff-buf (or (buffer-by-name
-                                                      "*Magit Diff*")
-                                                    (qt-buffer-create!
-                                                      "*Magit Diff*"
-                                                      ed
-                                                      #f))])
-                                 (qt-buffer-attach! ed diff-buf)
-                                 (qt-edit-window-buffer-set!
-                                   (qt-current-window fr)
-                                   diff-buf)
-                                 (qt-plain-text-edit-set-text!
-                                   ed
-                                   (if (string=? full-diff "")
-                                       "No differences.\n"
-                                       full-diff))
-                                 (qt-text-document-set-modified!
-                                   (buffer-doc-pointer diff-buf)
-                                   #f)
-                                 (qt-plain-text-edit-set-cursor-position!
-                                   ed
-                                   0)
-                                 (qt-highlight-diff! ed)))))))))
-                 (echo-error! (app-state-echo app) "No file at point"))))))
+                     (let ([diff-output (completion-wait! unstaged-done)]
+                           [staged-diff (completion-wait! staged-done)])
+                       (let* ([full-diff (string-append
+                                           (if (> (string-length
+                                                    staged-diff)
+                                                  0)
+                                               (string-append
+                                                 "Staged:\n"
+                                                 staged-diff
+                                                 "\n")
+                                               "")
+                                           (if (> (string-length
+                                                    diff-output)
+                                                  0)
+                                               (string-append
+                                                 "Unstaged:\n"
+                                                 diff-output)
+                                               ""))]
+                              [ed (current-qt-editor app)]
+                              [fr (app-state-frame app)]
+                              [diff-buf (or (buffer-by-name "*Magit Diff*")
+                                            (qt-buffer-create!
+                                              "*Magit Diff*"
+                                              ed
+                                              #f))])
+                         (qt-buffer-attach! ed diff-buf)
+                         (qt-edit-window-buffer-set!
+                           (qt-current-window fr)
+                           diff-buf)
+                         (qt-plain-text-edit-set-text!
+                           ed
+                           (if (string=? full-diff "")
+                               "No differences.\n"
+                               full-diff))
+                         (qt-text-document-set-modified!
+                           (buffer-doc-pointer diff-buf)
+                           #f)
+                         (qt-plain-text-edit-set-cursor-position! ed 0)
+                         (qt-highlight-diff! ed))))
+                   (echo-error!
+                     (app-state-echo app)
+                     "No file at point")))))))
   (def (cmd-magit-stage-all app)
        "Stage all changes."
        (when *magit-dir*

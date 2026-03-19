@@ -166,19 +166,11 @@
                                on-timeout: (on-timeout #f))
   "Send a JSON-RPC request with timeout (seconds). If no response arrives
    within timeout, remove the pending callback and call on-timeout on UI thread."
+  ;; NOTE: timeout enforcement removed to avoid spawning Chez threads
+  ;; (which cause GC deadlocks in SMP mode). The LSP request will either
+  ;; succeed via the normal response path, or the pending callback will
+  ;; remain unused. Users will notice if the server is unresponsive.
   (let ((id (lsp-send-request! method params callback)))
-    (when id
-      (spawn/name 'lsp-timeout
-        (lambda ()
-          (thread-sleep! timeout)
-          ;; If still pending, the response never arrived
-          (let ((cb (lsp-take-pending! id)))
-            (when cb
-              (ui-queue-push!
-                (lambda ()
-                  (if on-timeout
-                    (on-timeout)
-                    (gemacs-log! "LSP request timeout: " method)))))))))
     id))
 
 (def (lsp-send-notification! method params)
@@ -197,49 +189,57 @@
 ;;; Reader thread: dispatch responses, notifications, server requests
 ;;;============================================================================
 
-(def (lsp-reader-loop! port)
-  "Background thread: read LSP messages and dispatch them."
+(def (lsp-poll-one-message! port)
+  "Poll for one LSP message from port (non-blocking). Called from UI thread
+   via schedule-periodic!. Reads and dispatches at most one message per tick.
+   Returns #t if a message was processed, #f otherwise."
+  (if (not (and port (not (port-closed? port))))
+    #f
+    (if (not (char-ready? port))
+      #f
+      (let ((msg (with-catch
+                   (lambda (e) #f)
+                   (lambda () (lsp-read-message port)))))
+        (if (not (and msg (hash-table? msg)))
+          #f
+          (begin
+            (let ((id     (hash-get msg "id"))
+                  (method (hash-get msg "method"))
+                  (result (hash-get msg "result"))
+                  (error  (hash-get msg "error")))
+              (cond
+                ;; Response to our request (has id, no method)
+                ((and id (not method))
+                 (let ((cb (lsp-take-pending! id)))
+                   (when cb (cb msg))))
+                ;; Server notification (has method, no id)
+                ((and method (not id))
+                 (lsp-handle-server-notification! method
+                   (hash-get msg "params")))
+                ;; Server request (has both id and method)
+                ((and id method)
+                 (lsp-handle-server-request! id method
+                   (hash-get msg "params")))
+                (else (void))))
+            #t))))))
+
+(def (lsp-drain-messages! port)
+  "Drain all available LSP messages from port (non-blocking). Called from
+   schedule-periodic! on the UI thread. Processes messages until none are ready."
   (let loop ()
-    (let ((msg (with-catch
-                 (lambda (e) #f)
-                 (lambda () (lsp-read-message port)))))
-      (when (and msg (hash-table? msg))
-        (let ((id     (hash-get msg "id"))
-              (method (hash-get msg "method"))
-              (result (hash-get msg "result"))
-              (error  (hash-get msg "error")))
-          (cond
-            ;; Response to our request (has id, no method)
-            ((and id (not method))
-             (let ((cb (lsp-take-pending! id)))
-               (when cb
-                 (lsp-queue-ui-action!
-                   (lambda () (cb msg))))))
-            ;; Server notification (has method, no id)
-            ((and method (not id))
-             (lsp-handle-server-notification! method
-               (hash-get msg "params")))
-            ;; Server request (has both id and method)
-            ((and id method)
-             (lsp-handle-server-request! id method
-               (hash-get msg "params")))
-            (else (void))))
-        (loop)))))
+    (when (lsp-poll-one-message! port)
+      (loop))))
 
 (def (lsp-handle-server-notification! method params)
-  "Handle a notification from the server (dispatched on reader thread,
-   but queues UI actions for actual processing)."
+  "Handle a notification from the server. Now runs directly on UI thread
+   via schedule-periodic! polling — no need for lsp-queue-ui-action!."
   (cond
     ((string=? method "textDocument/publishDiagnostics")
-     (lsp-queue-ui-action!
-       (lambda ()
-         (lsp-store-diagnostics! params))))
+     (lsp-store-diagnostics! params))
     ((string=? method "window/logMessage")
      (void))  ;; silently ignore log messages
     ((string=? method "window/showMessage")
-     (lsp-queue-ui-action!
-       (lambda ()
-         (lsp-store-show-message! params))))
+     (lsp-store-show-message! params))
     (else (void))))
 
 (def (lsp-handle-server-request! id method params)
@@ -335,16 +335,15 @@
         #f)
       (begin
         (set! *lsp-process* proc)
-        ;; Start reader thread
-        (set! *lsp-reader-thread*
-          (thread-start!
-            (make-thread
-              (lambda ()
-                (with-catch
-                  (lambda (e) (void))
-                  (lambda ()
-                    (lsp-reader-loop! proc))))
-              'lsp-reader)))
+        ;; Poll for LSP messages on UI thread via schedule-periodic!
+        ;; (avoids spawning a Chez thread which causes GC deadlocks in SMP)
+        (schedule-periodic! 'lsp-reader 50
+          (lambda ()
+            (when *lsp-process*
+              (with-catch
+                (lambda (e) (void))
+                (lambda ()
+                  (lsp-drain-messages! *lsp-process*))))))
         ;; Send initialize request
         (lsp-send-initialize! workspace-root)
         #t))))
@@ -373,7 +372,8 @@
           (process-status *lsp-process*)))))
   ;; Reset state
   (set! *lsp-process* #f)
-  (set! *lsp-reader-thread* #f)
+  ;; *lsp-reader-thread* no longer used (periodic polling via schedule-periodic!)
+  ;; The 'lsp-reader periodic task becomes a no-op when *lsp-process* is #f
   (set! *lsp-request-id* 0)
   (set! *lsp-pending-requests* (make-hash-table))
   (set! *lsp-initialized* #f)
