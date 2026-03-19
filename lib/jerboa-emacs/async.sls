@@ -4,13 +4,13 @@
 
 (library (jerboa-emacs async)
   (export ui-queue-push! ui-queue-drain! spawn-worker
-   async-process! async-process-stream! async-read-file!
-   async-write-file! async-eval! schedule-periodic!
-   master-timer-tick! current-time-ms *file-index*
-   start-file-indexer! stop-file-indexer! file-index-lookup
-   *git-status-cache* start-git-watcher! stop-git-watcher!
-   flycheck-trigger! start-flycheck-watcher!
-   stop-flycheck-watcher!)
+   pin-thread-to-processor0! async-process!
+   async-process-stream! async-read-file! async-write-file!
+   async-eval! schedule-periodic! master-timer-tick!
+   current-time-ms *file-index* start-file-indexer!
+   stop-file-indexer! file-index-lookup *git-status-cache*
+   start-git-watcher! stop-git-watcher! flycheck-trigger!
+   start-flycheck-watcher! stop-flycheck-watcher!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -20,6 +20,9 @@
     (std misc atom) (std sugar) (std srfi srfi-13)
     (jerboa-emacs core) (except (jerboa core) time->seconds)
     (jerboa runtime))
+  (def (pin-thread-to-processor0! thread)
+       "No-op on Chez — Qt thread affinity is handled by architecture:\n   all Qt calls run on the primordial thread, blocking work in workers."
+       #f)
   (def (spawn-worker name thunk)
        "Spawn a background worker thread for blocking operations.\n   Uses fork-thread which properly decrements S_nthreads on completion.\n   The thunk runs in a background thread — do NOT call Qt FFI from it.\n   Post Qt operations back to the UI thread via ui-queue-push!."
        (let ([t (make-thread

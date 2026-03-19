@@ -22,6 +22,9 @@
   ;; Background worker
   spawn-worker
 
+  ;; Thread pinning (no-op on Chez — Qt affinity handled by architecture)
+  pin-thread-to-processor0!
+
   ;; Async command runner
   async-process!
   async-process-stream!
@@ -56,6 +59,15 @@
         :std/sugar
         :std/srfi/13
         :jerboa-emacs/core)
+
+;;;============================================================================
+;;; Thread Pinning (no-op on Chez)
+;;;============================================================================
+
+(def (pin-thread-to-processor0! thread)
+  "No-op on Chez — Qt thread affinity is handled by architecture:
+   all Qt calls run on the primordial thread, blocking work in workers."
+  #f)
 
 ;;;============================================================================
 ;;; Background Worker
