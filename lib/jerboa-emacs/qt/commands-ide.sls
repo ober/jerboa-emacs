@@ -39,14 +39,14 @@
      mutex? mutex-name printf fprintf sort sort!)
    (std sugar) (chez-scintilla constants) (std sort)
    (std srfi srfi-13) (std format) (std text base64)
-   (std misc completion) (jerboa-emacs qt sci-shim)
-   (jerboa-emacs core) (jerboa-emacs async)
-   (jerboa-emacs editor) (jerboa-emacs repl)
-   (jerboa-emacs eshell) (jerboa-emacs shell)
-   (jerboa-emacs terminal) (jerboa-emacs qt buffer)
-   (jerboa-emacs qt window) (jerboa-emacs qt echo)
-   (jerboa-emacs qt highlight) (jerboa-emacs qt modeline)
-   (jerboa-emacs qt magit) (jerboa-emacs qt commands-core)
+   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (jerboa-emacs async) (jerboa-emacs editor)
+   (jerboa-emacs repl) (jerboa-emacs eshell)
+   (jerboa-emacs shell) (jerboa-emacs terminal)
+   (jerboa-emacs qt buffer) (jerboa-emacs qt window)
+   (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
+   (jerboa-emacs qt modeline) (jerboa-emacs qt magit)
+   (jerboa-emacs qt commands-core)
    (jerboa-emacs qt commands-core2)
    (jerboa-emacs qt commands-edit)
    (jerboa-emacs qt commands-edit2)
@@ -516,21 +516,22 @@
               [dir (if path (path-directory path) (current-directory))])
          (set! *magit-dir* dir)
          (echo-message! (app-state-echo app) "Loading git status...")
-         (let ([status-done (make-completion 'status)]
-               [branch-done (make-completion 'branch)])
-           (magit-run-git/async
-             '("status" "--porcelain")
-             dir
-             (lambda (output) (completion-post! status-done output)))
-           (magit-run-git/async
-             '("rev-parse" "--abbrev-ref" "HEAD")
-             dir
-             (lambda (output) (completion-post! branch-done output)))
-           (magit-render-status!
-             app
-             (completion-wait! status-done)
-             (completion-wait! branch-done)
-             dir))))
+         (spawn-worker
+           'magit-status
+           (lambda ()
+             (let ([status-output (magit-run-git
+                                    '("status" "--porcelain")
+                                    dir)]
+                   [branch-output (magit-run-git
+                                    '("rev-parse" "--abbrev-ref" "HEAD")
+                                    dir)])
+               (ui-queue-push!
+                 (lambda ()
+                   (magit-render-status!
+                     app
+                     status-output
+                     branch-output
+                     dir))))))))
   (def (cmd-magit-stage app)
        "Stage file or hunk at point."
        (let ([buf (current-qt-buffer app)])
@@ -828,58 +829,59 @@
              (if file
                  (begin
                    (echo-message! (app-state-echo app) "Loading diff...")
-                   (let ([unstaged-done (make-completion 'diff)]
-                         [staged-done (make-completion 'diff-cached)])
-                     (magit-run-git/async
-                       (list "diff" file)
-                       *magit-dir*
-                       (lambda (out) (completion-post! unstaged-done out)))
-                     (magit-run-git/async
-                       (list "diff" "--cached" file)
-                       *magit-dir*
-                       (lambda (out) (completion-post! staged-done out)))
-                     (let ([diff-output (completion-wait! unstaged-done)]
-                           [staged-diff (completion-wait! staged-done)])
-                       (let* ([full-diff (string-append
-                                           (if (> (string-length
-                                                    staged-diff)
-                                                  0)
-                                               (string-append
-                                                 "Staged:\n"
-                                                 staged-diff
-                                                 "\n")
-                                               "")
-                                           (if (> (string-length
-                                                    diff-output)
-                                                  0)
-                                               (string-append
-                                                 "Unstaged:\n"
-                                                 diff-output)
-                                               ""))]
-                              [ed (current-qt-editor app)]
-                              [fr (app-state-frame app)]
-                              [diff-buf (or (buffer-by-name "*Magit Diff*")
-                                            (qt-buffer-create!
-                                              "*Magit Diff*"
-                                              ed
-                                              #f))])
-                         (qt-buffer-attach! ed diff-buf)
-                         (qt-edit-window-buffer-set!
-                           (qt-current-window fr)
-                           diff-buf)
-                         (qt-plain-text-edit-set-text!
-                           ed
-                           (if (string=? full-diff "")
-                               "No differences.\n"
-                               full-diff))
-                         (qt-text-document-set-modified!
-                           (buffer-doc-pointer diff-buf)
-                           #f)
-                         (qt-plain-text-edit-set-cursor-position! ed 0)
-                         (qt-highlight-diff! ed))))
-                   (echo-error!
-                     (app-state-echo app)
-                     "No file at point")))))))
+                   (let ([dir *magit-dir*])
+                     (spawn-worker
+                       'magit-diff
+                       (lambda ()
+                         (let ([diff-output (magit-run-git
+                                              (list "diff" file)
+                                              dir)]
+                               [staged-diff (magit-run-git
+                                              (list "diff" "--cached" file)
+                                              dir)])
+                           (ui-queue-push!
+                             (lambda ()
+                               (let* ([full-diff (string-append
+                                                   (if (> (string-length
+                                                            staged-diff)
+                                                          0)
+                                                       (string-append
+                                                         "Staged:\n"
+                                                         staged-diff
+                                                         "\n")
+                                                       "")
+                                                   (if (> (string-length
+                                                            diff-output)
+                                                          0)
+                                                       (string-append
+                                                         "Unstaged:\n"
+                                                         diff-output)
+                                                       ""))]
+                                      [ed2 (current-qt-editor app)]
+                                      [fr (app-state-frame app)]
+                                      [diff-buf (or (buffer-by-name
+                                                      "*Magit Diff*")
+                                                    (qt-buffer-create!
+                                                      "*Magit Diff*"
+                                                      ed2
+                                                      #f))])
+                                 (qt-buffer-attach! ed2 diff-buf)
+                                 (qt-edit-window-buffer-set!
+                                   (qt-current-window fr)
+                                   diff-buf)
+                                 (qt-plain-text-edit-set-text!
+                                   ed2
+                                   (if (string=? full-diff "")
+                                       "No differences.\n"
+                                       full-diff))
+                                 (qt-text-document-set-modified!
+                                   (buffer-doc-pointer diff-buf)
+                                   #f)
+                                 (qt-plain-text-edit-set-cursor-position!
+                                   ed2
+                                   0)
+                                 (qt-highlight-diff! ed2))))))))))
+             (echo-error! (app-state-echo app) "No file at point")))))
   (def (cmd-magit-stage-all app)
        "Stage all changes."
        (when *magit-dir*

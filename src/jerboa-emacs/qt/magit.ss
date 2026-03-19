@@ -6,7 +6,7 @@
 
 (import :std/sugar
         :std/srfi/13
-        :jerboa-emacs/async)
+        (only-in :jerboa-emacs/async spawn-worker ui-queue-push!))
 
 ;;;============================================================================
 ;;; Git process helpers
@@ -48,21 +48,23 @@
           (or out ""))))))
 
 (def (magit-run-git/async args dir callback)
-  "Run git synchronously and call callback with output.
-   Avoids GC deadlocks from background Chez threads."
-  (let ((output (with-catch
-                  (lambda (e) "")
-                  (lambda ()
-                    (let* ((proc (open-process
-                                   [path: "/usr/bin/git"
-                                    arguments: args
-                                    directory: dir
-                                    stdout-redirection: #t
-                                    stderr-redirection: #t]))
-                           (out (read-line proc #f)))
-                      (close-port proc)
-                      (or out ""))))))
-    (callback output)))
+  "Run git in a background thread, deliver output via UI queue.
+   Callback runs on the primordial/UI thread (safe for Qt operations)."
+  (spawn-worker 'magit-git
+    (lambda ()
+      (let ((output (with-catch
+                      (lambda (e) "")
+                      (lambda ()
+                        (let* ((proc (open-process
+                                       [path: "/usr/bin/git"
+                                        arguments: args
+                                        directory: dir
+                                        stdout-redirection: #t
+                                        stderr-redirection: #t]))
+                               (out (read-line proc #f)))
+                          (close-port proc)
+                          (or out ""))))))
+        (ui-queue-push! (lambda () (callback output)))))))
 
 ;;;============================================================================
 ;;; Status parsing and formatting

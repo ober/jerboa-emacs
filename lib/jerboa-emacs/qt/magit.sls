@@ -15,7 +15,8 @@
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
-    (std sugar) (std srfi srfi-13) (jerboa-emacs async)
+    (std sugar) (std srfi srfi-13)
+    (only (jerboa-emacs async) spawn-worker ui-queue-push!)
     (jerboa core) (jerboa runtime))
   (def (magit-run-git args dir)
        "Run git command, return output. Omits process-status to avoid Qt SIGCHLD race."
@@ -49,19 +50,22 @@
                (close-port proc)
                (or out ""))))))
   (def (magit-run-git/async args dir callback)
-       "Run git synchronously and call callback with output.\n   Avoids GC deadlocks from background Chez threads."
-       (let ([output (with-catch
-                       (lambda (e) "")
-                       (lambda ()
-                         (let* ([proc (open-process
-                                        (list 'path: "/usr/bin/git" 'arguments:
-                                          args 'directory: dir
-                                          'stdout-redirection: #t
-                                          'stderr-redirection: #t))]
-                                [out (read-line proc #f)])
-                           (close-port proc)
-                           (or out ""))))])
-         (callback output)))
+       "Run git in a background thread, deliver output via UI queue.\n   Callback runs on the primordial/UI thread (safe for Qt operations)."
+       (spawn-worker
+         'magit-git
+         (lambda ()
+           (let ([output (with-catch
+                           (lambda (e) "")
+                           (lambda ()
+                             (let* ([proc (open-process
+                                            (list 'path: "/usr/bin/git"
+                                              'arguments: args 'directory:
+                                              dir 'stdout-redirection: #t
+                                              'stderr-redirection: #t))]
+                                    [out (read-line proc #f)])
+                               (close-port proc)
+                               (or out ""))))])
+             (ui-queue-push! (lambda () (callback output)))))))
   (def (magit-parse-status output)
        "Parse git status --porcelain output into list of (status . filename)."
        (let ([lines (string-split output #\newline)])
