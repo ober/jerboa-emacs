@@ -143,6 +143,9 @@
       (let ((pos (qt-plain-text-edit-cursor-position ed)))
         (qt-plain-text-edit-set-selection! ed pos pos)))))
 
+;; Master timer tick function — set by qt-do-init!, called from qt-app-exec! loop
+(def *master-timer-tick-fn* #f)
+
 ;; Which-key state — show available bindings after prefix key delay
 (def *which-key-timer* #f)
 (def *which-key-pending-keymap* #f)
@@ -1198,32 +1201,14 @@
           (for-each (lambda (f) (qt-open-file! app f))
                     (ipc-poll-files!))))
 
-      ;; Master timer — drives all periodic tasks and drains the async UI queue.
-      ;; Single 50ms green-thread loop replaces 7+ individual Qt timers.
-      ;;
-      ;; SMP NOTE: We deliberately use a spawned Gambit green thread instead of
-      ;; a Qt QTimer.  In the SMP model the Qt thread is a raw pthread (not a
-      ;; Gambit VP), so any `c-define` callback invoked directly from the Qt
-      ;; thread has ___ps == NULL and crashes.  A Qt timer's timeout signal fires
-      ;; on the Qt thread, so its trampoline would enqueue the callback instead
-      ;; of executing it — creating a circular deadlock where the drain is inside
-      ;; the callback that never runs.
-      ;;
-      ;; A spawned Gambit green thread solves this cleanly: thread-sleep! yields
-      ;; to the Gambit scheduler (no Qt calls), and the tick/drain run on a
-      ;; Gambit VP where ___ps is valid.  Qt calls inside the drain/tick go
-      ;; through BlockingQueuedConnection to the Qt thread as normal.
-      ;; Pin the master timer to processor 0 so it always drains the BQC
-      ;; callback queue and runs periodic UI tasks on the main OS thread.
-      ;; Without pinning, work-stealing could move it to another VP where
-      ;; Qt calls via BQC would still work but add unnecessary latency.
-      (spawn/name/pinned 'master-timer
+      ;; Master timer tick function — passed to qt-app-exec! as the per-iteration
+      ;; callback so all periodic work runs on the primordial thread.
+      ;; This eliminates the second Chez thread entirely, preventing GC
+      ;; rendezvous deadlocks (single thread = no stop-the-world coordination).
+      (set! *master-timer-tick-fn*
         (lambda ()
-          (let loop ()
-            (thread-sleep! 0.05)
-            (qt-drain-pending-callbacks!)
-            (master-timer-tick!)
-            (loop))))
+          (qt-drain-pending-callbacks!)
+          (master-timer-tick!)))
 
       )) ;; end of qt-do-init! let* and function body
 
@@ -1250,8 +1235,11 @@
       ;; background threads (LSP, async file I/O) use BlockingQueuedConnection
       ;; safely because the event loop is then running.
       (qt-do-init! qt-app args)
-      ;; Enter Qt event loop (blocks here until quit)
-      (qt-app-exec! qt-app)
+      ;; Enter Qt event loop (blocks here until quit).
+      ;; Pass the master-timer tick as the per-iteration callback so all
+      ;; periodic work (UI queue drain, scheduled tasks, debug REPL, IPC)
+      ;; runs on the primordial thread — single Chez thread, no GC deadlock.
+      (qt-app-exec! qt-app *master-timer-tick-fn*)
       ;; Cleanup after event loop exits
       (lsp-stop!)
       (stop-ipc-server!)

@@ -269,6 +269,10 @@ build-jemacs-qt-static: check-root
 	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
 	  --compile-imported-libraries --script /src/vendor/jerboa-compile-tcp.ss && \
 	rm -f /deps/jerboa/lib/std/net/*.wpo && \
+	rm -f /src/lib/jerboa/*.wpo /src/lib/jerboa/*.so && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /src/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-repl-socket.ss && \
+	rm -f /src/lib/jerboa/*.wpo && \
 	JEMACS_STATIC=1 \
 	CHEZ_DIR=$(CHEZ_MUSL_DIR) \
 	JERBOA_DIR=/deps/jerboa/lib \

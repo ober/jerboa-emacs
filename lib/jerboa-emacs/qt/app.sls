@@ -132,6 +132,7 @@
                (qt-plain-text-edit-set-selection! ed mark pos))
              (let ([pos (qt-plain-text-edit-cursor-position ed)])
                (qt-plain-text-edit-set-selection! ed pos pos)))))
+  (def *master-timer-tick-fn* #f)
   (def *which-key-timer* #f)
   (def *which-key-pending-keymap* #f)
   (def *which-key-pending-prefix* #f)
@@ -1545,20 +1546,17 @@
              (for-each
                (lambda (f) (qt-open-file! app f))
                (ipc-poll-files!))))
-         (spawn/name/pinned
-           'master-timer
+         (set! *master-timer-tick-fn*
            (lambda ()
-             (let loop ()
-               (thread-sleep! 0.05)
-               (qt-drain-pending-callbacks!)
-               (master-timer-tick!)
-               (loop))))))
+             (qt-drain-pending-callbacks!)
+             (master-timer-tick!)))))
   (def (qt-main . args)
        (pin-thread-to-processor0! (current-thread))
        (setenv "QT_IM_MODULE" "compose")
        (setenv "QT_ACCESSIBILITY" "0")
        (let ([qt-app (qt-app-create)])
-         (try (qt-do-init! qt-app args) (qt-app-exec! qt-app) (lsp-stop!)
+         (try (qt-do-init! qt-app args)
+              (qt-app-exec! qt-app *master-timer-tick-fn*) (lsp-stop!)
               (stop-ipc-server!) (stop-debug-repl!)
               (finally (qt-app-quit! qt-app) (qt-app-destroy! qt-app)))))
   (def (qt-open-file! app filename (on-loaded #f))

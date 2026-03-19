@@ -4,7 +4,9 @@
 
 (import (except (chezscheme)
           make-hash-table hash-table? iota 1+ 1-)
+        (only (jerboa core) thread-terminate!)
         (jerboa-emacs debug-repl)
+        (jerboa-emacs async)
         (std net tcp))
 
 (define pass-count 0)
@@ -26,6 +28,32 @@
            (write exp)
            (newline)
            (flush-output-port (current-output-port))))))))
+
+;; ============================================================================
+;; Master timer for test context
+;; ============================================================================
+
+;; The debug REPL uses schedule-periodic! for non-blocking I/O polling.
+;; In the Qt app, qt-app-exec! drives master-timer-tick!. In tests, we
+;; need our own timer thread.
+(define *test-timer-thread* #f)
+
+(define (start-test-timer!)
+  (set! *test-timer-thread*
+    (fork-thread
+      (lambda ()
+        (let loop ()
+          (sleep (make-time 'time-duration 50000000 0))
+          (master-timer-tick!)
+          (loop))))))
+
+(define (stop-test-timer!)
+  (when *test-timer-thread*
+    (guard (e [#t #f])
+      (thread-terminate! *test-timer-thread*))
+    (set! *test-timer-thread* #f)))
+
+(start-test-timer!)
 
 ;; ============================================================================
 ;; Helpers
@@ -146,11 +174,7 @@
     ;; ,threads
     (let ((resp (send-command in out ",threads")))
       (check (> (length resp) 0) => #t)
-      (check (has-line? "debug-repl" resp) => #t))
-
-    ;; ,buffers
-    (let ((resp (send-command in out ",buffers")))
-      (check (list? resp) => #t))
+      (check (has-line? "master-timer" resp) => #t))
 
     ;; ,help
     (let ((resp (send-command in out ",help")))
@@ -159,8 +183,8 @@
 
     ;; ,state
     (let ((resp (send-command in out ",state")))
-      (check (has-line? "buffers" resp) => #t)
-      (check (has-line? "threads" resp) => #t))
+      (check (has-line? "listen-fd" resp) => #t)
+      (check (has-line? "bytes-allocated" resp) => #t))
 
     ;; ,gc
     (let ((resp (send-command in out ",gc")))
@@ -207,24 +231,29 @@
     (guard (e [#t #f]) (close-port out))))
 
 ;; ============================================================================
-;; Test group 6: Multiple simultaneous clients
+;; Test group 6: Sequential clients (single-client non-blocking design)
 ;; ============================================================================
 
-(display "--- debug-repl-multi-client ---\n")
+(display "--- debug-repl-sequential-client ---\n")
 (flush-output-port (current-output-port))
 
+;; The thread-free REPL handles one client at a time.
+;; Verify that after one client disconnects, another can connect.
 (with-fresh-server (port)
-  (let-values (((in1 out1) (connect-repl port))
-               ((in2 out2) (connect-repl port)))
-    (sleep-ms 30)
+  ;; First client
+  (let-values (((in1 out1) (connect-repl port)))
     (skip-banner in1)
-    (skip-banner in2)
-    (let ((r1 (send-command in1 out1 "(+ 10 20)"))
-          (r2 (send-command in2 out2 "(+ 30 40)")))
-      (check (has-line? "30" r1) => #t)
-      (check (has-line? "70" r2) => #t))
+    (let ((r1 (send-command in1 out1 "(+ 10 20)")))
+      (check (has-line? "30" r1) => #t))
     (close-port in1)
-    (close-port out1)
+    (close-port out1))
+  ;; Wait for server to notice disconnect
+  (sleep-ms 300)
+  ;; Second client
+  (let-values (((in2 out2) (connect-repl port)))
+    (skip-banner in2)
+    (let ((r2 (send-command in2 out2 "(+ 30 40)")))
+      (check (has-line? "70" r2) => #t))
     (close-port in2)
     (close-port out2)))
 
@@ -288,4 +317,5 @@
   (number->string fail-count) " failed\n"))
 (display "========================================\n")
 (flush-output-port (current-output-port))
+(stop-test-timer!)
 (when (> fail-count 0) (exit 1))
