@@ -125,6 +125,16 @@
 #include <semaphore.h>
 #include <time.h>
 
+// Chez Scheme SMP thread activation — declared in the running Scheme process.
+// Deactivating a thread before a blocking foreign call tells GC that the
+// thread is not touching the Scheme heap, so stop-the-world GC can proceed
+// without waiting for it.  Must reactivate before any Scheme heap access.
+// Only available / needed when compiled for a Chez-based build (JEMACS_CHEZ_SMP).
+#ifdef JEMACS_CHEZ_SMP
+extern "C" int  Sactivate_thread(void);
+extern "C" void Sdeactivate_thread(void);
+#endif
+
 // ============================================================
 // Verbose logging — enabled via qt_verbose_log_enable(path).
 // Logs every BlockingQueuedConnection dispatch and explicit
@@ -237,6 +247,21 @@ static inline bool is_qt_main_thread() {
 // Dispatch a void body to the Qt main thread.
 // If already on Qt thread: calls directly (zero overhead).
 // Otherwise: marshals via BlockingQueuedConnection with verbose logging.
+#ifdef JEMACS_CHEZ_SMP
+#define QT_VOID(...) do {                                           \
+    if (is_qt_main_thread()) { __VA_ARGS__; }                      \
+    else {                                                          \
+        vlog_bqc_enter(__func__);                                   \
+        Sdeactivate_thread();                                       \
+        QMetaObject::invokeMethod(                                  \
+            QCoreApplication::instance(),                           \
+            [=]() { __VA_ARGS__; },                                \
+            Qt::BlockingQueuedConnection);                          \
+        Sactivate_thread();                                         \
+        vlog_bqc_exit(__func__);                                    \
+    }                                                               \
+} while(0)
+#else
 #define QT_VOID(...) do {                                           \
     if (is_qt_main_thread()) { __VA_ARGS__; }                      \
     else {                                                          \
@@ -248,8 +273,24 @@ static inline bool is_qt_main_thread() {
         vlog_bqc_exit(__func__);                                    \
     }                                                               \
 } while(0)
+#endif
 
 // Dispatch a function returning a value.
+#ifdef JEMACS_CHEZ_SMP
+#define QT_RETURN(type, expr) do {                                  \
+    if (is_qt_main_thread()) { return (expr); }                    \
+    vlog_bqc_enter(__func__);                                       \
+    type _result{};                                                 \
+    Sdeactivate_thread();                                           \
+    QMetaObject::invokeMethod(                                      \
+        QCoreApplication::instance(),                               \
+        [&]() { _result = (expr); },                               \
+        Qt::BlockingQueuedConnection);                              \
+    Sactivate_thread();                                             \
+    vlog_bqc_exit(__func__);                                        \
+    return _result;                                                 \
+} while(0)
+#else
 #define QT_RETURN(type, expr) do {                                  \
     if (is_qt_main_thread()) { return (expr); }                    \
     vlog_bqc_enter(__func__);                                       \
@@ -261,8 +302,28 @@ static inline bool is_qt_main_thread() {
     vlog_bqc_exit(__func__);                                        \
     return _result;                                                 \
 } while(0)
+#endif
 
 // Dispatch a function returning const char* via s_return_buf.
+#ifdef JEMACS_CHEZ_SMP
+#define QT_RETURN_STRING(expr) do {                                 \
+    if (is_qt_main_thread()) {                                      \
+        s_return_buf = (expr);                                      \
+        return s_return_buf.c_str();                                \
+    }                                                               \
+    vlog_bqc_enter(__func__);                                       \
+    std::string _str_result;                                        \
+    Sdeactivate_thread();                                           \
+    QMetaObject::invokeMethod(                                      \
+        QCoreApplication::instance(),                               \
+        [&]() { _str_result = (expr); },                           \
+        Qt::BlockingQueuedConnection);                              \
+    Sactivate_thread();                                             \
+    s_return_buf = std::move(_str_result);                         \
+    vlog_bqc_exit(__func__);                                        \
+    return s_return_buf.c_str();                                    \
+} while(0)
+#else
 #define QT_RETURN_STRING(expr) do {                                 \
     if (is_qt_main_thread()) {                                      \
         s_return_buf = (expr);                                      \
@@ -278,6 +339,7 @@ static inline bool is_qt_main_thread() {
     vlog_bqc_exit(__func__);                                        \
     return s_return_buf.c_str();                                    \
 } while(0)
+#endif
 
 // String buffer for returning strings to FFI safely.
 // Qt's QString::toUtf8().constData() returns a pointer to a temporary;
@@ -2055,6 +2117,11 @@ extern "C" void qt_splitter_set_sizes_2(qt_splitter_t s, int a, int b) {
 extern "C" void qt_splitter_set_sizes_3(qt_splitter_t s, int a, int b, int c) {
     QT_NULL_CHECK_VOID(s);
     QT_VOID(static_cast<QSplitter*>(s)->setSizes({a, b, c}));
+}
+
+extern "C" void qt_splitter_set_sizes_4(qt_splitter_t s, int a, int b, int c, int d) {
+    QT_NULL_CHECK_VOID(s);
+    QT_VOID(static_cast<QSplitter*>(s)->setSizes({a, b, c, d}));
 }
 
 extern "C" int qt_splitter_size_at(qt_splitter_t s, int index) {

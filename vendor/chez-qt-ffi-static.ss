@@ -203,7 +203,7 @@
     ffi-qt-splitter-create ffi-qt-splitter-add-widget
     ffi-qt-splitter-insert-widget ffi-qt-splitter-index-of
     ffi-qt-splitter-widget ffi-qt-splitter-count
-    ffi-qt-splitter-set-sizes-2 ffi-qt-splitter-set-sizes-3 ffi-qt-splitter-size-at
+    ffi-qt-splitter-set-sizes-2 ffi-qt-splitter-set-sizes-3 ffi-qt-splitter-set-sizes-4 ffi-qt-splitter-size-at
     ffi-qt-splitter-set-stretch-factor ffi-qt-splitter-set-handle-width
     ffi-qt-splitter-set-collapsible ffi-qt-splitter-is-collapsible
     ffi-qt-splitter-set-orientation
@@ -1615,6 +1615,8 @@
     (foreign-procedure "qt_splitter_set_sizes_2" (void* int int) void))
   (define ffi-qt-splitter-set-sizes-3
     (foreign-procedure "qt_splitter_set_sizes_3" (void* int int int) void))
+  (define ffi-qt-splitter-set-sizes-4
+    (foreign-procedure "qt_splitter_set_sizes_4" (void* int int int int) void))
   (define ffi-qt-splitter-size-at
     (foreign-procedure "qt_splitter_size_at" (void* int) int))
   (define ffi-qt-splitter-set-stretch-factor

@@ -37,7 +37,9 @@
         split-tree-flatten
         split-tree-find-parent
         split-tree-find-leaf
-        split-tree-collect-sub-splitters)
+        split-tree-collect-sub-splitters
+        ;; App pointer for process-events during splits
+        qt-window-set-app-ptr!)
 
 (import :std/sugar
         :chez-scintilla/constants
@@ -45,6 +47,21 @@
         :jerboa-emacs/core
         :jerboa-emacs/face
         :jerboa-emacs/qt/buffer)
+
+;;;============================================================================
+;;; App pointer for process-events during splits
+;;;============================================================================
+
+;; Set by qt/app.ss at startup so splits can process Qt events
+(def *qt-app-for-events* #f)
+
+(def (qt-window-set-app-ptr! app)
+  (set! *qt-app-for-events* app))
+
+(def (qt-window-process-events!)
+  "Process pending Qt events if app pointer is available."
+  (when *qt-app-for-events*
+    (qt-app-process-events! *qt-app-for-events*)))
 
 ;;;============================================================================
 ;;; Structures
@@ -337,7 +354,9 @@
            (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
              (set! (qt-frame-current-idx fr) (or new-idx 0)))
            ;; Equalize all children in the splitter for even sizing
-           (with-catch void
+           ;; Process events first so Qt layout is computed before we set sizes
+           (qt-window-process-events!)
+           (with-catch (lambda (_e) (void))
              (lambda ()
                (let ((n (length (split-node-children parent))))
                  (qt-splitter-set-sizes! parent-spl
@@ -358,8 +377,9 @@
            ;; Find new window's index in the rebuilt list
            (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
              (set! (qt-frame-current-idx fr) (or new-idx 0)))
-           ;; 50/50 split
-           (with-catch void (lambda () (qt-splitter-set-sizes! root-spl (list 500 500))))
+           ;; 50/50 split — process events so Qt layout is computed first
+           (qt-window-process-events!)
+           (with-catch (lambda (_e) (void)) (lambda () (qt-splitter-set-sizes! root-spl (list 500 500))))
            (qt-edit-window-editor new-win)))
 
         ;; ── Case C: no parent or different orientation — nest with new splitter ─
@@ -393,10 +413,11 @@
            ;; Find new window's index in the rebuilt list
            (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
              (set! (qt-frame-current-idx fr) (or new-idx 0)))
-           ;; 50/50 split in nested splitter
-           (with-catch void (lambda () (qt-splitter-set-sizes! new-spl (list 500 500))))
+           ;; 50/50 split in nested splitter — process events first
+           (qt-window-process-events!)
+           (with-catch (lambda (_e) (void)) (lambda () (qt-splitter-set-sizes! new-spl (list 500 500))))
            ;; Re-equalize parent splitter so all children get equal space
-           (with-catch void
+           (with-catch (lambda (_e) (void))
              (lambda ()
                (let* ((n (qt-splitter-count parent-spl))
                       (sizes (let loop ((i 0) (acc '()))
@@ -487,6 +508,9 @@
       (set! (qt-frame-windows fr) (list-remove-idx (qt-frame-windows fr) idx))
       (when (>= (qt-frame-current-idx fr) (length (qt-frame-windows fr)))
         (set! (qt-frame-current-idx fr) (- (length (qt-frame-windows fr)) 1))))
+      ;; Restore focus to the new current editor (destroying widgets may lose it)
+      (let ((new-win (list-ref (qt-frame-windows fr) (qt-frame-current-idx fr))))
+        (qt-widget-set-focus! (qt-edit-window-editor new-win)))
       ;; Update visual indicators
       (qt-frame-update-visual-indicators! fr)))
 
@@ -513,7 +537,9 @@
     (set! (qt-frame-root fr) (make-split-leaf cur))
     (set! (qt-frame-windows fr) (list cur))
     (set! (qt-frame-current-idx fr) 0)
-    ;; 5. Update visual indicators
+    ;; 5. Restore focus to the surviving editor (reparenting may lose it)
+    (qt-widget-set-focus! (qt-edit-window-editor cur))
+    ;; 6. Update visual indicators
     (qt-frame-update-visual-indicators! fr)))
 
 ;;;============================================================================

@@ -1505,8 +1505,25 @@
   (define (qt-splitter-count s) (ffi-qt-splitter-count s))
   (define qt-splitter-set-sizes!
     (case-lambda
+      [(s sizes)
+       ;; Accept a list of sizes and dispatch to the appropriate FFI call
+       (cond
+         [(and (pair? sizes) (= (length sizes) 2))
+          (ffi-qt-splitter-set-sizes-2 s (car sizes) (cadr sizes))]
+         [(and (pair? sizes) (= (length sizes) 3))
+          (ffi-qt-splitter-set-sizes-3 s (car sizes) (cadr sizes) (caddr sizes))]
+         [(and (pair? sizes) (= (length sizes) 4))
+          (ffi-qt-splitter-set-sizes-4 s (car sizes) (cadr sizes) (caddr sizes) (cadddr sizes))]
+         [(and (pair? sizes) (> (length sizes) 4))
+          ;; For 5+ children, use stretch factors for equal sizing
+          (let ((n (length sizes)))
+            (do ((i 0 (+ i 1)))
+                ((= i n))
+              (ffi-qt-splitter-set-stretch-factor s i 1)))]
+         [else (void)])]
       [(s a b)     (ffi-qt-splitter-set-sizes-2 s a b)]
-      [(s a b c)   (ffi-qt-splitter-set-sizes-3 s a b c)]))
+      [(s a b c)   (ffi-qt-splitter-set-sizes-3 s a b c)]
+      [(s a b c d) (ffi-qt-splitter-set-sizes-4 s a b c d)]))
   (define (qt-splitter-size-at s idx) (ffi-qt-splitter-size-at s idx))
   (define (qt-splitter-set-stretch-factor! s idx factor)
     (ffi-qt-splitter-set-stretch-factor s idx factor))
@@ -2154,7 +2171,7 @@
       (ffi-qt-completer-on-activated c id)
       (track-handler! c id)))
 
-  (define (qt-line-edit-set-completer! e c) (ffi-qt-line-edit-set-completer e c))
+  (define (qt-line-edit-set-completer! e c) (ffi-qt-line-edit-set-completer e (or c 0)))
   (define (qt-completer-destroy! c) (ffi-qt-completer-destroy c))
 
   ;; -----------------------------------------------------------------------
@@ -2390,7 +2407,10 @@
   ;; Editor extensions
   (define (qt-plain-text-edit-cursor-position e) (ffi-qt-plain-text-edit-cursor-position e))
   (define (qt-plain-text-edit-set-cursor-position! e pos) (ffi-qt-plain-text-edit-set-cursor-position e pos))
-  (define (qt-plain-text-edit-move-cursor! e op mode) (ffi-qt-plain-text-edit-move-cursor e op mode))
+  (define qt-plain-text-edit-move-cursor!
+    (case-lambda
+      [(e op) (ffi-qt-plain-text-edit-move-cursor e op ffi-qt-const-move-anchor)]
+      [(e op mode) (ffi-qt-plain-text-edit-move-cursor e op mode)]))
   (define (qt-plain-text-edit-select-all! e) (ffi-qt-plain-text-edit-select-all e))
   (define (qt-plain-text-edit-selected-text e) (ffi-qt-plain-text-edit-selected-text e))
   (define (qt-plain-text-edit-selection-start e) (ffi-qt-plain-text-edit-selection-start e))

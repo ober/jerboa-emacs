@@ -27,7 +27,8 @@
    qt-frame-delete-window! qt-frame-delete-other-windows!
    qt-frame-other-window! qt-apply-editor-theme!
    split-tree-flatten split-tree-find-parent
-   split-tree-find-leaf split-tree-collect-sub-splitters)
+   split-tree-find-leaf split-tree-collect-sub-splitters
+   qt-window-set-app-ptr!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -36,6 +37,13 @@
     (jerboa-emacs qt sci-shim) (jerboa-emacs core)
     (jerboa-emacs face) (jerboa-emacs qt buffer) (jerboa core)
     (jerboa runtime))
+  (def *qt-app-for-events* #f)
+  (def (qt-window-set-app-ptr! app)
+       (set! *qt-app-for-events* app))
+  (def (qt-window-process-events!)
+       "Process pending Qt events if app pointer is available."
+       (when *qt-app-for-events*
+         (qt-app-process-events! *qt-app-for-events*)))
   (defstruct
     qt-edit-window
     (editor container buffer line-number-area image-scroll
@@ -315,8 +323,9 @@
                               (qt-frame-current-idx-set!
                                 fr
                                 (or new-idx 0)))
+                            (qt-window-process-events!)
                             (with-catch
-                              void
+                              (lambda (_e) (void))
                               (lambda ()
                                 (let ([n (length
                                            (split-node-children parent))])
@@ -351,8 +360,9 @@
                               (qt-frame-current-idx-set!
                                 fr
                                 (or new-idx 0)))
+                            (qt-window-process-events!)
                             (with-catch
-                              void
+                              (lambda (_e) (void))
                               (lambda ()
                                 (qt-splitter-set-sizes!
                                   root-spl
@@ -406,14 +416,15 @@
                               (qt-frame-current-idx-set!
                                 fr
                                 (or new-idx 0)))
+                            (qt-window-process-events!)
                             (with-catch
-                              void
+                              (lambda (_e) (void))
                               (lambda ()
                                 (qt-splitter-set-sizes!
                                   new-spl
                                   (list 500 500))))
                             (with-catch
-                              void
+                              (lambda (_e) (void))
                               (lambda ()
                                 (let* ([n (qt-splitter-count parent-spl)]
                                        [sizes (let loop ([i 0] [acc '()])
@@ -499,6 +510,10 @@
              (qt-frame-current-idx-set!
                fr
                (- (length (qt-frame-windows fr)) 1))))
+         (let ([new-win (list-ref
+                          (qt-frame-windows fr)
+                          (qt-frame-current-idx fr))])
+           (qt-widget-set-focus! (qt-edit-window-editor new-win)))
          (qt-frame-update-visual-indicators! fr)))
   (def (qt-frame-delete-other-windows! fr)
        "Keep only the current window, destroy all others and all sub-splitters."
@@ -524,6 +539,7 @@
          (qt-frame-root-set! fr (make-split-leaf cur))
          (qt-frame-windows-set! fr (list cur))
          (qt-frame-current-idx-set! fr 0)
+         (qt-widget-set-focus! (qt-edit-window-editor cur))
          (qt-frame-update-visual-indicators! fr)))
   (def (qt-frame-update-visual-indicators! fr)
        "Update container borders to show which window is active.\n   Active window: blue border; inactive windows: no border."
