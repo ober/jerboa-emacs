@@ -24,6 +24,7 @@
     qt-widget-create qt-widget-show! qt-widget-hide! qt-widget-close!
     qt-widget-set-enabled! qt-widget-enabled?
     qt-widget-set-visible! qt-widget-visible?
+    qt-widget-set-updates-enabled!
     qt-widget-set-fixed-size! qt-widget-set-minimum-size!
     qt-widget-set-maximum-size!
     qt-widget-set-minimum-width! qt-widget-set-minimum-height!
@@ -897,6 +898,9 @@
     (ffi-qt-widget-set-visible w (if visible 1 0)))
   (define (qt-widget-visible? w)
     (not (zero? (ffi-qt-widget-is-visible w))))
+
+  (define (qt-widget-set-updates-enabled! w enabled)
+    (ffi-qt-widget-set-updates-enabled w (if enabled 1 0)))
 
   (define (qt-widget-set-fixed-size! w width height)
     (ffi-qt-widget-set-fixed-size w width height))

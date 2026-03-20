@@ -117,6 +117,7 @@
   qt-widget-height qt-widget-hide! qt-widget-resize! qt-widget-set-focus!
   qt-widget-set-font-size! qt-widget-set-maximum-height! qt-widget-set-minimum-height!
   qt-widget-set-minimum-size! qt-widget-set-size-policy! qt-widget-set-style-sheet!
+  qt-widget-set-updates-enabled!
   qt-widget-show! qt-widget-show-fullscreen! qt-widget-show-maximized!
   qt-widget-show-minimized! qt-widget-show-normal! qt-widget-width qt-widget-window-state
   ;; Qt constants re-exported for modules that only import sci-shim

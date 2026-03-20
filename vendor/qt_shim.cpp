@@ -565,6 +565,11 @@ extern "C" void qt_widget_set_visible(qt_widget_t w, int visible) {
     QT_VOID(static_cast<QWidget*>(w)->setVisible(visible != 0));
 }
 
+extern "C" void qt_widget_set_updates_enabled(qt_widget_t w, int enabled) {
+    QT_NULL_CHECK_VOID(w);
+    QT_VOID(static_cast<QWidget*>(w)->setUpdatesEnabled(enabled != 0));
+}
+
 extern "C" int qt_widget_is_visible(qt_widget_t w) {
     QT_NULL_CHECK_RET(w, 0);
     QT_RETURN(int, static_cast<QWidget*>(w)->isVisible() ? 1 : 0);
@@ -4709,7 +4714,12 @@ extern "C" qt_plain_text_edit_t qt_plain_text_edit_create(qt_widget_t parent) {
 extern "C" void qt_plain_text_edit_set_text(qt_plain_text_edit_t e,
                                               const char* text) {
     QT_NULL_CHECK_VOID(e);
-    QT_VOID(static_cast<QPlainTextEdit*>(e)->setPlainText(QString::fromUtf8(text)));
+    QT_VOID(
+        auto* pte = static_cast<QPlainTextEdit*>(e);
+        pte->setUpdatesEnabled(false);
+        pte->setPlainText(QString::fromUtf8(text));
+        pte->setUpdatesEnabled(true)
+    );
 }
 
 extern "C" const char* qt_plain_text_edit_text(qt_plain_text_edit_t e) {

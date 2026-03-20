@@ -17,6 +17,7 @@
     ffi-qt-widget-create ffi-qt-widget-show ffi-qt-widget-hide
     ffi-qt-widget-close ffi-qt-widget-set-enabled ffi-qt-widget-is-enabled
     ffi-qt-widget-set-visible ffi-qt-widget-is-visible
+    ffi-qt-widget-set-updates-enabled
     ffi-qt-widget-set-fixed-size ffi-qt-widget-set-minimum-size
     ffi-qt-widget-set-maximum-size
     ffi-qt-widget-set-minimum-width ffi-qt-widget-set-minimum-height
@@ -926,6 +927,9 @@
 
   (define ffi-qt-widget-is-visible
     (foreign-procedure "qt_widget_is_visible" (void*) int))
+
+  (define ffi-qt-widget-set-updates-enabled
+    (foreign-procedure "qt_widget_set_updates_enabled" (void* int) void))
 
   (define ffi-qt-widget-set-fixed-size
     (foreign-procedure "qt_widget_set_fixed_size" (void* int int) void))
