@@ -9,9 +9,12 @@
 ;;;   - Master timer drains UI queue on primordial thread (safe for Qt)
 ;;;
 ;;; GC safety:
-;;;   Chez SMP GC uses active_threads count for stop-the-world rendezvous.
-;;;   fork-thread properly decrements S_nthreads when thunks complete.
+;;;   Chez SMP GC uses stop-the-world rendezvous (active_threads must reach 0).
 ;;;   Threads blocked in sleep/condition-wait/mutex-acquire auto-deactivate.
+;;;   Threads blocked in foreign calls (read/popen) do NOT auto-deactivate.
+;;;   Solution: repl-capture-command (C level) deactivates around blocking I/O.
+;;;   NEVER use open-process-ports + get-line in worker threads — use
+;;;   repl-capture-command instead.
 ;;;   NEVER block the primordial thread — it freezes the entire UI.
 
 (export
@@ -58,7 +61,45 @@
         :std/misc/atom
         :std/sugar
         :std/srfi/13
-        :jerboa-emacs/core)
+        :jerboa-emacs/core
+        (only-in :jerboa/repl-socket
+          repl-capture-command
+          repl-read-file
+          repl-write-file))
+
+;;;============================================================================
+;;; String Helpers
+;;;============================================================================
+
+(def (string-split-newlines str)
+  "Split a string on newline characters. Drops trailing empty string."
+  (let ((len (string-length str)))
+    (if (= len 0) '()
+      (let loop ((start 0) (i 0) (acc '()))
+        (cond
+          ((>= i len)
+           (let ((last (substring str start len)))
+             (reverse (if (string=? last "") acc (cons last acc)))))
+          ((char=? (string-ref str i) #\newline)
+           (loop (+ i 1) (+ i 1) (cons (substring str start i) acc)))
+          (else (loop start (+ i 1) acc)))))))
+
+(def (shell-escape-single-quotes str)
+  "Escape single quotes for use inside a single-quoted shell string.
+   Replaces ' with '\\'' (end quote, escaped quote, start quote)."
+  (let loop ((i 0) (acc '()))
+    (if (>= i (string-length str))
+      (apply string-append (reverse acc))
+      (if (char=? (string-ref str i) #\')
+        (loop (+ i 1) (cons "'\\''" acc))
+        (let ((start i))
+          (let scan ((j (+ i 1)))
+            (cond
+              ((>= j (string-length str))
+               (loop j (cons (substring str start j) acc)))
+              ((char=? (string-ref str j) #\')
+               (loop j (cons (substring str start j) acc)))
+              (else (scan (+ j 1))))))))))
 
 ;;;============================================================================
 ;;; Thread Pinning (no-op on Chez)
@@ -73,14 +114,12 @@
 ;;; Background Worker
 ;;;============================================================================
 
-
-
-
 (def (spawn-worker name thunk)
   "Spawn a background worker thread for blocking operations.
-   Uses fork-thread which properly decrements S_nthreads on completion.
-   The thunk runs in a background thread — do NOT call Qt FFI from it.
-   Post Qt operations back to the UI thread via ui-queue-push!."
+   Worker thunks should use repl-capture-command (not open-process-ports)
+   for subprocess I/O, and repl-read-file/repl-write-file for file I/O.
+   These C-level helpers deactivate the Chez thread during blocking system
+   calls so GC can proceed, then reactivate before returning Scheme strings."
   (let ((t (make-thread
              (lambda ()
                (with-catch
@@ -166,8 +205,9 @@
                      on-error: (on-error #f)
                      stdin-text: (stdin-text #f))
   "Run shell command in a background thread, deliver result via UI queue.
-   The callback runs on the primordial/UI thread (safe for Qt operations).
-   Never blocks the event loop."
+   Uses repl-capture-command for GC-safe subprocess I/O — the thread is
+   deactivated during the blocking popen/fread at the C level.
+   The callback runs on the primordial/UI thread (safe for Qt operations)."
   (spawn-worker 'async-process
     (lambda ()
       (with-catch
@@ -177,23 +217,22 @@
               (if on-error (on-error e)
                 (jemacs-log! "async-process error: " (format "~a" e))))))
         (lambda ()
-          (let-values (((in-port out-port err-port pid)
-                        (open-process-ports cmd (buffer-mode block) (native-transcoder))))
-            (when stdin-text
-              (put-string out-port stdin-text)
-              (flush-output-port out-port))
-            (close-port out-port)
-            (close-port err-port)
-            (let ((out (get-string-all in-port)))
-              (close-port in-port)
-              (let ((result (if (eof-object? out) "" out)))
-                (ui-queue-push! (lambda () (callback result)))))))))))
+          (let ((full-cmd (if stdin-text
+                            ;; For stdin: use printf piped to command
+                            ;; (shell handles the pipe, no Chez port blocking)
+                            (string-append "printf '%s' '"
+                                           (shell-escape-single-quotes stdin-text)
+                                           "' | " cmd)
+                            cmd)))
+            (let ((result (repl-capture-command full-cmd)))
+              (ui-queue-push! (lambda () (callback result))))))))))
 
 (def (async-process-stream! cmd
                             on-line: on-line
                             on-done: (on-done #f)
                             on-error: (on-error #f))
   "Run shell command in background thread, deliver each line via UI queue.
+   Uses repl-capture-command for GC-safe I/O, then splits output into lines.
    Callbacks run on the primordial/UI thread (safe for Qt operations)."
   (spawn-worker 'async-process-stream
     (lambda ()
@@ -204,20 +243,15 @@
               (if on-error (on-error e)
                 (jemacs-log! "async-process-stream error: " (format "~a" e))))))
         (lambda ()
-          (let-values (((in-port out-port err-port pid)
-                        (open-process-ports cmd (buffer-mode line) (native-transcoder))))
-            (close-port out-port)
-            (close-port err-port)
-            (let loop ()
-              (let ((line (get-line in-port)))
-                (if (eof-object? line)
-                  (begin
-                    (close-port in-port)
-                    (when on-done
-                      (ui-queue-push! on-done)))
-                  (begin
-                    (ui-queue-push! (lambda () (on-line line)))
-                    (loop)))))))))))
+          (let ((output (repl-capture-command cmd)))
+            ;; Split output into lines and deliver each via UI queue
+            (let ((lines (string-split-newlines output)))
+              (for-each
+                (lambda (line)
+                  (ui-queue-push! (lambda () (on-line line))))
+                lines)
+              (when on-done
+                (ui-queue-push! on-done)))))))))
 
 ;;;============================================================================
 ;;; Async File I/O
@@ -225,25 +259,22 @@
 
 (def (async-read-file! path callback)
   "Read file in a background thread, deliver content via UI queue.
+   Uses repl-read-file for GC-safe file I/O.
    Callback receives the file content string, or #f on error."
   (spawn-worker 'async-read-file
     (lambda ()
       (let ((content (with-catch (lambda (e) #f)
-                       (lambda ()
-                         (call-with-input-file path
-                           (lambda (port) (get-string-all port)))))))
+                       (lambda () (repl-read-file path)))))
         (ui-queue-push! (lambda () (callback content)))))))
 
 (def (async-write-file! path content callback)
   "Write file in a background thread, deliver result via UI queue.
+   Uses repl-write-file for GC-safe file I/O.
    Callback receives #t on success, #f on error."
   (spawn-worker 'async-write-file
     (lambda ()
       (let ((ok (with-catch (lambda (e) #f)
-                  (lambda ()
-                    (call-with-output-file path
-                      (lambda (port) (display content port)))
-                    #t))))
+                  (lambda () (repl-write-file path content)))))
         (ui-queue-push! (lambda () (callback ok)))))))
 
 ;;;============================================================================
@@ -339,39 +370,31 @@
 
 (def (git-status-collect dir)
   "Run git status subprocess and return a hash with branch/modified/staged/untracked.
-   Runs in the calling thread (designed for background worker)."
-  (let-values (((in-port out-port err-port pid)
-                (open-process-ports
-                  (string-append "git -C \"" dir "\" status --porcelain -b 2>&1")
-                  (buffer-mode line) (native-transcoder))))
-    (close-port out-port)
-    (close-port err-port)
-    (let ((lines (let rd ((acc '()))
-                   (let ((line (get-line in-port)))
-                     (if (eof-object? line) (reverse acc)
-                       (rd (cons line acc)))))))
-      (close-port in-port)
-      (let ((status (make-hash-table))
-            (modified 0) (staged 0) (untracked 0))
-        (for-each
-          (lambda (line)
-            (when (>= (string-length line) 3)
-              (let ((xy (substring line 0 2)))
-                (cond
-                  ((string-prefix? "##" xy)
-                   (hash-put! status 'branch
-                     (substring line 3 (string-length line))))
-                  ((string-contains xy "?")
-                   (set! untracked (+ untracked 1)))
-                  ((or (string-contains xy "M") (string-contains xy "D"))
-                   (set! modified (+ modified 1)))
-                  ((or (string-contains xy "A") (string-contains xy "R"))
-                   (set! staged (+ staged 1)))))))
-          lines)
-        (hash-put! status 'modified modified)
-        (hash-put! status 'staged staged)
-        (hash-put! status 'untracked untracked)
-        status))))
+   Uses repl-capture-command for GC-safe subprocess I/O."
+  (let* ((output (repl-capture-command
+                   (string-append "git -C \"" dir "\" status --porcelain -b 2>&1")))
+         (lines (string-split-newlines output))
+         (status (make-hash-table))
+         (modified 0) (staged 0) (untracked 0))
+    (for-each
+      (lambda (line)
+        (when (>= (string-length line) 3)
+          (let ((xy (substring line 0 2)))
+            (cond
+              ((string-prefix? "##" xy)
+               (hash-put! status 'branch
+                 (substring line 3 (string-length line))))
+              ((string-contains xy "?")
+               (set! untracked (+ untracked 1)))
+              ((or (string-contains xy "M") (string-contains xy "D"))
+               (set! modified (+ modified 1)))
+              ((or (string-contains xy "A") (string-contains xy "R"))
+               (set! staged (+ staged 1)))))))
+      lines)
+    (hash-put! status 'modified modified)
+    (hash-put! status 'staged staged)
+    (hash-put! status 'untracked untracked)
+    status))
 
 (def (git-watcher-tick!)
   "One git status poll. Spawns a background thread for the subprocess,

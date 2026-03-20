@@ -4,7 +4,7 @@ JSH       = $(HOME)/mine/jerboa-shell/src
 GHERKIN   = $(HOME)/mine/gherkin/src
 LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
-export LD_LIBRARY_PATH := $(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:$(HOME)/mine/gerbil-qt/vendor:$(HOME)/mine/jerboa-shell:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:$(HOME)/mine/gerbil-qt/vendor:$(HOME)/mine/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
 export CHEZ_QT_LIB := $(HOME)/mine/chez-qt
@@ -30,7 +30,10 @@ rebuild:
 run: build
 	$(SCHEME) $(LIBDIRS) --script main.ss
 
-run-qt: build
+repl_shim.so: support/repl_shim.c
+	gcc -shared -fPIC -O2 -o repl_shim.so support/repl_shim.c -Wall
+
+run-qt: build repl_shim.so
 	$(SCHEME) $(LIBDIRS) --script qt-main.ss
 
 # Qt backend build target

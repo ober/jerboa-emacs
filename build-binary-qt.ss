@@ -337,7 +337,7 @@
          ;;   define-foreign name "c-name"  — jsh macro (C name is the second string)
          (gen-cmd
            (format
-             "{ { cat ~a ~a; find ~a ~a ~a lib/jerboa-emacs -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; } | \
+             "{ { cat ~a ~a; find ~a ~a ~a lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; } | \
 sed 's/;;.*//' | grep -oE '(foreign-procedure|foreign-entry\\?) \"[^\"]*\"' | sed 's/.* \"//;s/\"//'; \
 { cat ~a ~a; } | sed 's/;;.*//' | grep -o 'define-optional-ffi [^ ]* \"[^\"]*\"' | sed 's/.*define-optional-ffi [^ ]* \"//;s/\"//'; \
 find ~a -name '*.sls' -o -name '*.ss' | \
@@ -401,6 +401,14 @@ echo OK"
       (display "Error: pty_shim.c compilation failed\n")
       (exit 1))))
 
+;; repl shim (poll/nanosleep/Sdeactivate wrappers for debug REPL in static builds)
+(when jemacs-static?
+  (let* ((cmd (format "gcc -c -O2 -o jemacs-qt-repl-shim.o support/repl_shim.c -I~a -Wall 2>&1"
+                       chez-dir)))
+    (unless (= 0 (system cmd))
+      (display "Error: repl_shim.c compilation failed\n")
+      (exit 1))))
+
 ;; jerboa landlock shim (jerboa_landlock_* symbols from jerboa/support/landlock-shim.c)
 (when jemacs-static?
   (let* ((jerboa-root (path-parent jerboa-dir))
@@ -435,7 +443,7 @@ echo OK"
          (libqt-shim  (format "~a/libqt_shim.a" qt-shim-dir))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
 jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
-jemacs-qt-pty-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
+jemacs-qt-pty-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
 qt_static_symbols.o \
 ~a ~a ~a ~a \
 -L~a -lkernel -llz4 -lz \

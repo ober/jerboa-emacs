@@ -18,13 +18,49 @@
     (std misc channel)
     (only (std srfi srfi-19) current-time time->seconds)
     (std misc atom) (std sugar) (std srfi srfi-13)
-    (jerboa-emacs core) (except (jerboa core) time->seconds)
-    (jerboa runtime))
+    (jerboa-emacs core)
+    (only
+      (jerboa repl-socket)
+      repl-capture-command
+      repl-read-file
+      repl-write-file)
+    (except (jerboa core) time->seconds) (jerboa runtime))
+  (def (string-split-newlines str)
+       "Split a string on newline characters. Drops trailing empty string."
+       (let ([len (string-length str)])
+         (if (= len 0)
+             '()
+             (let loop ([start 0] [i 0] [acc '()])
+               (cond
+                 [(>= i len)
+                  (let ([last (substring str start len)])
+                    (reverse (if (string=? last "") acc (cons last acc))))]
+                 [(char=? (string-ref str i) #\newline)
+                  (loop
+                    (+ i 1)
+                    (+ i 1)
+                    (cons (substring str start i) acc))]
+                 [else (loop start (+ i 1) acc)])))))
+  (def (shell-escape-single-quotes str)
+       "Escape single quotes for use inside a single-quoted shell string.\n   Replaces ' with '\\'' (end quote, escaped quote, start quote)."
+       (let loop ([i 0] [acc '()])
+         (if (>= i (string-length str))
+             (apply string-append (reverse acc))
+             (if (char=? (string-ref str i) #\')
+                 (loop (+ i 1) (cons "'\\''" acc))
+                 (let ([start i])
+                   (let scan ([j (+ i 1)])
+                     (cond
+                       [(>= j (string-length str))
+                        (loop j (cons (substring str start j) acc))]
+                       [(char=? (string-ref str j) #\')
+                        (loop j (cons (substring str start j) acc))]
+                       [else (scan (+ j 1))])))))))
   (def (pin-thread-to-processor0! thread)
        "No-op on Chez — Qt thread affinity is handled by architecture:\n   all Qt calls run on the primordial thread, blocking work in workers."
        #f)
   (def (spawn-worker name thunk)
-       "Spawn a background worker thread for blocking operations.\n   Uses fork-thread which properly decrements S_nthreads on completion.\n   The thunk runs in a background thread — do NOT call Qt FFI from it.\n   Post Qt operations back to the UI thread via ui-queue-push!."
+       "Spawn a background worker thread for blocking operations.\n   Worker thunks should use repl-capture-command (not open-process-ports)\n   for subprocess I/O, and repl-read-file/repl-write-file for file I/O.\n   These C-level helpers deactivate the Chez thread during blocking system\n   calls so GC can proceed, then reactivate before returning Scheme strings."
        (let ([t (make-thread
                   (lambda ()
                     (with-catch
@@ -87,7 +123,7 @@
                 *scheduled-tasks*))))
   (def (async-process! cmd callback: callback on-error:
          (on-error #f) stdin-text: (stdin-text #f))
-       "Run shell command in a background thread, deliver result via UI queue.\n   The callback runs on the primordial/UI thread (safe for Qt operations).\n   Never blocks the event loop."
+       "Run shell command in a background thread, deliver result via UI queue.\n   Uses repl-capture-command for GC-safe subprocess I/O — the thread is\n   deactivated during the blocking popen/fread at the C level.\n   The callback runs on the primordial/UI thread (safe for Qt operations)."
        (spawn-worker
          'async-process
          (lambda ()
@@ -101,23 +137,19 @@
                          "async-process error: "
                          (format "~a" e))))))
              (lambda ()
-               (let-values ([(in-port out-port err-port pid)
-                             (open-process-ports
-                               cmd
-                               (buffer-mode block)
-                               (native-transcoder))])
-                 (when stdin-text
-                   (put-string out-port stdin-text)
-                   (flush-output-port out-port))
-                 (close-port out-port)
-                 (close-port err-port)
-                 (let ([out (get-string-all in-port)])
-                   (close-port in-port)
-                   (let ([result (if (eof-object? out) "" out)])
-                     (ui-queue-push! (lambda () (callback result)))))))))))
+               (let ([full-cmd (if stdin-text
+                                   (string-append
+                                     "printf '%s' '"
+                                     (shell-escape-single-quotes
+                                       stdin-text)
+                                     "' | "
+                                     cmd)
+                                   cmd)])
+                 (let ([result (repl-capture-command full-cmd)])
+                   (ui-queue-push! (lambda () (callback result))))))))))
   (def (async-process-stream! cmd on-line: on-line on-done:
          (on-done #f) on-error: (on-error #f))
-       "Run shell command in background thread, deliver each line via UI queue.\n   Callbacks run on the primordial/UI thread (safe for Qt operations)."
+       "Run shell command in background thread, deliver each line via UI queue.\n   Uses repl-capture-command for GC-safe I/O, then splits output into lines.\n   Callbacks run on the primordial/UI thread (safe for Qt operations)."
        (spawn-worker
          'async-process-stream
          (lambda ()
@@ -131,46 +163,30 @@
                          "async-process-stream error: "
                          (format "~a" e))))))
              (lambda ()
-               (let-values ([(in-port out-port err-port pid)
-                             (open-process-ports
-                               cmd
-                               (buffer-mode line)
-                               (native-transcoder))])
-                 (close-port out-port)
-                 (close-port err-port)
-                 (let loop ()
-                   (let ([line (get-line in-port)])
-                     (if (eof-object? line)
-                         (begin
-                           (close-port in-port)
-                           (when on-done (ui-queue-push! on-done)))
-                         (begin
-                           (ui-queue-push! (lambda () (on-line line)))
-                           (loop)))))))))))
+               (let ([output (repl-capture-command cmd)])
+                 (let ([lines (string-split-newlines output)])
+                   (for-each
+                     (lambda (line)
+                       (ui-queue-push! (lambda () (on-line line))))
+                     lines)
+                   (when on-done (ui-queue-push! on-done)))))))))
   (def (async-read-file! path callback)
-       "Read file in a background thread, deliver content via UI queue.\n   Callback receives the file content string, or #f on error."
+       "Read file in a background thread, deliver content via UI queue.\n   Uses repl-read-file for GC-safe file I/O.\n   Callback receives the file content string, or #f on error."
        (spawn-worker
          'async-read-file
          (lambda ()
            (let ([content (with-catch
                             (lambda (e) #f)
-                            (lambda ()
-                              (call-with-input-file
-                                path
-                                (lambda (port) (get-string-all port)))))])
+                            (lambda () (repl-read-file path)))])
              (ui-queue-push! (lambda () (callback content)))))))
   (def (async-write-file! path content callback)
-       "Write file in a background thread, deliver result via UI queue.\n   Callback receives #t on success, #f on error."
+       "Write file in a background thread, deliver result via UI queue.\n   Uses repl-write-file for GC-safe file I/O.\n   Callback receives #t on success, #f on error."
        (spawn-worker
          'async-write-file
          (lambda ()
            (let ([ok (with-catch
                        (lambda (e) #f)
-                       (lambda ()
-                         (call-with-output-file
-                           path
-                           (lambda (port) (display content port)))
-                         #t))])
+                       (lambda () (repl-write-file path content)))])
              (ui-queue-push! (lambda () (callback ok)))))))
   (def (async-eval! thunk callback)
        "Evaluate thunk in background thread, deliver result via UI queue.\n   Callback runs on the primordial/UI thread."
@@ -246,50 +262,38 @@
            (cons (string-trim-both status) file))))
   (def *git-watcher-running* #f)
   (def (git-status-collect dir)
-       "Run git status subprocess and return a hash with branch/modified/staged/untracked.\n   Runs in the calling thread (designed for background worker)."
-       (let-values ([(in-port out-port err-port pid)
-                     (open-process-ports
-                       (string-append
-                         "git -C \""
-                         dir
-                         "\" status --porcelain -b 2>&1")
-                       (buffer-mode line)
-                       (native-transcoder))])
-         (close-port out-port)
-         (close-port err-port)
-         (let ([lines (let rd ([acc '()])
-                        (let ([line (get-line in-port)])
-                          (if (eof-object? line)
-                              (reverse acc)
-                              (rd (cons line acc)))))])
-           (close-port in-port)
-           (let ([status (make-hash-table)]
-                 [modified 0]
-                 [staged 0]
-                 [untracked 0])
-             (for-each
-               (lambda (line)
-                 (when (>= (string-length line) 3)
-                   (let ([xy (substring line 0 2)])
-                     (cond
-                       [(string-prefix? "##" xy)
-                        (hash-put!
-                          status
-                          'branch
-                          (substring line 3 (string-length line)))]
-                       [(string-contains xy "?")
-                        (set! untracked (+ untracked 1))]
-                       [(or (string-contains xy "M")
-                            (string-contains xy "D"))
-                        (set! modified (+ modified 1))]
-                       [(or (string-contains xy "A")
-                            (string-contains xy "R"))
-                        (set! staged (+ staged 1))]))))
-               lines)
-             (hash-put! status 'modified modified)
-             (hash-put! status 'staged staged)
-             (hash-put! status 'untracked untracked)
-             status))))
+       "Run git status subprocess and return a hash with branch/modified/staged/untracked.\n   Uses repl-capture-command for GC-safe subprocess I/O."
+       (let* ([output (repl-capture-command
+                        (string-append
+                          "git -C \""
+                          dir
+                          "\" status --porcelain -b 2>&1"))]
+              [lines (string-split-newlines output)]
+              [status (make-hash-table)]
+              [modified 0]
+              [staged 0]
+              [untracked 0])
+         (for-each
+           (lambda (line)
+             (when (>= (string-length line) 3)
+               (let ([xy (substring line 0 2)])
+                 (cond
+                   [(string-prefix? "##" xy)
+                    (hash-put!
+                      status
+                      'branch
+                      (substring line 3 (string-length line)))]
+                   [(string-contains xy "?")
+                    (set! untracked (+ untracked 1))]
+                   [(or (string-contains xy "M") (string-contains xy "D"))
+                    (set! modified (+ modified 1))]
+                   [(or (string-contains xy "A") (string-contains xy "R"))
+                    (set! staged (+ staged 1))]))))
+           lines)
+         (hash-put! status 'modified modified)
+         (hash-put! status 'staged staged)
+         (hash-put! status 'untracked untracked)
+         status))
   (def (git-watcher-tick!)
        "One git status poll. Spawns a background thread for the subprocess,\n   posts results to UI thread. Skips if previous poll still running."
        (when (and *git-watcher-dir* (not *git-watcher-running*))

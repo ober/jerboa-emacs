@@ -12,17 +12,42 @@
     repl-socket-accept    ;; (listen-fd) → client-fd or #f
     repl-socket-read      ;; (fd) → string or #f (EAGAIN) or 'eof
     repl-socket-write     ;; (fd string) → #t or #f
-    repl-socket-close)    ;; (fd) → void
+    repl-socket-close     ;; (fd) → void
+    repl-socket-poll      ;; (fd timeout-ms) → 'ready, #f (timeout), or 'error
+    repl-socket-nanosleep ;; (milliseconds) → void
+    repl-deactivate-thread! ;; () → void — deactivate for GC
+    repl-activate-thread!   ;; () → void — reactivate after foreign call
+    ;; GC-safe subprocess/file I/O — deactivates thread during blocking calls
+    repl-capture-command  ;; (cmd-string) → output-string
+    repl-read-file        ;; (path) → content-string (empty on error)
+    repl-write-file)      ;; (path content) → #t or #f
 
   (import (chezscheme))
 
   ;; ========== FFI ==========
 
+  ;; load-shared-object #f → dlopen(NULL) → gives access to all symbols
+  ;; in the main binary, whether dynamically or statically linked.
+  ;; Must always be called (even for static builds) so poll/nanosleep/etc.
+  ;; are found by foreign-procedure.
   (define _libc-loaded
     (let ((v (getenv "JEMACS_STATIC")))
       (if (and v (not (string=? v "")) (not (string=? v "0")))
-          #f  ; symbols already in static binary
-          (load-shared-object #f))))
+          #f  ; static build: symbols from repl_shim.c + libc via --export-dynamic
+          (begin
+            (load-shared-object #f)
+            ;; Load repl_shim.so for GC-safe subprocess/file I/O helpers.
+            ;; Try several paths: next to the binary, in support/, or via LD_LIBRARY_PATH.
+            (let try ((paths (list "repl_shim.so"
+                                   "./repl_shim.so"
+                                   "support/repl_shim.so"
+                                   "../support/repl_shim.so")))
+              (if (null? paths)
+                ;; If no .so found, the capture functions won't be available
+                ;; but socket functions (from libc) still work
+                (void)
+                (guard (e (#t (try (cdr paths))))
+                  (load-shared-object (car paths)))))))))
 
   (define c-socket    (foreign-procedure "socket" (int int int) int))
   (define c-bind      (foreign-procedure "bind" (int void* int) int))
@@ -36,6 +61,18 @@
   (define c-inet-pton (foreign-procedure "inet_pton" (int string void*) int))
   (define c-getsockname (foreign-procedure "getsockname" (int void* void*) int))
   (define c-fcntl     (foreign-procedure "fcntl" (int int int) int))
+  ;; poll/nanosleep/thread activation use wrapper names from repl_shim.c
+  ;; because musl static binaries don't export libc symbols to dlsym.
+  (define c-poll      (foreign-procedure "repl_poll" (void* unsigned-int int) int))
+  (define c-nanosleep (foreign-procedure "repl_nanosleep" (void* void*) int))
+
+  ;; Chez SMP thread activation — allows GC to proceed while this thread
+  ;; is blocked in foreign calls. Must bracket foreign blocking calls:
+  ;;   (repl-deactivate-thread!)  ; tell GC we're not using Scheme heap
+  ;;   ... foreign blocking call (poll, nanosleep) ...
+  ;;   (repl-activate-thread!)    ; re-enter Scheme safely
+  (define c-deactivate (foreign-procedure "repl_deactivate_thread" () void))
+  (define c-activate   (foreign-procedure "repl_activate_thread" () int))
 
   ;; errno
   (define c-errno-location (foreign-procedure "__errno_location" () void*))
@@ -52,6 +89,8 @@
   (define F_GETFL 3)
   (define F_SETFL 4)
   (define O_NONBLOCK #x800)
+  (define POLLIN #x001)
+  (define POLLFD_SIZE 8)  ;; struct pollfd: int fd, short events, short revents
 
   ;; ========== Helpers ==========
 
@@ -176,5 +215,70 @@
            [result (make-bytevector len)])
       (bytevector-copy! bv start result 0 len)
       result))
+
+  (define (repl-socket-poll fd timeout-ms)
+    ;; Use poll() to wait for data on fd with a timeout.
+    ;; Returns 'ready if data available, #f on timeout, 'error on error.
+    ;; This is a pure C call — it does NOT interact with Chez GC.
+    (let ([pfd (foreign-alloc POLLFD_SIZE)])
+      (foreign-set! 'int pfd 0 fd)              ;; .fd
+      (foreign-set! 'short pfd 4 POLLIN)         ;; .events
+      (foreign-set! 'short pfd 6 0)              ;; .revents
+      (let ([rc (c-poll pfd 1 timeout-ms)])
+        (let ([result (cond
+                        [(> rc 0) 'ready]
+                        [(= rc 0) #f]       ;; timeout
+                        [else 'error])])
+          (foreign-free pfd)
+          result))))
+
+  (define (repl-socket-nanosleep ms)
+    ;; Sleep for ms milliseconds using raw nanosleep().
+    ;; This is a pure C call — does NOT use Chez sleep/condition-wait,
+    ;; so it doesn't participate in GC rendezvous.
+    (let ([ts (foreign-alloc 16)])  ;; struct timespec: long tv_sec, long tv_nsec
+      (foreign-set! 'long ts 0 (quotient ms 1000))
+      (foreign-set! 'long ts 8 (* (remainder ms 1000) 1000000))
+      (c-nanosleep ts 0)
+      (foreign-free ts)))
+
+  (define (repl-deactivate-thread!)
+    ;; Deactivate this Chez thread for GC purposes.
+    ;; After this call, GC will NOT wait for this thread at rendezvous.
+    ;; The thread must NOT touch any Scheme heap objects until reactivated.
+    (c-deactivate))
+
+  (define (repl-activate-thread!)
+    ;; Reactivate this Chez thread. Must be called before accessing any
+    ;; Scheme objects. Will block if a GC is currently in progress (safe).
+    (c-activate))
+
+  ;; ========== GC-safe subprocess/file I/O ==========
+  ;;
+  ;; These functions deactivate the Chez thread during the blocking C call
+  ;; (popen+fread, fopen+fread, fopen+fwrite) and reactivate before returning.
+  ;; The Chez FFI converts the C string return to a Scheme string AFTER
+  ;; reactivation, so heap allocation is safe.
+
+  (define c-capture-command
+    (foreign-procedure "repl_capture_command" (string) string))
+  (define c-read-file
+    (foreign-procedure "repl_read_file" (string) string))
+  (define c-write-file
+    (foreign-procedure "repl_write_file" (string string size_t) int))
+
+  (define (repl-capture-command cmd)
+    ;; Run a shell command in a GC-safe way.  The thread is deactivated
+    ;; during the blocking popen/fread so GC can proceed.
+    ;; Returns the command's stdout as a string (empty string on error).
+    (c-capture-command cmd))
+
+  (define (repl-read-file path)
+    ;; Read a file in a GC-safe way.  Returns content string (empty on error).
+    (c-read-file path))
+
+  (define (repl-write-file path content)
+    ;; Write content to a file in a GC-safe way.  Returns #t/#f.
+    (= 0 (c-write-file path content (string-length content))))
 
 ) ;; end library
