@@ -323,12 +323,13 @@
     (if (not env)
       "$ "
       (let* ((ps1 (or (env-get env "PS1") "$ "))
-             (env-getter (lambda (name) (env-get env name))))
+             (env-getter (lambda (name) (env-get env name)))
+             (cmd-exec (make-cmd-exec-fn env)))
         (expand-prompt ps1 env-getter
                        0  ; job-count
                        (shell-environment-cmd-number env)
                        0  ; history-number
-                       )))))
+                       cmd-exec)))))
 
 (def (terminal-prompt ts)
   "Return the expanded PS1 prompt string (ANSI stripped)."

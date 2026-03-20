@@ -254,9 +254,10 @@
   "Configure QScintilla editor: theme, margins, caret, save-point signals."
   ;; Apply theme colors from face system
   (qt-apply-editor-theme! ed)
-  ;; Line number margin (margin 0)
+  ;; Line number margin (margin 0) — scale width with font size
   (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
-  (sci-send ed SCI_SETMARGINWIDTHN 0 50)
+  (sci-send ed SCI_SETMARGINWIDTHN 0
+    (max 30 (inexact->exact (round (* (/ *default-font-size* 11.0) 50)))))
   ;; Disable other margins (symbol, fold) to avoid white gutters
   (sci-send ed SCI_SETMARGINWIDTHN 1 0)  ; symbol margin
   (sci-send ed SCI_SETMARGINWIDTHN 2 0)  ; fold margin

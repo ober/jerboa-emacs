@@ -61,12 +61,18 @@
 
 (def (apply-font-size-to-all-editors! app)
   "Apply the current global font size to all open editors."
-  (let ((fr (app-state-frame app)))
+  (let ((fr (app-state-frame app))
+        ;; Scale margin width proportionally to font size (50px at 11pt baseline)
+        (margin-w (max 30 (inexact->exact (round (* (/ *default-font-size* 11.0) 50))))))
     (for-each
       (lambda (win)
         (let ((ed (qt-edit-window-editor win)))
           (sci-send ed SCI_STYLESETSIZE STYLE_DEFAULT *default-font-size*)
-          (sci-send ed SCI_STYLECLEARALL)))
+          (sci-send ed SCI_STYLECLEARALL)
+          ;; Recalculate margin width for new font size
+          (sci-send ed SCI_SETMARGINWIDTHN 0 margin-w)
+          ;; Re-apply theme (STYLECLEARALL resets colors)
+          (qt-apply-editor-theme! ed)))
       (qt-frame-windows fr)))
   ;; Update Qt stylesheet so chrome widgets match
   (when *qt-app-ptr*
