@@ -7,7 +7,7 @@
     qt-echo-read-string-with-completion
     qt-echo-read-file-with-completion
     qt-echo-read-file-with-narrowing qt-echo-read-with-narrowing
-    qt-minibuffer-init!)
+    qt-minibuffer-init! *minibuffer-active?*)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -50,6 +50,7 @@
   (def *mb-qt-app* #f)
   (def *mb-editor* #f)
   (def *mb-result* #f)
+  (define *minibuffer-active?*--cell (vector #f))
   (def *mb-completions* (list))
   (def *mb-tab-idx* 0)
   (def *mb-file-mode* #f)
@@ -367,8 +368,9 @@
            (lambda ()
              (cond
                [*mb-file-narrowing?*
-                (if *mb-user-selected?*
-                    (let ([selected (narrowing-selected-text)])
+                (let ([selected (narrowing-selected-text)]
+                      [has-matches (> (vector-length *mb-filtered*) 0)])
+                  (if has-matches
                       (cond
                         [(string-suffix? "/" selected)
                          (qt-line-edit-set-text!
@@ -376,10 +378,9 @@
                            (string-append *mb-file-dir* selected))]
                         [else
                          (set! *mb-result*
-                           (list
-                             (string-append *mb-file-dir* selected)))]))
-                    (set! *mb-result*
-                      (list (qt-line-edit-text *mb-input*))))]
+                           (list (string-append *mb-file-dir* selected)))])
+                      (set! *mb-result*
+                        (list (qt-line-edit-text *mb-input*)))))]
                [*mb-narrowing?*
                 (set! *mb-result* (list (narrowing-selected-text)))]
                [else
@@ -437,6 +438,7 @@
          (qt-widget-hide! *mb-echo-label*)
          (qt-widget-show! *mb-container*)
          (qt-widget-set-focus! *mb-input*)
+         (set! *minibuffer-active?* #t)
          (set! *mb-result* #f)
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
@@ -449,6 +451,7 @@
                                    (let ([t (car *mb-result*)])
                                      (if (string=? t "") #f t)))
                                #f)])
+                 (set! *minibuffer-active?* #f)
                  (qt-widget-hide! *mb-container*)
                  (qt-widget-show! *mb-echo-label*)
                  (let ([ed (qt-current-editor fr)])
@@ -474,6 +477,7 @@
            (qt-widget-hide! *mb-echo-label*)
            (qt-widget-show! *mb-container*)
            (qt-widget-set-focus! *mb-input*)
+           (set! *minibuffer-active?* #t)
            (set! *mb-result* #f)
            (let loop ()
              (qt-app-process-events! *mb-qt-app*)
@@ -486,6 +490,7 @@
                                      (let ([t (car *mb-result*)])
                                        (if (string=? t "") #f t)))
                                  #f)])
+                   (set! *minibuffer-active?* #f)
                    (set! *mb-completions* (list))
                    (set! *mb-tab-idx* 0)
                    (qt-line-edit-set-completer! *mb-input* #f)
@@ -509,6 +514,7 @@
          (qt-widget-hide! *mb-echo-label*)
          (qt-widget-show! *mb-container*)
          (qt-widget-set-focus! *mb-input*)
+         (set! *minibuffer-active?* #t)
          (set! *mb-result* #f)
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
@@ -521,6 +527,7 @@
                                    (let ([t (car *mb-result*)])
                                      (if (string=? t "") #f t)))
                                #f)])
+                 (set! *minibuffer-active?* #f)
                  (set! *mb-file-mode* #f)
                  (set! *mb-completions* (list))
                  (set! *mb-tab-idx* 0)
@@ -561,6 +568,7 @@
          (qt-widget-show! *mb-list*)
          (qt-widget-show! *mb-container*)
          (qt-widget-set-focus! *mb-input*)
+         (set! *minibuffer-active?* #t)
          (set! *mb-result* #f)
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
@@ -573,6 +581,7 @@
                                    (let ([t (car *mb-result*)])
                                      (if (string=? t "") #f t)))
                                #f)])
+                 (set! *minibuffer-active?* #f)
                  (set! *mb-narrowing?* #f)
                  (set! *mb-all-candidates* (list))
                  (set! *mb-filtered* (vector))
@@ -603,6 +612,7 @@
          (qt-widget-show! *mb-list*)
          (qt-widget-show! *mb-container*)
          (qt-widget-set-focus! *mb-input*)
+         (set! *minibuffer-active?* #t)
          (set! *mb-result* #f)
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
@@ -615,6 +625,7 @@
                                    (let ([t (car *mb-result*)])
                                      (if (string=? t "") #f t)))
                                #f)])
+                 (set! *minibuffer-active?* #f)
                  (set! *mb-narrowing?* #f)
                  (set! *mb-file-narrowing?* #f)
                  (set! *mb-file-dir* "")
@@ -628,4 +639,11 @@
                  (let ([ed (qt-current-editor fr)])
                    (when ed (qt-widget-set-focus! ed)))
                  text)
-               (loop))))))
+               (loop)))))
+  (define-syntax *minibuffer-active?*
+    (identifier-syntax
+      [id (vector-ref *minibuffer-active?*--cell 0)]
+      [(set! id val) (vector-set!
+                       *minibuffer-active?*--cell
+                       0
+                       val)])))

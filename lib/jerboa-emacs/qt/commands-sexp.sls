@@ -1099,10 +1099,10 @@
                            (qt-plain-text-edit-set-cursor-position! ed 0)
                            (when output (qt-highlight-diff! ed))
                            (with-catch
-                             void
+                             (lambda (_e) (void))
                              (lambda () (delete-file tmp-a)))
                            (with-catch
-                             void
+                             (lambda (_e) (void))
                              (lambda () (delete-file tmp-b)))
                            (echo-message!
                              (app-state-echo app)

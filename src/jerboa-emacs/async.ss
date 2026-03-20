@@ -151,7 +151,9 @@
       (let-values (((action found) (channel-try-get *ui-queue*)))
         (when found
           (with-catch
-            (lambda (e) (jemacs-log! "UI queue error: " (format "~a" e)))
+            (lambda (e) (verbose-log! "UI-QUEUE-ERROR: "
+                                     (with-output-to-string
+                                       (lambda () (display-exception e)))))
             action)
           (loop (+ n 1)))))))
 
@@ -187,11 +189,15 @@
                    (thunk (cadddr task)))
                (if (>= (- now last) interval)
                  (begin
+                   (verbose-log! "TICK " (symbol->string name) " begin")
                    (with-catch
                      (lambda (e)
-                       (jemacs-log! "Timer error in " name ": "
-                                    (format "~a" e)))
+                       (verbose-log! "TIMER-ERROR in "
+                                     (symbol->string name) ": "
+                                     (with-output-to-string
+                                       (lambda () (display-exception e)))))
                      thunk)
+                   (verbose-log! "TICK " (symbol->string name) " end")
                    [name interval now thunk])
                  task)))
            *scheduled-tasks*))))

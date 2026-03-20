@@ -75,8 +75,8 @@
    qt-layout-set-margins! qt-layout-set-spacing!
    qt-layout-set-stretch-factor! qt-label-create
    qt-label-set-alignment! qt-label-set-pixmap!
-   qt-label-set-text! qt-last-key-code qt-last-key-modifiers
-   qt-last-key-text qt-line-edit-create
+   qt-label-set-text! qt-label-text qt-last-key-code
+   qt-last-key-modifiers qt-last-key-text qt-line-edit-create
    qt-line-edit-set-completer! qt-line-edit-set-text!
    qt-line-edit-text qt-list-widget-add-item!
    qt-list-widget-clear! qt-list-widget-create
@@ -249,7 +249,12 @@
   (def (sci-recv-string sci msg (wparam 0))
        (qt-scintilla-receive-string sci msg wparam))
   (def (rgb->sci r g b) (+ r (* 256 g) (* 65536 b)))
-  (def (qt-drain-pending-callbacks!) (void))
+  (def ffi-drain-pending-callbacks
+       (foreign-procedure "chez_qt_drain_pending_callbacks"
+         ()
+         void))
+  (def (qt-drain-pending-callbacks!)
+       (ffi-drain-pending-callbacks))
   (define *doc-editor-map*--cell (vector (make-hash-table)))
   (define *doc-buffer-map*--cell (vector (make-hash-table)))
   (def (doc-editor-register! doc editor)
@@ -323,7 +328,74 @@
          (mode #f))
        (let* ([keep-anchor? (and mode (= mode QT_KEEP_ANCHOR))]
               [cur-pos (sci-send sci SCI_GETCURRENTPOS)]
-              [new-pos cur-pos])
+              [new-pos (cond
+                         [(= op QT_CURSOR_END)
+                          (sci-send sci SCI_GETTEXTLENGTH)]
+                         [(= op QT_CURSOR_START) 0]
+                         [(= op QT_CURSOR_END_OF_BLOCK)
+                          (let ([line (sci-send
+                                        sci
+                                        SCI_LINEFROMPOSITION
+                                        cur-pos)])
+                            (sci-send sci SCI_GETLINEENDPOSITION line))]
+                         [(= op QT_CURSOR_START_OF_BLOCK)
+                          (let ([line (sci-send
+                                        sci
+                                        SCI_LINEFROMPOSITION
+                                        cur-pos)])
+                            (sci-send sci SCI_POSITIONFROMLINE line))]
+                         [(= op QT_CURSOR_DOWN)
+                          (let* ([line (sci-send
+                                         sci
+                                         SCI_LINEFROMPOSITION
+                                         cur-pos)]
+                                 [col (sci-send sci SCI_GETCOLUMN cur-pos)]
+                                 [max-line (- (sci-send
+                                                sci
+                                                SCI_GETLINECOUNT)
+                                              1)]
+                                 [new-line (min (+ line 1) max-line)])
+                            (sci-send sci SCI_FINDCOLUMN new-line col))]
+                         [(= op QT_CURSOR_UP)
+                          (let* ([line (sci-send
+                                         sci
+                                         SCI_LINEFROMPOSITION
+                                         cur-pos)]
+                                 [col (sci-send sci SCI_GETCOLUMN cur-pos)]
+                                 [new-line (max (- line 1) 0)])
+                            (sci-send sci SCI_FINDCOLUMN new-line col))]
+                         [(= op QT_CURSOR_NEXT_CHAR)
+                          (min (+ cur-pos 1)
+                               (sci-send sci SCI_GETTEXTLENGTH))]
+                         [(= op QT_CURSOR_PREVIOUS_CHAR)
+                          (max (- cur-pos 1) 0)]
+                         [(= op QT_CURSOR_NEXT_WORD)
+                          (let* ([text (qt-plain-text-edit-text sci)]
+                                 [len (string-length text)])
+                            (let loop ([i cur-pos] [in-word? #t])
+                              (cond
+                                [(>= i len) len]
+                                [(char-alphabetic? (string-ref text i))
+                                 (if in-word? (loop (+ i 1) #t) i)]
+                                [(char-whitespace? (string-ref text i))
+                                 (loop (+ i 1) #f)]
+                                [in-word? (loop (+ i 1) #f)]
+                                [else i])))]
+                         [(= op QT_CURSOR_PREVIOUS_WORD)
+                          (let ([text (qt-plain-text-edit-text sci)])
+                            (let loop ([i (max (- cur-pos 1) 0)]
+                                       [in-space? #t])
+                              (cond
+                                [(<= i 0) 0]
+                                [(char-whitespace? (string-ref text i))
+                                 (if in-space? (loop (- i 1) #t) (+ i 1))]
+                                [(char-alphabetic? (string-ref text i))
+                                 (if in-space?
+                                     (loop (- i 1) #f)
+                                     (loop (- i 1) #f))]
+                                [in-space? (loop (- i 1) #f)]
+                                [else (+ i 1)])))]
+                         [else cur-pos])])
          (let ([safe-pos (min new-pos (sci-send sci SCI_GETLENGTH))])
            (if keep-anchor?
                (sci-send sci SCI_SETCURRENTPOS safe-pos)

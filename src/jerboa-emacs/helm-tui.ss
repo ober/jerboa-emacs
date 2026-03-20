@@ -240,7 +240,7 @@
                (src (helm-candidate-source cand))
                (pa (helm-source-persistent-action src)))
           (when pa
-            (with-catch void (lambda () (pa (helm-candidate-real cand))))))))))
+            (with-catch (lambda (_e) (void)) (lambda () (pa (helm-candidate-real cand))))))))))
 
 ;;;============================================================================
 ;;; Action menu

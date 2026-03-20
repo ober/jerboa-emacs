@@ -260,7 +260,7 @@
        "Stop the LSP server — send shutdown, then exit, then kill process."
        (when *lsp-process*
          (with-catch
-           void
+           (lambda (_e) (void))
            (lambda ()
              (let ([msg (make-hash-table)])
                (hash-put! msg "jsonrpc" "2.0")
@@ -268,11 +268,13 @@
                (hash-put! msg "method" "shutdown")
                (lsp-write-message *lsp-process* msg))))
          (with-catch
-           void
+           (lambda (_e) (void))
            (lambda () (lsp-send-notification! "exit" #f)))
-         (with-catch void (lambda () (close-port *lsp-process*)))
          (with-catch
-           void
+           (lambda (_e) (void))
+           (lambda () (close-port *lsp-process*)))
+         (with-catch
+           (lambda (_e) (void))
            (lambda ()
              (when *lsp-process* (process-status *lsp-process*)))))
        (set! *lsp-process* #f) (set! *lsp-request-id* 0)

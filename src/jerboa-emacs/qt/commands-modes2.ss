@@ -825,7 +825,7 @@
     (if (not path)
       (echo-message! (app-state-echo app) "Buffer has no file")
       (begin
-        (with-catch void (lambda () (open-process (list path: "xdg-open" arguments: (list path)))))
+        (with-catch (lambda (_e) (void)) (lambda () (open-process (list path: "xdg-open" arguments: (list path)))))
         (echo-message! (app-state-echo app) (string-append "Opening with system handler: " path))))))
 
 (def (cmd-crux-duplicate-current-line app)

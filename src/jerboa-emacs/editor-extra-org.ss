@@ -1202,7 +1202,7 @@
     (for-each
       (lambda (file)
         (when (file-exists? file)
-          (with-catch void
+          (with-catch (lambda (_e) (void))
             (lambda ()
               (let ((text (read-file-as-string file)))
                 (set! items (append items

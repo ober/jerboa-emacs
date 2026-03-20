@@ -870,7 +870,7 @@
            (lambda (file)
              (when (file-exists? file)
                (with-catch
-                 void
+                 (lambda (_e) (void))
                  (lambda ()
                    (let ([text (read-file-as-string file)])
                      (set! items

@@ -596,8 +596,8 @@
                  (output (read-line proc #f))
                  (status (process-status proc)))
             ;; Clean up temp files
-            (with-catch void (lambda () (delete-file tmp1)))
-            (with-catch void (lambda () (delete-file tmp2)))
+            (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp1)))
+            (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp2)))
             (if (and output (> (string-length output) 0))
               ;; Show diff in *Diff* buffer
               (let ((diff-buf (or (buffer-by-name "*Diff*")
@@ -985,8 +985,8 @@
                          (output (read-line proc #f))
                          (status (process-status proc)))
                     ;; Cleanup temp files
-                    (with-catch void (lambda () (delete-file tmp-a)))
-                    (with-catch void (lambda () (delete-file tmp-b)))
+                    (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp-a)))
+                    (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp-b)))
                     ;; Show diff in buffer
                     (let ((diff-buf (buffer-create! "*Diff*" ed #f)))
                       (buffer-attach! ed diff-buf)
@@ -1320,7 +1320,7 @@
                               arguments: (list "cp" tmp path)
                               stderr-redirection: #t)))
                (status (process-status proc)))
-          (with-catch void (lambda () (delete-file tmp)))
+          (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp)))
           (if (= status 0)
             (begin
               (editor-set-save-point ed)

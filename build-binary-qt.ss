@@ -69,7 +69,7 @@
       (format "~a/mine/gherkin/src" home)))
 (define jsh-dir
   (or (getenv "JSH_DIR")
-      (format "~a/mine/jerboa-shell/src" home)))
+      (format "~a/mine/jerboa-emacs/vendor/jerboa-shell/src" home)))
 (define pcre2-dir
   (or (getenv "CHEZ_PCRE2_DIR")
       (format "~a/mine/chez-pcre2" home)))
@@ -96,8 +96,8 @@
       (exit 1)))
   (list (format "~a/jerboa/core.so" jerboa-dir)
         (if jemacs-static?
-            (format "~a/qt_chez_shim.o" qt-dir)
-            (format "~a/qt_chez_shim.so" qt-dir))
+            "jemacs-qt-chez-shim.o"   ;; built locally from vendor/qt_chez_shim.c
+            "qt_chez_shim.so")
         (if jemacs-static?
             (format "~a/pcre2_shim.o" pcre2-dir)
             (format "~a/pcre2_shim.so" pcre2-dir))
@@ -183,23 +183,49 @@
         "runtime/mop"))
     ;; compat/gambit lives in jsh (not gherkin)
     (list (format "~a/compat/gambit.so" jsh-dir))
-    ;; jsh modules (WPO-missing)
+    ;; jsh modules (WPO-missing, all needed transitively)
     (map (lambda (m) (format "~a/jsh/~a.so" jsh-dir m))
       '("embed"
         "embed-data"
+        "ffi"
+        "static-compat"
+        "pregexp-compat"
+        "util"
         "arithmetic"
-        "functions"
         "ast"
         "environment"
         "registry"
-        "ffi"
-        "static-compat"))
+        "functions"
+        "signals"
+        "glob"
+        "expander"
+        "lexer"
+        "parser"
+        "redirect"
+        "pipeline"
+        "jobs"
+        "builtins"
+        "executor"
+        "control"
+        "script"
+        "macros"
+        "completion"
+        "fuzzy"
+        "fzf"
+        "history"
+        "prompt"
+        "lineedit"
+        "startup"
+        "stage"
+        "lib"))
     ;; chez-pcre2 (compiled by step 1)
     (map (lambda (m) (format "~a/chez-pcre2/~a.so" pcre2-dir m))
       '("ffi" "pcre2"))
-    ;; chez-scintilla: ffi (patched to skip load-shared-object in static builds) + constants
+    ;; std/net/request (WPO-missing)
+    (list (format "~a/std/net/request.so" jerboa-dir))
+    ;; chez-scintilla (all modules — WPO-missing)
     (map (lambda (m) (format "~a/chez-scintilla/~a.so" sci-dir m))
-      '("ffi" "constants"))
+      '("ffi" "constants" "style" "lexer" "scintilla" "tui"))
     ;; chez-qt
     (map (lambda (m) (format "~a/chez-qt/~a.so" qt-dir m))
       '("ffi" "qt"))
@@ -312,13 +338,21 @@
     (display "Error: pcre2 shim compilation failed\n")
     (exit 1)))
 
-;; qt_chez_shim
-(let* ((qt-cflags (shell-output "pkg-config --cflags Qt6Widgets" ""))
-       (cmd (format "gcc -c -O2 -DQT_SCINTILLA_AVAILABLE -o jemacs-qt-chez-shim.o ~a/qt_chez_shim.c -I~a ~a -Wall 2>&1"
-                    qt-dir qt-shim-dir qt-cflags)))
-  (unless (= 0 (system cmd))
-    (display "Error: qt_chez_shim compilation failed\n")
-    (exit 1)))
+;; qt_chez_shim — use jerboa-emacs deferred-callback version (avoids Sactivate_thread GC deadlock)
+(let* ((qt-cflags (shell-output "pkg-config --cflags Qt6Widgets" "")))
+  ;; Static .o for static builds
+  (let ((cmd (format "gcc -c -O2 -DQT_SCINTILLA_AVAILABLE -o jemacs-qt-chez-shim.o vendor/qt_chez_shim.c -I~a ~a -Wall 2>&1"
+                     qt-shim-dir qt-cflags)))
+    (unless (= 0 (system cmd))
+      (display "Error: qt_chez_shim compilation failed\n")
+      (exit 1)))
+  ;; Shared .so for dynamic builds
+  (unless jemacs-static?
+    (let ((cmd (format "gcc -shared -fPIC -O2 -DQT_SCINTILLA_AVAILABLE -o qt_chez_shim.so vendor/qt_chez_shim.c -I~a ~a -Wall 2>&1"
+                       qt-shim-dir qt-cflags)))
+      (unless (= 0 (system cmd))
+        (display "Error: qt_chez_shim.so compilation failed\n")
+        (exit 1)))))
 
 ;; Static: generate + compile foreign symbol registration table
 ;; (dlopen(NULL) is a stub in musl static builds, so we use Sforeign_symbol instead)
@@ -457,8 +491,10 @@ qt_static_symbols.o \
   ;; ─── Dynamic link (default local build) ────────────────────────────────
   (let* ((pcre2-libs (shell-output "pkg-config --libs libpcre2-8" "-lpcre2-8"))
          (qt-libs    (shell-output "pkg-config --libs Qt6Widgets" "-lQt6Widgets -lQt6Gui -lQt6Core"))
-         (cmd (format "g++ -rdynamic -o jemacs-qt jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o ~a ~a -L~a -lkernel -llz4 -lz -lm -ldl -lpthread -luuid -lncurses -lstdc++ -L~a -lqt_shim -lqscintilla2_qt6 -Wl,-rpath,~a -Wl,-rpath,~a 2>&1"
-                      pcre2-libs qt-libs chez-dir qt-shim-dir chez-dir qt-shim-dir)))
+         ;; Link against ./libqt_shim.so (local copy with JEMACS_CHEZ_SMP)
+         ;; rather than qt-shim-dir (gerbil-qt vendor — no Sdeactivate)
+         (cmd (format "g++ -rdynamic -o jemacs-qt jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o ~a ~a -L~a -lkernel -llz4 -lz -lm -ldl -lpthread -luuid -lncurses -lstdc++ -L. -lqt_shim -lqscintilla2_qt6 -Wl,-rpath,~a -Wl,-rpath,'$ORIGIN' 2>&1"
+                      pcre2-libs qt-libs chez-dir chez-dir)))
     (printf "  ~a~n" cmd)
     (unless (= 0 (system cmd))
       (display "Error: Link failed\n")
@@ -493,7 +529,7 @@ qt_static_symbols.o \
   (begin
     ;; Copy shim .so files alongside binary for dynamic builds
     (system (format "cp ~a/libqt_shim.so . 2>/dev/null; true" qt-shim-dir))
-    (system (format "cp ~a/qt_chez_shim.so . 2>/dev/null; true" qt-dir))
+    ;; qt_chez_shim.so already built locally from vendor/qt_chez_shim.c
     (system (format "cp ~a/pcre2_shim.so . 2>/dev/null; true" pcre2-dir))
     (printf "~nBundle (keep these together):~n")
     (printf "  ./jemacs-qt~n")

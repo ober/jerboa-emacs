@@ -321,7 +321,10 @@
    - (cons 'done exit-status) — child exited
    - #f — nothing available"
   (let ((ch (shell-state-pty-channel ss)))
-    (and ch (channel-try-get ch))))
+    (if ch
+      (let-values (((value found) (channel-try-get ch)))
+        (if found value #f))
+      #f)))
 
 (def (shell-pty-busy? ss)
   "Check if a PTY command is currently running."

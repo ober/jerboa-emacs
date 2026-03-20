@@ -2171,7 +2171,8 @@
       (ffi-qt-completer-on-activated c id)
       (track-handler! c id)))
 
-  (define (qt-line-edit-set-completer! e c) (ffi-qt-line-edit-set-completer e (or c 0)))
+  (define (qt-line-edit-set-completer! e c)
+    (when e (ffi-qt-line-edit-set-completer e (or c 0))))
   (define (qt-completer-destroy! c) (ffi-qt-completer-destroy c))
 
   ;; -----------------------------------------------------------------------

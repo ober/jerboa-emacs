@@ -10,3 +10,6 @@ lib/**/*.wpo
 
 # Build symlinks / local artifacts
 libjsh-ffi.so
+
+# Vendored repos (cloned, not submodules)
+vendor/jerboa-shell/

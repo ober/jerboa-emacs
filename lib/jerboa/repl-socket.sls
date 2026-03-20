@@ -30,6 +30,23 @@
   ;; in the main binary, whether dynamically or statically linked.
   ;; Must always be called (even for static builds) so poll/nanosleep/etc.
   ;; are found by foreign-procedure.
+  ;; Helper: find directory containing the running binary via /proc/self/exe
+  (define (_exe-dir)
+    (guard (e [#t #f])
+      (let* ([c-readlink (foreign-procedure "readlink"
+                           (string u8* size_t) ssize_t)]
+             [buf (make-bytevector 4096 0)]
+             [n (c-readlink "/proc/self/exe" buf 4096)])
+        (if (<= n 0) #f
+          (let* ([sub (make-bytevector n)])
+            (bytevector-copy! buf 0 sub 0 n)
+            (let* ([exe (utf8->string sub)]
+                   [slash (let lp ([i (- (string-length exe) 1)])
+                            (cond [(< i 0) #f]
+                                  [(char=? (string-ref exe i) #\/) i]
+                                  [else (lp (- i 1))]))])
+              (if slash (substring exe 0 (+ slash 1)) #f)))))))
+
   (define _libc-loaded
     (let ((v (getenv "JEMACS_STATIC")))
       (if (and v (not (string=? v "")) (not (string=? v "0")))
@@ -37,17 +54,20 @@
           (begin
             (load-shared-object #f)
             ;; Load repl_shim.so for GC-safe subprocess/file I/O helpers.
-            ;; Try several paths: next to the binary, in support/, or via LD_LIBRARY_PATH.
-            (let try ((paths (list "repl_shim.so"
-                                   "./repl_shim.so"
-                                   "support/repl_shim.so"
-                                   "../support/repl_shim.so")))
-              (if (null? paths)
-                ;; If no .so found, the capture functions won't be available
-                ;; but socket functions (from libc) still work
-                (void)
-                (guard (e (#t (try (cdr paths))))
-                  (load-shared-object (car paths)))))))))
+            ;; Try CWD paths, then next to the binary via /proc/self/exe.
+            (let* ([exe-dir (_exe-dir)]
+                   [paths (append
+                            (list "repl_shim.so"
+                                  "./repl_shim.so"
+                                  "support/repl_shim.so")
+                            (if exe-dir
+                              (list (string-append exe-dir "repl_shim.so"))
+                              '()))])
+              (let try ((ps paths))
+                (if (null? ps)
+                  (void)
+                  (guard (e (#t (try (cdr ps))))
+                    (load-shared-object (car ps))))))))))
 
   (define c-socket    (foreign-procedure "socket" (int int int) int))
   (define c-bind      (foreign-procedure "bind" (int void* int) int))

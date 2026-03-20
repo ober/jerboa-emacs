@@ -98,50 +98,58 @@
      (jerboa-emacs helm-commands)
      cmd-helm-buffers-list
      cmd-helm-occur)
-   (jerboa core) (jerboa runtime))
+   (jerboa-emacs qt helm-commands) (jerboa core)
+   (jerboa runtime))
   (def (apply-dir-locals! app file-path)
        "Apply directory-local variables for FILE-PATH."
-       (when file-path
-         (let* ([dir (path-directory file-path)]
-                [config-file (find-dir-locals-file dir)])
-           (when config-file
-             (let* ([cached (hash-get *dir-locals-cache* config-file)]
-                    [current-mtime (file-mtime config-file)]
-                    [settings (if (and cached
-                                       current-mtime
-                                       (= (car cached) current-mtime))
-                                  (cdr cached)
-                                  (let ([s (read-dir-locals config-file)])
-                                    (when (and s current-mtime)
-                                      (hash-put!
-                                        *dir-locals-cache*
-                                        config-file
-                                        (cons current-mtime s)))
-                                    s))])
-               (when (and settings (list? settings))
-                 (for-each
-                   (lambda (pair)
-                     (when (pair? pair)
-                       (let ([key (car pair)] [val (cdr pair)])
-                         (case key
-                           [(tab-width)
-                            (when (and (integer? val)
-                                       (> val 0)
-                                       (<= val 16))
-                              (set! *tab-width* val))]
-                           [(indent-tabs-mode)
-                            (set! *indent-tabs-mode* (and val #t))]
-                           [(fill-column)
-                            (when (and (integer? val) (> val 0))
-                              (set! *fill-column* val))]
-                           [(compile-command)
-                            (when (string? val)
-                              (app-state-last-compile-set! app val))]
-                           [(auto-indent)
-                            (set! *auto-indent* (and val #t))]
-                           [(auto-pair-mode)
-                            (set! *auto-pair-mode* (and val #t))]))))
-                   settings)))))))
+       (with-catch
+         (lambda (e)
+           (verbose-log!
+             "apply-dir-locals! error: "
+             (with-output-to-string (lambda () (display-exception e)))))
+         (lambda ()
+           (when file-path
+             (let* ([dir (path-directory file-path)]
+                    [config-file (find-dir-locals-file dir)])
+               (when config-file
+                 (let* ([cached (hash-get *dir-locals-cache* config-file)]
+                        [current-mtime (file-mtime config-file)]
+                        [settings (if (and cached
+                                           current-mtime
+                                           (= (car cached) current-mtime))
+                                      (cdr cached)
+                                      (let ([s (read-dir-locals
+                                                 config-file)])
+                                        (when (and s current-mtime)
+                                          (hash-put!
+                                            *dir-locals-cache*
+                                            config-file
+                                            (cons current-mtime s)))
+                                        s))])
+                   (when (and settings (list? settings))
+                     (for-each
+                       (lambda (pair)
+                         (when (pair? pair)
+                           (let ([key (car pair)] [val (cdr pair)])
+                             (case key
+                               [(tab-width)
+                                (when (and (integer? val)
+                                           (> val 0)
+                                           (<= val 16))
+                                  (set! *tab-width* val))]
+                               [(indent-tabs-mode)
+                                (set! *indent-tabs-mode* (and val #t))]
+                               [(fill-column)
+                                (when (and (integer? val) (> val 0))
+                                  (set! *fill-column* val))]
+                               [(compile-command)
+                                (when (string? val)
+                                  (app-state-last-compile-set! app val))]
+                               [(auto-indent)
+                                (set! *auto-indent* (and val #t))]
+                               [(auto-pair-mode)
+                                (set! *auto-pair-mode* (and val #t))]))))
+                       settings)))))))))
   (def (qt-apply-editorconfig! app file-path)
        "Apply .editorconfig settings for FILE-PATH in Qt mode."
        (when file-path
@@ -246,9 +254,9 @@
   (def (qt-open-image-inline! app filename)
        "Open an image file as an inline image buffer."
        (verbose-log! "qt-open-image-inline! begin file=" filename)
-       (gemacs-log! "IMG: loading pixmap " filename)
+       (verbose-log! "IMG: loading pixmap " filename)
        (let* ([pixmap (qt-pixmap-load filename)])
-         (gemacs-log!
+         (verbose-log!
            "IMG: pixmap loaded null="
            (if (qt-pixmap-null? pixmap) "yes" "no"))
          (if (qt-pixmap-null? pixmap)
@@ -260,11 +268,10 @@
              (let* ([name (path-strip-directory filename)]
                     [fr (app-state-frame app)]
                     [ed (current-qt-editor app)]
-                    [_ (gemacs-log! "IMG: creating buffer")]
                     [buf (qt-buffer-create! name ed filename)]
                     [orig-w (qt-pixmap-width pixmap)]
                     [orig-h (qt-pixmap-height pixmap)])
-               (gemacs-log!
+               (verbose-log!
                  "IMG: buffer created "
                  (number->string orig-w)
                  "x"
@@ -275,15 +282,15 @@
                  buf
                  (list pixmap (box 1.0) orig-w orig-h))
                (buffer-touch! buf)
-               (gemacs-log! "IMG: calling qt-buffer-attach!")
+               (verbose-log! "IMG: calling qt-buffer-attach!")
                (qt-buffer-attach! ed buf)
-               (gemacs-log! "IMG: qt-buffer-attach! done")
+               (verbose-log! "IMG: qt-buffer-attach! done buf=" name)
                (qt-edit-window-buffer-set! (qt-current-window fr) buf)
                (echo-message!
                  (app-state-echo app)
                  (string-append "Image: " name " (" (number->string orig-w)
                    "x" (number->string orig-h) ")"))
-               (gemacs-log! "IMG: qt-open-image-inline! done")))))
+               (verbose-log! "IMG: qt-open-image-inline! done")))))
   (def (cmd-find-file-at-point app)
        "Open file at point, or prompt with path at point as default."
        (let* ([ed (current-qt-editor app)]
@@ -375,9 +382,17 @@
                           app
                           "Find file: "
                           default-dir)])
+         (verbose-log!
+           "find-file: helm returned="
+           (if filename filename "#f"))
          (when filename
            (when (> (string-length filename) 0)
              (let ([filename (expand-filename filename)])
+               (verbose-log!
+                 "find-file: expanded="
+                 filename
+                 " image?="
+                 (if (image-file? filename) "yes" "no"))
                (if (tramp-path? filename)
                    (let-values ([(host remote-path)
                                  (tramp-parse-path filename)])
@@ -432,11 +447,20 @@
                                [fr (app-state-frame app)]
                                [ed (current-qt-editor app)]
                                [buf (qt-buffer-create! name ed filename)])
+                          (verbose-log!
+                            "find-file: attach begin file="
+                            filename)
                           (qt-buffer-attach! ed buf)
+                          (verbose-log!
+                            "find-file: attach done, setting window buf")
                           (qt-edit-window-buffer-set!
                             (qt-current-window fr)
                             buf)
+                          (verbose-log!
+                            "find-file: window buf set, file-exists?="
+                            (if (file-exists? filename) "yes" "no"))
                           (when (file-exists? filename)
+                            (verbose-log! "find-file: reading file")
                             (let ([text (read-file-as-string filename)])
                               (if text
                                   (begin
@@ -467,12 +491,19 @@
                                       filename
                                       "]"))))
                             (file-mtime-record! filename))
+                          (verbose-log! "find-file: highlighting")
                           (qt-setup-highlighting! app buf)
+                          (verbose-log! "find-file: dir-locals")
                           (apply-dir-locals! app filename)
+                          (verbose-log! "find-file: editorconfig")
                           (qt-apply-editorconfig! app filename)
+                          (verbose-log! "find-file: echo")
                           (echo-message!
                             echo
-                            (string-append "Opened: " filename)))]))))))))
+                            (string-append "Opened: " filename))
+                          (verbose-log!
+                            "find-file: DONE file="
+                            filename))]))))))))
   (def (cmd-save-buffer app)
        (let* ([ed (current-qt-editor app)]
               [buf (current-qt-buffer app)]
@@ -2091,7 +2122,8 @@
    (register-command!
      'screen-reader-mode
      cmd-screen-reader-mode)
-   (register-helm-commands!) (qt-register-parity3-toggles!)
+   (register-helm-commands!) (qt-register-helm-commands!)
+   (qt-register-parity3-toggles!)
    (qt-register-parity4-commands!)
    (qt-register-parity4-toggles!)
    (qt-register-parity5-commands!)

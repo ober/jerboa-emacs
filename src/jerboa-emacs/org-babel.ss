@@ -124,7 +124,7 @@
   (let* ((key (org-babel-session-key lang session-name))
          (proc (hash-get *org-babel-sessions* key)))
     (when proc
-      (with-catch void
+      (with-catch (lambda (_e) (void))
         (lambda ()
           (close-port (cdr proc))  ;; out-port
           (close-port (car proc)))) ;; in-port
@@ -134,7 +134,7 @@
   "Kill all active babel sessions."
   (hash-for-each
     (lambda (key proc)
-      (with-catch void
+      (with-catch (lambda (_e) (void))
         (lambda ()
           (close-port (cdr proc))  ;; out-port
           (close-port (car proc))))) ;; in-port

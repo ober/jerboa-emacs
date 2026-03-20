@@ -1245,7 +1245,9 @@
                                   (let ([output (read-line port #f)])
                                     (close-port port)
                                     (or output "No differences")))))])
-               (with-catch void (lambda () (delete-file tmp-path)))
+               (with-catch
+                 (lambda (_e) (void))
+                 (lambda () (delete-file tmp-path)))
                (let* ([fr (app-state-frame app)]
                       [diff-buf (or (buffer-by-name "*Diff*")
                                     (qt-buffer-create! "*Diff*" ed #f))])

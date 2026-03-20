@@ -60,8 +60,9 @@
 
 (def (qt-window-process-events!)
   "Process pending Qt events if app pointer is available."
-  (when *qt-app-for-events*
-    (qt-app-process-events! *qt-app-for-events*)))
+  (let ((app *qt-app-for-events*))
+    (when app
+      (qt-app-process-events! app))))
 
 ;;;============================================================================
 ;;; Structures

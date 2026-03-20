@@ -72,7 +72,7 @@
   qt-layout-add-stretch! qt-layout-add-widget! qt-layout-set-margins!
   qt-layout-set-spacing! qt-layout-set-stretch-factor!
   ;; Label
-  qt-label-create qt-label-set-alignment! qt-label-set-pixmap! qt-label-set-text!
+  qt-label-create qt-label-set-alignment! qt-label-set-pixmap! qt-label-set-text! qt-label-text
   ;; Key events
   qt-last-key-code qt-last-key-modifiers qt-last-key-text
   ;; Line edit
@@ -257,8 +257,11 @@
 (def (rgb->sci r g b)
   (+ r (* 256 g) (* 65536 b)))
 
-;; Callback queue drain — gerbil-qt has a custom queue, chez-qt handles it via event loop
-(def (qt-drain-pending-callbacks!) (void))
+;; Callback queue drain — calls C-level chez_qt_drain_pending_callbacks()
+;; which pops deferred Qt signal events and dispatches them on the primordial thread.
+(def ffi-drain-pending-callbacks
+  (foreign-procedure "chez_qt_drain_pending_callbacks" () void))
+(def (qt-drain-pending-callbacks!) (ffi-drain-pending-callbacks))
 
 ;; Document tracking
 (def *doc-editor-map* (make-hash-table))
@@ -332,14 +335,69 @@
 (def (qt-plain-text-edit-line-end-position sci line)
   (sci-send sci SCI_GETLINEENDPOSITION line))
 
-;; Cursor movement - simplified for now
+;; Cursor movement — maps QT_CURSOR_* constants to Scintilla positions
 (def (qt-plain-text-edit-move-cursor! sci op mode: (mode #f))
   (let* ((keep-anchor? (and mode (= mode QT_KEEP_ANCHOR)))
          (cur-pos (sci-send sci SCI_GETCURRENTPOS))
-         (new-pos cur-pos))  ;; Stub - needs full implementation
+         (new-pos
+          (cond
+            ((= op QT_CURSOR_END)
+             (sci-send sci SCI_GETTEXTLENGTH))
+            ((= op QT_CURSOR_START)
+             0)
+            ((= op QT_CURSOR_END_OF_BLOCK)
+             (let ((line (sci-send sci SCI_LINEFROMPOSITION cur-pos)))
+               (sci-send sci SCI_GETLINEENDPOSITION line)))
+            ((= op QT_CURSOR_START_OF_BLOCK)
+             (let ((line (sci-send sci SCI_LINEFROMPOSITION cur-pos)))
+               (sci-send sci SCI_POSITIONFROMLINE line)))
+            ((= op QT_CURSOR_DOWN)
+             (let* ((line (sci-send sci SCI_LINEFROMPOSITION cur-pos))
+                    (col (sci-send sci SCI_GETCOLUMN cur-pos))
+                    (max-line (- (sci-send sci SCI_GETLINECOUNT) 1))
+                    (new-line (min (+ line 1) max-line)))
+               (sci-send sci SCI_FINDCOLUMN new-line col)))
+            ((= op QT_CURSOR_UP)
+             (let* ((line (sci-send sci SCI_LINEFROMPOSITION cur-pos))
+                    (col (sci-send sci SCI_GETCOLUMN cur-pos))
+                    (new-line (max (- line 1) 0)))
+               (sci-send sci SCI_FINDCOLUMN new-line col)))
+            ((= op QT_CURSOR_NEXT_CHAR)
+             (min (+ cur-pos 1) (sci-send sci SCI_GETTEXTLENGTH)))
+            ((= op QT_CURSOR_PREVIOUS_CHAR)
+             (max (- cur-pos 1) 0))
+            ((= op QT_CURSOR_NEXT_WORD)
+             ;; Scan forward past current word, then past whitespace
+             (let* ((text (qt-plain-text-edit-text sci))
+                    (len (string-length text)))
+               (let loop ((i cur-pos) (in-word? #t))
+                 (cond
+                   ((>= i len) len)
+                   ((char-alphabetic? (string-ref text i))
+                    (if in-word? (loop (+ i 1) #t) i))
+                   ((char-whitespace? (string-ref text i))
+                    (loop (+ i 1) #f))
+                   (in-word? (loop (+ i 1) #f))
+                   (else i)))))
+            ((= op QT_CURSOR_PREVIOUS_WORD)
+             ;; Scan backward past whitespace, then past word
+             (let ((text (qt-plain-text-edit-text sci)))
+               (let loop ((i (max (- cur-pos 1) 0)) (in-space? #t))
+                 (cond
+                   ((<= i 0) 0)
+                   ((char-whitespace? (string-ref text i))
+                    (if in-space? (loop (- i 1) #t) (+ i 1)))
+                   ((char-alphabetic? (string-ref text i))
+                    (if in-space? (loop (- i 1) #f) (loop (- i 1) #f)))
+                   (in-space? (loop (- i 1) #f))
+                   (else (+ i 1))))))
+            (else cur-pos))))
+    ;; Apply the movement (clamp to document length for safety)
     (let ((safe-pos (min new-pos (sci-send sci SCI_GETLENGTH))))
       (if keep-anchor?
+        ;; Keep anchor — extends selection
         (sci-send sci SCI_SETCURRENTPOS safe-pos)
+        ;; Move anchor too — no selection
         (sci-send sci SCI_GOTOPOS safe-pos)))))
 
 (def (qt-plain-text-edit-ensure-cursor-visible! sci)

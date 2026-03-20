@@ -328,12 +328,29 @@
   (define *dir-locals-cache*--cell (vector (make-hash-table)))
   (def (find-dir-locals-file dir)
        "Search DIR and parent directories for .gemacs-config file."
-       (let loop ([d dir])
-         (let ([config-path (path-expand ".gemacs-config" d)])
-           (cond
-             [(file-exists? config-path) config-path]
-             [(string=? d "/") #f]
-             [else (loop (path-directory (string-append d "/")))]))))
+       (let loop ([d dir] [depth 0])
+         (cond
+           [(> depth 50) #f]
+           [(or (not d) (string=? d "") (string=? d "/")) #f]
+           [else
+            (let ([config-path (path-expand ".gemacs-config" d)])
+              (if (file-exists? config-path)
+                  config-path
+                  (let* ([stripped (if (and (> (string-length d) 1)
+                                            (char=?
+                                              (string-ref
+                                                d
+                                                (- (string-length d) 1))
+                                              #\/))
+                                       (substring
+                                         d
+                                         0
+                                         (- (string-length d) 1))
+                                       d)]
+                         [parent (path-directory stripped)])
+                    (if (string=? parent stripped)
+                        #f
+                        (loop parent (+ depth 1))))))])))
   (def (read-dir-locals file)
        "Read directory-local settings from FILE. Returns alist or #f."
        (with-catch
@@ -963,13 +980,22 @@
   (def (cmd-delete-window app)
        (let ([fr (app-state-frame app)])
          (if (> (length (qt-frame-windows fr)) 1)
-             (begin (winner-save! fr) (qt-frame-delete-window! fr))
+             (begin
+               (winner-save! fr)
+               (qt-frame-delete-window! fr)
+               (when (app-state-key-handler app)
+                 ((app-state-key-handler app)
+                   (qt-edit-window-editor (qt-current-window fr)))))
              (echo-error!
                (app-state-echo app)
                "Can't delete sole window"))))
   (def (cmd-delete-other-windows app)
        (winner-save! (app-state-frame app))
-       (qt-frame-delete-other-windows! (app-state-frame app)))
+       (qt-frame-delete-other-windows! (app-state-frame app))
+       (when (app-state-key-handler app)
+         ((app-state-key-handler app)
+           (qt-edit-window-editor
+             (qt-current-window (app-state-frame app))))))
   (def (cmd-ace-window app)
        (let* ([fr (app-state-frame app)]
               [wins (qt-frame-windows fr)]

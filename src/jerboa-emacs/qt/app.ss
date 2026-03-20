@@ -145,6 +145,7 @@
 
 ;; Master timer tick function — set by qt-do-init!, called from qt-app-exec! loop
 (def *master-timer-tick-fn* #f)
+(def *pty-poll-logged?* #f)
 
 ;; Which-key state — show available bindings after prefix key delay
 (def *which-key-timer* #f)
@@ -378,12 +379,10 @@
 (def (qt-do-init! qt-app args)
   ;; Initialize runtime error log (~/.gemacs-errors.log)
   (init-jemacs-log!)
-  ;; Verbose hang-diagnosis log: --verbose opens ~/.gemacs-verbose.log and
-  ;; enables per-BlockingQueuedConnection tracing in the Qt shim.
-  (when (member "--verbose" args)
-    (let ((vpath (init-verbose-log!)))
-      ;; Note: qt-verbose-log-enable! not available in chez-qt
-      (verbose-log! "gemacs-qt verbose mode ON")))
+  ;; Verbose hang-diagnosis log: always enabled for debugging.
+  ;; Opens ~/.jemacs-verbose.log for timestamped diagnostic output.
+  (init-verbose-log!)
+  (verbose-log! "gemacs-qt verbose mode ON")
     ;; Initialize face system with standard faces
     (define-standard-faces!)
     ;; Load saved theme and font settings from ~/.gemacs-theme
@@ -460,6 +459,8 @@
 
       ;; Store Qt app pointer for clipboard access from commands
       (set! *qt-app-ptr* qt-app)
+      ;; Also store in window module for process-events during splits
+      (qt-window-set-app-ptr! qt-app)
 
       ;; Set up keybindings and commands
       (setup-default-bindings!)
@@ -475,19 +476,24 @@
       (let ((image-key-installed (make-hash-table-eq)))
         (add-hook! 'post-buffer-attach-hook
           (lambda (editor buf)
-            (if (image-buffer? buf)
-              (begin
-                (qt-show-image-buffer! editor buf)
-                (let ((win (hash-get *editor-window-map* editor)))
-                  (when (and win (qt-edit-window-image-scroll win))
-                    (let ((scroll (qt-edit-window-image-scroll win)))
-                      (unless (hash-get image-key-installed scroll)
-                        ((app-state-key-handler app) scroll)
-                        (hash-put! image-key-installed scroll #t))
-                      (qt-widget-set-focus! scroll)))))
-              (begin
-                (qt-hide-image-buffer! editor)
-                (qt-widget-set-focus! editor))))))
+            (with-catch
+              (lambda (e)
+                (verbose-log! "post-buffer-attach-hook ERROR: "
+                  (with-output-to-string (lambda () (display-exception e)))))
+              (lambda ()
+                (if (image-buffer? buf)
+                  (begin
+                    (qt-show-image-buffer! editor buf)
+                    (let ((win (hash-get *editor-window-map* editor)))
+                      (when (and win (qt-edit-window-image-scroll win))
+                        (let ((scroll (qt-edit-window-image-scroll win)))
+                          (unless (hash-get image-key-installed scroll)
+                            ((app-state-key-handler app) scroll)
+                            (hash-put! image-key-installed scroll #t))
+                          (qt-widget-set-focus! scroll)))))
+                  (begin
+                    (qt-hide-image-buffer! editor)
+                    (qt-widget-set-focus! editor))))))))
 
       ;; Load recent files, bookmarks, keys, abbrevs, history from disk
       (recent-files-load!)
@@ -533,6 +539,10 @@
       ;; Uses consuming variant so QPlainTextEdit doesn't process keys itself.
       (let ((key-handler
              (lambda ()
+               ;; Guard: ignore editor keystrokes while minibuffer is blocking.
+               ;; Without this, qt-app-process-events! inside the minibuffer loop
+               ;; can re-enter the key handler, causing nested command dispatch.
+               (when (not *minibuffer-active?*)
                (let* ((code (qt-last-key-code))
                       (mods (normalize-qt-mods (qt-last-key-modifiers)))
                       (raw-text (qt-last-key-text))
@@ -826,7 +836,7 @@
 
                     ;; Case 3: Normal key — no chord involvement
                     (else
-                     (do-normal-key! code mods text))))))))))
+                     (do-normal-key! code mods text)))))))))))  ; extra paren closes minibuffer-active? when
 
         ;; Install on the initial editor (consuming — editor doesn't see keys)
         (qt-on-key-press-consuming! (qt-current-editor fr) key-handler)
@@ -881,6 +891,29 @@
                             (drain))))))))
               (when (terminal-buffer? buf)
                 (let ((ts (hash-get *terminal-state* buf)))
+                  ;; Resize PTY + vtscreen when editor dimensions change
+                  (when (and ts (terminal-pty-busy? ts))
+                    (let ((vt (terminal-state-vtscreen ts)))
+                      (when vt
+                        ;; Find editor widget for this buffer
+                        (let ed-loop ((wins (qt-frame-windows fr)))
+                          (when (pair? wins)
+                            (if (eq? (qt-edit-window-buffer (car wins)) buf)
+                              (let* ((ed (qt-edit-window-editor (car wins)))
+                                     (new-rows (max 2 (sci-send ed 2370 0)))
+                                     (widget-w (qt-widget-width ed))
+                                     (new-cols (max 20 (quotient widget-w 8)))
+                                     (old-rows (vtscreen-rows vt))
+                                     (old-cols (vtscreen-cols vt)))
+                                (when (or (not (= new-rows old-rows))
+                                          (not (= new-cols old-cols)))
+                                  (verbose-log! "PTY-RESIZE: "
+                                    (number->string old-rows) "x" (number->string old-cols)
+                                    " -> "
+                                    (number->string new-rows) "x" (number->string new-cols))
+                                  (vtscreen-resize! vt new-rows new-cols)
+                                  (terminal-resize! ts new-rows new-cols)))
+                              (ed-loop (cdr wins))))))))
                   (when (and ts (terminal-pty-busy? ts))
                     ;; Batch all pending data chunks, then render once
                     (let drain ((chunks []) (done-msg #f))
@@ -889,8 +922,9 @@
                           ((not msg)
                            ;; No more messages — render accumulated data
                            (when (pair? chunks)
-                             (qt-poll-terminal-pty-batch! fr buf ts
-                               (apply string-append (reverse chunks))))
+                             (let ((combined (apply string-append (reverse chunks))))
+                               (verbose-log! "PTY-BATCH: " (number->string (string-length combined)) " bytes")
+                               (qt-poll-terminal-pty-batch! fr buf ts combined)))
                            (when done-msg
                              (qt-poll-terminal-pty-msg! fr buf ts done-msg)))
                           ((eq? (car msg) 'data)
@@ -898,8 +932,9 @@
                           (else
                            ;; 'done message — render data first, then handle done
                            (when (pair? chunks)
-                             (qt-poll-terminal-pty-batch! fr buf ts
-                               (apply string-append (reverse chunks))))
+                             (let ((combined (apply string-append (reverse chunks))))
+                               (verbose-log! "PTY-BATCH+DONE: " (number->string (string-length combined)) " bytes")
+                               (qt-poll-terminal-pty-batch! fr buf ts combined)))
                            (qt-poll-terminal-pty-msg! fr buf ts msg)))))))))
             (buffer-list))
           ;; Poll chat buffers (Claude CLI)
@@ -961,10 +996,12 @@
             (for-each
               (lambda (job)
                 (with-catch
-                  (lambda (e) (jemacs-log! "Auto-save error: " (object->string e)))
+                  (lambda (e) (jemacs-log! "Auto-save error: "
+                               (with-output-to-string (lambda () (display-condition e)))))
                   (lambda ()
-                    (call-with-output-file (car job)
-                      (lambda (port) (display (cdr job) port))))))
+                    (let ((p (open-output-file (car job) 'replace)))
+                      (display (cdr job) p)
+                      (close-port p)))))
               save-jobs))
           ;; Cache scratch buffer text for persistence (fast, stays on UI thread)
           (let ((scratch (buffer-by-name "*scratch*")))
@@ -1025,30 +1062,9 @@
                                     (loop (cdr wins)))))))))))))
               (buffer-list)))))
 
-      ;; Periodic auto-save (30 seconds)
-      ;; Writes modified buffers to #filename# auto-save files (Emacs convention)
-      (schedule-periodic! 'auto-save 30000
-        (lambda ()
-          (for-each
-            (lambda (buf)
-              (let ((path (buffer-file-path buf))
-                    (doc  (buffer-doc-pointer buf)))
-                (when (and path doc
-                           (qt-text-document-modified? doc)
-                           (not (hash-get *auto-save-disabled-buffers* buf)))
-                  (let ((auto-path (make-auto-save-path path)))
-                    (with-catch
-                      (lambda (e) (void))  ; silently ignore write errors
-                      (lambda ()
-                        ;; Find editor widget for this buffer to get text
-                        (let loop ((wins (qt-frame-windows fr)))
-                          (when (pair? wins)
-                            (if (eq? (qt-edit-window-buffer (car wins)) buf)
-                              (let ((text (qt-plain-text-edit-text
-                                            (qt-edit-window-editor (car wins)))))
-                                (write-string-to-file auto-path text))
-                              (loop (cdr wins)))))))))))
-            (buffer-list))))
+      ;; NOTE: auto-save is registered earlier in this function (line ~941)
+      ;; with better error handling and undo-history snapshot support.
+      ;; Do not register a duplicate auto-save here.
 
       ;; Pulse-line: tick countdown + auto-detect large jumps
       (schedule-periodic! 'pulse 50
@@ -1169,8 +1185,11 @@
                     (set! (qt-edit-window-buffer (qt-current-window fr)) (car bufs)))
                   (loop (cdr bufs))))))))
 
-      ;; Open files from command line — skip flags (handled in main.ss)
-      (let ((files (filter (lambda (a) (not (string-prefix? "-" a))) args)))
+      ;; Open files from command line — skip flags and their arguments
+      ;; parse-repl-port returns (port . filtered-args) with --repl <port> removed
+      (let* ((repl-parsed (parse-repl-port args))
+             (clean-args (if repl-parsed (cdr repl-parsed) args))
+             (files (filter (lambda (a) (not (string-prefix? "-" a))) clean-args)))
         (for-each (lambda (file) (qt-open-file! app file)) files))
 
       ;; Show window

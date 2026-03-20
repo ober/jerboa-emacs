@@ -7,6 +7,7 @@
 (library (jerboa-emacs pty)
   (export pty-spawn
           pty-read
+          pty-last-errno
           pty-write
           pty-close!
           pty-kill!
@@ -62,6 +63,8 @@
     (foreign-procedure "pty_waitpid" (int int) int))
   (define ffi-pty-waitpid-status
     (foreign-procedure "pty_get_wait_status" () int))
+  (define ffi-pty-last-errno
+    (foreign-procedure "pty_last_errno" () int))
 
   ;;; ========================================================================
   ;;; Scheme-level API
@@ -75,12 +78,22 @@
         (values #f #f))))
 
   (def (pty-read master-fd)
+    "Read from PTY master fd.
+     Returns: string (data), #f (EAGAIN/retry), 'eof (true EOF), or 'error (fatal)."
     (let* ((buf (make-bytevector 4096 0))
            (n (ffi-pty-read master-fd buf 4095)))
       (cond
-        ((> n 0) (utf8->string (bytevector-copy buf 0 n)))
-        ((= n 0) #f)
-        (else 'eof))))
+        ((> n 0)
+         (let ((sub (make-bytevector n)))
+           (bytevector-copy! buf 0 sub 0 n)
+           (utf8->string sub)))
+        ((= n 0) #f)       ; EAGAIN/EIO/ENXIO — retry
+        ((= n -1) 'eof)    ; true EOF (read returned 0)
+        (else 'error))))   ; fatal error — check pty-last-errno
+
+  (def (pty-last-errno)
+    "Return the errno from the last pty_read call."
+    (ffi-pty-last-errno))
 
   (def (pty-write master-fd str)
     (ffi-pty-write master-fd str (string-length str)))

@@ -21,9 +21,9 @@
 (def (kill-active-subprocess!)
   "Kill the currently tracked subprocess, if any."
   (when *active-subprocess*
-    (with-catch void
+    (with-catch (lambda (_e) (void))
       (lambda () (close-port (car *active-subprocess*))))
-    (with-catch void
+    (with-catch (lambda (_e) (void))
       (lambda () (close-port (cdr *active-subprocess*))))
     (set! *active-subprocess* #f)))
 
@@ -74,7 +74,7 @@
             ;; Check for C-g via peek-event
             (let ((ev (peek-event poll-ms)))
               (when (and ev (event-key? ev) (= (event-key ev) 7))
-                (with-catch void (lambda () (close-port p-stdout)))
+                (with-catch (lambda (_e) (void)) (lambda () (close-port p-stdout)))
                 (raise (make-keyboard-quit-exception))))
             ;; Drain whatever's available
             (if (drain-available! p-stdout out)
@@ -119,7 +119,7 @@
             ;; Check quit flag
             (when (quit-flag?)
               (quit-flag-clear!)
-              (with-catch void (lambda () (close-port p-stdout)))
+              (with-catch (lambda (_e) (void)) (lambda () (close-port p-stdout)))
               (raise (make-keyboard-quit-exception)))
             ;; Drain whatever's available
             (if (drain-available! p-stdout out)

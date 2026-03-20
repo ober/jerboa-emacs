@@ -743,7 +743,9 @@ modified so the next save uses the new encoding."
     (when ts
       ;; If PTY is busy, just send newline to the child process
       (if (terminal-pty-busy? ts)
-        (terminal-send-input! ts "\n")
+        (begin
+          (verbose-log! "cmd-terminal-send: PTY busy, sending newline")
+          (terminal-send-input! ts "\n"))
         (let* ((ed (current-qt-editor app))
                (text (qt-plain-text-edit-text ed))
                (prompt-pos (terminal-state-prompt-pos ts))
@@ -756,10 +758,17 @@ modified so the next save uses the new encoding."
                ;; estimate visible columns, or fall back to widget width / 8.
                (widget-w (qt-widget-width ed))
                (cols (max 20 (quotient widget-w 8))))
+          (verbose-log! "cmd-terminal-send: input=" input " rows=" (number->string rows)
+                        " cols=" (number->string cols))
           ;; Append newline after user input
           (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
           (qt-plain-text-edit-insert-text! ed "\n")
           (let-values (((mode output new-cwd) (terminal-execute-async! input ts rows cols)))
+          (verbose-log! "cmd-terminal-send: mode=" (symbol->string mode)
+                        " pty-pid=" (let ((p (terminal-state-pty-pid ts)))
+                                      (if p (number->string p) "none"))
+                        " pty-master=" (let ((m (terminal-state-pty-master ts)))
+                                         (if m (number->string m) "none")))
           (case mode
             ((sync)
              (when (and (string? output) (> (string-length output) 0))

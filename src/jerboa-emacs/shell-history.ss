@@ -161,7 +161,7 @@
     (lambda ()
       ;; Close the append port first
       (when *gsh-history-port*
-        (with-catch void (lambda () (close-output-port *gsh-history-port*)))
+        (with-catch (lambda (_e) (void)) (lambda () (close-output-port *gsh-history-port*)))
         (set! *gsh-history-port* #f))
       ;; Rewrite the file (oldest first on disk, so newest is at end)
       (let ((entries (reverse *gsh-history*)))

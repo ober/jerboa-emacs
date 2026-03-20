@@ -731,7 +731,7 @@
              (lambda ()
                (when (and *qt-gdb-process* (port? *qt-gdb-process*))
                  (with-catch
-                   void
+                   (lambda (_e) (void))
                    (lambda () (close-port *qt-gdb-process*))))
                (let* ([proc (open-process
                               (list 'path: "gdb" 'arguments:

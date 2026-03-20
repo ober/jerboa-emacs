@@ -530,7 +530,7 @@
         (lambda ()
           ;; Close existing session
           (when (and *qt-gdb-process* (port? *qt-gdb-process*))
-            (with-catch void (lambda () (close-port *qt-gdb-process*))))
+            (with-catch (lambda (_e) (void)) (lambda () (close-port *qt-gdb-process*))))
           (let* ((proc (open-process
                          (list path: "gdb"
                                arguments: (list "-q" "--interpreter=mi2" program)

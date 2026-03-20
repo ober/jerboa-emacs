@@ -133,6 +133,7 @@
              (let ([pos (qt-plain-text-edit-cursor-position ed)])
                (qt-plain-text-edit-set-selection! ed pos pos)))))
   (def *master-timer-tick-fn* #f)
+  (def *pty-poll-logged?* #f)
   (def *which-key-timer* #f)
   (def *which-key-pending-keymap* #f)
   (def *which-key-pending-prefix* #f)
@@ -396,9 +397,8 @@
                           (qt-plain-text-edit-ensure-cursor-visible! ed)))
                       (loop (cdr wins))))))])))
   (def (qt-do-init! qt-app args) (init-jemacs-log!)
-       (when (member "--verbose" args)
-         (let ([vpath (init-verbose-log!)])
-           (verbose-log! "gemacs-qt verbose mode ON")))
+       (init-verbose-log!)
+       (verbose-log! "gemacs-qt verbose mode ON")
        (define-standard-faces!)
        (let-values ([(saved-theme saved-font-family saved-font-size)
                      (theme-settings-load!)])
@@ -463,6 +463,7 @@
          (qt-layout-set-spacing! layout 0)
          (qt-minibuffer-init! echo-label qt-app layout)
          (set! *qt-app-ptr* qt-app)
+         (qt-window-set-app-ptr! qt-app)
          (setup-default-bindings!)
          (setup-command-docs!)
          (qt-register-all-commands!)
@@ -474,19 +475,30 @@
            (add-hook!
              'post-buffer-attach-hook
              (lambda (editor buf)
-               (if (image-buffer? buf)
-                   (begin
-                     (qt-show-image-buffer! editor buf)
-                     (let ([win (hash-get *editor-window-map* editor)])
-                       (when (and win (qt-edit-window-image-scroll win))
-                         (let ([scroll (qt-edit-window-image-scroll win)])
-                           (unless (hash-get image-key-installed scroll)
-                             ((app-state-key-handler app) scroll)
-                             (hash-put! image-key-installed scroll #t))
-                           (qt-widget-set-focus! scroll)))))
-                   (begin
-                     (qt-hide-image-buffer! editor)
-                     (qt-widget-set-focus! editor))))))
+               (with-catch
+                 (lambda (e)
+                   (verbose-log!
+                     "post-buffer-attach-hook ERROR: "
+                     (with-output-to-string
+                       (lambda () (display-exception e)))))
+                 (lambda ()
+                   (if (image-buffer? buf)
+                       (begin
+                         (qt-show-image-buffer! editor buf)
+                         (let ([win (hash-get *editor-window-map* editor)])
+                           (when (and win
+                                      (qt-edit-window-image-scroll win))
+                             (let ([scroll (qt-edit-window-image-scroll
+                                             win)])
+                               (unless (hash-get
+                                         image-key-installed
+                                         scroll)
+                                 ((app-state-key-handler app) scroll)
+                                 (hash-put! image-key-installed scroll #t))
+                               (qt-widget-set-focus! scroll)))))
+                       (begin
+                         (qt-hide-image-buffer! editor)
+                         (qt-widget-set-focus! editor))))))))
          (recent-files-load!)
          (bookmarks-load! app)
          (custom-keys-load!)
@@ -519,595 +531,600 @@
            (scratch-update-text! text))
          (run-hooks! 'after-init-hook app)
          (let ([key-handler (lambda ()
-                              (let* ([code (qt-last-key-code)]
-                                     [mods (normalize-qt-mods
-                                             (qt-last-key-modifiers))]
-                                     [raw-text (qt-last-key-text)]
-                                     [text (if (= (string-length raw-text)
-                                                  1)
-                                               (string
-                                                 (key-translate-char
-                                                   (string-ref
-                                                     raw-text
-                                                     0)))
-                                               raw-text)])
-                                (let ([ks (qt-key-event->string
-                                            code
-                                            mods
-                                            text)])
-                                  (when ks
-                                    (key-lossage-record! app ks)
-                                    (verbose-log! "KEY " ks " code="
-                                      (number->string code) " mods="
-                                      (number->string mods))))
-                                (cond
-                                  [*isearch-active*
-                                   (let ([handled (isearch-handle-key!
-                                                    app
-                                                    code
-                                                    mods
-                                                    text)])
-                                     (qt-update-visual-decorations!
-                                       (qt-current-editor
-                                         (app-state-frame app)))
+                              (when (not *minibuffer-active?*)
+                                (let* ([code (qt-last-key-code)]
+                                       [mods (normalize-qt-mods
+                                               (qt-last-key-modifiers))]
+                                       [raw-text (qt-last-key-text)]
+                                       [text (if (= (string-length
+                                                      raw-text)
+                                                    1)
+                                                 (string
+                                                   (key-translate-char
+                                                     (string-ref
+                                                       raw-text
+                                                       0)))
+                                                 raw-text)])
+                                  (let ([ks (qt-key-event->string
+                                              code
+                                              mods
+                                              text)])
+                                    (when ks
+                                      (key-lossage-record! app ks)
+                                      (verbose-log! "KEY " ks " code="
+                                        (number->string code) " mods="
+                                        (number->string mods))))
+                                  (cond
+                                    [*isearch-active*
+                                     (let ([handled (isearch-handle-key!
+                                                      app
+                                                      code
+                                                      mods
+                                                      text)])
+                                       (qt-update-visual-decorations!
+                                         (qt-current-editor
+                                           (app-state-frame app)))
+                                       (qt-modeline-update! app)
+                                       (qt-echo-draw!
+                                         (app-state-echo app)
+                                         echo-label)
+                                       (when (not handled)
+                                         (let-values ([(action data new-state)
+                                                       (qt-key-state-feed!
+                                                         (app-state-key-state
+                                                           app)
+                                                         code
+                                                         mods
+                                                         text)])
+                                           (app-state-key-state-set!
+                                             app
+                                             new-state)
+                                           (when (eq? action 'command)
+                                             (execute-command!
+                                               app
+                                               data)))))]
+                                    [*qreplace-active*
+                                     (qreplace-handle-key!
+                                       app
+                                       code
+                                       mods
+                                       text)
                                      (qt-modeline-update! app)
                                      (qt-echo-draw!
                                        (app-state-echo app)
-                                       echo-label)
-                                     (when (not handled)
-                                       (let-values ([(action data new-state)
-                                                     (qt-key-state-feed!
-                                                       (app-state-key-state
-                                                         app)
-                                                       code
-                                                       mods
-                                                       text)])
-                                         (app-state-key-state-set!
-                                           app
-                                           new-state)
-                                         (when (eq? action 'command)
-                                           (execute-command! app data)))))]
-                                  [*qreplace-active*
-                                   (qreplace-handle-key!
-                                     app
-                                     code
-                                     mods
-                                     text)
-                                   (qt-modeline-update! app)
-                                   (qt-echo-draw!
-                                     (app-state-echo app)
-                                     echo-label)]
-                                  [else
-                                   (letrec ([do-normal-key! (lambda (code
-                                                                     mods
-                                                                     text)
-                                                              (if (and (active-repeat-map)
-                                                                       (let* ([ks (qt-key-event->string
-                                                                                    code
-                                                                                    mods
-                                                                                    text)]
-                                                                              [repeat-cmd (and ks
-                                                                                               (repeat-map-lookup
-                                                                                                 ks))])
-                                                                         (if repeat-cmd
-                                                                             (begin
-                                                                               (execute-command!
-                                                                                 app
-                                                                                 repeat-cmd)
-                                                                               #t)
-                                                                             (begin
-                                                                               (clear-repeat-map!)
-                                                                               #f))))
-                                                                  (void)
-                                                                  (let-values ([(action data new-state)
-                                                                                (qt-key-state-feed!
-                                                                                  (app-state-key-state
-                                                                                    app)
-                                                                                  code
-                                                                                  mods
-                                                                                  text)])
-                                                                    (app-state-key-state-set!
-                                                                      app
-                                                                      new-state)
-                                                                    (when (and *which-key-timer*
-                                                                               (not (eq? action
-                                                                                         'prefix)))
-                                                                      (qt-timer-stop!
-                                                                        *which-key-timer*)
-                                                                      (set! *which-key-pending-keymap*
-                                                                        #f))
-                                                                    (if (and *qt-describe-key-pending*
-                                                                             (not (eq? action
-                                                                                       'prefix)))
-                                                                        (let ([ks (qt-key-event->string
+                                       echo-label)]
+                                    [else
+                                     (letrec ([do-normal-key! (lambda (code
+                                                                       mods
+                                                                       text)
+                                                                (if (and (active-repeat-map)
+                                                                         (let* ([ks (qt-key-event->string
+                                                                                      code
+                                                                                      mods
+                                                                                      text)]
+                                                                                [repeat-cmd (and ks
+                                                                                                 (repeat-map-lookup
+                                                                                                   ks))])
+                                                                           (if repeat-cmd
+                                                                               (begin
+                                                                                 (execute-command!
+                                                                                   app
+                                                                                   repeat-cmd)
+                                                                                 #t)
+                                                                               (begin
+                                                                                 (clear-repeat-map!)
+                                                                                 #f))))
+                                                                    (void)
+                                                                    (let-values ([(action data new-state)
+                                                                                  (qt-key-state-feed!
+                                                                                    (app-state-key-state
+                                                                                      app)
                                                                                     code
                                                                                     mods
                                                                                     text)])
-                                                                          (qt-describe-key-result!
-                                                                            app
-                                                                            ks
-                                                                            action
-                                                                            data))
-                                                                        (if *qt-quoted-insert-pending*
-                                                                            (qt-quoted-insert-handle!
+                                                                      (app-state-key-state-set!
+                                                                        app
+                                                                        new-state)
+                                                                      (when (and *which-key-timer*
+                                                                                 (not (eq? action
+                                                                                           'prefix)))
+                                                                        (qt-timer-stop!
+                                                                          *which-key-timer*)
+                                                                        (set! *which-key-pending-keymap*
+                                                                          #f))
+                                                                      (if (and *qt-describe-key-pending*
+                                                                               (not (eq? action
+                                                                                         'prefix)))
+                                                                          (let ([ks (qt-key-event->string
+                                                                                      code
+                                                                                      mods
+                                                                                      text)])
+                                                                            (qt-describe-key-result!
                                                                               app
-                                                                              (if (and text
-                                                                                       (> (string-length
-                                                                                            text)
-                                                                                          0))
-                                                                                  text
-                                                                                  (qt-key-event->string
-                                                                                    code
-                                                                                    mods
-                                                                                    text)))
-                                                                            (case action
-                                                                              [(command)
-                                                                               (when (and (app-state-macro-recording
-                                                                                            app)
-                                                                                          (not (memq
-                                                                                                 data
-                                                                                                 '(start-kbd-macro
-                                                                                                    end-kbd-macro
-                                                                                                    call-last-kbd-macro
-                                                                                                    call-named-kbd-macro
-                                                                                                    name-last-kbd-macro
-                                                                                                    list-kbd-macros
-                                                                                                    save-kbd-macros
-                                                                                                    load-kbd-macros))))
-                                                                                 (app-state-macro-recording-set!
-                                                                                   app
-                                                                                   (cons
+                                                                              ks
+                                                                              action
+                                                                              data))
+                                                                          (if *qt-quoted-insert-pending*
+                                                                              (qt-quoted-insert-handle!
+                                                                                app
+                                                                                (if (and text
+                                                                                         (> (string-length
+                                                                                              text)
+                                                                                            0))
+                                                                                    text
+                                                                                    (qt-key-event->string
+                                                                                      code
+                                                                                      mods
+                                                                                      text)))
+                                                                              (case action
+                                                                                [(command)
+                                                                                 (when (and (app-state-macro-recording
+                                                                                              app)
+                                                                                            (not (memq
+                                                                                                   data
+                                                                                                   '(start-kbd-macro
+                                                                                                      end-kbd-macro
+                                                                                                      call-last-kbd-macro
+                                                                                                      call-named-kbd-macro
+                                                                                                      name-last-kbd-macro
+                                                                                                      list-kbd-macros
+                                                                                                      save-kbd-macros
+                                                                                                      load-kbd-macros))))
+                                                                                   (app-state-macro-recording-set!
+                                                                                     app
                                                                                      (cons
-                                                                                       'command
-                                                                                       data)
-                                                                                     (app-state-macro-recording
-                                                                                       app))))
-                                                                               (when (and (echo-state-message
-                                                                                            (app-state-echo
-                                                                                              app))
-                                                                                          (null?
-                                                                                            (key-state-prefix-keys
-                                                                                              new-state)))
-                                                                                 (echo-clear!
-                                                                                   (app-state-echo
-                                                                                     app)))
-                                                                               (execute-command!
-                                                                                 app
-                                                                                 data)]
-                                                                              [(self-insert)
-                                                                               (let* ([buf (qt-current-buffer
-                                                                                             (app-state-frame
-                                                                                               app))]
-                                                                                      [mode-cmd (mode-keymap-lookup
-                                                                                                  buf
-                                                                                                  data)])
-                                                                                 (if mode-cmd
-                                                                                     (execute-command!
-                                                                                       app
-                                                                                       mode-cmd)
-                                                                                     (begin
-                                                                                       (when (app-state-macro-recording
-                                                                                               app)
-                                                                                         (app-state-macro-recording-set!
-                                                                                           app
-                                                                                           (cons
+                                                                                       (cons
+                                                                                         'command
+                                                                                         data)
+                                                                                       (app-state-macro-recording
+                                                                                         app))))
+                                                                                 (when (and (echo-state-message
+                                                                                              (app-state-echo
+                                                                                                app))
+                                                                                            (null?
+                                                                                              (key-state-prefix-keys
+                                                                                                new-state)))
+                                                                                   (echo-clear!
+                                                                                     (app-state-echo
+                                                                                       app)))
+                                                                                 (execute-command!
+                                                                                   app
+                                                                                   data)]
+                                                                                [(self-insert)
+                                                                                 (let* ([buf (qt-current-buffer
+                                                                                               (app-state-frame
+                                                                                                 app))]
+                                                                                        [mode-cmd (mode-keymap-lookup
+                                                                                                    buf
+                                                                                                    data)])
+                                                                                   (if mode-cmd
+                                                                                       (execute-command!
+                                                                                         app
+                                                                                         mode-cmd)
+                                                                                       (begin
+                                                                                         (when (app-state-macro-recording
+                                                                                                 app)
+                                                                                           (app-state-macro-recording-set!
+                                                                                             app
                                                                                              (cons
-                                                                                               'self-insert
-                                                                                               data)
-                                                                                             (app-state-macro-recording
-                                                                                               app))))
-                                                                                       (let* ([ed (qt-current-editor
-                                                                                                    (app-state-frame
-                                                                                                      app))]
-                                                                                              [ch (string-ref
-                                                                                                    data
-                                                                                                    0)]
-                                                                                              [close-ch (and *auto-pair-mode*
-                                                                                                             (let ([cc (auto-pair-char
-                                                                                                                         (char->integer
-                                                                                                                           ch))])
-                                                                                                               (and cc
-                                                                                                                    (integer->char
-                                                                                                                      cc))))]
-                                                                                              [n (get-prefix-arg
-                                                                                                   app)])
-                                                                                         (cond
-                                                                                           [(dired-buffer?
-                                                                                              buf)
-                                                                                            (void)]
-                                                                                           [(image-buffer?
-                                                                                              buf)
-                                                                                            (void)]
-                                                                                           [(repl-buffer?
-                                                                                              buf)
-                                                                                            (let* ([pos (qt-plain-text-edit-cursor-position
-                                                                                                          ed)]
-                                                                                                   [rs (hash-get
-                                                                                                         *repl-state*
-                                                                                                         buf)])
-                                                                                              (when (and rs
-                                                                                                         (>= pos
-                                                                                                             (repl-state-prompt-pos
-                                                                                                               rs)))
-                                                                                                (let loop ([i 0])
-                                                                                                  (when (< i
-                                                                                                           n)
-                                                                                                    (qt-plain-text-edit-insert-text!
-                                                                                                      ed
+                                                                                               (cons
+                                                                                                 'self-insert
+                                                                                                 data)
+                                                                                               (app-state-macro-recording
+                                                                                                 app))))
+                                                                                         (let* ([ed (qt-current-editor
+                                                                                                      (app-state-frame
+                                                                                                        app))]
+                                                                                                [ch (string-ref
+                                                                                                      data
+                                                                                                      0)]
+                                                                                                [close-ch (and *auto-pair-mode*
+                                                                                                               (let ([cc (auto-pair-char
+                                                                                                                           (char->integer
+                                                                                                                             ch))])
+                                                                                                                 (and cc
+                                                                                                                      (integer->char
+                                                                                                                        cc))))]
+                                                                                                [n (get-prefix-arg
+                                                                                                     app)])
+                                                                                           (cond
+                                                                                             [(dired-buffer?
+                                                                                                buf)
+                                                                                              (void)]
+                                                                                             [(image-buffer?
+                                                                                                buf)
+                                                                                              (void)]
+                                                                                             [(repl-buffer?
+                                                                                                buf)
+                                                                                              (let* ([pos (qt-plain-text-edit-cursor-position
+                                                                                                            ed)]
+                                                                                                     [rs (hash-get
+                                                                                                           *repl-state*
+                                                                                                           buf)])
+                                                                                                (when (and rs
+                                                                                                           (>= pos
+                                                                                                               (repl-state-prompt-pos
+                                                                                                                 rs)))
+                                                                                                  (let loop ([i 0])
+                                                                                                    (when (< i
+                                                                                                             n)
+                                                                                                      (qt-plain-text-edit-insert-text!
+                                                                                                        ed
+                                                                                                        (string
+                                                                                                          ch))
+                                                                                                      (loop
+                                                                                                        (+ i
+                                                                                                           1))))))]
+                                                                                             [(eshell-buffer?
+                                                                                                buf)
+                                                                                              (let loop ([i 0])
+                                                                                                (when (< i
+                                                                                                         n)
+                                                                                                  (qt-plain-text-edit-insert-text!
+                                                                                                    ed
+                                                                                                    (string
+                                                                                                      ch))
+                                                                                                  (loop
+                                                                                                    (+ i
+                                                                                                       1))))]
+                                                                                             [(terminal-buffer?
+                                                                                                buf)
+                                                                                              (let ([ts (hash-get
+                                                                                                          *terminal-state*
+                                                                                                          buf)])
+                                                                                                (if (and ts
+                                                                                                         (terminal-pty-busy?
+                                                                                                           ts))
+                                                                                                    (terminal-send-input!
+                                                                                                      ts
                                                                                                       (string
                                                                                                         ch))
-                                                                                                    (loop
-                                                                                                      (+ i
-                                                                                                         1))))))]
-                                                                                           [(eshell-buffer?
-                                                                                              buf)
-                                                                                            (let loop ([i 0])
-                                                                                              (when (< i
-                                                                                                       n)
-                                                                                                (qt-plain-text-edit-insert-text!
-                                                                                                  ed
-                                                                                                  (string
-                                                                                                    ch))
-                                                                                                (loop
-                                                                                                  (+ i
-                                                                                                     1))))]
-                                                                                           [(terminal-buffer?
-                                                                                              buf)
-                                                                                            (let ([ts (hash-get
-                                                                                                        *terminal-state*
-                                                                                                        buf)])
-                                                                                              (if (and ts
-                                                                                                       (terminal-pty-busy?
-                                                                                                         ts))
-                                                                                                  (terminal-send-input!
-                                                                                                    ts
-                                                                                                    (string
-                                                                                                      ch))
-                                                                                                  (let loop ([i 0])
-                                                                                                    (when (< i
-                                                                                                             n)
-                                                                                                      (qt-plain-text-edit-insert-text!
-                                                                                                        ed
-                                                                                                        (string
-                                                                                                          ch))
-                                                                                                      (loop
-                                                                                                        (+ i
-                                                                                                           1))))))]
-                                                                                           [(shell-buffer?
-                                                                                              buf)
-                                                                                            (let ([ss (hash-get
-                                                                                                        *shell-state*
-                                                                                                        buf)])
-                                                                                              (if (and ss
-                                                                                                       (shell-pty-busy?
-                                                                                                         ss))
-                                                                                                  (shell-send-input!
-                                                                                                    ss
-                                                                                                    (string
-                                                                                                      ch))
-                                                                                                  (let loop ([i 0])
-                                                                                                    (when (< i
-                                                                                                             n)
-                                                                                                      (qt-plain-text-edit-insert-text!
-                                                                                                        ed
-                                                                                                        (string
-                                                                                                          ch))
-                                                                                                      (loop
-                                                                                                        (+ i
-                                                                                                           1))))))]
-                                                                                           [else
-                                                                                            (when (not *qt-delete-selection-enabled*)
-                                                                                              (let ([pos (qt-plain-text-edit-cursor-position
-                                                                                                           ed)])
-                                                                                                (sci-send
-                                                                                                  ed
-                                                                                                  SCI_SETSEL
-                                                                                                  pos
-                                                                                                  pos)))
-                                                                                            (cond
-                                                                                              [(and *auto-pair-mode*
-                                                                                                    (= n
-                                                                                                       1)
-                                                                                                    (auto-pair-closing?
-                                                                                                      (char->integer
-                                                                                                        ch)))
-                                                                                               (let* ([pos (qt-plain-text-edit-cursor-position
-                                                                                                             ed)]
-                                                                                                      [text (qt-plain-text-edit-text
-                                                                                                              ed)]
-                                                                                                      [next-ch (and (< pos
-                                                                                                                       (string-length
-                                                                                                                         text))
-                                                                                                                    (string-ref
-                                                                                                                      text
-                                                                                                                      pos))])
-                                                                                                 (if (and next-ch
-                                                                                                          (char=?
-                                                                                                            next-ch
+                                                                                                    (let loop ([i 0])
+                                                                                                      (when (< i
+                                                                                                               n)
+                                                                                                        (qt-plain-text-edit-insert-text!
+                                                                                                          ed
+                                                                                                          (string
                                                                                                             ch))
-                                                                                                     (qt-plain-text-edit-set-cursor-position!
-                                                                                                       ed
-                                                                                                       (+ pos
-                                                                                                          1))
-                                                                                                     (qt-plain-text-edit-insert-text!
-                                                                                                       ed
-                                                                                                       (string
-                                                                                                         ch))))]
-                                                                                              [(and close-ch
-                                                                                                    (= n
-                                                                                                       1))
-                                                                                               (let ([pos (qt-plain-text-edit-cursor-position
-                                                                                                            ed)])
+                                                                                                        (loop
+                                                                                                          (+ i
+                                                                                                             1))))))]
+                                                                                             [(shell-buffer?
+                                                                                                buf)
+                                                                                              (let ([ss (hash-get
+                                                                                                          *shell-state*
+                                                                                                          buf)])
+                                                                                                (if (and ss
+                                                                                                         (shell-pty-busy?
+                                                                                                           ss))
+                                                                                                    (shell-send-input!
+                                                                                                      ss
+                                                                                                      (string
+                                                                                                        ch))
+                                                                                                    (let loop ([i 0])
+                                                                                                      (when (< i
+                                                                                                               n)
+                                                                                                        (qt-plain-text-edit-insert-text!
+                                                                                                          ed
+                                                                                                          (string
+                                                                                                            ch))
+                                                                                                        (loop
+                                                                                                          (+ i
+                                                                                                             1))))))]
+                                                                                             [else
+                                                                                              (when (not *qt-delete-selection-enabled*)
+                                                                                                (let ([pos (qt-plain-text-edit-cursor-position
+                                                                                                             ed)])
+                                                                                                  (sci-send
+                                                                                                    ed
+                                                                                                    SCI_SETSEL
+                                                                                                    pos
+                                                                                                    pos)))
+                                                                                              (cond
+                                                                                                [(and *auto-pair-mode*
+                                                                                                      (= n
+                                                                                                         1)
+                                                                                                      (auto-pair-closing?
+                                                                                                        (char->integer
+                                                                                                          ch)))
+                                                                                                 (let* ([pos (qt-plain-text-edit-cursor-position
+                                                                                                               ed)]
+                                                                                                        [text (qt-plain-text-edit-text
+                                                                                                                ed)]
+                                                                                                        [next-ch (and (< pos
+                                                                                                                         (string-length
+                                                                                                                           text))
+                                                                                                                      (string-ref
+                                                                                                                        text
+                                                                                                                        pos))])
+                                                                                                   (if (and next-ch
+                                                                                                            (char=?
+                                                                                                              next-ch
+                                                                                                              ch))
+                                                                                                       (qt-plain-text-edit-set-cursor-position!
+                                                                                                         ed
+                                                                                                         (+ pos
+                                                                                                            1))
+                                                                                                       (qt-plain-text-edit-insert-text!
+                                                                                                         ed
+                                                                                                         (string
+                                                                                                           ch))))]
+                                                                                                [(and close-ch
+                                                                                                      (= n
+                                                                                                         1))
+                                                                                                 (let ([pos (qt-plain-text-edit-cursor-position
+                                                                                                              ed)])
+                                                                                                   (qt-plain-text-edit-insert-text!
+                                                                                                     ed
+                                                                                                     (string
+                                                                                                       ch
+                                                                                                       close-ch))
+                                                                                                   (qt-plain-text-edit-set-cursor-position!
+                                                                                                     ed
+                                                                                                     (+ pos
+                                                                                                        1)))]
+                                                                                                [else
+                                                                                                 (let ([str (make-string
+                                                                                                              n
+                                                                                                              ch)])
+                                                                                                   (qt-plain-text-edit-insert-text!
+                                                                                                     ed
+                                                                                                     str))])]))
+                                                                                         (auto-fill-check!
+                                                                                           (qt-current-editor
+                                                                                             (app-state-frame
+                                                                                               app)))
+                                                                                         (when (and *abbrev-mode-enabled*
+                                                                                                    (let ([c (string-ref
+                                                                                                               data
+                                                                                                               0)])
+                                                                                                      (or (char=?
+                                                                                                            c
+                                                                                                            #\space)
+                                                                                                          (char=?
+                                                                                                            c
+                                                                                                            #\newline)
+                                                                                                          (char=?
+                                                                                                            c
+                                                                                                            #\,)
+                                                                                                          (char=?
+                                                                                                            c
+                                                                                                            #\.)
+                                                                                                          (char=?
+                                                                                                            c
+                                                                                                            #\;))))
+                                                                                           (let* ([aed (qt-current-editor
+                                                                                                         (app-state-frame
+                                                                                                           app))]
+                                                                                                  [pos (qt-plain-text-edit-cursor-position
+                                                                                                         aed)]
+                                                                                                  [text (qt-plain-text-edit-text
+                                                                                                          aed)]
+                                                                                                  [sep-pos (- pos
+                                                                                                              1)]
+                                                                                                  [word-end sep-pos]
+                                                                                                  [word-start (let loop ([i (- sep-pos
+                                                                                                                               1)])
+                                                                                                                (if (< i
+                                                                                                                       0)
+                                                                                                                    0
+                                                                                                                    (let ([c (string-ref
+                                                                                                                               text
+                                                                                                                               i)])
+                                                                                                                      (if (or (char-alphabetic?
+                                                                                                                                c)
+                                                                                                                              (char-numeric?
+                                                                                                                                c)
+                                                                                                                              (char=?
+                                                                                                                                c
+                                                                                                                                #\-)
+                                                                                                                              (char=?
+                                                                                                                                c
+                                                                                                                                #\_))
+                                                                                                                          (loop
+                                                                                                                            (- i
+                                                                                                                               1))
+                                                                                                                          (+ i
+                                                                                                                             1)))))]
+                                                                                                  [word (if (> word-end
+                                                                                                               word-start)
+                                                                                                            (substring
+                                                                                                              text
+                                                                                                              word-start
+                                                                                                              word-end)
+                                                                                                            "")])
+                                                                                             (let ([expansion (hash-get
+                                                                                                                *abbrev-table*
+                                                                                                                word)])
+                                                                                               (when expansion
+                                                                                                 (qt-plain-text-edit-set-selection!
+                                                                                                   aed
+                                                                                                   word-start
+                                                                                                   word-end)
+                                                                                                 (qt-plain-text-edit-remove-selected-text!
+                                                                                                   aed)
                                                                                                  (qt-plain-text-edit-insert-text!
-                                                                                                   ed
-                                                                                                   (string
-                                                                                                     ch
-                                                                                                     close-ch))
-                                                                                                 (qt-plain-text-edit-set-cursor-position!
-                                                                                                   ed
-                                                                                                   (+ pos
-                                                                                                      1)))]
-                                                                                              [else
-                                                                                               (let ([str (make-string
-                                                                                                            n
-                                                                                                            ch)])
-                                                                                                 (qt-plain-text-edit-insert-text!
-                                                                                                   ed
-                                                                                                   str))])]))
-                                                                                       (auto-fill-check!
-                                                                                         (qt-current-editor
-                                                                                           (app-state-frame
-                                                                                             app)))
-                                                                                       (when (and *abbrev-mode-enabled*
-                                                                                                  (let ([c (string-ref
-                                                                                                             data
-                                                                                                             0)])
-                                                                                                    (or (char=?
-                                                                                                          c
-                                                                                                          #\space)
-                                                                                                        (char=?
-                                                                                                          c
-                                                                                                          #\newline)
-                                                                                                        (char=?
-                                                                                                          c
-                                                                                                          #\,)
-                                                                                                        (char=?
-                                                                                                          c
-                                                                                                          #\.)
-                                                                                                        (char=?
-                                                                                                          c
-                                                                                                          #\;))))
-                                                                                         (let* ([aed (qt-current-editor
-                                                                                                       (app-state-frame
-                                                                                                         app))]
-                                                                                                [pos (qt-plain-text-edit-cursor-position
-                                                                                                       aed)]
-                                                                                                [text (qt-plain-text-edit-text
-                                                                                                        aed)]
-                                                                                                [sep-pos (- pos
-                                                                                                            1)]
-                                                                                                [word-end sep-pos]
-                                                                                                [word-start (let loop ([i (- sep-pos
-                                                                                                                             1)])
-                                                                                                              (if (< i
-                                                                                                                     0)
-                                                                                                                  0
-                                                                                                                  (let ([c (string-ref
-                                                                                                                             text
-                                                                                                                             i)])
-                                                                                                                    (if (or (char-alphabetic?
-                                                                                                                              c)
-                                                                                                                            (char-numeric?
-                                                                                                                              c)
-                                                                                                                            (char=?
-                                                                                                                              c
-                                                                                                                              #\-)
-                                                                                                                            (char=?
-                                                                                                                              c
-                                                                                                                              #\_))
-                                                                                                                        (loop
-                                                                                                                          (- i
-                                                                                                                             1))
-                                                                                                                        (+ i
-                                                                                                                           1)))))]
-                                                                                                [word (if (> word-end
-                                                                                                             word-start)
-                                                                                                          (substring
-                                                                                                            text
-                                                                                                            word-start
-                                                                                                            word-end)
-                                                                                                          "")])
-                                                                                           (let ([expansion (hash-get
-                                                                                                              *abbrev-table*
-                                                                                                              word)])
-                                                                                             (when expansion
-                                                                                               (qt-plain-text-edit-set-selection!
-                                                                                                 aed
-                                                                                                 word-start
-                                                                                                 word-end)
-                                                                                               (qt-plain-text-edit-remove-selected-text!
-                                                                                                 aed)
-                                                                                               (qt-plain-text-edit-insert-text!
-                                                                                                 aed
-                                                                                                 expansion)
-                                                                                               (echo-message!
-                                                                                                 (app-state-echo
-                                                                                                   app)
-                                                                                                 (string-append
-                                                                                                   "\""
-                                                                                                   word
-                                                                                                   "\" → \""
-                                                                                                   expansion
-                                                                                                   "\""))))))
-                                                                                       (let ([si-ch (string-ref
-                                                                                                      data
-                                                                                                      0)])
-                                                                                         (when (and *aggressive-indent-mode*
-                                                                                                    (memv
-                                                                                                      si-ch
-                                                                                                      '(#\) #\]
-                                                                                                            #\}
-                                                                                                            #\newline)))
-                                                                                           (qt-aggressive-indent-line!
-                                                                                             (qt-current-editor
-                                                                                               (app-state-frame
-                                                                                                 app)))))
-                                                                                       (qt-record-edit-position!
-                                                                                         app)
-                                                                                       (app-state-prefix-arg-set!
-                                                                                         app
-                                                                                         #f)
-                                                                                       (app-state-prefix-digit-mode?-set!
-                                                                                         app
-                                                                                         #f))))]
-                                                                              [(prefix)
-                                                                               (let ([prefix-str (let loop ([keys (key-state-prefix-keys
-                                                                                                                    new-state)]
-                                                                                                            [acc ""])
-                                                                                                   (if (null?
-                                                                                                         keys)
-                                                                                                       acc
-                                                                                                       (loop
-                                                                                                         (cdr keys)
-                                                                                                         (if (string=?
-                                                                                                               acc
-                                                                                                               "")
-                                                                                                             (car keys)
-                                                                                                             (string-append
-                                                                                                               acc
-                                                                                                               " "
-                                                                                                               (car keys))))))])
-                                                                                 (echo-message!
+                                                                                                   aed
+                                                                                                   expansion)
+                                                                                                 (echo-message!
+                                                                                                   (app-state-echo
+                                                                                                     app)
+                                                                                                   (string-append
+                                                                                                     "\""
+                                                                                                     word
+                                                                                                     "\" → \""
+                                                                                                     expansion
+                                                                                                     "\""))))))
+                                                                                         (let ([si-ch (string-ref
+                                                                                                        data
+                                                                                                        0)])
+                                                                                           (when (and *aggressive-indent-mode*
+                                                                                                      (memv
+                                                                                                        si-ch
+                                                                                                        '(#\) #\]
+                                                                                                              #\}
+                                                                                                              #\newline)))
+                                                                                             (qt-aggressive-indent-line!
+                                                                                               (qt-current-editor
+                                                                                                 (app-state-frame
+                                                                                                   app)))))
+                                                                                         (qt-record-edit-position!
+                                                                                           app)
+                                                                                         (app-state-prefix-arg-set!
+                                                                                           app
+                                                                                           #f)
+                                                                                         (app-state-prefix-digit-mode?-set!
+                                                                                           app
+                                                                                           #f))))]
+                                                                                [(prefix)
+                                                                                 (let ([prefix-str (let loop ([keys (key-state-prefix-keys
+                                                                                                                      new-state)]
+                                                                                                              [acc ""])
+                                                                                                     (if (null?
+                                                                                                           keys)
+                                                                                                         acc
+                                                                                                         (loop
+                                                                                                           (cdr keys)
+                                                                                                           (if (string=?
+                                                                                                                 acc
+                                                                                                                 "")
+                                                                                                               (car keys)
+                                                                                                               (string-append
+                                                                                                                 acc
+                                                                                                                 " "
+                                                                                                                 (car keys))))))])
+                                                                                   (echo-message!
+                                                                                     (app-state-echo
+                                                                                       app)
+                                                                                     (string-append
+                                                                                       prefix-str
+                                                                                       "-"))
+                                                                                   (when *which-key-mode*
+                                                                                     (set! *which-key-pending-keymap*
+                                                                                       (key-state-keymap
+                                                                                         new-state))
+                                                                                     (set! *which-key-pending-prefix*
+                                                                                       prefix-str)
+                                                                                     (qt-timer-start!
+                                                                                       *which-key-timer*
+                                                                                       (inexact->exact
+                                                                                         (round
+                                                                                           (* *which-key-delay*
+                                                                                              1000))))))]
+                                                                                [(undefined)
+                                                                                 (echo-error!
                                                                                    (app-state-echo
                                                                                      app)
                                                                                    (string-append
-                                                                                     prefix-str
-                                                                                     "-"))
-                                                                                 (when *which-key-mode*
-                                                                                   (set! *which-key-pending-keymap*
-                                                                                     (key-state-keymap
-                                                                                       new-state))
-                                                                                   (set! *which-key-pending-prefix*
-                                                                                     prefix-str)
-                                                                                   (qt-timer-start!
-                                                                                     *which-key-timer*
-                                                                                     (inexact->exact
-                                                                                       (round
-                                                                                         (* *which-key-delay*
-                                                                                            1000))))))]
-                                                                              [(undefined)
-                                                                               (echo-error!
-                                                                                 (app-state-echo
-                                                                                   app)
-                                                                                 (string-append
-                                                                                   data
-                                                                                   " is undefined"))]
-                                                                              [(ignore)
-                                                                               (void)])))
-                                                                    (qt-update-visual-decorations!
-                                                                      (qt-current-editor
-                                                                        (app-state-frame
-                                                                          app)))
-                                                                    (qt-update-mark-selection!
-                                                                      app)
-                                                                    (qt-modeline-update!
-                                                                      app)
-                                                                    (qt-tabbar-update!
-                                                                      app)
-                                                                    (qt-update-frame-title!
-                                                                      app)
-                                                                    (qt-echo-draw!
-                                                                      (app-state-echo
+                                                                                     data
+                                                                                     " is undefined"))]
+                                                                                [(ignore)
+                                                                                 (void)])))
+                                                                      (qt-update-visual-decorations!
+                                                                        (qt-current-editor
+                                                                          (app-state-frame
+                                                                            app)))
+                                                                      (qt-update-mark-selection!
                                                                         app)
-                                                                      echo-label))))])
-                                     (cond
-                                       [*chord-pending-char*
-                                        (qt-timer-stop! *chord-timer*)
-                                        (let* ([ch1 *chord-pending-char*]
-                                               [saved-code *chord-pending-code*]
-                                               [saved-mods *chord-pending-mods*]
-                                               [saved-text *chord-pending-text*]
-                                               [ch2 (and (= (string-length
-                                                              text)
-                                                            1)
-                                                         (> (char->integer
-                                                              (string-ref
-                                                                text
-                                                                0))
-                                                            31)
-                                                         (zero?
-                                                           (bitwise-and
-                                                             mods
-                                                             QT_MOD_CTRL))
-                                                         (zero?
-                                                           (bitwise-and
-                                                             mods
-                                                             QT_MOD_ALT))
-                                                         (string-ref
-                                                           text
-                                                           0))]
-                                               [chord-cmd (and ch2
-                                                               (chord-lookup
-                                                                 ch1
-                                                                 ch2))])
-                                          (set! *chord-pending-char* #f)
-                                          (if chord-cmd
-                                              (begin
-                                                (execute-command!
-                                                  app
-                                                  chord-cmd)
-                                                (qt-update-visual-decorations!
-                                                  (qt-current-editor
-                                                    (app-state-frame app)))
-                                                (qt-update-mark-selection!
-                                                  app)
-                                                (qt-modeline-update! app)
-                                                (qt-tabbar-update! app)
-                                                (qt-update-frame-title!
-                                                  app)
-                                                (qt-echo-draw!
-                                                  (app-state-echo app)
-                                                  echo-label))
-                                              (begin
-                                                (do-normal-key!
-                                                  saved-code
-                                                  saved-mods
-                                                  saved-text)
-                                                (do-normal-key!
-                                                  code
-                                                  mods
-                                                  text))))]
-                                       [(and (= (string-length text) 1)
-                                             (> (char->integer
-                                                  (string-ref text 0))
-                                                31)
-                                             (zero?
-                                               (bitwise-and
-                                                 mods
-                                                 QT_MOD_CTRL))
-                                             (zero?
-                                               (bitwise-and
-                                                 mods
-                                                 QT_MOD_ALT))
-                                             (null?
-                                               (key-state-prefix-keys
-                                                 (app-state-key-state
-                                                   app)))
-                                             (chord-start-char?
-                                               (string-ref text 0)))
-                                        (set! *chord-pending-char*
-                                          (string-ref text 0))
-                                        (set! *chord-pending-code* code)
-                                        (set! *chord-pending-mods* mods)
-                                        (set! *chord-pending-text* text)
-                                        (qt-timer-start!
-                                          *chord-timer*
-                                          *chord-timeout*)]
-                                       [else
-                                        (do-normal-key!
-                                          code
-                                          mods
-                                          text)]))])))])
+                                                                      (qt-modeline-update!
+                                                                        app)
+                                                                      (qt-tabbar-update!
+                                                                        app)
+                                                                      (qt-update-frame-title!
+                                                                        app)
+                                                                      (qt-echo-draw!
+                                                                        (app-state-echo
+                                                                          app)
+                                                                        echo-label))))])
+                                       (cond
+                                         [*chord-pending-char*
+                                          (qt-timer-stop! *chord-timer*)
+                                          (let* ([ch1 *chord-pending-char*]
+                                                 [saved-code *chord-pending-code*]
+                                                 [saved-mods *chord-pending-mods*]
+                                                 [saved-text *chord-pending-text*]
+                                                 [ch2 (and (= (string-length
+                                                                text)
+                                                              1)
+                                                           (> (char->integer
+                                                                (string-ref
+                                                                  text
+                                                                  0))
+                                                              31)
+                                                           (zero?
+                                                             (bitwise-and
+                                                               mods
+                                                               QT_MOD_CTRL))
+                                                           (zero?
+                                                             (bitwise-and
+                                                               mods
+                                                               QT_MOD_ALT))
+                                                           (string-ref
+                                                             text
+                                                             0))]
+                                                 [chord-cmd (and ch2
+                                                                 (chord-lookup
+                                                                   ch1
+                                                                   ch2))])
+                                            (set! *chord-pending-char* #f)
+                                            (if chord-cmd
+                                                (begin
+                                                  (execute-command!
+                                                    app
+                                                    chord-cmd)
+                                                  (qt-update-visual-decorations!
+                                                    (qt-current-editor
+                                                      (app-state-frame
+                                                        app)))
+                                                  (qt-update-mark-selection!
+                                                    app)
+                                                  (qt-modeline-update! app)
+                                                  (qt-tabbar-update! app)
+                                                  (qt-update-frame-title!
+                                                    app)
+                                                  (qt-echo-draw!
+                                                    (app-state-echo app)
+                                                    echo-label))
+                                                (begin
+                                                  (do-normal-key!
+                                                    saved-code
+                                                    saved-mods
+                                                    saved-text)
+                                                  (do-normal-key!
+                                                    code
+                                                    mods
+                                                    text))))]
+                                         [(and (= (string-length text) 1)
+                                               (> (char->integer
+                                                    (string-ref text 0))
+                                                  31)
+                                               (zero?
+                                                 (bitwise-and
+                                                   mods
+                                                   QT_MOD_CTRL))
+                                               (zero?
+                                                 (bitwise-and
+                                                   mods
+                                                   QT_MOD_ALT))
+                                               (null?
+                                                 (key-state-prefix-keys
+                                                   (app-state-key-state
+                                                     app)))
+                                               (chord-start-char?
+                                                 (string-ref text 0)))
+                                          (set! *chord-pending-char*
+                                            (string-ref text 0))
+                                          (set! *chord-pending-code* code)
+                                          (set! *chord-pending-mods* mods)
+                                          (set! *chord-pending-text* text)
+                                          (qt-timer-start!
+                                            *chord-timer*
+                                            *chord-timeout*)]
+                                         [else
+                                          (do-normal-key!
+                                            code
+                                            mods
+                                            text)]))]))))])
            (qt-on-key-press-consuming!
              (qt-current-editor fr)
              key-handler)
@@ -1164,16 +1181,61 @@
                  (when (terminal-buffer? buf)
                    (let ([ts (hash-get *terminal-state* buf)])
                      (when (and ts (terminal-pty-busy? ts))
+                       (let ([vt (terminal-state-vtscreen ts)])
+                         (when vt
+                           (let ed-loop ([wins (qt-frame-windows fr)])
+                             (when (pair? wins)
+                               (if (eq? (qt-edit-window-buffer (car wins))
+                                        buf)
+                                   (let* ([ed (qt-edit-window-editor
+                                                (car wins))]
+                                          [new-rows (max 2
+                                                         (sci-send
+                                                           ed
+                                                           2370
+                                                           0))]
+                                          [widget-w (qt-widget-width ed)]
+                                          [new-cols (max 20
+                                                         (quotient
+                                                           widget-w
+                                                           8))]
+                                          [old-rows (vtscreen-rows vt)]
+                                          [old-cols (vtscreen-cols vt)])
+                                     (when (or (not (= new-rows old-rows))
+                                               (not (= new-cols old-cols)))
+                                       (verbose-log! "PTY-RESIZE: "
+                                         (number->string old-rows) "x"
+                                         (number->string old-cols) " -> "
+                                         (number->string new-rows) "x"
+                                         (number->string new-cols))
+                                       (vtscreen-resize!
+                                         vt
+                                         new-rows
+                                         new-cols)
+                                       (terminal-resize!
+                                         ts
+                                         new-rows
+                                         new-cols)))
+                                   (ed-loop (cdr wins))))))))
+                     (when (and ts (terminal-pty-busy? ts))
                        (let drain ([chunks (list)] [done-msg #f])
                          (let ([msg (terminal-poll-output ts)])
                            (cond
                              [(not msg)
                               (when (pair? chunks)
-                                (qt-poll-terminal-pty-batch!
-                                  fr
-                                  buf
-                                  ts
-                                  (apply string-append (reverse chunks))))
+                                (let ([combined (apply
+                                                  string-append
+                                                  (reverse chunks))])
+                                  (verbose-log!
+                                    "PTY-BATCH: "
+                                    (number->string
+                                      (string-length combined))
+                                    " bytes")
+                                  (qt-poll-terminal-pty-batch!
+                                    fr
+                                    buf
+                                    ts
+                                    combined)))
                               (when done-msg
                                 (qt-poll-terminal-pty-msg!
                                   fr
@@ -1184,11 +1246,19 @@
                               (drain (cons (cdr msg) chunks) done-msg)]
                              [else
                               (when (pair? chunks)
-                                (qt-poll-terminal-pty-batch!
-                                  fr
-                                  buf
-                                  ts
-                                  (apply string-append (reverse chunks))))
+                                (let ([combined (apply
+                                                  string-append
+                                                  (reverse chunks))])
+                                  (verbose-log!
+                                    "PTY-BATCH+DONE: "
+                                    (number->string
+                                      (string-length combined))
+                                    " bytes")
+                                  (qt-poll-terminal-pty-batch!
+                                    fr
+                                    buf
+                                    ts
+                                    combined)))
                               (qt-poll-terminal-pty-msg!
                                 fr
                                 buf
@@ -1285,11 +1355,12 @@
                      (lambda (e)
                        (jemacs-log!
                          "Auto-save error: "
-                         (object->string e)))
+                         (with-output-to-string
+                           (lambda () (display-condition e)))))
                      (lambda ()
-                       (call-with-output-file
-                         (car job)
-                         (lambda (port) (display (cdr job) port))))))
+                       (let ([p (open-output-file (car job) 'replace)])
+                         (display (cdr job) p)
+                         (close-port p)))))
                  save-jobs))
              (let ([scratch (buffer-by-name "*scratch*")])
                (when scratch
@@ -1367,34 +1438,6 @@
                                              (file-mtime-record! path))
                                            (loop (cdr wins)))))))))))))
                  (buffer-list)))))
-         (schedule-periodic!
-           'auto-save
-           30000
-           (lambda ()
-             (for-each
-               (lambda (buf)
-                 (let ([path (buffer-file-path buf)]
-                       [doc (buffer-doc-pointer buf)])
-                   (when (and path
-                              doc
-                              (qt-text-document-modified? doc)
-                              (not (hash-get
-                                     *auto-save-disabled-buffers*
-                                     buf)))
-                     (let ([auto-path (make-auto-save-path path)])
-                       (with-catch
-                         (lambda (e) (void))
-                         (lambda ()
-                           (let loop ([wins (qt-frame-windows fr)])
-                             (when (pair? wins)
-                               (if (eq? (qt-edit-window-buffer (car wins))
-                                        buf)
-                                   (let ([text (qt-plain-text-edit-text
-                                                 (qt-edit-window-editor
-                                                   (car wins)))])
-                                     (write-string-to-file auto-path text))
-                                   (loop (cdr wins)))))))))))
-               (buffer-list))))
          (schedule-periodic!
            'pulse
            50
@@ -1516,9 +1559,11 @@
                            (qt-current-window fr)
                            (car bufs)))
                        (loop (cdr bufs))))))))
-         (let ([files (filter
-                        (lambda (a) (not (string-prefix? "-" a)))
-                        args)])
+         (let* ([repl-parsed (parse-repl-port args)]
+                [clean-args (if repl-parsed (cdr repl-parsed) args)]
+                [files (filter
+                         (lambda (a) (not (string-prefix? "-" a)))
+                         clean-args)])
            (for-each (lambda (file) (qt-open-file! app file)) files))
          (qt-main-window-set-central-widget! win central)
          (qt-main-window-set-title! win "gemacs")

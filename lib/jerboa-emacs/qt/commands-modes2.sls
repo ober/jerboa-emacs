@@ -996,7 +996,7 @@
              (echo-message! (app-state-echo app) "Buffer has no file")
              (begin
                (with-catch
-                 void
+                 (lambda (_e) (void))
                  (lambda ()
                    (open-process
                      (list 'path: "xdg-open" 'arguments: (list path)))))

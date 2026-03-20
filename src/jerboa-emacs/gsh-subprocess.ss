@@ -61,7 +61,7 @@
     ;; Set cwd if specified
     (when cwd
       (env-set! env "PWD" cwd)
-      (with-catch void (lambda () (current-directory cwd))))
+      (with-catch (lambda (_e) (void)) (lambda () (current-directory cwd))))
     (dynamic-wind
       (lambda () (set! *gsh-active-process* #t))
       (lambda ()
@@ -98,7 +98,7 @@
     ;; Set cwd if specified
     (when cwd
       (env-set! env "PWD" cwd)
-      (with-catch void (lambda () (current-directory cwd))))
+      (with-catch (lambda (_e) (void)) (lambda () (current-directory cwd))))
     (dynamic-wind
       (lambda () (set! *gsh-active-process* #t))
       (lambda ()

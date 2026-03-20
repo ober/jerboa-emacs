@@ -439,10 +439,10 @@
   "Read up to max-lines from a process port, return list of strings."
   (let loop ((n 0) (acc '()))
     (if (>= n max-lines)
-      (begin (with-catch void (lambda () (close-port proc))) (reverse acc))
+      (begin (with-catch (lambda (_e) (void)) (lambda () (close-port proc))) (reverse acc))
       (let ((line (with-catch (lambda (e) #f) (lambda () (read-line proc)))))
         (if (or (not line) (eof-object? line))
-          (begin (with-catch void (lambda () (process-status proc))) (reverse acc))
+          (begin (with-catch (lambda (_e) (void)) (lambda () (process-status proc))) (reverse acc))
           (loop (+ n 1) (cons line acc)))))))
 
 (def (shell-quote-arg str)

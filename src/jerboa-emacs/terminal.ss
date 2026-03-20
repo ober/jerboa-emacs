@@ -503,38 +503,72 @@
   "Reader thread body: poll PTY output and post to channel.
    Posts (cons 'data string) for output chunks,
    (cons 'done exit-status) when child exits."
+  (verbose-log! "PTY-READER: started mfd=" (number->string mfd)
+               " pid=" (number->string pid))
   (with-catch
     (lambda (e)
-      (jemacs-log! "PTY reader error: "
+      (verbose-log! "PTY-READER: ERROR "
         (with-output-to-string
           (lambda () (display-exception e))))
       (channel-put ch (cons 'done -1)))
     (lambda ()
-      (let loop ()
+      (let loop ((count 0) (eagain-count 0))
         (thread-sleep! 0.01)
         (let ((data (pty-read mfd)))
           (cond
             ((string? data)
+             (when (< count 5)
+               (verbose-log! "PTY-READER: data chunk " (number->string count)
+                            " len=" (number->string (string-length data))
+                            " after " (number->string eagain-count) " eagains"))
              (channel-put ch (cons 'data data))
-             (loop))
+             (loop (+ count 1) 0))
             ((eq? data 'eof)
-             ;; Child exited, reap and get status
-             (let ((status (pty-waitpid-status pid #f)))
-               (channel-put ch (cons 'done status))))
+             ;; True EOF from read() returning 0. But on Linux, brief spurious
+             ;; EOF can happen during PTY/curses setup. If child is alive and
+             ;; we haven't received any data, retry.
+             (let ((alive? (pty-child-alive? pid)))
+               (verbose-log! "PTY-READER: EOF after " (number->string count)
+                            " chunks, " (number->string eagain-count)
+                            " eagains, child-alive?=" (if alive? "YES" "no")
+                            " errno=" (number->string (pty-last-errno)))
+               (if (and alive? (< eagain-count 500))
+                 (begin
+                   ;; Spurious EOF — child still running, wait and retry
+                   (thread-sleep! 0.05)
+                   (loop count (+ eagain-count 1)))
+                 ;; Child dead or waited long enough — reap
+                 (let reap-loop ((attempts 0))
+                   (let ((status (pty-waitpid-status pid #t)))  ; WNOHANG!
+                     (cond
+                       ((and (= status 0) (< attempts 200))
+                        (thread-sleep! 0.01)
+                        (reap-loop (+ attempts 1)))
+                       (else
+                        (verbose-log! "PTY-READER: done status=" (number->string status))
+                        (channel-put ch (cons 'done status)))))))))
+            ((eq? data 'error)
+             ;; Fatal read error
+             (verbose-log! "PTY-READER: FATAL errno=" (number->string (pty-last-errno))
+                          " after " (number->string count) " chunks")
+             (channel-put ch (cons 'done -1)))
             (else
-             ;; EAGAIN: no data yet
+             ;; #f = EAGAIN: no data yet
              (if (pty-child-alive? pid)
-               (loop)
+               (loop count (+ eagain-count 1))
                ;; Child died but no EOF yet, drain remaining output
-               (let drain ()
-                 (let ((d (pty-read mfd)))
-                   (cond
-                     ((string? d)
-                      (channel-put ch (cons 'data d))
-                      (drain))
-                     (else
-                      (let ((status (pty-waitpid-status pid #t)))
-                        (channel-put ch (cons 'done status)))))))))))))))
+               (begin
+                 (verbose-log! "PTY-READER: child dead, draining after "
+                              (number->string count) " chunks")
+                 (let drain ()
+                   (let ((d (pty-read mfd)))
+                     (cond
+                       ((string? d)
+                        (channel-put ch (cons 'data d))
+                        (drain))
+                       (else
+                        (let ((status (pty-waitpid-status pid #t)))
+                          (channel-put ch (cons 'done status))))))))))))))))
 
 (def (terminal-execute-async! input ts (pty-rows 24) (pty-cols 80))
   "Execute command: builtins go through gsh-capture (sync),
@@ -555,6 +589,9 @@
        (values 'special 'exit #f))
       (else
        (let ((first-word (extract-first-word trimmed)))
+         (verbose-log! "TERM-EXEC: cmd=" trimmed
+                      " first-word=" (or first-word "")
+                      " builtin?=" (if (and first-word (builtin? first-word)) "yes" "no"))
          (if (and first-word
                   (builtin? first-word)
                   (pure-simple-command? trimmed))
@@ -565,13 +602,18 @@
            (let* ((env (terminal-state-env ts))
                   (env-alist (env-exported-alist env))
                   (rows pty-rows) (cols pty-cols))
+             (verbose-log! "TERM-EXEC: spawning PTY rows=" (number->string rows)
+                          " cols=" (number->string cols))
              (let-values (((mfd pid) (with-catch
                                        (lambda (e)
-                                         (jemacs-log! "PTY-SPAWN-ERROR: "
+                                         (verbose-log! "PTY-SPAWN-ERROR: "
                                            (with-output-to-string
-                                             (lambda () (display-exception e (current-output-port)))))
+                                             (lambda () (display-exception e))))
                                          (values #f #f))
                                        (lambda () (pty-spawn trimmed env-alist rows cols)))))
+               (verbose-log! "TERM-EXEC: pty-spawn mfd="
+                            (if mfd (number->string mfd) "FAILED")
+                            " pid=" (if pid (number->string pid) "FAILED"))
                (if (and mfd pid)
                  (let ((ch (make-channel)))
                    ;; Store PTY state
@@ -594,7 +636,10 @@
    - (cons 'done exit-status) — child exited
    - #f — nothing available"
   (let ((ch (terminal-state-pty-channel ts)))
-    (and ch (channel-try-get ch))))
+    (if ch
+      (let-values (((value found) (channel-try-get ch)))
+        (if found value #f))
+      #f)))
 
 (def (terminal-pty-busy? ts)
   "Check if a PTY command is currently running."
@@ -625,11 +670,11 @@
         (thread (terminal-state-pty-thread ts))
         (ch (terminal-state-pty-channel ts)))
     (when thread
-      (with-catch void (lambda () (thread-terminate! thread))))
+      (with-catch (lambda (_e) (void)) (lambda () (thread-terminate! thread))))
     (when (and master pid)
       (pty-close! master pid))
     (when ch
-      (with-catch void (lambda () (channel-close ch))))
+      (with-catch (lambda (_e) (void)) (lambda () (channel-close ch))))
     (set! (terminal-state-pty-master ts) #f)
     (set! (terminal-state-pty-pid ts) #f)
     (set! (terminal-state-pty-channel ts) #f)

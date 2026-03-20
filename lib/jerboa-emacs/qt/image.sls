@@ -24,59 +24,73 @@
   (def (qt-ensure-image-widget! win)
        "Ensure the qt-edit-window has an image widget at stacked index 1.\n   Creates QScrollArea + QLabel lazily on first call."
        (unless (qt-edit-window-image-scroll win)
-         (let* ([container (qt-edit-window-container win)]
-                [scroll (qt-scroll-area-create container)]
-                [label (qt-label-create "" scroll)])
-           (qt-scroll-area-set-widget! scroll label)
-           (qt-scroll-area-set-widget-resizable! scroll #f)
-           (qt-widget-set-style-sheet! scroll "background: #202020;")
-           (qt-label-set-alignment!
-             label
-             (bitwise-ior QT_ALIGN_CENTER QT_ALIGN_CENTER))
-           (qt-stacked-widget-add-widget! container scroll)
-           (qt-edit-window-image-scroll-set! win scroll)
-           (qt-edit-window-image-label-set! win label))))
+         (verbose-log!
+           "IMG: qt-ensure-image-widget! creating widgets")
+         (let* ([container (qt-edit-window-container win)])
+           (verbose-log! "IMG: creating scroll area")
+           (let ([scroll (qt-scroll-area-create container)])
+             (verbose-log! "IMG: scroll area created, creating label")
+             (let ([label (qt-label-create "" scroll)])
+               (verbose-log! "IMG: label created, configuring")
+               (qt-scroll-area-set-widget! scroll label)
+               (qt-scroll-area-set-widget-resizable! scroll #f)
+               (qt-widget-set-style-sheet! scroll "background: #202020;")
+               (qt-label-set-alignment!
+                 label
+                 (bitwise-ior QT_ALIGN_CENTER QT_ALIGN_CENTER))
+               (verbose-log! "IMG: adding scroll to stacked widget")
+               (qt-stacked-widget-add-widget! container scroll)
+               (verbose-log! "IMG: stacked widget add done")
+               (qt-edit-window-image-scroll-set! win scroll)
+               (qt-edit-window-image-label-set! win label))))))
   (def (qt-show-image-buffer! editor buf)
        "Display an image buffer inline. Loads pixmap into the label and\n   switches the stacked widget to the image view (index 1)."
-       (gemacs-log! "IMG: qt-show-image-buffer! start")
-       (let ([win (hash-get *editor-window-map* editor)])
-         (gemacs-log! "IMG: win=" (if win "found" "#f"))
-         (when win
-           (gemacs-log! "IMG: calling qt-ensure-image-widget!")
-           (qt-ensure-image-widget! win)
-           (gemacs-log! "IMG: qt-ensure-image-widget! done")
-           (let* ([state (hash-get *image-buffer-state* buf)]
-                  [container (qt-edit-window-container win)]
-                  [label (qt-edit-window-image-label win)])
-             (gemacs-log!
-               "IMG: state="
-               (if state "found" "#f")
-               " label="
-               (if label "found" "#f"))
-             (when state
-               (let* ([pixmap (list-ref state 0)]
-                      [zoom-ref (list-ref state 1)]
-                      [orig-w (list-ref state 2)]
-                      [orig-h (list-ref state 3)]
-                      [zoom (unbox zoom-ref)]
-                      [new-w (inexact->exact (round (* orig-w zoom)))]
-                      [new-h (inexact->exact (round (* orig-h zoom)))])
-                 (gemacs-log!
-                   "IMG: scaling pixmap "
-                   (number->string new-w)
-                   "x"
-                   (number->string new-h))
-                 (when (and (> new-w 0) (> new-h 0))
-                   (let ([scaled (qt-pixmap-scaled pixmap new-w new-h)])
-                     (gemacs-log! "IMG: setting pixmap on label")
-                     (qt-label-set-pixmap! label scaled)
-                     (qt-widget-set-minimum-size! label new-w new-h)
-                     (gemacs-log! "IMG: pixmap set on label")))))
-             (gemacs-log!
-               "IMG: calling qt-stacked-widget-set-current-index! 1")
-             (qt-stacked-widget-set-current-index! container 1)
-             (gemacs-log!
-               "IMG: qt-stacked-widget-set-current-index! done")))))
+       (verbose-log! "IMG: qt-show-image-buffer! start")
+       (with-catch
+         (lambda (e)
+           (verbose-log!
+             "IMG: ERROR in qt-show-image-buffer!: "
+             (with-output-to-string (lambda () (display-exception e)))))
+         (lambda ()
+           (let ([win (hash-get *editor-window-map* editor)])
+             (verbose-log! "IMG: win=" (if win "found" "#f"))
+             (when win
+               (qt-ensure-image-widget! win)
+               (let* ([state (hash-get *image-buffer-state* buf)]
+                      [container (qt-edit-window-container win)]
+                      [label (qt-edit-window-image-label win)])
+                 (when state
+                   (let* ([pixmap (list-ref state 0)]
+                          [zoom-ref (list-ref state 1)]
+                          [orig-w (list-ref state 2)]
+                          [orig-h (list-ref state 3)]
+                          [zoom (unbox zoom-ref)]
+                          [new-w (inexact->exact (round (* orig-w zoom)))]
+                          [new-h (inexact->exact (round (* orig-h zoom)))])
+                     (verbose-log! "IMG: display " (number->string new-w) "x"
+                       (number->string new-h) " zoom="
+                       (number->string
+                         (inexact->exact (round (* zoom 100))))
+                       "%")
+                     (when (and (> new-w 0) (> new-h 0))
+                       (if (= zoom 1.0)
+                           (begin
+                             (qt-label-set-pixmap! label pixmap)
+                             (qt-widget-set-minimum-size!
+                               label
+                               orig-w
+                               orig-h))
+                           (let ([scaled (qt-pixmap-scaled
+                                           pixmap
+                                           new-w
+                                           new-h)])
+                             (qt-label-set-pixmap! label scaled)
+                             (qt-widget-set-minimum-size!
+                               label
+                               new-w
+                               new-h))))))
+                 (qt-stacked-widget-set-current-index! container 1)
+                 (verbose-log! "IMG: display done")))))))
   (def (qt-hide-image-buffer! editor)
        "Switch the stacked widget back to the editor view (index 0)."
        (let ([win (hash-get *editor-window-map* editor)])

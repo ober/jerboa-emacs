@@ -33,10 +33,12 @@
 
 (def (repl-start!)
   "Spawn a gxi subprocess and return a repl-state."
-  (let-values (((in-port out-port err-port pid)
+  ;; Chez open-process-ports returns: (write-stdin read-stdout read-stderr pid)
+  (let-values (((p-stdin p-stdout p-stderr pid)
                 (open-process-ports "gxi" (buffer-mode none) (native-transcoder))))
-    (close-port err-port)
-    (make-repl-state (cons in-port out-port) 0 '())))
+    (close-port p-stderr)
+    ;; Store as (read-port . write-port) per struct contract
+    (make-repl-state (cons p-stdout p-stdin) 0 '())))
 
 (def (repl-send! rs input)
   "Send a line of input to the gxi process."
@@ -68,5 +70,5 @@
   "Shut down the gxi subprocess."
   (let ((in-port (car (repl-state-process rs)))
         (out-port (cdr (repl-state-process rs))))
-    (with-catch void (lambda () (close-port out-port)))
-    (with-catch void (lambda () (close-port in-port)))))
+    (with-catch (lambda (_e) (void)) (lambda () (close-port out-port)))
+    (with-catch (lambda (_e) (void)) (lambda () (close-port in-port)))))

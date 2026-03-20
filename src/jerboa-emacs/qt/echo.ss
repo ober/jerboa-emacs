@@ -10,7 +10,8 @@
         qt-echo-read-file-with-completion
         qt-echo-read-file-with-narrowing
         qt-echo-read-with-narrowing
-        qt-minibuffer-init!)
+        qt-minibuffer-init!
+        *minibuffer-active?*)
 
 (import :std/sugar
         :std/sort
@@ -52,6 +53,7 @@
 (def *mb-qt-app* #f)      ; Reference to the Qt application for process-events
 (def *mb-editor* #f)      ; Reference to the editor widget (to restore focus)
 (def *mb-result* #f)      ; Box: #f = still running, (list text) = accepted, (list) = cancelled
+(def *minibuffer-active?* #f)  ; When #t, editor key handler should ignore keystrokes
 (def *mb-completions* []) ; Stored completions for Tab cycling
 (def *mb-tab-idx* 0)      ; Current Tab cycle index
 (def *mb-file-mode* #f)   ; When #t, Tab does directory-aware file completion
@@ -366,9 +368,11 @@
       (lambda ()
         (cond
           (*mb-file-narrowing?*
-           (if *mb-user-selected?*
-             ;; User explicitly navigated list — use selected item
-             (let ((selected (narrowing-selected-text)))
+           ;; Use the selected list item if there are matches,
+           ;; otherwise fall back to the raw input text
+           (let ((selected (narrowing-selected-text))
+                 (has-matches (> (vector-length *mb-filtered*) 0)))
+             (if has-matches
                (cond
                  ((string-suffix? "/" selected)
                   ;; Directory — descend into it
@@ -377,9 +381,9 @@
                  (else
                   ;; File — return full path
                   (set! *mb-result*
-                    (list (string-append *mb-file-dir* selected))))))
-             ;; User just pressed Enter on typed input — return as-is
-             (set! *mb-result* (list (qt-line-edit-text *mb-input*)))))
+                    (list (string-append *mb-file-dir* selected)))))
+               ;; No matches — return raw typed path
+               (set! *mb-result* (list (qt-line-edit-text *mb-input*))))))
           (*mb-narrowing?*
            (set! *mb-result* (list (narrowing-selected-text))))
           (else
@@ -453,6 +457,7 @@
     (qt-widget-show! *mb-container*)
     (qt-widget-set-focus! *mb-input*)
     ;; Blocking event loop
+    (set! *minibuffer-active?* #t)
     (set! *mb-result* #f)
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
@@ -465,6 +470,7 @@
                         (let ((t (car *mb-result*)))
                           (if (string=? t "") #f t)))
                       #f)))
+          (set! *minibuffer-active?* #f)
           ;; Restore: hide minibuffer, show echo label, refocus editor
           (qt-widget-hide! *mb-container*)
           (qt-widget-show! *mb-echo-label*)
@@ -501,6 +507,7 @@
       (qt-widget-show! *mb-container*)
       (qt-widget-set-focus! *mb-input*)
       ;; Blocking event loop
+      (set! *minibuffer-active?* #t)
       (set! *mb-result* #f)
       (let loop ()
         (qt-app-process-events! *mb-qt-app*)
@@ -513,6 +520,7 @@
                           (let ((t (car *mb-result*)))
                             (if (string=? t "") #f t)))
                         #f)))
+            (set! *minibuffer-active?* #f)
             ;; Clean up completer and tab state
             (set! *mb-completions* [])
             (set! *mb-tab-idx* 0)
@@ -548,6 +556,7 @@
     (qt-widget-show! *mb-container*)
     (qt-widget-set-focus! *mb-input*)
     ;; Blocking event loop
+    (set! *minibuffer-active?* #t)
     (set! *mb-result* #f)
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
@@ -560,6 +569,7 @@
                         (let ((t (car *mb-result*)))
                           (if (string=? t "") #f t)))
                       #f)))
+          (set! *minibuffer-active?* #f)
           ;; Clean up file-mode state
           (set! *mb-file-mode* #f)
           (set! *mb-completions* [])
@@ -611,6 +621,7 @@
     (qt-widget-show! *mb-container*)
     (qt-widget-set-focus! *mb-input*)
     ;; Blocking event loop
+    (set! *minibuffer-active?* #t)
     (set! *mb-result* #f)
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
@@ -623,6 +634,7 @@
                         (let ((t (car *mb-result*)))
                           (if (string=? t "") #f t)))
                       #f)))
+          (set! *minibuffer-active?* #f)
           ;; Clean up narrowing state
           (set! *mb-narrowing?* #f)
           (set! *mb-all-candidates* [])
@@ -665,6 +677,7 @@
     (qt-widget-show! *mb-container*)
     (qt-widget-set-focus! *mb-input*)
     ;; Blocking event loop
+    (set! *minibuffer-active?* #t)
     (set! *mb-result* #f)
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
@@ -676,6 +689,7 @@
                         (let ((t (car *mb-result*)))
                           (if (string=? t "") #f t)))
                       #f)))
+          (set! *minibuffer-active?* #f)
           ;; Clean up
           (set! *mb-narrowing?* #f)
           (set! *mb-file-narrowing?* #f)

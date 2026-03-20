@@ -1,10 +1,10 @@
 SCHEME = scheme
 JERBOA    = $(HOME)/mine/jerboa
-JSH       = $(HOME)/mine/jerboa-shell/src
+JSH       = vendor/jerboa-shell/src
 GHERKIN   = $(HOME)/mine/gherkin/src
 LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
-export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:$(HOME)/mine/gerbil-qt/vendor:$(HOME)/mine/jerboa-shell:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:$(HOME)/mine/gerbil-qt/vendor:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
 export CHEZ_QT_LIB := $(HOME)/mine/chez-qt
@@ -14,7 +14,7 @@ export CHEZ_QT_SHIM_DIR := $(HOME)/mine/gerbil-qt/vendor
         test-org-duration test-org-element test-org-fold test-org-footnote \
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
         test-vtscreen test-debug-repl test-qt build-qt binary binary-qt \
-        test-emacs test-functional test-term-hang \
+        test-pty test-emacs test-functional test-term-hang \
         docker-deps static-qt clean-docker check-root build-jemacs-qt-static
 
 all: build test
@@ -33,7 +33,18 @@ run: build
 repl_shim.so: support/repl_shim.c
 	gcc -shared -fPIC -O2 -o repl_shim.so support/repl_shim.c -Wall
 
-run-qt: build repl_shim.so
+QT_INC := $(shell qmake6 -query QT_INSTALL_HEADERS 2>/dev/null || echo /usr/include/x86_64-linux-gnu/qt6)
+QT_SHIM_H := $(HOME)/mine/gerbil-qt/vendor
+
+libqt_shim.so: vendor/qt_shim.cpp
+	g++ -shared -fPIC -std=c++17 -O2 \
+	  -DJEMACS_CHEZ_SMP -DQT_SCINTILLA_AVAILABLE \
+	  -I$(QT_SHIM_H) -I$(QT_INC) -I$(QT_INC)/QtCore -I$(QT_INC)/QtGui -I$(QT_INC)/QtWidgets -I$(QT_INC)/Qsci \
+	  vendor/qt_shim.cpp \
+	  -o libqt_shim.so \
+	  -lQt6Core -lQt6Gui -lQt6Widgets -lqscintilla2_qt6
+
+run-qt: build repl_shim.so libqt_shim.so
 	$(SCHEME) $(LIBDIRS) --script qt-main.ss
 
 # Qt backend build target
@@ -170,13 +181,17 @@ test-debug-repl:
 	$(SCHEME) $(LIBDIRS) --program tests/test-debug-repl.ss
 
 test-qt: build
-	QT_QPA_PLATFORM=offscreen $(SCHEME) $(LIBDIRS) --script tests/test-qt.ss
+	QT_QPA_PLATFORM=offscreen LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script tests/test-qt.ss
+	QT_QPA_PLATFORM=offscreen LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script tests/test-qt-part2.ss
 
 test-emacs:
 	$(SCHEME) $(LIBDIRS) --program tests/test-emacs.ss
 
 test-functional:
 	$(SCHEME) $(LIBDIRS) --program tests/test-functional.ss
+
+test-pty:
+	$(SCHEME) $(LIBDIRS) --script tests/test-pty.ss
 
 test-term-hang:
 	$(SCHEME) $(LIBDIRS) --program tests/test-term-hang.ss
@@ -248,7 +263,7 @@ build-jemacs-qt-static: check-root
 	          -I/opt/qt6-static/include/QtGui -I/opt/qt6-static/include/QtWidgets") && \
 	  QSCI_FLAGS="-DQT_SCINTILLA_AVAILABLE -I/opt/qt6-static/include -I/opt/qt6-static/include/Qsci" && \
 	  cp /src/vendor/qt_shim.cpp /deps/gerbil-qt/vendor/qt_shim.cpp && \
-	  g++ -c -fPIC -std=c++17 $$QT_CFLAGS $$QSCI_FLAGS \
+	  g++ -c -fPIC -std=c++17 -DJEMACS_CHEZ_SMP $$QT_CFLAGS $$QSCI_FLAGS \
 	    /deps/gerbil-qt/vendor/qt_shim.cpp \
 	    -o /deps/gerbil-qt/vendor/qt_shim_static.o && \
 	  ar rcs /deps/gerbil-qt/vendor/libqt_shim.a \

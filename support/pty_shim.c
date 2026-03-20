@@ -44,7 +44,13 @@ int pty_spawn(const char *cmd, const char *envp, int rows, int cols) {
     }
 
     if (g_child_pid == 0) {
-        /* Child process */
+        /* Child process — close inherited fds (except 0/1/2 which forkpty set up).
+         * This prevents children from holding the debug REPL socket and other
+         * parent resources open. */
+        for (int fd = 3; fd < 1024; fd++) {
+            close(fd);  /* harmless if fd not open */
+        }
+
         if (envp && envp[0]) {
             clearenv();
             const char *p = envp;
@@ -84,19 +90,34 @@ int pty_spawn(const char *cmd, const char *envp, int rows, int cols) {
 int pty_get_master_fd(void) { return g_master_fd; }
 int pty_get_child_pid(void) { return g_child_pid; }
 
+/* Last errno from pty_read, for debugging */
+static int g_last_errno = 0;
+
+int pty_last_errno(void) { return g_last_errno; }
+
 /*
  * Non-blocking read from PTY master fd.
- * Returns bytes read (>0), 0 if EAGAIN (no data), -1 on EOF/error.
+ * Returns:
+ *   >0  — bytes read
+ *    0  — EAGAIN/EWOULDBLOCK/EIO/ENXIO (no data yet, retry)
+ *   -1  — EOF (read returned 0)
+ *   -2  — fatal error (check pty_last_errno())
+ *
+ * EIO is common on PTY masters when the slave does certain ioctls
+ * (e.g. during terminal setup).  ENXIO can occur briefly before the
+ * slave side is fully opened.  Treating both as EAGAIN prevents the
+ * reader thread from prematurely entering waitpid.
  */
 int pty_read(int fd, char *buf, int maxlen) {
     int n = read(fd, buf, maxlen);
     if (n < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        g_last_errno = errno;
+        if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EIO || errno == ENXIO)
             return 0;
-        return -1;
+        return -2;  /* fatal — caller should check pty_last_errno() */
     }
     if (n == 0)
-        return -1;
+        return -1;  /* true EOF */
     return n;
 }
 

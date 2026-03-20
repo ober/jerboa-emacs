@@ -1108,7 +1108,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
                              (close-port port)
                              (or output "No differences")))))))
         ;; Clean up temp file
-        (with-catch void (lambda () (delete-file tmp-path)))
+        (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp-path)))
         ;; Show diff in buffer
         (let* ((fr (app-state-frame app))
                (diff-buf (or (buffer-by-name "*Diff*")

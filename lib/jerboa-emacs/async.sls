@@ -86,7 +86,10 @@
              (when found
                (with-catch
                  (lambda (e)
-                   (jemacs-log! "UI queue error: " (format "~a" e)))
+                   (verbose-log!
+                     "UI-QUEUE-ERROR: "
+                     (with-output-to-string
+                       (lambda () (display-exception e)))))
                  action)
                (loop (+ n 1)))))))
   (def *scheduled-tasks* '())
@@ -110,14 +113,23 @@
                         [thunk (cadddr task)])
                     (if (>= (- now last) interval)
                         (begin
+                          (verbose-log!
+                            "TICK "
+                            (symbol->string name)
+                            " begin")
                           (with-catch
                             (lambda (e)
-                              (jemacs-log!
-                                "Timer error in "
-                                name
+                              (verbose-log!
+                                "TIMER-ERROR in "
+                                (symbol->string name)
                                 ": "
-                                (format "~a" e)))
+                                (with-output-to-string
+                                  (lambda () (display-exception e)))))
                             thunk)
+                          (verbose-log!
+                            "TICK "
+                            (symbol->string name)
+                            " end")
                           (list name interval now thunk))
                         task)))
                 *scheduled-tasks*))))

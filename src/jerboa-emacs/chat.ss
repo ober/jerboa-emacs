@@ -83,7 +83,7 @@
                 (if (eof-object? ch)
                   ;; Process finished
                   (begin
-                    (with-catch void (lambda () (close-port in-port)))
+                    (with-catch (lambda (_e) (void)) (lambda () (close-port in-port)))
                     (set! (chat-state-process cs) #f)
                     (set! (chat-state-busy? cs) #f))
                   (begin
@@ -105,6 +105,6 @@
   "Stop any running claude process."
   (let ((in-port (chat-state-process cs)))
     (when in-port
-      (with-catch void (lambda () (close-port in-port)))
+      (with-catch (lambda (_e) (void)) (lambda () (close-port in-port)))
       (set! (chat-state-process cs) #f)
       (set! (chat-state-busy? cs) #f))))
