@@ -368,19 +368,48 @@
            (lambda ()
              (cond
                [*mb-file-narrowing?*
-                (let ([selected (narrowing-selected-text)]
+                (let ([input-text (qt-line-edit-text *mb-input*)]
                       [has-matches (> (vector-length *mb-filtered*) 0)])
-                  (if has-matches
-                      (cond
-                        [(string-suffix? "/" selected)
-                         (qt-line-edit-set-text!
-                           *mb-input*
-                           (string-append *mb-file-dir* selected))]
-                        [else
-                         (set! *mb-result*
-                           (list (string-append *mb-file-dir* selected)))])
-                      (set! *mb-result*
-                        (list (qt-line-edit-text *mb-input*)))))]
+                  (cond
+                    [(string-suffix? "/" input-text)
+                     (set! *mb-result* (list input-text))]
+                    [(and has-matches *mb-user-selected?*)
+                     (let ([selected (narrowing-selected-text)])
+                       (cond
+                         [(string-suffix? "/" selected)
+                          (qt-line-edit-set-text!
+                            *mb-input*
+                            (string-append *mb-file-dir* selected))]
+                         [else
+                          (set! *mb-result*
+                            (list
+                              (string-append *mb-file-dir* selected)))]))]
+                    [(and has-matches (= (vector-length *mb-filtered*) 1))
+                     (let ([selected (vector-ref *mb-filtered* 0)])
+                       (cond
+                         [(string-suffix? "/" selected)
+                          (qt-line-edit-set-text!
+                            *mb-input*
+                            (string-append *mb-file-dir* selected))]
+                         [else
+                          (set! *mb-result*
+                            (list
+                              (string-append *mb-file-dir* selected)))]))]
+                    [(and has-matches
+                          (not (string=?
+                                 input-text
+                                 (string-append *mb-file-dir*))))
+                     (let ([selected (narrowing-selected-text)])
+                       (cond
+                         [(string-suffix? "/" selected)
+                          (qt-line-edit-set-text!
+                            *mb-input*
+                            (string-append *mb-file-dir* selected))]
+                         [else
+                          (set! *mb-result*
+                            (list
+                              (string-append *mb-file-dir* selected)))]))]
+                    [else (set! *mb-result* (list input-text))]))]
                [*mb-narrowing?*
                 (set! *mb-result* (list (narrowing-selected-text)))]
                [else

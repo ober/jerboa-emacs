@@ -368,22 +368,47 @@
       (lambda ()
         (cond
           (*mb-file-narrowing?*
-           ;; Use the selected list item if there are matches,
-           ;; otherwise fall back to the raw input text
-           (let ((selected (narrowing-selected-text))
+           (let ((input-text (qt-line-edit-text *mb-input*))
                  (has-matches (> (vector-length *mb-filtered*) 0)))
-             (if has-matches
-               (cond
-                 ((string-suffix? "/" selected)
-                  ;; Directory — descend into it
-                  (qt-line-edit-set-text! *mb-input*
-                    (string-append *mb-file-dir* selected)))
-                 (else
-                  ;; File — return full path
-                  (set! *mb-result*
-                    (list (string-append *mb-file-dir* selected)))))
+             (cond
+               ;; User typed a directory path (ends with /) — return it as-is
+               ((string-suffix? "/" input-text)
+                (set! *mb-result* (list input-text)))
+               ;; User actively narrowed and there are matches — use selected item
+               ((and has-matches *mb-user-selected?*)
+                (let ((selected (narrowing-selected-text)))
+                  (cond
+                    ((string-suffix? "/" selected)
+                     ;; Directory — descend into it
+                     (qt-line-edit-set-text! *mb-input*
+                       (string-append *mb-file-dir* selected)))
+                    (else
+                     ;; File — return full path
+                     (set! *mb-result*
+                       (list (string-append *mb-file-dir* selected)))))))
+               ;; User typed a filter that matches exactly one item — use it
+               ((and has-matches (= (vector-length *mb-filtered*) 1))
+                (let ((selected (vector-ref *mb-filtered* 0)))
+                  (cond
+                    ((string-suffix? "/" selected)
+                     (qt-line-edit-set-text! *mb-input*
+                       (string-append *mb-file-dir* selected)))
+                    (else
+                     (set! *mb-result*
+                       (list (string-append *mb-file-dir* selected)))))))
+               ;; User typed a filter with multiple matches — use top match
+               ((and has-matches (not (string=? input-text (string-append *mb-file-dir*))))
+                (let ((selected (narrowing-selected-text)))
+                  (cond
+                    ((string-suffix? "/" selected)
+                     (qt-line-edit-set-text! *mb-input*
+                       (string-append *mb-file-dir* selected)))
+                    (else
+                     (set! *mb-result*
+                       (list (string-append *mb-file-dir* selected)))))))
                ;; No matches — return raw typed path
-               (set! *mb-result* (list (qt-line-edit-text *mb-input*))))))
+               (else
+                (set! *mb-result* (list input-text))))))
           (*mb-narrowing?*
            (set! *mb-result* (list (narrowing-selected-text))))
           (else
