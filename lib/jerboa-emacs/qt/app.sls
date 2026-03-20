@@ -119,7 +119,7 @@
                        (if modified? "* " "")
                        name
                        (if path (string-append " - " path) "")
-                       " - gemacs")])
+                       " - jemacs")])
          (qt-main-window-set-title! win title)))
   (def (qt-update-mark-selection! app)
        "Update visual selection to reflect active mark region.\n   When buffer-mark is set, highlights the region between mark and cursor.\n   When mark is cleared, ensures no stale selection remains."
@@ -398,7 +398,7 @@
                       (loop (cdr wins))))))])))
   (def (qt-do-init! qt-app args) (init-jemacs-log!)
        (init-verbose-log!)
-       (verbose-log! "gemacs-qt verbose mode ON")
+       (verbose-log! "jemacs-qt verbose mode ON")
        (define-standard-faces!)
        (let-values ([(saved-theme saved-font-family saved-font-size)
                      (theme-settings-load!)])
@@ -512,7 +512,7 @@
          (let* ([ed (qt-current-editor fr)]
                 [saved (scratch-restore!)]
                 [text (or saved
-                          (string-append ";; Gerbil Emacs — *scratch*\n" ";;\n"
+                          (string-append ";; Jemacs — *scratch*\n" ";;\n"
                             ";; Key Bindings:\n"
                             ";;   C-x C-f   Find file        C-x C-s   Save buffer\n"
                             ";;   C-x b     Switch buffer     C-x k     Kill buffer\n"
@@ -1566,7 +1566,7 @@
                          clean-args)])
            (for-each (lambda (file) (qt-open-file! app file)) files))
          (qt-main-window-set-central-widget! win central)
-         (qt-main-window-set-title! win "gemacs")
+         (qt-main-window-set-title! win "jemacs")
          (qt-widget-resize! win 800 600)
          (qt-widget-show! win)
          (qt-modeline-update! app)

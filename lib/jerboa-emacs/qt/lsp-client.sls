@@ -26,7 +26,7 @@
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
     (std sugar) (std text json) (std misc string) (std os fdio)
-    (only (jerboa-emacs core) *lsp-server-command* gemacs-log!)
+    (only (jerboa-emacs core) *lsp-server-command* jemacs-log!)
     (jerboa-emacs async) (jerboa core) (jerboa runtime))
   (define *lsp-process*--cell (vector #f))
   (define *lsp-reader-thread*--cell (vector #f))
@@ -365,7 +365,7 @@
            params
            "clientInfo"
            (let ([h (make-hash-table)])
-             (hash-put! h "name" "gemacs")
+             (hash-put! h "name" "jemacs")
              (hash-put! h "version" "1.0")
              h))
          (lsp-send-request!

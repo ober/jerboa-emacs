@@ -366,7 +366,7 @@
   (define *qt-eww-bookmarks-file*--cell
     (vector
       (path-expand
-        ".gemacs-eww-bookmarks"
+        ".jemacs-eww-bookmarks"
         (user-info-home (user-info (user-name))))))
   (def (qt-eww-load-bookmarks!)
        "Load EWW bookmarks from disk."
@@ -668,7 +668,7 @@
              (reverse lines)
              (list
                ""
-               "Use (qt-autoload! 'symbol \"path.ss\") in ~/.gemacs-init.")))
+               "Use (qt-autoload! 'symbol \"path.ss\") in ~/.jemacs-init.")))
          (let* ([text (string-join lines "\n")]
                 [buf (or (buffer-by-name "*Autoloads*")
                          (qt-buffer-create! "*Autoloads*" ed #f))])
@@ -967,7 +967,7 @@
     (vector
       (string-append
         (or (getenv "HOME" #f) ".")
-        "/.gemacs-undo/")))
+        "/.jemacs-undo/")))
   (def (qt-persistent-undo-file-for path)
        (string-append
          *qt-persistent-undo-dir*

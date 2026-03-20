@@ -165,7 +165,7 @@
       (let* ((port (open-process
                      (list path: "curl"
                            arguments: ["-sL" "-m" "10"
-                                       "-A" "Mozilla/5.0 (compatible; gemacs eww)"
+                                       "-A" "Mozilla/5.0 (compatible; jemacs eww)"
                                        url]
                            stdout-redirection: #t
                            stderr-redirection: #f
@@ -178,7 +178,7 @@
 (def (eww-fetch-url-async! url callback)
   "Fetch a URL async using curl. Calls (callback html-or-#f) on UI thread."
   (async-process!
-    (string-append "curl -sL -m 10 -A 'Mozilla/5.0 (compatible; gemacs eww)' "
+    (string-append "curl -sL -m 10 -A 'Mozilla/5.0 (compatible; jemacs eww)' "
                    "'" (string-map (lambda (c) (if (char=? c #\') #\_ c)) url) "'")
     callback: (lambda (result)
       (callback (if (string=? result "") #f result)))
@@ -644,10 +644,10 @@
 
 ;; --- Diary integration ---
 (def *diary-file*
-  (path-expand ".gemacs-diary" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-diary" (user-info-home (user-info (user-name)))))
 
 (def (diary-entries-for-month year month)
-  "Read diary entries for year/month from ~/.gemacs-diary.
+  "Read diary entries for year/month from ~/.jemacs-diary.
    Format: YYYY-MM-DD entry text"
   (if (not (file-exists? *diary-file*))
     []
@@ -685,7 +685,7 @@
         (qt-plain-text-edit-set-cursor-position! ed 0)))))
 
 (def (cmd-diary-insert-entry app)
-  "Add a diary entry for today to ~/.gemacs-diary."
+  "Add a diary entry for today to ~/.jemacs-diary."
   (let* ((date-str (with-catch (lambda (e) "2026-01-01")
                      (lambda ()
                        (let* ((port (open-process
@@ -821,7 +821,7 @@
 
 ;; --- Runtime key rebinding ---
 (def *custom-keys-path*
-  (path-expand ".gemacs-keys" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-keys" (user-info-home (user-info (user-name)))))
 
 (def (cmd-global-set-key app)
   "Bind a key to a command interactively."
@@ -915,10 +915,10 @@
 ;;; ============================================================================
 
 (def *init-file-path*
-  (path-expand ".gemacs-init.ss" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-init.ss" (user-info-home (user-info (user-name)))))
 
 (def (load-init-file!)
-  "Load user init file (~/.gemacs-init.ss) if it exists."
+  "Load user init file (~/.jemacs-init.ss) if it exists."
   (with-catch
     (lambda (e) #f)
     (lambda ()
@@ -966,7 +966,7 @@
 ;;; ============================================================================
 
 (def *scratch-file-path*
-  (path-expand ".gemacs-scratch" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-scratch" (user-info-home (user-info (user-name)))))
 
 (def (scratch-save!)
   "Save scratch buffer contents to disk."

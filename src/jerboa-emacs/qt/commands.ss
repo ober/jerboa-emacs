@@ -266,7 +266,7 @@
       (echo-error! (app-state-echo app) "Buffer has no file")
       (let ((config (find-dir-locals-file (path-directory path))))
         (if (not config)
-          (echo-message! (app-state-echo app) "No .gemacs-config found")
+          (echo-message! (app-state-echo app) "No .jemacs-config found")
           (let ((settings (read-dir-locals config)))
             (echo-message! (app-state-echo app)
               (string-append config ": "
@@ -1764,7 +1764,7 @@
   (register-command! 'project-tree-delete-file cmd-project-tree-delete-file)
   (register-command! 'project-tree-rename-file cmd-project-tree-rename-file)
   (register-command! 'set-window-dedicated cmd-set-window-dedicated)
-  (register-command! 'gemacs-doc cmd-gemacs-doc)
+  (register-command! 'jemacs-doc cmd-jemacs-doc)
   (register-command! 'dired-async-copy cmd-dired-async-copy)
   (register-command! 'dired-async-move cmd-dired-async-move)
   ;; Batch 9: recursive minibuffer, customize, process sentinels, plugins
@@ -1891,14 +1891,14 @@
       (echo-message! echo "Header line mode disabled"))))
 
 (def (cmd-project-keymap-load app)
-  "Load project-specific keybindings from .gemacs-keys in project root."
+  "Load project-specific keybindings from .jemacs-keys in project root."
   (let* ((root (project-current app))
          (echo (app-state-echo app)))
     (if (not root)
       (echo-message! echo "Not in a project")
-      (let ((keyfile (path-expand ".gemacs-keys" root)))
+      (let ((keyfile (path-expand ".jemacs-keys" root)))
         (if (not (file-exists? keyfile))
-          (echo-message! echo (string-append "No .gemacs-keys in " root))
+          (echo-message! echo (string-append "No .jemacs-keys in " root))
           (with-catch
             (lambda (e)
               (echo-message! echo (string-append "Error: "
@@ -2011,12 +2011,12 @@
          (echo (app-state-echo app))
          (fr (app-state-frame app))
          (content (string-append
-           "Gemacs Info\n"
+           "Jemacs Info\n"
            "===========\n\n"
            "* Commands: M-x to run any command\n"
            "* Keybindings: C-h k to describe a key\n"
            "* Org Mode: Full org support with babel, export, agenda\n"
-           "* Configuration: ~/.gemacs-init, ~/.gemacs-config\n\n"
+           "* Configuration: ~/.jemacs-init, ~/.jemacs-config\n\n"
            "Movement: C-f/C-b (char), M-f/M-b (word), C-n/C-p (line)\n"
            "Editing: C-k (kill), C-y (yank), C-/ (undo), C-w (cut)\n"
            "Files: C-x C-f (open), C-x C-s (save), C-x b (switch)\n"
@@ -2155,8 +2155,8 @@
               (rename-file (path-expand old-name dir) (path-expand new-name dir))
               (echo-message! echo (string-append "Renamed: " old-name " → " new-name)))))))))
 
-(def (cmd-gemacs-doc app)
-  "Browse gemacs documentation (Qt)."
+(def (cmd-jemacs-doc app)
+  "Browse jemacs documentation (Qt)."
   (let* ((ed (current-qt-editor app))
          (echo (app-state-echo app))
          (fr (app-state-frame app))
@@ -2166,7 +2166,7 @@
              (content
                (cond
                  ((string=? key "getting-started")
-                  "Getting Started with Gemacs\n==========================\n\nOpen: C-x C-f | Save: C-x C-s | Quit: C-x C-c\nSearch: C-s | Replace: M-% | Undo: C-/\nWindows: C-x 2 (split), C-x o (other), C-x 1 (unsplit)\nBuffers: C-x b (switch), C-x k (kill)\nHelp: C-h k (describe key), M-x (run command)\n")
+                  "Getting Started with Jemacs\n==========================\n\nOpen: C-x C-f | Save: C-x C-s | Quit: C-x C-c\nSearch: C-s | Replace: M-% | Undo: C-/\nWindows: C-x 2 (split), C-x o (other), C-x 1 (unsplit)\nBuffers: C-x b (switch), C-x k (kill)\nHelp: C-h k (describe key), M-x (run command)\n")
                  ((string=? key "keybindings")
                   "Keybinding Reference\n====================\n\nC-f/C-b Forward/Back | M-f/M-b Word | C-n/C-p Line\nC-a/C-e BOL/EOL | M-</M-> BOB/EOB | C-v/M-v Page\nC-d Del | C-k Kill line | C-w Cut | M-w Copy | C-y Yank\nC-x C-f Open | C-x C-s Save | C-x b Switch | C-x k Kill\nC-s Search | C-r Reverse | M-% Replace\nC-x 2/3 Split | C-x 0/1 Delete | C-x o Other\n")
                  ((string=? key "commands")
@@ -2243,7 +2243,7 @@
                              "  ;; " desc) lines))))
       *qt-customizable-vars*)
     (let* ((text (string-append
-                   "Gemacs Customize\n"
+                   "Jemacs Customize\n"
                    "================\n\n"
                    "Current settings:\n\n"
                    (string-join (reverse lines) "\n")
@@ -2259,7 +2259,7 @@
 (def *qt-process-sentinels* (make-hash-table))
 (def *qt-process-filters* (make-hash-table))
 
-(def *qt-plugin-directory* "~/.gemacs-plugins")
+(def *qt-plugin-directory* "~/.jemacs-plugins")
 (def *qt-loaded-plugins* [])
 
 (def (cmd-load-plugin app)
@@ -2288,7 +2288,7 @@
          (available (if (file-exists? dir) (directory-files dir) []))
          (ss-files (filter (lambda (f) (string-suffix? ".ss" f)) available))
          (text (string-append
-                 "Gemacs Plugins\n"
+                 "Jemacs Plugins\n"
                  "==============\n\n"
                  "Loaded plugins:\n"
                  (if (null? *qt-loaded-plugins*)

@@ -2063,7 +2063,7 @@
          (win (current-window fr))
          (buf (buffer-create! "*Customize*" ed))
          (groups (custom-groups))
-         (lines ["Gemacs Customize"
+         (lines ["Jemacs Customize"
                  "================" ""]))
     (buffer-attach! ed buf)
     (set! (edit-window-buffer win) buf)
@@ -2185,7 +2185,7 @@
                        '()))
            (ss-files (filter (lambda (f) (string-suffix? ".ss" f)) available))
            (text (string-append
-                   "Gemacs Plugins\n"
+                   "Jemacs Plugins\n"
                    "==============\n\n"
                    "Loaded plugins:\n"
                    (if (null? *loaded-plugins*)

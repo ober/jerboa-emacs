@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Main application and event loop for gemacs
+;;; Main application and event loop for jemacs
 
 (export app-init! app-run! main tui-session-save!)
 
@@ -75,7 +75,7 @@
 ;;;============================================================================
 
 (def *tui-session-path*
-  (path-expand ".gemacs-session" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-session" (user-info-home (user-info (user-name)))))
 
 (def (tui-session-save! app)
   "Save current session (open file buffers) to disk."
@@ -218,7 +218,7 @@
         (if (and saved (> (string-length saved) 0))
           (editor-set-text ed saved)
           (editor-set-text ed (string-append
-            ";; Gerbil Emacs — *scratch*\n"
+            ";; Jemacs — *scratch*\n"
             ";;\n"
             ";; Key Bindings:\n"
             ";;   C-x C-f   Find file        C-x C-s   Save buffer\n"
@@ -239,7 +239,7 @@
     (for-each (lambda (file) (open-file-in-app! app file))
               files)
 
-    ;; Start IPC server for gemacs-client
+    ;; Start IPC server for jemacs-client
     (start-ipc-server!)
 
     ;; Run after-init-hook (parity with Qt layer)
@@ -309,7 +309,7 @@
           (when mode-cmd (mode-cmd app)))))))))
 
 ;;;============================================================================
-;;; IPC polling (files opened via gemacs-client)
+;;; IPC polling (files opened via jemacs-client)
 ;;;============================================================================
 
 (def (poll-ipc-files! app)
@@ -557,7 +557,7 @@
       ;; Poll AI chat output
       (poll-chat-output! app)
 
-      ;; Poll IPC queue for files opened via gemacs-client
+      ;; Poll IPC queue for files opened via jemacs-client
       (poll-ipc-files! app)
 
       ;; Tick pulse highlight countdown

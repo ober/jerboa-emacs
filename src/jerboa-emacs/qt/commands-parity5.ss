@@ -330,7 +330,7 @@
          (name (buffer-name buf))
          (ext (let ((dot (string-index name #\.)))
                 (if dot (substring name dot (string-length name)) "")))
-         (template-dir (string-append (getenv "HOME" "/tmp") "/.gemacs-templates"))
+         (template-dir (string-append (getenv "HOME" "/tmp") "/.jemacs-templates"))
          (template-file (string-append template-dir "/" ext)))
     (cond
       ((and (not (string=? ext ""))
@@ -476,7 +476,7 @@
 (def (cmd-help-for-help app)
   (let* ((fr (app-state-frame app))
          (help-text (string-append
-"Gemacs Help System\n"
+"Jemacs Help System\n"
 "==================\n\n"
 "You have typed C-h, the help character. Type a Help option:\n\n"
 "Key Bindings:\n"
@@ -524,7 +524,7 @@
 "Other:\n"
 "  M-x      Execute command by name\n"
 "  C-g      Cancel current operation\n"
-"  C-x C-c  Quit Gemacs\n")))
+"  C-x C-c  Quit Jemacs\n")))
     (let* ((win (qt-current-window fr))
            (ed (qt-edit-window-editor win))
            (help-buf (qt-buffer-create! "*Help*" ed #f)))
@@ -951,7 +951,7 @@
          (ed (qt-edit-window-editor win))
          (buf (qt-buffer-create! "*Customize*" ed #f))
          (groups (custom-groups))
-         (lines ["Gemacs Customize"
+         (lines ["Jemacs Customize"
                  (make-string 60 #\=) ""]))
     (for-each
       (lambda (group)

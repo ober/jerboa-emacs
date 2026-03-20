@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Helm Qt renderer for gemacs
+;;; Helm Qt renderer for jemacs
 ;;;
 ;;; Uses the existing QListWidget/minibuffer infrastructure from qt/echo.ss
 ;;; with multi-source header support and helm session management.

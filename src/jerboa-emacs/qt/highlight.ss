@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Qt syntax highlighting for gemacs
+;;; Qt syntax highlighting for jemacs
 ;;;
 ;;; Uses QScintilla's built-in Lexilla lexers for syntax highlighting.
 ;;; Detects language from file extension and configures lexer + style colors.

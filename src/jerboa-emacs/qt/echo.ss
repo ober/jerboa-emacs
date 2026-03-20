@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Qt echo area / minibuffer for gemacs
+;;; Qt echo area / minibuffer for jemacs
 ;;;
 ;;; Uses a QLabel for displaying messages and an inline QLineEdit
 ;;; (in the same echo-area row) for minibuffer prompts — no popup dialog.

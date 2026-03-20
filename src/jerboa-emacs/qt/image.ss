@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Image viewing for gemacs Qt backend
+;;; Image viewing for jemacs Qt backend
 ;;;
 ;;; Supports two modes:
 ;;; 1. Inline display: images shown inside the editor area via QStackedWidget

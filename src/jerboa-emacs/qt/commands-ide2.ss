@@ -430,7 +430,7 @@
               (for-each
                 (lambda (job)
                   (with-catch
-                    (lambda (e) (gemacs-log! "wgrep write error: " (object->string e)))
+                    (lambda (e) (jemacs-log! "wgrep write error: " (object->string e)))
                     (lambda () (write-string-to-file (car job) (cdr job)))))
                 write-jobs))))
         (set! *wgrep-mode* #f)
@@ -531,7 +531,7 @@
 ;;;============================================================================
 
 (def *session-path*
-  (path-expand ".gemacs-session" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-session" (user-info-home (user-info (user-name)))))
 
 (def (session-save! app)
   "Save current session (open file buffers + positions) to disk."

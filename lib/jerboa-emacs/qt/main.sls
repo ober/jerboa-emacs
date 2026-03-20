@@ -18,19 +18,19 @@
   (def (main . args)
        (cond
          [(member "--version" args)
-          (displayln "gemacs " (cdar version-manifest))
+          (displayln "jemacs " (cdar version-manifest))
           (for-each
             (lambda (p)
               (when (not (string=? (car p) ""))
                 (displayln (car p) " " (cdr p))))
             (cdr version-manifest))]
          [(member "--help" args)
-          (displayln "Usage: gemacs-qt [OPTIONS] [FILES...]")
+          (displayln "Usage: jemacs-qt [OPTIONS] [FILES...]")
           (displayln "Options:")
           (displayln "  --version        Show version information")
           (displayln "  --help           Show this help message")
           (displayln
-            "  --verbose        Log all Qt calls and commands to ~/.gemacs-verbose.log")
+            "  --verbose        Log all Qt calls and commands to ~/.jemacs-verbose.log")
           (displayln
             "  --repl <port>    Start TCP debug REPL on given port (0=auto)")]
          [else (apply qt-main args)])))

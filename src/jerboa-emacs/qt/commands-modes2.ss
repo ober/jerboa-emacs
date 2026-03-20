@@ -616,12 +616,12 @@
 (def (cmd-use-package-report app)
   "Show use-package statistics."
   (echo-message! (app-state-echo app)
-    "Gemacs: all packages built-in. No external packages to report."))
+    "Jemacs: all packages built-in. No external packages to report."))
 
 (def (cmd-straight-use-package app)
-  "Configure straight.el package — N/A in gemacs."
+  "Configure straight.el package — N/A in jemacs."
   (echo-message! (app-state-echo app)
-    "Gemacs uses built-in packages. straight.el not applicable."))
+    "Jemacs uses built-in packages. straight.el not applicable."))
 
 ;;; ============================================================================
 ;;; Which-key enhancements
@@ -1026,8 +1026,8 @@
 ;;; ============================================================================
 
 (def (cmd-no-littering-mode app)
-  "No-littering mode — gemacs uses ~/.gemacs-* by default."
-  (echo-message! (app-state-echo app) "Gemacs uses ~/.gemacs-* files; no littering by default"))
+  "No-littering mode — jemacs uses ~/.jemacs-* by default."
+  (echo-message! (app-state-echo app) "Jemacs uses ~/.jemacs-* files; no littering by default"))
 
 ;;; ============================================================================
 ;;; Benchmark-init / esup — startup profiling
@@ -1043,7 +1043,7 @@
 (def (cmd-benchmark-init-show-durations app)
   "Show runtime statistics — Chez version, platform."
   (let* ((out (string-append
-                "=== Gemacs Runtime Statistics ===\n\n"
+                "=== Jemacs Runtime Statistics ===\n\n"
                 "Chez:            " (scheme-version) "\n"
                 "Platform:        " (symbol->string (machine-type)) "\n"))
          (fr (app-state-frame app))

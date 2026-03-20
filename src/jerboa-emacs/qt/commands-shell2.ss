@@ -56,7 +56,7 @@
           (lambda (e)
             (echo-error! (app-state-echo app) "Sudo save failed"))
           (lambda ()
-            (let ((tmp (string-append "/tmp/.gemacs-sudo-"
+            (let ((tmp (string-append "/tmp/.jemacs-sudo-"
                          (number->string (random-integer 999999)))))
               (call-with-output-file tmp
                 (lambda (port) (display text port)))
@@ -256,8 +256,8 @@
           (echo-error! (app-state-echo app) (string-append "Buffer not found: " other-name))
           (let* ((ed (current-qt-editor app))
                  (text1 (qt-plain-text-edit-text ed))
-                 (tmp1 "/tmp/gemacs-ediff-1.txt")
-                 (tmp2 "/tmp/gemacs-ediff-2.txt"))
+                 (tmp1 "/tmp/jemacs-ediff-1.txt")
+                 (tmp2 "/tmp/jemacs-ediff-2.txt"))
             (call-with-output-file tmp1 (lambda (p) (display text1 p)))
             ;; Get other buffer text by temporarily switching
             (qt-buffer-attach! ed other-buf)
@@ -493,7 +493,7 @@ Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
         (let loop ((i hunk-line) (acc []))
           (if (>= i (length lines))
             (let* ((hunk-text (string-join (reverse acc) "\n"))
-                   (tmp "/tmp/gemacs-hunk.patch"))
+                   (tmp "/tmp/jemacs-hunk.patch"))
               (with-catch
                 (lambda (e) (echo-error! (app-state-echo app) "Failed to apply hunk"))
                 (lambda ()
@@ -523,7 +523,7 @@ Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
         (let loop ((i hunk-line) (acc []))
           (if (>= i (length lines))
             (let* ((hunk-text (string-join (reverse acc) "\n"))
-                   (tmp "/tmp/gemacs-revert-hunk.patch"))
+                   (tmp "/tmp/jemacs-revert-hunk.patch"))
               (with-catch
                 (lambda (e) (echo-error! (app-state-echo app) "Failed to revert hunk"))
                 (lambda ()
@@ -610,7 +610,7 @@ Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
       (with-catch
         (lambda (e) (echo-error! (app-state-echo app) "SSH fetch failed"))
         (lambda ()
-          (let* ((tmp (string-append "/tmp/gemacs-ssh-" (number->string (random-integer 99999))))
+          (let* ((tmp (string-append "/tmp/jemacs-ssh-" (number->string (random-integer 99999))))
                  (proc (open-process
                          (list path: "scp"
                                arguments: (list path tmp)
@@ -804,7 +804,7 @@ Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
 
 (def (qt-elfeed-db-path)
   (let ((home (getenv "HOME" "/tmp")))
-    (string-append home "/.gemacs-elfeed-feeds")))
+    (string-append home "/.jemacs-elfeed-feeds")))
 
 (def (qt-elfeed-load-feeds!)
   (let ((path (qt-elfeed-db-path)))

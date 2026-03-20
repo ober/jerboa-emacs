@@ -211,7 +211,7 @@
            (let* ([port (open-process
                           (list 'path: "curl" 'arguments:
                             (list "-sL" "-m" "10" "-A"
-                              "Mozilla/5.0 (compatible; gemacs eww)" url)
+                              "Mozilla/5.0 (compatible; jemacs eww)" url)
                             'stdout-redirection: #t 'stderr-redirection: #f
                             'pseudo-terminal: #f))]
                   [output (read-line port #f)])
@@ -221,7 +221,7 @@
        "Fetch a URL async using curl. Calls (callback html-or-#f) on UI thread."
        (async-process!
          (string-append
-           "curl -sL -m 10 -A 'Mozilla/5.0 (compatible; gemacs eww)' "
+           "curl -sL -m 10 -A 'Mozilla/5.0 (compatible; jemacs eww)' "
            "'"
            (string-map (lambda (c) (if (char=? c #\') #\_ c)) url)
            "'")
@@ -768,10 +768,10 @@
   (define *diary-file*--cell
     (vector
       (path-expand
-        ".gemacs-diary"
+        ".jemacs-diary"
         (user-info-home (user-info (user-name))))))
   (def (diary-entries-for-month year month)
-       "Read diary entries for year/month from ~/.gemacs-diary.\n   Format: YYYY-MM-DD entry text"
+       "Read diary entries for year/month from ~/.jemacs-diary.\n   Format: YYYY-MM-DD entry text"
        (if (not (file-exists? *diary-file*))
            (list)
            (with-catch
@@ -807,7 +807,7 @@
                (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
                (qt-plain-text-edit-set-cursor-position! ed 0)))))
   (def (cmd-diary-insert-entry app)
-       "Add a diary entry for today to ~/.gemacs-diary."
+       "Add a diary entry for today to ~/.jemacs-diary."
        (let* ([date-str (with-catch
                           (lambda (e) "2026-01-01")
                           (lambda ()
@@ -983,7 +983,7 @@
   (define *custom-keys-path*--cell
     (vector
       (path-expand
-        ".gemacs-keys"
+        ".jemacs-keys"
         (user-info-home (user-info (user-name))))))
   (def (cmd-global-set-key app)
        "Bind a key to a command interactively."
@@ -1109,10 +1109,10 @@
   (define *init-file-path*--cell
     (vector
       (path-expand
-        ".gemacs-init.ss"
+        ".jemacs-init.ss"
         (user-info-home (user-info (user-name))))))
   (def (load-init-file!)
-       "Load user init file (~/.gemacs-init.ss) if it exists."
+       "Load user init file (~/.jemacs-init.ss) if it exists."
        (with-catch
          (lambda (e) #f)
          (lambda ()
@@ -1157,7 +1157,7 @@
   (define *scratch-file-path*--cell
     (vector
       (path-expand
-        ".gemacs-scratch"
+        ".jemacs-scratch"
         (user-info-home (user-info (user-name))))))
   (def (scratch-save!)
        "Save scratch buffer contents to disk."

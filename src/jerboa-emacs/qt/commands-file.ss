@@ -928,7 +928,7 @@
           (qt-plain-text-edit-set-cursor-position! ed 0))))))
 
 (def *bookmarks-path*
-  (path-expand ".gemacs-bookmarks" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-bookmarks" (user-info-home (user-info (user-name)))))
 
 (def (bookmarks-save! app)
   "Persist bookmarks to disk. Format: one line per bookmark: name\tfile-path\tposition"

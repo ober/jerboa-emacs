@@ -478,7 +478,7 @@
          (if *follow-mode* "Follow mode ON" "Follow mode OFF")))
   (define *command-history-file*--cell
     (vector
-      (string-append (getenv "HOME" "/tmp") "/.gemacs-history")))
+      (string-append (getenv "HOME" "/tmp") "/.jemacs-history")))
   (def (savehist-save!)
        "Save command history to file (recency list + shared frequency history)."
        (with-catch
@@ -1858,7 +1858,7 @@
   (define *abbrevs-path*--cell
     (vector
       (path-expand
-        ".gemacs-abbrevs"
+        ".jemacs-abbrevs"
         (user-info-home (user-info (user-name))))))
   (def (abbrevs-save!)
        "Persist abbreviation table to disk."

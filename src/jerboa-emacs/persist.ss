@@ -744,7 +744,11 @@
 ;;;============================================================================
 
 (def *init-file-path*
-  (path-expand ".jemacs-init" (or (getenv "HOME" #f) "/tmp")))
+  (let ((home (or (getenv "HOME" #f) "/tmp")))
+    (let ((jemacs (path-expand ".jemacs-init" home))
+          (gemacs (path-expand ".gemacs-init" home)))
+      ;; Prefer .jemacs-init if it exists, fall back to .gemacs-init
+      (if (file-exists? jemacs) jemacs gemacs))))
 
 (def (init-file-load!)
   "Load init file and apply settings.
@@ -755,8 +759,13 @@
    centered-cursor, bind KEY COMMAND, unbind KEY,
    chord AB COMMAND, key-translate FROM TO,
    chord-mode true/false, chord-timeout MILLIS."
+  (verbose-log! "init-file-load! path=" *init-file-path*
+                " exists?=" (if (file-exists? *init-file-path*) "yes" "no"))
   (with-catch
-    (lambda (e) #f)
+    (lambda (e)
+      (verbose-log! "init-file-load! ERROR: "
+        (with-output-to-string (lambda () (display-exception e))))
+      #f)
     (lambda ()
       (when (file-exists? *init-file-path*)
         (call-with-input-file *init-file-path*
@@ -817,6 +826,7 @@
                                                     (substring val (+ sp2 1) (string-length val)))))
                                      (when (and (= (string-length chord-str) 2)
                                                 (> (string-length cmd-str) 0))
+                                       (verbose-log! "init-file: chord " chord-str " -> " cmd-str)
                                        (key-chord-define-global chord-str
                                          (string->symbol cmd-str)))))))
                               ;; Key translation: key-translate FROM TO

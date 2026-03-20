@@ -66,7 +66,7 @@
 (def (cmd-customize-face app)
   "Interactively customize a face's visual attributes.
    Prompts for face name, then for each attribute (foreground, background, bold, italic).
-   Changes are saved to ~/.gemacs-custom-faces and persist across sessions."
+   Changes are saved to ~/.jemacs-custom-faces and persist across sessions."
   (let* ((face-names (sort (hash-keys *faces*)
                            (lambda (a b) (string<? (symbol->string a) (symbol->string b)))))
          (face-name-strs (map symbol->string face-names))
@@ -279,10 +279,10 @@
 ;;; ============================================================================
 
 (def *user-themes-dir*
-  (path-expand ".gemacs-themes" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-themes" (user-info-home (user-info (user-name)))))
 
 (def (discover-user-themes)
-  "Scan ~/.gemacs-themes/*.ss for user-defined theme files.
+  "Scan ~/.jemacs-themes/*.ss for user-defined theme files.
    Returns a list of theme names (symbols)."
   (with-catch
     (lambda (e) [])
@@ -300,7 +300,7 @@
         []))))
 
 (def (load-user-theme-file! theme-name)
-  "Load a user theme file from ~/.gemacs-themes/THEME-NAME.ss
+  "Load a user theme file from ~/.jemacs-themes/THEME-NAME.ss
    Returns #t on success, #f on failure."
   (with-catch
     (lambda (e) #f)
@@ -319,7 +319,7 @@
                 #t))))))))
 
 (def (cmd-load-theme app)
-  "Switch to a different color theme (built-in or user-defined from ~/.gemacs-themes/)."
+  "Switch to a different color theme (built-in or user-defined from ~/.jemacs-themes/)."
   (let* ((builtin-themes (theme-names))
          (user-themes (discover-user-themes))
          (all-themes (append builtin-themes user-themes))
@@ -343,7 +343,7 @@
                  (apply-theme! app theme-name: sym)
                  (theme-settings-save! *current-theme* *default-font-family* *default-font-size*)
                  (echo-message! (app-state-echo app)
-                   (string-append "Theme: " input " (from ~/.gemacs-themes/)")))
+                   (string-append "Theme: " input " (from ~/.jemacs-themes/)")))
                (echo-error! (app-state-echo app)
                  (string-append "Theme file loaded but no theme defined: " input)))
              (echo-error! (app-state-echo app)
@@ -714,7 +714,7 @@ modified so the next save uses the new encoding."
     (with-catch
       (lambda (e)
         (let ((msg (with-output-to-string(lambda () (display-exception e)))))
-          (gemacs-log! "cmd-term: gsh init failed: " msg)
+          (jemacs-log! "cmd-term: gsh init failed: " msg)
           (verbose-log! "cmd-term: gsh init FAILED: " msg)
           (echo-error! (app-state-echo app)
             (string-append "Terminal failed: " msg))))

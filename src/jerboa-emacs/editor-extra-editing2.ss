@@ -1561,7 +1561,7 @@
 
 (def (cmd-no-littering-mode app)
   "Toggle no-littering mode — keep ~/.emacs.d clean."
-  (echo-message! (app-state-echo app) "Gemacs uses ~/.jemacs-* files; no littering by default"))
+  (echo-message! (app-state-echo app) "Jemacs uses ~/.jemacs-* files; no littering by default"))
 
 ;;;============================================================================
 ;;; Benchmark-init / esup — startup profiling
@@ -1585,7 +1585,7 @@
          (live-heap (f64vector-ref ps 17))
          (alloc-total (f64vector-ref ps 15))
          (out (string-append
-                "=== Gemacs Runtime Statistics ===\n\n"
+                "=== Jemacs Runtime Statistics ===\n\n"
                 "Heap size:       " (tui-fmt-bytes (inexact->exact (floor heap-size))) "\n"
                 "Live after GC:   " (tui-fmt-bytes (inexact->exact (floor live-heap))) "\n"
                 "Total allocated: " (tui-fmt-bytes (inexact->exact (floor alloc-total))) "\n"

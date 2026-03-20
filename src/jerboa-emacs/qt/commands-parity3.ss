@@ -529,7 +529,7 @@
     (next-error-function . "Use M-x next-error")
     (previous-error-function . "Use M-x previous-error")
     (yas-new-snippet . "Use M-x yas-insert-snippet for snippets")
-    (yas-visit-snippet-file . "Snippet files managed via ~/.gemacs-snippets")))
+    (yas-visit-snippet-file . "Snippet files managed via ~/.jemacs-snippets")))
 
 (def (qt-register-parity3-stubs!)
   "Register stub commands for Qt parity."

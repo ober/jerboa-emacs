@@ -22,8 +22,8 @@
    cmd-list-recent-files cmd-clear-recent-files
    cmd-recentf-open cmd-recentf-cleanup cmd-multi-occur
    cmd-align-current cmd-clear-rectangle cmd-describe-mode
-   cmd-describe-face cmd-describe-function *gemacs-variables*
-   gemacs-var-entry gemacs-describe-variables
+   cmd-describe-face cmd-describe-function *jemacs-variables*
+   jemacs-var-entry jemacs-describe-variables
    cmd-describe-variable cmd-describe-syntax
    cmd-insert-lorem-ipsum cmd-insert-current-date-iso
    cmd-insert-time *eldoc-mode* *gerbil-signatures*
@@ -908,7 +908,7 @@
   (define *recent-files-path*--cell
     (vector
       (path-expand
-        ".gemacs-recent-files"
+        ".jemacs-recent-files"
         (user-info-home (user-info (user-name))))))
   (def (recent-files-add! path)
        "Add a file path to the recent files list (most recent first, no duplicates)."
@@ -1234,61 +1234,61 @@
                  (echo-error!
                    (app-state-echo app)
                    (string-append name " is not a command")))))))
-  (define *gemacs-variables*--cell (vector '()))
-  (def (gemacs-var-entry name thunk description)
+  (define *jemacs-variables*--cell (vector '()))
+  (def (jemacs-var-entry name thunk description)
        (list name thunk description))
-  (def (gemacs-describe-variables)
+  (def (jemacs-describe-variables)
        "Build list of describable editor variables with current values."
        (list
-         (gemacs-var-entry
+         (jemacs-var-entry
            "debug-on-error"
            (lambda () *debug-on-error*)
            "Enter debugger on error")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "hl-line-mode"
            (lambda () *hl-line-mode*)
            "Highlight current line")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "hl-todo-mode"
            (lambda () *hl-todo-mode*)
            "Highlight TODO keywords")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "hl-todo-keywords"
            (lambda () *hl-todo-keywords*)
            "Keywords highlighted by hl-todo-mode")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "wgrep-mode"
            (lambda () *wgrep-mode*)
            "Writable grep buffer active")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "magit-dir"
            (lambda () *magit-dir*)
            "Current magit working directory")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "magit-amend-mode"
            (lambda () *magit-amend-mode*)
            "Amend mode for magit commit")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "current-workspace"
            (lambda () *current-workspace*)
            "Active workspace name")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "tab-width"
            (lambda () *tab-width*)
            "Width of tab stops")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "indent-tabs-mode"
            (lambda () *indent-tabs-mode*)
            "Use tabs for indentation")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "word-wrap"
            (lambda () *word-wrap-on*)
            "Word wrap mode")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "undo-history-max"
            (lambda () *undo-history-max*)
            "Max undo snapshots per buffer")
-         (gemacs-var-entry
+         (jemacs-var-entry
            "recenter-position"
            (lambda () *recenter-position-qt*)
            "Recentering position (center/top/bottom)")))
@@ -2088,11 +2088,11 @@
                        *recent-files-path*--cell
                        0
                        val)]))
-  (define-syntax *gemacs-variables*
+  (define-syntax *jemacs-variables*
     (identifier-syntax
-      [id (vector-ref *gemacs-variables*--cell 0)]
+      [id (vector-ref *jemacs-variables*--cell 0)]
       [(set! id val) (vector-set!
-                       *gemacs-variables*--cell
+                       *jemacs-variables*--cell
                        0
                        val)]))
   (define-syntax *eldoc-mode*

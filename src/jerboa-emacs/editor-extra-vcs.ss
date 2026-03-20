@@ -690,7 +690,7 @@
          (ed (edit-window-editor win))
          (buf (buffer-create! "*Customize*" ed))
          (groups (custom-groups))
-         (lines ["Gemacs Customize"
+         (lines ["Jemacs Customize"
                  (make-string 60 #\=) ""]))
     (for-each
       (lambda (group)

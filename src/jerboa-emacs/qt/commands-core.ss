@@ -350,19 +350,19 @@ Returns #t if changed, #f if not or if no record exists."
               (> current recorded)))))
 
 ;;;============================================================================
-;;; Directory-local variables (.gemacs-config)
+;;; Directory-local variables (.jemacs-config)
 ;;;============================================================================
 
 (def *dir-locals-cache* (make-hash-table))  ; dir -> (mtime . alist)
 
 (def (find-dir-locals-file dir)
-  "Search DIR and parent directories for .gemacs-config file."
+  "Search DIR and parent directories for .jemacs-config file."
   (let loop ((d dir) (depth 0))
     (cond
       ((> depth 50) #f)  ; safety limit
       ((or (not d) (string=? d "") (string=? d "/")) #f)
       (else
-       (let ((config-path (path-expand ".gemacs-config" d)))
+       (let ((config-path (path-expand ".jemacs-config" d)))
          (if (file-exists? config-path)
            config-path
            ;; Go up: strip trailing slash, then get parent

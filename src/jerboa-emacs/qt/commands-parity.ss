@@ -845,10 +845,10 @@
 
 ;;; --- Help with tutorial ---
 (def (cmd-help-with-tutorial app)
-  "Show the gemacs tutorial (C-h t)."
+  "Show the jemacs tutorial (C-h t)."
   (let* ((text (string-append
-    "=== Gemacs Tutorial ===\n\n"
-    "Welcome to Gemacs, a Gerbil Scheme Emacs replacement.\n\n"
+    "=== Jemacs Tutorial ===\n\n"
+    "Welcome to Jemacs, a Gerbil Scheme Emacs replacement.\n\n"
     "== Basic Movement ==\n"
     "  C-f / C-b    Forward / backward character\n"
     "  M-f / M-b    Forward / backward word\n"
@@ -894,7 +894,7 @@
     "  M-RET        Insert heading\n"
     "  C-c C-t      Toggle TODO\n"
     "  C-c C-c      Execute src block\n\n"
-    "== Gemacs-Specific ==\n"
+    "== Jemacs-Specific ==\n"
     "  M-x magit-status   Git integration\n"
     "  M-x treemacs       File tree\n"
     "  M-x shell          Shell\n"

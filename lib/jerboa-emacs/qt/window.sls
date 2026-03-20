@@ -199,7 +199,8 @@
                      ed
                      SCI_STYLESETBACK
                      STYLE_LINENUMBER
-                     (rgb->sci r g b))))
+                     (rgb->sci r g b))
+                   (sci-send ed 2260 0 (rgb->sci r g b))))
                (when (face-fg ln-face)
                  (let-values ([(r g b)
                                (parse-hex-color (face-fg ln-face))])
@@ -214,6 +215,7 @@
                  SCI_STYLESETBACK
                  STYLE_LINENUMBER
                  (rgb->sci 32 32 32))
+               (sci-send ed 2260 0 (rgb->sci 32 32 32))
                (sci-send
                  ed
                  SCI_STYLESETFORE
@@ -234,6 +236,18 @@
        (qt-apply-editor-theme! ed)
        (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
        (sci-send ed SCI_SETMARGINWIDTHN 0 50)
+       (sci-send ed SCI_SETMARGINWIDTHN 1 0)
+       (sci-send ed SCI_SETMARGINWIDTHN 2 0)
+       (sci-send ed SCI_SETMARGINWIDTHN 3 0)
+       (sci-send ed SCI_SETMARGINWIDTHN 4 0)
+       (let ([bg (let ([f (face-get 'default)])
+                   (if (and f (face-bg f))
+                       (let-values ([(r g b)
+                                     (parse-hex-color (face-bg f))])
+                         (rgb->sci r g b))
+                       (rgb->sci 30 30 46)))])
+         (sci-send ed 2290 1 bg)
+         (sci-send ed 2291 1 bg))
        (sci-send ed SCI_SETCARETLINEVISIBLE 1)
        (sci-send ed SCI_SETTABWIDTH 4)
        (sci-send ed SCI_SETINDENT 4) (sci-send ed 2563 1)

@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Qt frame/window management for gemacs
+;;; Qt frame/window management for jemacs
 ;;;
 ;;; Uses nested QSplitters to hold multiple QPlainTextEdit panes in a
 ;;; recursive binary tree. Each split can have a different orientation,
@@ -220,18 +220,23 @@
   ;; Propagate to all styles
   (sci-send ed SCI_STYLECLEARALL)
   ;; Line number margin from 'line-number face
+  ;; SCI_SETMARGINBACKN (2260) sets the margin area background color itself
+  ;; (distinct from STYLE_LINENUMBER which only colors the text background)
   (let ((ln-face (face-get 'line-number)))
     (if ln-face
       (begin
         (when (face-bg ln-face)
           (let-values (((r g b) (parse-hex-color (face-bg ln-face))))
-            (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci r g b))))
+            (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci r g b))
+            ;; Also set the margin area background to match
+            (sci-send ed 2260 0 (rgb->sci r g b))))
         (when (face-fg ln-face)
           (let-values (((r g b) (parse-hex-color (face-fg ln-face))))
             (sci-send ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci r g b)))))
       ;; Fallback
       (begin
         (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci #x20 #x20 #x20))
+        (sci-send ed 2260 0 (rgb->sci #x20 #x20 #x20))
         (sci-send ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci #x8c #x8c #x8c)))))
   ;; Cursor line from 'cursor-line face
   (let ((cl-face (face-get 'cursor-line)))
@@ -249,9 +254,23 @@
   "Configure QScintilla editor: theme, margins, caret, save-point signals."
   ;; Apply theme colors from face system
   (qt-apply-editor-theme! ed)
-  ;; Line number margin
+  ;; Line number margin (margin 0)
   (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
   (sci-send ed SCI_SETMARGINWIDTHN 0 50)
+  ;; Disable other margins (symbol, fold) to avoid white gutters
+  (sci-send ed SCI_SETMARGINWIDTHN 1 0)  ; symbol margin
+  (sci-send ed SCI_SETMARGINWIDTHN 2 0)  ; fold margin
+  (sci-send ed SCI_SETMARGINWIDTHN 3 0)  ; margin 3
+  (sci-send ed SCI_SETMARGINWIDTHN 4 0)  ; margin 4
+  ;; Set fold margin colors to match editor background (SCI_SETFOLDMARGINCOLOUR=2290, SCI_SETFOLDMARGINHICOLOUR=2291)
+  ;; This prevents any white bleed from the fold margin even at 0 width
+  (let ((bg (let ((f (face-get 'default)))
+              (if (and f (face-bg f))
+                (let-values (((r g b) (parse-hex-color (face-bg f))))
+                  (rgb->sci r g b))
+                (rgb->sci #x1e #x1e #x2e)))))
+    (sci-send ed 2290 1 bg)   ; SCI_SETFOLDMARGINCOLOUR
+    (sci-send ed 2291 1 bg))  ; SCI_SETFOLDMARGINHICOLOUR
   ;; Caret line highlight
   (sci-send ed SCI_SETCARETLINEVISIBLE 1)
   ;; Tab settings

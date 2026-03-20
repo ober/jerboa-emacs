@@ -412,7 +412,7 @@ SPC = page down, DEL = page up, q = quit view-mode."
 ;;; ========================================================================
 
 (def *command-history-file*
-  (string-append (getenv "HOME" "/tmp") "/.gemacs-history"))
+  (string-append (getenv "HOME" "/tmp") "/.jemacs-history"))
 
 (def (savehist-save!)
   "Save command history to file (recency list + shared frequency history)."
@@ -1644,7 +1644,7 @@ SPC = page down, DEL = page up, q = quit view-mode."
 ;; --- Abbreviations ---
 ;; *abbrev-table* and *abbrev-mode-enabled* are defined in persist.ss
 (def *abbrevs-path*
-  (path-expand ".gemacs-abbrevs" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-abbrevs" (user-info-home (user-info (user-name)))))
 
 (def (abbrevs-save!)
   "Persist abbreviation table to disk."

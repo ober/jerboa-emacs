@@ -327,13 +327,13 @@
               (and recorded current (> current recorded)))))
   (define *dir-locals-cache*--cell (vector (make-hash-table)))
   (def (find-dir-locals-file dir)
-       "Search DIR and parent directories for .gemacs-config file."
+       "Search DIR and parent directories for .jemacs-config file."
        (let loop ([d dir] [depth 0])
          (cond
            [(> depth 50) #f]
            [(or (not d) (string=? d "") (string=? d "/")) #f]
            [else
-            (let ([config-path (path-expand ".gemacs-config" d)])
+            (let ([config-path (path-expand ".jemacs-config" d)])
               (if (file-exists? config-path)
                   config-path
                   (let* ([stripped (if (and (> (string-length d) 1)

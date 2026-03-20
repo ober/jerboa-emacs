@@ -1045,7 +1045,7 @@
   (define *bookmarks-path*--cell
     (vector
       (path-expand
-        ".gemacs-bookmarks"
+        ".jemacs-bookmarks"
         (user-info-home (user-info (user-name))))))
   (def (bookmarks-save! app)
        "Persist bookmarks to disk. Format: one line per bookmark: name\tfile-path\tposition"

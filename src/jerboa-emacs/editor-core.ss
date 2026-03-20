@@ -2337,7 +2337,7 @@
   "Initialize built-in Info documentation topics."
   (hash-put! *info-topics* "top"
     (string-append
-      "Gemacs Info\n"
+      "Jemacs Info\n"
       "===========\n\n"
       "* Commands::     List of all available commands\n"
       "* Keybindings::  Default key bindings\n"
@@ -2391,7 +2391,7 @@
     (string-append
       "Org Mode\n"
       "========\n\n"
-      "Gemacs includes substantial org mode support:\n\n"
+      "Jemacs includes substantial org mode support:\n\n"
       "  TAB          Cycle heading visibility\n"
       "  S-TAB        Global cycle\n"
       "  M-RET        New heading\n"
@@ -2419,9 +2419,9 @@
       "  File-based snippet definitions.\n"))
   (hash-put! *info-topics* "about"
     (string-append
-      "About Gemacs\n"
+      "About Jemacs\n"
       "============\n\n"
-      "Gemacs is a Gerbil Scheme-based Emacs-like editor.\n"
+      "Jemacs is a Gerbil Scheme-based Emacs-like editor.\n"
       "It provides Emacs keybindings and commands with a\n"
       "Scintilla-based editing engine.\n\n"
       "Features: syntax highlighting, org mode, magit,\n"

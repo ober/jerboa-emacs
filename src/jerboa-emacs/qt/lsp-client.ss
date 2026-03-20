@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; LSP client protocol layer for gemacs.
+;;; LSP client protocol layer for jemacs.
 ;;; Pure I/O module (no Qt widget imports). Handles:
 ;;; - JSON-RPC transport over stdio (Content-Length framing)
 ;;; - Background reader thread + mutex-protected UI action queue
@@ -12,7 +12,7 @@
         :std/text/json
         :std/misc/string
         :std/os/fdio
-        (only-in :jerboa-emacs/core *lsp-server-command* gemacs-log!)
+        (only-in :jerboa-emacs/core *lsp-server-command* jemacs-log!)
         :jerboa-emacs/async)
 
 ;;;============================================================================
@@ -465,7 +465,7 @@
     (hash-put! params "capabilities" caps)
     (hash-put! params "clientInfo"
       (let ((h (make-hash-table)))
-        (hash-put! h "name" "gemacs")
+        (hash-put! h "name" "jemacs")
         (hash-put! h "version" "1.0")
         h))
     ;; Send initialize

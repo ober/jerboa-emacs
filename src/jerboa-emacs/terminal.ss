@@ -570,12 +570,73 @@
                         (let ((status (pty-waitpid-status pid #t)))
                           (channel-put ch (cons 'done status))))))))))))))))
 
+(def (terminal-handle-export! trimmed ts)
+  "Handle export VAR=VALUE in-process to update jsh env.
+   Returns (values 'sync output cwd)."
+  (let* ((env (terminal-state-env ts))
+         (cwd (or (env-get env "PWD") (current-directory)))
+         ;; Parse "export VAR=VALUE" or "export VAR"
+         (rest (safe-string-trim (substring trimmed 7 (string-length trimmed))))
+         (eq-pos (let loop ((i 0))
+                   (cond ((>= i (string-length rest)) #f)
+                         ((char=? (string-ref rest i) #\=) i)
+                         (else (loop (+ i 1)))))))
+    (if eq-pos
+      (let ((var (substring rest 0 eq-pos))
+            (val (substring rest (+ eq-pos 1) (string-length rest))))
+        ;; Strip surrounding quotes from value
+        (let ((val (if (and (>= (string-length val) 2)
+                            (or (and (char=? (string-ref val 0) #\")
+                                     (char=? (string-ref val (- (string-length val) 1)) #\"))
+                                (and (char=? (string-ref val 0) #\')
+                                     (char=? (string-ref val (- (string-length val) 1)) #\'))))
+                     (substring val 1 (- (string-length val) 1))
+                     val)))
+          (env-set! env var val)
+          (values 'sync "" cwd)))
+      ;; export VAR (no value) — just mark as exported (already set)
+      (values 'sync "" cwd))))
+
+(def (terminal-handle-cd! trimmed ts)
+  "Handle cd command in-process (no subprocess) to update jsh env PWD.
+   Returns (values 'sync output cwd)."
+  (let* ((env (terminal-state-env ts))
+         (current-pwd (or (env-get env "PWD") (current-directory)))
+         (args (if (string=? trimmed "cd")
+                 ""
+                 (safe-string-trim (substring trimmed 3 (string-length trimmed)))))
+         (target (cond
+                   ((string=? args "")
+                    (or (env-get env "HOME") (getenv "HOME" "/")))
+                   ((string=? args "-")
+                    (or (env-get env "OLDPWD") current-pwd))
+                   ((string=? args "~")
+                    (or (env-get env "HOME") (getenv "HOME" "/")))
+                   ((string-prefix? "~/" args)
+                    (string-append (or (env-get env "HOME") (getenv "HOME" "/"))
+                                   (substring args 1 (string-length args))))
+                   ;; Absolute path
+                   ((string-prefix? "/" args) args)
+                   ;; Relative path
+                   (else (string-append current-pwd "/" args)))))
+    ;; Normalize path (resolve .. and .)
+    (let ((resolved (with-catch (lambda (e) #f)
+                      (lambda () (path-normalize target)))))
+      (if (and resolved (file-exists? resolved) (file-directory? resolved))
+        (begin
+          (env-set! env "OLDPWD" current-pwd)
+          (env-set! env "PWD" resolved)
+          (values 'sync "" resolved))
+        (values 'sync (string-append "cd: " (or resolved target)
+                                     ": No such file or directory\n")
+                current-pwd)))))
+
 (def (terminal-execute-async! input ts (pty-rows 24) (pty-cols 80))
-  "Execute command: builtins go through gsh-capture (sync),
-   external commands go through PTY subprocess (async).
+  "Execute command via PTY subprocess (async) to avoid blocking UI.
+   Special cases: empty, clear, exit, cd (handled in-process).
    pty-rows/pty-cols: terminal dimensions for the PTY (default 24x80).
    Returns:
-   - (values 'sync output cwd) for sync builtins
+   - (values 'sync output cwd) for in-process commands
    - (values 'async #f #f) when command dispatched to PTY
    - (values 'special 'clear|'exit #f) for clear/exit"
   (let ((trimmed (safe-string-trim-both input)))
@@ -587,48 +648,49 @@
        (values 'special 'clear #f))
       ((string=? trimmed "exit")
        (values 'special 'exit #f))
+      ;; cd must update the in-process jsh environment for correct prompts
+      ((or (string=? trimmed "cd")
+           (string-prefix? "cd " trimmed))
+       (terminal-handle-cd! trimmed ts))
+      ;; export updates env vars in-process (PTY child won't propagate back)
+      ((string-prefix? "export " trimmed)
+       (terminal-handle-export! trimmed ts))
       (else
-       (let ((first-word (extract-first-word trimmed)))
-         (verbose-log! "TERM-EXEC: cmd=" trimmed
-                      " first-word=" (or first-word "")
-                      " builtin?=" (if (and first-word (builtin? first-word)) "yes" "no"))
-         (if (and first-word
-                  (builtin? first-word)
-                  (pure-simple-command? trimmed))
-           ;; Builtin: run in-process via gsh-capture (synchronous)
-           (let-values (((output cwd) (terminal-execute! trimmed ts)))
-             (values 'sync output cwd))
-           ;; External/compound: spawn PTY subprocess (async)
-           (let* ((env (terminal-state-env ts))
-                  (env-alist (env-exported-alist env))
-                  (rows pty-rows) (cols pty-cols))
-             (verbose-log! "TERM-EXEC: spawning PTY rows=" (number->string rows)
-                          " cols=" (number->string cols))
-             (let-values (((mfd pid) (with-catch
-                                       (lambda (e)
-                                         (verbose-log! "PTY-SPAWN-ERROR: "
-                                           (with-output-to-string
-                                             (lambda () (display-exception e))))
-                                         (values #f #f))
-                                       (lambda () (pty-spawn trimmed env-alist rows cols)))))
-               (verbose-log! "TERM-EXEC: pty-spawn mfd="
-                            (if mfd (number->string mfd) "FAILED")
-                            " pid=" (if pid (number->string pid) "FAILED"))
-               (if (and mfd pid)
-                 (let ((ch (make-channel)))
-                   ;; Store PTY state
-                   (set! (terminal-state-pty-master ts) mfd)
-                   (set! (terminal-state-pty-pid ts) pid)
-                   (set! (terminal-state-pty-channel ts) ch)
-                   ;; Create VT100 screen buffer for full-screen program support
-                   (set! (terminal-state-vtscreen ts) (new-vtscreen rows cols))
-                   ;; Spawn reader thread
-                   (let ((thread (spawn (lambda () (pty-reader-loop mfd pid ch)))))
-                     (set! (terminal-state-pty-thread ts) thread)
-                     (values 'async #f #f)))
-                 ;; forkpty failed, fall back to sync
-                 (let-values (((output cwd) (terminal-execute! trimmed ts)))
-                   (values 'sync output cwd)))))))))))
+       ;; ALL commands go through PTY async to avoid blocking the UI thread.
+       ;; gsh-capture runs synchronously and can deadlock the Chez SMP GC
+       ;; rendezvous when called on the primordial/Qt thread.
+       (let* ((env (terminal-state-env ts))
+              (env-alist (env-exported-alist env))
+              (rows pty-rows) (cols pty-cols))
+         (verbose-log! "TERM-EXEC: cmd=" (safe-string-trim-both input)
+                      " spawning PTY rows=" (number->string rows)
+                      " cols=" (number->string cols))
+         (let-values (((mfd pid) (with-catch
+                                   (lambda (e)
+                                     (verbose-log! "PTY-SPAWN-ERROR: "
+                                       (with-output-to-string
+                                         (lambda () (display-exception e))))
+                                     (values #f #f))
+                                   (lambda () (pty-spawn (safe-string-trim-both input)
+                                                         env-alist rows cols)))))
+           (verbose-log! "TERM-EXEC: pty-spawn mfd="
+                        (if mfd (number->string mfd) "FAILED")
+                        " pid=" (if pid (number->string pid) "FAILED"))
+           (if (and mfd pid)
+             (let ((ch (make-channel)))
+               ;; Store PTY state
+               (set! (terminal-state-pty-master ts) mfd)
+               (set! (terminal-state-pty-pid ts) pid)
+               (set! (terminal-state-pty-channel ts) ch)
+               ;; Create VT100 screen buffer for full-screen program support
+               (set! (terminal-state-vtscreen ts) (new-vtscreen rows cols))
+               ;; Spawn reader thread
+               (let ((thread (spawn (lambda () (pty-reader-loop mfd pid ch)))))
+                 (set! (terminal-state-pty-thread ts) thread)
+                 (values 'async #f #f)))
+             ;; forkpty failed — return error inline
+             (values 'sync "Error: failed to spawn PTY\n"
+                     (or (env-get env "PWD") (current-directory))))))))))
 
 (def (terminal-poll-output ts)
   "Non-blocking check for PTY output. Returns:

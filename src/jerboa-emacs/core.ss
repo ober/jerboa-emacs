@@ -109,9 +109,6 @@
   ;; Runtime error log file
   init-jemacs-log!
   jemacs-log!
-  ;; Compatibility aliases (Qt source files use gemacs-* naming)
-  init-gemacs-log!
-  gemacs-log!
 
   ;; Verbose hang-diagnosis log (~/.jemacs-verbose.log)
   init-verbose-log!
@@ -1910,9 +1907,8 @@
       (newline port)
       (force-output port))))
 
-;; Compatibility aliases used by Qt source files (ported from gerbil-emacs naming)
-(def gemacs-log!      jemacs-log!)
-(def init-gemacs-log! init-jemacs-log!)
+;; Legacy aliases (kept for backward compatibility)
+;; gemacs-log! and init-gemacs-log! removed — use jemacs-log! / init-jemacs-log! directly
 
 (def (init-verbose-log!)
   "Open ~/.jemacs-verbose.log for append and enable verbose-log!.
@@ -2170,9 +2166,11 @@
 ;; Set of characters that can start a chord (uppercase)
 (def *chord-first-chars* (make-hash-table))
 
-;; Time window in milliseconds for second key of chord
-(def *chord-timeout* 200)
-(defvar! 'chord-timeout 200 "Milliseconds to wait for second key of a chord"
+;; Time window in milliseconds for second key of chord.
+;; Emacs key-chord.el uses 100ms for two-key and 200ms for same-key chords.
+;; We use 300ms by default because Qt key event delivery adds latency.
+(def *chord-timeout* 300)
+(defvar! 'chord-timeout 300 "Milliseconds to wait for second key of a chord"
          setter: (lambda (v) (set! *chord-timeout* v))
          type: 'integer type-args: '(50 . 1000) group: 'keybindings)
 

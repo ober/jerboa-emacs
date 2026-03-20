@@ -806,12 +806,12 @@
        "Show use-package statistics."
        (echo-message!
          (app-state-echo app)
-         "Gemacs: all packages built-in. No external packages to report."))
+         "Jemacs: all packages built-in. No external packages to report."))
   (def (cmd-straight-use-package app)
-       "Configure straight.el package — N/A in gemacs."
+       "Configure straight.el package — N/A in jemacs."
        (echo-message!
          (app-state-echo app)
-         "Gemacs uses built-in packages. straight.el not applicable."))
+         "Jemacs uses built-in packages. straight.el not applicable."))
   (def (cmd-which-key-show-top-level app)
        "Show all top-level key bindings — delegates to describe-bindings."
        (cmd-describe-bindings app))
@@ -1264,10 +1264,10 @@
              "Prescient mode enabled"
              "Prescient mode disabled")))
   (def (cmd-no-littering-mode app)
-       "No-littering mode — gemacs uses ~/.gemacs-* by default."
+       "No-littering mode — jemacs uses ~/.jemacs-* by default."
        (echo-message!
          (app-state-echo app)
-         "Gemacs uses ~/.gemacs-* files; no littering by default"))
+         "Jemacs uses ~/.jemacs-* files; no littering by default"))
   (def (fmt-bytes-short b)
        "Format byte count for display."
        (cond
@@ -1283,7 +1283,7 @@
             " B")]))
   (def (cmd-benchmark-init-show-durations app)
        "Show runtime statistics — Chez version, platform."
-       (let* ([out (string-append "=== Gemacs Runtime Statistics ===\n\n"
+       (let* ([out (string-append "=== Jemacs Runtime Statistics ===\n\n"
                      "Chez:            " (scheme-version) "\n"
                      "Platform:        " (symbol->string (machine-type))
                      "\n")]

@@ -673,7 +673,7 @@
 (def *recent-files* [])
 (def *recent-files-max* 50)
 (def *recent-files-path*
-  (path-expand ".gemacs-recent-files" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-recent-files" (user-info-home (user-info (user-name)))))
 
 (def (recent-files-add! path)
   "Add a file path to the recent files list (most recent first, no duplicates)."
@@ -923,29 +923,29 @@
             (echo-message! (app-state-echo app) (string-append "Help for " name)))
           (echo-error! (app-state-echo app) (string-append name " is not a command")))))))
 
-(def *gemacs-variables*
+(def *jemacs-variables*
   ;; List of (name . thunk) pairs for describable variables
   '())
 
-(def (gemacs-var-entry name thunk description)
+(def (jemacs-var-entry name thunk description)
   (list name thunk description))
 
-(def (gemacs-describe-variables)
+(def (jemacs-describe-variables)
   "Build list of describable editor variables with current values."
   (list
-    (gemacs-var-entry "debug-on-error" (lambda () *debug-on-error*) "Enter debugger on error")
-    (gemacs-var-entry "hl-line-mode" (lambda () *hl-line-mode*) "Highlight current line")
-    (gemacs-var-entry "hl-todo-mode" (lambda () *hl-todo-mode*) "Highlight TODO keywords")
-    (gemacs-var-entry "hl-todo-keywords" (lambda () *hl-todo-keywords*) "Keywords highlighted by hl-todo-mode")
-    (gemacs-var-entry "wgrep-mode" (lambda () *wgrep-mode*) "Writable grep buffer active")
-    (gemacs-var-entry "magit-dir" (lambda () *magit-dir*) "Current magit working directory")
-    (gemacs-var-entry "magit-amend-mode" (lambda () *magit-amend-mode*) "Amend mode for magit commit")
-    (gemacs-var-entry "current-workspace" (lambda () *current-workspace*) "Active workspace name")
-    (gemacs-var-entry "tab-width" (lambda () *tab-width*) "Width of tab stops")
-    (gemacs-var-entry "indent-tabs-mode" (lambda () *indent-tabs-mode*) "Use tabs for indentation")
-    (gemacs-var-entry "word-wrap" (lambda () *word-wrap-on*) "Word wrap mode")
-    (gemacs-var-entry "undo-history-max" (lambda () *undo-history-max*) "Max undo snapshots per buffer")
-    (gemacs-var-entry "recenter-position" (lambda () *recenter-position-qt*) "Recentering position (center/top/bottom)")))
+    (jemacs-var-entry "debug-on-error" (lambda () *debug-on-error*) "Enter debugger on error")
+    (jemacs-var-entry "hl-line-mode" (lambda () *hl-line-mode*) "Highlight current line")
+    (jemacs-var-entry "hl-todo-mode" (lambda () *hl-todo-mode*) "Highlight TODO keywords")
+    (jemacs-var-entry "hl-todo-keywords" (lambda () *hl-todo-keywords*) "Keywords highlighted by hl-todo-mode")
+    (jemacs-var-entry "wgrep-mode" (lambda () *wgrep-mode*) "Writable grep buffer active")
+    (jemacs-var-entry "magit-dir" (lambda () *magit-dir*) "Current magit working directory")
+    (jemacs-var-entry "magit-amend-mode" (lambda () *magit-amend-mode*) "Amend mode for magit commit")
+    (jemacs-var-entry "current-workspace" (lambda () *current-workspace*) "Active workspace name")
+    (jemacs-var-entry "tab-width" (lambda () *tab-width*) "Width of tab stops")
+    (jemacs-var-entry "indent-tabs-mode" (lambda () *indent-tabs-mode*) "Use tabs for indentation")
+    (jemacs-var-entry "word-wrap" (lambda () *word-wrap-on*) "Word wrap mode")
+    (jemacs-var-entry "undo-history-max" (lambda () *undo-history-max*) "Max undo snapshots per buffer")
+    (jemacs-var-entry "recenter-position" (lambda () *recenter-position-qt*) "Recentering position (center/top/bottom)")))
 
 (def (cmd-describe-variable app)
   "Describe a variable — show value, type, docstring, default from customize registry."

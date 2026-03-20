@@ -1347,7 +1347,7 @@
          (stats (vector))
          (report (with-output-to-string
                    (lambda ()
-                     (display "Gerbil Emacs Memory Usage\n")
+                     (display "Jemacs Memory Usage\n")
                      (display (make-string 40 #\-))
                      (display "\n")
                      (display "User time:    ")

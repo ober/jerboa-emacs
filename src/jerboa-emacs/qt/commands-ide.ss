@@ -385,8 +385,8 @@ Use M-x set-buffer-file-coding-system to change."
       (string-append "Column: " (number->string col)))))
 
 (def (cmd-emacs-version app)
-  "Show gemacs version."
-  (echo-message! (app-state-echo app) "gemacs (Qt backend)"))
+  "Show jemacs version."
+  (echo-message! (app-state-echo app) "jemacs (Qt backend)"))
 
 ;;;============================================================================
 ;;; Git/VCS commands

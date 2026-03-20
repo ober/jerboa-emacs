@@ -76,7 +76,7 @@
                    (echo-error! (app-state-echo app) "Sudo save failed"))
                  (lambda ()
                    (let ([tmp (string-append
-                                "/tmp/.gemacs-sudo-"
+                                "/tmp/.jemacs-sudo-"
                                 (number->string (random-integer 999999)))])
                      (call-with-output-file
                        tmp
@@ -380,8 +380,8 @@
                    (string-append "Buffer not found: " other-name))
                  (let* ([ed (current-qt-editor app)]
                         [text1 (qt-plain-text-edit-text ed)]
-                        [tmp1 "/tmp/gemacs-ediff-1.txt"]
-                        [tmp2 "/tmp/gemacs-ediff-2.txt"])
+                        [tmp1 "/tmp/jemacs-ediff-1.txt"]
+                        [tmp2 "/tmp/jemacs-ediff-2.txt"])
                    (call-with-output-file
                      tmp1
                      (lambda (p) (display text1 p)))
@@ -662,7 +662,7 @@
                (let loop ([i hunk-line] [acc (list)])
                  (if (>= i (length lines))
                      (let* ([hunk-text (string-join (reverse acc) "\n")]
-                            [tmp "/tmp/gemacs-hunk.patch"])
+                            [tmp "/tmp/jemacs-hunk.patch"])
                        (with-catch
                          (lambda (e)
                            (echo-error!
@@ -701,7 +701,7 @@
                (let loop ([i hunk-line] [acc (list)])
                  (if (>= i (length lines))
                      (let* ([hunk-text (string-join (reverse acc) "\n")]
-                            [tmp "/tmp/gemacs-revert-hunk.patch"])
+                            [tmp "/tmp/jemacs-revert-hunk.patch"])
                        (with-catch
                          (lambda (e)
                            (echo-error!
@@ -826,7 +826,7 @@
                (echo-error! (app-state-echo app) "SSH fetch failed"))
              (lambda ()
                (let* ([tmp (string-append
-                             "/tmp/gemacs-ssh-"
+                             "/tmp/jemacs-ssh-"
                              (number->string (random-integer 99999)))]
                       [proc (open-process
                               (list 'path: "scp" 'arguments: (list path tmp)
@@ -1009,7 +1009,7 @@
   (define *qt-elfeed-entries*--cell (vector '()))
   (def (qt-elfeed-db-path)
        (let ([home (getenv "HOME" "/tmp")])
-         (string-append home "/.gemacs-elfeed-feeds")))
+         (string-append home "/.jemacs-elfeed-feeds")))
   (def (qt-elfeed-load-feeds!)
        (let ([path (qt-elfeed-db-path)])
          (when (file-exists? path)

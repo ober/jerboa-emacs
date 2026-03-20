@@ -1169,7 +1169,7 @@
                (app-state-echo app)
                (string-append "Macros: " (string-join names ", "))))))
   (def (cmd-save-kbd-macros app)
-       "Save named keyboard macros to ~/.gemacs-macros."
+       "Save named keyboard macros to ~/.jemacs-macros."
        (let ([named (app-state-macro-named app)])
          (if (= (hash-length named) 0)
              (echo-message! (app-state-echo app) "No macros to save")
@@ -1178,7 +1178,7 @@
                  (echo-error! (app-state-echo app) "Error saving macros"))
                (lambda ()
                  (let ([path (path-expand
-                               ".gemacs-macros"
+                               ".jemacs-macros"
                                (user-info-home (user-info (user-name))))])
                    (call-with-output-file
                      path
@@ -1195,7 +1195,7 @@
                      (number->string (hash-length named))
                      " macros")))))))
   (def (cmd-load-kbd-macros app)
-       "Load named keyboard macros from ~/.gemacs-macros."
+       "Load named keyboard macros from ~/.jemacs-macros."
        (with-catch
          (lambda (e)
            (echo-message!
@@ -1203,7 +1203,7 @@
              "No saved macros found"))
          (lambda ()
            (let* ([path (path-expand
-                          ".gemacs-macros"
+                          ".jemacs-macros"
                           (user-info-home (user-info (user-name))))]
                   [named (app-state-macro-named app)])
              (call-with-input-file

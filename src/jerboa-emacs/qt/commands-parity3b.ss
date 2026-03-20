@@ -430,7 +430,7 @@
 
 ;; Server
 (def (cmd-server-start app)
-  "Show IPC server status — gemacs-client opens files in this session."
+  "Show IPC server status — jemacs-client opens files in this session."
   (if (file-exists? *ipc-server-file*)
     (let* ((addr (with-exception-catcher
                    (lambda (e) "unknown")
@@ -438,10 +438,10 @@
                      (call-with-input-file *ipc-server-file*
                        (lambda (p) (read-line p))))))
            (msg (string-append "Server running on " (or addr "unknown")
-                               " — use: gemacs-client <file>")))
+                               " — use: jemacs-client <file>")))
       (echo-message! (app-state-echo app) msg))
     (echo-message! (app-state-echo app)
-      "No server running (start gemacs-qt to enable)")))
+      "No server running (start jemacs-qt to enable)")))
 (def (cmd-server-edit app)
   (execute-command! app 'find-file))
 (def (cmd-server-force-delete app)
@@ -869,7 +869,7 @@
   (let* ((ed (current-qt-editor app))
          (report (with-output-to-string
                    (lambda ()
-                     (display "Gemacs Memory Usage\n")
+                     (display "Jemacs Memory Usage\n")
                      (display (make-string 40 #\-))
                      (display "\n")
                      (display "Chez: ")
@@ -1567,11 +1567,11 @@
   (execute-command! app 'hippie-expand))
 
 (def (cmd-add-dir-local-variable app)
-  "Prompt for variable and value, append to .gemacs-config in project root."
+  "Prompt for variable and value, append to .jemacs-config in project root."
   (let* ((buf (current-qt-buffer app))
          (fp (and buf (buffer-file-path buf)))
          (dir (if fp (path-directory fp) (current-directory)))
-         (config-path (path-expand ".gemacs-config" dir))
+         (config-path (path-expand ".jemacs-config" dir))
          (var (qt-echo-read-string app "Dir-local variable: ")))
     (when (and var (> (string-length var) 0))
       (let ((val (qt-echo-read-string app (string-append var " = "))))

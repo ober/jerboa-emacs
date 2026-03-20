@@ -1093,7 +1093,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
              (current-text (qt-plain-text-edit-text ed))
              (file-text (read-file-as-string path))
              ;; Write current buffer to temp file for diff
-             (tmp-path (string-append "/tmp/gemacs-diff-" (number->string (random-integer 100000))))
+             (tmp-path (string-append "/tmp/jemacs-diff-" (number->string (random-integer 100000))))
              (_ (write-string-to-file tmp-path current-text))
              (result (with-catch
                        (lambda (e) "Error running diff")

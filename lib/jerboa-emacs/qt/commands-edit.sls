@@ -897,7 +897,7 @@
                  (lambda (e)
                    (let ([msg (with-output-to-string
                                 (lambda () (display-exception e)))])
-                     (gemacs-log! "cmd-shell: gsh init failed: " msg)
+                     (jemacs-log! "cmd-shell: gsh init failed: " msg)
                      (echo-error!
                        (app-state-echo app)
                        (string-append "Shell failed: " msg))))

@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Qt menu bar and toolbar for gemacs
+;;; Qt menu bar and toolbar for jemacs
 
 (export qt-setup-menubar!)
 

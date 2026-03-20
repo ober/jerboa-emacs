@@ -430,8 +430,8 @@
            (app-state-echo app)
            (string-append "Column: " (number->string col)))))
   (def (cmd-emacs-version app)
-       "Show gemacs version."
-       (echo-message! (app-state-echo app) "gemacs (Qt backend)"))
+       "Show jemacs version."
+       (echo-message! (app-state-echo app) "jemacs (Qt backend)"))
   (def (run-git-command app args buffer-name)
        "Run a git command async and show output in a buffer."
        (let* ([buf (current-qt-buffer app)]

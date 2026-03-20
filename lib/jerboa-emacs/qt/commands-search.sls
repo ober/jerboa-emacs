@@ -1229,7 +1229,7 @@
                     [current-text (qt-plain-text-edit-text ed)]
                     [file-text (read-file-as-string path)]
                     [tmp-path (string-append
-                                "/tmp/gemacs-diff-"
+                                "/tmp/jemacs-diff-"
                                 (number->string (random-integer 100000)))]
                     [_ (write-string-to-file tmp-path current-text)]
                     [result (with-catch

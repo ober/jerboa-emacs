@@ -301,7 +301,7 @@
 
 (def *qt-eww-bookmarks* '())  ; list of (title . url) pairs
 (def *qt-eww-bookmarks-file*
-  (path-expand ".gemacs-eww-bookmarks" (user-info-home (user-info (user-name)))))
+  (path-expand ".jemacs-eww-bookmarks" (user-info-home (user-info (user-name)))))
 
 (def (qt-eww-load-bookmarks!)
   "Load EWW bookmarks from disk."
@@ -565,7 +565,7 @@
     (when (= (length lines) 3)
       (set! lines (cons "  (no autoloads registered)" lines)))
     (set! lines (append (reverse lines)
-      ["" "Use (qt-autoload! 'symbol \"path.ss\") in ~/.gemacs-init."]))
+      ["" "Use (qt-autoload! 'symbol \"path.ss\") in ~/.jemacs-init."]))
     (let* ((text (string-join lines "\n"))
            (buf (or (buffer-by-name "*Autoloads*")
                     (qt-buffer-create! "*Autoloads*" ed #f))))
@@ -799,7 +799,7 @@
 ;;;============================================================================
 
 (def *qt-persistent-undo-dir*
-  (string-append (or (getenv "HOME" #f) ".") "/.gemacs-undo/"))
+  (string-append (or (getenv "HOME" #f) ".") "/.jemacs-undo/"))
 
 (def (qt-persistent-undo-file-for path)
   (string-append *qt-persistent-undo-dir*

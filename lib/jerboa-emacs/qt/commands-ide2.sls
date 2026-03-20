@@ -605,7 +605,7 @@
                        (lambda (job)
                          (with-catch
                            (lambda (e)
-                             (gemacs-log!
+                             (jemacs-log!
                                "wgrep write error: "
                                (object->string e)))
                            (lambda ()
@@ -700,7 +700,7 @@
   (define *session-path*--cell
     (vector
       (path-expand
-        ".gemacs-session"
+        ".jemacs-session"
         (user-info-home (user-info (user-name))))))
   (def (session-save! app)
        "Save current session (open file buffers + positions) to disk."

@@ -1717,12 +1717,12 @@
 (def (cmd-use-package-report app)
   "Show use-package statistics."
   (echo-message! (app-state-echo app)
-    "Gemacs uses Gerbil packages — see M-x list-packages"))
+    "Jemacs uses Gerbil packages — see M-x list-packages"))
 
 (def (cmd-straight-use-package app)
   "Straight.el package manager stub."
   (echo-message! (app-state-echo app)
-    "Gemacs uses gerbil pkg — see M-x package-install"))
+    "Jemacs uses gerbil pkg — see M-x package-install"))
 
 ;;;============================================================================
 ;;; Which-key enhancements

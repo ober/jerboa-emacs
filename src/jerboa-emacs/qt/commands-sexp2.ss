@@ -315,7 +315,7 @@
   (let* ((bufs (buffer-list))
          (files (filter (lambda (f) f)
                         (map buffer-file-path bufs)))
-         (session-file (string-append (getenv "HOME" "/tmp") "/.gemacs-session")))
+         (session-file (string-append (getenv "HOME" "/tmp") "/.jemacs-session")))
     (with-catch
       (lambda (e) (echo-message! (app-state-echo app) "Error saving session"))
       (lambda ()
@@ -327,7 +327,7 @@
 
 (def (cmd-desktop-read app)
   "Restore desktop session from saved file list."
-  (let ((session-file (string-append (getenv "HOME" "/tmp") "/.gemacs-session")))
+  (let ((session-file (string-append (getenv "HOME" "/tmp") "/.jemacs-session")))
     (if (file-exists? session-file)
       (with-catch
         (lambda (e) (echo-message! (app-state-echo app) "Error reading session"))
@@ -355,7 +355,7 @@
 
 (def (cmd-desktop-clear app)
   "Clear saved session file."
-  (let ((session-file (string-append (getenv "HOME" "/tmp") "/.gemacs-session")))
+  (let ((session-file (string-append (getenv "HOME" "/tmp") "/.jemacs-session")))
     (when (file-exists? session-file)
       (delete-file session-file))
     (echo-message! (app-state-echo app) "Session cleared")))
@@ -365,7 +365,7 @@
 ;;;============================================================================
 
 (def *qt-history-file*
-  (string-append (getenv "HOME" "/tmp") "/.gemacs-history"))
+  (string-append (getenv "HOME" "/tmp") "/.jemacs-history"))
 
 (def (cmd-savehist-save app)
   "Save command history to disk."

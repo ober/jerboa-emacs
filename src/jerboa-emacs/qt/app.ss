@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; Qt application and event loop for gemacs
+;;; Qt application and event loop for jemacs
 
 (export qt-main qt-open-file! qt-do-init!)
 
@@ -120,7 +120,7 @@
                   (if modified? "* " "")
                   name
                   (if path (string-append " - " path) "")
-                  " - gemacs")))
+                  " - jemacs")))
     (qt-main-window-set-title! win title)))
 
 (def (qt-update-mark-selection! app)
@@ -377,15 +377,15 @@
                (loop (cdr wins))))))))))
 
 (def (qt-do-init! qt-app args)
-  ;; Initialize runtime error log (~/.gemacs-errors.log)
+  ;; Initialize runtime error log (~/.jemacs-errors.log)
   (init-jemacs-log!)
   ;; Verbose hang-diagnosis log: always enabled for debugging.
   ;; Opens ~/.jemacs-verbose.log for timestamped diagnostic output.
   (init-verbose-log!)
-  (verbose-log! "gemacs-qt verbose mode ON")
+  (verbose-log! "jemacs-qt verbose mode ON")
     ;; Initialize face system with standard faces
     (define-standard-faces!)
-    ;; Load saved theme and font settings from ~/.gemacs-theme
+    ;; Load saved theme and font settings from ~/.jemacs-theme
     (let-values (((saved-theme saved-font-family saved-font-size) (theme-settings-load!)))
       ;; Apply saved theme if valid
       (when (and saved-theme (theme-get saved-theme))
@@ -504,7 +504,7 @@
       (save-place-load!)
       (gsh-history-load!)
       (load-init-file!)
-      (init-file-load!)  ;; plaintext ~/.gemacs-init (chords, key-translate, settings)
+      (init-file-load!)  ;; plaintext ~/.jemacs-init (chords, key-translate, settings)
 
       ;; Menu bar and toolbar
       (qt-setup-menubar! app win)
@@ -514,7 +514,7 @@
              (saved (scratch-restore!))
              (text (or saved
                        (string-append
-                        ";; Gerbil Emacs — *scratch*\n"
+                        ";; Jemacs — *scratch*\n"
                         ";;\n"
                         ";; Key Bindings:\n"
                         ";;   C-x C-f   Find file        C-x C-s   Save buffer\n"
@@ -1194,7 +1194,7 @@
 
       ;; Show window
       (qt-main-window-set-central-widget! win central)
-      (qt-main-window-set-title! win "gemacs")
+      (qt-main-window-set-title! win "jemacs")
       (qt-widget-resize! win 800 600)
       (qt-widget-show! win)
 
@@ -1203,7 +1203,7 @@
       (qt-tabbar-update! app)
       (qt-update-frame-title! app)
 
-      ;; Start IPC server for gemacs-client
+      ;; Start IPC server for jemacs-client
       (start-ipc-server!)
       ;; Start debug REPL if --repl <port> or GEMACS_REPL_PORT is set
       (let* ((repl-port-env (getenv "GEMACS_REPL_PORT" #f))

@@ -1861,9 +1861,9 @@
   "Initialize the documentation topic database."
   (hash-put! *doc-topics* "getting-started"
     (string-append
-      "Getting Started with Gemacs\n"
+      "Getting Started with Jemacs\n"
       "==========================\n\n"
-      "Gemacs is a Gerbil Scheme-based Emacs-like editor.\n\n"
+      "Jemacs is a Gerbil Scheme-based Emacs-like editor.\n\n"
       "Quick start:\n"
       "  1. Open a file: C-x C-f\n"
       "  2. Edit text: just type\n"

@@ -297,7 +297,7 @@
            "Use M-x yas-insert-snippet for snippets")
          (yas-visit-snippet-file
            .
-           "Snippet files managed via ~/.gemacs-snippets"))))
+           "Snippet files managed via ~/.jemacs-snippets"))))
   (def (qt-register-parity3-stubs!)
        "Register stub commands for Qt parity."
        (for-each

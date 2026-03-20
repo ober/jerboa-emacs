@@ -71,7 +71,7 @@
        "Toggle font lock mode."
        (cmd-toggle-highlighting app))
   (def (cmd-customize-face app)
-       "Interactively customize a face's visual attributes.\n   Prompts for face name, then for each attribute (foreground, background, bold, italic).\n   Changes are saved to ~/.gemacs-custom-faces and persist across sessions."
+       "Interactively customize a face's visual attributes.\n   Prompts for face name, then for each attribute (foreground, background, bold, italic).\n   Changes are saved to ~/.jemacs-custom-faces and persist across sessions."
        (let* ([face-names (sort
                             (hash-keys *faces*)
                             (lambda (a b)
@@ -342,10 +342,10 @@
   (define *user-themes-dir*--cell
     (vector
       (path-expand
-        ".gemacs-themes"
+        ".jemacs-themes"
         (user-info-home (user-info (user-name))))))
   (def (discover-user-themes)
-       "Scan ~/.gemacs-themes/*.ss for user-defined theme files.\n   Returns a list of theme names (symbols)."
+       "Scan ~/.jemacs-themes/*.ss for user-defined theme files.\n   Returns a list of theme names (symbols)."
        (with-catch
          (lambda (e) (list))
          (lambda ()
@@ -362,7 +362,7 @@
                       theme-files))
                (list)))))
   (def (load-user-theme-file! theme-name)
-       "Load a user theme file from ~/.gemacs-themes/THEME-NAME.ss\n   Returns #t on success, #f on failure."
+       "Load a user theme file from ~/.jemacs-themes/THEME-NAME.ss\n   Returns #t on success, #f on failure."
        (with-catch
          (lambda (e) #f)
          (lambda ()
@@ -380,7 +380,7 @@
                          (unless (eof-object? form) (eval form) (loop))))
                      #t))))))))
   (def (cmd-load-theme app)
-       "Switch to a different color theme (built-in or user-defined from ~/.gemacs-themes/)."
+       "Switch to a different color theme (built-in or user-defined from ~/.jemacs-themes/)."
        (let* ([builtin-themes (theme-names)]
               [user-themes (discover-user-themes)]
               [all-themes (append builtin-themes user-themes)]
@@ -415,7 +415,7 @@
                             (string-append
                               "Theme: "
                               input
-                              " (from ~/.gemacs-themes/)")))
+                              " (from ~/.jemacs-themes/)")))
                         (echo-error!
                           (app-state-echo app)
                           (string-append
@@ -879,7 +879,7 @@
            (lambda (e)
              (let ([msg (with-output-to-string
                           (lambda () (display-exception e)))])
-               (gemacs-log! "cmd-term: gsh init failed: " msg)
+               (jemacs-log! "cmd-term: gsh init failed: " msg)
                (verbose-log! "cmd-term: gsh init FAILED: " msg)
                (echo-error!
                  (app-state-echo app)
