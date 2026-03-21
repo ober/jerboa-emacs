@@ -9,6 +9,7 @@
         :std/sort
         :std/srfi/13
         :std/text/base64
+        :std/text/diff
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/async
@@ -1092,23 +1093,9 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
       (let* ((ed (current-qt-editor app))
              (current-text (qt-plain-text-edit-text ed))
              (file-text (read-file-as-string path))
-             ;; Write current buffer to temp file for diff
-             (tmp-path (string-append "/tmp/jemacs-diff-" (number->string (random-integer 100000))))
-             (_ (write-string-to-file tmp-path current-text))
-             (result (with-catch
-                       (lambda (e) "Error running diff")
-                       (lambda ()
-                         (let ((port (open-process
-                                       (list path: "/usr/bin/diff"
-                                             arguments: ["-u" path tmp-path]
-                                             stdout-redirection: #t
-                                             stderr-redirection: #t
-                                             pseudo-terminal: #f))))
-                           (let ((output (read-line port #f)))
-                             (close-port port)
-                             (or output "No differences")))))))
-        ;; Clean up temp file
-        (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp-path)))
+             (file-lines (string-split file-text #\newline))
+             (buf-lines (string-split current-text #\newline))
+             (result (diff-unified path "(buffer)" file-lines buf-lines)))
         ;; Show diff in buffer
         (let* ((fr (app-state-frame app))
                (diff-buf (or (buffer-by-name "*Diff*")
@@ -1116,7 +1103,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
           (qt-buffer-attach! ed diff-buf)
           (set! (qt-edit-window-buffer (qt-current-window fr)) diff-buf)
           (qt-plain-text-edit-set-text! ed
-            (if (string=? result "") "No differences\n" result))
+            (if (or (not result) (string=? result "")) "No differences\n" result))
           (qt-text-document-set-modified! (buffer-doc-pointer diff-buf) #f)
           (qt-plain-text-edit-set-cursor-position! ed 0)
           (qt-highlight-diff! ed)))

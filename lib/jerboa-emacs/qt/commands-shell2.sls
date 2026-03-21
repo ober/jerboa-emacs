@@ -37,7 +37,7 @@
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
    (std sugar) (chez-scintilla constants) (std sort)
-   (std srfi srfi-13) (std text base64)
+   (std srfi srfi-13) (std text base64) (std text diff)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (only (jerboa-emacs persist) theme-settings-save!
      theme-settings-load! mx-history-save! mx-history-load!)
@@ -379,55 +379,39 @@
                    (app-state-echo app)
                    (string-append "Buffer not found: " other-name))
                  (let* ([ed (current-qt-editor app)]
-                        [text1 (qt-plain-text-edit-text ed)]
-                        [tmp1 "/tmp/jemacs-ediff-1.txt"]
-                        [tmp2 "/tmp/jemacs-ediff-2.txt"])
-                   (call-with-output-file
-                     tmp1
-                     (lambda (p) (display text1 p)))
+                        [text1 (qt-plain-text-edit-text ed)])
                    (qt-buffer-attach! ed other-buf)
                    (let ([text2 (qt-plain-text-edit-text ed)])
-                     (call-with-output-file
-                       tmp2
-                       (lambda (p) (display text2 p)))
                      (qt-buffer-attach! ed cur-buf)
-                     (with-catch
-                       (lambda (e)
-                         (echo-error! (app-state-echo app) "diff failed"))
-                       (lambda ()
-                         (let* ([proc (open-process
-                                        (list 'path: "diff" 'arguments:
-                                          (list "-u"
-                                            (string-append
-                                              "--label="
-                                              cur-name)
-                                            (string-append
-                                              "--label="
-                                              other-name)
-                                            tmp1 tmp2)
-                                          'stdout-redirection: #t
-                                          'stderr-redirection: #t))]
-                                [output (read-line proc #f)]
-                                [_ (close-port proc)]
-                                [fr (app-state-frame app)]
-                                [diff-buf (or (buffer-by-name
-                                                "*Ediff Regions*")
-                                              (qt-buffer-create!
-                                                "*Ediff Regions*"
-                                                ed
-                                                #f))])
-                           (qt-buffer-attach! ed diff-buf)
-                           (qt-edit-window-buffer-set!
-                             (qt-current-window fr)
-                             diff-buf)
-                           (qt-plain-text-edit-set-text!
-                             ed
-                             (or output "Buffers are identical"))
-                           (qt-text-document-set-modified!
-                             (buffer-doc-pointer diff-buf)
-                             #f)
-                           (qt-plain-text-edit-set-cursor-position! ed 0)
-                           (qt-highlight-diff! ed)))))))))))
+                     (let* ([lines1 (string-split text1 #\newline)]
+                            [lines2 (string-split text2 #\newline)]
+                            [output (diff-unified
+                                      cur-name
+                                      other-name
+                                      lines1
+                                      lines2)]
+                            [fr (app-state-frame app)]
+                            [diff-buf (or (buffer-by-name
+                                            "*Ediff Regions*")
+                                          (qt-buffer-create!
+                                            "*Ediff Regions*"
+                                            ed
+                                            #f))])
+                       (qt-buffer-attach! ed diff-buf)
+                       (qt-edit-window-buffer-set!
+                         (qt-current-window fr)
+                         diff-buf)
+                       (qt-plain-text-edit-set-text!
+                         ed
+                         (if (and output (> (string-length output) 0))
+                             output
+                             "Buffers are identical"))
+                       (qt-text-document-set-modified!
+                         (buffer-doc-pointer diff-buf)
+                         #f)
+                       (qt-plain-text-edit-set-cursor-position! ed 0)
+                       (when (and output (> (string-length output) 0))
+                         (qt-highlight-diff! ed))))))))))
   (def (cmd-show-paren-mode app)
        "Toggle show-paren-mode (bracket matching highlight). Enabled by default.\nWhen disabled, cursor-adjacent braces are no longer highlighted."
        (set! *qt-show-paren-enabled* (not *qt-show-paren-enabled*))

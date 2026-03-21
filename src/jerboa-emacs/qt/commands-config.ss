@@ -9,6 +9,7 @@
         :std/sort
         :std/srfi/13
         :std/text/base64
+        :std/text/diff
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/async
@@ -1043,22 +1044,22 @@ modified so the next save uses the new encoding."
                 (path-b (path-expand file-b)))
             (if (not (and (file-exists? path-a) (file-exists? path-b)))
               (echo-error! (app-state-echo app) "One or both files not found")
-              (let* ((proc (open-process
-                             (list path: "/usr/bin/diff"
-                                   arguments: (list "-u" path-a path-b)
-                                   stdout-redirection: #t)))
-                     (output (read-line proc #f))
-                     ;; Omit process-status (Qt SIGCHLD race)
+              (let* ((text-a (read-file-as-string path-a))
+                     (text-b (read-file-as-string path-b))
+                     (lines-a (string-split text-a #\newline))
+                     (lines-b (string-split text-b #\newline))
+                     (output (diff-unified path-a path-b lines-a lines-b))
                      (ed (current-qt-editor app))
                      (fr (app-state-frame app))
                      (diff-buf (qt-buffer-create! "*Ediff*" ed #f)))
-                (close-port proc)
                 (qt-buffer-attach! ed diff-buf)
                 (set! (qt-edit-window-buffer (qt-current-window fr)) diff-buf)
-                (qt-plain-text-edit-set-text! ed (or output "No differences"))
+                (qt-plain-text-edit-set-text! ed
+                  (if (and output (> (string-length output) 0)) output "No differences"))
                 (qt-text-document-set-modified! (buffer-doc-pointer diff-buf) #f)
                 (qt-plain-text-edit-set-cursor-position! ed 0)
-                (when output (qt-highlight-diff! ed))
+                (when (and output (> (string-length output) 0))
+                  (qt-highlight-diff! ed))
                 (echo-message! (app-state-echo app) "Diff complete")))))))))
 
 ;;;============================================================================

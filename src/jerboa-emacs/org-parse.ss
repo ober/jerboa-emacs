@@ -13,6 +13,7 @@
                  date-hour date-minute date-second
                  date->time-utc time-difference time-second
                  date-week-day make-time time-utc)
+        (only-in :std/misc/number number->padded-string)
         ./pregexp-compat
         :std/misc/string)
 
@@ -113,9 +114,7 @@ Returns an org-timestamp struct or #f on parse failure."
 
 (def (pad-02 n)
   "Pad an integer to 2-digit zero-padded string."
-  (if (< n 10)
-    (string-append "0" (number->string n))
-    (number->string n)))
+  (number->padded-string n 2))
 
 (def (org-timestamp->date ts)
   "Convert an org-timestamp to a SRFI-19 date for arithmetic."

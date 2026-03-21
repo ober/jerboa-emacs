@@ -45,7 +45,7 @@
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
    (std sugar) (chez-scintilla constants) (std sort)
-   (std srfi srfi-13) (std text base64)
+   (std srfi srfi-13) (std text base64) (std text diff)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs async) (jerboa-emacs subprocess)
    (jerboa-emacs gsh-subprocess) (jerboa-emacs editor)
@@ -1228,26 +1228,13 @@
              (let* ([ed (current-qt-editor app)]
                     [current-text (qt-plain-text-edit-text ed)]
                     [file-text (read-file-as-string path)]
-                    [tmp-path (string-append
-                                "/tmp/jemacs-diff-"
-                                (number->string (random-integer 100000)))]
-                    [_ (write-string-to-file tmp-path current-text)]
-                    [result (with-catch
-                              (lambda (e) "Error running diff")
-                              (lambda ()
-                                (let ([port (open-process
-                                              (list 'path: "/usr/bin/diff"
-                                                'arguments:
-                                                (list "-u" path tmp-path)
-                                                'stdout-redirection: #t
-                                                'stderr-redirection: #t
-                                                'pseudo-terminal: #f))])
-                                  (let ([output (read-line port #f)])
-                                    (close-port port)
-                                    (or output "No differences")))))])
-               (with-catch
-                 (lambda (_e) (void))
-                 (lambda () (delete-file tmp-path)))
+                    [file-lines (string-split file-text #\newline)]
+                    [buf-lines (string-split current-text #\newline)]
+                    [result (diff-unified
+                              path
+                              "(buffer)"
+                              file-lines
+                              buf-lines)])
                (let* ([fr (app-state-frame app)]
                       [diff-buf (or (buffer-by-name "*Diff*")
                                     (qt-buffer-create! "*Diff*" ed #f))])
@@ -1257,7 +1244,9 @@
                    diff-buf)
                  (qt-plain-text-edit-set-text!
                    ed
-                   (if (string=? result "") "No differences\n" result))
+                   (if (or (not result) (string=? result ""))
+                       "No differences\n"
+                       result))
                  (qt-text-document-set-modified!
                    (buffer-doc-pointer diff-buf)
                    #f)

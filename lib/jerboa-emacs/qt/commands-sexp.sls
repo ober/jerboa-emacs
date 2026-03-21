@@ -37,7 +37,7 @@
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
    (std sugar) (chez-scintilla constants) (std sort)
-   (std srfi srfi-13) (std text base64)
+   (std srfi srfi-13) (std text base64) (std text diff)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs editor) (jerboa-emacs repl)
    (jerboa-emacs eshell) (jerboa-emacs shell)
@@ -1046,67 +1046,50 @@
                                bufs)])
                  (if (or (not buf-a) (not buf-b))
                      (echo-error! (app-state-echo app) "Buffer not found")
-                     (let* ([tmp-a (path-expand
-                                     "ediff-a"
-                                     (or (getenv "TMPDIR") "/tmp"))]
-                            [tmp-b (path-expand
-                                     "ediff-b"
-                                     (or (getenv "TMPDIR") "/tmp"))])
-                       (let ([text-a ""] [text-b ""])
-                         (let ([fr (app-state-frame app)])
-                           (for-each
-                             (lambda (win)
-                               (when (eq? (qt-edit-window-buffer win)
-                                          buf-a)
-                                 (set! text-a
-                                   (qt-plain-text-edit-text
-                                     (qt-edit-window-editor win))))
-                               (when (eq? (qt-edit-window-buffer win)
-                                          buf-b)
-                                 (set! text-b
-                                   (qt-plain-text-edit-text
-                                     (qt-edit-window-editor win)))))
-                             (qt-frame-windows fr)))
-                         (call-with-output-file
-                           tmp-a
-                           (lambda (p) (display text-a p)))
-                         (call-with-output-file
-                           tmp-b
-                           (lambda (p) (display text-b p)))
-                         (let* ([proc (open-process
-                                        (list 'path: "/usr/bin/diff"
-                                          'arguments:
-                                          (list "-u" tmp-a tmp-b)
-                                          'stdout-redirection: #t))]
-                                [output (read-line proc #f)]
-                                [ed (current-qt-editor app)]
-                                [fr (app-state-frame app)]
-                                [diff-buf (qt-buffer-create!
-                                            "*Ediff*"
-                                            ed
-                                            #f)])
-                           (close-port proc)
-                           (qt-buffer-attach! ed diff-buf)
-                           (qt-edit-window-buffer-set!
-                             (qt-current-window fr)
-                             diff-buf)
-                           (qt-plain-text-edit-set-text!
-                             ed
-                             (or output "No differences"))
-                           (qt-text-document-set-modified!
-                             (buffer-doc-pointer diff-buf)
-                             #f)
-                           (qt-plain-text-edit-set-cursor-position! ed 0)
-                           (when output (qt-highlight-diff! ed))
-                           (with-catch
-                             (lambda (_e) (void))
-                             (lambda () (delete-file tmp-a)))
-                           (with-catch
-                             (lambda (_e) (void))
-                             (lambda () (delete-file tmp-b)))
-                           (echo-message!
-                             (app-state-echo app)
-                             "Diff complete")))))))))))
+                     (let ([text-a ""] [text-b ""])
+                       (let ([fr (app-state-frame app)])
+                         (for-each
+                           (lambda (win)
+                             (when (eq? (qt-edit-window-buffer win) buf-a)
+                               (set! text-a
+                                 (qt-plain-text-edit-text
+                                   (qt-edit-window-editor win))))
+                             (when (eq? (qt-edit-window-buffer win) buf-b)
+                               (set! text-b
+                                 (qt-plain-text-edit-text
+                                   (qt-edit-window-editor win)))))
+                           (qt-frame-windows fr)))
+                       (let* ([lines-a (string-split text-a #\newline)]
+                              [lines-b (string-split text-b #\newline)]
+                              [output (diff-unified
+                                        a-name
+                                        b-name
+                                        lines-a
+                                        lines-b)]
+                              [ed (current-qt-editor app)]
+                              [fr (app-state-frame app)]
+                              [diff-buf (qt-buffer-create!
+                                          "*Ediff*"
+                                          ed
+                                          #f)])
+                         (qt-buffer-attach! ed diff-buf)
+                         (qt-edit-window-buffer-set!
+                           (qt-current-window fr)
+                           diff-buf)
+                         (qt-plain-text-edit-set-text!
+                           ed
+                           (if (and output (> (string-length output) 0))
+                               output
+                               "No differences"))
+                         (qt-text-document-set-modified!
+                           (buffer-doc-pointer diff-buf)
+                           #f)
+                         (qt-plain-text-edit-set-cursor-position! ed 0)
+                         (when (and output (> (string-length output) 0))
+                           (qt-highlight-diff! ed))
+                         (echo-message!
+                           (app-state-echo app)
+                           "Diff complete"))))))))))
   (def (word-at-point ed)
        "Extract the word at the cursor position. Returns (values word start end) or (values #f 0 0)."
        (let* ([text (qt-plain-text-edit-text ed)]

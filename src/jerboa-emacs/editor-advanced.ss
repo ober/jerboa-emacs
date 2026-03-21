@@ -10,6 +10,7 @@
         :std/srfi/13
         :std/text/base64
         :std/text/hex
+        :std/text/diff
         :std/crypto/digest
         :chez-scintilla/constants
         :chez-scintilla/scintilla
@@ -581,34 +582,19 @@
         (echo-error! echo (string-append "File not found: " path))
         (let* ((file-text (read-file-as-string path))
                (buf-text (editor-get-text ed))
-               ;; Write both to temp files and run diff
-               (pid (number->string (getpid)))
-               (tmp1 (string-append "/tmp/jemacs-diff-file-" pid))
-               (tmp2 (string-append "/tmp/jemacs-diff-buf-" pid)))
-          (write-string-to-file file-text tmp1)
-          (write-string-to-file buf-text tmp2)
-          (let* ((proc (open-process
-                         (list path: "/usr/bin/diff"
-                               arguments: (list "-u" tmp1 tmp2)
-                               stdin-redirection: #f
-                               stdout-redirection: #t
-                               stderr-redirection: #t)))
-                 (output (read-line proc #f))
-                 (status (process-status proc)))
-            ;; Clean up temp files
-            (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp1)))
-            (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp2)))
-            (if (and output (> (string-length output) 0))
-              ;; Show diff in *Diff* buffer
-              (let ((diff-buf (or (buffer-by-name "*Diff*")
-                                  (buffer-create! "*Diff*" ed #f))))
-                (buffer-attach! ed diff-buf)
-                (set! (edit-window-buffer (current-window fr)) diff-buf)
-                (editor-set-text ed output)
-                (editor-set-save-point ed)
-                (editor-goto-pos ed 0)
-                (echo-message! echo "*Diff*"))
-              (echo-message! echo "No differences"))))))))
+               (file-lines (string-split file-text #\newline))
+               (buf-lines (string-split buf-text #\newline))
+               (output (diff-unified path "(buffer)" file-lines buf-lines)))
+          (if (and output (> (string-length output) 0))
+            (let ((diff-buf (or (buffer-by-name "*Diff*")
+                                (buffer-create! "*Diff*" ed #f))))
+              (buffer-attach! ed diff-buf)
+              (set! (edit-window-buffer (current-window fr)) diff-buf)
+              (editor-set-text ed output)
+              (editor-set-save-point ed)
+              (editor-goto-pos ed 0)
+              (echo-message! echo "*Diff*"))
+            (echo-message! echo "No differences")))))))
 
 ;;;============================================================================
 ;;; Checksum: SHA256
@@ -950,55 +936,38 @@
                  (buf-b (and name-b (buffer-by-name name-b))))
             (if (not buf-b)
               (echo-error! echo (string-append "No buffer: " (or name-b "")))
-              ;; Get text from both buffers, write to temp files, diff
-              (let* ((pid (number->string (getpid)))
-                     (tmp-a (string-append "/tmp/gerbil-ediff-a-" pid))
-                     (tmp-b (string-append "/tmp/gerbil-ediff-b-" pid)))
-                ;; We need the text from those buffers — find their windows
-                (let ((text-a #f) (text-b #f))
-                  (for-each
-                    (lambda (win)
-                      (let ((wb (edit-window-buffer win)))
-                        (when (eq? wb buf-a)
-                          (set! text-a (editor-get-text (edit-window-editor win))))
-                        (when (eq? wb buf-b)
-                          (set! text-b (editor-get-text (edit-window-editor win))))))
-                    (frame-windows fr))
-                  ;; Fallback: if buffer not in a window, use current editor temporarily
-                  (unless text-a
-                    (buffer-attach! ed buf-a)
-                    (set! text-a (editor-get-text ed)))
-                  (unless text-b
-                    (buffer-attach! ed buf-b)
-                    (set! text-b (editor-get-text ed)))
-                  ;; Write to temp files and diff
-                  (write-string-to-file tmp-a text-a)
-                  (write-string-to-file tmp-b text-b)
-                  (let* ((proc (open-process
-                                 (list path: "/usr/bin/diff"
-                                       arguments: (list "-u"
-                                                        (string-append "--label=" name-a)
-                                                        (string-append "--label=" name-b)
-                                                        tmp-a tmp-b)
-                                       stdout-redirection: #t
-                                       stderr-redirection: #t)))
-                         (output (read-line proc #f))
-                         (status (process-status proc)))
-                    ;; Cleanup temp files
-                    (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp-a)))
-                    (with-catch (lambda (_e) (void)) (lambda () (delete-file tmp-b)))
-                    ;; Show diff in buffer
-                    (let ((diff-buf (buffer-create! "*Diff*" ed #f)))
-                      (buffer-attach! ed diff-buf)
-                      (set! (edit-window-buffer (current-window fr)) diff-buf)
-                      (if (and (string? output) (> (string-length output) 0))
-                        (begin
-                          (editor-set-text ed output)
-                          (setup-diff-highlighting! ed))
-                        (editor-set-text ed "(no differences)\n"))
-                      (editor-set-save-point ed)
-                      (editor-goto-pos ed 0)
-                      (editor-set-read-only ed #t))))))))))))
+              ;; Get text from both buffers
+              (let ((text-a #f) (text-b #f))
+                (for-each
+                  (lambda (win)
+                    (let ((wb (edit-window-buffer win)))
+                      (when (eq? wb buf-a)
+                        (set! text-a (editor-get-text (edit-window-editor win))))
+                      (when (eq? wb buf-b)
+                        (set! text-b (editor-get-text (edit-window-editor win))))))
+                  (frame-windows fr))
+                ;; Fallback: if buffer not in a window, use current editor temporarily
+                (unless text-a
+                  (buffer-attach! ed buf-a)
+                  (set! text-a (editor-get-text ed)))
+                (unless text-b
+                  (buffer-attach! ed buf-b)
+                  (set! text-b (editor-get-text ed)))
+                ;; In-process diff
+                (let* ((lines-a (string-split text-a #\newline))
+                       (lines-b (string-split text-b #\newline))
+                       (output (diff-unified name-a name-b lines-a lines-b))
+                       (diff-buf (buffer-create! "*Diff*" ed #f)))
+                  (buffer-attach! ed diff-buf)
+                  (set! (edit-window-buffer (current-window fr)) diff-buf)
+                  (if (and (string? output) (> (string-length output) 0))
+                    (begin
+                      (editor-set-text ed output)
+                      (setup-diff-highlighting! ed))
+                    (editor-set-text ed "(no differences)\n"))
+                  (editor-set-save-point ed)
+                  (editor-goto-pos ed 0)
+                  (editor-set-read-only ed #t))))))))))
 
 ;;;============================================================================
 ;;; Simple calculator
