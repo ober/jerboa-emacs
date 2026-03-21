@@ -12,6 +12,8 @@
         :std/misc/string
         :std/misc/ports
         :std/text/json
+        (only-in :std/misc/process process-kill)
+        (only-in :std/os/signal signal-names)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/editor
@@ -285,12 +287,11 @@
             (lambda (e) (echo-message! echo (string-append "Error sending signal: "
                                               (with-output-to-string(lambda () (display-exception e))))))
             (lambda ()
-              (let* ((proc (open-process
-                             (list path: "kill" arguments: (list (string-append "-" signal) pid-str)
-                                   stdout-redirection: #t stderr-redirection: #t)))
-                     (out (read-line proc #f)))
-                ;; Omit process-status (Qt SIGCHLD race) — assume success if no exception
-                (close-port proc)
+              (let* ((sig-name (string-append "SIG" signal))
+                     (sig-pair (find (lambda (p) (string=? (cdr p) sig-name)) signal-names))
+                     (sig-num (if sig-pair (car sig-pair)
+                                (error "Unknown signal" signal))))
+                (process-kill (string->number pid-str) sig-num)
                 (echo-message! echo (string-append "Sent SIG" signal " to PID " pid-str))))))))))
 
 ;; Calculator

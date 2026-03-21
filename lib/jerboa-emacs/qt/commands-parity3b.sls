@@ -91,6 +91,8 @@
    (except (std srfi srfi-13) string-join string-trim
      string-prefix? string-suffix? string-contains string-index)
    (std misc string) (std misc ports) (std text json)
+   (only (std misc process) process-kill)
+   (only (std os signal) signal-names)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs editor) (jerboa-emacs qt buffer)
    (jerboa-emacs qt window) (jerboa-emacs qt echo)
@@ -418,15 +420,15 @@
                          (with-output-to-string
                            (lambda () (display-exception e))))))
                    (lambda ()
-                     (let* ([proc (open-process
-                                    (list 'path: "kill" 'arguments:
-                                      (list
-                                        (string-append "-" signal)
-                                        pid-str)
-                                      'stdout-redirection: #t
-                                      'stderr-redirection: #t))]
-                            [out (read-line proc #f)])
-                       (close-port proc)
+                     (let* ([sig-name (string-append "SIG" signal)]
+                            [sig-pair (find
+                                        (lambda (p)
+                                          (string=? (cdr p) sig-name))
+                                        signal-names)]
+                            [sig-num (if sig-pair
+                                         (car sig-pair)
+                                         (error "Unknown signal" signal))])
+                       (process-kill (string->number pid-str) sig-num)
                        (echo-message!
                          echo
                          (string-append
