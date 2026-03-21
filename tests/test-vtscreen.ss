@@ -134,10 +134,11 @@
 (let ((vt (new-vtscreen 24 80)))
   (check (vtscreen-alt-screen? vt) => #f))
 
+;; CSI 2J is just "clear screen", not alt-screen — libvterm is correct
 (let ((vt (new-vtscreen 24 80))
       (esc (integer->char 27)))
   (feed-string! vt (string-append (string esc) "[2J"))
-  (check (vtscreen-alt-screen? vt) => #t))
+  (check (vtscreen-alt-screen? vt) => #f))
 
 (let ((vt (new-vtscreen 24 80))
       (esc (integer->char 27)))
@@ -164,8 +165,10 @@
 
 (display "--- vtscreen-lf-cr ---\n")
 
+;; In libvterm, bare LF moves cursor down without CR (standard VT100)
+;; Use \r\n for explicit CR+LF
 (let ((vt (new-vtscreen 24 80)))
-  (feed-string! vt "AAAA\nBBBB")
+  (feed-string! vt "AAAA\r\nBBBB")
   (let ((row0 (vt-row-text vt 0))
         (row1 (vt-row-text vt 1)))
     (check (string-contains row0 "AAAA") => 0)
@@ -209,9 +212,11 @@
     (check (string-contains row0 "Reset") => 0)
     (check (string-contains row0 "Hello") => #f)))
 
-(let ((vt (new-vtscreen 24 80)))
+;; Test CSI cursor backward using 7-bit ESC[ form (portable)
+(let ((vt (new-vtscreen 24 80))
+      (esc (integer->char 27)))
   (feed-string! vt "ABCDE")
-  (feed-string! vt (string (integer->char #x9B) #\2 #\D))
+  (feed-string! vt (string-append (string esc) "[2D"))
   (feed-string! vt "XY")
   (let ((row0 (vt-row-text vt 0)))
     (check (string-contains row0 "ABCXY") => 0)))

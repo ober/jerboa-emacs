@@ -764,6 +764,9 @@
     (set! (terminal-state-pty-pid ts) #f)
     (set! (terminal-state-pty-channel ts) #f)
     (set! (terminal-state-pty-thread ts) #f)
+    ;; Free libvterm resources before clearing the reference
+    (let ((vt (terminal-state-vtscreen ts)))
+      (when vt (vtscreen-free! vt)))
     (set! (terminal-state-vtscreen ts) #f)
     (set! (terminal-state-pre-pty-text ts) #f)))
 

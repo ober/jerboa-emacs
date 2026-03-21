@@ -75,6 +75,14 @@ int pty_spawn(const char *cmd, const char *envp, int rows, int cols) {
         if (!getenv("TERM"))
             setenv("TERM", "xterm-256color", 1);
 
+        /* Change to the shell's working directory (PWD from env).
+         * Without this, cd in the in-process shell updates PWD but the
+         * next PTY child still inherits the parent process's original cwd. */
+        const char *pwd = getenv("PWD");
+        if (pwd && pwd[0]) {
+            if (chdir(pwd) != 0) { /* ignore error, fall through to exec */ }
+        }
+
         execl("/bin/sh", "sh", "-c", cmd, (char *)NULL);
         _exit(127);
     }

@@ -91,7 +91,7 @@
 ;;;============================================================================
 
 ;; Minimum milliseconds between vterm renders (vtscreen → set-text!)
-(def *vterm-render-interval-ms* 100)
+(def *vterm-render-interval-ms* 33)
 
 ;; Maximum number of characters to keep in pre-pty scrollback text
 (def *vterm-scrollback-limit* 100000)
@@ -101,6 +101,15 @@
 
 ;; Per-terminal-state: last rendered string (skip set-text if unchanged)
 (def *vterm-last-rendered* (make-hash-table-eq))
+
+;; Per-terminal-state: have we done the initial full render?
+(def *vterm-initialized* (make-hash-table-eq))
+
+;; Per-terminal-state: line offset where vtscreen rows start in the document
+(def *vterm-line-offset* (make-hash-table-eq))
+
+;; Per-terminal-state: cached row texts from last render (vector of strings)
+(def *vterm-row-cache* (make-hash-table-eq))
 
 (def (vterm-render-due? ts)
   "Return #t if enough time has elapsed since last render for this terminal."
@@ -128,7 +137,175 @@
 (def (vterm-cleanup-state! ts)
   "Remove throttle state for a terminal that's done."
   (hash-remove! *vterm-last-render-time* ts)
-  (hash-remove! *vterm-last-rendered* ts))
+  (hash-remove! *vterm-last-rendered* ts)
+  (hash-remove! *vterm-initialized* ts)
+  (hash-remove! *vterm-line-offset* ts)
+  (hash-remove! *vterm-row-cache* ts))
+
+;;;============================================================================
+;;; Row-diff rendering: update only dirty rows in QScintilla
+;;;============================================================================
+
+(def (vterm-replace-line! ed doc-line new-text)
+  "Replace the content of a single line in QScintilla without touching other lines.
+   doc-line is 0-based. new-text should NOT include a newline."
+  (let* ((line-start (sci-send ed SCI_POSITIONFROMLINE doc-line))
+         (line-end   (sci-send ed SCI_GETLINEENDPOSITION doc-line)))
+    (when (>= line-start 0)
+      (sci-send ed SCI_SETTARGETSTART line-start)
+      (sci-send ed SCI_SETTARGETEND line-end)
+      (sci-send/string ed SCI_REPLACETARGET new-text))))
+
+(def (vterm-ensure-lines! ed needed-count)
+  "Ensure the document has at least needed-count lines by appending newlines."
+  (let ((current (sci-send ed SCI_GETLINECOUNT)))
+    (when (< current needed-count)
+      (let ((pad (make-string (- needed-count current) #\newline)))
+        ;; Append at end
+        (let ((end-pos (sci-send ed SCI_GETTEXTLENGTH)))
+          (sci-send ed SCI_SETTARGETSTART end-pos)
+          (sci-send ed SCI_SETTARGETEND end-pos)
+          (sci-send/string ed SCI_REPLACETARGET pad))))))
+
+(def (vterm-row-diff-render! ed vt ts)
+  "Render vtscreen rows into the QScintilla document.
+   When many rows changed, uses full set-text! for efficiency.
+   When few rows changed, uses per-line replacement."
+  (let ((rows (vtscreen-rows vt))
+        (line-offset (hash-ref *vterm-line-offset* ts 0))
+        (cache (hash-ref *vterm-row-cache* ts #f)))
+    ;; Ensure we have a row cache
+    (when (not cache)
+      (set! cache (make-vector rows ""))
+      (hash-put! *vterm-row-cache* ts cache))
+    ;; Ensure cache is right size (may have changed after resize)
+    (when (not (= (vector-length cache) rows))
+      (set! cache (make-vector rows ""))
+      (hash-put! *vterm-row-cache* ts cache))
+    ;; Count dirty rows to decide strategy
+    (let count-dirty ((r 0) (n 0))
+      (cond
+        ((>= r rows)
+         (cond
+           ((= n 0)
+            ;; No dirty rows
+            (vtscreen-clear-damage! vt)
+            #f)
+           ((> n 4)
+            ;; Many dirty rows — full set-text! is faster than N line replacements
+            (let* ((rendered (vtscreen-render vt))
+                   (pre-text (or (terminal-state-pre-pty-text ts) ""))
+                   (full (if (vtscreen-alt-screen? vt)
+                           rendered
+                           (string-append pre-text rendered))))
+              ;; Update cache for all rows
+              (let update ((r2 0))
+                (when (< r2 rows)
+                  (vector-set! cache r2 (vtscreen-get-row-text vt r2))
+                  (update (+ r2 1))))
+              (vtscreen-clear-damage! vt)
+              (qt-plain-text-edit-set-text! ed full)
+              #t))
+           (else
+            ;; Few dirty rows — per-line replacement
+            (vterm-ensure-lines! ed (+ line-offset rows))
+            (let loop ((r2 0) (any-changed? #f))
+              (if (>= r2 rows)
+                (begin
+                  (vtscreen-clear-damage! vt)
+                  any-changed?)
+                (if (vtscreen-row-dirty? vt r2)
+                  (let ((new-text (vtscreen-get-row-text vt r2))
+                        (old-text (vector-ref cache r2)))
+                    (if (string=? new-text old-text)
+                      (loop (+ r2 1) any-changed?)
+                      (begin
+                        (vector-set! cache r2 new-text)
+                        (vterm-replace-line! ed (+ line-offset r2) new-text)
+                        (loop (+ r2 1) #t))))
+                  (loop (+ r2 1) any-changed?)))))))
+        ((vtscreen-row-dirty? vt r)
+         (count-dirty (+ r 1) (+ n 1)))
+        (else
+         (count-dirty (+ r 1) n))))))
+
+;;;============================================================================
+;;; Per-cell color rendering
+;;;============================================================================
+
+;; Extended styles for 256-color/RGB: we allocate Scintilla styles on demand
+;; Style 64-79 = standard 16 ANSI colors (already set up in terminal.ss)
+;; Style 80-127 = dynamically allocated for additional fg colors
+(def *vterm-next-style* 80)
+(def *vterm-color-to-style* (make-hash-table))  ;; packed-rgb -> style-id
+(def *vterm-max-styles* 128)  ;; Scintilla supports styles 0-255
+
+(def (vterm-get-or-alloc-style! ed packed-rgb)
+  "Get or allocate a Scintilla style for a packed 0x00RRGGBB color.
+   Returns style index, or 0 if we've run out of style slots."
+  (or (hash-ref *vterm-color-to-style* packed-rgb #f)
+      (if (>= *vterm-next-style* *vterm-max-styles*)
+        0  ;; out of style slots, use default
+        (let ((style *vterm-next-style*))
+          (set! *vterm-next-style* (+ style 1))
+          ;; Configure this style
+          (sci-send ed SCI_STYLESETFORE style packed-rgb)
+          (sci-send ed SCI_STYLESETBACK style #x181818)
+          (hash-put! *vterm-color-to-style* packed-rgb style)
+          style))))
+
+(def (vterm-apply-row-colors! ed vt row doc-line)
+  "Apply per-cell foreground colors to a row using Scintilla styling.
+   Handles bold attribute by shifting color index +8 for indexed colors."
+  (let* ((cols (vtscreen-cols vt))
+         (line-start (sci-send ed SCI_POSITIONFROMLINE doc-line))
+         (line-end   (sci-send ed SCI_GETLINEENDPOSITION doc-line))
+         (line-len   (min (- line-end line-start) cols)))
+    (when (> line-len 0)
+      ;; Walk the row and apply styles in runs of same color
+      (let loop ((c 0) (run-start 0) (run-style #f))
+        (if (>= c line-len)
+          ;; Flush final run
+          (when (and run-style (> c run-start))
+            (sci-send ed SCI_STARTSTYLING (+ line-start run-start) 0)
+            (sci-send ed SCI_SETSTYLING (- c run-start) run-style))
+          (let* ((fg (vtscreen-cell-fg vt row c))
+                 (attrs (vtscreen-cell-attrs vt row c))
+                 (bold? (not (= 0 (bitwise-and attrs 1))))
+                 (style
+                  (cond
+                    ;; Default fg — use style 0 (no special color)
+                    ((= fg -1)
+                     (if bold?
+                       (+ *term-style-base* 15)  ;; bright white for bold default
+                       0))
+                    ;; Standard 16 ANSI color (check if it's a known palette color)
+                    (else
+                     (vterm-get-or-alloc-style! ed fg)))))
+            ;; If style changed, flush previous run
+            (if (eqv? style run-style)
+              (loop (+ c 1) run-start run-style)
+              (begin
+                (when (and run-style (> c run-start))
+                  (sci-send ed SCI_STARTSTYLING (+ line-start run-start) 0)
+                  (sci-send ed SCI_SETSTYLING (- c run-start) run-style))
+                (loop (+ c 1) c style)))))))))
+
+(def (vterm-apply-colors! ed vt ts)
+  "Apply colors to all dirty rows."
+  (let ((rows (vtscreen-rows vt))
+        (line-offset (hash-ref *vterm-line-offset* ts 0)))
+    (let loop ((r 0))
+      (when (< r rows)
+        ;; Only re-color rows that had their text updated
+        ;; (The damage was already cleared in row-diff-render, but we apply colors
+        ;;  to all rows whose text was just replaced in the cache)
+        (let ((cache (hash-ref *vterm-row-cache* ts #f)))
+          (when (and cache
+                     (< r (vector-length cache))
+                     (> (string-length (vector-ref cache r)) 0))
+            (vterm-apply-row-colors! ed vt r (+ line-offset r))))
+        (loop (+ r 1))))))
 
 ;;;============================================================================
 ;;; Qt Application
@@ -354,8 +531,8 @@
 
 (def (qt-poll-terminal-pty-batch! fr buf ts data)
   "Handle batched PTY data for a terminal buffer.
-   Feeds data to vtscreen immediately but throttles rendering to avoid
-   replacing the entire QScintilla document more than ~10 times/sec."
+   Feeds data to vtscreen immediately but throttles rendering.
+   Uses row-diff rendering: only updates dirty rows in QScintilla."
   (let ((vt (terminal-state-vtscreen ts)))
     (let loop ((wins (qt-frame-windows fr)))
       (when (pair? wins)
@@ -363,8 +540,17 @@
           (let ((ed (qt-edit-window-editor (car wins))))
             ;; Save pre-PTY text on first data chunk
             (when (and vt (not (terminal-state-pre-pty-text ts)))
-              (set! (terminal-state-pre-pty-text ts)
-                (qt-plain-text-edit-text ed)))
+              (let ((pre-text (qt-plain-text-edit-text ed)))
+                (set! (terminal-state-pre-pty-text ts) pre-text)
+                ;; Count lines in pre-pty-text for line offset
+                (let ((offset (if (and pre-text (> (string-length pre-text) 0))
+                               (let count ((i 0) (n 1))
+                                 (cond ((>= i (string-length pre-text)) n)
+                                       ((char=? (string-ref pre-text i) #\newline)
+                                        (count (+ i 1) (+ n 1)))
+                                       (else (count (+ i 1) n))))
+                               0)))
+                  (hash-put! *vterm-line-offset* ts offset))))
             (if vt
               (begin
                 ;; Always feed data to vtscreen so terminal state stays current
@@ -373,19 +559,43 @@
                 (vterm-cap-scrollback! ts)
                 ;; Only render to the widget if enough time has elapsed
                 (when (vterm-render-due? ts)
-                  (let* ((rendered (vtscreen-render vt))
-                         (full (if (vtscreen-alt-screen? vt)
-                                 rendered
-                                 (string-append (or (terminal-state-pre-pty-text ts) "")
-                                                rendered)))
-                         (prev (hash-ref *vterm-last-rendered* ts #f)))
-                    ;; Skip set-text if content hasn't changed
-                    (unless (and prev (string=? prev full))
-                      (hash-put! *vterm-last-rendered* ts full)
+                  (if (not (hash-ref *vterm-initialized* ts #f))
+                    ;; First render: full set-text to establish the document
+                    (let* ((rendered (vtscreen-render vt))
+                           (full (if (vtscreen-alt-screen? vt)
+                                   rendered
+                                   (string-append (or (terminal-state-pre-pty-text ts) "")
+                                                  rendered))))
                       (qt-plain-text-edit-set-text! ed full)
+                      (hash-put! *vterm-last-rendered* ts full)
+                      (hash-put! *vterm-initialized* ts #t)
+                      ;; Initialize row cache from current vtscreen state
+                      (let* ((rows (vtscreen-rows vt))
+                             (cache (make-vector rows "")))
+                        (let init-cache ((r 0))
+                          (when (< r rows)
+                            (vector-set! cache r (vtscreen-get-row-text vt r))
+                            (init-cache (+ r 1))))
+                        (hash-put! *vterm-row-cache* ts cache))
+                      (vtscreen-clear-damage! vt)
+                      ;; Apply colors to initial render
+                      (vterm-apply-colors! ed vt ts)
                       (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                       (qt-plain-text-edit-ensure-cursor-visible! ed))
-                    (vterm-mark-rendered! ts))))
+                    ;; Subsequent renders: row-diff update
+                    (when (vtscreen-has-damage? vt)
+                      (if (vtscreen-alt-screen? vt)
+                        ;; Alt screen: line-offset = 0
+                        (hash-put! *vterm-line-offset* ts 0)
+                        ;; Normal mode: keep existing offset
+                        (void))
+                      (let ((changed? (vterm-row-diff-render! ed vt ts)))
+                        (when changed?
+                          ;; Apply colors to changed rows
+                          (vterm-apply-colors! ed vt ts)
+                          (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+                          (qt-plain-text-edit-ensure-cursor-visible! ed)))))
+                  (vterm-mark-rendered! ts)))
               (begin
                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                 (qt-plain-text-edit-insert-text! ed (strip-ansi-codes data))
@@ -637,8 +847,37 @@
                  (else
                 ;; Normal key processing — with chord detection
                 (letrec
-                  ((do-normal-key!
+                  ((terminal-pty-intercept?
+                    ;; Check if we should intercept this key for an active PTY.
+                    ;; Returns #t if the key was sent to the PTY, #f otherwise.
+                    (lambda (code mods)
+                      (let* ((ctrl? (not (zero? (bitwise-and mods QT_MOD_CTRL))))
+                             (alt?  (not (zero? (bitwise-and mods QT_MOD_ALT))))
+                             (buf (qt-current-buffer (app-state-frame app))))
+                        (and ctrl? (not alt?)
+                             ;; Only intercept Ctrl+letter keys (not Ctrl+Shift, etc.)
+                             (>= code QT_KEY_A) (<= code QT_KEY_Z)
+                             ;; Allow C-x (buffer/file ops) and C-g (quit) to pass through
+                             (not (= code (+ QT_KEY_A 23)))  ;; C-x
+                             (not (= code (+ QT_KEY_A 6)))   ;; C-g
+                             (cond
+                               ((terminal-buffer? buf)
+                                (let ((ts (hash-get *terminal-state* buf)))
+                                  (and ts (terminal-pty-busy? ts)
+                                       (let ((ch (integer->char (+ 1 (- code QT_KEY_A)))))
+                                         (terminal-send-input! ts (string ch))
+                                         #t))))
+                               ((shell-buffer? buf)
+                                (let ((ss (hash-get *shell-state* buf)))
+                                  (and ss (shell-pty-busy? ss)
+                                       (let ((ch (integer->char (+ 1 (- code QT_KEY_A)))))
+                                         (shell-send-input! ss (string ch))
+                                         #t))))
+                               (else #f))))))
+                   (do-normal-key!
                     (lambda (code mods text)
+                     ;; Terminal PTY intercept: send control keys directly to PTY
+                     (unless (terminal-pty-intercept? code mods)
                      ;; Repeat-mode: check active repeat map before normal dispatch
                      (if (and (active-repeat-map)
                               (let* ((ks (qt-key-event->string code mods text))
@@ -844,7 +1083,7 @@
                        (qt-modeline-update! app)
                        (qt-tabbar-update! app)
                        (qt-update-frame-title! app)
-                       (qt-echo-draw! (app-state-echo app) echo-label))))))  ;; extra paren closes repeat-map if
+                       (qt-echo-draw! (app-state-echo app) echo-label)))))))  ;; extra parens close begin + repeat-map if + pty-intercept if
                   ;; Chord detection logic
                   (cond
                     ;; Case 1: A chord is pending and a new key arrived
@@ -975,7 +1214,11 @@
                                     " -> "
                                     (number->string new-rows) "x" (number->string new-cols))
                                   (vtscreen-resize! vt new-rows new-cols)
-                                  (terminal-resize! ts new-rows new-cols)))
+                                  (terminal-resize! ts new-rows new-cols)
+                                  ;; Invalidate row cache after resize
+                                  (hash-remove! *vterm-row-cache* ts)
+                                  ;; Force full re-render on next cycle
+                                  (hash-put! *vterm-initialized* ts #f)))
                               (ed-loop (cdr wins))))))))
                   (when (and ts (terminal-pty-busy? ts))
                     ;; Batch all pending data chunks, then render once
@@ -990,7 +1233,7 @@
                                (qt-poll-terminal-pty-batch! fr buf ts combined))
                              ;; No new data — flush any throttled render
                              (when (and (terminal-state-vtscreen ts)
-                                        (hash-ref *vterm-last-rendered* ts #f)
+                                        (hash-ref *vterm-initialized* ts #f)
                                         (vterm-render-due? ts))
                                (qt-poll-terminal-pty-batch! fr buf ts "")))
                            (when done-msg

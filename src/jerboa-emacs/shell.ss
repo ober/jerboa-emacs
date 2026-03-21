@@ -352,5 +352,8 @@
     (set! (shell-state-pty-pid ss) #f)
     (set! (shell-state-pty-channel ss) #f)
     (set! (shell-state-pty-thread ss) #f)
+    ;; Free libvterm resources before clearing the reference
+    (let ((vt (shell-state-vtscreen ss)))
+      (when vt (vtscreen-free! vt)))
     (set! (shell-state-vtscreen ss) #f)
     (set! (shell-state-pre-pty-text ss) #f)))

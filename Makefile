@@ -33,6 +33,9 @@ run: build
 repl_shim.so: support/repl_shim.c
 	gcc -shared -fPIC -O2 -o repl_shim.so support/repl_shim.c -Wall
 
+vterm_shim.so: support/vterm_shim.c
+	gcc -shared -fPIC -O2 -o vterm_shim.so support/vterm_shim.c -lvterm -Wall
+
 QT_INC := $(shell qmake6 -query QT_INSTALL_HEADERS 2>/dev/null || echo /usr/include/x86_64-linux-gnu/qt6)
 QT_SHIM_H := $(HOME)/mine/gerbil-qt/vendor
 
@@ -44,7 +47,7 @@ libqt_shim.so: vendor/qt_shim.cpp
 	  -o libqt_shim.so \
 	  -lQt6Core -lQt6Gui -lQt6Widgets -lqscintilla2_qt6
 
-run-qt: build repl_shim.so libqt_shim.so
+run-qt: build repl_shim.so libqt_shim.so vterm_shim.so
 	$(SCHEME) $(LIBDIRS) --script qt-main.ss
 
 # Qt backend build target

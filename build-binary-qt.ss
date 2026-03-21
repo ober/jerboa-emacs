@@ -435,6 +435,13 @@ echo OK"
       (display "Error: pty_shim.c compilation failed\n")
       (exit 1))))
 
+;; vterm shim (libvterm FFI — jvt_* symbols from support/vterm_shim.c)
+(when jemacs-static?
+  (let* ((cmd "gcc -c -O2 -o jemacs-qt-vterm-shim.o support/vterm_shim.c -Wall 2>&1"))
+    (unless (= 0 (system cmd))
+      (display "Error: vterm_shim.c compilation failed\n")
+      (exit 1))))
+
 ;; repl shim (poll/nanosleep/Sdeactivate wrappers for debug REPL in static builds)
 (when jemacs-static?
   (let* ((cmd (format "gcc -c -O2 -o jemacs-qt-repl-shim.o support/repl_shim.c -I~a -Wall 2>&1"
@@ -477,11 +484,11 @@ echo OK"
          (libqt-shim  (format "~a/libqt_shim.a" qt-shim-dir))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
 jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
-jemacs-qt-pty-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
+jemacs-qt-pty-shim.o jemacs-qt-vterm-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
 qt_static_symbols.o \
 ~a ~a ~a ~a \
 -L~a -lkernel -llz4 -lz \
--lm -ldl -lpthread -luuid -lncurses -lstdc++ 2>&1"
+-lvterm -lm -ldl -lpthread -luuid -lncurses -lstdc++ 2>&1"
                       libqt-shim qt-plugins qt-libs pcre2-libs
                       chez-dir)))
     (printf "  ~a~n" cmd)
@@ -493,7 +500,7 @@ qt_static_symbols.o \
          (qt-libs    (shell-output "pkg-config --libs Qt6Widgets" "-lQt6Widgets -lQt6Gui -lQt6Core"))
          ;; Link against ./libqt_shim.so (local copy with JEMACS_CHEZ_SMP)
          ;; rather than qt-shim-dir (gerbil-qt vendor — no Sdeactivate)
-         (cmd (format "g++ -rdynamic -o jemacs-qt jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o ~a ~a -L~a -lkernel -llz4 -lz -lm -ldl -lpthread -luuid -lncurses -lstdc++ -L. -lqt_shim -lqscintilla2_qt6 -Wl,-rpath,~a -Wl,-rpath,'$ORIGIN' 2>&1"
+         (cmd (format "g++ -rdynamic -o jemacs-qt jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o ~a ~a -L~a -lkernel -llz4 -lz -lm -ldl -lpthread -luuid -lncurses -lstdc++ -L. -lqt_shim -lqscintilla2_qt6 -lvterm -Wl,-rpath,~a -Wl,-rpath,'$ORIGIN' 2>&1"
                       pcre2-libs qt-libs chez-dir chez-dir)))
     (printf "  ~a~n" cmd)
     (unless (= 0 (system cmd))
@@ -510,7 +517,8 @@ qt_static_symbols.o \
       "jemacs_qt_scheme_boot.h" "jemacs_qt_jemacs_qt_boot.h"
       "jemacs-qt-all.so" "qt-main.so" "qt-main.wpo" "jemacs-qt.boot")
     (if jemacs-static?
-        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-pty-shim.o" "jemacs-qt-jerboa-landlock.o"
+        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-pty-shim.o" "jemacs-qt-vterm-shim.o"
+          "jemacs-qt-jerboa-landlock.o"
           "jemacs-qt-sci-stubs.o" "qt_static_symbols.o" "qt_static_symbols.c")
         '())))
 
@@ -536,8 +544,9 @@ qt_static_symbols.o \
     (printf "  ./libqt_shim.so~n")
     (printf "  ./qt_chez_shim.so~n")
     (printf "  ./pcre2_shim.so~n")
+    (printf "  ./vterm_shim.so~n")
     (printf "~nRun:~n")
     (printf "  ./jemacs-qt                # launch Qt editor~n")
     (printf "  ./jemacs-qt file.txt       # open file~n")
     (printf "~nInstall:~n")
-    (printf "  cp jemacs-qt libqt_shim.so qt_chez_shim.so pcre2_shim.so /usr/local/bin/~n")))
+    (printf "  cp jemacs-qt libqt_shim.so qt_chez_shim.so pcre2_shim.so vterm_shim.so /usr/local/bin/~n")))
