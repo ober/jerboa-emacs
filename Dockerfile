@@ -31,6 +31,7 @@ RUN apk add --no-cache \
     libx11-static graphite2-static libxkbcommon-static \
     ncurses-dev ncurses-static \
     util-linux-dev util-linux-static \
+    libvterm-dev libvterm-static \
     gcc g++ binutils make git curl wget
 
 # Build static libXau (no Alpine -static package available)

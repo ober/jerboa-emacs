@@ -89,25 +89,23 @@
     (and v (not (string=? v "0")) (not (string=? v "")))))
 
 ;; Check critical dependencies
+;; For static builds, skip checks on .o files that this script compiles in step 5
+;; (jemacs-qt-chez-shim.o, pcre2_shim.o). Only check pre-existing external deps.
 (for-each
   (lambda (path label)
     (unless (file-exists? path)
       (printf "Error: ~a not found at ~a~n" label path)
       (exit 1)))
-  (list (format "~a/jerboa/core.so" jerboa-dir)
-        (if jemacs-static?
-            "jemacs-qt-chez-shim.o"   ;; built locally from vendor/qt_chez_shim.c
-            "qt_chez_shim.so")
-        (if jemacs-static?
-            (format "~a/pcre2_shim.o" pcre2-dir)
-            (format "~a/pcre2_shim.so" pcre2-dir))
-        (if jemacs-static?
-            (format "~a/libqt_shim.a" qt-shim-dir)
-            (format "~a/libqt_shim.so" qt-shim-dir)))
-  (list "jerboa core.so"
-        (if jemacs-static? "qt_chez_shim.o" "qt_chez_shim.so")
-        (if jemacs-static? "pcre2_shim.o" "pcre2_shim.so")
-        (if jemacs-static? "libqt_shim.a" "libqt_shim.so")))
+  (if jemacs-static?
+    (list (format "~a/jerboa/core.so" jerboa-dir)
+          (format "~a/libqt_shim.a" qt-shim-dir))
+    (list (format "~a/jerboa/core.so" jerboa-dir)
+          "qt_chez_shim.so"
+          (format "~a/pcre2_shim.so" pcre2-dir)
+          (format "~a/libqt_shim.so" qt-shim-dir)))
+  (if jemacs-static?
+    (list "jerboa core.so" "libqt_shim.a")
+    (list "jerboa core.so" "qt_chez_shim.so" "pcre2_shim.so" "libqt_shim.so")))
 
 (printf "Chez dir:      ~a~n" chez-dir)
 (printf "Jerboa dir:    ~a~n" jerboa-dir)
@@ -421,6 +419,29 @@ echo OK"
       (display "Error: jsh ffi-shim.c compilation failed\n")
       (exit 1))))
 
+;; jsh embed-crypto (pure C crypto for embed encryption — no external deps)
+(when jemacs-static?
+  (let* ((jsh-root (path-parent jsh-dir))
+         (cmd (format "gcc -c -O2 -o jemacs-qt-embed-crypto.o ~a/embed-crypto.c -I~a -Wall 2>&1"
+                      jsh-root jsh-root)))
+    (unless (= 0 (system cmd))
+      (display "Error: embed-crypto.c compilation failed\n")
+      (exit 1))))
+
+;; jsh ssh-agent stub (chez_ssh_agent_stop referenced in main.sls but not needed for jemacs)
+(when jemacs-static?
+  (let ((stub-file "jemacs-qt-ssh-agent-stub.c"))
+    (call-with-output-file stub-file
+      (lambda (out)
+        (fprintf out "/* Stub — jemacs doesn't use ssh-agent */~n")
+        (fprintf out "void chez_ssh_agent_stop(void) {}~n")
+        (fprintf out "int chez_ssh_agent_is_running(void) { return 0; }~n"))
+      'replace)
+    (let ((cmd (format "gcc -c -O2 -o jemacs-qt-ssh-agent-stub.o ~a -Wall 2>&1" stub-file)))
+      (unless (= 0 (system cmd))
+        (display "Error: ssh-agent stub compilation failed\n")
+        (exit 1)))))
+
 ;; chez-scintilla stubs (TUI-only — Qt never calls these; stubs allow foreign-procedure defs)
 (when jemacs-static?
   (let* ((cmd "gcc -c -O2 -o jemacs-qt-sci-stubs.o support/chez_scintilla_stubs.c -Wall 2>&1"))
@@ -484,6 +505,7 @@ echo OK"
          (libqt-shim  (format "~a/libqt_shim.a" qt-shim-dir))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
 jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
+jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o \
 jemacs-qt-pty-shim.o jemacs-qt-vterm-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
 qt_static_symbols.o \
 ~a ~a ~a ~a \
@@ -517,7 +539,9 @@ qt_static_symbols.o \
       "jemacs_qt_scheme_boot.h" "jemacs_qt_jemacs_qt_boot.h"
       "jemacs-qt-all.so" "qt-main.so" "qt-main.wpo" "jemacs-qt.boot")
     (if jemacs-static?
-        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-pty-shim.o" "jemacs-qt-vterm-shim.o"
+        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-embed-crypto.o"
+          "jemacs-qt-ssh-agent-stub.o" "jemacs-qt-ssh-agent-stub.c"
+          "jemacs-qt-pty-shim.o" "jemacs-qt-vterm-shim.o"
           "jemacs-qt-jerboa-landlock.o"
           "jemacs-qt-sci-stubs.o" "qt_static_symbols.o" "qt_static_symbols.c")
         '())))

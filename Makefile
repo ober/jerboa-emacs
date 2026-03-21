@@ -258,6 +258,9 @@ CHEZ_MT ?= ta6le
 CHEZ_MUSL_DIR ?= $(shell ls -d /opt/chez/lib/csv*/$(CHEZ_MT) 2>/dev/null | head -1)
 
 build-jemacs-qt-static: check-root
+	cp /src/vendor/jerboa-shell/embed-crypto.c /deps/jsh/ 2>/dev/null; \
+	cp /src/vendor/jerboa-shell/embed-crypto.h /deps/jsh/ 2>/dev/null; \
+	cp /src/vendor/jerboa-shell/ffi-shim.c /deps/jsh/ 2>/dev/null; \
 	cd /src && make build SCHEME=/opt/chez/bin/scheme JERBOA=/deps/jerboa && \
 	if [ -f /src/vendor/qt_shim.cpp ]; then \
 	  echo "Rebuilding libqt_shim.a from updated qt_shim.cpp..." && \
@@ -290,6 +293,11 @@ build-jemacs-qt-static: check-root
 	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
 	  --compile-imported-libraries --script /src/vendor/jerboa-compile-tcp.ss && \
 	rm -f /deps/jerboa/lib/std/net/*.wpo && \
+	cp /src/vendor/jerboa-repl-static.sls /deps/jerboa/lib/std/repl.sls && \
+	rm -f /deps/jerboa/lib/std/repl.wpo /deps/jerboa/lib/std/repl.so && \
+	cd /deps/jerboa/lib && /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-repl.ss && \
+	rm -f /deps/jerboa/lib/std/repl.wpo && cd /src && \
 	rm -f /src/lib/jerboa/*.wpo /src/lib/jerboa/*.so && \
 	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /src/lib \
 	  --compile-imported-libraries --script /src/vendor/jerboa-compile-repl-socket.ss && \
@@ -315,7 +323,8 @@ linux-static-qt-docker:
 	  --ulimit nofile=8192:8192 \
 	  -v $(CURDIR):/src:z \
 	  $(DEPS_IMAGE) \
-	  sh -c "chmod 755 /root && \
+	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
+	         chmod 755 /root && \
 	         chown -R $(UID):$(GID) /opt/ /deps && \
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \
 	         exec su-exec $(UID):$(GID) env HOME=/tmp/jemacs-build sh -c '\
