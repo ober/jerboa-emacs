@@ -10,6 +10,7 @@
         :std/misc/process
         :std/misc/shuffle
         :std/text/json
+        (only-in :std/net/uri uri-encode uri-decode)
         :chez-scintilla/constants
         :chez-scintilla/scintilla
         :chez-scintilla/tui
@@ -516,60 +517,10 @@
 ;;; URL encode/decode
 ;;;============================================================================
 
-(def (url-encode str)
-  "Percent-encode a string for URLs."
-  (let ((out (open-output-string)))
-    (let loop ((i 0))
-      (when (< i (string-length str))
-        (let ((ch (string-ref str i)))
-          (cond
-            ((or (char-alphabetic? ch) (char-numeric? ch)
-                 (memv ch '(#\- #\_ #\. #\~)))
-             (write-char ch out))
-            ((char=? ch #\space)
-             (write-char #\+ out))
-            (else
-             (let ((b (char->integer ch)))
-               (display "%" out)
-               (when (< b 16) (write-char #\0 out))
-               (display (number->string b 16) out)))))
-        (loop (+ i 1))))
-    (get-output-string out)))
-
-(def (hex-digit-value ch)
-  "Convert hex digit char to integer value."
-  (cond
-    ((and (char>=? ch #\0) (char<=? ch #\9))
-     (- (char->integer ch) (char->integer #\0)))
-    ((and (char>=? ch #\a) (char<=? ch #\f))
-     (+ 10 (- (char->integer ch) (char->integer #\a))))
-    ((and (char>=? ch #\A) (char<=? ch #\F))
-     (+ 10 (- (char->integer ch) (char->integer #\A))))
-    (else #f)))
-
-(def (url-decode str)
-  "Decode a percent-encoded URL string."
-  (let ((out (open-output-string))
-        (len (string-length str)))
-    (let loop ((i 0))
-      (when (< i len)
-        (let ((ch (string-ref str i)))
-          (cond
-            ((and (char=? ch #\%) (< (+ i 2) len))
-             (let ((h1 (hex-digit-value (string-ref str (+ i 1))))
-                   (h2 (hex-digit-value (string-ref str (+ i 2)))))
-               (if (and h1 h2)
-                 (begin
-                   (write-char (integer->char (+ (* h1 16) h2)) out)
-                   (loop (+ i 3)))
-                 (begin (write-char ch out) (loop (+ i 1))))))
-            ((char=? ch #\+)
-             (write-char #\space out)
-             (loop (+ i 1)))
-            (else
-             (write-char ch out)
-             (loop (+ i 1)))))))
-    (get-output-string out)))
+;; url-encode / url-decode are now provided by (std net uri) as uri-encode / uri-decode.
+;; Keep aliases for compatibility with existing call sites.
+(def url-encode uri-encode)
+(def url-decode uri-decode)
 
 (def (cmd-url-encode-region app)
   "URL-encode the selected region."

@@ -12,30 +12,30 @@
    cmd-toggle-centered-cursor-mode *qt-tab-width*
    cmd-tab-to-tab-stop cmd-set-tab-width qt-json-pretty-print
    cmd-json-format-buffer cmd-json-minify-buffer
-   cmd-json-pretty-print-region uri-encode uri-decode
-   cmd-url-encode-region cmd-url-decode-region
-   qt-reverse-lines-in-string cmd-reverse-lines qt-shuffle
-   cmd-shuffle-lines cmd-xml-format qt-find-url-at-point
-   cmd-open-url-at-point cmd-compare-windows cmd-dedent-region
-   cmd-count-words-line cmd-diff-goto-source
-   cmd-find-file-by-path cmd-insert-date-iso cmd-org-schedule
-   cmd-org-deadline cmd-org-insert-src-block
-   *qt-org-clock-line* *qt-org-clock-heading*
-   qt-count-lines-before cmd-org-clock-in cmd-org-clock-out
-   cmd-org-clock-cancel cmd-org-clock-goto)
+   cmd-json-pretty-print-region cmd-url-encode-region
+   cmd-url-decode-region qt-reverse-lines-in-string
+   cmd-reverse-lines qt-shuffle cmd-shuffle-lines
+   cmd-xml-format qt-find-url-at-point cmd-open-url-at-point
+   cmd-compare-windows cmd-dedent-region cmd-count-words-line
+   cmd-diff-goto-source cmd-find-file-by-path
+   cmd-insert-date-iso cmd-org-schedule cmd-org-deadline
+   cmd-org-insert-src-block *qt-org-clock-line*
+   *qt-org-clock-heading* qt-count-lines-before
+   cmd-org-clock-in cmd-org-clock-out cmd-org-clock-cancel
+   cmd-org-clock-goto)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
    (std sugar) (std sort) (std srfi srfi-13) (std text base64)
-   (std text json) (jerboa-emacs qt sci-shim)
-   (jerboa-emacs core) (jerboa-emacs subprocess)
-   (jerboa-emacs editor) (jerboa-emacs repl)
-   (jerboa-emacs eshell) (jerboa-emacs shell)
-   (jerboa-emacs terminal) (jerboa-emacs qt buffer)
-   (jerboa-emacs qt window) (jerboa-emacs persist)
-   (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
-   (jerboa-emacs qt modeline)
+   (std text json) (only (std net uri) uri-encode uri-decode)
+   (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (jerboa-emacs subprocess) (jerboa-emacs editor)
+   (jerboa-emacs repl) (jerboa-emacs eshell)
+   (jerboa-emacs shell) (jerboa-emacs terminal)
+   (jerboa-emacs qt buffer) (jerboa-emacs qt window)
+   (jerboa-emacs persist) (jerboa-emacs qt echo)
+   (jerboa-emacs qt highlight) (jerboa-emacs qt modeline)
    (only
      (jerboa-emacs editor-core)
      paredit-delimiter?
@@ -322,54 +322,6 @@
                      (echo-message!
                        (app-state-echo app)
                        "JSON formatted"))))))))
-  (def (uri-encode str)
-       (let ([out (open-output-string)])
-         (string-for-each
-           (lambda (ch)
-             (let ([code (char->integer ch)])
-               (if (or (and (>= code 65) (<= code 90))
-                       (and (>= code 97) (<= code 122))
-                       (and (>= code 48) (<= code 57))
-                       (char=? ch #\-)
-                       (char=? ch #\_)
-                       (char=? ch #\.)
-                       (char=? ch #\~))
-                   (write-char ch out)
-                   (begin
-                     (write-char #\% out)
-                     (let ([hi (arithmetic-shift code -4)]
-                           [lo (bitwise-and code 15)])
-                       (write-char (string-ref "0123456789ABCDEF" hi) out)
-                       (write-char
-                         (string-ref "0123456789ABCDEF" lo)
-                         out))))))
-           str)
-         (get-output-string out)))
-  (def (uri-decode str)
-       (let ([len (string-length str)] [out (open-output-string)])
-         (let loop ([i 0])
-           (if (>= i len)
-               (get-output-string out)
-               (let ([ch (string-ref str i)])
-                 (cond
-                   [(char=? ch #\%)
-                    (if (>= (+ i 2) len)
-                        (begin (write-char ch out) (loop (+ i 1)))
-                        (let* ([h (string-ref str (+ i 1))]
-                               [l (string-ref str (+ i 2))]
-                               [hex (string h l)]
-                               [code (string->number hex 16)])
-                          (if code
-                              (begin
-                                (write-char (integer->char code) out)
-                                (loop (+ i 3)))
-                              (begin
-                                (write-char ch out)
-                                (loop (+ i 1))))))]
-                   [(char=? ch #\+)
-                    (write-char #\space out)
-                    (loop (+ i 1))]
-                   [else (write-char ch out) (loop (+ i 1))]))))))
   (def (cmd-url-encode-region app)
        "URL-encode the selected region."
        (let* ([ed (current-qt-editor app)]

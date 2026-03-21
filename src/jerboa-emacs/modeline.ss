@@ -7,6 +7,7 @@
 (export modeline-draw!)
 
 (import :std/sugar
+        (only-in :std/misc/memo memo/ttl)
         :chez-scintilla/constants
         :chez-scintilla/scintilla
         :chez-scintilla/tui
@@ -37,34 +38,27 @@
 ;;; Git branch detection (cached)
 ;;;============================================================================
 
-(def *git-branch-cache* (make-hash-table))
-(def *git-branch-cache-time* (make-hash-table))
-(def *git-cache-ttl* 5.0)
+(def git-branch-for-dir
+  (memo/ttl 5.0
+    (lambda (dir)
+      (with-catch
+        (lambda (e) #f)
+        (lambda ()
+          (let-values (((in-port out-port err-port pid)
+                        (open-process-ports
+                          (string-append "cd " dir " && git rev-parse --abbrev-ref HEAD 2>/dev/null")
+                          (buffer-mode block)
+                          (native-transcoder))))
+            (close-port out-port)
+            (close-port err-port)
+            (let ((result (read-line in-port)))
+              (close-port in-port)
+              (if (string? result) result #f))))))))
 
 (def (git-branch-for-file file-path)
   "Get current git branch for a file's directory, with caching."
   (if (not file-path) #f
-    (let ((dir (path-directory file-path)))
-      (let ((cached-time (hash-get *git-branch-cache-time* dir)))
-        (if (and cached-time
-                 (< (- (time->seconds (current-time)) cached-time) *git-cache-ttl*))
-          (hash-get *git-branch-cache* dir)
-          (let ((branch (with-catch
-                          (lambda (e) #f)
-                          (lambda ()
-                            (let-values (((in-port out-port err-port pid)
-                                          (open-process-ports
-                                            (string-append "cd " dir " && git rev-parse --abbrev-ref HEAD 2>/dev/null")
-                                            (buffer-mode block)
-                                            (native-transcoder))))
-                              (close-port out-port)
-                              (close-port err-port)
-                              (let ((result (read-line in-port)))
-                                (close-port in-port)
-                                (if (string? result) result #f)))))))
-            (hash-put! *git-branch-cache* dir branch)
-            (hash-put! *git-branch-cache-time* dir (time->seconds (current-time)))
-            branch))))))
+    (git-branch-for-dir (path-directory file-path))))
 
 ;;;============================================================================
 ;;; Mode name detection

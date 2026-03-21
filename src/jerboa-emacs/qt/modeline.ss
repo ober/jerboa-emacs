@@ -9,38 +9,32 @@
         *modeline-narrow-provider*)
 
 (import :std/sugar
+        (only-in :std/misc/memo memo/ttl)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/qt/window)
 
-(def *git-branch-cache* (make-hash-table))
-(def *git-branch-cache-time* (make-hash-table))
-(def *git-cache-ttl* 5.0)
+(def git-branch-for-dir
+  (memo/ttl 5.0
+    (lambda (dir)
+      (with-catch
+        (lambda (e) #f)
+        (lambda ()
+          (let* ((proc (open-process
+                          (list path: "/usr/bin/git"
+                                arguments: ["rev-parse" "--abbrev-ref" "HEAD"]
+                                directory: dir
+                                stdin-redirection: #f
+                                stdout-redirection: #t
+                                stderr-redirection: #t)))
+                 (result (read-line proc)))
+            ;; Omit process-status (Qt SIGCHLD race)
+            (close-port proc)
+            (if (string? result) result #f)))))))
 
 (def (git-branch-for-file file-path)
   (if (not file-path) #f
-    (let ((dir (path-directory file-path)))
-      (let ((cached-time (hash-get *git-branch-cache-time* dir)))
-        (if (and cached-time
-                 (< (- (time->seconds (current-time)) cached-time) *git-cache-ttl*))
-          (hash-get *git-branch-cache* dir)
-          (let ((branch (with-catch
-                          (lambda (e) #f)
-                          (lambda ()
-                            (let* ((proc (open-process
-                                          (list path: "/usr/bin/git"
-                                                arguments: ["rev-parse" "--abbrev-ref" "HEAD"]
-                                                directory: dir
-                                                stdin-redirection: #f
-                                                stdout-redirection: #t
-                                                stderr-redirection: #t)))
-                                   (result (read-line proc)))
-                              (process-status proc)
-                              (close-port proc)
-                              (if (string? result) result #f))))))
-            (hash-put! *git-branch-cache* dir branch)
-            (hash-put! *git-branch-cache-time* dir (time->seconds (current-time)))
-            branch))))))
+    (git-branch-for-dir (path-directory file-path))))
 
 (def (mode-name-for-buffer buf)
   (let ((lang (buffer-lexer-lang buf)))

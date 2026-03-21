@@ -9,6 +9,7 @@
         :std/srfi/13
         :std/text/base64
         :std/text/json
+        (only-in :std/net/uri uri-encode uri-decode)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/subprocess
@@ -317,49 +318,7 @@
 ;;; URL encode / decode
 ;;;============================================================================
 
-;; Simple URI percent-encoding (RFC 3986 unreserved chars pass through)
-(def (uri-encode str)
-  (let ((out (open-output-string)))
-    (string-for-each
-      (lambda (ch)
-        (let ((code (char->integer ch)))
-          (if (or (and (>= code 65) (<= code 90))   ;; A-Z
-                  (and (>= code 97) (<= code 122))  ;; a-z
-                  (and (>= code 48) (<= code 57))   ;; 0-9
-                  (char=? ch #\-) (char=? ch #\_)
-                  (char=? ch #\.) (char=? ch #\~))
-            (write-char ch out)
-            (begin
-              (write-char #\% out)
-              (let ((hi (arithmetic-shift code -4))
-                    (lo (bitwise-and code #xf)))
-                (write-char (string-ref "0123456789ABCDEF" hi) out)
-                (write-char (string-ref "0123456789ABCDEF" lo) out))))))
-      str)
-    (get-output-string out)))
-
-(def (uri-decode str)
-  (let ((len (string-length str))
-        (out (open-output-string)))
-    (let loop ((i 0))
-      (if (>= i len)
-        (get-output-string out)
-        (let ((ch (string-ref str i)))
-          (cond
-            ((char=? ch #\%)
-             (if (>= (+ i 2) len)
-               (begin (write-char ch out) (loop (+ i 1)))
-               (let* ((h (string-ref str (+ i 1)))
-                      (l (string-ref str (+ i 2)))
-                      (hex (string h l))
-                      (code (string->number hex 16)))
-                 (if code
-                   (begin (write-char (integer->char code) out) (loop (+ i 3)))
-                   (begin (write-char ch out) (loop (+ i 1)))))))
-            ((char=? ch #\+)
-             (write-char #\space out) (loop (+ i 1)))
-            (else
-             (write-char ch out) (loop (+ i 1)))))))))
+;; uri-encode / uri-decode now provided by (std net uri) import above.
 
 (def (cmd-url-encode-region app)
   "URL-encode the selected region."

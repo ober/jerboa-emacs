@@ -10,6 +10,7 @@
         :std/misc/process
         :std/misc/ports
         :std/srfi/19
+        (only-in :std/text/glob glob-match?)
         ./pregexp-compat
         :chez-scintilla/constants
         :chez-scintilla/scintilla
@@ -438,17 +439,8 @@
     (reverse result)))
 
 (def (editorconfig-glob-match? pattern filename)
-  "Simple glob matching for editorconfig patterns."
-  (let ((basename (path-strip-directory filename))
-        (ext (path-extension filename)))
-    (cond
-      ((string=? pattern "*") #t)
-      ((string-prefix? "*." pattern)
-       ;; Match by extension: *.py matches .py files
-       (let ((pat-ext (substring pattern 1 (string-length pattern))))
-         (string-suffix? pat-ext basename)))
-      ((string-prefix? "[" pattern) #t) ;; Simplified: match all bracket patterns
-      (else (string=? pattern basename)))))
+  "Glob matching for editorconfig patterns."
+  (glob-match? pattern (path-strip-directory filename)))
 
 (def (find-editorconfig filepath)
   "Search up from filepath for .editorconfig files, return merged settings."
