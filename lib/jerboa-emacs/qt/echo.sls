@@ -226,12 +226,14 @@
                            (take filtered (* *mb-max-visible* 3))
                            filtered)])
            (set! *mb-filtered* (list->vector shown))
+           (qt-widget-set-updates-enabled! *mb-list* #f)
            (qt-list-widget-clear! *mb-list*)
            (for-each
              (lambda (c) (qt-list-widget-add-item! *mb-list* c))
              shown)
            (when (> (vector-length *mb-filtered*) 0)
              (qt-list-widget-set-current-row! *mb-list* 0))
+           (qt-widget-set-updates-enabled! *mb-list* #t)
            (let ([total (length *mb-all-candidates*)]
                  [matched (length filtered)])
              (qt-label-set-text!

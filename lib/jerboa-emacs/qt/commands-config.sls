@@ -37,7 +37,8 @@
      buffer-local-set!)
    (jerboa-emacs editor) (jerboa-emacs repl)
    (jerboa-emacs eshell) (jerboa-emacs gsh-eshell)
-   (jerboa-emacs shell) (jerboa-emacs terminal)
+   (jerboa-emacs shell) (jerboa-emacs shell-history)
+   (jerboa-emacs terminal) (only (jsh environment) env-get)
    (jerboa-emacs qt buffer) (jerboa-emacs qt window)
    (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
    (jerboa-emacs qt modeline) (jerboa-emacs qt commands-core)
@@ -926,6 +927,15 @@
                       [cols (max 20 (quotient widget-w 8))])
                  (verbose-log! "cmd-terminal-send: input=" input " rows="
                    (number->string rows) " cols=" (number->string cols))
+                 (let ([trimmed-input (safe-string-trim-both input)])
+                   (when (and (> (string-length trimmed-input) 0)
+                              (not (string=? trimmed-input "clear"))
+                              (not (string=? trimmed-input "exit")))
+                     (gsh-history-add!
+                       trimmed-input
+                       (or (env-get (terminal-state-env ts) "PWD")
+                           (current-directory)))))
+                 (terminal-history-reset! buf)
                  (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                  (qt-plain-text-edit-insert-text! ed "\n")
                  (let-values ([(mode output new-cwd)

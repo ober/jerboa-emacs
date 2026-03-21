@@ -235,7 +235,11 @@
        "Configure QScintilla editor: theme, margins, caret, save-point signals."
        (qt-apply-editor-theme! ed)
        (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
-       (sci-send ed SCI_SETMARGINWIDTHN 0 50)
+       (sci-send
+         ed
+         SCI_SETMARGINWIDTHN
+         0
+         (max 30 (* *default-font-size* 3)))
        (sci-send ed SCI_SETMARGINWIDTHN 1 0)
        (sci-send ed SCI_SETMARGINWIDTHN 2 0)
        (sci-send ed SCI_SETMARGINWIDTHN 3 0)

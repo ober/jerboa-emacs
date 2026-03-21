@@ -257,7 +257,7 @@
   ;; Line number margin (margin 0) — scale width with font size
   (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
   (sci-send ed SCI_SETMARGINWIDTHN 0
-    (max 30 (inexact->exact (round (* (/ *default-font-size* 11.0) 50)))))
+    (max 30 (* *default-font-size* 3)))
   ;; Disable other margins (symbol, fold) to avoid white gutters
   (sci-send ed SCI_SETMARGINWIDTHN 1 0)  ; symbol margin
   (sci-send ed SCI_SETMARGINWIDTHN 2 0)  ; fold margin

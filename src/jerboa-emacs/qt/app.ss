@@ -65,6 +65,7 @@
                  *abbrev-mode-enabled* *abbrev-table*)
         :jerboa-emacs/repl
         :jerboa-emacs/eshell
+        (only-in :jerboa-emacs/gsh-eshell gsh-eshell-buffer?)
         :jerboa-emacs/shell
         :jerboa-emacs/shell-history
         :jerboa-emacs/terminal
@@ -84,6 +85,50 @@
         :jerboa-emacs/vtscreen
         (only-in :jerboa-emacs/editor-extra-web *aggressive-indent-mode*)
         (only-in :jerboa-emacs/debug-repl start-debug-repl! stop-debug-repl!))
+
+;;;============================================================================
+;;; Vterm render throttle — skip intermediate renders during fast output
+;;;============================================================================
+
+;; Minimum milliseconds between vterm renders (vtscreen → set-text!)
+(def *vterm-render-interval-ms* 100)
+
+;; Maximum number of characters to keep in pre-pty scrollback text
+(def *vterm-scrollback-limit* 100000)
+
+;; Per-terminal-state: timestamp (seconds) of last render
+(def *vterm-last-render-time* (make-hash-table-eq))
+
+;; Per-terminal-state: last rendered string (skip set-text if unchanged)
+(def *vterm-last-rendered* (make-hash-table-eq))
+
+(def (vterm-render-due? ts)
+  "Return #t if enough time has elapsed since last render for this terminal."
+  (let ((last (hash-ref *vterm-last-render-time* ts 0.0))
+        (now (time->seconds (current-time))))
+    (>= (* (- now last) 1000) *vterm-render-interval-ms*)))
+
+(def (vterm-mark-rendered! ts)
+  "Record that we just rendered this terminal."
+  (hash-put! *vterm-last-render-time* ts (time->seconds (current-time))))
+
+(def (vterm-cap-scrollback! ts)
+  "Trim pre-pty-text if it exceeds the scrollback limit."
+  (let ((text (terminal-state-pre-pty-text ts)))
+    (when (and (string? text) (> (string-length text) *vterm-scrollback-limit*))
+      ;; Keep the last *vterm-scrollback-limit* chars, trim at a newline boundary
+      (let* ((start (- (string-length text) *vterm-scrollback-limit*))
+             (nl (let scan ((i start))
+                   (cond ((>= i (string-length text)) start)
+                         ((char=? (string-ref text i) #\newline) (+ i 1))
+                         (else (scan (+ i 1)))))))
+        (set! (terminal-state-pre-pty-text ts)
+          (substring text nl (string-length text)))))))
+
+(def (vterm-cleanup-state! ts)
+  "Remove throttle state for a terminal that's done."
+  (hash-remove! *vterm-last-render-time* ts)
+  (hash-remove! *vterm-last-rendered* ts))
 
 ;;;============================================================================
 ;;; Qt Application
@@ -309,7 +354,8 @@
 
 (def (qt-poll-terminal-pty-batch! fr buf ts data)
   "Handle batched PTY data for a terminal buffer.
-   Processes all accumulated data at once, rendering only once."
+   Feeds data to vtscreen immediately but throttles rendering to avoid
+   replacing the entire QScintilla document more than ~10 times/sec."
   (let ((vt (terminal-state-vtscreen ts)))
     (let loop ((wins (qt-frame-windows fr)))
       (when (pair? wins)
@@ -321,15 +367,25 @@
                 (qt-plain-text-edit-text ed)))
             (if vt
               (begin
+                ;; Always feed data to vtscreen so terminal state stays current
                 (vtscreen-feed! vt data)
-                (let* ((rendered (vtscreen-render vt))
-                       (full (if (vtscreen-alt-screen? vt)
-                               rendered
-                               (string-append (or (terminal-state-pre-pty-text ts) "")
-                                              rendered))))
-                  (qt-plain-text-edit-set-text! ed full)
-                  (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
-                  (qt-plain-text-edit-ensure-cursor-visible! ed)))
+                ;; Cap scrollback to prevent unbounded growth
+                (vterm-cap-scrollback! ts)
+                ;; Only render to the widget if enough time has elapsed
+                (when (vterm-render-due? ts)
+                  (let* ((rendered (vtscreen-render vt))
+                         (full (if (vtscreen-alt-screen? vt)
+                                 rendered
+                                 (string-append (or (terminal-state-pre-pty-text ts) "")
+                                                rendered)))
+                         (prev (hash-ref *vterm-last-rendered* ts #f)))
+                    ;; Skip set-text if content hasn't changed
+                    (unless (and prev (string=? prev full))
+                      (hash-put! *vterm-last-rendered* ts full)
+                      (qt-plain-text-edit-set-text! ed full)
+                      (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+                      (qt-plain-text-edit-ensure-cursor-visible! ed))
+                    (vterm-mark-rendered! ts))))
               (begin
                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                 (qt-plain-text-edit-insert-text! ed (strip-ansi-codes data))
@@ -352,6 +408,7 @@
        (let* ((alt-screen? (and vt (vtscreen-alt-screen? vt)))
               (final-render (and vt (vtscreen-render vt)))
               (pre-text (terminal-state-pre-pty-text ts)))
+         (vterm-cleanup-state! ts)
          (terminal-cleanup-pty! ts)
          (let loop ((wins (qt-frame-windows fr)))
            (when (pair? wins)
@@ -822,12 +879,18 @@
                            (do-normal-key! code mods text)))))
 
                     ;; Case 2: Printable key that could start a chord — save and wait
+                    ;; Skip chord detection in terminal/shell buffers to avoid
+                    ;; letter doubling/dropping when typing fast
                     ((and (= (string-length text) 1)
                           (> (char->integer (string-ref text 0)) 31)
                           (zero? (bitwise-and mods QT_MOD_CTRL))
                           (zero? (bitwise-and mods QT_MOD_ALT))
                           (null? (key-state-prefix-keys (app-state-key-state app)))
-                          (chord-start-char? (string-ref text 0)))
+                          (chord-start-char? (string-ref text 0))
+                          (let ((cur-buf (qt-current-buffer fr)))
+                            (not (or (terminal-buffer? cur-buf)
+                                     (shell-buffer? cur-buf)
+                                     (gsh-eshell-buffer? cur-buf)))))
                      (set! *chord-pending-char* (string-ref text 0))
                      (set! *chord-pending-code* code)
                      (set! *chord-pending-mods* mods)
@@ -921,10 +984,15 @@
                         (cond
                           ((not msg)
                            ;; No more messages — render accumulated data
-                           (when (pair? chunks)
+                           (if (pair? chunks)
                              (let ((combined (apply string-append (reverse chunks))))
                                (verbose-log! "PTY-BATCH: " (number->string (string-length combined)) " bytes")
-                               (qt-poll-terminal-pty-batch! fr buf ts combined)))
+                               (qt-poll-terminal-pty-batch! fr buf ts combined))
+                             ;; No new data — flush any throttled render
+                             (when (and (terminal-state-vtscreen ts)
+                                        (hash-ref *vterm-last-rendered* ts #f)
+                                        (vterm-render-due? ts))
+                               (qt-poll-terminal-pty-batch! fr buf ts "")))
                            (when done-msg
                              (qt-poll-terminal-pty-msg! fr buf ts done-msg)))
                           ((eq? (car msg) 'data)

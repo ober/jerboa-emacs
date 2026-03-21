@@ -109,7 +109,8 @@
        (and (file-exists? path) (file-directory? path)))
   (def (apply-font-size-to-all-editors! app)
        "Apply the current global font size to all open editors."
-       (let ([fr (app-state-frame app)])
+       (let ([fr (app-state-frame app)]
+             [margin-w (max 30 (* *default-font-size* 3))])
          (for-each
            (lambda (win)
              (let ([ed (qt-edit-window-editor win)])
@@ -118,7 +119,9 @@
                  SCI_STYLESETSIZE
                  STYLE_DEFAULT
                  *default-font-size*)
-               (sci-send ed SCI_STYLECLEARALL)))
+               (sci-send ed SCI_STYLECLEARALL)
+               (sci-send ed SCI_SETMARGINWIDTHN 0 margin-w)
+               (qt-apply-editor-theme! ed)))
            (qt-frame-windows fr)))
        (when *qt-app-ptr*
          (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))

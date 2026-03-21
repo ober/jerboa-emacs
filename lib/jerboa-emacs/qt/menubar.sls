@@ -10,6 +10,7 @@
       mutex? mutex-name)
     (std sugar) (jerboa-emacs qt sci-shim) (jerboa-emacs core)
     (jerboa core) (jerboa runtime))
+  (def *menu-command-running?* #f)
   (def (qt-setup-menubar! app win)
        "Set up the menu bar and toolbar for the main window."
        (let ([menu-bar (qt-main-window-menu-bar win)])
@@ -100,7 +101,14 @@
               [action (qt-action-create display-label win)])
          (qt-on-triggered!
            action
-           (lambda () (execute-command! app command-name)))
+           (lambda ()
+             (unless *menu-command-running?*
+               (set! *menu-command-running?* #t)
+               (with-catch
+                 (lambda (e) (set! *menu-command-running?* #f) (raise e))
+                 (lambda ()
+                   (execute-command! app command-name)
+                   (set! *menu-command-running?* #f))))))
          (qt-menu-add-action! menu action)
          action))
   (def (add-toolbar-command! toolbar win app label

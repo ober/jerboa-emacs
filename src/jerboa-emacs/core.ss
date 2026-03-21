@@ -2169,8 +2169,8 @@
 ;; Time window in milliseconds for second key of chord.
 ;; Emacs key-chord.el uses 100ms for two-key and 200ms for same-key chords.
 ;; We use 300ms by default because Qt key event delivery adds latency.
-(def *chord-timeout* 300)
-(defvar! 'chord-timeout 300 "Milliseconds to wait for second key of a chord"
+(def *chord-timeout* 150)
+(defvar! 'chord-timeout 150 "Milliseconds to wait for second key of a chord"
          setter: (lambda (v) (set! *chord-timeout* v))
          type: 'integer type-args: '(50 . 1000) group: 'keybindings)
 

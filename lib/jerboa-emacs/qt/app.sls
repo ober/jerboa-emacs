@@ -72,6 +72,7 @@
      *which-key-mode* *which-key-delay* *abbrev-mode-enabled*
      *abbrev-table*)
    (jerboa-emacs repl) (jerboa-emacs eshell)
+   (only (jerboa-emacs gsh-eshell) gsh-eshell-buffer?)
    (jerboa-emacs shell) (jerboa-emacs shell-history)
    (jerboa-emacs terminal) (jerboa-emacs chat)
    (jerboa-emacs qt keymap) (jerboa-emacs qt buffer)
@@ -89,6 +90,40 @@
      start-debug-repl!
      stop-debug-repl!)
    (jerboa core) (jerboa runtime))
+  (def *vterm-render-interval-ms* 100)
+  (def *vterm-scrollback-limit* 100000)
+  (def *vterm-last-render-time* (make-hash-table-eq))
+  (def *vterm-last-rendered* (make-hash-table-eq))
+  (def (vterm-render-due? ts)
+       "Return #t if enough time has elapsed since last render for this terminal."
+       (let ([last (hash-ref *vterm-last-render-time* ts 0.0)]
+             [now (time->seconds (current-time))])
+         (>= (* (- now last) 1000) *vterm-render-interval-ms*)))
+  (def (vterm-mark-rendered! ts)
+       "Record that we just rendered this terminal."
+       (hash-put!
+         *vterm-last-render-time*
+         ts
+         (time->seconds (current-time))))
+  (def (vterm-cap-scrollback! ts)
+       "Trim pre-pty-text if it exceeds the scrollback limit."
+       (let ([text (terminal-state-pre-pty-text ts)])
+         (when (and (string? text)
+                    (> (string-length text) *vterm-scrollback-limit*))
+           (let* ([start (- (string-length text)
+                            *vterm-scrollback-limit*)]
+                  [nl (let scan ([i start])
+                        (cond
+                          [(>= i (string-length text)) start]
+                          [(char=? (string-ref text i) #\newline) (+ i 1)]
+                          [else (scan (+ i 1))]))])
+             (terminal-state-pre-pty-text-set!
+               ts
+               (substring text nl (string-length text)))))))
+  (def (vterm-cleanup-state! ts)
+       "Remove throttle state for a terminal that's done."
+       (hash-remove! *vterm-last-render-time* ts)
+       (hash-remove! *vterm-last-rendered* ts))
   (def (parse-repl-port args)
        "Return (port-num . filtered-args) if --repl <port> is present, else #f."
        (let loop ([rest args] [acc (list)])
@@ -314,7 +349,7 @@
                           (qt-plain-text-edit-ensure-cursor-visible! ed)))
                       (loop (cdr wins))))))])))
   (def (qt-poll-terminal-pty-batch! fr buf ts data)
-       "Handle batched PTY data for a terminal buffer.\n   Processes all accumulated data at once, rendering only once."
+       "Handle batched PTY data for a terminal buffer.\n   Feeds data to vtscreen immediately but throttles rendering to avoid\n   replacing the entire QScintilla document more than ~10 times/sec."
        (let ([vt (terminal-state-vtscreen ts)])
          (let loop ([wins (qt-frame-windows fr)])
            (when (pair? wins)
@@ -327,19 +362,29 @@
                    (if vt
                        (begin
                          (vtscreen-feed! vt data)
-                         (let* ([rendered (vtscreen-render vt)]
-                                [full (if (vtscreen-alt-screen? vt)
-                                          rendered
-                                          (string-append
-                                            (or (terminal-state-pre-pty-text
-                                                  ts)
-                                                "")
-                                            rendered))])
-                           (qt-plain-text-edit-set-text! ed full)
-                           (qt-plain-text-edit-move-cursor!
-                             ed
-                             QT_CURSOR_END)
-                           (qt-plain-text-edit-ensure-cursor-visible! ed)))
+                         (vterm-cap-scrollback! ts)
+                         (when (vterm-render-due? ts)
+                           (let* ([rendered (vtscreen-render vt)]
+                                  [full (if (vtscreen-alt-screen? vt)
+                                            rendered
+                                            (string-append
+                                              (or (terminal-state-pre-pty-text
+                                                    ts)
+                                                  "")
+                                              rendered))]
+                                  [prev (hash-ref
+                                          *vterm-last-rendered*
+                                          ts
+                                          #f)])
+                             (unless (and prev (string=? prev full))
+                               (hash-put! *vterm-last-rendered* ts full)
+                               (qt-plain-text-edit-set-text! ed full)
+                               (qt-plain-text-edit-move-cursor!
+                                 ed
+                                 QT_CURSOR_END)
+                               (qt-plain-text-edit-ensure-cursor-visible!
+                                 ed))
+                             (vterm-mark-rendered! ts))))
                        (begin
                          (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                          (qt-plain-text-edit-insert-text!
@@ -360,6 +405,7 @@
             (let* ([alt-screen? (and vt (vtscreen-alt-screen? vt))]
                    [final-render (and vt (vtscreen-render vt))]
                    [pre-text (terminal-state-pre-pty-text ts)])
+              (vterm-cleanup-state! ts)
               (terminal-cleanup-pty! ts)
               (let loop ([wins (qt-frame-windows fr)])
                 (when (pair? wins)
@@ -1111,7 +1157,15 @@
                                                    (app-state-key-state
                                                      app)))
                                                (chord-start-char?
-                                                 (string-ref text 0)))
+                                                 (string-ref text 0))
+                                               (let ([cur-buf (qt-current-buffer
+                                                                fr)])
+                                                 (not (or (terminal-buffer?
+                                                            cur-buf)
+                                                          (shell-buffer?
+                                                            cur-buf)
+                                                          (gsh-eshell-buffer?
+                                                            cur-buf)))))
                                           (set! *chord-pending-char*
                                             (string-ref text 0))
                                           (set! *chord-pending-code* code)
@@ -1222,20 +1276,31 @@
                          (let ([msg (terminal-poll-output ts)])
                            (cond
                              [(not msg)
-                              (when (pair? chunks)
-                                (let ([combined (apply
-                                                  string-append
-                                                  (reverse chunks))])
-                                  (verbose-log!
-                                    "PTY-BATCH: "
-                                    (number->string
-                                      (string-length combined))
-                                    " bytes")
-                                  (qt-poll-terminal-pty-batch!
-                                    fr
-                                    buf
-                                    ts
-                                    combined)))
+                              (if (pair? chunks)
+                                  (let ([combined (apply
+                                                    string-append
+                                                    (reverse chunks))])
+                                    (verbose-log!
+                                      "PTY-BATCH: "
+                                      (number->string
+                                        (string-length combined))
+                                      " bytes")
+                                    (qt-poll-terminal-pty-batch!
+                                      fr
+                                      buf
+                                      ts
+                                      combined))
+                                  (when (and (terminal-state-vtscreen ts)
+                                             (hash-ref
+                                               *vterm-last-rendered*
+                                               ts
+                                               #f)
+                                             (vterm-render-due? ts))
+                                    (qt-poll-terminal-pty-batch!
+                                      fr
+                                      buf
+                                      ts
+                                      "")))
                               (when done-msg
                                 (qt-poll-terminal-pty-msg!
                                   fr

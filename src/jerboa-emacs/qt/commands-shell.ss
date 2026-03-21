@@ -62,8 +62,7 @@
 (def (apply-font-size-to-all-editors! app)
   "Apply the current global font size to all open editors."
   (let ((fr (app-state-frame app))
-        ;; Scale margin width proportionally to font size (50px at 11pt baseline)
-        (margin-w (max 30 (inexact->exact (round (* (/ *default-font-size* 11.0) 50))))))
+        (margin-w (max 30 (* *default-font-size* 3))))
     (for-each
       (lambda (win)
         (let ((ed (qt-edit-window-editor win)))

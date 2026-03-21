@@ -114,22 +114,23 @@
    qt-widget-set-focus! qt-widget-set-font-size!
    qt-widget-set-maximum-height! qt-widget-set-minimum-height!
    qt-widget-set-minimum-size! qt-widget-set-size-policy!
-   qt-widget-set-style-sheet! qt-widget-show!
-   qt-widget-show-fullscreen! qt-widget-show-maximized!
-   qt-widget-show-minimized! qt-widget-show-normal!
-   qt-widget-width qt-widget-window-state QT_MOD_SHIFT
-   QT_MOD_ALT QT_MOD_META QT_MOD_CTRL QT_KEY_ESCAPE
-   QT_KEY_BACKSPACE QT_KEY_RETURN QT_KEY_ENTER QT_KEY_DELETE
-   QT_KEY_TAB QT_KEY_INSERT QT_KEY_HOME QT_KEY_END QT_KEY_LEFT
-   QT_KEY_RIGHT QT_KEY_UP QT_KEY_DOWN QT_KEY_PAGE_UP
-   QT_KEY_PAGE_DOWN QT_KEY_SPACE QT_KEY_A QT_KEY_G QT_KEY_N
-   QT_KEY_P QT_KEY_R QT_KEY_S QT_KEY_W QT_KEY_Z QT_KEY_F1
-   QT_KEY_F2 QT_KEY_F3 QT_KEY_F4 QT_KEY_F5 QT_KEY_F6 QT_KEY_F7
-   QT_KEY_F8 QT_KEY_F9 QT_KEY_F10 QT_KEY_F11 QT_KEY_F12
-   QT_CURSOR_UP QT_CURSOR_DOWN QT_CURSOR_START QT_CURSOR_END
-   QT_CURSOR_START_OF_BLOCK QT_CURSOR_END_OF_BLOCK
-   QT_CURSOR_NEXT_CHAR QT_CURSOR_NEXT_WORD
-   QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD)
+   qt-widget-set-style-sheet! qt-widget-set-updates-enabled!
+   qt-widget-show! qt-widget-show-fullscreen!
+   qt-widget-show-maximized! qt-widget-show-minimized!
+   qt-widget-show-normal! qt-widget-width
+   qt-widget-window-state QT_MOD_SHIFT QT_MOD_ALT QT_MOD_META
+   QT_MOD_CTRL QT_KEY_ESCAPE QT_KEY_BACKSPACE QT_KEY_RETURN
+   QT_KEY_ENTER QT_KEY_DELETE QT_KEY_TAB QT_KEY_INSERT
+   QT_KEY_HOME QT_KEY_END QT_KEY_LEFT QT_KEY_RIGHT QT_KEY_UP
+   QT_KEY_DOWN QT_KEY_PAGE_UP QT_KEY_PAGE_DOWN QT_KEY_SPACE
+   QT_KEY_A QT_KEY_G QT_KEY_N QT_KEY_P QT_KEY_R QT_KEY_S
+   QT_KEY_W QT_KEY_Z QT_KEY_F1 QT_KEY_F2 QT_KEY_F3 QT_KEY_F4
+   QT_KEY_F5 QT_KEY_F6 QT_KEY_F7 QT_KEY_F8 QT_KEY_F9 QT_KEY_F10
+   QT_KEY_F11 QT_KEY_F12 QT_CURSOR_UP QT_CURSOR_DOWN
+   QT_CURSOR_START QT_CURSOR_END QT_CURSOR_START_OF_BLOCK
+   QT_CURSOR_END_OF_BLOCK QT_CURSOR_NEXT_CHAR
+   QT_CURSOR_NEXT_WORD QT_CURSOR_PREVIOUS_CHAR
+   QT_CURSOR_PREVIOUS_WORD)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex

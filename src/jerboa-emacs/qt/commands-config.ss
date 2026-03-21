@@ -24,7 +24,9 @@
         :jerboa-emacs/eshell
         :jerboa-emacs/gsh-eshell
         :jerboa-emacs/shell
+        :jerboa-emacs/shell-history
         :jerboa-emacs/terminal
+        (only-in :jsh/environment env-get)
         :jerboa-emacs/qt/buffer
         :jerboa-emacs/qt/window
         :jerboa-emacs/qt/echo
@@ -760,6 +762,16 @@ modified so the next save uses the new encoding."
                (cols (max 20 (quotient widget-w 8))))
           (verbose-log! "cmd-terminal-send: input=" input " rows=" (number->string rows)
                         " cols=" (number->string cols))
+          ;; Record command in shared history
+          (let ((trimmed-input (safe-string-trim-both input)))
+            (when (and (> (string-length trimmed-input) 0)
+                       (not (string=? trimmed-input "clear"))
+                       (not (string=? trimmed-input "exit")))
+              (gsh-history-add! trimmed-input
+                (or (env-get (terminal-state-env ts) "PWD")
+                    (current-directory)))))
+          ;; Reset history navigation on submit
+          (terminal-history-reset! buf)
           ;; Append newline after user input
           (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
           (qt-plain-text-edit-insert-text! ed "\n")

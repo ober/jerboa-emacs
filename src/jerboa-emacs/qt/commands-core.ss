@@ -465,40 +465,79 @@ Returns #t if changed, #f if not or if no record exists."
         (qt-plain-text-edit-set-text! ed (string-append before new-input))
         (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)))))
 
+(def (terminal-current-input ed ts)
+  "Get the text after the prompt in a terminal buffer."
+  (let* ((text (qt-plain-text-edit-text ed))
+         (prompt-pos (terminal-state-prompt-pos ts)))
+    (if (< prompt-pos (string-length text))
+      (substring text prompt-pos (string-length text))
+      "")))
+
+(def (terminal-replace-input! ed ts new-input)
+  "Replace the current input (text after prompt) in a terminal buffer."
+  (let* ((text (qt-plain-text-edit-text ed))
+         (prompt-pos (terminal-state-prompt-pos ts))
+         (before (if (<= prompt-pos (string-length text))
+                   (substring text 0 prompt-pos)
+                   text)))
+    (qt-plain-text-edit-set-text! ed (string-append before new-input))
+    (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)))
+
 (def (cmd-next-line app)
   (let* ((buf (current-qt-buffer app))
          (ed (current-qt-editor app)))
-    (if (and (gsh-eshell-buffer? buf) (eshell-on-input-line? ed))
+    (cond
       ;; Eshell: navigate to newer history entry
-      (let ((cmd (eshell-history-next buf)))
-        (when cmd
-          (eshell-replace-input! ed cmd)))
+      ((and (gsh-eshell-buffer? buf) (eshell-on-input-line? ed))
+       (let ((cmd (eshell-history-next buf)))
+         (when cmd
+           (eshell-replace-input! ed cmd))))
+      ;; Terminal: navigate to newer history entry (when not PTY busy)
+      ((and (terminal-buffer? buf)
+            (let ((ts (hash-get *terminal-state* buf)))
+              (and ts (not (terminal-pty-busy? ts)))))
+       (let* ((ts (hash-get *terminal-state* buf))
+              (cmd (terminal-history-next buf)))
+         (when cmd
+           (terminal-replace-input! ed ts cmd))))
       ;; Normal: move cursor down
-      (let ((n (get-prefix-arg app)))
-        (collapse-selection-to-caret! ed)
-        (let loop ((i 0))
-          (when (< i (abs n))
-            (qt-plain-text-edit-move-cursor! ed (if (>= n 0) QT_CURSOR_DOWN QT_CURSOR_UP))
-            (loop (+ i 1))))
-        (update-mark-region! app ed)))))
+      (else
+       (let ((n (get-prefix-arg app)))
+         (collapse-selection-to-caret! ed)
+         (let loop ((i 0))
+           (when (< i (abs n))
+             (qt-plain-text-edit-move-cursor! ed (if (>= n 0) QT_CURSOR_DOWN QT_CURSOR_UP))
+             (loop (+ i 1))))
+         (update-mark-region! app ed))))))
 
 (def (cmd-previous-line app)
   (let* ((buf (current-qt-buffer app))
          (ed (current-qt-editor app)))
-    (if (and (gsh-eshell-buffer? buf) (eshell-on-input-line? ed))
+    (cond
       ;; Eshell: navigate to older history entry
-      (let* ((input (eshell-current-input ed))
-             (cmd (eshell-history-prev buf input)))
-        (when cmd
-          (eshell-replace-input! ed cmd)))
+      ((and (gsh-eshell-buffer? buf) (eshell-on-input-line? ed))
+       (let* ((input (eshell-current-input ed))
+              (cmd (eshell-history-prev buf input)))
+         (when cmd
+           (eshell-replace-input! ed cmd))))
+      ;; Terminal: navigate to older history entry (when not PTY busy)
+      ((and (terminal-buffer? buf)
+            (let ((ts (hash-get *terminal-state* buf)))
+              (and ts (not (terminal-pty-busy? ts)))))
+       (let* ((ts (hash-get *terminal-state* buf))
+              (input (terminal-current-input ed ts))
+              (cmd (terminal-history-prev buf input)))
+         (when cmd
+           (terminal-replace-input! ed ts cmd))))
       ;; Normal: move cursor up
-      (let ((n (get-prefix-arg app)))
-        (collapse-selection-to-caret! ed)
-        (let loop ((i 0))
-          (when (< i (abs n))
-            (qt-plain-text-edit-move-cursor! ed (if (>= n 0) QT_CURSOR_UP QT_CURSOR_DOWN))
-            (loop (+ i 1))))
-        (update-mark-region! app ed)))))
+      (else
+       (let ((n (get-prefix-arg app)))
+         (collapse-selection-to-caret! ed)
+         (let loop ((i 0))
+           (when (< i (abs n))
+             (qt-plain-text-edit-move-cursor! ed (if (>= n 0) QT_CURSOR_UP QT_CURSOR_DOWN))
+             (loop (+ i 1))))
+         (update-mark-region! app ed))))))
 
 (def (cmd-beginning-of-line app)
   "Smart beginning of line: toggle between first non-whitespace and column 0."

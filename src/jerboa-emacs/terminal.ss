@@ -29,7 +29,11 @@
         color-to-style
         (struct-out text-segment)
         ;; Terminal style base
-        *term-style-base*)
+        *term-style-base*
+        ;; Terminal history navigation
+        terminal-history-prev
+        terminal-history-next
+        terminal-history-reset!)
 
 (import :std/sugar
         :std/srfi/13
@@ -43,7 +47,8 @@
         (only-in :jsh/prompt expand-prompt)
         :jerboa-emacs/core
         :jerboa-emacs/pty
-        :jerboa-emacs/vtscreen)
+        :jerboa-emacs/vtscreen
+        :jerboa-emacs/shell-history)
 
 ;;;============================================================================
 ;;; Scintilla styling message IDs (not in constants.ss)
@@ -598,6 +603,23 @@
       ;; export VAR (no value) — just mark as exported (already set)
       (values 'sync "" cwd))))
 
+(def (resolve-path-dots path)
+  "Resolve . and .. components in an absolute path.
+   Returns a clean absolute path without . or .. segments."
+  (let loop ((parts (string-split path #\/)) (acc '()))
+    (if (null? parts)
+      (if (null? acc)
+        "/"
+        (apply string-append (map (lambda (p) (string-append "/" p)) (reverse acc))))
+      (let ((p (car parts)))
+        (cond
+          ((or (string=? p "") (string=? p "."))
+           (loop (cdr parts) acc))
+          ((string=? p "..")
+           (loop (cdr parts) (if (pair? acc) (cdr acc) acc)))
+          (else
+           (loop (cdr parts) (cons p acc))))))))
+
 (def (terminal-handle-cd! trimmed ts)
   "Handle cd command in-process (no subprocess) to update jsh env PWD.
    Returns (values 'sync output cwd)."
@@ -620,9 +642,9 @@
                    ((string-prefix? "/" args) args)
                    ;; Relative path
                    (else (string-append current-pwd "/" args)))))
-    ;; Normalize path (resolve .. and .)
+    ;; Normalize path (resolve .. and . components)
     (let ((resolved (with-catch (lambda (e) #f)
-                      (lambda () (path-normalize target)))))
+                      (lambda () (resolve-path-dots target)))))
       (if (and resolved (file-exists? resolved) (file-directory? resolved))
         (begin
           (env-set! env "OLDPWD" current-pwd)
@@ -744,3 +766,48 @@
     (set! (terminal-state-pty-thread ts) #f)
     (set! (terminal-state-vtscreen ts) #f)
     (set! (terminal-state-pre-pty-text ts) #f)))
+
+;;;============================================================================
+;;; Terminal history navigation (up/down arrow)
+;;;============================================================================
+
+;; Per-buffer history navigation index (-1 = not navigating)
+(def *terminal-history-index* (make-hash-table-eq))
+;; Per-buffer saved input (what user typed before starting history navigation)
+(def *terminal-saved-input* (make-hash-table-eq))
+
+(def (terminal-history-prev buf current-input)
+  "Navigate to the previous (older) history entry for terminal buffer.
+   Returns the history command string, or #f if no more history."
+  (let* ((idx (or (hash-get *terminal-history-index* buf) -1))
+         (history *gsh-history*)
+         (hlen (length history))
+         (new-idx (+ idx 1)))
+    (if (>= new-idx hlen)
+      #f
+      (begin
+        (when (= idx -1)
+          (hash-put! *terminal-saved-input* buf current-input))
+        (hash-put! *terminal-history-index* buf new-idx)
+        (caddr (list-ref history new-idx))))))
+
+(def (terminal-history-next buf)
+  "Navigate to the next (newer) history entry for terminal buffer.
+   Returns the history command string, the saved input, or #f."
+  (let* ((idx (or (hash-get *terminal-history-index* buf) -1)))
+    (cond
+      ((< idx 0) #f)
+      ((= idx 0)
+       (hash-put! *terminal-history-index* buf -1)
+       (let ((saved (or (hash-get *terminal-saved-input* buf) "")))
+         (hash-remove! *terminal-saved-input* buf)
+         saved))
+      (else
+       (let ((new-idx (- idx 1)))
+         (hash-put! *terminal-history-index* buf new-idx)
+         (caddr (list-ref *gsh-history* new-idx)))))))
+
+(def (terminal-history-reset! buf)
+  "Reset terminal history navigation state (called when input is submitted)."
+  (hash-remove! *terminal-history-index* buf)
+  (hash-remove! *terminal-saved-input* buf))
