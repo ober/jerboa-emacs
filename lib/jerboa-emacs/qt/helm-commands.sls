@@ -3,72 +3,40 @@
 ;;; Source: src/jerboa-emacs/qt/helm-commands.ss
 
 (library (jerboa-emacs qt helm-commands)
-  (export
-    qt-register-helm-commands!
-    cmd-helm-buffers-list
-    cmd-helm-occur)
+  (export qt-register-helm-commands! cmd-helm-occur)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
-      mutex? mutex-name sort sort!)
-    (std sugar) (std sort) (std srfi srfi-13)
-    (chez-scintilla constants) (jerboa-emacs core)
-    (jerboa-emacs qt sci-shim) (jerboa-emacs qt buffer)
-    (jerboa-emacs qt window) (jerboa-emacs qt echo)
-    (jerboa-emacs helm) (jerboa-emacs helm-sources)
-    (jerboa-emacs qt helm-qt) (jerboa-emacs editor)
+      mutex? mutex-name)
+    (std sugar) (std srfi srfi-13) (chez-scintilla constants)
+    (jerboa-emacs core) (jerboa-emacs qt sci-shim)
+    (jerboa-emacs qt buffer) (jerboa-emacs qt window)
+    (jerboa-emacs qt echo) (jerboa-emacs editor)
+    (only
+      (jerboa-emacs qt commands-core)
+      current-qt-editor
+      current-qt-buffer
+      cmd-helm-buffers-list)
     (jerboa core) (jerboa runtime))
-  (def (cmd-helm-buffers-list app)
-       "List and switch buffers with Qt helm narrowing."
-       (let* ([src (helm-source-buffers app)]
-              [session (make-new-session (list src) "*helm buffers*")]
-              [result (helm-qt-run! session app)])
-         (when (and result (string? result))
-           (let* ([buf-name (let ([star-pos (string-contains
-                                              result
-                                              " *")])
-                              (if star-pos
-                                  (substring result 0 star-pos)
-                                  (let ([space-pos (string-contains
-                                                     result
-                                                     "  ")])
-                                    (if space-pos
-                                        (substring result 0 space-pos)
-                                        result))))]
-                  [buf (buffer-by-name buf-name)])
-             (when buf
-               (let* ([ed (current-qt-editor app)]
-                      [fr (app-state-frame app)])
-                 (qt-buffer-attach! ed buf)
-                 (qt-edit-window-buffer-set! (qt-current-window fr) buf)
-                 (echo-message!
-                   (app-state-echo app)
-                   (string-append "Switched to: " buf-name))))))))
   (def (cmd-helm-occur app)
        "Search lines in current buffer with Qt helm narrowing."
-       (let* ([ed (current-qt-editor app)]
-              [echo (app-state-echo app)])
-         (when ed
-           (let* ([text-fn (lambda () (qt-plain-text-edit-text ed))]
-                  [src (helm-source-occur app text-fn)]
-                  [session (make-new-session (list src) "*helm occur*")]
-                  [result (helm-qt-run! session app)])
-             (when (and result (string? result))
-               (let ([colon-pos (string-index result #\:)])
-                 (when colon-pos
-                   (let ([line-num (string->number
-                                     (substring result 0 colon-pos))])
-                     (when line-num
-                       (let ([pos (sci-send
-                                    ed
-                                    SCI_POSITIONFROMLINE
-                                    (- line-num 1))])
-                         (sci-send ed SCI_GOTOPOS pos)
-                         (echo-message!
-                           echo
-                           (string-append
-                             "Line "
-                             (number->string line-num)))))))))))))
+       (let* ([echo (app-state-echo app)]
+              [ed (current-qt-editor app)]
+              [pattern (qt-echo-read-string app "Helm occur pattern: ")])
+         (when (and pattern (> (string-length pattern) 0))
+           (let* ([text (qt-plain-text-edit-text ed)]
+                  [lines (string-split text #\newline)]
+                  [matches (filter
+                             (lambda (l) (string-contains l pattern))
+                             lines)])
+             (if (null? matches)
+                 (echo-message! echo "No matches")
+                 (let ([buf (qt-buffer-create! "*Helm Occur*" ed)])
+                   (qt-buffer-attach! ed buf)
+                   (qt-plain-text-edit-set-text!
+                     ed
+                     (string-append "Helm Occur: " pattern "\n\n"
+                       (string-join matches "\n") "\n"))))))))
   (def (qt-register-helm-commands!)
        "Register Qt-specific helm command overrides."
        (register-command! 'helm-buffers-list cmd-helm-buffers-list)

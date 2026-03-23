@@ -2817,25 +2817,6 @@
          (echo-message!
            (app-state-echo app)
            "SSH config mode enabled (properties lexer)")))
-  (def (cmd-helm-occur app)
-       "Helm-style occur (Qt)."
-       (let* ([echo (app-state-echo app)]
-              [ed (current-qt-editor app)]
-              [pattern (qt-echo-read-string app "Helm occur pattern: ")])
-         (when (and pattern (> (string-length pattern) 0))
-           (let* ([text (qt-plain-text-edit-text ed)]
-                  [lines (string-split text #\newline)]
-                  [matches (filter
-                             (lambda (l) (string-contains l pattern))
-                             lines)])
-             (if (null? matches)
-                 (echo-message! echo "No matches")
-                 (let ([buf (qt-buffer-create! "*Helm Occur*" ed)])
-                   (qt-buffer-attach! ed buf)
-                   (qt-plain-text-edit-set-text!
-                     ed
-                     (string-append "Helm Occur: " pattern "\n\n"
-                       (string-join matches "\n") "\n"))))))))
   (def (cmd-helm-dash app)
        "Search documentation — uses man pages and apropos (Qt)."
        (let* ([echo (app-state-echo app)]

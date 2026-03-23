@@ -153,7 +153,7 @@
                (sci-send ed SCI_SETTARGETEND end-pos)
                (sci-send/string ed SCI_REPLACETARGET pad))))))
   (def (vterm-row-diff-render! ed vt ts)
-       "Render vtscreen rows into the QScintilla document.\n   When many rows changed, uses full set-text! for efficiency.\n   When few rows changed, uses per-line replacement."
+       "Render vtscreen rows into the QScintilla document.\n   In normal mode with many dirty rows, uses full set-text! for efficiency.\n   On alt screen (top, htop, etc.), always uses per-line replacement to avoid\n   the full document reset that causes visible bouncing/flicker.\n   Tracks which rows actually changed in *vterm-dirty-rows* for targeted recoloring."
        (let ([rows (vtscreen-rows vt)]
              [line-offset (hash-ref *vterm-line-offset* ts 0)]
              [cache (hash-ref *vterm-row-cache* ts #f)])
@@ -167,38 +167,47 @@
            (cond
              [(>= r rows)
               (cond
-                [(= n 0) (vtscreen-clear-damage! vt) #f]
-                [(> n 4)
+                [(= n 0)
+                 (vtscreen-clear-damage! vt)
+                 (hash-put! *vterm-dirty-rows* ts (make-hash-table))
+                 #f]
+                [(and (> n 4) (not (vtscreen-alt-screen? vt)))
                  (let* ([rendered (vtscreen-render vt)]
-                        [pre-text (or (terminal-state-pre-pty-text ts) "")]
-                        [full (if (vtscreen-alt-screen? vt)
-                                  rendered
-                                  (string-append pre-text rendered))])
+                        [pre-text (or (terminal-state-pre-pty-text ts)
+                                      "")])
                    (let update ([r2 0])
                      (when (< r2 rows)
                        (vector-set! cache r2 (vtscreen-get-row-text vt r2))
                        (update (+ r2 1))))
                    (vtscreen-clear-damage! vt)
-                   (qt-plain-text-edit-set-text! ed full)
+                   (hash-put! *vterm-dirty-rows* ts #f)
+                   (qt-plain-text-edit-set-text!
+                     ed
+                     (string-append pre-text rendered))
                    #t)]
                 [else
                  (vterm-ensure-lines! ed (+ line-offset rows))
-                 (let loop ([r2 0] [any-changed? #f])
-                   (if (>= r2 rows)
-                       (begin (vtscreen-clear-damage! vt) any-changed?)
-                       (if (vtscreen-row-dirty? vt r2)
-                           (let ([new-text (vtscreen-get-row-text vt r2)]
-                                 [old-text (vector-ref cache r2)])
-                             (if (string=? new-text old-text)
-                                 (loop (+ r2 1) any-changed?)
-                                 (begin
-                                   (vector-set! cache r2 new-text)
-                                   (vterm-replace-line!
-                                     ed
-                                     (+ line-offset r2)
-                                     new-text)
-                                   (loop (+ r2 1) #t))))
-                           (loop (+ r2 1) any-changed?))))])]
+                 (let ([dirty-set (make-hash-table)])
+                   (let loop ([r2 0] [any-changed? #f])
+                     (if (>= r2 rows)
+                         (begin
+                           (vtscreen-clear-damage! vt)
+                           (hash-put! *vterm-dirty-rows* ts dirty-set)
+                           any-changed?)
+                         (if (vtscreen-row-dirty? vt r2)
+                             (let ([new-text (vtscreen-get-row-text vt r2)]
+                                   [old-text (vector-ref cache r2)])
+                               (if (string=? new-text old-text)
+                                   (loop (+ r2 1) any-changed?)
+                                   (begin
+                                     (vector-set! cache r2 new-text)
+                                     (hash-put! dirty-set r2 #t)
+                                     (vterm-replace-line!
+                                       ed
+                                       (+ line-offset r2)
+                                       new-text)
+                                     (loop (+ r2 1) #t))))
+                             (loop (+ r2 1) any-changed?)))))])]
              [(vtscreen-row-dirty? vt r) (count-dirty (+ r 1) (+ n 1))]
              [else (count-dirty (+ r 1) n)]))))
   (def *vterm-next-style* 80)
@@ -254,17 +263,20 @@
                              (- c run-start)
                              run-style))
                          (loop (+ c 1) c style)))))))))
+  (def *vterm-dirty-rows* (make-hash-table-eq))
   (def (vterm-apply-colors! ed vt ts)
-       "Apply colors to all dirty rows."
+       "Apply colors to rows updated in the last render pass."
        (let ([rows (vtscreen-rows vt)]
-             [line-offset (hash-ref *vterm-line-offset* ts 0)])
+             [line-offset (hash-ref *vterm-line-offset* ts 0)]
+             [dirty-set (hash-ref *vterm-dirty-rows* ts #f)])
          (let loop ([r 0])
            (when (< r rows)
-             (let ([cache (hash-ref *vterm-row-cache* ts #f)])
-               (when (and cache
-                          (< r (vector-length cache))
-                          (> (string-length (vector-ref cache r)) 0))
-                 (vterm-apply-row-colors! ed vt r (+ line-offset r))))
+             (when (or (not dirty-set) (hash-ref dirty-set r #f))
+               (let ([cache (hash-ref *vterm-row-cache* ts #f)])
+                 (when (and cache
+                            (< r (vector-length cache))
+                            (> (string-length (vector-ref cache r)) 0))
+                   (vterm-apply-row-colors! ed vt r (+ line-offset r)))))
              (loop (+ r 1))))))
   (def (parse-repl-port args)
        "Return (port-num . filtered-args) if --repl <port> is present, else #f."
@@ -553,17 +565,42 @@
                                  (if (vtscreen-alt-screen? vt)
                                      (hash-put! *vterm-line-offset* ts 0)
                                      (void))
+                                 (qt-widget-set-updates-enabled! ed #f)
                                  (let ([changed? (vterm-row-diff-render!
                                                    ed
                                                    vt
                                                    ts)])
                                    (when changed?
                                      (vterm-apply-colors! ed vt ts)
-                                     (qt-plain-text-edit-move-cursor!
-                                       ed
-                                       QT_CURSOR_END)
-                                     (qt-plain-text-edit-ensure-cursor-visible!
-                                       ed)))))
+                                     (if (vtscreen-alt-screen? vt)
+                                         (let* ([crow (vtscreen-cursor-row
+                                                        vt)]
+                                                [ccol (vtscreen-cursor-col
+                                                        vt)]
+                                                [offset (hash-ref
+                                                          *vterm-line-offset*
+                                                          ts
+                                                          0)]
+                                                [line-start (sci-send
+                                                              ed
+                                                              SCI_POSITIONFROMLINE
+                                                              (+ offset
+                                                                 crow))]
+                                                [pos (+ line-start ccol)])
+                                           (when (>= line-start 0)
+                                             (sci-send
+                                               ed
+                                               SCI_GOTOPOS
+                                               pos)))
+                                         (begin
+                                           (qt-plain-text-edit-move-cursor!
+                                             ed
+                                             QT_CURSOR_END)
+                                           (qt-plain-text-edit-ensure-cursor-visible!
+                                             ed))))
+                                   (qt-widget-set-updates-enabled!
+                                     ed
+                                     #t))))
                            (vterm-mark-rendered! ts)))
                        (begin
                          (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
@@ -1906,7 +1943,9 @@
            (lambda ()
              (qt-drain-pending-callbacks!)
              (master-timer-tick!)))))
-  (def (qt-main . args)
+  (def ffi-umask
+       (foreign-procedure "umask" (unsigned-32) unsigned-32))
+  (def (qt-main . args) (ffi-umask 63)
        (pin-thread-to-processor0! (current-thread))
        (setenv "QT_IM_MODULE" "compose")
        (setenv "QT_ACCESSIBILITY" "0")
