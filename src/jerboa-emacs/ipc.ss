@@ -9,7 +9,15 @@
 
 (import :std/sugar
         :jerboa/repl-socket
-        :jerboa-emacs/async)
+        :jerboa-emacs/async
+        ;; Path validation
+        :std/srfi/13)
+
+;;;============================================================================
+;;; FFI
+;;;============================================================================
+
+(def ffi-chmod (foreign-procedure "chmod" (string int) int))
 
 ;;;============================================================================
 ;;; State
@@ -30,12 +38,28 @@
 (def *ipc-line-buf* "")
 
 ;;;============================================================================
+;;; Path validation
+;;;============================================================================
+
+(def (ipc-path-safe? path)
+  "Validate an IPC file path — reject directory traversal and null bytes."
+  (and (> (string-length path) 0)
+       ;; No null bytes (could truncate C paths)
+       (not (string-contains path "\x0;"))
+       ;; No directory traversal components
+       (not (string-contains path "/../"))
+       (not (string-prefix? "../" path))
+       (not (string-suffix? "/.." path))
+       (not (string=? ".." path))))
+
+;;;============================================================================
 ;;; Queue operations (single-threaded, no mutex needed)
 ;;;============================================================================
 
 (def (ipc-queue-push! path)
-  "Push a file path onto the IPC queue."
-  (set! *ipc-queue* (append *ipc-queue* (list path))))
+  "Push a file path onto the IPC queue (if path passes validation)."
+  (when (ipc-path-safe? path)
+    (set! *ipc-queue* (append *ipc-queue* (list path)))))
 
 (def (ipc-poll-files!)
   "Drain the IPC queue and return a list of file paths.
@@ -162,6 +186,8 @@
           (display "127.0.0.1:" p)
           (display actual-port p)
           (newline p)))
+      ;; Restrict to owner-only (mode 600) — contains IPC port info
+      (ffi-chmod *ipc-server-file* #o600)
       ;; Register periodic tick
       (schedule-periodic! 'ipc-accept 100 ipc-tick!)
       (void))))

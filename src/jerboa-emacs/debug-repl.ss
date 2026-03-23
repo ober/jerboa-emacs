@@ -54,13 +54,17 @@
 ;;; Port file
 ;;;============================================================================
 
+(def ffi-chmod (foreign-procedure "chmod" (string int) int))
+
 (def (write-repl-port-file! port-num)
   (delete-repl-port-file!)
   (call-with-output-file *repl-port-file*
     (lambda (p)
       (display "PORT=" p)
       (display port-num p)
-      (newline p))))
+      (newline p)))
+  ;; Restrict to owner-only (mode 600) — contains REPL port info
+  (ffi-chmod *repl-port-file* #o600))
 
 (def (delete-repl-port-file!)
   (when (file-exists? *repl-port-file*)

@@ -24,6 +24,7 @@
   (def *repl-port-file*
        (string-append (getenv "HOME") "/.jerboa-repl-port"))
   (def *repl-env* (interaction-environment))
+  (def ffi-chmod (foreign-procedure "chmod" (string int) int))
   (def (write-repl-port-file! port-num)
        (delete-repl-port-file!)
        (call-with-output-file
@@ -31,7 +32,8 @@
          (lambda (p)
            (display "PORT=" p)
            (display port-num p)
-           (newline p))))
+           (newline p)))
+       (ffi-chmod *repl-port-file* 384))
   (def (delete-repl-port-file!)
        (when (file-exists? *repl-port-file*)
          (with-catch

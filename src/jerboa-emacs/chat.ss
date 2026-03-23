@@ -16,7 +16,8 @@
 
 (import :std/sugar
         :std/srfi/13
-        :jerboa-emacs/core)
+        :jerboa-emacs/core
+        :std/misc/string)
 
 ;;;============================================================================
 ;;; Chat state
@@ -49,6 +50,11 @@
   "Check if chat is waiting for a response."
   (chat-state-busy? cs))
 
+(def (shell-quote-arg s)
+  "Shell-escape a string for safe embedding in a sh -c command.
+   Wraps in single quotes, escaping any embedded single quotes."
+  (string-append "'" (string-join (string-split s #\') "'\\''") "'"))
+
 (def (chat-send! cs input)
   "Send a prompt to Claude CLI. Spawns claude -p as a subprocess."
   (when (and (not (chat-state-busy? cs))
@@ -58,9 +64,10 @@
                     "--no-session-persistence" input]
                    ["-p" "--output-format" "text"
                     "--no-session-persistence" input]))
+           ;; Build shell command with properly escaped cwd and arguments
            (cmd (string-append
-                  "cd \"" (chat-state-cwd cs) "\" && claude "
-                  (string-join args " ")))
+                  "cd " (shell-quote-arg (chat-state-cwd cs)) " && claude "
+                  (string-join (map shell-quote-arg args) " ")))
            (in-port (let-values (((in-port out-port err-port pid)
                                   (open-process-ports cmd (buffer-mode none) (native-transcoder))))
                       (close-port out-port)

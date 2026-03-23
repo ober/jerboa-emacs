@@ -88,20 +88,30 @@
 ;;; Transport: Content-Length framed JSON over stdio
 ;;;============================================================================
 
+;; Maximum LSP message size (10 MB) — reject messages larger than this
+;; to prevent memory exhaustion from a malicious or buggy language server.
+(def *lsp-max-message-size* (* 10 1024 1024))
+
 (def (lsp-read-message port)
   "Read one LSP message from port. Returns parsed JSON hash, or #f on EOF/error.
    Uses read-string (not read-subu8vector) to avoid Gambit char/byte buffer conflict
-   when headers are read with read-line (character I/O)."
+   when headers are read with read-line (character I/O).
+   Rejects messages larger than *lsp-max-message-size*."
   (let ((content-length (lsp-read-headers port)))
-    (if content-length
-      (let ((body (read-string content-length port)))
-        (if (and (string? body) (= (string-length body) content-length))
-          (with-catch
-            (lambda (e) #f)
-            (lambda ()
-              (string->json-object body)))
-          #f))
-      #f)))
+    (cond
+      ((not content-length) #f)
+      ((> content-length *lsp-max-message-size*)
+       (jemacs-log! "LSP: rejected oversized message: "
+                    (number->string content-length) " bytes")
+       #f)
+      (else
+       (let ((body (read-string content-length port)))
+         (if (and (string? body) (= (string-length body) content-length))
+           (with-catch
+             (lambda (e) #f)
+             (lambda ()
+               (string->json-object body)))
+           #f))))))
 
 (def (lsp-read-headers port)
   "Read HTTP-style headers, return Content-Length value or #f."

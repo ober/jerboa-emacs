@@ -9,18 +9,19 @@
    *lsp-initialized* *lsp-initializing* *lsp-diagnostics*
    *lsp-workspace-root* lsp-queue-ui-action!
    lsp-poll-ui-actions! lsp-store-pending! lsp-take-pending!
-   lsp-read-message lsp-read-headers lsp-write-message
-   lsp-send-request! lsp-send-request/timeout!
-   lsp-send-notification! lsp-poll-one-message!
-   lsp-drain-messages! lsp-handle-server-notification!
-   lsp-handle-server-request! lsp-send-response!
-   *lsp-diagnostics-handler* *lsp-show-message-handler*
-   *lsp-on-initialized-handler* *lsp-last-sent-content*
-   lsp-store-diagnostics! lsp-store-show-message!
-   lsp-content-changed? lsp-record-sent-content! lsp-start!
-   lsp-stop! lsp-running? lsp-send-initialize! lsp-did-open!
-   lsp-did-change! lsp-did-save! lsp-did-close! file-path->uri
-   uri->file-path lsp-text-document-position lsp-language-id)
+   *lsp-max-message-size* lsp-read-message lsp-read-headers
+   lsp-write-message lsp-send-request!
+   lsp-send-request/timeout! lsp-send-notification!
+   lsp-poll-one-message! lsp-drain-messages!
+   lsp-handle-server-notification! lsp-handle-server-request!
+   lsp-send-response! *lsp-diagnostics-handler*
+   *lsp-show-message-handler* *lsp-on-initialized-handler*
+   *lsp-last-sent-content* lsp-store-diagnostics!
+   lsp-store-show-message! lsp-content-changed?
+   lsp-record-sent-content! lsp-start! lsp-stop! lsp-running?
+   lsp-send-initialize! lsp-did-open! lsp-did-change!
+   lsp-did-save! lsp-did-close! file-path->uri uri->file-path
+   lsp-text-document-position lsp-language-id)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -61,18 +62,27 @@
            (when cb (hash-remove! *lsp-pending-requests* id))
            cb)
          (mutex-unlock! *lsp-pending-mutex*)))
+  (define *lsp-max-message-size*--cell
+    (vector (* 10 1024 1024)))
   (def (lsp-read-message port)
-       "Read one LSP message from port. Returns parsed JSON hash, or #f on EOF/error.\n   Uses read-string (not read-subu8vector) to avoid Gambit char/byte buffer conflict\n   when headers are read with read-line (character I/O)."
+       "Read one LSP message from port. Returns parsed JSON hash, or #f on EOF/error.\n   Uses read-string (not read-subu8vector) to avoid Gambit char/byte buffer conflict\n   when headers are read with read-line (character I/O).\n   Rejects messages larger than *lsp-max-message-size*."
        (let ([content-length (lsp-read-headers port)])
-         (if content-length
-             (let ([body (read-string content-length port)])
-               (if (and (string? body)
-                        (= (string-length body) content-length))
-                   (with-catch
-                     (lambda (e) #f)
-                     (lambda () (string->json-object body)))
-                   #f))
-             #f)))
+         (cond
+           [(not content-length) #f]
+           [(> content-length *lsp-max-message-size*)
+            (jemacs-log!
+              "LSP: rejected oversized message: "
+              (number->string content-length)
+              " bytes")
+            #f]
+           [else
+            (let ([body (read-string content-length port)])
+              (if (and (string? body)
+                       (= (string-length body) content-length))
+                  (with-catch
+                    (lambda (e) #f)
+                    (lambda () (string->json-object body)))
+                  #f))])))
   (def (lsp-read-headers port)
        "Read HTTP-style headers, return Content-Length value or #f."
        (let loop ([content-length #f])
@@ -534,6 +544,13 @@
       [id (vector-ref *lsp-workspace-root*--cell 0)]
       [(set! id val) (vector-set!
                        *lsp-workspace-root*--cell
+                       0
+                       val)]))
+  (define-syntax *lsp-max-message-size*
+    (identifier-syntax
+      [id (vector-ref *lsp-max-message-size*--cell 0)]
+      [(set! id val) (vector-set!
+                       *lsp-max-message-size*--cell
                        0
                        val)]))
   (define-syntax *lsp-diagnostics-handler*
