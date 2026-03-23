@@ -597,7 +597,7 @@
     ;; UI elements
     (modeline . (fg: "#f8f8f2" bg: "#44475a"))
     (modeline-inactive . (fg: "#6272a4" bg: "#44475a"))
-    (line-number . (fg: "#6272a4" bg: "#282a36"))
+    (line-number . (fg: "#a4b0d4" bg: "#282a36"))
     (cursor-line . (bg: "#44475a"))
 
     ;; Search and matching
@@ -678,7 +678,7 @@
     ;; UI elements
     (modeline . (fg: "#d8dee9" bg: "#3b4252"))
     (modeline-inactive . (fg: "#616e88" bg: "#3b4252"))
-    (line-number . (fg: "#616e88" bg: "#2e3440"))
+    (line-number . (fg: "#8690a8" bg: "#2e3440"))
     (cursor-line . (bg: "#3b4252"))
 
     ;; Search and matching

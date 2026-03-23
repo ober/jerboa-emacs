@@ -169,8 +169,10 @@
 
 (def (vterm-row-diff-render! ed vt ts)
   "Render vtscreen rows into the QScintilla document.
-   When many rows changed, uses full set-text! for efficiency.
-   When few rows changed, uses per-line replacement."
+   In normal mode with many dirty rows, uses full set-text! for efficiency.
+   On alt screen (top, htop, etc.), always uses per-line replacement to avoid
+   the full document reset that causes visible bouncing/flicker.
+   Tracks which rows actually changed in *vterm-dirty-rows* for targeted recoloring."
   (let ((rows (vtscreen-rows vt))
         (line-offset (hash-ref *vterm-line-offset* ts 0))
         (cache (hash-ref *vterm-row-cache* ts #f)))
@@ -190,40 +192,45 @@
            ((= n 0)
             ;; No dirty rows
             (vtscreen-clear-damage! vt)
+            (hash-put! *vterm-dirty-rows* ts (make-hash-table))
             #f)
-           ((> n 4)
-            ;; Many dirty rows — full set-text! is faster than N line replacements
+           ((and (> n 4) (not (vtscreen-alt-screen? vt)))
+            ;; Many dirty rows in normal mode — full set-text! is faster than N line replacements.
+            ;; Never do this on alt screen (top, htop, etc.) — set-text! replaces the entire
+            ;; document, causing QScintilla to reset scroll/layout and visibly bounce.
             (let* ((rendered (vtscreen-render vt))
-                   (pre-text (or (terminal-state-pre-pty-text ts) ""))
-                   (full (if (vtscreen-alt-screen? vt)
-                           rendered
-                           (string-append pre-text rendered))))
+                   (pre-text (or (terminal-state-pre-pty-text ts) "")))
               ;; Update cache for all rows
               (let update ((r2 0))
                 (when (< r2 rows)
                   (vector-set! cache r2 (vtscreen-get-row-text vt r2))
                   (update (+ r2 1))))
               (vtscreen-clear-damage! vt)
-              (qt-plain-text-edit-set-text! ed full)
+              ;; Full render — mark all rows dirty for coloring
+              (hash-put! *vterm-dirty-rows* ts #f)
+              (qt-plain-text-edit-set-text! ed (string-append pre-text rendered))
               #t))
            (else
-            ;; Few dirty rows — per-line replacement
+            ;; Per-line replacement — only update rows whose text actually changed
             (vterm-ensure-lines! ed (+ line-offset rows))
-            (let loop ((r2 0) (any-changed? #f))
-              (if (>= r2 rows)
-                (begin
-                  (vtscreen-clear-damage! vt)
-                  any-changed?)
-                (if (vtscreen-row-dirty? vt r2)
-                  (let ((new-text (vtscreen-get-row-text vt r2))
-                        (old-text (vector-ref cache r2)))
-                    (if (string=? new-text old-text)
-                      (loop (+ r2 1) any-changed?)
-                      (begin
-                        (vector-set! cache r2 new-text)
-                        (vterm-replace-line! ed (+ line-offset r2) new-text)
-                        (loop (+ r2 1) #t))))
-                  (loop (+ r2 1) any-changed?)))))))
+            (let ((dirty-set (make-hash-table)))
+              (let loop ((r2 0) (any-changed? #f))
+                (if (>= r2 rows)
+                  (begin
+                    (vtscreen-clear-damage! vt)
+                    (hash-put! *vterm-dirty-rows* ts dirty-set)
+                    any-changed?)
+                  (if (vtscreen-row-dirty? vt r2)
+                    (let ((new-text (vtscreen-get-row-text vt r2))
+                          (old-text (vector-ref cache r2)))
+                      (if (string=? new-text old-text)
+                        (loop (+ r2 1) any-changed?)
+                        (begin
+                          (vector-set! cache r2 new-text)
+                          (hash-put! dirty-set r2 #t)
+                          (vterm-replace-line! ed (+ line-offset r2) new-text)
+                          (loop (+ r2 1) #t))))
+                    (loop (+ r2 1) any-changed?))))))))
         ((vtscreen-row-dirty? vt r)
          (count-dirty (+ r 1) (+ n 1)))
         (else
@@ -291,20 +298,24 @@
                   (sci-send ed SCI_SETSTYLING (- c run-start) run-style))
                 (loop (+ c 1) c style)))))))))
 
+;; Per-terminal-state: set of row indices updated in the last row-diff-render
+(def *vterm-dirty-rows* (make-hash-table-eq))
+
 (def (vterm-apply-colors! ed vt ts)
-  "Apply colors to all dirty rows."
+  "Apply colors to rows updated in the last render pass."
   (let ((rows (vtscreen-rows vt))
-        (line-offset (hash-ref *vterm-line-offset* ts 0)))
+        (line-offset (hash-ref *vterm-line-offset* ts 0))
+        (dirty-set (hash-ref *vterm-dirty-rows* ts #f)))
     (let loop ((r 0))
       (when (< r rows)
-        ;; Only re-color rows that had their text updated
-        ;; (The damage was already cleared in row-diff-render, but we apply colors
-        ;;  to all rows whose text was just replaced in the cache)
-        (let ((cache (hash-ref *vterm-row-cache* ts #f)))
-          (when (and cache
-                     (< r (vector-length cache))
-                     (> (string-length (vector-ref cache r)) 0))
-            (vterm-apply-row-colors! ed vt r (+ line-offset r))))
+        ;; Only re-color rows that were actually replaced in the last render
+        (when (or (not dirty-set)   ;; full render — color everything
+                  (hash-ref dirty-set r #f))
+          (let ((cache (hash-ref *vterm-row-cache* ts #f)))
+            (when (and cache
+                       (< r (vector-length cache))
+                       (> (string-length (vector-ref cache r)) 0))
+              (vterm-apply-row-colors! ed vt r (+ line-offset r)))))
         (loop (+ r 1))))))
 
 ;;;============================================================================
@@ -589,12 +600,31 @@
                         (hash-put! *vterm-line-offset* ts 0)
                         ;; Normal mode: keep existing offset
                         (void))
+                      ;; Suppress intermediate repaints: disable widget updates,
+                      ;; do all line replacements + styling, then re-enable for
+                      ;; a single
+                      (qt-widget-set-updates-enabled! ed #f)
                       (let ((changed? (vterm-row-diff-render! ed vt ts)))
                         (when changed?
                           ;; Apply colors to changed rows
                           (vterm-apply-colors! ed vt ts)
-                          (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
-                          (qt-plain-text-edit-ensure-cursor-visible! ed)))))
+                          (if (vtscreen-alt-screen? vt)
+                            ;; Alt screen (top, htop, etc.): place cursor at terminal's
+                            ;; actual cursor position. Do NOT move to end or call
+                            ;; ensure-cursor-visible — that forces a scroll/relayout
+                            ;; on every refresh, causing the visible "bounce".
+                            (let* ((crow (vtscreen-cursor-row vt))
+                                   (ccol (vtscreen-cursor-col vt))
+                                   (offset (hash-ref *vterm-line-offset* ts 0))
+                                   (line-start (sci-send ed SCI_POSITIONFROMLINE (+ offset crow)))
+                                   (pos (+ line-start ccol)))
+                              (when (>= line-start 0)
+                                (sci-send ed SCI_GOTOPOS pos)))
+                            ;; Normal mode: scroll to bottom to follow output
+                            (begin
+                              (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+                              (qt-plain-text-edit-ensure-cursor-visible! ed))))
+                        (qt-widget-set-updates-enabled! ed #t))))
                   (vterm-mark-rendered! ts)))
               (begin
                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
