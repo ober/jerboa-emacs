@@ -1849,11 +1849,26 @@ SPC = page down, DEL = page up, q = quit view-mode."
 ;;;============================================================================
 
 (def *top-buffer-name* "*top*")
+(def *coreutils-registered* #f)
 (def *top-active* #f)  ;; the app when top is running, or #f
+
+(def (ensure-coreutils!)
+  "Lazily register coreutils builtins on first use.
+   Uses eval to avoid a compile-time dependency on (jsh coreutils)
+   which requires jerboa-coreutils (not available in Docker builds)."
+  (unless *coreutils-registered*
+    (with-catch
+      (lambda (e) #f)  ;; silently fail if coreutils not available
+      (lambda ()
+        (eval '(begin
+                 (import (only (jsh coreutils) register-coreutils!))
+                 (register-coreutils!)))
+        (set! *coreutils-registered* #t)))))
 
 (def (top-capture-output)
   "Run coreutils top in batch mode (-b -n 1) and capture output as a string.
    Uses builtin-lookup to get the jsh-registered handler."
+  (ensure-coreutils!)
   (let ((handler (builtin-lookup "top")))
     (if handler
       (let ((output (with-output-to-string
@@ -1862,7 +1877,7 @@ SPC = page down, DEL = page up, q = quit view-mode."
                           (lambda (e) (display "top: error\n"))
                           (lambda () (handler '("-b" "-n" "1") #f)))))))
         output)
-      "top: command not available (coreutils not registered)\n")))
+      "top: command not available (coreutils not installed)\n")))
 
 (def (top-refresh! app)
   "Refresh the *top* buffer with current coreutils top output."

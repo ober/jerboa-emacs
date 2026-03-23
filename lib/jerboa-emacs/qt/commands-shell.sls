@@ -68,8 +68,9 @@
    *abbrevs-path* abbrevs-save! abbrevs-load! cmd-abbrev-mode
    cmd-define-abbrev cmd-delete-horizontal-space
    cmd-consult-line cmd-consult-grep cmd-consult-buffer
-   cmd-consult-outline *top-buffer-name* *top-active*
-   top-capture-output top-refresh! cmd-top cmd-top-quit)
+   cmd-consult-outline *top-buffer-name* *coreutils-registered*
+   *top-active* ensure-coreutils! top-capture-output
+   top-refresh! cmd-top cmd-top-quit)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -2152,9 +2153,22 @@
                          (qt-plain-text-edit-ensure-cursor-visible!
                            ed))))))))))
   (define *top-buffer-name*--cell (vector "*top*"))
+  (define *coreutils-registered*--cell (vector #f))
   (define *top-active*--cell (vector #f))
+  (def (ensure-coreutils!)
+       "Lazily register coreutils builtins on first use.\n   Uses eval to avoid a compile-time dependency on (jsh coreutils)\n   which requires jerboa-coreutils (not available in Docker builds)."
+       (unless *coreutils-registered*
+         (with-catch
+           (lambda (e) #f)
+           (lambda ()
+             (eval
+               '(begin
+                  (import (only (jsh coreutils) register-coreutils!))
+                  (register-coreutils!)))
+             (set! *coreutils-registered* #t)))))
   (def (top-capture-output)
        "Run coreutils top in batch mode (-b -n 1) and capture output as a string.\n   Uses builtin-lookup to get the jsh-registered handler."
+       (ensure-coreutils!)
        (let ([handler (builtin-lookup "top")])
          (if handler
              (let ([output (with-output-to-string
@@ -2164,7 +2178,7 @@
                                  (lambda ()
                                    (handler '("-b" "-n" "1") #f)))))])
                output)
-             "top: command not available (coreutils not registered)\n")))
+             "top: command not available (coreutils not installed)\n")))
   (def (top-refresh! app)
        "Refresh the *top* buffer with current coreutils top output."
        (let* ([ed (current-qt-editor app)]
@@ -2348,6 +2362,13 @@
       [id (vector-ref *top-buffer-name*--cell 0)]
       [(set! id val) (vector-set!
                        *top-buffer-name*--cell
+                       0
+                       val)]))
+  (define-syntax *coreutils-registered*
+    (identifier-syntax
+      [id (vector-ref *coreutils-registered*--cell 0)]
+      [(set! id val) (vector-set!
+                       *coreutils-registered*--cell
                        0
                        val)]))
   (define-syntax *top-active*

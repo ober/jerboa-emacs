@@ -2182,26 +2182,35 @@
 
 (def (key-chord-define-global two-char-str cmd)
   "Bind a 2-character chord to a command symbol.
-   Case-sensitive: 'MT' only matches Shift+M then Shift+T, not lowercase.
+   Case-insensitive: 'MT' matches mt, Mt, mT, and MT.
    Like Emacs key-chord.el, registers BOTH orderings so the chord fires
    regardless of which key arrives first (e.g. 'MT' matches M→T and T→M)."
-  (let ((c1 (string-ref two-char-str 0))
-        (c2 (string-ref two-char-str 1)))
-    ;; Register both orderings
-    (hash-put! *chord-map* (string c1 c2) cmd)
-    (when (not (char=? c1 c2))
-      (hash-put! *chord-map* (string c2 c1) cmd))
-    ;; Both characters can start a chord
-    (hash-put! *chord-first-chars* c1 #t)
-    (hash-put! *chord-first-chars* c2 #t)))
+  (let* ((c1 (string-ref two-char-str 0))
+         (c2 (string-ref two-char-str 1))
+         ;; All case variants of each character
+         (c1s (if (char-alphabetic? c1)
+                (list (char-upcase c1) (char-downcase c1))
+                (list c1)))
+         (c2s (if (char-alphabetic? c2)
+                (list (char-upcase c2) (char-downcase c2))
+                (list c2))))
+    ;; Register all case combinations in both orderings
+    (for-each (lambda (a)
+      (for-each (lambda (b)
+        (hash-put! *chord-map* (string a b) cmd)
+        (when (not (char=? a b))
+          (hash-put! *chord-map* (string b a) cmd))
+        (hash-put! *chord-first-chars* a #t)
+        (hash-put! *chord-first-chars* b #t))
+        c2s))
+      c1s)))
 
 (def (chord-lookup ch1 ch2)
-  "Look up a chord by two characters. Case-sensitive match."
+  "Look up a chord by two characters."
   (hash-get *chord-map* (string ch1 ch2)))
 
 (def (chord-start-char? ch)
-  "Can this character start a chord? Only when chord-mode is on.
-   Case-sensitive: uppercase chord starters only match uppercase input."
+  "Can this character start a chord? Only when chord-mode is on."
   (and *chord-mode*
        (hash-get *chord-first-chars* ch)))
 
