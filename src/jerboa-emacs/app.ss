@@ -904,8 +904,13 @@
 ;;; Main entry point
 ;;;============================================================================
 
+(def ffi-umask (foreign-procedure "umask" (unsigned-32) unsigned-32))
+
 (def main
   (lambda args
+    ;; Restrict file permissions: new files are owner-only by default.
+    ;; Prevents session data (history, scratch, desktop) from being world-readable.
+    (ffi-umask #o077)
     (let ((app (app-init! args)))
       (try
         (app-run! app)

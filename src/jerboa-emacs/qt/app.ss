@@ -1539,7 +1539,12 @@
 
       )) ;; end of qt-do-init! let* and function body
 
+(def ffi-umask (foreign-procedure "umask" (unsigned-32) unsigned-32))
+
 (def (qt-main . args)
+  ;; Restrict file permissions: new files are owner-only by default.
+  ;; Prevents session data (history, scratch, desktop) from being world-readable.
+  (ffi-umask #o077)
   ;; Pin the primordial thread to processor 0 (the main OS thread).
   ;; This is the most critical pinning: the primordial thread runs all
   ;; command dispatch, key handling, minibuffer poll loops, and Qt init.
