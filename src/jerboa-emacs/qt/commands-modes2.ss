@@ -9,7 +9,6 @@
         :std/sort
         :std/srfi/13
         :std/text/base64
-        :gerbil-litehtml/html
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/async

@@ -69,7 +69,7 @@
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
    (std sugar) (chez-scintilla constants) (std sort)
-   (std srfi srfi-13) (std text base64) (gerbil-litehtml html)
+   (std srfi srfi-13) (std text base64)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs async) (jerboa-emacs editor)
    (jerboa-emacs repl) (jerboa-emacs eshell)

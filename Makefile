@@ -4,11 +4,11 @@ JSH       = vendor/jerboa-shell/src
 GHERKIN   = $(HOME)/mine/gherkin/src
 LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
-export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:$(HOME)/mine/gerbil-qt/vendor:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
 export CHEZ_QT_LIB := $(HOME)/mine/chez-qt
-export CHEZ_QT_SHIM_DIR := $(HOME)/mine/gerbil-qt/vendor
+export CHEZ_QT_SHIM_DIR := .
 
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
         test-org-duration test-org-element test-org-fold test-org-footnote \
@@ -37,7 +37,7 @@ vterm_shim.so: support/vterm_shim.c
 	gcc -shared -fPIC -O2 -o vterm_shim.so support/vterm_shim.c -lvterm -Wall
 
 QT_INC := $(shell qmake6 -query QT_INSTALL_HEADERS 2>/dev/null || echo /usr/include/x86_64-linux-gnu/qt6)
-QT_SHIM_H := $(HOME)/mine/gerbil-qt/vendor
+QT_SHIM_H := vendor
 
 libqt_shim.so: vendor/qt_shim.cpp
 	g++ -shared -fPIC -std=c++17 -O2 \
@@ -47,8 +47,11 @@ libqt_shim.so: vendor/qt_shim.cpp
 	  -o libqt_shim.so \
 	  -lQt6Core -lQt6Gui -lQt6Widgets -lqscintilla2_qt6
 
-run-qt: build repl_shim.so libqt_shim.so vterm_shim.so
-	$(SCHEME) $(LIBDIRS) --script qt-main.ss
+qt_chez_shim.so: vendor/qt_chez_shim.c vendor/qt_shim.h
+	gcc -shared -fPIC -O2 -o qt_chez_shim.so vendor/qt_chez_shim.c -Ivendor -Wall
+
+run-qt: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script qt-main.ss
 
 # Qt backend build target
 build-qt: build
@@ -289,9 +292,12 @@ build-jemacs-qt-static: check-root
 	  --compile-imported-libraries --script /src/vendor/chez-scintilla-compile-libs.ss && \
 	rm -f /deps/chez-scintilla/src/chez-scintilla/*.wpo && \
 	cp /src/vendor/jerboa-net-tcp-static.sls /deps/jerboa/lib/std/net/tcp.sls && \
+	cp /src/vendor/jerboa-net-uri.sls /deps/jerboa/lib/std/net/uri.sls && \
 	rm -f /deps/jerboa/lib/std/net/*.wpo && \
 	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
 	  --compile-imported-libraries --script /src/vendor/jerboa-compile-tcp.ss && \
+	/opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-uri.ss && \
 	rm -f /deps/jerboa/lib/std/net/*.wpo && \
 	cp /src/vendor/jerboa-repl-static.sls /deps/jerboa/lib/std/repl.sls && \
 	rm -f /deps/jerboa/lib/std/repl.wpo /deps/jerboa/lib/std/repl.so && \
@@ -322,8 +328,25 @@ linux-static-qt-docker:
 	docker run --rm \
 	  --ulimit nofile=8192:8192 \
 	  -v $(CURDIR):/src:z \
+	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
 	  $(DEPS_IMAGE) \
 	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
+	         for f in \
+	           misc/atom.sls misc/channel.sls misc/completion.sls misc/list.sls \
+	           misc/memo.sls misc/number.sls misc/ports.sls misc/process.sls \
+	           misc/rwlock.sls misc/shuffle.sls misc/string.sls \
+	           net/request.sls net/uri.sls \
+	           os/fdio.sls os/signal.sls \
+	           text/base64.sls text/diff.sls text/glob.sls text/hex.sls text/json.sls \
+	           crypto/digest.sls \
+	           format.sls iter.sls pregexp.sls sort.sls sugar.sls \
+	           srfi/srfi-1.sls srfi/srfi-13.sls srfi/srfi-19.sls; do \
+	           if [ -f /host-jerboa-std/\$$f ]; then \
+	             mkdir -p /deps/jerboa/lib/std/$$(dirname \$$f); \
+	             cp /host-jerboa-std/\$$f /deps/jerboa/lib/std/\$$f; \
+	             rm -f /deps/jerboa/lib/std/\$${f%.sls}.so /deps/jerboa/lib/std/\$${f%.sls}.wpo; \
+	           fi; \
+	         done; \
 	         chmod 755 /root && \
 	         chown -R $(UID):$(GID) /opt/ /deps && \
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \

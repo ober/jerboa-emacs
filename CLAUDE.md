@@ -17,7 +17,25 @@ make build           # Translate src/*.ss → lib/*.sls (incremental)
 make rebuild         # Force full retranslation
 make run             # Build and run TUI editor
 make run-qt          # Build and run Qt editor
+make static-qt       # Build static jemacs-qt binary via Docker
 ```
+
+## MANDATORY: Verify Binary After Changes
+
+After ANY code change, you MUST verify the static binary actually works — never tell the user "it's fixed" without testing. Run these steps IN ORDER:
+
+1. `make build` — rebuild `.sls` files from `.ss` sources
+2. `make static-qt` — rebuild the static Docker binary
+3. `./jemacs-qt --version` — verify binary launches without exceptions
+
+If step 3 throws ANY exception (library not found, unbound variable, dynamic loading errors), the fix is NOT done. Common pitfalls:
+
+- **`library (std ...) not found`**: The Docker image has a stale jerboa `std/` tree. New modules must be added to the sync list in the `linux-static-qt-docker` Makefile target AND compiled into the WPO step in `build-binary-qt.ss`.
+- **`Dynamic loading not supported`**: Any `load-shared-object` call must be guarded with the `JEMACS_STATIC` env var check (the binary sets `JEMACS_STATIC=1`).
+- **`final:` or other unsupported keywords**: jerbuild doesn't support all Gerbil `defstruct` keywords — remove them.
+- **Dependencies not in gerbil-qt**: This project uses `~/mine/chez-qt`, NOT `~/mine/gerbil-qt`. The `CHEZ_QT_SHIM_DIR` must point to `.` (local project root) for runtime, and `vendor/` for the build header.
+
+Do NOT rely on `make run-qt` (interpreted mode) as proof the binary works — the static binary has different constraints (no `load-shared-object`, all libraries must be compiled in).
 
 ## Test Commands
 

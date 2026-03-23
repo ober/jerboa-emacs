@@ -47,9 +47,13 @@
 ;;;============================================================================
 
 (def vterm-shim-loaded
-  (let ((dir (or (getenv "JERBOA_EMACS_SUPPORT")
-                 (string-append (or (getenv "HOME") ".") "/mine/jerboa-emacs"))))
-    (load-shared-object (string-append dir "/vterm_shim.so"))))
+  (let ((static? (let ((v (getenv "JEMACS_STATIC")))
+                   (and v (not (string=? v "")) (not (string=? v "0"))))))
+    (if static?
+      #f  ; symbols already linked into the binary
+      (let ((dir (or (getenv "JERBOA_EMACS_SUPPORT")
+                     (string-append (or (getenv "HOME") ".") "/mine/jerboa-emacs"))))
+        (load-shared-object (string-append dir "/vterm_shim.so"))))))
 
 ;; Core lifecycle
 (def ffi-jvt-new       (foreign-procedure "jvt_new" (int int) void*))

@@ -249,7 +249,7 @@
 ;;; Quit flag (C-g subprocess interruption)
 ;;;============================================================================
 
-(defstruct keyboard-quit-exception () final: #t)
+(defstruct keyboard-quit-exception ())
 
 (def *quit-flag* #f)
 

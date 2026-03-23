@@ -163,12 +163,15 @@
         "std/os/path"
         "std/os/signal"
         "std/os/fdio"))
-    ;; Jerboa core + sugar
+    ;; Jerboa core + sugar + repl
     (map (lambda (m) (format "~a/~a.so" jerboa-dir m))
       '("jerboa/core"
-        "std/sugar"))
-    ;; std/net/tcp (compiled by step 1)
-    (list (format "~a/std/net/tcp.so" jerboa-dir))
+        "std/sugar"
+        "std/repl"))
+    ;; std/net/tcp and std/net/uri (compiled by step 1)
+    (map (lambda (m) (format "~a/~a.so" jerboa-dir m))
+      '("std/net/tcp"
+        "std/net/uri"))
     ;; jerboa/repl-socket (non-blocking socket FFI for debug REPL + IPC)
     (list "lib/jerboa/repl-socket.so")
     ;; Gherkin MOP modules (WPO-missing, must be in boot file)
