@@ -225,6 +225,7 @@ PCRE2_SRC    ?= $(HOME)/mine/chez-pcre2
 SCI_SRC      ?= $(HOME)/mine/chez-scintilla
 QT_SRC       ?= $(HOME)/mine/chez-qt
 QTSHIM_SRC   ?= $(HOME)/mine/gerbil-qt
+COREUTILS_SRC ?= $(HOME)/mine/jerboa-coreutils
 
 DEPS_IMAGE := jemacs-deps:$(ARCH)
 
@@ -318,9 +319,10 @@ build-jemacs-qt-static: check-root
 	CHEZ_SCINTILLA_DIR=/deps/chez-scintilla/src \
 	CHEZ_QT_DIR=/deps/chez-qt \
 	CHEZ_QT_SHIM_DIR=/deps/gerbil-qt/vendor \
+	COREUTILS_DIR=/deps/coreutils \
 	PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig \
 	/opt/chez/bin/scheme \
-	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/deps/gherkin/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
+	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/deps/coreutils:/deps/gherkin/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
 	  --script build-binary-qt.ss
 
 linux-static-qt-docker:
@@ -330,14 +332,18 @@ linux-static-qt-docker:
 	  --ulimit nofile=8192:8192 \
 	  -v $(CURDIR):/src:z \
 	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
+	  -v $(COREUTILS_SRC)/lib:/host-coreutils:ro \
 	  $(DEPS_IMAGE) \
 	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
+	         cp -a /host-coreutils/. /deps/coreutils/; \
+	         find /deps/coreutils -name '*.sls' -exec sed -i 's/(load-shared-object #f)/(void)/g' {} +; \
 	         for f in \
 	           misc/atom.sls misc/channel.sls misc/completion.sls misc/list.sls \
 	           misc/memo.sls misc/number.sls misc/ports.sls misc/process.sls \
-	           misc/rwlock.sls misc/shuffle.sls misc/string.sls \
+	           misc/rwlock.sls misc/shuffle.sls misc/string.sls misc/terminal.sls \
+	           cli/getopt.sls \
 	           net/request.sls net/uri.sls \
-	           os/fdio.sls os/signal.sls \
+	           os/fdio.sls os/signal.sls os/tty.sls \
 	           text/base64.sls text/diff.sls text/glob.sls text/hex.sls text/json.sls \
 	           crypto/digest.sls \
 	           format.sls iter.sls pregexp.sls sort.sls sugar.sls \

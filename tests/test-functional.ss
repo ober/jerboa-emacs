@@ -29,7 +29,8 @@
               *mx-history* mx-history-add! mx-history-ordered-candidates)
         (only (jerboa-emacs helm-commands) register-helm-commands!)
         (jerboa-emacs helm)
-        (only (std srfi srfi-13) string-contains string-prefix?))
+        (only (std srfi srfi-13) string-contains string-prefix?)
+        (rename (jerboa-coreutils top) (main cu-top-main)))
 
 (define pass-count 0)
 (define fail-count 0)
@@ -1577,6 +1578,112 @@
   (execute-command! app 'toggle-repeat-mode)
   (check (repeat-mode?) => #f)
   (repeat-mode-set! #f))
+
+;;;============================================================================
+;;; Key Chord Tests
+;;;============================================================================
+
+(display "\n--- key-chord: case-insensitive registration ---\n")
+;; Clear chord state
+(set! *chord-map* (make-hash-table))
+(set! *chord-first-chars* (make-hash-table))
+
+;; Define a chord with uppercase letters
+(key-chord-define-global "EE" 'eshell)
+
+;; Test: all case combinations should resolve to the same command
+(check (chord-lookup #\E #\E) => 'eshell)
+(check (chord-lookup #\e #\e) => 'eshell)
+(check (chord-lookup #\E #\e) => 'eshell)
+(check (chord-lookup #\e #\E) => 'eshell)
+
+(display "--- key-chord: both orderings registered ---\n")
+(set! *chord-map* (make-hash-table))
+(set! *chord-first-chars* (make-hash-table))
+(key-chord-define-global "MT" 'vterm)
+
+;; Both orderings: M→T and T→M
+(check (chord-lookup #\m #\t) => 'vterm)
+(check (chord-lookup #\t #\m) => 'vterm)
+(check (chord-lookup #\M #\T) => 'vterm)
+(check (chord-lookup #\T #\M) => 'vterm)
+
+(display "--- key-chord: start-char detects both chars ---\n")
+(check (chord-start-char? #\m) => #t)
+(check (chord-start-char? #\t) => #t)
+(check (chord-start-char? #\M) => #t)
+(check (chord-start-char? #\T) => #t)
+(check (chord-start-char? #\z) => #f)
+
+(display "--- key-chord: same-char chord ---\n")
+(set! *chord-map* (make-hash-table))
+(set! *chord-first-chars* (make-hash-table))
+(key-chord-define-global "GG" 'keyboard-quit)
+(check (chord-lookup #\g #\g) => 'keyboard-quit)
+(check (chord-lookup #\G #\G) => 'keyboard-quit)
+
+(display "--- key-chord: non-alpha chars ---\n")
+(set! *chord-map* (make-hash-table))
+(set! *chord-first-chars* (make-hash-table))
+(key-chord-define-global ";;" 'comment)
+(check (chord-lookup #\; #\;) => 'comment)
+(check (chord-start-char? #\;) => #t)
+
+(display "--- key-chord: multiple chords don't interfere ---\n")
+(set! *chord-map* (make-hash-table))
+(set! *chord-first-chars* (make-hash-table))
+(key-chord-define-global "EE" 'eshell)
+(key-chord-define-global "MT" 'vterm)
+(key-chord-define-global "GG" 'keyboard-quit)
+(check (chord-lookup #\e #\e) => 'eshell)
+(check (chord-lookup #\m #\t) => 'vterm)
+(check (chord-lookup #\g #\g) => 'keyboard-quit)
+;; Non-chord pairs should return #f
+(check (chord-lookup #\e #\m) => #f)
+(check (chord-lookup #\g #\t) => #f)
+
+;;;============================================================================
+;;; Coreutils Top Tests
+;;;============================================================================
+
+(display "\n--- coreutils-top: cu-top-main is a procedure ---\n")
+(check (procedure? cu-top-main) => #t)
+
+(display "--- coreutils-top: batch mode produces output ---\n")
+(let ((output (with-output-to-string
+                (lambda ()
+                  (call/cc
+                    (lambda (k)
+                      (parameterize ([exit-handler (lambda (code) (k (void)))])
+                        (cu-top-main "-b" "-n" "1"))))))))
+  ;; Output should be non-empty
+  (check (> (string-length output) 100) => #t)
+  ;; Should contain standard top header fields (string-contains returns index, not #t)
+  (check (and (string-contains output "load average") #t) => #t)
+  (check (and (string-contains output "Tasks:") #t) => #t)
+  (check (and (string-contains output "Cpu") #t) => #t)
+  (check (and (string-contains output "Mem") #t) => #t)
+  ;; Should contain PID column header
+  (check (and (string-contains output "PID") #t) => #t))
+
+(display "--- coreutils-top: output is multi-line ---\n")
+(let* ((output (with-output-to-string
+                 (lambda ()
+                   (call/cc
+                     (lambda (k)
+                       (parameterize ([exit-handler (lambda (code) (k (void)))])
+                         (cu-top-main "-b" "-n" "1")))))))
+       (lines (let loop ((s output) (acc '()))
+                (let ((nl (let find ((i 0))
+                            (if (>= i (string-length s)) #f
+                                (if (char=? (string-ref s i) #\newline) i
+                                    (find (+ i 1)))))))
+                  (if nl
+                    (loop (substring s (+ nl 1) (string-length s))
+                          (cons (substring s 0 nl) acc))
+                    (reverse (cons s acc)))))))
+  ;; Should have many lines (header + processes)
+  (check (> (length lines) 10) => #t))
 
 ;; Summary
 (newline)

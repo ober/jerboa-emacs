@@ -83,6 +83,10 @@
   (or (getenv "CHEZ_QT_SHIM_DIR")
       (format "~a/mine/gerbil-qt/vendor" home)))
 
+(define coreutils-dir
+  (or (getenv "COREUTILS_DIR")
+      "/deps/coreutils"))
+
 ;; Static build detection (needed before dep checks)
 (define jemacs-static?
   (let ((v (getenv "JEMACS_STATIC")))
@@ -372,7 +376,7 @@
          ;;   define-foreign name "c-name"  — jsh macro (C name is the second string)
          (gen-cmd
            (format
-             "{ { cat ~a ~a; find ~a ~a ~a lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; } | \
+             "{ { cat ~a ~a; find ~a ~a ~a lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; cat ~a/jerboa-coreutils/top.sls 2>/dev/null; } | \
 sed 's/;;.*//' | grep -oE '(foreign-procedure|foreign-entry\\?) \"[^\"]*\"' | sed 's/.* \"//;s/\"//'; \
 { cat ~a ~a; } | sed 's/;;.*//' | grep -o 'define-optional-ffi [^ ]* \"[^\"]*\"' | sed 's/.*define-optional-ffi [^ ]* \"//;s/\"//'; \
 find ~a -name '*.sls' -o -name '*.ss' | \
@@ -391,7 +395,7 @@ echo \"}\" >> qt_static_symbols.c && \
 rm /tmp/ffi_syms.txt && \
 echo OK"
              ffi-path pcre2-ffi-path
-             jsh-dir jerboa-dir sci-dir
+             jsh-dir jerboa-dir sci-dir coreutils-dir
              ffi-path pcre2-ffi-path
              jsh-dir))
          (result (shell-output gen-cmd "")))
