@@ -11,5 +11,25 @@ lib/**/*.wpo
 # Build symlinks / local artifacts
 libjsh-ffi.so
 
+# Build outputs (binaries, objects, boot files, generated headers)
+jemacs
+jemacs-qt
+*.o
+*.boot
+*_boot.h
+*_program.h
+qt_static_symbols.c
+jemacs-qt-ssh-agent-stub.c
+qt-main.so
+qt-main.wpo
+jemacs-qt-all.so
+vterm_shim.so
+chez_pty_shim.so
+chez_scintilla_shim.so
+libqt_shim.so
+pcre2_shim.so
+qt_chez_shim.so
+#7778#
+
 # Vendored repos (cloned, not submodules)
 vendor/jerboa-shell/
