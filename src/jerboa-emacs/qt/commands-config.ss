@@ -822,7 +822,10 @@ modified so the next save uses the new encoding."
                     (set! (qt-edit-window-buffer (qt-current-window fr)) other))
                   (hash-remove! *terminal-state* buf)
                   (qt-buffer-kill! buf)
-                  (echo-message! (app-state-echo app) "Terminal exited"))))))))))))
+                  (echo-message! (app-state-echo app) "Terminal exited")))
+               ((eq? output 'top)
+                ;; Redirect to in-process top buffer (flicker-free)
+                (cmd-top app)))))))))))
 
 (def (cmd-term-interrupt app)
   "Send SIGINT to running PTY process, or cancel current input."

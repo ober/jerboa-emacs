@@ -1004,7 +1004,8 @@
                            (qt-buffer-kill! buf)
                            (echo-message!
                              (app-state-echo app)
-                             "Terminal exited"))])])))))))
+                             "Terminal exited"))]
+                        [(eq? output 'top) (cmd-top app)])])))))))
   (def (cmd-term-interrupt app)
        "Send SIGINT to running PTY process, or cancel current input."
        (let* ([buf (current-qt-buffer app)]

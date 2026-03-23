@@ -1,8 +1,9 @@
 SCHEME = scheme
 JERBOA    = $(HOME)/mine/jerboa
 JSH       = vendor/jerboa-shell/src
+COREUTILS = $(HOME)/mine/jerboa-coreutils/lib
 GHERKIN   = $(HOME)/mine/gherkin/src
-LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
+LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(COREUTILS):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
 export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla

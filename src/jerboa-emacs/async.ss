@@ -41,6 +41,7 @@
 
   ;; Periodic task scheduler
   schedule-periodic!
+  cancel-periodic!
   master-timer-tick!
   current-time-ms
 
@@ -171,8 +172,16 @@
 (def (schedule-periodic! name interval-ms thunk)
   "Register a periodic task to run at the given interval.
    Tasks are run by master-timer-tick! on the UI thread."
+  ;; Remove any existing task with the same name first
+  (set! *scheduled-tasks*
+    (filter (lambda (t) (not (eq? (car t) name))) *scheduled-tasks*))
   (set! *scheduled-tasks*
     (cons [name interval-ms 0 thunk] *scheduled-tasks*)))
+
+(def (cancel-periodic! name)
+  "Remove a periodic task by name."
+  (set! *scheduled-tasks*
+    (filter (lambda (t) (not (eq? (car t) name))) *scheduled-tasks*)))
 
 (def (master-timer-tick!)
   "Master timer callback: drain the UI queue, then run periodic tasks.

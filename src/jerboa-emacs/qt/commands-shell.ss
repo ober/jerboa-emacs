@@ -11,6 +11,8 @@
         :std/text/base64
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
+        (only-in :jerboa-emacs/async schedule-periodic! cancel-periodic!)
+        (only-in :jsh/registry builtin-lookup)
         (only-in :jerboa-emacs/persist theme-settings-save! theme-settings-load!
                  mx-history-save! mx-history-load!
                  *auto-fill-mode* *fill-column*
@@ -1840,4 +1842,68 @@ SPC = page down, DEL = page up, q = quit view-mode."
                 (let ((pos (sci-send ed SCI_POSITIONFROMLINE (- line-num 1) 0)))
                   (qt-plain-text-edit-set-cursor-position! ed pos)
                   (qt-plain-text-edit-ensure-cursor-visible! ed))))))))))
+
+;;;============================================================================
+;;; In-process top: uses coreutils top in batch mode, renders into a buffer.
+;;; Bypasses PTY/vtscreen pipeline for flicker-free display.
+;;;============================================================================
+
+(def *top-buffer-name* "*top*")
+(def *top-active* #f)  ;; the app when top is running, or #f
+
+(def (top-capture-output)
+  "Run coreutils top in batch mode (-b -n 1) and capture output as a string.
+   Uses builtin-lookup to get the jsh-registered handler."
+  (let ((handler (builtin-lookup "top")))
+    (if handler
+      (let ((output (with-output-to-string
+                      (lambda ()
+                        (with-catch
+                          (lambda (e) (display "top: error\n"))
+                          (lambda () (handler '("-b" "-n" "1") #f)))))))
+        output)
+      "top: command not available (coreutils not registered)\n")))
+
+(def (top-refresh! app)
+  "Refresh the *top* buffer with current coreutils top output."
+  (let* ((ed (current-qt-editor app))
+         (buf (current-qt-buffer app)))
+    (when (and buf (string=? (buffer-name buf) *top-buffer-name*))
+      (let ((output (top-capture-output))
+            (cursor-pos (qt-plain-text-edit-cursor-position ed)))
+        (qt-widget-set-updates-enabled! ed #f)
+        (qt-plain-text-edit-set-text! ed output)
+        ;; Restore cursor position if possible
+        (when (< cursor-pos (string-length output))
+          (qt-plain-text-edit-set-cursor-position! ed cursor-pos))
+        (qt-widget-set-updates-enabled! ed #t)))))
+
+(def (cmd-top app)
+  "Display process list (top) in a buffer, refreshing every 3 seconds.
+   Uses coreutils top in batch mode — no PTY, no flicker."
+  (let* ((ed (current-qt-editor app))
+         (fr (app-state-frame app))
+         (buf (qt-buffer-create! *top-buffer-name* ed #f)))
+    (qt-buffer-attach! ed buf)
+    (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
+    (qt-plain-text-edit-set-read-only! ed #t)
+    ;; Initial render
+    (let ((output (top-capture-output)))
+      (qt-plain-text-edit-set-text! ed output)
+      (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
+      (qt-plain-text-edit-set-cursor-position! ed 0))
+    ;; Set up periodic refresh
+    (set! *top-active* app)
+    (schedule-periodic! 'top-refresh 3000
+      (lambda ()
+        (when *top-active*
+          (top-refresh! *top-active*))))
+    (echo-message! (app-state-echo app)
+      "top: press q or switch buffer to stop")))
+
+(def (cmd-top-quit app)
+  "Stop the top refresh timer."
+  (cancel-periodic! 'top-refresh)
+  (set! *top-active* #f)
+  (echo-message! (app-state-echo app) "top stopped"))
 

@@ -6,11 +6,12 @@
   (export ui-queue-push! ui-queue-drain! spawn-worker
    pin-thread-to-processor0! async-process!
    async-process-stream! async-read-file! async-write-file!
-   async-eval! schedule-periodic! master-timer-tick!
-   current-time-ms *file-index* start-file-indexer!
-   stop-file-indexer! file-index-lookup *git-status-cache*
-   start-git-watcher! stop-git-watcher! flycheck-trigger!
-   start-flycheck-watcher! stop-flycheck-watcher!)
+   async-eval! schedule-periodic! cancel-periodic!
+   master-timer-tick! current-time-ms *file-index*
+   start-file-indexer! stop-file-indexer! file-index-lookup
+   *git-status-cache* start-git-watcher! stop-git-watcher!
+   flycheck-trigger! start-flycheck-watcher!
+   stop-flycheck-watcher!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -100,7 +101,17 @@
   (def (schedule-periodic! name interval-ms thunk)
        "Register a periodic task to run at the given interval.\n   Tasks are run by master-timer-tick! on the UI thread."
        (set! *scheduled-tasks*
+         (filter
+           (lambda (t) (not (eq? (car t) name)))
+           *scheduled-tasks*))
+       (set! *scheduled-tasks*
          (cons (list name interval-ms 0 thunk) *scheduled-tasks*)))
+  (def (cancel-periodic! name)
+       "Remove a periodic task by name."
+       (set! *scheduled-tasks*
+         (filter
+           (lambda (t) (not (eq? (car t) name)))
+           *scheduled-tasks*)))
   (def (master-timer-tick!)
        "Master timer callback: drain the UI queue, then run periodic tasks.\n   Should be called from a single Qt timer at ~16-50ms interval."
        (ui-queue-drain!)

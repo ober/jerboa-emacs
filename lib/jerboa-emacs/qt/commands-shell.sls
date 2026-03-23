@@ -68,7 +68,8 @@
    *abbrevs-path* abbrevs-save! abbrevs-load! cmd-abbrev-mode
    cmd-define-abbrev cmd-delete-horizontal-space
    cmd-consult-line cmd-consult-grep cmd-consult-buffer
-   cmd-consult-outline)
+   cmd-consult-outline *top-buffer-name* *top-active*
+   top-capture-output top-refresh! cmd-top cmd-top-quit)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -76,6 +77,11 @@
    (std sugar) (chez-scintilla constants) (std sort)
    (std srfi srfi-13) (std text base64)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (only
+     (jerboa-emacs async)
+     schedule-periodic!
+     cancel-periodic!)
+   (only (jsh registry) builtin-lookup)
    (only (jerboa-emacs persist) theme-settings-save!
      theme-settings-load! mx-history-save! mx-history-load!
      *auto-fill-mode* *fill-column* *abbrev-table*
@@ -2145,6 +2151,56 @@
                          (qt-plain-text-edit-set-cursor-position! ed pos)
                          (qt-plain-text-edit-ensure-cursor-visible!
                            ed))))))))))
+  (define *top-buffer-name*--cell (vector "*top*"))
+  (define *top-active*--cell (vector #f))
+  (def (top-capture-output)
+       "Run coreutils top in batch mode (-b -n 1) and capture output as a string.\n   Uses builtin-lookup to get the jsh-registered handler."
+       (let ([handler (builtin-lookup "top")])
+         (if handler
+             (let ([output (with-output-to-string
+                             (lambda ()
+                               (with-catch
+                                 (lambda (e) (display "top: error\n"))
+                                 (lambda ()
+                                   (handler '("-b" "-n" "1") #f)))))])
+               output)
+             "top: command not available (coreutils not registered)\n")))
+  (def (top-refresh! app)
+       "Refresh the *top* buffer with current coreutils top output."
+       (let* ([ed (current-qt-editor app)]
+              [buf (current-qt-buffer app)])
+         (when (and buf
+                    (string=? (buffer-name buf) *top-buffer-name*))
+           (let ([output (top-capture-output)]
+                 [cursor-pos (qt-plain-text-edit-cursor-position ed)])
+             (qt-widget-set-updates-enabled! ed #f)
+             (qt-plain-text-edit-set-text! ed output)
+             (when (< cursor-pos (string-length output))
+               (qt-plain-text-edit-set-cursor-position! ed cursor-pos))
+             (qt-widget-set-updates-enabled! ed #t)))))
+  (def (cmd-top app)
+       "Display process list (top) in a buffer, refreshing every 3 seconds.\n   Uses coreutils top in batch mode — no PTY, no flicker."
+       (let* ([ed (current-qt-editor app)]
+              [fr (app-state-frame app)]
+              [buf (qt-buffer-create! *top-buffer-name* ed #f)])
+         (qt-buffer-attach! ed buf)
+         (qt-edit-window-buffer-set! (qt-current-window fr) buf)
+         (qt-plain-text-edit-set-read-only! ed #t)
+         (let ([output (top-capture-output)])
+           (qt-plain-text-edit-set-text! ed output)
+           (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
+           (qt-plain-text-edit-set-cursor-position! ed 0))
+         (set! *top-active* app)
+         (schedule-periodic!
+           'top-refresh
+           3000
+           (lambda () (when *top-active* (top-refresh! *top-active*))))
+         (echo-message!
+           (app-state-echo app)
+           "top: press q or switch buffer to stop")))
+  (def (cmd-top-quit app) "Stop the top refresh timer."
+       (cancel-periodic! 'top-refresh) (set! *top-active* #f)
+       (echo-message! (app-state-echo app) "top stopped"))
   (define-syntax *auto-indent*
     (identifier-syntax
       [id (vector-ref *auto-indent*--cell 0)]
@@ -2286,4 +2342,15 @@
   (define-syntax *abbrevs-path*
     (identifier-syntax
       [id (vector-ref *abbrevs-path*--cell 0)]
-      [(set! id val) (vector-set! *abbrevs-path*--cell 0 val)])))
+      [(set! id val) (vector-set! *abbrevs-path*--cell 0 val)]))
+  (define-syntax *top-buffer-name*
+    (identifier-syntax
+      [id (vector-ref *top-buffer-name*--cell 0)]
+      [(set! id val) (vector-set!
+                       *top-buffer-name*--cell
+                       0
+                       val)]))
+  (define-syntax *top-active*
+    (identifier-syntax
+      [id (vector-ref *top-active*--cell 0)]
+      [(set! id val) (vector-set! *top-active*--cell 0 val)])))

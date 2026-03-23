@@ -725,6 +725,8 @@
    (register-command! 'info-elisp-manual cmd-info-elisp-manual)
    (register-command! 'report-bug cmd-report-bug)
    (register-command! 'memory-report cmd-memory-report)
+   (register-command! 'top cmd-top)
+   (register-command! 'top-quit cmd-top-quit)
    (register-command!
      'view-echo-area-messages
      cmd-view-echo-area-messages)
