@@ -1118,7 +1118,6 @@
                   (cond
                     ;; Case 1: A chord is pending and a new key arrived
                     (*chord-pending-char*
-                     (qt-timer-stop! *chord-timer*)
                      (let* ((ch1 *chord-pending-char*)
                             (saved-code *chord-pending-code*)
                             (saved-mods *chord-pending-mods*)
@@ -1128,10 +1127,18 @@
                                       (> (char->integer (string-ref text 0)) 31)
                                       (zero? (bitwise-and mods QT_MOD_CTRL))
                                       (zero? (bitwise-and mods QT_MOD_ALT))
-                                      (string-ref text 0)))
-                            (chord-cmd (and ch2 (chord-lookup ch1 ch2))))
-                       (set! *chord-pending-char* #f)
-                       (if chord-cmd
+                                      (string-ref text 0))))
+                       ;; Auto-repeat filter: when same char + same code arrives,
+                       ;; check if it's a valid same-char chord (e.g. EE→eshell).
+                       ;; If not a valid chord, it's auto-repeat — ignore and keep waiting.
+                       (if (and ch2 (char=? ch1 ch2) (= code saved-code)
+                                (not (chord-lookup ch1 ch2)))
+                         (void)  ;; ignore auto-repeat, timer keeps running
+                         ;; Real second key — resolve the chord
+                         (let ((chord-cmd (and ch2 (chord-lookup ch1 ch2))))
+                           (qt-timer-stop! *chord-timer*)
+                           (set! *chord-pending-char* #f)
+                           (if chord-cmd
                          ;; Chord matched — execute the chord command
                          (begin
                            (execute-command! app chord-cmd)
@@ -1145,7 +1152,7 @@
                          ;; No chord — replay saved key then process current key
                          (begin
                            (do-normal-key! saved-code saved-mods saved-text)
-                           (do-normal-key! code mods text)))))
+                           (do-normal-key! code mods text)))))))
 
                     ;; Case 2: Printable key that could start a chord — save and wait
                     ;; Skip chord detection in terminal/shell buffers to avoid
@@ -1160,6 +1167,7 @@
                             (not (or (terminal-buffer? cur-buf)
                                      (shell-buffer? cur-buf)
                                      (gsh-eshell-buffer? cur-buf)))))
+                     (verbose-log! "CHORD-PENDING ch=" (string (string-ref text 0)))
                      (set! *chord-pending-char* (string-ref text 0))
                      (set! *chord-pending-code* code)
                      (set! *chord-pending-mods* mods)

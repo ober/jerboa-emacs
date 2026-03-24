@@ -81,7 +81,7 @@
      (jerboa-emacs async)
      schedule-periodic!
      cancel-periodic!)
-   (only (jsh registry) builtin-lookup)
+   (only (jsh registry) builtin-lookup builtin-register!)
    (rename (jerboa-coreutils top) (main cu-top-main))
    (only (jerboa-emacs persist) theme-settings-save!
      theme-settings-load! mx-history-save! mx-history-load!
@@ -2358,4 +2358,46 @@
   (define-syntax *top-active*
     (identifier-syntax
       [id (vector-ref *top-active*--cell 0)]
-      [(set! id val) (vector-set! *top-active*--cell 0 val)])))
+      [(set! id val) (vector-set! *top-active*--cell 0 val)]))
+  (builtin-register!
+    "top"
+    (lambda (args env)
+      (call/cc
+        (lambda (k)
+          (parameterize ([exit-handler (lambda (code) (k code))])
+            (if (member "-b" args)
+                (begin (apply cu-top-main args) 0)
+                (let ([in (current-input-port)])
+                  (let loop ()
+                    (with-catch
+                      (lambda (e) (void))
+                      (lambda ()
+                        (call/cc
+                          (lambda (k2)
+                            (parameterize ([exit-handler
+                                            (lambda (code) (k2 (void)))])
+                              (apply
+                                cu-top-main
+                                (append (list "-b" "-n" "1") args)))))))
+                    (let check ()
+                      (if (and (input-port? in) (char-ready? in))
+                          (let ([ch (read-char in)])
+                            (cond
+                              [(eof-object? ch) (k 0)]
+                              [(char=? ch #\q) (k 0)]
+                              [(char=? ch (integer->char 3)) (k 0)]
+                              [else (check)]))
+                          (void)))
+                    (let delay-loop ([remaining 30])
+                      (when (> remaining 0)
+                        (thread-sleep! 0.1)
+                        (if (and (input-port? in) (char-ready? in))
+                            (let ([ch (read-char in)])
+                              (cond
+                                [(eof-object? ch) (k 0)]
+                                [(char=? ch #\q) (k 0)]
+                                [(char=? ch (integer->char 3)) (k 0)]
+                                [else (delay-loop (- remaining 1))]))
+                            (delay-loop (- remaining 1)))))
+                    (loop)))))))
+      0)))

@@ -1366,7 +1366,6 @@
                                                                           echo-label)))))])
                                        (cond
                                          [*chord-pending-char*
-                                          (qt-timer-stop! *chord-timer*)
                                           (let* ([ch1 *chord-pending-char*]
                                                  [saved-code *chord-pending-code*]
                                                  [saved-mods *chord-pending-mods*]
@@ -1389,39 +1388,52 @@
                                                                QT_MOD_ALT))
                                                            (string-ref
                                                              text
-                                                             0))]
-                                                 [chord-cmd (and ch2
-                                                                 (chord-lookup
-                                                                   ch1
-                                                                   ch2))])
-                                            (set! *chord-pending-char* #f)
-                                            (if chord-cmd
-                                                (begin
-                                                  (execute-command!
-                                                    app
-                                                    chord-cmd)
-                                                  (qt-update-visual-decorations!
-                                                    (qt-current-editor
-                                                      (app-state-frame
-                                                        app)))
-                                                  (qt-update-mark-selection!
-                                                    app)
-                                                  (qt-modeline-update! app)
-                                                  (qt-tabbar-update! app)
-                                                  (qt-update-frame-title!
-                                                    app)
-                                                  (qt-echo-draw!
-                                                    (app-state-echo app)
-                                                    echo-label))
-                                                (begin
-                                                  (do-normal-key!
-                                                    saved-code
-                                                    saved-mods
-                                                    saved-text)
-                                                  (do-normal-key!
-                                                    code
-                                                    mods
-                                                    text))))]
+                                                             0))])
+                                            (if (and ch2
+                                                     (char=? ch1 ch2)
+                                                     (= code saved-code)
+                                                     (not (chord-lookup
+                                                            ch1
+                                                            ch2)))
+                                                (void)
+                                                (let ([chord-cmd (and ch2
+                                                                      (chord-lookup
+                                                                        ch1
+                                                                        ch2))])
+                                                  (qt-timer-stop!
+                                                    *chord-timer*)
+                                                  (set! *chord-pending-char*
+                                                    #f)
+                                                  (if chord-cmd
+                                                      (begin
+                                                        (execute-command!
+                                                          app
+                                                          chord-cmd)
+                                                        (qt-update-visual-decorations!
+                                                          (qt-current-editor
+                                                            (app-state-frame
+                                                              app)))
+                                                        (qt-update-mark-selection!
+                                                          app)
+                                                        (qt-modeline-update!
+                                                          app)
+                                                        (qt-tabbar-update!
+                                                          app)
+                                                        (qt-update-frame-title!
+                                                          app)
+                                                        (qt-echo-draw!
+                                                          (app-state-echo
+                                                            app)
+                                                          echo-label))
+                                                      (begin
+                                                        (do-normal-key!
+                                                          saved-code
+                                                          saved-mods
+                                                          saved-text)
+                                                        (do-normal-key!
+                                                          code
+                                                          mods
+                                                          text))))))]
                                          [(and (= (string-length text) 1)
                                                (> (char->integer
                                                     (string-ref text 0))
@@ -1448,6 +1460,9 @@
                                                             cur-buf)
                                                           (gsh-eshell-buffer?
                                                             cur-buf)))))
+                                          (verbose-log!
+                                            "CHORD-PENDING ch="
+                                            (string (string-ref text 0)))
                                           (set! *chord-pending-char*
                                             (string-ref text 0))
                                           (set! *chord-pending-code* code)

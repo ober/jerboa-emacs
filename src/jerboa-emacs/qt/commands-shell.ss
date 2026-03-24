@@ -12,7 +12,7 @@
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         (only-in :jerboa-emacs/async schedule-periodic! cancel-periodic!)
-        (only-in :jsh/registry builtin-lookup)
+        (only-in :jsh/registry builtin-lookup builtin-register!)
         (rename-in :jerboa-coreutils/top (main cu-top-main))
         (only-in :jerboa-emacs/persist theme-settings-save! theme-settings-load!
                  mx-history-save! mx-history-load!
@@ -1910,4 +1910,54 @@ SPC = page down, DEL = page up, q = quit view-mode."
   (cancel-periodic! 'top-refresh)
   (set! *top-active* #f)
   (echo-message! (app-state-echo app) "top stopped"))
+
+;; Register `top` as a jsh builtin for vterm.
+;; The coreutils top opens /dev/tty for interactive input, which doesn't
+;; work inside vterm (different fd from the PTY). This builtin runs top
+;; in batch mode with a loop, using current-input-port (the PTY) for
+;; quit detection (q or C-c).
+(builtin-register! "top"
+  (lambda (args env)
+    (call/cc
+      (lambda (k)
+        (parameterize ((exit-handler (lambda (code) (k code))))
+          (if (member "-b" args)
+            ;; User explicitly asked for batch mode — pass through
+            (begin (apply cu-top-main args) 0)
+            ;; Interactive-style: batch mode + loop + PTY input for quit
+            (let ((in (current-input-port)))
+              (let loop ()
+                ;; Run one batch iteration
+                (with-catch
+                  (lambda (e) (void))
+                  (lambda ()
+                    (call/cc
+                      (lambda (k2)
+                        (parameterize ((exit-handler (lambda (code) (k2 (void)))))
+                          (apply cu-top-main
+                            (append (list "-b" "-n" "1") args)))))))
+                ;; Check for quit: q or C-c (char 3)
+                (let check ()
+                  (if (and (input-port? in) (char-ready? in))
+                    (let ((ch (read-char in)))
+                      (cond
+                        ((eof-object? ch) (k 0))
+                        ((char=? ch #\q) (k 0))
+                        ((char=? ch (integer->char 3)) (k 0))  ;; C-c
+                        (else (check))))  ;; drain other chars
+                    (void)))
+                ;; Sleep 3 seconds, polling for quit every 100ms
+                (let delay-loop ((remaining 30))
+                  (when (> remaining 0)
+                    (thread-sleep! 0.1)
+                    (if (and (input-port? in) (char-ready? in))
+                      (let ((ch (read-char in)))
+                        (cond
+                          ((eof-object? ch) (k 0))
+                          ((char=? ch #\q) (k 0))
+                          ((char=? ch (integer->char 3)) (k 0))
+                          (else (delay-loop (- remaining 1)))))
+                      (delay-loop (- remaining 1)))))
+                (loop)))))))
+    0))
 
