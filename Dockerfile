@@ -194,6 +194,7 @@ RUN git clone --depth 1 --branch v${TS_VERSION} \
       https://github.com/tree-sitter/tree-sitter /tmp/tree-sitter && \
     cd /tmp/tree-sitter && \
     cc -c -O2 -Ilib/include lib/src/lib.c -o lib/src/lib.o && \
+    mkdir -p /opt/tree-sitter-lib && \
     ar rcs /opt/tree-sitter-lib/libtree-sitter.a lib/src/lib.o && \
     mkdir -p /opt/tree-sitter-include/tree_sitter && \
     cp lib/include/tree_sitter/api.h /opt/tree-sitter-include/tree_sitter/ && \
@@ -204,7 +205,7 @@ RUN mkdir -p /opt/tree-sitter-grammars && \
     build_grammar() { \
       name=$1; repo=$2; tag=$3; subdir=${4:-.}; \
       git clone --depth 1 --branch "$tag" \
-        "https://github.com/$repo" /tmp/ts-$name 2>/dev/null && \
+        "https://github.com/$repo" /tmp/ts-$name && \
       cd /tmp/ts-$name/$subdir && \
       SRC_DIR=src && \
       gcc -c -O2 -I/opt/tree-sitter-include -I$SRC_DIR \
@@ -219,7 +220,7 @@ RUN mkdir -p /opt/tree-sitter-grammars && \
       cd / && rm -rf /tmp/ts-$name; \
     } && \
     build_grammar c          tree-sitter/tree-sitter-c          v0.23.5 && \
-    build_grammar cpp        tree-sitter/tree-sitter-cpp        v0.23.6 && \
+    build_grammar cpp        tree-sitter/tree-sitter-cpp        v0.23.4 && \
     build_grammar python     tree-sitter/tree-sitter-python     v0.23.6 && \
     build_grammar javascript tree-sitter/tree-sitter-javascript v0.23.1 && \
     build_grammar rust       tree-sitter/tree-sitter-rust       v0.23.3 && \
@@ -231,7 +232,7 @@ RUN mkdir -p /opt/tree-sitter-grammars && \
     build_grammar css        tree-sitter/tree-sitter-css        v0.23.2 && \
     build_grammar html       tree-sitter/tree-sitter-html       v0.23.2 && \
     build_grammar lua        tree-sitter-grammars/tree-sitter-lua v0.3.0 && \
-    build_grammar scheme     6cdh/tree-sitter-scheme            master && \
+    build_grammar scheme     6cdh/tree-sitter-scheme            main && \
     echo "Grammars built:" && ls /opt/tree-sitter-grammars/
 
 # ── Phase 6: Gerbil/Chez dependencies ──────────────────────────────────

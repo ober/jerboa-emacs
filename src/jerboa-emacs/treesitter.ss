@@ -38,9 +38,16 @@
 
 (import :std/sugar
         :std/srfi/13
-        :chez-scintilla/constants
         :jerboa-emacs/core
         :jerboa-emacs/qt/sci-shim)
+
+;; Scintilla styling constants (avoid chez-scintilla/constants dep for boot order)
+(define SCI_STARTSTYLING 2032)
+(define SCI_SETSTYLING   2033)
+(define SCI_STYLESETFORE 2051)
+(define SCI_STYLESETBACK 2052)
+(define SCI_STYLESETBOLD 2053)
+(define SCI_STYLESETITALIC 2054)
 
 ;;;============================================================================
 ;;; Load the C shim shared library
@@ -346,11 +353,7 @@
     ((java)             "java")
     ((css)              "css")
     ((xml)              "html")
-    ((yaml)             "yaml")
-    ((toml)             "toml")
     ((lua)              "lua")
-    ((sql)              "sql")
-    ((markdown)         "markdown")
     (else #f)))
 
 ;;;============================================================================

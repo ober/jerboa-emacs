@@ -380,13 +380,17 @@
          ;;   define-foreign name "c-name"  — jsh macro (C name is the second string)
          (gen-cmd
            (format
-             "{ { cat ~a ~a; find ~a ~a ~a lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; cat ~a/jerboa-coreutils/top.sls 2>/dev/null; } | \
+             "{ { cat ~a ~a; find ~a ~a/jerboa ~a/chez-scintilla lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; cat ~a/jerboa-coreutils/top.sls 2>/dev/null; } | \
 sed 's/;;.*//' | grep -oE '(foreign-procedure|foreign-entry\\?) \"[^\"]*\"' | sed 's/.* \"//;s/\"//'; \
 { cat ~a ~a; } | sed 's/;;.*//' | grep -o 'define-optional-ffi [^ ]* \"[^\"]*\"' | sed 's/.*define-optional-ffi [^ ]* \"//;s/\"//'; \
 find ~a -name '*.sls' -o -name '*.ss' | \
-  xargs grep -oh 'define-foreign [^ ]* \"[^\"]*\"' 2>/dev/null | \
-  sed 's/.*define-foreign [^ ]* \"//;s/\".*//'; } | \
-sort -u | grep -v '^$' | grep -v '^_NSGetExecutablePath$' | grep -v '^io_uring_' > /tmp/ffi_syms.txt && \
+  xargs cat 2>/dev/null | tr '\\n' ' ' | \
+  grep -oE 'define-foreign [^ ]+ +\"[^\"]+\"' | \
+  sed 's/.*define-foreign [^ ]* *\"//;s/\".*//'; } | \
+sort -u | grep -v '^$' | grep -v '^_NSGetExecutablePath$' | grep -v '^io_uring_' | \
+grep -v '^jerboa_' | grep -v '^SSL_' | grep -v '^TLS_' | grep -v '^EVP_' | \
+grep -v '^CRYPTO_' | grep -v '^PKCS5_' | grep -v '^RAND_' | \
+grep -v '^QRcode_' | grep -v '^embed_encrypt$' | grep -v '^embed_random_bytes$' > /tmp/ffi_syms.txt && \
 awk '\
 BEGIN{ print \"/* Auto-generated — do not edit */\"; \
        print \"#include \\\"scheme.h\\\"\"; print \"\"; } \
