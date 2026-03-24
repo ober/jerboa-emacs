@@ -779,9 +779,13 @@ modified so the next save uses the new encoding."
           (let-values (((mode output new-cwd) (terminal-execute-async! input ts rows cols)))
           (verbose-log! "cmd-terminal-send: mode=" (symbol->string mode)
                         " pty-pid=" (let ((p (terminal-state-pty-pid ts)))
-                                      (if p (number->string p) "none"))
+                                      (cond ((integer? p) (number->string p))
+                                            ((symbol? p) (symbol->string p))
+                                            (else "none")))
                         " pty-master=" (let ((m (terminal-state-pty-master ts)))
-                                         (if m (number->string m) "none")))
+                                         (cond ((integer? m) (number->string m))
+                                               ((box? m) "virtual")
+                                               (else "none"))))
           (case mode
             ((sync)
              (when (and (string? output) (> (string-length output) 0))
@@ -824,8 +828,9 @@ modified so the next save uses the new encoding."
                   (qt-buffer-kill! buf)
                   (echo-message! (app-state-echo app) "Terminal exited")))
                ((eq? output 'top)
-                ;; Redirect to in-process top buffer (flicker-free)
-                (cmd-top app)))))))))))
+                ;; Run coreutils top inside this vterm using virtual PTY
+                (vterm-start-top! ts ed (app-state-frame app) new-cwd))
+               )))))))))
 
 (def (cmd-term-interrupt app)
   "Send SIGINT to running PTY process, or cancel current input."

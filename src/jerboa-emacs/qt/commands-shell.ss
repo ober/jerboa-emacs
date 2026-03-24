@@ -9,8 +9,10 @@
         :std/sort
         :std/srfi/13
         :std/text/base64
+        :std/misc/channel
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
+        (only-in :jerboa-emacs/vtscreen new-vtscreen)
         (only-in :jerboa-emacs/async schedule-periodic! cancel-periodic!)
         (only-in :jsh/registry builtin-lookup builtin-register!)
         (rename-in :jerboa-coreutils/top (main cu-top-main))
@@ -1845,8 +1847,9 @@ SPC = page down, DEL = page up, q = quit view-mode."
                   (qt-plain-text-edit-ensure-cursor-visible! ed))))))))))
 
 ;;;============================================================================
-;;; In-process top: uses coreutils top in batch mode, renders into a buffer.
-;;; Bypasses PTY/vtscreen pipeline for flicker-free display.
+;;; In-process top: runs coreutils top in batch mode inside the vterm.
+;;; Uses virtual PTY (box for input, channel for output) with vtscreen
+;;; alt-screen rendering for performant, flicker-free display.
 ;;;============================================================================
 
 (def *top-buffer-name* "*top*")
@@ -1911,53 +1914,66 @@ SPC = page down, DEL = page up, q = quit view-mode."
   (set! *top-active* #f)
   (echo-message! (app-state-echo app) "top stopped"))
 
-;; Register `top` as a jsh builtin for vterm.
-;; The coreutils top opens /dev/tty for interactive input, which doesn't
-;; work inside vterm (different fd from the PTY). This builtin runs top
-;; in batch mode with a loop, using current-input-port (the PTY) for
-;; quit detection (q or C-c).
-(builtin-register! "top"
-  (lambda (args env)
-    (call/cc
-      (lambda (k)
-        (parameterize ((exit-handler (lambda (code) (k code))))
-          (if (member "-b" args)
-            ;; User explicitly asked for batch mode — pass through
-            (begin (apply cu-top-main args) 0)
-            ;; Interactive-style: batch mode + loop + PTY input for quit
-            (let ((in (current-input-port)))
-              (let loop ()
-                ;; Run one batch iteration
-                (with-catch
-                  (lambda (e) (void))
-                  (lambda ()
-                    (call/cc
-                      (lambda (k2)
-                        (parameterize ((exit-handler (lambda (code) (k2 (void)))))
-                          (apply cu-top-main
-                            (append (list "-b" "-n" "1") args)))))))
-                ;; Check for quit: q or C-c (char 3)
-                (let check ()
-                  (if (and (input-port? in) (char-ready? in))
-                    (let ((ch (read-char in)))
-                      (cond
-                        ((eof-object? ch) (k 0))
-                        ((char=? ch #\q) (k 0))
-                        ((char=? ch (integer->char 3)) (k 0))  ;; C-c
-                        (else (check))))  ;; drain other chars
-                    (void)))
-                ;; Sleep 3 seconds, polling for quit every 100ms
-                (let delay-loop ((remaining 30))
-                  (when (> remaining 0)
-                    (thread-sleep! 0.1)
-                    (if (and (input-port? in) (char-ready? in))
-                      (let ((ch (read-char in)))
-                        (cond
-                          ((eof-object? ch) (k 0))
-                          ((char=? ch #\q) (k 0))
-                          ((char=? ch (integer->char 3)) (k 0))
-                          (else (delay-loop (- remaining 1)))))
-                      (delay-loop (- remaining 1)))))
-                (loop)))))))
-    0))
+(def (vterm-start-top! ts ed _fr cmd-string)
+  "Run coreutils top inside the current vterm buffer using a virtual PTY.
+   Uses alt-screen + row-diff rendering for performant, flicker-free display.
+   Input (q/C-c to quit) flows through terminal-send-input! via the input box."
+  (let* ((esc (string (integer->char 27)))
+         (alt-screen-on  (string-append esc "[?1049h"))
+         (alt-screen-off (string-append esc "[?1049l"))
+         (clear-home     (string-append esc "[2J" esc "[H"))
+         (ch (make-channel))
+         (input-box (box ""))
+         (vt (new-vtscreen 24 80)))
+    ;; Set up virtual PTY state — input-box as master, 'top as pid
+    (set! (terminal-state-pty-master ts) input-box)
+    (set! (terminal-state-pty-pid ts) 'top)
+    (set! (terminal-state-pty-channel ts) ch)
+    (set! (terminal-state-vtscreen ts) vt)
+    ;; Spawn background thread that loops coreutils top
+    (let ((thread
+           (spawn
+             (lambda ()
+               (with-catch
+                 (lambda (e) (channel-put ch (cons 'done -1)))
+                 (lambda ()
+                   ;; Switch to alt screen
+                   (channel-put ch (cons 'data alt-screen-on))
+                   (let loop ()
+                     ;; Clear screen + cursor home
+                     (channel-put ch (cons 'data clear-home))
+                     ;; Capture top -b -n 1 output
+                     (let ((output (top-capture-output)))
+                       (channel-put ch (cons 'data output)))
+                     ;; Check input box for quit chars (q or C-c)
+                     (let ((pending (unbox input-box)))
+                       (set-box! input-box "")
+                       (if (top-input-quit? pending)
+                         ;; Quit: restore normal screen, signal done
+                         (begin
+                           (channel-put ch (cons 'data alt-screen-off))
+                           (channel-put ch (cons 'done 0)))
+                         ;; Sleep ~3 seconds, polling input every 100ms
+                         (let delay ((remaining 30))
+                           (if (<= remaining 0)
+                             (loop)
+                             (begin
+                               (thread-sleep! 0.1)
+                               (let ((p (unbox input-box)))
+                                 (if (top-input-quit? p)
+                                   (begin
+                                     (set-box! input-box "")
+                                     (channel-put ch (cons 'data alt-screen-off))
+                                     (channel-put ch (cons 'done 0)))
+                                   (delay (- remaining 1))))))))))))))))
+      (set! (terminal-state-pty-thread ts) thread))))
+
+(def (top-input-quit? str)
+  "Check if input string contains q or C-c (quit signal for top)."
+  (let ((len (string-length str)))
+    (let scan ((i 0))
+      (and (< i len)
+           (or (char=? (string-ref str i) #\q)
+               (char=? (string-ref str i) (integer->char 3))
+               (scan (+ i 1)))))))
 

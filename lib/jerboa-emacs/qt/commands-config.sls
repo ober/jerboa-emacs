@@ -947,10 +947,16 @@
                    (verbose-log! "cmd-terminal-send: mode=" (symbol->string mode)
                      " pty-pid="
                      (let ([p (terminal-state-pty-pid ts)])
-                       (if p (number->string p) "none"))
+                       (cond
+                         [(integer? p) (number->string p)]
+                         [(symbol? p) (symbol->string p)]
+                         [else "none"]))
                      " pty-master="
                      (let ([m (terminal-state-pty-master ts)])
-                       (if m (number->string m) "none")))
+                       (cond
+                         [(integer? m) (number->string m)]
+                         [(box? m) "virtual"]
+                         [else "none"])))
                    (case mode
                      [(sync)
                       (when (and (string? output)
@@ -1005,7 +1011,12 @@
                            (echo-message!
                              (app-state-echo app)
                              "Terminal exited"))]
-                        [(eq? output 'top) (cmd-top app)])])))))))
+                        [(eq? output 'top)
+                         (vterm-start-top!
+                           ts
+                           ed
+                           (app-state-frame app)
+                           new-cwd)])])))))))
   (def (cmd-term-interrupt app)
        "Send SIGINT to running PTY process, or cancel current input."
        (let* ([buf (current-qt-buffer app)]

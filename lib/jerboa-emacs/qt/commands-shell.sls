@@ -69,14 +69,16 @@
    cmd-define-abbrev cmd-delete-horizontal-space
    cmd-consult-line cmd-consult-grep cmd-consult-buffer
    cmd-consult-outline *top-buffer-name* *top-active*
-   top-capture-output top-refresh! cmd-top cmd-top-quit)
+   top-capture-output top-refresh! cmd-top cmd-top-quit
+   vterm-start-top! top-input-quit?)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
      mutex? mutex-name sort sort!)
    (std sugar) (chez-scintilla constants) (std sort)
-   (std srfi srfi-13) (std text base64)
+   (std srfi srfi-13) (std text base64) (std misc channel)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+   (only (jerboa-emacs vtscreen) new-vtscreen)
    (only
      (jerboa-emacs async)
      schedule-periodic!
@@ -2206,6 +2208,67 @@
   (def (cmd-top-quit app) "Stop the top refresh timer."
        (cancel-periodic! 'top-refresh) (set! *top-active* #f)
        (echo-message! (app-state-echo app) "top stopped"))
+  (def (vterm-start-top! ts ed _fr cmd-string)
+       "Run coreutils top inside the current vterm buffer using a virtual PTY.\n   Uses alt-screen + row-diff rendering for performant, flicker-free display.\n   Input (q/C-c to quit) flows through terminal-send-input! via the input box."
+       (let* ([esc (string (integer->char 27))]
+              [alt-screen-on (string-append esc "[?1049h")]
+              [alt-screen-off (string-append esc "[?1049l")]
+              [clear-home (string-append esc "[2J" esc "[H")]
+              [ch (make-channel)]
+              [input-box (box "")]
+              [vt (new-vtscreen 24 80)])
+         (terminal-state-pty-master-set! ts input-box)
+         (terminal-state-pty-pid-set! ts 'top)
+         (terminal-state-pty-channel-set! ts ch)
+         (terminal-state-vtscreen-set! ts vt)
+         (let ([thread (spawn
+                         (lambda ()
+                           (with-catch
+                             (lambda (e) (channel-put ch (cons 'done -1)))
+                             (lambda ()
+                               (channel-put ch (cons 'data alt-screen-on))
+                               (let loop ()
+                                 (channel-put ch (cons 'data clear-home))
+                                 (let ([output (top-capture-output)])
+                                   (channel-put ch (cons 'data output)))
+                                 (let ([pending (unbox input-box)])
+                                   (set-box! input-box "")
+                                   (if (top-input-quit? pending)
+                                       (begin
+                                         (channel-put
+                                           ch
+                                           (cons 'data alt-screen-off))
+                                         (channel-put ch (cons 'done 0)))
+                                       (let delay ([remaining 30])
+                                         (if (<= remaining 0)
+                                             (loop)
+                                             (begin
+                                               (thread-sleep! 0.1)
+                                               (let ([p (unbox input-box)])
+                                                 (if (top-input-quit? p)
+                                                     (begin
+                                                       (set-box!
+                                                         input-box
+                                                         "")
+                                                       (channel-put
+                                                         ch
+                                                         (cons
+                                                           'data
+                                                           alt-screen-off))
+                                                       (channel-put
+                                                         ch
+                                                         (cons 'done 0)))
+                                                     (delay (- remaining
+                                                               1))))))))))))))])
+           (terminal-state-pty-thread-set! ts thread))))
+  (def (top-input-quit? str)
+       "Check if input string contains q or C-c (quit signal for top)."
+       (let ([len (string-length str)])
+         (let scan ([i 0])
+           (and (< i len)
+                (or (char=? (string-ref str i) #\q)
+                    (char=? (string-ref str i) (integer->char 3))
+                    (scan (+ i 1)))))))
   (define-syntax *auto-indent*
     (identifier-syntax
       [id (vector-ref *auto-indent*--cell 0)]
@@ -2358,46 +2421,4 @@
   (define-syntax *top-active*
     (identifier-syntax
       [id (vector-ref *top-active*--cell 0)]
-      [(set! id val) (vector-set! *top-active*--cell 0 val)]))
-  (builtin-register!
-    "top"
-    (lambda (args env)
-      (call/cc
-        (lambda (k)
-          (parameterize ([exit-handler (lambda (code) (k code))])
-            (if (member "-b" args)
-                (begin (apply cu-top-main args) 0)
-                (let ([in (current-input-port)])
-                  (let loop ()
-                    (with-catch
-                      (lambda (e) (void))
-                      (lambda ()
-                        (call/cc
-                          (lambda (k2)
-                            (parameterize ([exit-handler
-                                            (lambda (code) (k2 (void)))])
-                              (apply
-                                cu-top-main
-                                (append (list "-b" "-n" "1") args)))))))
-                    (let check ()
-                      (if (and (input-port? in) (char-ready? in))
-                          (let ([ch (read-char in)])
-                            (cond
-                              [(eof-object? ch) (k 0)]
-                              [(char=? ch #\q) (k 0)]
-                              [(char=? ch (integer->char 3)) (k 0)]
-                              [else (check)]))
-                          (void)))
-                    (let delay-loop ([remaining 30])
-                      (when (> remaining 0)
-                        (thread-sleep! 0.1)
-                        (if (and (input-port? in) (char-ready? in))
-                            (let ([ch (read-char in)])
-                              (cond
-                                [(eof-object? ch) (k 0)]
-                                [(char=? ch #\q) (k 0)]
-                                [(char=? ch (integer->char 3)) (k 0)]
-                                [else (delay-loop (- remaining 1))]))
-                            (delay-loop (- remaining 1)))))
-                    (loop)))))))
-      0)))
+      [(set! id val) (vector-set! *top-active*--cell 0 val)])))

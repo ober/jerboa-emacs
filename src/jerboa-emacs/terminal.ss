@@ -678,10 +678,10 @@
       ;; export updates env vars in-process (PTY child won't propagate back)
       ((string-prefix? "export " trimmed)
        (terminal-handle-export! trimmed ts))
-      ;; top: redirect to in-process buffer rendering (no PTY flicker)
+      ;; top: run coreutils top inside vterm (not a separate buffer)
       ((or (string=? trimmed "top")
            (string-prefix? "top " trimmed))
-       (values 'special 'top #f))
+       (values 'special 'top trimmed))
       (else
        ;; ALL commands go through PTY async to avoid blocking the UI thread.
        ;; gsh-capture runs synchronously and can deadlock the Chez SMP GC
@@ -735,22 +735,31 @@
   (and (terminal-state-pty-pid ts) #t))
 
 (def (terminal-interrupt! ts)
-  "Send SIGINT to the PTY child process group."
-  (let ((pid (terminal-state-pty-pid ts)))
-    (when pid
-      (pty-kill! pid 2))))  ;; SIGINT = 2
+  "Send SIGINT to the PTY child process group.
+   For virtual PTY (coreutils top), sends C-c via input box instead."
+  (let ((pid (terminal-state-pty-pid ts))
+        (master (terminal-state-pty-master ts)))
+    (cond
+      ((and pid (integer? pid)) (pty-kill! pid 2))
+      ((box? master)
+       ;; Virtual PTY: inject C-c into input box
+       (set-box! master (string-append (unbox master) (string (integer->char 3))))))))
 
 (def (terminal-resize! ts rows cols)
   "Notify PTY child of window size change."
   (let ((master (terminal-state-pty-master ts)))
-    (when master
+    (when (and master (integer? master))
       (pty-resize! master rows cols))))
 
 (def (terminal-send-input! ts str)
-  "Send keystrokes to PTY child's stdin."
+  "Send keystrokes to PTY child's stdin.
+   Supports real PTY (integer fd) or virtual PTY (box for input queueing)."
   (let ((master (terminal-state-pty-master ts)))
-    (when master
-      (pty-write master str))))
+    (cond
+      ((integer? master) (pty-write master str))
+      ((box? master)
+       ;; Virtual PTY (e.g. coreutils top): queue input in box
+       (set-box! master (string-append (unbox master) str))))))
 
 (def (terminal-cleanup-pty! ts)
   "Clean up PTY resources: kill child, close fd, terminate reader thread."
@@ -760,7 +769,7 @@
         (ch (terminal-state-pty-channel ts)))
     (when thread
       (with-catch (lambda (_e) (void)) (lambda () (thread-terminate! thread))))
-    (when (and master pid)
+    (when (and master pid (integer? master))
       (pty-close! master pid))
     (when ch
       (with-catch (lambda (_e) (void)) (lambda () (channel-close ch))))
