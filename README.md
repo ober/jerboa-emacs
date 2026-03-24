@@ -188,3 +188,12 @@ The Gerbil form `(with-output-to-string "" thunk)` is not valid in Chez.
 | `GHERKIN` | `~/mine/gherkin/src` | gherkin library path |
 
 Override on the command line: `make SCHEME=/usr/local/bin/chez build`
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [docs/jemacs-vs-emacs.md](docs/jemacs-vs-emacs.md) | Feature comparison with GNU Emacs (48 categories, 2168+ commands) |
+| [docs/helm.md](docs/helm.md) | Helm narrowing framework — architecture, matching engine, sources |
+| [docs/shell.md](docs/shell.md) | Shell integration plan — jsh POSIX shell embedding |
+| [docs/repl-server.md](docs/repl-server.md) | TCP debug REPL server for live introspection |
