@@ -770,6 +770,7 @@
     ffi-qt-scintilla-receive-string
     ffi-qt-scintilla-set-text ffi-qt-scintilla-get-text ffi-qt-scintilla-get-text-length
     ffi-qt-scintilla-set-lexer-language ffi-qt-scintilla-get-lexer-language
+    ffi-qt-scintilla-lexer-set-color ffi-qt-scintilla-lexer-set-paper ffi-qt-scintilla-lexer-set-font-attr
     ffi-qt-scintilla-set-read-only ffi-qt-scintilla-is-read-only
     ffi-qt-scintilla-set-margin-width ffi-qt-scintilla-set-margin-type
     ffi-qt-scintilla-set-focus
@@ -3007,6 +3008,9 @@
   (define-optional-ffi ffi-qt-scintilla-get-text-length "qt_scintilla_get_text_length" (void*) int)
   (define-optional-ffi ffi-qt-scintilla-set-lexer-language "qt_scintilla_set_lexer_language" (void* string) void)
   (define-optional-ffi ffi-qt-scintilla-get-lexer-language "qt_scintilla_get_lexer_language" (void*) string)
+  (define-optional-ffi ffi-qt-scintilla-lexer-set-color "qt_scintilla_lexer_set_color" (void* int int) void)
+  (define-optional-ffi ffi-qt-scintilla-lexer-set-paper "qt_scintilla_lexer_set_paper" (void* int int) void)
+  (define-optional-ffi ffi-qt-scintilla-lexer-set-font-attr "qt_scintilla_lexer_set_font_attr" (void* int int int) void)
   (define-optional-ffi ffi-qt-scintilla-set-read-only "qt_scintilla_set_read_only" (void* int) void)
   (define-optional-ffi ffi-qt-scintilla-is-read-only "qt_scintilla_is_read_only" (void*) int)
   (define-optional-ffi ffi-qt-scintilla-set-margin-width "qt_scintilla_set_margin_width" (void* int int) void)

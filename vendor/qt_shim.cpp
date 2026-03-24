@@ -6799,6 +6799,11 @@ extern "C" int qt_scintilla_get_text_length(qt_scintilla_t sci) {
     QT_RETURN(int, static_cast<QsciScintilla*>(sci)->text().toUtf8().length());
 }
 
+// Helper: convert Scintilla BGR color int to QColor
+static QColor sci_to_qcolor(int color) {
+    return QColor(color & 0xFF, (color >> 8) & 0xFF, (color >> 16) & 0xFF);
+}
+
 extern "C" void qt_scintilla_set_lexer_language(qt_scintilla_t sci, const char* language) {
     QT_NULL_CHECK_VOID(sci);
     QT_VOID(
@@ -6807,7 +6812,174 @@ extern "C" void qt_scintilla_set_lexer_language(qt_scintilla_t sci, const char* 
         QsciLexer* old = s->lexer();
         QsciLexer* lex = create_lexer_for_language(s, language);
         s->setLexer(lex);  // nullptr disables lexer
-        delete old
+        delete old;
+        // After setLexer, override paper (background) to dark theme.
+        // QsciLexer defaults are light-themed; this makes them dark.
+        // Foreground colors from the lexer subclass are kept as-is
+        // since most are already distinct (blue, green, red, etc).
+        if (lex) {
+            QColor dark_bg(0x1e, 0x1e, 0x2e);
+            lex->setPaper(dark_bg, -1);
+            lex->setDefaultPaper(dark_bg);
+            // Brighten default text for dark background
+            lex->setDefaultColor(QColor(0xcd, 0xd6, 0xf4));
+            lex->setColor(QColor(0xcd, 0xd6, 0xf4), -1);
+            // Apply Catppuccin Mocha-inspired dark theme colors per style.
+            // These apply generically to all QsciLexer subclasses since
+            // style IDs 0-15 are common across most lexers.
+            // Style 0: Default text
+            lex->setColor(QColor(0xcd, 0xd6, 0xf4), 0);
+            // Style 1: Comments (green)
+            lex->setColor(QColor(0xa6, 0xe3, 0xa1), 1);
+            // Style 2: Numbers / line numbers (peach)
+            lex->setColor(QColor(0xfa, 0xb3, 0x87), 2);
+            // Style 3: Strings / single-quoted (yellow)
+            lex->setColor(QColor(0xf9, 0xe2, 0xaf), 3);
+            // Style 4: Keywords / operators (mauve)
+            lex->setColor(QColor(0xcb, 0xa6, 0xf7), 4);
+            // Style 5: Variables / identifiers (blue)
+            lex->setColor(QColor(0x89, 0xb4, 0xfa), 5);
+            // Style 6: Backtick strings / here-docs (teal)
+            lex->setColor(QColor(0x94, 0xe2, 0xd5), 6);
+            // Style 7: Operators / param expansion (flamingo)
+            lex->setColor(QColor(0xf2, 0xcd, 0xcd), 7);
+            // Style 8: Heredoc delimiter (maroon)
+            lex->setColor(QColor(0xeb, 0xa0, 0xac), 8);
+            // Style 9: Scalar variable (sapphire)
+            lex->setColor(QColor(0x74, 0xc7, 0xec), 9);
+            // Style 10: Error / special (red)
+            lex->setColor(QColor(0xf3, 0x8b, 0xa8), 10);
+            // Style 11: Preprocessor / here-doc body (sky)
+            lex->setColor(QColor(0x89, 0xdc, 0xeb), 11);
+            // Style 12: Double-quoted string (yellow, same as 3)
+            lex->setColor(QColor(0xf9, 0xe2, 0xaf), 12);
+            // Style 13: Regex (pink)
+            lex->setColor(QColor(0xf5, 0xc2, 0xe7), 13);
+        }
+    );
+}
+
+// Set lexer language AND apply dark theme colors in one call.
+// fg/bg are Scintilla BGR color ints. style_pairs is "style:color,style:color,..."
+// where each style is an int and color is a hex BGR value.
+// This avoids the need for separate FFI functions that require symbol registration.
+extern "C" void qt_scintilla_set_lexer_with_theme(qt_scintilla_t sci, const char* language,
+                                                    int default_fg, int default_bg,
+                                                    const char* style_spec) {
+    QT_NULL_CHECK_VOID(sci);
+    QT_VOID(
+        auto* s = static_cast<QsciScintilla*>(sci);
+        QsciLexer* old = s->lexer();
+        QsciLexer* lex = create_lexer_for_language(s, language);
+        // Set lexer first (this applies the lexer's default light-theme colors)
+        s->setLexer(lex);
+        delete old;
+        // NOW override colors on the active lexer — after setLexer() has connected signals
+        if (lex) {
+            QColor bg = sci_to_qcolor(default_bg);
+            QColor fg = sci_to_qcolor(default_fg);
+            // Set default paper/color for ALL styles (style -1)
+            lex->setPaper(bg, -1);
+            lex->setColor(fg, -1);
+            // Also set the default paper explicitly for STYLE_DEFAULT
+            lex->setDefaultPaper(bg);
+            lex->setDefaultColor(fg);
+            // Parse style spec: "style:color:bold:italic,..."
+            if (style_spec && style_spec[0]) {
+                std::string spec(style_spec);
+                size_t pos = 0;
+                while (pos < spec.size()) {
+                    size_t comma = spec.find(',', pos);
+                    if (comma == std::string::npos) comma = spec.size();
+                    std::string entry = spec.substr(pos, comma - pos);
+                    int style_id = 0, color = 0, bold = 0, italic = 0;
+                    if (sscanf(entry.c_str(), "%d:%x:%d:%d", &style_id, &color, &bold, &italic) >= 2) {
+                        lex->setColor(sci_to_qcolor(color), style_id);
+                        if (bold || italic) {
+                            QFont f = lex->font(style_id);
+                            if (bold) f.setBold(true);
+                            if (italic) f.setItalic(true);
+                            lex->setFont(f, style_id);
+                        }
+                    }
+                    pos = comma + 1;
+                }
+            }
+        }
+        // Also set via Scintilla API as fallback for areas not covered by lexer
+        s->SendScintilla(QsciScintillaBase::SCI_STYLESETBACK,
+                         QsciScintillaBase::STYLE_DEFAULT, (long)default_bg);
+        s->SendScintilla(QsciScintillaBase::SCI_STYLESETFORE,
+                         QsciScintillaBase::STYLE_DEFAULT, (long)default_fg);
+        s->SendScintilla(QsciScintillaBase::SCI_STYLECLEARALL);
+        // Re-apply per-style colors via lexer (STYLECLEARALL wiped them)
+        if (lex) {
+            QColor bg = sci_to_qcolor(default_bg);
+            QColor fg = sci_to_qcolor(default_fg);
+            lex->setPaper(bg, -1);
+            lex->setColor(fg, -1);
+            if (style_spec && style_spec[0]) {
+                std::string spec(style_spec);
+                size_t pos = 0;
+                while (pos < spec.size()) {
+                    size_t comma = spec.find(',', pos);
+                    if (comma == std::string::npos) comma = spec.size();
+                    std::string entry = spec.substr(pos, comma - pos);
+                    int style_id = 0, color = 0, bold = 0, italic = 0;
+                    if (sscanf(entry.c_str(), "%d:%x:%d:%d", &style_id, &color, &bold, &italic) >= 2) {
+                        lex->setColor(sci_to_qcolor(color), style_id);
+                        if (bold || italic) {
+                            QFont f = lex->font(style_id);
+                            if (bold) f.setBold(true);
+                            if (italic) f.setItalic(true);
+                            lex->setFont(f, style_id);
+                        }
+                    }
+                    pos = comma + 1;
+                }
+            }
+        }
+        // Force re-colorize
+        s->SendScintilla(QsciScintillaBase::SCI_COLOURISE, (unsigned long)0, (long)-1)
+    );
+}
+
+extern "C" void qt_scintilla_lexer_set_color(qt_scintilla_t sci, int style, int color) {
+    QT_NULL_CHECK_VOID(sci);
+    QT_VOID(
+        auto* lex = static_cast<QsciScintilla*>(sci)->lexer();
+        if (lex) {
+            int r = color & 0xFF;
+            int g = (color >> 8) & 0xFF;
+            int b = (color >> 16) & 0xFF;
+            lex->setColor(QColor(r, g, b), style);
+        }
+    );
+}
+
+extern "C" void qt_scintilla_lexer_set_paper(qt_scintilla_t sci, int style, int color) {
+    QT_NULL_CHECK_VOID(sci);
+    QT_VOID(
+        auto* lex = static_cast<QsciScintilla*>(sci)->lexer();
+        if (lex) {
+            int r = color & 0xFF;
+            int g = (color >> 8) & 0xFF;
+            int b = (color >> 16) & 0xFF;
+            lex->setPaper(QColor(r, g, b), style);
+        }
+    );
+}
+
+extern "C" void qt_scintilla_lexer_set_font_attr(qt_scintilla_t sci, int style, int bold, int italic) {
+    QT_NULL_CHECK_VOID(sci);
+    QT_VOID(
+        auto* lex = static_cast<QsciScintilla*>(sci)->lexer();
+        if (lex) {
+            QFont f = lex->font(style);
+            f.setBold(bold != 0);
+            f.setItalic(italic != 0);
+            lex->setFont(f, style);
+        }
     );
 }
 

@@ -217,6 +217,7 @@
       ;; Collect all captures in batch
       (let ((count (ffi-ts-highlight-captures cursor query
                      *capture-buf* *capture-buf-size*)))
+        (verbose-log! "ts-highlight: captures=" (number->string count))
         ;; Apply styles
         (ts-apply-captures! ed query count))
       (ffi-ts-query-cursor-delete cursor))))
@@ -232,7 +233,7 @@
       (let ((count (ffi-ts-highlight-captures cursor query
                      *capture-buf* *capture-buf-size*)))
         ;; Clear styles in range first
-        (sci-send ed SCI_STARTSTYLING start-byte)
+        (sci-send ed SCI_STARTSTYLING start-byte 31)
         (sci-send ed SCI_SETSTYLING (- end-byte start-byte) 0)
         ;; Apply captures
         (ts-apply-captures! ed query count))
@@ -242,8 +243,8 @@
   "Apply captured highlights to the Scintilla editor.
    Reads from *capture-buf* (filled by ts-highlight-captures)."
   (let ((buf *capture-buf*))
-    (let loop ((i 0) (last-end 0))
-      (when (< i count)
+    (let loop ((i 0) (last-end 0) (applied 0))
+      (if (< i count)
         (let* ((off (* i 12))
                (start (bytevector-s32-native-ref buf off))
                (end   (bytevector-s32-native-ref buf (+ off 4)))
@@ -251,10 +252,21 @@
                (cap-name (ffi-ts-query-capture-name query cap-idx))
                (style-id (ts-capture->style-id cap-name))
                (len (- end start)))
-          (when (and (> style-id 0) (> len 0) (>= start last-end))
-            (sci-send ed SCI_STARTSTYLING start)
-            (sci-send ed SCI_SETSTYLING len style-id))
-          (loop (+ i 1) (max last-end end)))))))
+          (when (< i 5)
+            (verbose-log! "ts-capture[" (number->string i) "]: name=" cap-name
+                          " style=" (number->string style-id)
+                          " start=" (number->string start)
+                          " end=" (number->string end)
+                          " len=" (number->string len)
+                          " last-end=" (number->string last-end)))
+          (if (and (> style-id 0) (> len 0) (>= start last-end))
+            (begin
+              (sci-send ed SCI_STARTSTYLING start 31)
+              (sci-send ed SCI_SETSTYLING len style-id)
+              (loop (+ i 1) (max last-end end) (+ applied 1)))
+            (loop (+ i 1) (max last-end end) applied)))
+        (verbose-log! "ts-apply: total=" (number->string count)
+                      " applied=" (number->string applied))))))
 
 (def (ts-tree-changed-ranges old-tree new-tree)
   "Get byte ranges that changed between two trees.
@@ -313,13 +325,18 @@
   "Full re-parse of buffer text and re-highlight.
    Called on initial load and after debounced edits."
   (let ((state (hash-get *buffer-ts-state* buf)))
+    (verbose-log! "ts-reparse: state=" (if state "yes" "nil")
+                  " text-len=" (if text (number->string (string-length text)) "nil"))
     (when state
       (let* ((parser (ts-state-parser state))
              (old-tree (ts-state-tree state))
              (new-tree (ts-parse-string! parser old-tree text)))
+        (verbose-log! "ts-reparse: parser=" (if parser "yes" "nil")
+                      " old-tree=" (if old-tree "yes" "nil")
+                      " new-tree=" (if new-tree "yes" "nil"))
         (when new-tree
           ;; Clear all styles first (set to default)
-          (sci-send ed SCI_STARTSTYLING 0)
+          (sci-send ed SCI_STARTSTYLING 0 31)
           (sci-send ed SCI_SETSTYLING (string-length text) 0)
           ;; Apply highlights
           (ts-highlight-buffer! parser new-tree (ts-state-query state) text ed)
@@ -360,28 +377,29 @@
 ;;; Capture name -> Scintilla style ID mapping
 ;;;============================================================================
 
-;; Style IDs 70-86: reserved for tree-sitter highlights.
-;; These do not conflict with Lexilla styles (0-63) or terminal styles (64-79).
-;; Note: terminal styles use 64-79, so we start tree-sitter at 90.
-(def *ts-style-keyword*     90)
-(def *ts-style-string*      91)
-(def *ts-style-comment*     92)
-(def *ts-style-function*    93)
-(def *ts-style-type*        94)
-(def *ts-style-variable*    95)
-(def *ts-style-constant*    96)
-(def *ts-style-number*      97)
-(def *ts-style-operator*    98)
-(def *ts-style-property*    99)
-(def *ts-style-punctuation* 100)
-(def *ts-style-attribute*   101)
-(def *ts-style-namespace*   102)
-(def *ts-style-constructor* 103)
-(def *ts-style-tag*         104)
-(def *ts-style-escape*      105)
-(def *ts-style-label*       106)
-(def *ts-style-builtin*     107)
-(def *ts-style-preproc*     108)
+;; Style IDs 1-19: tree-sitter highlights.
+;; QScintilla uses 5 style bits (0-31 valid range), so we MUST use low IDs.
+;; Since tree-sitter disables the built-in lexer, styles 1-19 are free.
+;; Style 0 = default text, styles 20-31 reserved for other uses.
+(def *ts-style-keyword*     1)
+(def *ts-style-string*      2)
+(def *ts-style-comment*     3)
+(def *ts-style-function*    4)
+(def *ts-style-type*        5)
+(def *ts-style-variable*    6)
+(def *ts-style-constant*    7)
+(def *ts-style-number*      8)
+(def *ts-style-operator*    9)
+(def *ts-style-property*    10)
+(def *ts-style-punctuation* 11)
+(def *ts-style-attribute*   12)
+(def *ts-style-namespace*   13)
+(def *ts-style-constructor* 14)
+(def *ts-style-tag*         15)
+(def *ts-style-escape*      16)
+(def *ts-style-label*       17)
+(def *ts-style-builtin*     18)
+(def *ts-style-preproc*     19)
 
 (def (ts-capture->style-id capture-name)
   "Map a tree-sitter capture name to a Scintilla style ID."

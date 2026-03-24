@@ -599,28 +599,51 @@
        (sci-send ed SCI_STYLESETBACK s 1579032)
        (loop (+ s 1)))))
   (def (qt-setup-highlighting! app buf)
-       (let* ([lang (or (detect-language (buffer-file-path buf))
-                        (let ([path (buffer-file-path buf)])
-                          (and path
-                               (file-exists? path)
-                               (with-catch
-                                 (lambda (e) #f)
-                                 (lambda ()
-                                   (let ([line (call-with-input-file
-                                                 path
-                                                 read-line)])
-                                     (and (string? line)
-                                          (> (string-length line) 2)
-                                          (detect-language-from-shebang-qt
-                                            (string-append
-                                              line
-                                              "\n"))))))))
+       (let* ([ext-lang (detect-language (buffer-file-path buf))]
+              [shebang-lang (and (not ext-lang)
+                                 (let ([path (buffer-file-path buf)])
+                                   (and path
+                                        (file-exists? path)
+                                        (with-catch
+                                          (lambda (e)
+                                            (verbose-log!
+                                              "highlight: shebang exception: "
+                                              (with-output-to-string
+                                                (lambda ()
+                                                  (display-exception e))))
+                                            #f)
+                                          (lambda ()
+                                            (let ([line (call-with-input-file
+                                                          path
+                                                          (lambda (port)
+                                                            (get-line
+                                                              port)))])
+                                              (verbose-log!
+                                                "highlight: shebang line="
+                                                (if (string? line)
+                                                    line
+                                                    "NOT-STRING"))
+                                              (and (string? line)
+                                                   (> (string-length line)
+                                                      2)
+                                                   (detect-language-from-shebang-qt
+                                                     (string-append
+                                                       line
+                                                       "\n")))))))))]
+              [lang (or ext-lang
+                        shebang-lang
                         (let ([l (buffer-lexer-lang buf)])
                           (and (not (memq l '(dired repl eshell shell)))
                                l)))]
               [doc (buffer-doc-pointer buf)]
               [ed (and doc (hash-get *doc-editor-map* doc))]
               [lexer-name (and lang (language->lexer-name lang))])
+         (verbose-log! "highlight: path=" (or (buffer-file-path buf) "nil")
+           " ext-lang=" (if ext-lang (symbol->string ext-lang) "nil")
+           " shebang-lang="
+           (if shebang-lang (symbol->string shebang-lang) "nil")
+           " lang=" (if lang (symbol->string lang) "nil") " ed="
+           (if ed "yes" "nil") " lexer=" (or lexer-name "nil"))
          (when (and ed (eq? lang 'org))
            (buffer-lexer-lang-set! buf 'org)
            (apply-base-theme! ed)
@@ -628,74 +651,53 @@
            (qt-setup-org-styles! ed)
            (let ([text (qt-plain-text-edit-text ed)])
              (qt-org-highlight-buffer-async! ed text)))
-         (let ([ts-name (and lang
-                             (not (eq? lang 'org))
-                             (language->ts-name lang))])
-           (if (and ed
-                    ts-name
-                    (with-catch
-                      (lambda (e) #f)
-                      (lambda () (ts-buffer-init! buf ts-name))))
-               (begin
-                 (buffer-lexer-lang-set! buf lang)
-                 (apply-base-theme! ed)
-                 (sci-send ed 4033 0)
-                 (ts-setup-styles! ed)
-                 (let ([text (qt-plain-text-edit-text ed)])
-                   (when (and text (> (string-length text) 0))
-                     (ts-buffer-reparse! buf text ed)))
-                 (qt-enable-code-folding! ed))
-               (when (and ed lexer-name)
-                 (buffer-lexer-lang-set! buf lang)
-                 (apply-base-theme! ed)
-                 (if (member
-                       lexer-name
-                       '("lisp" "rust" "diff" "perl" "haskell" "props"))
-                     (begin
-                       (sci-send/string ed SCI_SETLEXERLANGUAGE lexer-name)
-                       (sci-send ed SCI_COLOURISE 0 -1))
-                     (qt-scintilla-set-lexer-language! ed lexer-name))
-                 (case lang
-                   [(scheme lisp) (setup-lisp-styles! ed)]
-                   [(c) (setup-cpp-styles! ed *c-keywords* *c-types*)]
-                   [(javascript)
-                    (setup-cpp-styles! ed *js-keywords* *js-builtins*)]
-                   [(go) (setup-cpp-styles! ed *go-keywords* *go-types*)]
-                   [(rust)
-                    (setup-cpp-styles! ed *rust-keywords* *rust-types*)]
-                   [(java haskell swift elixir)
-                    (setup-cpp-styles! ed *java-keywords* *java-types*)]
-                   [(zig nix)
-                    (setup-cpp-styles! ed *c-keywords* *c-types*)]
-                   [(python) (setup-python-styles! ed)]
-                   [(shell) (setup-bash-styles! ed)]
-                   [(ruby) (setup-ruby-styles! ed)]
-                   [(lua) (setup-lua-styles! ed)]
-                   [(sql) (setup-sql-styles! ed)]
-                   [(perl) (setup-perl-styles! ed)]
-                   [(json yaml xml css markdown makefile diff toml)
-                    (let-values ([(r g b)
-                                  (face-fg-rgb 'font-lock-comment-face)])
-                      (for-each
-                        (lambda (s)
-                          (sci-send ed SCI_STYLESETFORE s (rgb->sci r g b))
-                          (when (face-has-italic? 'font-lock-comment-face)
-                            (sci-send ed SCI_STYLESETITALIC s 1)))
-                        '(1 2 3)))
-                    (let-values ([(r g b)
-                                  (face-fg-rgb 'font-lock-keyword-face)])
-                      (sci-send ed SCI_STYLESETFORE 5 (rgb->sci r g b))
-                      (when (face-has-bold? 'font-lock-keyword-face)
-                        (sci-send ed SCI_STYLESETBOLD 5 1)))
-                    (let-values ([(r g b)
-                                  (face-fg-rgb 'font-lock-string-face)])
-                      (sci-send ed SCI_STYLESETFORE 6 (rgb->sci r g b))
-                      (sci-send ed SCI_STYLESETFORE 7 (rgb->sci r g b)))
-                    (let-values ([(r g b)
-                                  (face-fg-rgb 'font-lock-number-face)])
-                      (sci-send ed SCI_STYLESETFORE 4 (rgb->sci r g b)))]
-                   [else (void)])
-                 (qt-enable-code-folding! ed))))))
+         (when (and ed lexer-name)
+           (buffer-lexer-lang-set! buf lang)
+           (qt-scintilla-set-lexer-language! ed lexer-name)
+           (case lang
+             [(c)
+              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+              (when *c-types*
+                (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+             [(javascript)
+              (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+              (when *js-builtins*
+                (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1))]
+             [(go)
+              (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+              (when *go-types*
+                (sci-send/string ed SCI_SETKEYWORDS *go-types* 1))]
+             [(rust)
+              (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
+              (when *rust-types*
+                (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1))]
+             [(java haskell swift elixir)
+              (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
+              (when *java-types*
+                (sci-send/string ed SCI_SETKEYWORDS *java-types* 1))]
+             [(zig nix)
+              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+              (when *c-types*
+                (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+             [(shell)
+              (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0)]
+             [else (void)])
+           (let-values ([(ln-r ln-g ln-b) (face-fg-rgb 'line-number)])
+             (sci-send
+               ed
+               SCI_STYLESETFORE
+               STYLE_LINENUMBER
+               (rgb->sci ln-r ln-g ln-b)))
+           (let ([ln-face (face-get 'line-number)])
+             (when (and ln-face (face-bg ln-face))
+               (let-values ([(bg-r bg-g bg-b)
+                             (parse-hex-color (face-bg ln-face))])
+                 (sci-send
+                   ed
+                   SCI_STYLESETBACK
+                   STYLE_LINENUMBER
+                   (rgb->sci bg-r bg-g bg-b)))))
+           (qt-enable-code-folding! ed))))
   (def (qt-enable-code-folding! ed)
        "Enable code folding margin and markers for QScintilla editor.\n   Sets up margin 2 as fold margin with box-tree style markers.\n   QScintilla lexers compute fold levels automatically."
        (sci-send ed SCI_SETMARGINTYPEN 2 SC_MARGIN_SYMBOL)

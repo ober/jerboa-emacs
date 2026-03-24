@@ -605,6 +605,7 @@
     qt-scintilla-receive-string
     qt-scintilla-set-text! qt-scintilla-get-text qt-scintilla-get-text-length
     qt-scintilla-set-lexer-language! qt-scintilla-get-lexer-language
+    qt-scintilla-lexer-set-color! qt-scintilla-lexer-set-paper! qt-scintilla-lexer-set-font-attr!
     qt-scintilla-set-read-only! qt-scintilla-read-only?
     qt-scintilla-set-margin-width! qt-scintilla-set-margin-type!
     qt-scintilla-set-focus!
@@ -2819,6 +2820,9 @@
   (define (qt-scintilla-get-text-length sci) (ffi-qt-scintilla-get-text-length sci))
   (define (qt-scintilla-set-lexer-language! sci lang) (ffi-qt-scintilla-set-lexer-language sci lang))
   (define (qt-scintilla-get-lexer-language sci) (ffi-qt-scintilla-get-lexer-language sci))
+  (define (qt-scintilla-lexer-set-color! sci style color) (ffi-qt-scintilla-lexer-set-color sci style color))
+  (define (qt-scintilla-lexer-set-paper! sci style color) (ffi-qt-scintilla-lexer-set-paper sci style color))
+  (define (qt-scintilla-lexer-set-font-attr! sci style bold italic) (ffi-qt-scintilla-lexer-set-font-attr sci style (if bold 1 0) (if italic 1 0)))
   (define (qt-scintilla-set-read-only! sci val) (ffi-qt-scintilla-set-read-only sci (if val 1 0)))
   (define (qt-scintilla-read-only? sci) (not (zero? (ffi-qt-scintilla-is-read-only sci))))
   (define (qt-scintilla-set-margin-width! sci margin width) (ffi-qt-scintilla-set-margin-width sci margin width))

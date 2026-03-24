@@ -1752,7 +1752,7 @@
     (lambda (e) #f)  ;; binary/unreadable files return #f
     (lambda ()
       (call-with-input-file path
-        (lambda (port) (read-line port #f))))))
+        (lambda (port) (get-string-all port))))))
 
 (def (write-string-to-file path str)
   (call-with-output-file path

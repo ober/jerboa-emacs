@@ -100,6 +100,7 @@
   qt-scintilla-create qt-scintilla-get-text qt-scintilla-get-text-length
   qt-scintilla-receive-string qt-scintilla-send-message
   qt-scintilla-send-message-string qt-scintilla-set-lexer-language! qt-scintilla-set-text!
+  qt-scintilla-lexer-set-color! qt-scintilla-lexer-set-paper! qt-scintilla-lexer-set-font-attr!
   ;; Scroll area
   qt-scroll-area-create qt-scroll-area-set-widget! qt-scroll-area-set-widget-resizable!
   ;; Splitter

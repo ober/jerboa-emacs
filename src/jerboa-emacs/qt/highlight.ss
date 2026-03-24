@@ -34,6 +34,9 @@
                  org-comment-line? org-keyword-line?
                  org-table-line? org-block-begin? org-block-end?))
 
+;;; No extra FFI needed — we use raw Lexilla via SCI_SETLEXERLANGUAGE
+;;; which respects SCI_STYLESETFORE/BACK (unlike QsciLexer wrappers).
+
 ;;;============================================================================
 ;;; Mode flags (shared with commands layer)
 ;;;============================================================================
@@ -304,7 +307,7 @@
         (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci bg-r bg-g bg-b))))))
 
 ;;;============================================================================
-;;; Lexer-specific style setup
+;;; Lexer style setup (via SCI messages — works with raw Lexilla)
 ;;;============================================================================
 
 ;;; --- C/C++/Java/JS/Go/Rust/Zig lexer ("cpp") ---
@@ -609,21 +612,37 @@
 ;;;============================================================================
 
 (def (qt-setup-highlighting! app buf)
-  (let* ((lang (or (detect-language (buffer-file-path buf))
-                   (let ((path (buffer-file-path buf)))
-                     (and path (file-exists? path)
-                          (with-catch (lambda (e) #f)
-                            (lambda ()
-                              (let ((line (call-with-input-file path read-line)))
-                                (and (string? line)
-                                     (> (string-length line) 2)
-                                     (detect-language-from-shebang-qt
-                                       (string-append line "\n"))))))))
+  (let* ((ext-lang (detect-language (buffer-file-path buf)))
+         (shebang-lang
+           (and (not ext-lang)
+                (let ((path (buffer-file-path buf)))
+                  (and path (file-exists? path)
+                       (with-catch
+                         (lambda (e)
+                           (verbose-log! "highlight: shebang exception: "
+                             (with-output-to-string (lambda () (display-exception e))))
+                           #f)
+                         (lambda ()
+                           (let ((line (call-with-input-file path
+                                         (lambda (port) (get-line port)))))
+                             (verbose-log! "highlight: shebang line=" (if (string? line) line "NOT-STRING"))
+                             (and (string? line)
+                                  (> (string-length line) 2)
+                                  (detect-language-from-shebang-qt
+                                    (string-append line "\n"))))))))))
+         (lang (or ext-lang
+                   shebang-lang
                    (let ((l (buffer-lexer-lang buf)))
                      (and (not (memq l '(dired repl eshell shell))) l))))
          (doc (buffer-doc-pointer buf))
          (ed (and doc (hash-get *doc-editor-map* doc)))
          (lexer-name (and lang (language->lexer-name lang))))
+    (verbose-log! "highlight: path=" (or (buffer-file-path buf) "nil")
+                  " ext-lang=" (if ext-lang (symbol->string ext-lang) "nil")
+                  " shebang-lang=" (if shebang-lang (symbol->string shebang-lang) "nil")
+                  " lang=" (if lang (symbol->string lang) "nil")
+                  " ed=" (if ed "yes" "nil")
+                  " lexer=" (or lexer-name "nil"))
     ;; Org mode: no QScintilla lexer — use manual styling
     (when (and ed (eq? lang 'org))
       (set! (buffer-lexer-lang buf) 'org)
@@ -634,93 +653,51 @@
       ;; Apply full-buffer org highlighting in background
       (let ((text (qt-plain-text-edit-text ed)))
         (qt-org-highlight-buffer-async! ed text)))
-    ;; Try tree-sitter first, fall back to Lexilla
-    (let ((ts-name (and lang (not (eq? lang 'org)) (language->ts-name lang))))
-      (if (and ed ts-name
-               (with-catch (lambda (e) #f)
-                 (lambda () (ts-buffer-init! buf ts-name))))
-        ;; Tree-sitter available — use it
-        (begin
-          (set! (buffer-lexer-lang buf) lang)
-          (apply-base-theme! ed)
-          ;; Disable built-in lexer
-          (sci-send ed 4033 0)
-          ;; Set up tree-sitter styles
-          (ts-setup-styles! ed)
-          ;; Initial full parse + highlight
-          (let ((text (qt-plain-text-edit-text ed)))
-            (when (and text (> (string-length text) 0))
-              (ts-buffer-reparse! buf text ed)))
-          ;; Enable code folding
-          (qt-enable-code-folding! ed))
-        ;; No tree-sitter — fall back to Lexilla
-        (when (and ed lexer-name)
+    ;; Use raw Lexilla via SCI_SETLEXERLANGUAGE (not QsciLexer wrappers).
+    ;; QsciLexer wrappers override SCI_STYLESETFORE/BACK, but raw Lexilla
+    ;; respects our style settings, so apply-base-theme! and setup-*-styles! work.
+    (when (and ed lexer-name)
           ;; Store language in buffer
           (set! (buffer-lexer-lang buf) lang)
-          ;; Reset to dark theme base
-          (apply-base-theme! ed)
-          ;; Set lexer language — QScintilla has wrapper classes for common languages,
-          ;; but not for lisp, rust, diff, perl, haskell, props.
-          ;; For those, use SCI_SETLEXERLANGUAGE to invoke Lexilla directly.
-          (if (member lexer-name '("lisp" "rust" "diff" "perl" "haskell" "props"))
-            (begin
-              ;; No QsciLexer wrapper — use raw Scintilla message and force colorize
-              (sci-send/string ed SCI_SETLEXERLANGUAGE lexer-name)
-              (sci-send ed SCI_COLOURISE 0 -1))
-            (qt-scintilla-set-lexer-language! ed lexer-name))
-          ;; Apply lexer-specific styles and keywords
+          ;; Use QsciLexer wrappers for tokenization.
+          ;; The C++ function now also sets dark paper on the lexer object
+          ;; after setLexer(), so the background is dark.
+          ;; QsciLexer's own foreground colors (designed for syntax highlighting)
+          ;; are kept as-is — they provide tokenized coloring out of the box.
+          (qt-scintilla-set-lexer-language! ed lexer-name)
+          ;; Set keywords per language (QsciLexer has some defaults,
+          ;; but we override to ensure completeness)
           (case lang
-            ((scheme lisp)
-             (setup-lisp-styles! ed))
             ((c)
-             (setup-cpp-styles! ed *c-keywords* *c-types*))
+             (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+             (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
             ((javascript)
-             (setup-cpp-styles! ed *js-keywords* *js-builtins*))
+             (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+             (when *js-builtins* (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1)))
             ((go)
-             (setup-cpp-styles! ed *go-keywords* *go-types*))
+             (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+             (when *go-types* (sci-send/string ed SCI_SETKEYWORDS *go-types* 1)))
             ((rust)
-             (setup-cpp-styles! ed *rust-keywords* *rust-types*))
+             (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
+             (when *rust-types* (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1)))
             ((java haskell swift elixir)
-             (setup-cpp-styles! ed *java-keywords* *java-types*))
+             (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
+             (when *java-types* (sci-send/string ed SCI_SETKEYWORDS *java-types* 1)))
             ((zig nix)
-             (setup-cpp-styles! ed *c-keywords* *c-types*))
-            ((python)
-             (setup-python-styles! ed))
+             (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+             (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
             ((shell)
-             (setup-bash-styles! ed))
-            ((ruby)
-             (setup-ruby-styles! ed))
-            ((lua)
-             (setup-lua-styles! ed))
-            ((sql)
-             (setup-sql-styles! ed))
-            ((perl)
-             (setup-perl-styles! ed))
-            ;; For json, yaml, xml, css, markdown, makefile, diff, toml:
-            ;; The lexer handles tokenization; we just set basic comment/string colors
-            ((json yaml xml css markdown makefile diff toml)
-             ;; Comments: styles 1-3 for most lexers
-             (let-values (((r g b) (face-fg-rgb 'font-lock-comment-face)))
-               (for-each (lambda (s)
-                           (sci-send ed SCI_STYLESETFORE s (rgb->sci r g b))
-                           (when (face-has-italic? 'font-lock-comment-face)
-                             (sci-send ed SCI_STYLESETITALIC s 1)))
-                         '(1 2 3)))
-             ;; Keywords: style 5
-             (let-values (((r g b) (face-fg-rgb 'font-lock-keyword-face)))
-               (sci-send ed SCI_STYLESETFORE 5 (rgb->sci r g b))
-               (when (face-has-bold? 'font-lock-keyword-face)
-                 (sci-send ed SCI_STYLESETBOLD 5 1)))
-             ;; Strings: styles 6-7
-             (let-values (((r g b) (face-fg-rgb 'font-lock-string-face)))
-               (sci-send ed SCI_STYLESETFORE 6 (rgb->sci r g b))
-               (sci-send ed SCI_STYLESETFORE 7 (rgb->sci r g b)))
-             ;; Numbers: style 4
-             (let-values (((r g b) (face-fg-rgb 'font-lock-number-face)))
-               (sci-send ed SCI_STYLESETFORE 4 (rgb->sci r g b))))
+             (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0))
             (else (void)))
-          ;; Enable code folding margin for all code files
-          (qt-enable-code-folding! ed))))))
+          ;; Line number margin styling
+          (let-values (((ln-r ln-g ln-b) (face-fg-rgb 'line-number)))
+            (sci-send ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci ln-r ln-g ln-b)))
+          (let ((ln-face (face-get 'line-number)))
+            (when (and ln-face (face-bg ln-face))
+              (let-values (((bg-r bg-g bg-b) (parse-hex-color (face-bg ln-face))))
+                (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci bg-r bg-g bg-b)))))
+          ;; Enable code folding
+          (qt-enable-code-folding! ed))))
 
 ;;;============================================================================
 ;;; Code folding margin setup
