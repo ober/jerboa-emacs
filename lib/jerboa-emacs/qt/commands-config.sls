@@ -210,7 +210,8 @@
        (let ([fr (app-state-frame app)])
          (for-each
            (lambda (win)
-             (let ([ed (qt-edit-window-editor win)])
+             (let* ([ed (qt-edit-window-editor win)]
+                    [buf (qt-edit-window-buffer win)])
                (sci-send/string
                  ed
                  SCI_STYLESETFONT
@@ -221,7 +222,8 @@
                  SCI_STYLESETSIZE
                  STYLE_DEFAULT
                  *default-font-size*)
-               (sci-send ed SCI_STYLECLEARALL)))
+               (sci-send ed SCI_STYLECLEARALL)
+               (when buf (qt-setup-highlighting! buf))))
            (qt-frame-windows fr)))
        (when *qt-app-ptr*
          (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))

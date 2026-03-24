@@ -50,7 +50,7 @@
   (define _libc-loaded
     (let ((v (getenv "JEMACS_STATIC")))
       (if (and v (not (string=? v "")) (not (string=? v "0")))
-          #f  ; static build: symbols from repl_shim.c + libc via --export-dynamic
+          #f  ; static build: symbols registered via Sforeign_symbol
           (begin
             (load-shared-object #f)
             ;; Load repl_shim.so for GC-safe subprocess/file I/O helpers.

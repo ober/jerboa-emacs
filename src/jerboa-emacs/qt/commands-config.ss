@@ -182,10 +182,14 @@
   (let ((fr (app-state-frame app)))
     (for-each
       (lambda (win)
-        (let ((ed (qt-edit-window-editor win)))
+        (let* ((ed (qt-edit-window-editor win))
+               (buf (qt-edit-window-buffer win)))
           (sci-send/string ed SCI_STYLESETFONT *default-font-family* STYLE_DEFAULT)
           (sci-send ed SCI_STYLESETSIZE STYLE_DEFAULT *default-font-size*)
-          (sci-send ed SCI_STYLECLEARALL)))
+          (sci-send ed SCI_STYLECLEARALL)
+          ;; Re-apply highlighting (STYLECLEARALL wipes QsciLexer colors)
+          (when buf
+            (qt-setup-highlighting! buf))))
       (qt-frame-windows fr)))
   ;; Update Qt stylesheet so chrome widgets match
   (when *qt-app-ptr*

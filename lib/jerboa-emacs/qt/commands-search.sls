@@ -6,9 +6,11 @@
   (export cmd-mark-word cmd-save-some-buffers
    *compilation-errors* *compilation-error-index*
    *grep-results* *grep-result-index* parse-compilation-errors
-   parse-error-line compilation-run-command! cmd-compile
-   cmd-recompile *compile-on-save* compile-on-save-check!
-   *flycheck-mode* *flycheck-errors* *flycheck-error-idx*
+   parse-error-line strip-terminal-escapes
+   *compile-output-file* compilation-show-output!
+   compilation-run-command! cmd-compile cmd-recompile
+   *compile-on-save* compile-on-save-check! *flycheck-mode*
+   *flycheck-errors* *flycheck-error-idx*
    *flycheck-error-marker* *flycheck-warning-marker*
    *flycheck-margin-num* flycheck-setup-markers!
    flycheck-clear-markers! flycheck-add-markers!
@@ -275,58 +277,140 @@
                                          (if (string=? msg "")
                                              line
                                              msg))))))))))))))
-  (def (compilation-run-command! app cmd)
-       "Run a compile command async, display output in *compilation* buffer, parse errors."
-       (let ([echo (app-state-echo app)])
-         (echo-message! echo (string-append "Compiling: " cmd "..."))
-         (async-process! cmd 'callback:
-           (lambda (result)
-             (let* ([errors (parse-compilation-errors result)]
-                    [has-errors? (not (null? errors))]
-                    [header (string-append "-*- Compilation -*-\n" "Command: " cmd "\n"
-                              (make-string 60 #\-) "\n\n")]
-                    [footer (string-append "\n" (make-string 60 #\-) "\n" "Compilation "
-                              (if has-errors?
-                                  "exited abnormally"
-                                  "finished")
-                              (if has-errors?
-                                  (string-append
-                                    " — "
-                                    (number->string (length errors))
-                                    " error location(s)")
-                                  "")
-                              "\n")]
-                    [text (string-append header result footer)]
-                    [fr (app-state-frame app)]
-                    [ed (current-qt-editor app)]
-                    [buf (or (buffer-by-name "*compilation*")
-                             (qt-buffer-create! "*compilation*" ed #f))])
-               (set! *compilation-errors* errors)
-               (set! *compilation-error-index* -1)
-               (qt-buffer-attach! ed buf)
-               (qt-edit-window-buffer-set! (qt-current-window fr) buf)
-               (qt-set-text-with-ansi! ed text)
-               (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
-               (qt-plain-text-edit-set-cursor-position! ed 0)
-               (echo-message!
-                 echo
+  (def (strip-terminal-escapes str)
+       "Strip all terminal escape sequences, carriage returns, and control chars from text.\n   Handles CSI (ESC[...), OSC (ESC]...BEL/ST), and single-char escapes (ESC X)."
+       (let ([len (string-length str)] [out (open-output-string)])
+         (let loop ([i 0])
+           (if (>= i len)
+               (get-output-string out)
+               (let ([ch (string-ref str i)])
+                 (cond
+                   [(char=? ch #\esc)
+                    (if (< (+ i 1) len)
+                        (let ([next (string-ref str (+ i 1))])
+                          (cond
+                            [(char=? next #\[)
+                             (let skip-csi ([j (+ i 2)])
+                               (if (>= j len)
+                                   (loop j)
+                                   (let ([c (string-ref str j)])
+                                     (if (and (char>=? c #\@)
+                                              (char<=? c #\~))
+                                         (loop (+ j 1))
+                                         (skip-csi (+ j 1))))))]
+                            [(char=? next #\])
+                             (let skip-osc ([j (+ i 2)])
+                               (cond
+                                 [(>= j len) (loop j)]
+                                 [(char=? (string-ref str j) #\alarm)
+                                  (loop (+ j 1))]
+                                 [(and (char=? (string-ref str j) #\esc)
+                                       (< (+ j 1) len)
+                                       (char=?
+                                         (string-ref str (+ j 1))
+                                         #\\))
+                                  (loop (+ j 2))]
+                                 [else (skip-osc (+ j 1))]))]
+                            [(or (char=? next #\()
+                                 (char=? next #\))
+                                 (char=? next #\#)
+                                 (char=? next #\>)
+                                 (char=? next #\=))
+                             (loop (+ i 3))]
+                            [else (loop (+ i 2))]))
+                        (loop (+ i 1)))]
+                   [(char=? ch #\return) (loop (+ i 1))]
+                   [(and (char<? ch #\space)
+                         (not (char=? ch #\newline))
+                         (not (char=? ch #\tab)))
+                    (loop (+ i 1))]
+                   [else (write-char ch out) (loop (+ i 1))]))))))
+  (define *compile-output-file*--cell
+    (vector "/tmp/jemacs-compile.out"))
+  (def (compilation-show-output! app cmd result)
+       "Display compilation result in *compilation* buffer."
+       (let* ([echo (app-state-echo app)]
+              [result (with-catch
+                        (lambda (e) result)
+                        (lambda () (strip-terminal-escapes result)))]
+              [errors (parse-compilation-errors result)]
+              [has-errors? (not (null? errors))]
+              [header (string-append "-*- Compilation -*-\n" "Command: "
+                        cmd "\n" (make-string 60 #\-) "\n\n")]
+              [footer (string-append "\n" (make-string 60 #\-) "\n" "Compilation "
+                        (if has-errors? "exited abnormally" "finished")
+                        (if has-errors?
+                            (string-append
+                              " — "
+                              (number->string (length errors))
+                              " error location(s)")
+                            "")
+                        "\n")]
+              [text (string-append header result footer)]
+              [fr (app-state-frame app)]
+              [ed (current-qt-editor app)]
+              [buf (or (buffer-by-name "*compilation*")
+                       (qt-buffer-create! "*compilation*" ed #f))])
+         (set! *compilation-errors* errors)
+         (set! *compilation-error-index* -1)
+         (qt-buffer-attach! ed buf)
+         (qt-edit-window-buffer-set! (qt-current-window fr) buf)
+         (qt-set-text-with-ansi! ed text)
+         (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
+         (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+         (echo-message!
+           echo
+           (string-append
+             "Compilation "
+             (if has-errors? "failed" "finished")
+             (if has-errors?
                  (string-append
-                   "Compilation "
-                   (if has-errors? "failed" "finished")
-                   (if has-errors?
-                       (string-append
-                         " — "
-                         (number->string (length errors))
-                         " error(s)")
-                       "")))))
-           'on-error:
-           (lambda (e)
-             (echo-error!
-               echo
-               (string-append
-                 "Compilation error: "
-                 (with-output-to-string
-                   (lambda () (display-exception e)))))))))
+                   " — "
+                   (number->string (length errors))
+                   " error(s)")
+                 "")))))
+  (def (compilation-run-command! app cmd)
+       "Run a compile command async, display output in *compilation* buffer, parse errors.\n   Shows buffer immediately with 'Compiling...' text, then updates when done.\n   Closes inherited fds in subprocess to avoid blocking the REPL server."
+       (let* ([echo (app-state-echo app)]
+              [outfile *compile-output-file*]
+              [fr (app-state-frame app)]
+              [ed (current-qt-editor app)]
+              [buf (or (buffer-by-name "*compilation*")
+                       (qt-buffer-create! "*compilation*" ed #f))])
+         (qt-buffer-attach! ed buf)
+         (qt-edit-window-buffer-set! (qt-current-window fr) buf)
+         (qt-plain-text-edit-set-text!
+           ed
+           (string-append "-*- Compilation -*-\n" "Command: " cmd "\n"
+             (make-string 60 #\-) "\n\nCompiling...\n"))
+         (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
+         (echo-message! echo (string-append "Compiling: " cmd "..."))
+         (spawn-worker
+           'compile
+           (lambda ()
+             (let ([shell-cmd (string-append "for fd in /proc/self/fd/*; do "
+                                "  f=$(basename $fd); "
+                                "  [ $f -gt 2 ] && eval \"exec $f>&-\" 2>/dev/null; "
+                                "done; " cmd " > " outfile " 2>&1")])
+               (system shell-cmd))
+             (let ([result (with-catch
+                             (lambda (e) "")
+                             (lambda ()
+                               (call-with-input-file
+                                 outfile
+                                 (lambda (p) (get-string-all p)))))])
+               (ui-queue-push!
+                 (lambda ()
+                   (with-catch
+                     (lambda (e)
+                       (echo-error!
+                         echo
+                         (string-append
+                           "Compilation error: "
+                           (with-output-to-string
+                             (lambda () (display-exception e))))))
+                     (lambda ()
+                       (compilation-show-output! app cmd result))))))))))
   (def (cmd-compile app)
        "Run a compile command and display output in *compilation* buffer with error parsing."
        (let* ([echo (app-state-echo app)]
@@ -1999,6 +2083,13 @@
       [id (vector-ref *grep-result-index*--cell 0)]
       [(set! id val) (vector-set!
                        *grep-result-index*--cell
+                       0
+                       val)]))
+  (define-syntax *compile-output-file*
+    (identifier-syntax
+      [id (vector-ref *compile-output-file*--cell 0)]
+      [(set! id val) (vector-set!
+                       *compile-output-file*--cell
                        0
                        val)]))
   (define-syntax *compile-on-save*
