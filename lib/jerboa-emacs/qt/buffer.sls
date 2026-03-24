@@ -9,8 +9,8 @@
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name)
     (std sugar) (chez-scintilla constants)
-    (jerboa-emacs qt sci-shim) (jerboa-emacs core) (jerboa core)
-    (jerboa runtime))
+    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
+    (jerboa-emacs treesitter) (jerboa core) (jerboa runtime))
   (def (qt-buffer-create! name editor (file-path #f))
        "Create buffer with a new Scintilla document."
        (verbose-log!
@@ -34,6 +34,7 @@
            (when state
              (qt-pixmap-destroy! (car state))
              (hash-remove! *image-buffer-state* buf)))
+         (ts-buffer-cleanup! buf)
          (hash-remove! *doc-editor-map* doc)
          (hash-remove! *doc-buffer-map* doc)
          (buffer-list-remove! buf)))

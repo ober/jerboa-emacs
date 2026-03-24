@@ -12,7 +12,8 @@
 (import :std/sugar
         :chez-scintilla/constants
         :jerboa-emacs/qt/sci-shim
-        :jerboa-emacs/core)
+        :jerboa-emacs/core
+        :jerboa-emacs/treesitter)
 
 ;;;============================================================================
 ;;; Qt buffer operations
@@ -41,6 +42,8 @@
       (when state
         (qt-pixmap-destroy! (car state))
         (hash-remove! *image-buffer-state* buf)))
+    ;; Clean up tree-sitter state if applicable
+    (ts-buffer-cleanup! buf)
     (hash-remove! *doc-editor-map* doc)
     (hash-remove! *doc-buffer-map* doc)
     (buffer-list-remove! buf)))

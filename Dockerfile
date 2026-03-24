@@ -188,6 +188,52 @@ RUN git clone --depth 1 --branch ${CHEZ_TAG} \
     make install && \
     rm -rf /tmp/ChezScheme
 
+# ── Phase 5.5: Build tree-sitter + grammars (static) ──────────────────
+ARG TS_VERSION=0.24.7
+RUN git clone --depth 1 --branch v${TS_VERSION} \
+      https://github.com/tree-sitter/tree-sitter /tmp/tree-sitter && \
+    cd /tmp/tree-sitter && \
+    cc -c -O2 -Ilib/include lib/src/lib.c -o lib/src/lib.o && \
+    ar rcs /opt/tree-sitter-lib/libtree-sitter.a lib/src/lib.o && \
+    mkdir -p /opt/tree-sitter-include/tree_sitter && \
+    cp lib/include/tree_sitter/api.h /opt/tree-sitter-include/tree_sitter/ && \
+    rm -rf /tmp/tree-sitter
+
+# Build tree-sitter grammar static archives
+RUN mkdir -p /opt/tree-sitter-grammars && \
+    build_grammar() { \
+      name=$1; repo=$2; tag=$3; subdir=${4:-.}; \
+      git clone --depth 1 --branch "$tag" \
+        "https://github.com/$repo" /tmp/ts-$name 2>/dev/null && \
+      cd /tmp/ts-$name/$subdir && \
+      SRC_DIR=src && \
+      gcc -c -O2 -I/opt/tree-sitter-include -I$SRC_DIR \
+        $SRC_DIR/parser.c -o parser.o && \
+      if [ -f $SRC_DIR/scanner.c ]; then \
+        gcc -c -O2 -I/opt/tree-sitter-include -I$SRC_DIR \
+          $SRC_DIR/scanner.c -o scanner.o && \
+        ar rcs /opt/tree-sitter-grammars/libtree-sitter-$name.a parser.o scanner.o; \
+      else \
+        ar rcs /opt/tree-sitter-grammars/libtree-sitter-$name.a parser.o; \
+      fi && \
+      cd / && rm -rf /tmp/ts-$name; \
+    } && \
+    build_grammar c          tree-sitter/tree-sitter-c          v0.23.5 && \
+    build_grammar cpp        tree-sitter/tree-sitter-cpp        v0.23.6 && \
+    build_grammar python     tree-sitter/tree-sitter-python     v0.23.6 && \
+    build_grammar javascript tree-sitter/tree-sitter-javascript v0.23.1 && \
+    build_grammar rust       tree-sitter/tree-sitter-rust       v0.23.3 && \
+    build_grammar go         tree-sitter/tree-sitter-go         v0.23.4 && \
+    build_grammar bash       tree-sitter/tree-sitter-bash       v0.23.3 && \
+    build_grammar json       tree-sitter/tree-sitter-json       v0.24.8 && \
+    build_grammar ruby       tree-sitter/tree-sitter-ruby       v0.23.1 && \
+    build_grammar java       tree-sitter/tree-sitter-java       v0.23.5 && \
+    build_grammar css        tree-sitter/tree-sitter-css        v0.23.2 && \
+    build_grammar html       tree-sitter/tree-sitter-html       v0.23.2 && \
+    build_grammar lua        tree-sitter-grammars/tree-sitter-lua v0.3.0 && \
+    build_grammar scheme     6cdh/tree-sitter-scheme            master && \
+    echo "Grammars built:" && ls /opt/tree-sitter-grammars/
+
 # ── Phase 6: Gerbil/Chez dependencies ──────────────────────────────────
 ENV PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig
 ENV SCHEME=/opt/chez/bin/scheme

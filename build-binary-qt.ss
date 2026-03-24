@@ -281,7 +281,11 @@
     ;; Qt-specific modules
     (map (lambda (m) (format "lib/jerboa-emacs/qt/~a.so" m))
       '(;; Foundation
-        "sci-shim" "keymap" "buffer" "echo"
+        "sci-shim" "keymap"))
+    ;; treesitter must come before qt/buffer (which imports it)
+    (list "lib/jerboa-emacs/treesitter.so")
+    (map (lambda (m) (format "lib/jerboa-emacs/qt/~a.so" m))
+      '("buffer" "echo"
         "image" "magit"
         "highlight" "modeline" "window"
         "lsp-client" "helm-qt"
@@ -510,15 +514,27 @@ echo OK"
                         "-lQt6Widgets -lQt6Gui -lQt6Core"))
          (qt-plugins  (format "~a/qt_static_plugins.o" qt-shim-dir))
          (libqt-shim  (format "~a/libqt_shim.a" qt-shim-dir))
+         ;; Tree-sitter objects and libraries
+         (ts-shim-obj (or (getenv "TREE_SITTER_SHIM_OBJ") ""))
+         (ts-queries-obj (or (getenv "TREE_SITTER_QUERIES_OBJ") ""))
+         (ts-lib-dir (or (getenv "TREE_SITTER_LIB") "/opt/tree-sitter-lib"))
+         (ts-gram-dir (or (getenv "TREE_SITTER_GRAMMARS") "/opt/tree-sitter-grammars"))
+         (ts-link (format "~a ~a -L~a -ltree-sitter \
+-L~a -ltree-sitter-c -ltree-sitter-cpp -ltree-sitter-python \
+-ltree-sitter-javascript -ltree-sitter-rust -ltree-sitter-go \
+-ltree-sitter-bash -ltree-sitter-json -ltree-sitter-ruby \
+-ltree-sitter-java -ltree-sitter-css -ltree-sitter-html \
+-ltree-sitter-lua -ltree-sitter-scheme"
+                          ts-shim-obj ts-queries-obj ts-lib-dir ts-gram-dir))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
 jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
 jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o \
 jemacs-qt-pty-shim.o jemacs-qt-vterm-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
 qt_static_symbols.o \
-~a ~a ~a ~a \
+~a ~a ~a ~a ~a \
 -L~a -lkernel -llz4 -lz \
 -lvterm -lm -ldl -lpthread -luuid -lncurses -lstdc++ 2>&1"
-                      libqt-shim qt-plugins qt-libs pcre2-libs
+                      libqt-shim qt-plugins ts-link qt-libs pcre2-libs
                       chez-dir)))
     (printf "  ~a~n" cmd)
     (unless (= 0 (system cmd))

@@ -78,10 +78,10 @@
    (jerboa-emacs qt keymap) (jerboa-emacs qt buffer)
    (jerboa-emacs qt window) (jerboa-emacs qt modeline)
    (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
-   (jerboa-emacs qt image) (jerboa-emacs qt commands)
-   (jerboa-emacs qt lsp-client) (jerboa-emacs qt commands-lsp)
-   (jerboa-emacs qt menubar) (jerboa-emacs ipc)
-   (jerboa-emacs vtscreen)
+   (jerboa-emacs treesitter) (jerboa-emacs qt image)
+   (jerboa-emacs qt commands) (jerboa-emacs qt lsp-client)
+   (jerboa-emacs qt commands-lsp) (jerboa-emacs qt menubar)
+   (jerboa-emacs ipc) (jerboa-emacs vtscreen)
    (only
      (jerboa-emacs editor-extra-web)
      *aggressive-indent-mode*)
@@ -1395,11 +1395,25 @@
                                                      (not (chord-lookup
                                                             ch1
                                                             ch2)))
-                                                (void)
+                                                (begin
+                                                  (verbose-log!
+                                                    "CHORD-AUTOREPEAT ignored ch="
+                                                    (string ch1))
+                                                  (void))
                                                 (let ([chord-cmd (and ch2
                                                                       (chord-lookup
                                                                         ch1
                                                                         ch2))])
+                                                  (verbose-log! "CHORD-RESOLVE ch1="
+                                                    (string ch1) " ch2="
+                                                    (if ch2
+                                                        (string ch2)
+                                                        "#f")
+                                                    " cmd="
+                                                    (if chord-cmd
+                                                        (symbol->string
+                                                          chord-cmd)
+                                                        "#f"))
                                                   (qt-timer-stop!
                                                     *chord-timer*)
                                                   (set! *chord-pending-char*
@@ -1460,9 +1474,12 @@
                                                             cur-buf)
                                                           (gsh-eshell-buffer?
                                                             cur-buf)))))
-                                          (verbose-log!
-                                            "CHORD-PENDING ch="
-                                            (string (string-ref text 0)))
+                                          (verbose-log! "CHORD-PENDING ch="
+                                            (string (string-ref text 0))
+                                            " timeout="
+                                            (number->string
+                                              *chord-timeout*)
+                                            "ms")
                                           (set! *chord-pending-char*
                                             (string-ref text 0))
                                           (set! *chord-pending-code* code)
@@ -1861,6 +1878,11 @@
          (qt-on-timeout!
            *chord-timer*
            (lambda ()
+             (verbose-log!
+               "CHORD-TIMEOUT fired pending="
+               (if *chord-pending-char*
+                   (string *chord-pending-char*)
+                   "#f"))
              (when *chord-pending-char*
                (let ([saved-code *chord-pending-code*]
                      [saved-mods *chord-pending-mods*]
@@ -1947,6 +1969,24 @@
                                       (string->number repl-port-env)
                                       args)))])
            (when repl-info (start-debug-repl! (car repl-info))))
+         (schedule-periodic!
+           'treesitter-reparse
+           150
+           (lambda ()
+             (let* ([fr (app-state-frame app)]
+                    [buf (qt-current-buffer fr)]
+                    [state (and buf (ts-buffer-state buf))])
+               (when state
+                 (let ([ed (qt-current-editor fr)])
+                   (when ed
+                     (let* ([text (qt-plain-text-edit-text ed)]
+                            [new-ver (and text (string-length text))]
+                            [old-ver (ts-state-version state)])
+                       (when (and new-ver (not (= new-ver old-ver)))
+                         (with-catch
+                           (lambda (e) (void))
+                           (lambda () (ts-buffer-reparse! buf text ed)))
+                         (ts-state-version-set! state new-ver)))))))))
          (schedule-periodic!
            'ipc
            200

@@ -17,7 +17,8 @@
         qt-org-table-separator?
         *search-highlight-active*
         *qt-show-paren-enabled*
-        *qt-delete-selection-enabled*)
+        *qt-delete-selection-enabled*
+        ts-setup-styles!)
 
 (import :std/sugar
         :chez-scintilla/constants
@@ -27,6 +28,7 @@
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/async
+        :jerboa-emacs/treesitter
         (only-in :jerboa-emacs/org-parse
                  org-heading-line? org-heading-stars-of-line
                  org-comment-line? org-keyword-line?
@@ -552,6 +554,57 @@
   (sci-send/string ed SCI_SETKEYWORDS *perl-keywords* 0))
 
 ;;;============================================================================
+;;; Tree-sitter style setup (uses face system from this module)
+;;;============================================================================
+
+(def (ts-setup-styles! ed)
+  "Configure Scintilla style IDs 90-108 with face colors for tree-sitter."
+  (let-values (((r g b) (face-fg-rgb 'font-lock-keyword-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-keyword* (rgb->sci r g b))
+    (when (face-has-bold? 'font-lock-keyword-face)
+      (sci-send ed SCI_STYLESETBOLD *ts-style-keyword* 1)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-string-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-string* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-comment-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-comment* (rgb->sci r g b))
+    (when (face-has-italic? 'font-lock-comment-face)
+      (sci-send ed SCI_STYLESETITALIC *ts-style-comment* 1)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-function-name-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-function* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-type-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-type* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-variable-name-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-variable* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-constant-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-constant* (rgb->sci r g b))
+    (sci-send ed SCI_STYLESETFORE *ts-style-number* (rgb->sci r g b)))
+  (sci-send ed SCI_STYLESETFORE *ts-style-operator* #xd8d8d8)
+  (let-values (((r g b) (face-fg-rgb 'font-lock-variable-name-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-property* (rgb->sci r g b)))
+  (sci-send ed SCI_STYLESETFORE *ts-style-punctuation* #x808080)
+  (let-values (((r g b) (face-fg-rgb 'font-lock-type-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-attribute* (rgb->sci r g b))
+    (sci-send ed SCI_STYLESETFORE *ts-style-constructor* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-constant-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-namespace* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-keyword-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-tag* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-constant-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-escape* (rgb->sci r g b))
+    (sci-send ed SCI_STYLESETBOLD *ts-style-escape* 1))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-function-name-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-label* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-builtin-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-builtin* (rgb->sci r g b)))
+  (let-values (((r g b) (face-fg-rgb 'font-lock-preprocessor-face)))
+    (sci-send ed SCI_STYLESETFORE *ts-style-preproc* (rgb->sci r g b)))
+  ;; Set background for all tree-sitter styles
+  (let loop ((s 90))
+    (when (<= s 108)
+      (sci-send ed SCI_STYLESETBACK s #x181818)
+      (loop (+ s 1)))))
+
+;;;============================================================================
 ;;; Main setup and teardown
 ;;;============================================================================
 
@@ -581,73 +634,93 @@
       ;; Apply full-buffer org highlighting in background
       (let ((text (qt-plain-text-edit-text ed)))
         (qt-org-highlight-buffer-async! ed text)))
-    (when (and ed lexer-name)
-      ;; Store language in buffer
-      (set! (buffer-lexer-lang buf) lang)
-      ;; Reset to dark theme base
-      (apply-base-theme! ed)
-      ;; Set lexer language — QScintilla has wrapper classes for common languages,
-      ;; but not for lisp, rust, diff, perl, haskell, props.
-      ;; For those, use SCI_SETLEXERLANGUAGE to invoke Lexilla directly.
-      (if (member lexer-name '("lisp" "rust" "diff" "perl" "haskell" "props"))
+    ;; Try tree-sitter first, fall back to Lexilla
+    (let ((ts-name (and lang (not (eq? lang 'org)) (language->ts-name lang))))
+      (if (and ed ts-name
+               (with-catch (lambda (e) #f)
+                 (lambda () (ts-buffer-init! buf ts-name))))
+        ;; Tree-sitter available — use it
         (begin
-          ;; No QsciLexer wrapper — use raw Scintilla message and force colorize
-          (sci-send/string ed SCI_SETLEXERLANGUAGE lexer-name)
-          (sci-send ed SCI_COLOURISE 0 -1))
-        (qt-scintilla-set-lexer-language! ed lexer-name))
-      ;; Apply lexer-specific styles and keywords
-      (case lang
-        ((scheme lisp)
-         (setup-lisp-styles! ed))
-        ((c)
-         (setup-cpp-styles! ed *c-keywords* *c-types*))
-        ((javascript)
-         (setup-cpp-styles! ed *js-keywords* *js-builtins*))
-        ((go)
-         (setup-cpp-styles! ed *go-keywords* *go-types*))
-        ((rust)
-         (setup-cpp-styles! ed *rust-keywords* *rust-types*))
-        ((java haskell swift elixir)
-         (setup-cpp-styles! ed *java-keywords* *java-types*))
-        ((zig nix)
-         (setup-cpp-styles! ed *c-keywords* *c-types*))
-        ((python)
-         (setup-python-styles! ed))
-        ((shell)
-         (setup-bash-styles! ed))
-        ((ruby)
-         (setup-ruby-styles! ed))
-        ((lua)
-         (setup-lua-styles! ed))
-        ((sql)
-         (setup-sql-styles! ed))
-        ((perl)
-         (setup-perl-styles! ed))
-        ;; For json, yaml, xml, css, markdown, makefile, diff, toml:
-        ;; The lexer handles tokenization; we just set basic comment/string colors
-        ((json yaml xml css markdown makefile diff toml)
-         ;; Comments: styles 1-3 for most lexers
-         (let-values (((r g b) (face-fg-rgb 'font-lock-comment-face)))
-           (for-each (lambda (s)
-                       (sci-send ed SCI_STYLESETFORE s (rgb->sci r g b))
-                       (when (face-has-italic? 'font-lock-comment-face)
-                         (sci-send ed SCI_STYLESETITALIC s 1)))
-                     '(1 2 3)))
-         ;; Keywords: style 5
-         (let-values (((r g b) (face-fg-rgb 'font-lock-keyword-face)))
-           (sci-send ed SCI_STYLESETFORE 5 (rgb->sci r g b))
-           (when (face-has-bold? 'font-lock-keyword-face)
-             (sci-send ed SCI_STYLESETBOLD 5 1)))
-         ;; Strings: styles 6-7
-         (let-values (((r g b) (face-fg-rgb 'font-lock-string-face)))
-           (sci-send ed SCI_STYLESETFORE 6 (rgb->sci r g b))
-           (sci-send ed SCI_STYLESETFORE 7 (rgb->sci r g b)))
-         ;; Numbers: style 4
-         (let-values (((r g b) (face-fg-rgb 'font-lock-number-face)))
-           (sci-send ed SCI_STYLESETFORE 4 (rgb->sci r g b))))
-        (else (void)))
-      ;; Enable code folding margin for all code files
-      (qt-enable-code-folding! ed))))
+          (set! (buffer-lexer-lang buf) lang)
+          (apply-base-theme! ed)
+          ;; Disable built-in lexer
+          (sci-send ed 4033 0)
+          ;; Set up tree-sitter styles
+          (ts-setup-styles! ed)
+          ;; Initial full parse + highlight
+          (let ((text (qt-plain-text-edit-text ed)))
+            (when (and text (> (string-length text) 0))
+              (ts-buffer-reparse! buf text ed)))
+          ;; Enable code folding
+          (qt-enable-code-folding! ed))
+        ;; No tree-sitter — fall back to Lexilla
+        (when (and ed lexer-name)
+          ;; Store language in buffer
+          (set! (buffer-lexer-lang buf) lang)
+          ;; Reset to dark theme base
+          (apply-base-theme! ed)
+          ;; Set lexer language — QScintilla has wrapper classes for common languages,
+          ;; but not for lisp, rust, diff, perl, haskell, props.
+          ;; For those, use SCI_SETLEXERLANGUAGE to invoke Lexilla directly.
+          (if (member lexer-name '("lisp" "rust" "diff" "perl" "haskell" "props"))
+            (begin
+              ;; No QsciLexer wrapper — use raw Scintilla message and force colorize
+              (sci-send/string ed SCI_SETLEXERLANGUAGE lexer-name)
+              (sci-send ed SCI_COLOURISE 0 -1))
+            (qt-scintilla-set-lexer-language! ed lexer-name))
+          ;; Apply lexer-specific styles and keywords
+          (case lang
+            ((scheme lisp)
+             (setup-lisp-styles! ed))
+            ((c)
+             (setup-cpp-styles! ed *c-keywords* *c-types*))
+            ((javascript)
+             (setup-cpp-styles! ed *js-keywords* *js-builtins*))
+            ((go)
+             (setup-cpp-styles! ed *go-keywords* *go-types*))
+            ((rust)
+             (setup-cpp-styles! ed *rust-keywords* *rust-types*))
+            ((java haskell swift elixir)
+             (setup-cpp-styles! ed *java-keywords* *java-types*))
+            ((zig nix)
+             (setup-cpp-styles! ed *c-keywords* *c-types*))
+            ((python)
+             (setup-python-styles! ed))
+            ((shell)
+             (setup-bash-styles! ed))
+            ((ruby)
+             (setup-ruby-styles! ed))
+            ((lua)
+             (setup-lua-styles! ed))
+            ((sql)
+             (setup-sql-styles! ed))
+            ((perl)
+             (setup-perl-styles! ed))
+            ;; For json, yaml, xml, css, markdown, makefile, diff, toml:
+            ;; The lexer handles tokenization; we just set basic comment/string colors
+            ((json yaml xml css markdown makefile diff toml)
+             ;; Comments: styles 1-3 for most lexers
+             (let-values (((r g b) (face-fg-rgb 'font-lock-comment-face)))
+               (for-each (lambda (s)
+                           (sci-send ed SCI_STYLESETFORE s (rgb->sci r g b))
+                           (when (face-has-italic? 'font-lock-comment-face)
+                             (sci-send ed SCI_STYLESETITALIC s 1)))
+                         '(1 2 3)))
+             ;; Keywords: style 5
+             (let-values (((r g b) (face-fg-rgb 'font-lock-keyword-face)))
+               (sci-send ed SCI_STYLESETFORE 5 (rgb->sci r g b))
+               (when (face-has-bold? 'font-lock-keyword-face)
+                 (sci-send ed SCI_STYLESETBOLD 5 1)))
+             ;; Strings: styles 6-7
+             (let-values (((r g b) (face-fg-rgb 'font-lock-string-face)))
+               (sci-send ed SCI_STYLESETFORE 6 (rgb->sci r g b))
+               (sci-send ed SCI_STYLESETFORE 7 (rgb->sci r g b)))
+             ;; Numbers: style 4
+             (let-values (((r g b) (face-fg-rgb 'font-lock-number-face)))
+               (sci-send ed SCI_STYLESETFORE 4 (rgb->sci r g b))))
+            (else (void)))
+          ;; Enable code folding margin for all code files
+          (qt-enable-code-folding! ed))))))
 
 ;;;============================================================================
 ;;; Code folding margin setup

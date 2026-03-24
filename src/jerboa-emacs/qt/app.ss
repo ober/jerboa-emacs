@@ -76,6 +76,7 @@
         :jerboa-emacs/qt/modeline
         :jerboa-emacs/qt/echo
         :jerboa-emacs/qt/highlight
+        :jerboa-emacs/treesitter
         :jerboa-emacs/qt/image
         :jerboa-emacs/qt/commands
         :jerboa-emacs/qt/lsp-client
@@ -1133,9 +1134,14 @@
                        ;; If not a valid chord, it's auto-repeat — ignore and keep waiting.
                        (if (and ch2 (char=? ch1 ch2) (= code saved-code)
                                 (not (chord-lookup ch1 ch2)))
-                         (void)  ;; ignore auto-repeat, timer keeps running
+                         (begin
+                           (verbose-log! "CHORD-AUTOREPEAT ignored ch=" (string ch1))
+                           (void))  ;; ignore auto-repeat, timer keeps running
                          ;; Real second key — resolve the chord
                          (let ((chord-cmd (and ch2 (chord-lookup ch1 ch2))))
+                           (verbose-log! "CHORD-RESOLVE ch1=" (string ch1)
+                                         " ch2=" (if ch2 (string ch2) "#f")
+                                         " cmd=" (if chord-cmd (symbol->string chord-cmd) "#f"))
                            (qt-timer-stop! *chord-timer*)
                            (set! *chord-pending-char* #f)
                            (if chord-cmd
@@ -1167,7 +1173,8 @@
                             (not (or (terminal-buffer? cur-buf)
                                      (shell-buffer? cur-buf)
                                      (gsh-eshell-buffer? cur-buf)))))
-                     (verbose-log! "CHORD-PENDING ch=" (string (string-ref text 0)))
+                     (verbose-log! "CHORD-PENDING ch=" (string (string-ref text 0))
+                                   " timeout=" (number->string *chord-timeout*) "ms")
                      (set! *chord-pending-char* (string-ref text 0))
                      (set! *chord-pending-code* code)
                      (set! *chord-pending-mods* mods)
@@ -1477,6 +1484,8 @@
       (qt-timer-set-single-shot! *chord-timer* #t)
       (qt-on-timeout! *chord-timer*
         (lambda ()
+          (verbose-log! "CHORD-TIMEOUT fired pending="
+                        (if *chord-pending-char* (string *chord-pending-char*) "#f"))
           (when *chord-pending-char*
             (let ((saved-code *chord-pending-code*)
                   (saved-mods *chord-pending-mods*)
@@ -1561,6 +1570,24 @@
                                      (cons (string->number repl-port-env) args)))))
         (when repl-info
           (start-debug-repl! (car repl-info))))
+      ;; Tree-sitter debounced re-highlight — re-parse when buffer content changes.
+      ;; Tracks last-known text length per buffer to detect modifications.
+      (schedule-periodic! 'treesitter-reparse 150
+        (lambda ()
+          (let* ((fr (app-state-frame app))
+                 (buf (qt-current-buffer fr))
+                 (state (and buf (ts-buffer-state buf))))
+            (when state
+              (let ((ed (qt-current-editor fr)))
+                (when ed
+                  (let* ((text (qt-plain-text-edit-text ed))
+                         (new-ver (and text (string-length text)))
+                         (old-ver (ts-state-version state)))
+                    (when (and new-ver (not (= new-ver old-ver)))
+                      (with-catch (lambda (e) (void))
+                        (lambda () (ts-buffer-reparse! buf text ed)))
+                      (set! (ts-state-version state) new-ver)))))))))
+
       (schedule-periodic! 'ipc 200
         (lambda ()
           (for-each (lambda (f) (qt-open-file! app f))

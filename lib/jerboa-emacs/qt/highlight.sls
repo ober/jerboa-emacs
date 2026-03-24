@@ -9,7 +9,8 @@
     qt-highlight-search-matches! qt-clear-search-highlights!
     qt-enable-code-folding! detect-language
     qt-org-table-separator? *search-highlight-active*
-    *qt-show-paren-enabled* *qt-delete-selection-enabled*)
+    *qt-show-paren-enabled* *qt-delete-selection-enabled*
+    ts-setup-styles!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -22,6 +23,7 @@
       pregexp-split)
     (std misc string) (jerboa-emacs qt sci-shim)
     (jerboa-emacs core) (jerboa-emacs async)
+    (jerboa-emacs treesitter)
     (only (jerboa-emacs org-parse) org-heading-line?
       org-heading-stars-of-line org-comment-line?
       org-keyword-line? org-table-line? org-block-begin?
@@ -467,6 +469,135 @@
                      (face-fg-rgb 'font-lock-operator-face)])
          (sci-send ed SCI_STYLESETFORE 10 (rgb->sci r g b)))
        (sci-send/string ed SCI_SETKEYWORDS *perl-keywords* 0))
+  (def (ts-setup-styles! ed)
+   "Configure Scintilla style IDs 90-108 with face colors for tree-sitter."
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-keyword-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-keyword*
+       (rgb->sci r g b))
+     (when (face-has-bold? 'font-lock-keyword-face)
+       (sci-send ed SCI_STYLESETBOLD *ts-style-keyword* 1)))
+   (let-values ([(r g b) (face-fg-rgb 'font-lock-string-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-string*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-comment-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-comment*
+       (rgb->sci r g b))
+     (when (face-has-italic? 'font-lock-comment-face)
+       (sci-send ed SCI_STYLESETITALIC *ts-style-comment* 1)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-function-name-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-function*
+       (rgb->sci r g b)))
+   (let-values ([(r g b) (face-fg-rgb 'font-lock-type-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-type*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-variable-name-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-variable*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-constant-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-constant*
+       (rgb->sci r g b))
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-number*
+       (rgb->sci r g b)))
+   (sci-send ed SCI_STYLESETFORE *ts-style-operator* 14211288)
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-variable-name-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-property*
+       (rgb->sci r g b)))
+   (sci-send
+     ed
+     SCI_STYLESETFORE
+     *ts-style-punctuation*
+     8421504)
+   (let-values ([(r g b) (face-fg-rgb 'font-lock-type-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-attribute*
+       (rgb->sci r g b))
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-constructor*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-constant-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-namespace*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-keyword-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-tag*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-constant-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-escape*
+       (rgb->sci r g b))
+     (sci-send ed SCI_STYLESETBOLD *ts-style-escape* 1))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-function-name-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-label*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-builtin-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-builtin*
+       (rgb->sci r g b)))
+   (let-values ([(r g b)
+                 (face-fg-rgb 'font-lock-preprocessor-face)])
+     (sci-send
+       ed
+       SCI_STYLESETFORE
+       *ts-style-preproc*
+       (rgb->sci r g b)))
+   (let loop ([s 90])
+     (when (<= s 108)
+       (sci-send ed SCI_STYLESETBACK s 1579032)
+       (loop (+ s 1)))))
   (def (qt-setup-highlighting! app buf)
        (let* ([lang (or (detect-language (buffer-file-path buf))
                         (let ([path (buffer-file-path buf)])
@@ -497,53 +628,74 @@
            (qt-setup-org-styles! ed)
            (let ([text (qt-plain-text-edit-text ed)])
              (qt-org-highlight-buffer-async! ed text)))
-         (when (and ed lexer-name)
-           (buffer-lexer-lang-set! buf lang)
-           (apply-base-theme! ed)
-           (if (member
-                 lexer-name
-                 '("lisp" "rust" "diff" "perl" "haskell" "props"))
+         (let ([ts-name (and lang
+                             (not (eq? lang 'org))
+                             (language->ts-name lang))])
+           (if (and ed
+                    ts-name
+                    (with-catch
+                      (lambda (e) #f)
+                      (lambda () (ts-buffer-init! buf ts-name))))
                (begin
-                 (sci-send/string ed SCI_SETLEXERLANGUAGE lexer-name)
-                 (sci-send ed SCI_COLOURISE 0 -1))
-               (qt-scintilla-set-lexer-language! ed lexer-name))
-           (case lang
-             [(scheme lisp) (setup-lisp-styles! ed)]
-             [(c) (setup-cpp-styles! ed *c-keywords* *c-types*)]
-             [(javascript)
-              (setup-cpp-styles! ed *js-keywords* *js-builtins*)]
-             [(go) (setup-cpp-styles! ed *go-keywords* *go-types*)]
-             [(rust) (setup-cpp-styles! ed *rust-keywords* *rust-types*)]
-             [(java haskell swift elixir)
-              (setup-cpp-styles! ed *java-keywords* *java-types*)]
-             [(zig nix) (setup-cpp-styles! ed *c-keywords* *c-types*)]
-             [(python) (setup-python-styles! ed)]
-             [(shell) (setup-bash-styles! ed)]
-             [(ruby) (setup-ruby-styles! ed)]
-             [(lua) (setup-lua-styles! ed)]
-             [(sql) (setup-sql-styles! ed)]
-             [(perl) (setup-perl-styles! ed)]
-             [(json yaml xml css markdown makefile diff toml)
-              (let-values ([(r g b)
-                            (face-fg-rgb 'font-lock-comment-face)])
-                (for-each
-                  (lambda (s)
-                    (sci-send ed SCI_STYLESETFORE s (rgb->sci r g b))
-                    (when (face-has-italic? 'font-lock-comment-face)
-                      (sci-send ed SCI_STYLESETITALIC s 1)))
-                  '(1 2 3)))
-              (let-values ([(r g b)
-                            (face-fg-rgb 'font-lock-keyword-face)])
-                (sci-send ed SCI_STYLESETFORE 5 (rgb->sci r g b))
-                (when (face-has-bold? 'font-lock-keyword-face)
-                  (sci-send ed SCI_STYLESETBOLD 5 1)))
-              (let-values ([(r g b) (face-fg-rgb 'font-lock-string-face)])
-                (sci-send ed SCI_STYLESETFORE 6 (rgb->sci r g b))
-                (sci-send ed SCI_STYLESETFORE 7 (rgb->sci r g b)))
-              (let-values ([(r g b) (face-fg-rgb 'font-lock-number-face)])
-                (sci-send ed SCI_STYLESETFORE 4 (rgb->sci r g b)))]
-             [else (void)])
-           (qt-enable-code-folding! ed))))
+                 (buffer-lexer-lang-set! buf lang)
+                 (apply-base-theme! ed)
+                 (sci-send ed 4033 0)
+                 (ts-setup-styles! ed)
+                 (let ([text (qt-plain-text-edit-text ed)])
+                   (when (and text (> (string-length text) 0))
+                     (ts-buffer-reparse! buf text ed)))
+                 (qt-enable-code-folding! ed))
+               (when (and ed lexer-name)
+                 (buffer-lexer-lang-set! buf lang)
+                 (apply-base-theme! ed)
+                 (if (member
+                       lexer-name
+                       '("lisp" "rust" "diff" "perl" "haskell" "props"))
+                     (begin
+                       (sci-send/string ed SCI_SETLEXERLANGUAGE lexer-name)
+                       (sci-send ed SCI_COLOURISE 0 -1))
+                     (qt-scintilla-set-lexer-language! ed lexer-name))
+                 (case lang
+                   [(scheme lisp) (setup-lisp-styles! ed)]
+                   [(c) (setup-cpp-styles! ed *c-keywords* *c-types*)]
+                   [(javascript)
+                    (setup-cpp-styles! ed *js-keywords* *js-builtins*)]
+                   [(go) (setup-cpp-styles! ed *go-keywords* *go-types*)]
+                   [(rust)
+                    (setup-cpp-styles! ed *rust-keywords* *rust-types*)]
+                   [(java haskell swift elixir)
+                    (setup-cpp-styles! ed *java-keywords* *java-types*)]
+                   [(zig nix)
+                    (setup-cpp-styles! ed *c-keywords* *c-types*)]
+                   [(python) (setup-python-styles! ed)]
+                   [(shell) (setup-bash-styles! ed)]
+                   [(ruby) (setup-ruby-styles! ed)]
+                   [(lua) (setup-lua-styles! ed)]
+                   [(sql) (setup-sql-styles! ed)]
+                   [(perl) (setup-perl-styles! ed)]
+                   [(json yaml xml css markdown makefile diff toml)
+                    (let-values ([(r g b)
+                                  (face-fg-rgb 'font-lock-comment-face)])
+                      (for-each
+                        (lambda (s)
+                          (sci-send ed SCI_STYLESETFORE s (rgb->sci r g b))
+                          (when (face-has-italic? 'font-lock-comment-face)
+                            (sci-send ed SCI_STYLESETITALIC s 1)))
+                        '(1 2 3)))
+                    (let-values ([(r g b)
+                                  (face-fg-rgb 'font-lock-keyword-face)])
+                      (sci-send ed SCI_STYLESETFORE 5 (rgb->sci r g b))
+                      (when (face-has-bold? 'font-lock-keyword-face)
+                        (sci-send ed SCI_STYLESETBOLD 5 1)))
+                    (let-values ([(r g b)
+                                  (face-fg-rgb 'font-lock-string-face)])
+                      (sci-send ed SCI_STYLESETFORE 6 (rgb->sci r g b))
+                      (sci-send ed SCI_STYLESETFORE 7 (rgb->sci r g b)))
+                    (let-values ([(r g b)
+                                  (face-fg-rgb 'font-lock-number-face)])
+                      (sci-send ed SCI_STYLESETFORE 4 (rgb->sci r g b)))]
+                   [else (void)])
+                 (qt-enable-code-folding! ed))))))
   (def (qt-enable-code-folding! ed)
        "Enable code folding margin and markers for QScintilla editor.\n   Sets up margin 2 as fold margin with box-tree style markers.\n   QScintilla lexers compute fold levels automatically."
        (sci-send ed SCI_SETMARGINTYPEN 2 SC_MARGIN_SYMBOL)

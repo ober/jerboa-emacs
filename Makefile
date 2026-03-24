@@ -310,6 +310,11 @@ build-jemacs-qt-static: check-root
 	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /src/lib \
 	  --compile-imported-libraries --script /src/vendor/jerboa-compile-repl-socket.ss && \
 	rm -f /src/lib/jerboa/*.wpo && \
+	echo "Building tree-sitter shim + queries..." && \
+	gcc -c -O2 -I/opt/tree-sitter-include -o /tmp/jemacs-build/treesitter_shim.o \
+	    /src/support/treesitter_shim.c -Wall && \
+	gcc -c -O2 -o /tmp/jemacs-build/treesitter_queries.o \
+	    /src/support/treesitter_queries.c -Wall && \
 	JEMACS_STATIC=1 \
 	CHEZ_DIR=$(CHEZ_MUSL_DIR) \
 	JERBOA_DIR=/deps/jerboa/lib \
@@ -320,6 +325,11 @@ build-jemacs-qt-static: check-root
 	CHEZ_QT_DIR=/deps/chez-qt \
 	CHEZ_QT_SHIM_DIR=/deps/gerbil-qt/vendor \
 	COREUTILS_DIR=/deps/coreutils \
+	TREE_SITTER_INCLUDE=/opt/tree-sitter-include \
+	TREE_SITTER_LIB=/opt/tree-sitter-lib \
+	TREE_SITTER_GRAMMARS=/opt/tree-sitter-grammars \
+	TREE_SITTER_SHIM_OBJ=/tmp/jemacs-build/treesitter_shim.o \
+	TREE_SITTER_QUERIES_OBJ=/tmp/jemacs-build/treesitter_queries.o \
 	PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig \
 	/opt/chez/bin/scheme \
 	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/deps/coreutils:/deps/gherkin/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
