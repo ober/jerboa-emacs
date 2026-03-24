@@ -541,6 +541,7 @@
                                                         ts)
                                                       "")
                                                   rendered))])
+                                 (qt-widget-set-updates-enabled! ed #f)
                                  (qt-plain-text-edit-set-text! ed full)
                                  (hash-put! *vterm-last-rendered* ts full)
                                  (hash-put! *vterm-initialized* ts #t)
@@ -560,7 +561,9 @@
                                    ed
                                    QT_CURSOR_END)
                                  (qt-plain-text-edit-ensure-cursor-visible!
-                                   ed))
+                                   ed)
+                                 (sci-send ed SCI_SETXOFFSET 0)
+                                 (qt-widget-set-updates-enabled! ed #t))
                                (when (vtscreen-has-damage? vt)
                                  (if (vtscreen-alt-screen? vt)
                                      (hash-put! *vterm-line-offset* ts 0)
@@ -597,7 +600,11 @@
                                              ed
                                              QT_CURSOR_END)
                                            (qt-plain-text-edit-ensure-cursor-visible!
-                                             ed))))
+                                             ed)
+                                           (sci-send
+                                             ed
+                                             SCI_SETXOFFSET
+                                             0))))
                                    (qt-widget-set-updates-enabled!
                                      ed
                                      #t))))
@@ -607,7 +614,8 @@
                          (qt-plain-text-edit-insert-text!
                            ed
                            (strip-ansi-codes data))
-                         (qt-plain-text-edit-ensure-cursor-visible! ed))))
+                         (qt-plain-text-edit-ensure-cursor-visible! ed)
+                         (sci-send ed SCI_SETXOFFSET 0))))
                  (loop (cdr wins)))))))
   (def (qt-poll-terminal-pty-msg! fr buf ts msg)
        "Handle one PTY message for a terminal buffer in Qt.\n   Data messages are handled via qt-poll-terminal-pty-batch! for efficiency."
@@ -629,27 +637,26 @@
                   (if (eq? (qt-edit-window-buffer (car wins)) buf)
                       (let ([ed (qt-edit-window-editor (car wins))])
                         (let ([prompt (terminal-prompt ts)])
-                          (when pre-text
-                            (if alt-screen?
-                                (qt-plain-text-edit-set-text! ed pre-text)
-                                (let* ([output (or final-render "")]
-                                       [sep (if (and (> (string-length
-                                                          output)
-                                                        0)
-                                                     (not (char=?
-                                                            (string-ref
-                                                              output
-                                                              (- (string-length
-                                                                   output)
-                                                                 1))
-                                                            #\newline)))
-                                                "\n"
-                                                "")]
-                                       [full (string-append
-                                               pre-text
-                                               output
-                                               sep)])
-                                  (qt-plain-text-edit-set-text! ed full))))
+                          (qt-widget-set-updates-enabled! ed #f)
+                          (if (and pre-text alt-screen?)
+                              (qt-plain-text-edit-set-text! ed pre-text)
+                              (begin
+                                (qt-plain-text-edit-move-cursor!
+                                  ed
+                                  QT_CURSOR_END)
+                                (let ([text (qt-plain-text-edit-text ed)])
+                                  (when (and text
+                                             (> (string-length text) 0)
+                                             (not (char=?
+                                                    (string-ref
+                                                      text
+                                                      (- (string-length
+                                                           text)
+                                                         1))
+                                                    #\newline)))
+                                    (qt-plain-text-edit-insert-text!
+                                      ed
+                                      "\n")))))
                           (qt-plain-text-edit-move-cursor!
                             ed
                             QT_CURSOR_END)
@@ -657,7 +664,9 @@
                           (terminal-state-prompt-pos-set!
                             ts
                             (string-length (qt-plain-text-edit-text ed)))
-                          (qt-plain-text-edit-ensure-cursor-visible! ed)))
+                          (qt-plain-text-edit-ensure-cursor-visible! ed)
+                          (sci-send ed SCI_SETXOFFSET 0)
+                          (qt-widget-set-updates-enabled! ed #t)))
                       (loop (cdr wins))))))])))
   (def (qt-do-init! qt-app args) (init-jemacs-log!)
        (init-verbose-log!)

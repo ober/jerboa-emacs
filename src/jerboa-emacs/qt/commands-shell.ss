@@ -1915,58 +1915,53 @@ SPC = page down, DEL = page up, q = quit view-mode."
   (echo-message! (app-state-echo app) "top stopped"))
 
 (def (vterm-start-top! ts ed _fr cmd-string)
-  "Run coreutils top inside the current vterm buffer using a virtual PTY.
-   Uses alt-screen + row-diff rendering for performant, flicker-free display.
+  "Run coreutils top inside the current vterm buffer.
+   Uses direct text replacement for flicker-free display.
    Input (q/C-c to quit) flows through terminal-send-input! via the input box."
-  (let* ((esc (string (integer->char 27)))
-         (alt-screen-on  (string-append esc "[?1049h"))
-         (alt-screen-off (string-append esc "[?1049l"))
-         (clear-home     (string-append esc "[2J" esc "[H"))
-         (ch (make-channel))
-         (input-box (box ""))
-         (vt (new-vtscreen 24 80)))
+  (let* ((input-box (box ""))
+         (running (box #t))
+         (pre-text (qt-plain-text-edit-text ed)))
     ;; Set up virtual PTY state — input-box as master, 'top as pid
     (set! (terminal-state-pty-master ts) input-box)
     (set! (terminal-state-pty-pid ts) 'top)
-    (set! (terminal-state-pty-channel ts) ch)
-    (set! (terminal-state-vtscreen ts) vt)
-    ;; Spawn background thread that loops coreutils top
-    (let ((thread
-           (spawn
-             (lambda ()
-               (with-catch
-                 (lambda (e) (channel-put ch (cons 'done -1)))
-                 (lambda ()
-                   ;; Switch to alt screen
-                   (channel-put ch (cons 'data alt-screen-on))
-                   (let loop ()
-                     ;; Clear screen + cursor home
-                     (channel-put ch (cons 'data clear-home))
-                     ;; Capture top -b -n 1 output
-                     (let ((output (top-capture-output)))
-                       (channel-put ch (cons 'data output)))
-                     ;; Check input box for quit chars (q or C-c)
-                     (let ((pending (unbox input-box)))
-                       (set-box! input-box "")
-                       (if (top-input-quit? pending)
-                         ;; Quit: restore normal screen, signal done
-                         (begin
-                           (channel-put ch (cons 'data alt-screen-off))
-                           (channel-put ch (cons 'done 0)))
-                         ;; Sleep ~3 seconds, polling input every 100ms
-                         (let delay ((remaining 30))
-                           (if (<= remaining 0)
-                             (loop)
-                             (begin
-                               (thread-sleep! 0.1)
-                               (let ((p (unbox input-box)))
-                                 (if (top-input-quit? p)
-                                   (begin
-                                     (set-box! input-box "")
-                                     (channel-put ch (cons 'data alt-screen-off))
-                                     (channel-put ch (cons 'done 0)))
-                                   (delay (- remaining 1))))))))))))))))
-      (set! (terminal-state-pty-thread ts) thread))))
+    (set! (terminal-state-pre-pty-text ts) pre-text)
+    ;; Use schedule-periodic! for UI-thread rendering (no vtscreen needed)
+    (schedule-periodic! 'vterm-top 3000
+      (lambda ()
+        (when (unbox running)
+          ;; Check for quit input
+          (let ((pending (unbox input-box)))
+            (set-box! input-box "")
+            (if (top-input-quit? pending)
+              ;; Quit: restore terminal
+              (begin
+                (set-box! running #f)
+                (cancel-periodic! 'vterm-top)
+                (set! (terminal-state-pty-master ts) #f)
+                (set! (terminal-state-pty-pid ts) #f)
+                (set! (terminal-state-pre-pty-text ts) #f)
+                ;; Restore previous text + prompt
+                (qt-plain-text-edit-set-text! ed pre-text)
+                (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+                (let ((prompt (terminal-prompt ts)))
+                  (qt-plain-text-edit-insert-text! ed prompt)
+                  (set! (terminal-state-prompt-pos ts)
+                    (string-length (qt-plain-text-edit-text ed)))
+                  (qt-plain-text-edit-ensure-cursor-visible! ed)))
+              ;; Render top output
+              (let ((output (top-capture-output))
+                    (cursor-pos (qt-plain-text-edit-cursor-position ed)))
+                (qt-widget-set-updates-enabled! ed #f)
+                (qt-plain-text-edit-set-text! ed output)
+                (when (< cursor-pos (string-length output))
+                  (qt-plain-text-edit-set-cursor-position! ed cursor-pos))
+                (qt-widget-set-updates-enabled! ed #t)))))))
+    ;; Do initial render immediately
+    (let ((output (top-capture-output)))
+      (qt-widget-set-updates-enabled! ed #f)
+      (qt-plain-text-edit-set-text! ed output)
+      (qt-plain-text-edit-set-cursor-position! ed 0)
+      (qt-widget-set-updates-enabled! ed #t))))
 
 (def (top-input-quit? str)
   "Check if input string contains q or C-c (quit signal for top)."

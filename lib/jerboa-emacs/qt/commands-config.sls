@@ -924,7 +924,15 @@
                                  "")]
                       [rows (max 2 (sci-send ed 2370 0))]
                       [widget-w (qt-widget-width ed)]
-                      [cols (max 20 (quotient widget-w 8))])
+                      [margin-w (sci-send ed SCI_GETMARGINWIDTHN 0)]
+                      [text-w (- widget-w margin-w 16)]
+                      [char-w (let ([w (sci-send/string
+                                         ed
+                                         2276
+                                         "M"
+                                         STYLE_DEFAULT)])
+                                (if (> w 0) w 8))]
+                      [cols (max 20 (quotient text-w char-w))])
                  (verbose-log! "cmd-terminal-send: input=" input " rows="
                    (number->string rows) " cols=" (number->string cols))
                  (let ([trimmed-input (safe-string-trim-both input)])

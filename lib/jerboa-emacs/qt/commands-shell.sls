@@ -2209,58 +2209,50 @@
        (cancel-periodic! 'top-refresh) (set! *top-active* #f)
        (echo-message! (app-state-echo app) "top stopped"))
   (def (vterm-start-top! ts ed _fr cmd-string)
-       "Run coreutils top inside the current vterm buffer using a virtual PTY.\n   Uses alt-screen + row-diff rendering for performant, flicker-free display.\n   Input (q/C-c to quit) flows through terminal-send-input! via the input box."
-       (let* ([esc (string (integer->char 27))]
-              [alt-screen-on (string-append esc "[?1049h")]
-              [alt-screen-off (string-append esc "[?1049l")]
-              [clear-home (string-append esc "[2J" esc "[H")]
-              [ch (make-channel)]
-              [input-box (box "")]
-              [vt (new-vtscreen 24 80)])
+       "Run coreutils top inside the current vterm buffer.\n   Uses direct text replacement for flicker-free display.\n   Input (q/C-c to quit) flows through terminal-send-input! via the input box."
+       (let* ([input-box (box "")]
+              [running (box #t)]
+              [pre-text (qt-plain-text-edit-text ed)])
          (terminal-state-pty-master-set! ts input-box)
          (terminal-state-pty-pid-set! ts 'top)
-         (terminal-state-pty-channel-set! ts ch)
-         (terminal-state-vtscreen-set! ts vt)
-         (let ([thread (spawn
-                         (lambda ()
-                           (with-catch
-                             (lambda (e) (channel-put ch (cons 'done -1)))
-                             (lambda ()
-                               (channel-put ch (cons 'data alt-screen-on))
-                               (let loop ()
-                                 (channel-put ch (cons 'data clear-home))
-                                 (let ([output (top-capture-output)])
-                                   (channel-put ch (cons 'data output)))
-                                 (let ([pending (unbox input-box)])
-                                   (set-box! input-box "")
-                                   (if (top-input-quit? pending)
-                                       (begin
-                                         (channel-put
-                                           ch
-                                           (cons 'data alt-screen-off))
-                                         (channel-put ch (cons 'done 0)))
-                                       (let delay ([remaining 30])
-                                         (if (<= remaining 0)
-                                             (loop)
-                                             (begin
-                                               (thread-sleep! 0.1)
-                                               (let ([p (unbox input-box)])
-                                                 (if (top-input-quit? p)
-                                                     (begin
-                                                       (set-box!
-                                                         input-box
-                                                         "")
-                                                       (channel-put
-                                                         ch
-                                                         (cons
-                                                           'data
-                                                           alt-screen-off))
-                                                       (channel-put
-                                                         ch
-                                                         (cons 'done 0)))
-                                                     (delay (- remaining
-                                                               1))))))))))))))])
-           (terminal-state-pty-thread-set! ts thread))))
+         (terminal-state-pre-pty-text-set! ts pre-text)
+         (schedule-periodic!
+           'vterm-top
+           3000
+           (lambda ()
+             (when (unbox running)
+               (let ([pending (unbox input-box)])
+                 (set-box! input-box "")
+                 (if (top-input-quit? pending)
+                     (begin
+                       (set-box! running #f)
+                       (cancel-periodic! 'vterm-top)
+                       (terminal-state-pty-master-set! ts #f)
+                       (terminal-state-pty-pid-set! ts #f)
+                       (terminal-state-pre-pty-text-set! ts #f)
+                       (qt-plain-text-edit-set-text! ed pre-text)
+                       (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+                       (let ([prompt (terminal-prompt ts)])
+                         (qt-plain-text-edit-insert-text! ed prompt)
+                         (terminal-state-prompt-pos-set!
+                           ts
+                           (string-length (qt-plain-text-edit-text ed)))
+                         (qt-plain-text-edit-ensure-cursor-visible! ed)))
+                     (let ([output (top-capture-output)]
+                           [cursor-pos (qt-plain-text-edit-cursor-position
+                                         ed)])
+                       (qt-widget-set-updates-enabled! ed #f)
+                       (qt-plain-text-edit-set-text! ed output)
+                       (when (< cursor-pos (string-length output))
+                         (qt-plain-text-edit-set-cursor-position!
+                           ed
+                           cursor-pos))
+                       (qt-widget-set-updates-enabled! ed #t)))))))
+         (let ([output (top-capture-output)])
+           (qt-widget-set-updates-enabled! ed #f)
+           (qt-plain-text-edit-set-text! ed output)
+           (qt-plain-text-edit-set-cursor-position! ed 0)
+           (qt-widget-set-updates-enabled! ed #t))))
   (def (top-input-quit? str)
        "Check if input string contains q or C-c (quit signal for top)."
        (let ([len (string-length str)])

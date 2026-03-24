@@ -572,12 +572,17 @@
                 ;; Only render to the widget if enough time has elapsed
                 (when (vterm-render-due? ts)
                   (if (not (hash-ref *vterm-initialized* ts #f))
-                    ;; First render: full set-text to establish the document
+                    ;; First render: full set-text to establish the document.
+                    ;; Wrap in set-updates-enabled #f/#t to prevent bounce:
+                    ;; set-text! resets scroll to top, then ensure-cursor-visible
+                    ;; scrolls to bottom — without suppressing updates, both
+                    ;; paints are visible as a flash/bounce.
                     (let* ((rendered (vtscreen-render vt))
                            (full (if (vtscreen-alt-screen? vt)
                                    rendered
                                    (string-append (or (terminal-state-pre-pty-text ts) "")
                                                   rendered))))
+                      (qt-widget-set-updates-enabled! ed #f)
                       (qt-plain-text-edit-set-text! ed full)
                       (hash-put! *vterm-last-rendered* ts full)
                       (hash-put! *vterm-initialized* ts #t)
@@ -593,7 +598,10 @@
                       ;; Apply colors to initial render
                       (vterm-apply-colors! ed vt ts)
                       (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
-                      (qt-plain-text-edit-ensure-cursor-visible! ed))
+                      (qt-plain-text-edit-ensure-cursor-visible! ed)
+                      ;; Reset horizontal scroll — terminal never needs h-scroll
+                      (sci-send ed SCI_SETXOFFSET 0)
+                      (qt-widget-set-updates-enabled! ed #t))
                     ;; Subsequent renders: row-diff update
                     (when (vtscreen-has-damage? vt)
                       (if (vtscreen-alt-screen? vt)
@@ -624,13 +632,16 @@
                             ;; Normal mode: scroll to bottom to follow output
                             (begin
                               (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
-                              (qt-plain-text-edit-ensure-cursor-visible! ed))))
+                              (qt-plain-text-edit-ensure-cursor-visible! ed)
+                              ;; Reset horizontal scroll — terminal never needs h-scroll
+                              (sci-send ed SCI_SETXOFFSET 0))))
                         (qt-widget-set-updates-enabled! ed #t))))
                   (vterm-mark-rendered! ts)))
               (begin
                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                 (qt-plain-text-edit-insert-text! ed (strip-ansi-codes data))
-                (qt-plain-text-edit-ensure-cursor-visible! ed))))
+                (qt-plain-text-edit-ensure-cursor-visible! ed)
+                (sci-send ed SCI_SETXOFFSET 0))))
           (loop (cdr wins)))))))
 
 (def (qt-poll-terminal-pty-msg! fr buf ts msg)
@@ -656,22 +667,30 @@
              (if (eq? (qt-edit-window-buffer (car wins)) buf)
                (let ((ed (qt-edit-window-editor (car wins))))
                  (let ((prompt (terminal-prompt ts)))
-                   (when pre-text
-                     (if alt-screen?
-                       ;; Full-screen program (top, vim): restore pre-PTY text
-                       (qt-plain-text-edit-set-text! ed pre-text)
-                       ;; Simple command (ls, ps): keep output
-                       (let* ((output (or final-render ""))
-                              (sep (if (and (> (string-length output) 0)
-                                           (not (char=? (string-ref output (- (string-length output) 1)) #\newline)))
-                                     "\n" ""))
-                              (full (string-append pre-text output sep)))
-                         (qt-plain-text-edit-set-text! ed full))))
+                   ;; Suppress widget updates during done-handler edits
+                   ;; to prevent bounce (multiple paints during set-text/insert/scroll).
+                   (qt-widget-set-updates-enabled! ed #f)
+                   (if (and pre-text alt-screen?)
+                     ;; Full-screen program (top, vim): restore pre-PTY text
+                     (qt-plain-text-edit-set-text! ed pre-text)
+                     ;; Simple command (ls, ps): keep current editor content as-is.
+                     ;; Row-diff rendering already updated the display incrementally;
+                     ;; do NOT call set-text! again (causes visible bounce/flash).
+                     (begin
+                       (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+                       ;; Ensure trailing newline before prompt
+                       (let ((text (qt-plain-text-edit-text ed)))
+                         (when (and text (> (string-length text) 0)
+                                    (not (char=? (string-ref text (- (string-length text) 1)) #\newline)))
+                           (qt-plain-text-edit-insert-text! ed "\n")))))
                    (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                    (qt-plain-text-edit-insert-text! ed prompt)
                    (set! (terminal-state-prompt-pos ts)
                      (string-length (qt-plain-text-edit-text ed)))
-                   (qt-plain-text-edit-ensure-cursor-visible! ed)))
+                   (qt-plain-text-edit-ensure-cursor-visible! ed)
+                   ;; Reset horizontal scroll — terminal never needs h-scroll
+                   (sci-send ed SCI_SETXOFFSET 0)
+                   (qt-widget-set-updates-enabled! ed #t)))
                (loop (cdr wins))))))))))
 
 (def (qt-do-init! qt-app args)
