@@ -851,7 +851,7 @@
                                  (when (and n (> n 0) (<= n 2000))
                                    (custom-set! 'chord-timeout n))))
                               ;; LSP server command: lsp-server-command PATH
-                              ;; e.g. "lsp-server-command /home/user/gerbil-lsp/.gerbil/bin/gerbil-lsp"
+                              ;; e.g. "lsp-server-command /home/user/mine/jerboa-lsp/scripts/jerboa-lsp"
                               ((string=? key "lsp-server-command")
                                (when (> (string-length val) 0)
                                  (custom-set! 'lsp-server-command val)))

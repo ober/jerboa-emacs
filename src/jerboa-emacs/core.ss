@@ -295,8 +295,10 @@
 (def *ctrl-c-map*   (make-keymap))
 (def *ctrl-c-l-map* (make-keymap))
 (def *ctrl-c-m-map* (make-keymap))
-(def *lsp-server-command* "gerbil-lsp")  ;; overridable via ~/.jemacs-init
-(defvar! 'lsp-server-command "gerbil-lsp" "Command to launch the LSP server"
+(def *lsp-server-command*
+  (let ((home (or (getenv "HOME") "")))
+    (string-append home "/mine/jerboa-lsp/scripts/jerboa-lsp")))
+(defvar! 'lsp-server-command *lsp-server-command* "Command to launch the LSP server"
          setter: (lambda (v) (set! *lsp-server-command* v))
          type: 'string group: 'lsp)
 (def *meta-g-map*   (make-keymap))

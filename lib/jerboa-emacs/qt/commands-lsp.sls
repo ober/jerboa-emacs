@@ -81,32 +81,36 @@
   (define *marker-lsp-info*--cell (vector 10))
   (define *marker-lsp-hint*--cell (vector 11))
   (def (lsp-maybe-auto-start! app buf)
-       "Auto-start LSP when opening a Gerbil/Scheme file if not running."
+       "Auto-start LSP when opening a Scheme file if not running."
        (when (and (not (lsp-running?))
                   (not *lsp-initializing*)
                   (buffer-file-path buf))
          (let ([path (buffer-file-path buf)])
            (when (and path
                       (let ([ext (path-extension path)])
-                        (or (string=? ext ".ss") (string=? ext ".scm"))))
+                        (or (string=? ext ".ss")
+                            (string=? ext ".sls")
+                            (string=? ext ".scm"))))
              (let ([root (lsp-find-project-root path)])
                (when root
                  (echo-message!
                    (app-state-echo app)
-                   "LSP: starting gerbil-lsp...")
+                   "LSP: starting jerboa-lsp...")
                  (if (lsp-start! root)
                      (echo-message!
                        (app-state-echo app)
                        "LSP: initializing...")
                      (echo-error!
                        (app-state-echo app)
-                       "LSP: failed to start gerbil-lsp"))))))))
+                       "LSP: failed to start jerboa-lsp"))))))))
   (def (lsp-find-project-root path)
-       "Walk up from PATH to find a directory containing gerbil.pkg or .git."
+       "Walk up from PATH to find a directory containing a project marker."
        (let loop ([dir (path-directory (path-expand path))])
          (cond
            [(or (string=? dir "/") (string=? dir "")) #f]
-           [(or (file-exists? (path-expand "gerbil.pkg" dir))
+           [(or (file-exists? (path-expand "jerboa.pkg" dir))
+                (file-exists? (path-expand ".jerboa-lsp.json" dir))
+                (file-exists? (path-expand "gerbil.pkg" dir))
                 (file-exists? (path-expand ".git" dir)))
             dir]
            [else
@@ -1655,7 +1659,7 @@
                      (lsp-ensure-diagnostic-margin! ed))
                    (echo-message!
                      (app-state-echo app)
-                     "LSP: starting gerbil-lsp..."))
+                     "LSP: starting jerboa-lsp..."))
                  (echo-error!
                    (app-state-echo app)
                    "LSP: no project root found")))))

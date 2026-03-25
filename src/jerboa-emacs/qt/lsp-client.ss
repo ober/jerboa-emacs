@@ -4,7 +4,7 @@
 ;;; - JSON-RPC transport over stdio (Content-Length framing)
 ;;; - Background reader thread + mutex-protected UI action queue
 ;;; - Document synchronization (didOpen/didChange/didSave/didClose)
-;;; - Process management (start/stop gerbil-lsp)
+;;; - Process management (start/stop jerboa-lsp)
 
 (export #t)
 
