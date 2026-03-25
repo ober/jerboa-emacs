@@ -508,12 +508,14 @@
        (let* ([fr (app-state-frame app)])
          (for-each
            (lambda (win)
-             (let ([ed (qt-edit-window-editor win)])
+             (let* ([ed (qt-edit-window-editor win)]
+                    [buf (qt-edit-window-buffer win)])
                (sci-send ed SCI_STYLESETBACK 32 16777215)
                (sci-send ed SCI_STYLESETFORE 32 0)
                (sci-send ed SCI_STYLECLEARALL 0)
                (sci-send ed SCI_SETCARETLINEVISIBLE 1)
-               (sci-send ed SCI_SETCARETLINEBACK 16777184)))
+               (sci-send ed SCI_SETCARETLINEBACK 16777184)
+               (when buf (qt-setup-highlighting! app buf))))
            (qt-frame-windows fr))
          (echo-message!
            (app-state-echo app)
@@ -894,12 +896,14 @@
        (let ([fr (app-state-frame app)])
          (for-each
            (lambda (win)
-             (let ([ed (qt-edit-window-editor win)])
+             (let* ([ed (qt-edit-window-editor win)]
+                    [buf (qt-edit-window-buffer win)])
                (sci-send ed SCI_STYLESETBACK 32 1973806)
                (sci-send ed SCI_STYLESETFORE 32 13489908)
                (sci-send ed SCI_STYLECLEARALL 0)
                (sci-send ed SCI_SETCARETLINEVISIBLE 1)
-               (sci-send ed SCI_SETCARETLINEBACK 3224132)))
+               (sci-send ed SCI_SETCARETLINEBACK 3224132)
+               (when buf (qt-setup-highlighting! app buf))))
            (qt-frame-windows fr))
          (echo-message! (app-state-echo app) "Doom theme applied")))
   (def (cmd-rmail app)
@@ -952,9 +956,11 @@
                  (let ([fr (app-state-frame app)])
                    (for-each
                      (lambda (win)
-                       (let ([ed (qt-edit-window-editor win)])
+                       (let* ([ed (qt-edit-window-editor win)]
+                              [buf (qt-edit-window-buffer win)])
                          (sci-send ed SCI_STYLESETBACK 32 val)
-                         (sci-send ed SCI_STYLECLEARALL 0)))
+                         (sci-send ed SCI_STYLECLEARALL 0)
+                         (when buf (qt-setup-highlighting! app buf))))
                      (qt-frame-windows fr))
                    (echo-message!
                      (app-state-echo app)

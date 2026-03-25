@@ -451,14 +451,18 @@
     ;; Reset all editors to default colors
     (for-each
       (lambda (win)
-        (let ((ed (qt-edit-window-editor win)))
+        (let* ((ed (qt-edit-window-editor win))
+               (buf (qt-edit-window-buffer win)))
           ;; Reset to default white background, black foreground
           (sci-send ed SCI_STYLESETBACK 32 #xFFFFFF)  ; STYLE_DEFAULT bg
           (sci-send ed SCI_STYLESETFORE 32 #x000000)  ; STYLE_DEFAULT fg
           (sci-send ed SCI_STYLECLEARALL 0)
           ;; Reset caret line
           (sci-send ed SCI_SETCARETLINEVISIBLE 1)
-          (sci-send ed SCI_SETCARETLINEBACK #xFFFFE0)))
+          (sci-send ed SCI_SETCARETLINEBACK #xFFFFE0)
+          ;; Re-apply highlighting
+          (when buf
+            (qt-setup-highlighting! app buf))))
       (qt-frame-windows fr))
     (echo-message! (app-state-echo app) "Theme reset to defaults")))
 
@@ -811,14 +815,18 @@
   (let ((fr (app-state-frame app)))
     (for-each
       (lambda (win)
-        (let ((ed (qt-edit-window-editor win)))
+        (let* ((ed (qt-edit-window-editor win))
+               (buf (qt-edit-window-buffer win)))
           ;; Doom One dark theme colors
           (sci-send ed SCI_STYLESETBACK 32 #x1e1e2e)   ;; Dark bg (catppuccin-ish)
           (sci-send ed SCI_STYLESETFORE 32 #xcdd6f4)   ;; Light fg
           (sci-send ed SCI_STYLECLEARALL 0)
           ;; Caret line
           (sci-send ed SCI_SETCARETLINEVISIBLE 1)
-          (sci-send ed SCI_SETCARETLINEBACK #x313244)))
+          (sci-send ed SCI_SETCARETLINEBACK #x313244)
+          ;; Re-apply highlighting
+          (when buf
+            (qt-setup-highlighting! app buf))))
       (qt-frame-windows fr))
     (echo-message! (app-state-echo app) "Doom theme applied")))
 
@@ -867,9 +875,13 @@
           (let ((fr (app-state-frame app)))
             (for-each
               (lambda (win)
-                (let ((ed (qt-edit-window-editor win)))
+                (let* ((ed (qt-edit-window-editor win))
+                       (buf (qt-edit-window-buffer win)))
                   (sci-send ed SCI_STYLESETBACK 32 val)
-                  (sci-send ed SCI_STYLECLEARALL 0)))
+                  (sci-send ed SCI_STYLECLEARALL 0)
+                  ;; Re-apply highlighting (STYLECLEARALL wipes syntax colors)
+                  (when buf
+                    (qt-setup-highlighting! app buf))))
               (qt-frame-windows fr))
             (echo-message! (app-state-echo app) (string-append "Background set to #" hex-str)))
           (echo-error! (app-state-echo app) "Invalid hex color"))))))

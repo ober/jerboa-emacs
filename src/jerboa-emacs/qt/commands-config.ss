@@ -184,12 +184,19 @@
       (lambda (win)
         (let* ((ed (qt-edit-window-editor win))
                (buf (qt-edit-window-buffer win)))
-          (sci-send/string ed SCI_STYLESETFONT *default-font-family* STYLE_DEFAULT)
-          (sci-send ed SCI_STYLESETSIZE STYLE_DEFAULT *default-font-size*)
-          (sci-send ed SCI_STYLECLEARALL)
-          ;; Re-apply highlighting (STYLECLEARALL wipes QsciLexer colors)
+          ;; Re-apply highlighting (restores syntax colors)
           (when buf
-            (qt-setup-highlighting! buf))))
+            (qt-setup-highlighting! app buf))
+          ;; Force font family and size on ALL styles (0-127).
+          ;; QsciLexer's setLexer() controls style fonts, so we must override
+          ;; each style individually — SCI_STYLECLEARALL would wipe syntax colors.
+          (let loop ((i 0))
+            (when (<= i 127)
+              (sci-send/string ed SCI_STYLESETFONT *default-font-family* i)
+              (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+              (loop (+ i 1))))
+          ;; Restore margin and default colors (font loop may have corrupted them)
+          (restore-margin-colors! ed)))
       (qt-frame-windows fr)))
   ;; Update Qt stylesheet so chrome widgets match
   (when *qt-app-ptr*

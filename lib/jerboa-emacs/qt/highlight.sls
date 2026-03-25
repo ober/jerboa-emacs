@@ -10,7 +10,7 @@
     qt-enable-code-folding! detect-language
     qt-org-table-separator? *search-highlight-active*
     *qt-show-paren-enabled* *qt-delete-selection-enabled*
-    ts-setup-styles!)
+    ts-setup-styles! restore-margin-colors!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -263,6 +263,40 @@
                SCI_STYLESETBACK
                STYLE_LINENUMBER
                (rgb->sci bg-r bg-g bg-b))))))
+  (def (restore-margin-colors! ed)
+       "Restore line number margin and default face colors without SCI_STYLECLEARALL.\n   Use after operations that may corrupt margin colors (e.g. setting font on all styles\n   or re-creating a QsciLexer via setLexer)."
+       (let-values ([(fg-r fg-g fg-b) (face-fg-rgb 'default)])
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           STYLE_DEFAULT
+           (rgb->sci fg-r fg-g fg-b)))
+       (let ([default-face (face-get 'default)])
+         (when (and default-face (face-bg default-face))
+           (let-values ([(bg-r bg-g bg-b)
+                         (parse-hex-color (face-bg default-face))])
+             (sci-send
+               ed
+               SCI_STYLESETBACK
+               STYLE_DEFAULT
+               (rgb->sci bg-r bg-g bg-b)))))
+       (let ([ln-face (face-get 'line-number)])
+         (when ln-face
+           (when (face-fg ln-face)
+             (let-values ([(r g b) (parse-hex-color (face-fg ln-face))])
+               (sci-send
+                 ed
+                 SCI_STYLESETFORE
+                 STYLE_LINENUMBER
+                 (rgb->sci r g b))))
+           (when (face-bg ln-face)
+             (let-values ([(r g b) (parse-hex-color (face-bg ln-face))])
+               (sci-send
+                 ed
+                 SCI_STYLESETBACK
+                 STYLE_LINENUMBER
+                 (rgb->sci r g b))
+               (sci-send ed 2260 0 (rgb->sci r g b)))))))
   (def (setup-cpp-styles! ed keywords (types #f))
        (let-values ([(r g b)
                      (face-fg-rgb 'font-lock-comment-face)])
@@ -682,21 +716,7 @@
              [(shell)
               (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0)]
              [else (void)])
-           (let-values ([(ln-r ln-g ln-b) (face-fg-rgb 'line-number)])
-             (sci-send
-               ed
-               SCI_STYLESETFORE
-               STYLE_LINENUMBER
-               (rgb->sci ln-r ln-g ln-b)))
-           (let ([ln-face (face-get 'line-number)])
-             (when (and ln-face (face-bg ln-face))
-               (let-values ([(bg-r bg-g bg-b)
-                             (parse-hex-color (face-bg ln-face))])
-                 (sci-send
-                   ed
-                   SCI_STYLESETBACK
-                   STYLE_LINENUMBER
-                   (rgb->sci bg-r bg-g bg-b)))))
+           (restore-margin-colors! ed)
            (qt-enable-code-folding! ed))))
   (def (qt-enable-code-folding! ed)
        "Enable code folding margin and markers for QScintilla editor.\n   Sets up margin 2 as fold margin with box-tree style markers.\n   QScintilla lexers compute fold levels automatically."

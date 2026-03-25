@@ -212,18 +212,17 @@
            (lambda (win)
              (let* ([ed (qt-edit-window-editor win)]
                     [buf (qt-edit-window-buffer win)])
-               (sci-send/string
-                 ed
-                 SCI_STYLESETFONT
-                 *default-font-family*
-                 STYLE_DEFAULT)
-               (sci-send
-                 ed
-                 SCI_STYLESETSIZE
-                 STYLE_DEFAULT
-                 *default-font-size*)
-               (sci-send ed SCI_STYLECLEARALL)
-               (when buf (qt-setup-highlighting! buf))))
+               (when buf (qt-setup-highlighting! app buf))
+               (let loop ([i 0])
+                 (when (<= i 127)
+                   (sci-send/string
+                     ed
+                     SCI_STYLESETFONT
+                     *default-font-family*
+                     i)
+                   (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                   (loop (+ i 1))))
+               (restore-margin-colors! ed)))
            (qt-frame-windows fr)))
        (when *qt-app-ptr*
          (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))

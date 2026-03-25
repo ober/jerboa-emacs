@@ -18,7 +18,8 @@
         *search-highlight-active*
         *qt-show-paren-enabled*
         *qt-delete-selection-enabled*
-        ts-setup-styles!)
+        ts-setup-styles!
+        restore-margin-colors!)
 
 (import :std/sugar
         :chez-scintilla/constants
@@ -305,6 +306,29 @@
     (when (and ln-face (face-bg ln-face))
       (let-values (((bg-r bg-g bg-b) (parse-hex-color (face-bg ln-face))))
         (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci bg-r bg-g bg-b))))))
+
+(def (restore-margin-colors! ed)
+  "Restore line number margin and default face colors without SCI_STYLECLEARALL.
+   Use after operations that may corrupt margin colors (e.g. setting font on all styles
+   or re-creating a QsciLexer via setLexer)."
+  ;; Default face fg/bg
+  (let-values (((fg-r fg-g fg-b) (face-fg-rgb 'default)))
+    (sci-send ed SCI_STYLESETFORE STYLE_DEFAULT (rgb->sci fg-r fg-g fg-b)))
+  (let ((default-face (face-get 'default)))
+    (when (and default-face (face-bg default-face))
+      (let-values (((bg-r bg-g bg-b) (parse-hex-color (face-bg default-face))))
+        (sci-send ed SCI_STYLESETBACK STYLE_DEFAULT (rgb->sci bg-r bg-g bg-b)))))
+  ;; Line number margin: both STYLE_LINENUMBER (text bg) and SCI_SETMARGINBACKN (margin area bg)
+  (let ((ln-face (face-get 'line-number)))
+    (when ln-face
+      (when (face-fg ln-face)
+        (let-values (((r g b) (parse-hex-color (face-fg ln-face))))
+          (sci-send ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci r g b))))
+      (when (face-bg ln-face)
+        (let-values (((r g b) (parse-hex-color (face-bg ln-face))))
+          (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci r g b))
+          ;; SCI_SETMARGINBACKN (2260) — sets the margin gutter background itself
+          (sci-send ed 2260 0 (rgb->sci r g b)))))))
 
 ;;;============================================================================
 ;;; Lexer style setup (via SCI messages — works with raw Lexilla)
@@ -689,13 +713,8 @@
             ((shell)
              (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0))
             (else (void)))
-          ;; Line number margin styling
-          (let-values (((ln-r ln-g ln-b) (face-fg-rgb 'line-number)))
-            (sci-send ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci ln-r ln-g ln-b)))
-          (let ((ln-face (face-get 'line-number)))
-            (when (and ln-face (face-bg ln-face))
-              (let-values (((bg-r bg-g bg-b) (parse-hex-color (face-bg ln-face))))
-                (sci-send ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci bg-r bg-g bg-b)))))
+          ;; Restore margin + default colors (QsciLexer setLexer() resets them)
+          (restore-margin-colors! ed)
           ;; Enable code folding
           (qt-enable-code-folding! ed))))
 
