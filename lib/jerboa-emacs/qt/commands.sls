@@ -2143,6 +2143,46 @@
      'project-vterm-toggle
      cmd-project-vterm-toggle)
    (register-command! 'breadcrumb cmd-breadcrumb)
+   (register-command!
+     'find-file-parallel
+     cmd-find-file-parallel)
+   (register-command! 'magit-status-fast cmd-magit-status-fast)
+   (register-command! 'runtime-stats cmd-runtime-stats)
+   (register-command!
+     'runtime-stats-buffer
+     cmd-runtime-stats-buffer)
+   (register-command!
+     'eval-expression-compiled
+     cmd-eval-expression-compiled)
+   (register-command!
+     'benchmark-expression
+     cmd-benchmark-expression)
+   (register-command! 'profile-buffer cmd-profile-buffer)
+   (register-command! 'parallel-grep cmd-parallel-grep)
+   (register-command!
+     'keyboard-quit-abort
+     cmd-keyboard-quit-abort)
+   (register-command! 'describe-symbol cmd-describe-symbol)
+   (register-command!
+     'parallel-word-count
+     cmd-parallel-word-count)
+   (register-command! 'eval-in-sandbox cmd-eval-in-sandbox)
+   (register-command! 'sandbox-reset cmd-sandbox-reset)
+   (register-command!
+     'inspect-expression
+     cmd-inspect-expression)
+   (register-command! 'disassemble cmd-disassemble)
+   (register-command! 'apropos cmd-apropos)
+   (register-command! 'expand-macro cmd-expand-macro)
+   (register-command!
+     'project-statistics
+     cmd-project-statistics)
+   (register-command! 'define-command cmd-define-command)
+   (register-command! 'set-buffer-var cmd-set-buffer-var)
+   (register-command! 'get-buffer-var cmd-get-buffer-var)
+   (register-command! 'clear-file-cache cmd-clear-file-cache)
+   (register-command! 'file-cache-stats cmd-file-cache-stats)
+   (register-command! 'fuel-eval cmd-fuel-eval)
    (register-helm-commands!) (qt-register-helm-commands!)
    (qt-register-parity3-toggles!)
    (qt-register-parity4-commands!)

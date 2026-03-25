@@ -52,6 +52,25 @@
   parallel-map
   parallel-git!
 
+  ;; Weak-key caches (GC-friendly, no leaks)
+  make-weak-cache
+  weak-cache-ref
+  weak-cache-set!
+
+  ;; Chez statistics / self-profiling
+  runtime-statistics
+  runtime-gc-info
+
+  ;; Continuation-based abortable commands
+  with-abortable-command
+  abort-current-command!
+
+  ;; Engine-based timed execution (deadline enforcement)
+  with-time-limit
+
+  ;; SMP thread pool for batched I/O
+  parallel-for-each
+
   ;; Periodic task scheduler
   schedule-periodic!
   cancel-periodic!
@@ -706,3 +725,156 @@
                          (lambda () (repl-capture-command full-cmd))))))
                  commands)))
         (ui-queue-push! (lambda () (callback results)))))))
+
+;;;============================================================================
+;;; Weak-Key Caches — GC-Friendly Memoization
+;;;============================================================================
+;;;
+;;; Chez's `make-weak-eq-hashtable` uses weak references for keys.
+;;; When a key is GC'd, the entry disappears automatically.
+;;; Perfect for caching buffer metadata, parsed ASTs, file info
+;;; without worrying about memory leaks from stale entries.
+;;;
+;;; Emacs Lisp has nothing like this — its caches either leak forever
+;;; or require manual pruning timers.
+
+(def (make-weak-cache)
+  "Create a weak-key hashtable for caching.
+   Entries are automatically removed when the key is GC'd."
+  (make-weak-eq-hashtable))
+
+(def (weak-cache-ref cache key . default)
+  "Look up KEY in weak CACHE. Returns value or default (default: #f)."
+  (let ((v (hashtable-ref cache key '#:miss)))
+    (if (eq? v '#:miss)
+      (if (null? default) #f (car default))
+      v)))
+
+(def (weak-cache-set! cache key value)
+  "Set KEY to VALUE in weak CACHE."
+  (hashtable-set! cache key value))
+
+;;;============================================================================
+;;; Runtime Statistics — Chez Self-Profiling
+;;;============================================================================
+;;;
+;;; Chez exposes detailed runtime statistics: GC time, CPU time,
+;;; allocation rates, collection counts, thread counts.
+;;; Use this to display performance info in the modeline or on demand.
+;;; Emacs has (garbage-collect) but it's far less informative.
+
+(def (runtime-statistics)
+  "Return an alist of Chez Scheme runtime statistics.
+   Includes: cpu-time, real-time, gc-count, gc-cpu-time, bytes-allocated,
+   current-memory, max-memory, threads-active."
+  (let ((stats (statistics)))
+    (list
+      (cons 'cpu-time (sstats-cpu stats))
+      (cons 'real-time (sstats-real stats))
+      (cons 'gc-count (sstats-gc-count stats))
+      (cons 'gc-cpu-time (sstats-gc-cpu stats))
+      (cons 'gc-real-time (sstats-gc-real stats))
+      (cons 'bytes-allocated (sstats-bytes stats))
+      (cons 'current-memory (current-memory-bytes))
+      (cons 'max-memory (maximum-memory-bytes)))))
+
+(def (runtime-gc-info)
+  "Return a human-readable string of GC and memory statistics."
+  (let* ((stats (runtime-statistics))
+         (mem-mb (/ (cdr (assoc 'current-memory stats)) 1048576.0))
+         (max-mb (/ (cdr (assoc 'max-memory stats)) 1048576.0))
+         (gc-count (cdr (assoc 'gc-count stats)))
+         (gc-time (cdr (assoc 'gc-cpu-time stats)))
+         (alloc (cdr (assoc 'bytes-allocated stats))))
+    (string-append
+      "Memory: " (number->string (inexact->exact (round (* mem-mb 10)))) "/10 MB"
+      " (peak " (number->string (inexact->exact (round (* max-mb 10)))) "/10 MB)"
+      " | GC: " (number->string gc-count) " collections"
+      ", " (number->string (inexact->exact (round (* (time-second gc-time) 1000)))) " ms"
+      " | Allocated: " (number->string (quotient alloc 1048576)) " MB total")))
+
+;;;============================================================================
+;;; Continuation-Based Abortable Commands
+;;;============================================================================
+;;;
+;;; Chez has first-class continuations (call/cc). We use them to create
+;;; an abort mechanism: any command wrapped in with-abortable-command can
+;;; be instantly cancelled by calling abort-current-command!.
+;;; The continuation captures the exact point of interruption, so
+;;; cleanup is automatic — no try/finally needed.
+;;;
+;;; Emacs uses (keyboard-quit) with dynamic throw/catch, which is
+;;; less powerful because it can't capture/resume arbitrary points.
+
+(def *abort-continuation* #f)
+
+(def (with-abortable-command thunk)
+  "Run THUNK as an abortable command. If abort-current-command! is called
+   during execution, the command immediately exits via continuation."
+  (call/cc
+    (lambda (k)
+      (let ((old *abort-continuation*))
+        (dynamic-wind
+          (lambda () (set! *abort-continuation* k))
+          thunk
+          (lambda () (set! *abort-continuation* old)))))))
+
+(def (abort-current-command!)
+  "Abort the currently running command by invoking its saved continuation.
+   Safe to call from any context (timer, callback, signal handler)."
+  (when *abort-continuation*
+    (let ((k *abort-continuation*))
+      (set! *abort-continuation* #f)
+      (k 'aborted))))
+
+;;;============================================================================
+;;; Engine-Based Time Limits — Deadline Enforcement
+;;;============================================================================
+;;;
+;;; Combine engines + continuations to enforce hard time limits on any
+;;; computation. If the thunk doesn't finish within N ticks, it's killed.
+;;; Unlike Emacs (which has no preemption), this guarantees termination.
+
+(def (with-time-limit ticks thunk default)
+  "Run THUNK for at most TICKS engine ticks. If it finishes, return its value.
+   If not, return DEFAULT. The thunk is truly preempted, not just signaled.
+   This is impossible in Emacs Lisp which lacks preemptive scheduling."
+  (let ((eng (make-engine thunk)))
+    (eng ticks
+      ;; Complete: return the value
+      (lambda (remaining value) value)
+      ;; Expired: return default
+      (lambda (new-engine) default))))
+
+;;;============================================================================
+;;; SMP Parallel For-Each — Fire-and-Forget Parallel I/O
+;;;============================================================================
+;;;
+;;; Like parallel-map but discards results. Useful for parallel writes,
+;;; parallel cache warming, parallel file touches, etc.
+
+(def (parallel-for-each fn items)
+  "Apply FN to each item in ITEMS using parallel threads.
+   Waits for all threads to complete but discards results.
+   More efficient than parallel-map when you don't need return values."
+  (let ((n (length items)))
+    (when (> n 0)
+      (let ((threads
+              (let loop ((rest items) (i 0) (acc '()))
+                (if (null? rest) (reverse acc)
+                  (let ((item (car rest))
+                        (idx i))
+                    (loop (cdr rest) (+ i 1)
+                      (cons
+                        (let ((t (make-thread
+                                   (lambda ()
+                                     (with-catch (lambda (e) (void))
+                                       (lambda () (fn item))))
+                                   (string->symbol
+                                     (string-append "pfe-" (number->string idx))))))
+                          (thread-start! t)
+                          t)
+                        acc)))))))
+        (for-each (lambda (t) (thread-join! t)) threads)))))
+
+

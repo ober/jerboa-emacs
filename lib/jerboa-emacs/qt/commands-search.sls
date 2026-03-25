@@ -22,11 +22,10 @@
    cmd-where-is cmd-flush-lines cmd-keep-lines cmd-number-lines
    cmd-reverse-region cmd-toggle-read-only cmd-rename-buffer
    cmd-switch-buffer-other-window cmd-find-file-other-window
-   cmd-insert-date cmd-eval-buffer cmd-eval-region
-   cmd-eval-last-sexp cmd-eval-defun cmd-eval-print-last-sexp
-   cmd-clone-buffer cmd-scratch-buffer
-   cmd-delete-duplicate-lines cmd-count-matches
-   cmd-count-lines-region qt-highlight-diff!
+   cmd-insert-date cmd-eval-buffer cmd-eval-last-sexp
+   cmd-eval-defun cmd-eval-print-last-sexp cmd-clone-buffer
+   cmd-scratch-buffer cmd-delete-duplicate-lines
+   cmd-count-matches cmd-count-lines-region qt-highlight-diff!
    cmd-diff-buffer-with-file cmd-diff-next-hunk
    cmd-diff-prev-hunk cmd-grep-buffer cmd-revert-buffer-quick
    cmd-shell-command-on-region cmd-pipe-buffer
@@ -1060,24 +1059,6 @@
                    (if (has-captured-output?)
                        " (see *Output*/*Errors*)"
                        "")))))))
-  (def (cmd-eval-region app)
-       (let* ([echo (app-state-echo app)]
-              [ed (current-qt-editor app)]
-              [buf (current-qt-buffer app)]
-              [mark (buffer-mark buf)])
-         (if mark
-             (let* ([pos (qt-plain-text-edit-cursor-position ed)]
-                    [start (min mark pos)]
-                    [end (max mark pos)]
-                    [text (qt-plain-text-edit-text ed)]
-                    [region (substring text start end)])
-               (buffer-mark-set! buf #f)
-               (let-values ([(result error?)
-                             (eval-expression-string region)])
-                 (if error?
-                     (echo-error! echo result)
-                     (echo-message! echo (string-append "=> " result)))))
-             (echo-error! echo "No mark set"))))
   (def (cmd-eval-last-sexp app)
        "Evaluate the sexp ending before point and display result."
        (let* ([echo (app-state-echo app)]

@@ -8,7 +8,10 @@
    async-process-stream! async-read-file! async-write-file!
    async-eval! engine-eval-start! engine-eval-cancel!
    *engine-eval-active* register-for-cleanup! drain-guardians!
-   parallel-map parallel-git! schedule-periodic!
+   parallel-map parallel-git! make-weak-cache weak-cache-ref
+   weak-cache-set! runtime-statistics runtime-gc-info
+   with-abortable-command abort-current-command!
+   with-time-limit parallel-for-each schedule-periodic!
    cancel-periodic! master-timer-tick! current-time-ms
    *file-index* start-file-indexer! stop-file-indexer!
    file-index-lookup *git-status-cache* start-git-watcher!
@@ -538,6 +541,99 @@
                                        (repl-capture-command full-cmd))))))
                              commands)])
              (ui-queue-push! (lambda () (callback results)))))))
+  (def (make-weak-cache)
+       "Create a weak-key hashtable for caching.\n   Entries are automatically removed when the key is GC'd."
+       (make-weak-eq-hashtable))
+  (def (weak-cache-ref cache key . default)
+       "Look up KEY in weak CACHE. Returns value or default (default: #f)."
+       (let ([v (hashtable-ref
+                  cache
+                  key
+                  '#{miss duooixdaklheon9quqi6o5g83-1})])
+         (if (eq? v '#{miss duooixdaklheon9quqi6o5g83-2})
+             (if (null? default) #f (car default))
+             v)))
+  (def (weak-cache-set! cache key value)
+       "Set KEY to VALUE in weak CACHE."
+       (hashtable-set! cache key value))
+  (def (runtime-statistics)
+       "Return an alist of Chez Scheme runtime statistics.\n   Includes: cpu-time, real-time, gc-count, gc-cpu-time, bytes-allocated,\n   current-memory, max-memory, threads-active."
+       (let ([stats (statistics)])
+         (list (cons 'cpu-time (sstats-cpu stats))
+           (cons 'real-time (sstats-real stats))
+           (cons 'gc-count (sstats-gc-count stats))
+           (cons 'gc-cpu-time (sstats-gc-cpu stats))
+           (cons 'gc-real-time (sstats-gc-real stats))
+           (cons 'bytes-allocated (sstats-bytes stats))
+           (cons 'current-memory (current-memory-bytes))
+           (cons 'max-memory (maximum-memory-bytes)))))
+  (def (runtime-gc-info)
+       "Return a human-readable string of GC and memory statistics."
+       (let* ([stats (runtime-statistics)]
+              [mem-mb (/ (cdr (assoc 'current-memory stats)) 1048576.0)]
+              [max-mb (/ (cdr (assoc 'max-memory stats)) 1048576.0)]
+              [gc-count (cdr (assoc 'gc-count stats))]
+              [gc-time (cdr (assoc 'gc-cpu-time stats))]
+              [alloc (cdr (assoc 'bytes-allocated stats))])
+         (string-append "Memory: "
+           (number->string (inexact->exact (round (* mem-mb 10))))
+           "/10 MB" " (peak "
+           (number->string (inexact->exact (round (* max-mb 10))))
+           "/10 MB)" " | GC: " (number->string gc-count) " collections"
+           ", "
+           (number->string
+             (inexact->exact (round (* (time-second gc-time) 1000))))
+           " ms" " | Allocated: "
+           (number->string (quotient alloc 1048576)) " MB total")))
+  (def *abort-continuation* #f)
+  (def (with-abortable-command thunk)
+       "Run THUNK as an abortable command. If abort-current-command! is called\n   during execution, the command immediately exits via continuation."
+       (call/cc
+         (lambda (k)
+           (let ([old *abort-continuation*])
+             (dynamic-wind
+               (lambda () (set! *abort-continuation* k))
+               thunk
+               (lambda () (set! *abort-continuation* old)))))))
+  (def (abort-current-command!)
+       "Abort the currently running command by invoking its saved continuation.\n   Safe to call from any context (timer, callback, signal handler)."
+       (when *abort-continuation*
+         (let ([k *abort-continuation*])
+           (set! *abort-continuation* #f)
+           (k 'aborted))))
+  (def (with-time-limit ticks thunk default)
+       "Run THUNK for at most TICKS engine ticks. If it finishes, return its value.\n   If not, return DEFAULT. The thunk is truly preempted, not just signaled.\n   This is impossible in Emacs Lisp which lacks preemptive scheduling."
+       (let ([eng (make-engine thunk)])
+         (eng ticks
+              (lambda (remaining value) value)
+              (lambda (new-engine) default))))
+  (def (parallel-for-each fn items)
+       "Apply FN to each item in ITEMS using parallel threads.\n   Waits for all threads to complete but discards results.\n   More efficient than parallel-map when you don't need return values."
+       (let ([n (length items)])
+         (when (> n 0)
+           (let ([threads (let loop ([rest items] [i 0] [acc '()])
+                            (if (null? rest)
+                                (reverse acc)
+                                (let ([item (car rest)] [idx i])
+                                  (loop
+                                    (cdr rest)
+                                    (+ i 1)
+                                    (cons
+                                      (let ([t (make-thread
+                                                 (lambda ()
+                                                   (with-catch
+                                                     (lambda (e) (void))
+                                                     (lambda ()
+                                                       (fn item))))
+                                                 (string->symbol
+                                                   (string-append
+                                                     "pfe-"
+                                                     (number->string
+                                                       idx))))])
+                                        (thread-start! t)
+                                        t)
+                                      acc)))))])
+             (for-each (lambda (t) (thread-join! t)) threads)))))
   (define-syntax *engine-eval-active*
     (identifier-syntax
       [id (vector-ref *engine-eval-active*--cell 0)]

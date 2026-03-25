@@ -932,23 +932,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
                          " forms in " name
                          (if (has-captured-output?) " (see *Output*/*Errors*)" "")))))))
 
-(def (cmd-eval-region app)
-  (let* ((echo (app-state-echo app))
-         (ed (current-qt-editor app))
-         (buf (current-qt-buffer app))
-         (mark (buffer-mark buf)))
-    (if mark
-      (let* ((pos (qt-plain-text-edit-cursor-position ed))
-             (start (min mark pos))
-             (end (max mark pos))
-             (text (qt-plain-text-edit-text ed))
-             (region (substring text start end)))
-        (set! (buffer-mark buf) #f)
-        (let-values (((result error?) (eval-expression-string region)))
-          (if error?
-            (echo-error! echo result)
-            (echo-message! echo (string-append "=> " result)))))
-      (echo-error! echo "No mark set"))))
+;; cmd-eval-region moved to commands-ide.ss (engine-based, non-blocking)
 
 (def (cmd-eval-last-sexp app)
   "Evaluate the sexp ending before point and display result."

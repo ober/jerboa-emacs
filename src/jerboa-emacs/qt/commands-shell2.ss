@@ -15,6 +15,7 @@
         (only-in :jerboa-emacs/persist theme-settings-save! theme-settings-load!
                  mx-history-save! mx-history-load!)
         :jerboa-emacs/editor
+        (only-in :jerboa-emacs/editor-extra-helpers project-find-root project-current)
         :jerboa-emacs/repl
         :jerboa-emacs/eshell
         :jerboa-emacs/shell
@@ -24,7 +25,8 @@
         :jerboa-emacs/qt/echo
         :jerboa-emacs/qt/highlight
         :jerboa-emacs/qt/modeline
-        (only-in :jerboa-emacs/qt/magit magit-run-git)
+        :jerboa-emacs/async
+        (only-in :jerboa-emacs/qt/magit magit-run-git magit-run-git/async)
         :jerboa-emacs/qt/commands-core
         :jerboa-emacs/qt/commands-core2
         :jerboa-emacs/qt/commands-edit
@@ -41,6 +43,19 @@
         :jerboa-emacs/qt/lsp-client
         :jerboa-emacs/qt/commands-lsp
         :jerboa-emacs/qt/commands-shell)
+
+;;;============================================================================
+;;; Helpers
+
+(def (shell-quote-arg str)
+  "Quote STR for safe use in shell commands."
+  (string-append "'" (let loop ((i 0) (acc ""))
+    (if (>= i (string-length str)) acc
+      (let ((c (string-ref str i)))
+        (loop (+ i 1)
+          (if (char=? c #\')
+            (string-append acc "'\\''")
+            (string-append acc (string c))))))) "'"))
 
 ;;;============================================================================
 ;;; Sudo save
@@ -1656,6 +1671,206 @@ Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
                   (if fn-name (string-append " > " fn-name) "")
                   " [L" (number->string line) ":C" (number->string col) "]")))
     (echo-message! echo crumb)))
+
+;;;============================================================================
+;;; SMP Parallel Grep — Search All Project Files Concurrently
+;;;============================================================================
+;;;
+;;; Chez SMP threads let us split a grep across multiple files.
+;;; Each thread searches a shard of the file list — true OS-level parallelism.
+;;; Emacs grep is single-threaded and shells out to an external process.
+
+(def (cmd-parallel-grep app)
+  "Grep across project files using SMP parallel threads.
+   Each thread searches a portion of the file list concurrently."
+  (let* ((echo (app-state-echo app))
+         (pattern (qt-echo-read-string app "Parallel grep: ")))
+    (when (and pattern (> (string-length pattern) 0))
+      (let* ((buf (current-qt-buffer app))
+             (path (buffer-file-path buf))
+             (dir (if path (path-directory path) (current-directory))))
+        ;; Use rg for speed, but fan out multiple sharded searches
+        (async-process!
+          (string-append "rg --files '" dir "' 2>/dev/null | head -500")
+          callback:
+          (lambda (file-list-output)
+            (let* ((all-files (filter (lambda (f) (> (string-length f) 0))
+                                (string-split file-list-output #\newline)))
+                   (n (length all-files)))
+              (if (= n 0)
+                (echo-message! echo "No files found in project")
+                (begin
+                  (echo-message! echo
+                    (string-append "Searching " (number->string n)
+                                   " files with SMP..."))
+                  ;; Split files into shards and search in parallel
+                  (spawn-worker 'parallel-grep
+                    (lambda ()
+                      (let* ((shard-size (max 1 (quotient n 4)))
+                             (shards (let shard-loop ((rest all-files) (acc '()))
+                                       (if (null? rest) (reverse acc)
+                                         (let take ((r rest) (s '()) (c 0))
+                                           (if (or (null? r) (>= c shard-size))
+                                             (shard-loop r (cons (reverse s) acc))
+                                             (take (cdr r) (cons (car r) s) (+ c 1)))))))
+                             (results
+                               (parallel-map
+                                 (lambda (shard)
+                                   (let ((matches '()))
+                                     (for-each
+                                       (lambda (file)
+                                         (with-catch
+                                           (lambda (e) (void))
+                                           (lambda ()
+                                             (let* ((content (read-file-text file))
+                                                    (lines (string-split content #\newline)))
+                                               (let line-loop ((ls lines) (lineno 1))
+                                                 (when (pair? ls)
+                                                   (when (string-contains (car ls) pattern)
+                                                     (set! matches
+                                                       (cons (string-append file ":"
+                                                               (number->string lineno) ":"
+                                                               (car ls))
+                                                             matches)))
+                                                   (line-loop (cdr ls) (+ lineno 1))))))))
+                                       shard)
+                                     (reverse matches)))
+                                 shards)))
+                        ;; Flatten results and post to UI
+                        (let ((all-matches (apply append results)))
+                          (ui-queue-push!
+                            (lambda ()
+                              (if (null? all-matches)
+                                (echo-message! echo "No matches found")
+                                (let* ((ed (current-qt-editor app))
+                                       (fr (app-state-frame app))
+                                       (rbuf (or (buffer-by-name "*grep*")
+                                                 (qt-buffer-create! "*grep*" ed #f)))
+                                       (text (string-append
+                                               "=== Parallel Grep: " pattern
+                                               " (" (number->string (length all-matches))
+                                               " matches, SMP) ===\n\n"
+                                               (apply string-append
+                                                 (map (lambda (m) (string-append m "\n"))
+                                                      all-matches)))))
+                                  (set! (qt-edit-window-buffer (qt-current-window fr)) rbuf)
+                                  (qt-buffer-attach! ed rbuf)
+                                  (qt-plain-text-edit-set-text! ed text)
+                                  (qt-text-document-set-modified! (buffer-doc-pointer rbuf) #f)
+                                  (qt-plain-text-edit-set-cursor-position! ed 0)
+                                  (echo-message! echo
+                                    (string-append (number->string (length all-matches))
+                                                   " matches (SMP parallel grep)")))))))))))))))))))
+
+;;;============================================================================
+;;; Continuation-Based Keyboard Quit — Instant Abort
+;;;============================================================================
+
+(def (cmd-keyboard-quit-abort app)
+  "Abort the current command using Chez continuations.
+   Unlike Emacs C-g (which sets a flag), this instantly unwinds
+   the call stack via first-class continuations."
+  (abort-current-command!)
+  (echo-message! (app-state-echo app) "Quit (continuation abort)"))
+
+;;;============================================================================
+;;; Smart Describe Symbol — Chez Introspection
+;;;============================================================================
+
+(def (cmd-describe-symbol app)
+  "Describe a symbol using Chez's runtime introspection.
+   Shows: procedure arity, source location, type, documentation.
+   Emacs describe-function uses a static database; this is live introspection."
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Describe symbol: ")))
+    (when (and input (> (string-length input) 0))
+      (engine-eval-start!
+        (string-append
+          "(let ((sym (string->symbol " (with-output-to-string (lambda () (write input))) ")))"
+          "  (let ((val (with-exception-handler"
+          "               (lambda (e) '#:unbound)"
+          "               (lambda () (eval sym))"
+          "               #:on 'raise-continuable)))"
+          "    (cond"
+          "      ((eq? val '#:unbound)"
+          "       (string-append (symbol->string sym) \" is unbound\"))"
+          "      ((procedure? val)"
+          "       (let ((arity (with-exception-handler"
+          "                      (lambda (e) #f)"
+          "                      (lambda () (procedure-arity-mask val))"
+          "                      #:on 'raise-continuable)))"
+          "         (string-append"
+          "           (symbol->string sym) \" is a procedure\""
+          "           (if arity"
+          "             (string-append \" (arity-mask: \" (number->string arity) \")\")"
+          "             \"\"))))"
+          "      ((number? val)"
+          "       (string-append (symbol->string sym) \" = \" (number->string val) \" (number)\"))"
+          "      ((string? val)"
+          "       (string-append (symbol->string sym) \" = \\\"\" val \"\\\" (string)\"))"
+          "      ((boolean? val)"
+          "       (string-append (symbol->string sym) \" = \" (if val \"#t\" \"#f\") \" (boolean)\"))"
+          "      ((list? val)"
+          "       (string-append (symbol->string sym) \" = list of \""
+          "                      (number->string (length val)) \" elements\"))"
+          "      ((pair? val)"
+          "       (string-append (symbol->string sym) \" = pair\"))"
+          "      ((vector? val)"
+          "       (string-append (symbol->string sym) \" = vector of \""
+          "                      (number->string (vector-length val)) \" elements\"))"
+          "      ((hashtable? val)"
+          "       (string-append (symbol->string sym) \" = hashtable (\""
+          "                      (number->string (hashtable-size val)) \" entries)\"))"
+          "      (else"
+          "       (string-append (symbol->string sym) \" = \" (format \"~a\" val))))))")
+        (lambda (result) (echo-message! echo (or result "nil")))
+        (lambda (err) (echo-error! echo err))))))
+
+;;;============================================================================
+;;; SMP Parallel Word Count — Demonstrates True Thread Parallelism
+;;;============================================================================
+
+(def (count-words-in-string text)
+  "Count words in TEXT. A word is a run of non-whitespace characters."
+  (let count ((i 0) (in-word #f) (wc 0))
+    (if (>= i (string-length text)) wc
+      (let ((c (string-ref text i)))
+        (if (or (char=? c #\space) (char=? c #\newline) (char=? c #\tab))
+          (count (+ i 1) #f wc)
+          (count (+ i 1) #t (if in-word wc (+ wc 1))))))))
+
+(def (cmd-parallel-word-count app)
+  "Count words across all open buffers using SMP parallel threads.
+   Collects text on UI thread, then counts in parallel worker threads."
+  (let* ((echo (app-state-echo app))
+         (bufs (buffer-list))
+         (n (length bufs)))
+    (if (= n 0)
+      (echo-message! echo "No buffers open")
+      ;; Collect buffer texts on UI thread (Qt widgets are UI-thread only)
+      (let ((texts (map (lambda (buf)
+                          (cons (buffer-name buf)
+                                (let ((path (buffer-file-path buf)))
+                                  (if path
+                                    (with-catch (lambda (e) "")
+                                      (lambda () (read-file-text path)))
+                                    ""))))
+                     bufs)))
+        ;; Count words in parallel using SMP threads
+        (spawn-worker 'parallel-wc
+          (lambda ()
+            (let* ((results
+                     (parallel-map
+                       (lambda (pair)
+                         (cons (car pair) (count-words-in-string (cdr pair))))
+                       texts))
+                   (total (apply + (map cdr results))))
+              (ui-queue-push!
+                (lambda ()
+                  (echo-message! echo
+                    (string-append
+                      (number->string total) " words across "
+                      (number->string n) " buffers (SMP parallel)")))))))))))
 
 ;; cmd-align-regexp is defined in qt/commands-sexp.ss
 ;; cmd-insert-uuid is defined in qt/commands-file.ss

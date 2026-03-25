@@ -1871,6 +1871,50 @@
   (register-command! 'project-vterm-toggle cmd-project-vterm-toggle)
   ;; Breadcrumb navigation
   (register-command! 'breadcrumb cmd-breadcrumb)
+  ;; SMP parallel file loader
+  (register-command! 'find-file-parallel cmd-find-file-parallel)
+  ;; SMP parallel magit status
+  (register-command! 'magit-status-fast cmd-magit-status-fast)
+  ;; Chez runtime statistics
+  (register-command! 'runtime-stats cmd-runtime-stats)
+  (register-command! 'runtime-stats-buffer cmd-runtime-stats-buffer)
+  ;; JIT compiled eval
+  (register-command! 'eval-expression-compiled cmd-eval-expression-compiled)
+  ;; Benchmark expression
+  (register-command! 'benchmark-expression cmd-benchmark-expression)
+  ;; Profile buffer code
+  (register-command! 'profile-buffer cmd-profile-buffer)
+  ;; SMP parallel grep
+  (register-command! 'parallel-grep cmd-parallel-grep)
+  ;; Continuation-based abort
+  (register-command! 'keyboard-quit-abort cmd-keyboard-quit-abort)
+  ;; Chez describe symbol
+  (register-command! 'describe-symbol cmd-describe-symbol)
+  ;; SMP parallel word count
+  (register-command! 'parallel-word-count cmd-parallel-word-count)
+  ;; Sandboxed eval
+  (register-command! 'eval-in-sandbox cmd-eval-in-sandbox)
+  (register-command! 'sandbox-reset cmd-sandbox-reset)
+  ;; Chez inspector
+  (register-command! 'inspect-expression cmd-inspect-expression)
+  ;; Chez disassemble
+  (register-command! 'disassemble cmd-disassemble)
+  ;; Chez apropos
+  (register-command! 'apropos cmd-apropos)
+  ;; Chez expand macro
+  (register-command! 'expand-macro cmd-expand-macro)
+  ;; SMP project statistics
+  (register-command! 'project-statistics cmd-project-statistics)
+  ;; Define user command at runtime (JIT compiled)
+  (register-command! 'define-command cmd-define-command)
+  ;; STM buffer variables
+  (register-command! 'set-buffer-var cmd-set-buffer-var)
+  (register-command! 'get-buffer-var cmd-get-buffer-var)
+  ;; LRU file cache
+  (register-command! 'clear-file-cache cmd-clear-file-cache)
+  (register-command! 'file-cache-stats cmd-file-cache-stats)
+  ;; Fuel-budgeted eval
+  (register-command! 'fuel-eval cmd-fuel-eval)
   ;; Helm commands (real implementations)
   (register-helm-commands!)
   ;; Qt-specific helm commands (uses helm-qt renderer)

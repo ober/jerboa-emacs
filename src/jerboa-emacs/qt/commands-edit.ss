@@ -1491,3 +1491,150 @@ Returns the clean text (without ANSI codes)."
          (text (qt-plain-text-edit-text ed)))
     (qt-set-text-with-ansi! ed text)
     (echo-message! (app-state-echo app) "ANSI colors applied")))
+
+;;;============================================================================
+;;; Chez Runtime Statistics — Self-Profiling Dashboard
+;;;============================================================================
+
+(def (cmd-runtime-stats app)
+  "Display Chez Scheme runtime statistics: memory, GC, allocation.
+   Unique to Chez — Emacs has no equivalent self-profiling."
+  (let* ((echo (app-state-echo app))
+         (info (runtime-gc-info)))
+    (echo-message! echo info)))
+
+(def (cmd-runtime-stats-buffer app)
+  "Show detailed Chez runtime stats in a dedicated buffer."
+  (let* ((ed (current-qt-editor app))
+         (fr (app-state-frame app))
+         (stats (runtime-statistics))
+         (buf (or (buffer-by-name "*runtime-stats*")
+                  (qt-buffer-create! "*runtime-stats*" ed #f)))
+         (lines
+           (list
+             "=== Chez Scheme Runtime Statistics ==="
+             ""
+             (string-append "CPU time:       "
+               (number->string (time-second (cdr (assoc 'cpu-time stats)))) " s")
+             (string-append "Real time:      "
+               (number->string (time-second (cdr (assoc 'real-time stats)))) " s")
+             (string-append "GC count:       "
+               (number->string (cdr (assoc 'gc-count stats))))
+             (string-append "GC CPU time:    "
+               (number->string (time-second (cdr (assoc 'gc-cpu-time stats)))) " s")
+             (string-append "GC real time:   "
+               (number->string (time-second (cdr (assoc 'gc-real-time stats)))) " s")
+             (string-append "Bytes alloc:    "
+               (number->string (cdr (assoc 'bytes-allocated stats))))
+             (string-append "Current memory: "
+               (number->string (quotient (cdr (assoc 'current-memory stats)) 1048576)) " MB")
+             (string-append "Peak memory:    "
+               (number->string (quotient (cdr (assoc 'max-memory stats)) 1048576)) " MB")
+             ""
+             (string-append "Chez version:   " (scheme-version))
+             (string-append "Thread model:   SMP (Chez native threads)")
+             (string-append "Petite:         " (if (petite?) "yes" "no")))))
+    (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
+    (qt-buffer-attach! ed buf)
+    (qt-plain-text-edit-set-text! ed
+      (apply string-append (map (lambda (l) (string-append l "\n")) lines)))
+    (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
+    (qt-plain-text-edit-set-cursor-position! ed 0)))
+
+;;;============================================================================
+;;; JIT Compile Expression — Chez Native Code at Runtime
+;;;============================================================================
+;;;
+;;; (compile expr) turns an S-expression into native machine code at runtime.
+;;; This is a Chez superpower: user eval'd code runs at full compiled speed.
+;;; Emacs Lisp can byte-compile but not native-compile at runtime interactively.
+
+(def (cmd-eval-expression-compiled app)
+  "Evaluate expression with Chez JIT compilation for maximum speed.
+   The expression is compiled to native machine code before execution."
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Eval (compiled): ")))
+    (when (and input (> (string-length input) 0))
+      (engine-eval-start!
+        ;; Wrap in compile call for native code generation
+        (string-append "(let ((proc (compile (lambda () " input "))))"
+                       "  (proc))")
+        (lambda (result)
+          (echo-message! echo (or result "nil")))
+        (lambda (err)
+          (echo-error! echo err))))))
+
+;;;============================================================================
+;;; Benchmark Expression — Time Any Eval with Chez Precision
+;;;============================================================================
+
+(def (cmd-benchmark-expression app)
+  "Benchmark an expression: measure wall time, CPU time, GC time, allocations.
+   Uses Chez statistics for nanosecond-precision timing."
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Benchmark: ")))
+    (when (and input (> (string-length input) 0))
+      (engine-eval-start!
+        (string-append
+          "(let* ((before (statistics))"
+          "       (result (begin " input "))"
+          "       (after (statistics)))"
+          "  (let ((cpu (- (time-second (sstats-cpu after))"
+          "                (time-second (sstats-cpu before))))"
+          "        (real (- (time-second (sstats-real after))"
+          "                 (time-second (sstats-real before))))"
+          "        (gc (- (time-second (sstats-gc-cpu after))"
+          "               (time-second (sstats-gc-cpu before))))"
+          "        (alloc (- (sstats-bytes after) (sstats-bytes before))))"
+          "    (string-append"
+          "      (format \"~a\" result)"
+          "      \" | CPU: \" (format \"~,3fs\" cpu)"
+          "      \" | Wall: \" (format \"~,3fs\" real)"
+          "      \" | GC: \" (format \"~,3fs\" gc)"
+          "      \" | Alloc: \" (format \"~:d bytes\" alloc))))")
+        (lambda (result)
+          (echo-message! echo (or result "nil")))
+        (lambda (err)
+          (echo-error! echo err))))))
+
+;;;============================================================================
+;;; Profile Buffer Code — Chez Built-In Profiler
+;;;============================================================================
+
+(def (cmd-profile-buffer app)
+  "Profile the current buffer's code using Chez's built-in profiler.
+   Shows which expressions consume the most time."
+  (let* ((ed (current-qt-editor app))
+         (echo (app-state-echo app))
+         (text (qt-plain-text-edit-text ed)))
+    (if (= (string-length text) 0)
+      (echo-message! echo "Buffer is empty")
+      (engine-eval-start!
+        (string-append
+          "(begin"
+          "  (profile-clear)"
+          "  (let ((forms (with-input-from-string "
+          "                 " (with-output-to-string (lambda () (write text)))
+          "                 (lambda () (let loop ((acc '()))"
+          "                   (let ((f (read)))"
+          "                     (if (eof-object? f) (reverse acc)"
+          "                       (loop (cons f acc))))))))"
+          "    (for-each (lambda (f)"
+          "                (with-exception-handler"
+          "                  (lambda (e) (void))"
+          "                  (lambda () (eval f))"
+          "                  #:on 'raise-continuable))"
+          "              forms)"
+          "    (with-output-to-string"
+          "      (lambda () (profile-dump-html)))))")
+        (lambda (result)
+          (let* ((buf (or (buffer-by-name "*profile*")
+                          (qt-buffer-create! "*profile*" ed #f)))
+                 (fr (app-state-frame app)))
+            (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
+            (qt-buffer-attach! ed buf)
+            (qt-plain-text-edit-set-text! ed (or result "No profile data"))
+            (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)))
+        (lambda (err)
+          (echo-error! echo err))))))
+
