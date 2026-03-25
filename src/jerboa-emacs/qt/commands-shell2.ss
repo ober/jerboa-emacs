@@ -1528,7 +1528,7 @@ Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
 ;;; Multi-vterm: per-project terminal management
 ;;;============================================================================
 
-(def *project-terminals* (make-hash-table))  ;; project-root -> list of buffer names
+;; *project-terminals* is defined in commands-ide2.ss
 
 (def (cmd-project-vterm app)
   "Open a terminal associated with the current project."

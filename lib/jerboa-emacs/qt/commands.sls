@@ -1448,6 +1448,11 @@
    (register-command! 'query-replace cmd-query-replace)
    (register-command! 'repl cmd-repl)
    (register-command! 'eval-expression cmd-eval-expression)
+   (register-command!
+     'eval-expression-blocking
+     cmd-eval-expression-blocking)
+   (register-command! 'eval-cancel cmd-eval-cancel)
+   (register-command! 'eval-introspect cmd-eval-introspect)
    (register-command! 'load-file cmd-load-file)
    (register-command! 'eshell cmd-eshell)
    (register-command! 'shell cmd-shell)

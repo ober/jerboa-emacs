@@ -1255,6 +1255,9 @@
   ;; REPL
   (register-command! 'repl cmd-repl)
   (register-command! 'eval-expression cmd-eval-expression)
+  (register-command! 'eval-expression-blocking cmd-eval-expression-blocking)
+  (register-command! 'eval-cancel cmd-eval-cancel)
+  (register-command! 'eval-introspect cmd-eval-introspect)
   (register-command! 'load-file cmd-load-file)
   ;; Eshell
   (register-command! 'eshell cmd-eshell)

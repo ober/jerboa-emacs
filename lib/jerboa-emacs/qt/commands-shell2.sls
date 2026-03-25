@@ -35,10 +35,9 @@
    cmd-forge-browse-pr-at-point cmd-forge-pr-diff
    *display-buffer-rules* display-buffer-add-rule!
    display-buffer-match-rule cmd-display-buffer-add-rule
-   cmd-display-buffer-list-rules *project-terminals*
-   cmd-project-vterm cmd-project-vterm-toggle
-   breadcrumb-find-function-at-point breadcrumb-extract-name
-   cmd-breadcrumb)
+   cmd-display-buffer-list-rules cmd-project-vterm
+   cmd-project-vterm-toggle breadcrumb-find-function-at-point
+   breadcrumb-extract-name cmd-breadcrumb)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -1881,8 +1880,6 @@
                           "Display Buffer Rules:\n"
                           (string-join lines "\n")))])
          (echo-message! echo text)))
-  (define *project-terminals*--cell
-    (vector (make-hash-table)))
   (def (cmd-project-vterm app)
        "Open a terminal associated with the current project."
        (let* ([echo (app-state-echo app)]
@@ -2087,13 +2084,6 @@
       [id (vector-ref *display-buffer-rules*--cell 0)]
       [(set! id val) (vector-set!
                        *display-buffer-rules*--cell
-                       0
-                       val)]))
-  (define-syntax *project-terminals*
-    (identifier-syntax
-      [id (vector-ref *project-terminals*--cell 0)]
-      [(set! id val) (vector-set!
-                       *project-terminals*--cell
                        0
                        val)]))
   (display-buffer-add-rule! "*Compilation" 'bottom-window)

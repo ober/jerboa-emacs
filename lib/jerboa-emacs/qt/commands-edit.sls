@@ -28,14 +28,17 @@
    cmd-chat cmd-chat-send dired-open-directory!
    cmd-dired-find-file cmd-dired-rename-at-point
    cmd-dired-copy-at-point repl-buffer-name cmd-repl
-   cmd-repl-send cmd-eval-expression cmd-load-file cmd-zoom-in
-   cmd-zoom-out *line-numbers-visible* cmd-toggle-line-numbers
-   *qt-pulse-indicator* *qt-pulse-editor* *qt-pulse-countdown*
-   *qt-pulse-last-line* *qt-pulse-mode* qt-pulse-clear!
-   qt-pulse-line! qt-pulse-tick! qt-pulse-check-jump!
-   cmd-toggle-pulse-line *ansi-colors* *ansi-bright-colors*
-   ansi-parse-segments qt-apply-ansi-styles!
-   qt-set-text-with-ansi! cmd-ansi-color-apply)
+   cmd-repl-send cmd-eval-expression
+   cmd-eval-expression-blocking cmd-eval-cancel
+   *introspect-app* cmd-eval-introspect cmd-load-file
+   cmd-zoom-in cmd-zoom-out *line-numbers-visible*
+   cmd-toggle-line-numbers *qt-pulse-indicator*
+   *qt-pulse-editor* *qt-pulse-countdown* *qt-pulse-last-line*
+   *qt-pulse-mode* qt-pulse-clear! qt-pulse-line!
+   qt-pulse-tick! qt-pulse-check-jump! cmd-toggle-pulse-line
+   *ansi-colors* *ansi-bright-colors* ansi-parse-segments
+   qt-apply-ansi-styles! qt-set-text-with-ansi!
+   cmd-ansi-color-apply)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -1272,15 +1275,75 @@
                rs
                (string-length (qt-plain-text-edit-text ed)))))))
   (def (cmd-eval-expression app)
-       "Prompt for an expression, eval it in-process."
+       "Evaluate expression using Chez engine (time-sliced, never freezes UI).\n   The engine runs in small time slices on the master timer, yielding back\n   to the UI event loop between slices. Even infinite loops won't freeze\n   the editor — cancel with C-g."
        (let* ([echo (app-state-echo app)]
               [input (qt-echo-read-string app "Eval: ")])
+         (when (and input (> (string-length input) 0))
+           (echo-message! echo "Evaluating...")
+           (engine-eval-start!
+             input
+             (lambda (result) (echo-message! echo (or result "nil")))
+             (lambda (err) (echo-error! echo err))))))
+  (def (cmd-eval-expression-blocking app)
+       "Evaluate expression immediately (blocking, for simple expressions)."
+       (let* ([echo (app-state-echo app)]
+              [input (qt-echo-read-string app "Eval (blocking): ")])
          (when (and input (> (string-length input) 0))
            (let-values ([(result error?)
                          (eval-expression-string input)])
              (if error?
                  (echo-error! echo result)
                  (echo-message! echo result))))))
+  (def (cmd-eval-cancel app)
+       "Cancel any running engine-based evaluation."
+       (if *engine-eval-active*
+           (begin
+             (engine-eval-cancel!)
+             (echo-message! (app-state-echo app) "Eval cancelled"))
+           (echo-message! (app-state-echo app) "No eval running")))
+  (define *introspect-app*--cell (vector #f))
+  (def (cmd-eval-introspect app)
+       "Live editor introspection: evaluate Chez Scheme with access to the running editor.\n   The expression can access *introspect-app* to get the app-state.\n   This is jerboa's superpower: the running editor IS a Chez Scheme program\n   you can inspect and modify at runtime."
+       (let* ([echo (app-state-echo app)]
+              [input (qt-echo-read-string app "Introspect: ")])
+         (when (and input (> (string-length input) 0))
+           (set! *introspect-app* app)
+           (with-catch
+             (lambda (e)
+               (set! *introspect-app* #f)
+               (echo-error!
+                 echo
+                 (with-output-to-string
+                   (lambda () (display-exception e)))))
+             (lambda ()
+               (let* ([expr (with-input-from-string input read)]
+                      [out (open-output-string)]
+                      [result (parameterize ([current-output-port out])
+                                (eval expr))]
+                      [stdout-text (get-output-string out)]
+                      [result-str (with-output-to-string
+                                    (lambda () (write result)))]
+                      [display-str (if (> (string-length stdout-text) 0)
+                                       (string-append
+                                         stdout-text
+                                         "\n=> "
+                                         result-str)
+                                       (string-append "=> " result-str))])
+                 (set! *introspect-app* #f)
+                 (if (> (string-length display-str) 120)
+                     (let* ([ed (current-qt-editor app)]
+                            [fr (app-state-frame app)]
+                            [buf (qt-buffer-create! "*Introspect*" ed #f)])
+                       (qt-buffer-attach! ed buf)
+                       (qt-edit-window-buffer-set!
+                         (qt-current-window fr)
+                         buf)
+                       (qt-plain-text-edit-set-text! ed display-str)
+                       (qt-text-document-set-modified!
+                         (buffer-doc-pointer buf)
+                         #f)
+                       (qt-plain-text-edit-set-cursor-position! ed 0))
+                     (echo-message! echo display-str))))))))
   (def (cmd-load-file app)
        "Prompt for a .ss file path and evaluate all its forms."
        (let* ([echo (app-state-echo app)]
@@ -1562,6 +1625,10 @@
                        *qreplace-files-remaining*--cell
                        0
                        val)]))
+  (define-syntax *introspect-app*
+    (identifier-syntax
+      [id (vector-ref *introspect-app*--cell 0)]
+      [(set! id val) (vector-set! *introspect-app*--cell 0 val)]))
   (define-syntax *line-numbers-visible*
     (identifier-syntax
       [id (vector-ref *line-numbers-visible*--cell 0)]
