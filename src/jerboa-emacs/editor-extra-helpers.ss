@@ -1054,6 +1054,19 @@
 ;;; Persistent undo across sessions
 ;;;============================================================================
 
+;; Shared undo history table: buffer-name -> list of (timestamp . text) snapshots
+;; Used by both TUI (editor-extra-final.ss) and Qt (commands-shell2.ss) code.
+(def *undo-history-table* (make-hash-table))
+
+(def (undo-history-record! name text)
+  "Record a text snapshot for buffer NAME in the undo history table.
+   Keeps at most 20 snapshots per buffer."
+  (let* ((now (inexact->exact (floor (time->seconds (current-time)))))
+         (hist (or (hash-get *undo-history-table* name) '()))
+         (new-hist (cons (cons now text) hist))
+         (trimmed (if (> (length new-hist) 20) (take new-hist 20) new-hist)))
+    (hash-put! *undo-history-table* name trimmed)))
+
 (def *persistent-undo-dir*
   (string-append (or (getenv "HOME" #f) ".") "/.jemacs-undo/"))
 
@@ -1065,40 +1078,75 @@
     ".undo"))
 
 (def (cmd-undo-history-save app)
-  "Save undo history for the current buffer to disk."
+  "Save undo history snapshots for the current buffer to disk."
   (let* ((echo (app-state-echo app))
          (ed (current-editor app))
          (buf (current-buffer-from-app app))
-         (file (buffer-file-path buf)))
+         (file (buffer-file-path buf))
+         (name (and buf (buffer-name buf))))
     (if (not file)
-      (echo-message! echo "Buffer has no file — cannot save undo history")
-      (let ((undo-file (persistent-undo-file-for file))
-            (text (editor-get-text ed)))
+      (echo-message! echo "Buffer has no file - cannot save undo history")
+      (let* ((undo-file (persistent-undo-file-for file))
+             (hist (or (hash-get *undo-history-table* name) '()))
+             (now (inexact->exact (floor (time->seconds (current-time)))))
+             (current-text (editor-get-text ed))
+             (snapshots (cons (cons now current-text) hist))
+             (to-save (if (> (length snapshots) 20) (take snapshots 20) snapshots)))
         (with-catch
-          (lambda (e) (echo-message! echo (string-append "Error saving undo: " (error-message e))))
+          (lambda (e) (echo-message! echo (string-append "Error saving undo: "
+                        (with-output-to-string (lambda () (display-exception e))))))
           (lambda ()
             (create-directory* *persistent-undo-dir*)
             (call-with-output-file undo-file
               (lambda (port)
-                (write (list 'undo-v1 file (string-length text)) port)
-                (newline port)))
-            (echo-message! echo (string-append "Undo history saved: " undo-file))))))))
+                (write (list 'undo-v2 file (length to-save)) port)
+                (newline port)
+                (for-each
+                  (lambda (snap)
+                    (write (list (car snap) (cdr snap)) port)
+                    (newline port))
+                  to-save)))
+            (echo-message! echo
+              (string-append "Undo history saved: " (number->string (length to-save)) " snapshots"))))))))
 
 (def (cmd-undo-history-load app)
-  "Load undo history for the current buffer from disk."
+  "Load undo history snapshots for the current buffer from disk."
   (let* ((echo (app-state-echo app))
          (buf (current-buffer-from-app app))
-         (file (buffer-file-path buf)))
+         (file (buffer-file-path buf))
+         (name (and buf (buffer-name buf))))
     (if (not file)
-      (echo-message! echo "Buffer has no file — cannot load undo history")
+      (echo-message! echo "Buffer has no file - cannot load undo history")
       (let ((undo-file (persistent-undo-file-for file)))
         (if (not (file-exists? undo-file))
           (echo-message! echo "No saved undo history for this file")
           (with-catch
-            (lambda (e) (echo-message! echo (string-append "Error loading undo: " (error-message e))))
+            (lambda (e) (echo-message! echo (string-append "Error loading undo: "
+                          (with-output-to-string (lambda () (display-exception e))))))
             (lambda ()
-              (let ((data (call-with-input-file undo-file read)))
-                (echo-message! echo (string-append "Undo history loaded from: " undo-file))))))))))
+              (let* ((port (open-input-file undo-file))
+                     (header (read port)))
+                (if (not (and (pair? header) (eq? (car header) 'undo-v2)))
+                  (begin (close-port port)
+                         (echo-message! echo "Undo file is old format (v1) - cannot load"))
+                  (let ((count (caddr header)))
+                    (let loop ((i 0) (snapshots '()))
+                      (if (>= i count)
+                        (begin
+                          (close-port port)
+                          (hash-put! *undo-history-table* name (reverse snapshots))
+                          (echo-message! echo
+                            (string-append "Loaded " (number->string count) " undo snapshots")))
+                        (let ((entry (read port)))
+                          (if (eof-object? entry)
+                            (begin
+                              (close-port port)
+                              (hash-put! *undo-history-table* name (reverse snapshots))
+                              (echo-message! echo
+                                (string-append "Loaded " (number->string i) " snapshots (truncated)")))
+                            (loop (+ i 1)
+                                  (cons (cons (car entry) (cadr entry)) snapshots))))))))))))))))
+
 
 ;;;============================================================================
 ;;; Image thumbnails in dired

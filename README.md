@@ -197,3 +197,4 @@ Override on the command line: `make SCHEME=/usr/local/bin/chez build`
 | [docs/helm.md](docs/helm.md) | Helm narrowing framework — architecture, matching engine, sources |
 | [docs/shell.md](docs/shell.md) | Shell integration plan — jsh POSIX shell embedding |
 | [docs/repl-server.md](docs/repl-server.md) | TCP debug REPL server for live introspection |
+| [docs/50-features.md](docs/50-features.md) | 50 features roadmap to close the gap with GNU Emacs |

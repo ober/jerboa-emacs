@@ -1967,12 +1967,11 @@
     (if (not path) (echo-error! (app-state-echo app) "Buffer has no file")
       (let ((ans (app-read-string app (string-append "Revert " (path-strip-directory path) "? (y/n) "))))
         (when (and ans (member ans '("y" "yes"))) (cmd-revert-buffer-no-confirm app))))))
-(def *tui-undo-history* (make-hash-table))
 (def (cmd-undo-history app)
   "Show undo history."
   (let* ((fr (app-state-frame app)) (win (current-window fr)) (ed (edit-window-editor win))
          (buf (edit-window-buffer win)) (name (and buf (buffer-name buf)))
-         (hist (or (hash-get *tui-undo-history* name) '())))
+         (hist (or (hash-get *undo-history-table* name) '())))
     (if (null? hist) (echo-message! (app-state-echo app) "No undo history")
       (let* ((lines (let loop ((es hist) (i 0) (acc '()))
                (if (null? es) (reverse acc)
@@ -1991,7 +1990,7 @@
 (def (cmd-undo-history-restore app)
   "Restore undo snapshot."
   (let* ((buf (current-buffer-from-app app)) (name (and buf (buffer-name buf)))
-         (hist (or (hash-get *tui-undo-history* name) '())))
+         (hist (or (hash-get *undo-history-table* name) '())))
     (if (null? hist) (echo-message! (app-state-echo app) "No undo history")
       (let ((input (app-read-string app (string-append "Restore (0-" (number->string (- (length hist) 1)) "): "))))
         (when input

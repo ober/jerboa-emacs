@@ -31,7 +31,14 @@
    cmd-transient-map cmd-terraform-mode cmd-terraform
    cmd-terraform-plan cmd-docker-compose cmd-docker-compose-up
    cmd-docker-compose-down pqr-grep-files
-   cmd-project-query-replace)
+   cmd-project-query-replace cmd-forge-browse-pr
+   cmd-forge-browse-pr-at-point cmd-forge-pr-diff
+   *display-buffer-rules* display-buffer-add-rule!
+   display-buffer-match-rule cmd-display-buffer-add-rule
+   cmd-display-buffer-list-rules *project-terminals*
+   cmd-project-vterm cmd-project-vterm-toggle
+   breadcrumb-find-function-at-point breadcrumb-extract-name
+   cmd-breadcrumb)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -1655,6 +1662,377 @@
                                    (set! *qreplace-active* #t)
                                    (qt-modeline-update! app)
                                    (qreplace-show-next! app))))))))))))))
+  (def (cmd-forge-browse-pr app)
+       "Browse GitHub pull requests for the current git repository."
+       (let* ([buf (current-qt-buffer app)]
+              [path (buffer-file-path buf)]
+              [dir (if path (path-directory path) (current-directory))]
+              [echo (app-state-echo app)])
+         (magit-run-git/async
+           '("remote" "get-url" "origin")
+           dir
+           (lambda (remote-url)
+             (let ([url (string-trim remote-url)])
+               (if (string=? url "")
+                   (ui-queue-push!
+                     (lambda ()
+                       (echo-error! echo "No git remote 'origin' found")))
+                   (magit-run-git/async
+                     '("log" "--oneline" "-20" "--format=%h %s")
+                     dir
+                     (lambda (log-output)
+                       (ui-queue-push!
+                         (lambda ()
+                           (let-values ([(p-stdin p-stdout p-stderr pid)
+                                         (open-process-ports
+                                           (string-append
+                                             "cd "
+                                             (shell-quote-arg dir)
+                                             " && gh pr list --limit 20 --state open 2>/dev/null || echo 'gh CLI not available'")
+                                           (buffer-mode block)
+                                           (native-transcoder))])
+                             (close-port p-stdin)
+                             (let* ([output (let loop ([lines '()])
+                                              (let ([line (get-line
+                                                            p-stdout)])
+                                                (if (eof-object? line)
+                                                    (reverse lines)
+                                                    (loop
+                                                      (cons
+                                                        line
+                                                        lines)))))]
+                                    [text (string-join output "\n")]
+                                    [ed (current-qt-editor app)]
+                                    [fr (app-state-frame app)]
+                                    [pr-buf (qt-buffer-create!
+                                              "*Forge: PRs*"
+                                              ed
+                                              #f)])
+                               (close-port p-stdout)
+                               (close-port p-stderr)
+                               (qt-buffer-attach! ed pr-buf)
+                               (qt-edit-window-buffer-set!
+                                 (qt-current-window fr)
+                                 pr-buf)
+                               (qt-plain-text-edit-set-text!
+                                 ed
+                                 (string-append "GitHub Pull Requests: " url "\n"
+                                   (make-string 60 #\-) "\n\n"
+                                   (if (string=? text "")
+                                       "No open pull requests."
+                                       text)
+                                   "\n\n--- Recent Commits ---\n\n"
+                                   (or log-output "")))
+                               (qt-text-document-set-modified!
+                                 (buffer-doc-pointer pr-buf)
+                                 #f)
+                               (qt-plain-text-edit-set-cursor-position!
+                                 ed
+                                 0)
+                               (echo-message!
+                                 echo
+                                 "*Forge: PRs*")))))))))))))
+  (def (cmd-forge-browse-pr-at-point app)
+       "Open the PR under cursor in the web browser."
+       (let* ([ed (current-qt-editor app)]
+              [echo (app-state-echo app)]
+              [line-num (qt-plain-text-edit-cursor-line ed)]
+              [all-text (qt-plain-text-edit-text ed)]
+              [lines (string-split all-text #\newline)])
+         (if (>= line-num (length lines))
+             (echo-message! echo "No PR on this line")
+             (let* ([line (list-ref lines line-num)]
+                    [trimmed (string-trim line)])
+               (if (and (> (string-length trimmed) 0)
+                        (char-numeric? (string-ref trimmed 0)))
+                   (let* ([pr-num (let loop ([i 0] [acc ""])
+                                    (if (or (>= i (string-length trimmed))
+                                            (not (char-numeric?
+                                                   (string-ref
+                                                     trimmed
+                                                     i))))
+                                        acc
+                                        (loop
+                                          (+ i 1)
+                                          (string-append
+                                            acc
+                                            (string
+                                              (string-ref trimmed i))))))]
+                          [buf (current-qt-buffer app)]
+                          [path (buffer-file-path buf)]
+                          [dir (if path
+                                   (path-directory path)
+                                   (current-directory))])
+                     (let-values ([(p-stdin p-stdout p-stderr pid)
+                                   (open-process-ports
+                                     (string-append "cd " (shell-quote-arg dir)
+                                       " && gh pr view " pr-num
+                                       " --web 2>/dev/null")
+                                     (buffer-mode block)
+                                     (native-transcoder))])
+                       (close-port p-stdin)
+                       (close-port p-stdout)
+                       (close-port p-stderr)
+                       (echo-message!
+                         echo
+                         (string-append
+                           "Opening PR #"
+                           pr-num
+                           " in browser"))))
+                   (echo-message! echo "No PR number on this line"))))))
+  (def (cmd-forge-pr-diff app)
+       "Show the diff for a PR number prompted from user."
+       (let* ([echo (app-state-echo app)]
+              [pr-num (qt-echo-read-string app "PR number: ")])
+         (when (and pr-num (> (string-length pr-num) 0))
+           (let* ([buf (current-qt-buffer app)]
+                  [path (buffer-file-path buf)]
+                  [dir (if path
+                           (path-directory path)
+                           (current-directory))])
+             (let-values ([(p-stdin p-stdout p-stderr pid)
+                           (open-process-ports
+                             (string-append "cd " (shell-quote-arg dir)
+                               " && gh pr diff " pr-num " 2>/dev/null")
+                             (buffer-mode block)
+                             (native-transcoder))])
+               (close-port p-stdin)
+               (let* ([output (let loop ([lines '()])
+                                (let ([line (get-line p-stdout)])
+                                  (if (eof-object? line)
+                                      (string-join (reverse lines) "\n")
+                                      (loop (cons line lines)))))]
+                      [ed (current-qt-editor app)]
+                      [fr (app-state-frame app)]
+                      [diff-buf (qt-buffer-create!
+                                  (string-append "*PR #" pr-num " Diff*")
+                                  ed
+                                  #f)])
+                 (close-port p-stdout)
+                 (close-port p-stderr)
+                 (qt-buffer-attach! ed diff-buf)
+                 (qt-edit-window-buffer-set!
+                   (qt-current-window fr)
+                   diff-buf)
+                 (qt-plain-text-edit-set-text! ed (or output ""))
+                 (qt-text-document-set-modified!
+                   (buffer-doc-pointer diff-buf)
+                   #f)
+                 (qt-plain-text-edit-set-cursor-position! ed 0)
+                 (qt-highlight-diff! ed)
+                 (echo-message!
+                   echo
+                   (string-append "*PR #" pr-num " Diff*"))))))))
+  (define *display-buffer-rules*--cell (vector '()))
+  (def (display-buffer-add-rule! pattern action)
+       "Add a buffer display rule. PATTERN is a string prefix to match buffer names.\n   ACTION is one of: 'same-window, 'other-window, 'bottom-window."
+       (set! *display-buffer-rules*
+         (cons (cons pattern action) *display-buffer-rules*)))
+  (def (display-buffer-match-rule name)
+       "Find matching display rule for buffer NAME. Returns action or #f."
+       (let loop ([rules *display-buffer-rules*])
+         (if (null? rules)
+             #f
+             (let ([pattern (caar rules)] [action (cdar rules)])
+               (if (string-prefix? pattern name)
+                   action
+                   (loop (cdr rules)))))))
+  (def (cmd-display-buffer-add-rule app)
+       "Interactively add a display buffer rule."
+       (let* ([echo (app-state-echo app)]
+              [pattern (qt-echo-read-string app "Buffer pattern: ")])
+         (when (and pattern (> (string-length pattern) 0))
+           (let ([action-str (qt-echo-read-string-with-completion
+                               app
+                               "Action: "
+                               '("same-window"
+                                  "other-window"
+                                  "bottom-window"))])
+             (when action-str
+               (let ([action (cond
+                               [(string=? action-str "same-window")
+                                'same-window]
+                               [(string=? action-str "other-window")
+                                'other-window]
+                               [(string=? action-str "bottom-window")
+                                'bottom-window]
+                               [else 'same-window])])
+                 (display-buffer-add-rule! pattern action)
+                 (echo-message!
+                   echo
+                   (string-append
+                     "Rule added: "
+                     pattern
+                     " -> "
+                     (symbol->string action)))))))))
+  (def (cmd-display-buffer-list-rules app)
+       "List all display buffer rules."
+       (let* ([echo (app-state-echo app)]
+              [lines (map (lambda (rule)
+                            (string-append
+                              "  "
+                              (car rule)
+                              " -> "
+                              (symbol->string (cdr rule))))
+                          *display-buffer-rules*)]
+              [text (if (null? lines)
+                        "No display buffer rules configured."
+                        (string-append
+                          "Display Buffer Rules:\n"
+                          (string-join lines "\n")))])
+         (echo-message! echo text)))
+  (define *project-terminals*--cell
+    (vector (make-hash-table)))
+  (def (cmd-project-vterm app)
+       "Open a terminal associated with the current project."
+       (let* ([echo (app-state-echo app)]
+              [root (with-catch
+                      (lambda (_e) (current-directory))
+                      (lambda () (project-find-root (current-directory))))]
+              [existing (or (hash-get *project-terminals* root) '())]
+              [name (string-append
+                      "*term:"
+                      (path-strip-directory root)
+                      "*"
+                      (if (null? existing)
+                          ""
+                          (string-append
+                            "-"
+                            (number->string (+ 1 (length existing))))))])
+         (let* ([ed (current-qt-editor app)]
+                [fr (app-state-frame app)]
+                [buf (qt-buffer-create! name ed #f)])
+           (buffer-lexer-lang-set! buf 'terminal)
+           (qt-buffer-attach! ed buf)
+           (qt-edit-window-buffer-set! (qt-current-window fr) buf)
+           (hash-put! *project-terminals* root (cons name existing))
+           (qt-plain-text-edit-set-text!
+             ed
+             (string-append "Terminal for project: " root "\n$ "))
+           (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+           (echo-message!
+             echo
+             (string-append "Project terminal: " name)))))
+  (def (cmd-project-vterm-toggle app)
+       "Toggle between project's terminal buffers, or create one if none exist."
+       (let* ([echo (app-state-echo app)]
+              [root (with-catch
+                      (lambda (_e) (current-directory))
+                      (lambda () (project-find-root (current-directory))))]
+              [terms (or (hash-get *project-terminals* root) '())])
+         (if (null? terms)
+             (cmd-project-vterm app)
+             (let* ([cur-buf (current-qt-buffer app)]
+                    [cur-name (buffer-name cur-buf)]
+                    [idx (let loop ([ts terms] [i 0])
+                           (if (null? ts)
+                               #f
+                               (if (string=? (car ts) cur-name)
+                                   i
+                                   (loop (cdr ts) (+ i 1)))))]
+                    [next-name (if idx
+                                   (list-ref
+                                     terms
+                                     (modulo (+ idx 1) (length terms)))
+                                   (car terms))]
+                    [next-buf (buffer-by-name next-name)])
+               (if next-buf
+                   (let* ([ed (current-qt-editor app)]
+                          [fr (app-state-frame app)])
+                     (qt-buffer-attach! ed next-buf)
+                     (qt-edit-window-buffer-set!
+                       (qt-current-window fr)
+                       next-buf)
+                     (echo-message! echo next-name))
+                   (cmd-project-vterm app))))))
+  (def (breadcrumb-find-function-at-point ed)
+       "Find the current function/definition name at cursor position.\n   Scans backward for (def, (define, (defun, class, function patterns."
+       (let* ([pos (qt-plain-text-edit-cursor-position ed)]
+              [text (qt-plain-text-edit-text ed)]
+              [len (string-length text)])
+         (if (= len 0)
+             #f
+             (let loop ([p (min pos (- len 1))])
+               (if (< p 0)
+                   #f
+                   (if (and (char=? (string-ref text p) #\()
+                            (< (+ p 5) len))
+                       (let ([after (substring
+                                      text
+                                      (+ p 1)
+                                      (min len (+ p 20)))])
+                         (cond
+                           [(string-prefix? "def " after)
+                            (let ([rest (substring
+                                          after
+                                          4
+                                          (string-length after))])
+                              (let ([name (breadcrumb-extract-name rest)])
+                                (or name (loop (- p 1)))))]
+                           [(string-prefix? "define " after)
+                            (let ([rest (substring
+                                          after
+                                          7
+                                          (string-length after))])
+                              (let ([name (breadcrumb-extract-name rest)])
+                                (or name (loop (- p 1)))))]
+                           [(string-prefix? "defun " after)
+                            (let ([rest (substring
+                                          after
+                                          6
+                                          (string-length after))])
+                              (let ([name (breadcrumb-extract-name rest)])
+                                (or name (loop (- p 1)))))]
+                           [(string-prefix? "defclass " after)
+                            (let ([rest (substring
+                                          after
+                                          9
+                                          (string-length after))])
+                              (let ([name (breadcrumb-extract-name rest)])
+                                (or name (loop (- p 1)))))]
+                           [(string-prefix? "defstruct " after)
+                            (let ([rest (substring
+                                          after
+                                          10
+                                          (string-length after))])
+                              (let ([name (breadcrumb-extract-name rest)])
+                                (or name (loop (- p 1)))))]
+                           [else (loop (- p 1))]))
+                       (loop (- p 1))))))))
+  (def (breadcrumb-extract-name text)
+       "Extract the first word (function name) from text after a def keyword."
+       (let ([trimmed (string-trim text)])
+         (if (= (string-length trimmed) 0)
+             #f
+             (let* ([start (if (char=? (string-ref trimmed 0) #\() 1 0)]
+                    [s (if (> start 0)
+                           (substring trimmed 1 (string-length trimmed))
+                           trimmed)])
+               (let loop ([i 0] [acc ""])
+                 (if (or (>= i (string-length s))
+                         (char=? (string-ref s i) #\space)
+                         (char=? (string-ref s i) #\()
+                         (char=? (string-ref s i) #\))
+                         (char=? (string-ref s i) #\newline))
+                     (if (> (string-length acc) 0) acc #f)
+                     (loop
+                       (+ i 1)
+                       (string-append acc (string (string-ref s i))))))))))
+  (def (cmd-breadcrumb app)
+       "Show breadcrumb navigation: file path > function at point."
+       (let* ([buf (current-qt-buffer app)]
+              [ed (current-qt-editor app)]
+              [echo (app-state-echo app)]
+              [file (buffer-file-path buf)]
+              [name (buffer-name buf)]
+              [fn-name (breadcrumb-find-function-at-point ed)]
+              [line (+ 1 (qt-plain-text-edit-cursor-line ed))]
+              [col (+ 1 (qt-plain-text-edit-cursor-column ed))]
+              [crumb (string-append (or file name)
+                       (if fn-name (string-append " > " fn-name) "") " [L"
+                       (number->string line) ":C" (number->string col)
+                       "]")])
+         (echo-message! echo crumb)))
   (define-syntax *xref-forward-stack*
     (identifier-syntax
       [id (vector-ref *xref-forward-stack*--cell 0)]
@@ -1703,4 +2081,24 @@
       [(set! id val) (vector-set!
                        *qt-transient-maps*--cell
                        0
-                       val)])))
+                       val)]))
+  (define-syntax *display-buffer-rules*
+    (identifier-syntax
+      [id (vector-ref *display-buffer-rules*--cell 0)]
+      [(set! id val) (vector-set!
+                       *display-buffer-rules*--cell
+                       0
+                       val)]))
+  (define-syntax *project-terminals*
+    (identifier-syntax
+      [id (vector-ref *project-terminals*--cell 0)]
+      [(set! id val) (vector-set!
+                       *project-terminals*--cell
+                       0
+                       val)]))
+  (display-buffer-add-rule! "*Compilation" 'bottom-window)
+  (display-buffer-add-rule! "*Help" 'other-window)
+  (display-buffer-add-rule! "*Grep" 'bottom-window)
+  (display-buffer-add-rule! "*Git" 'other-window)
+  (display-buffer-add-rule! "*Magit" 'same-window)
+  (display-buffer-add-rule! "*terminal" 'same-window))

@@ -2122,6 +2122,22 @@
    (register-command!
      'screen-reader-mode
      cmd-screen-reader-mode)
+   (register-command! 'forge-browse-pr cmd-forge-browse-pr)
+   (register-command!
+     'forge-browse-pr-at-point
+     cmd-forge-browse-pr-at-point)
+   (register-command! 'forge-pr-diff cmd-forge-pr-diff)
+   (register-command!
+     'display-buffer-add-rule
+     cmd-display-buffer-add-rule)
+   (register-command!
+     'display-buffer-list-rules
+     cmd-display-buffer-list-rules)
+   (register-command! 'project-vterm cmd-project-vterm)
+   (register-command!
+     'project-vterm-toggle
+     cmd-project-vterm-toggle)
+   (register-command! 'breadcrumb cmd-breadcrumb)
    (register-helm-commands!) (qt-register-helm-commands!)
    (qt-register-parity3-toggles!)
    (qt-register-parity4-commands!)

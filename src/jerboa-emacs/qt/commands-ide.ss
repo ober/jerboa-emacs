@@ -413,8 +413,8 @@ Use M-x set-buffer-file-coding-system to change."
   (run-git-command app '("status") "*Git Status*"))
 
 (def (cmd-show-git-log app)
-  "Show git log."
-  (run-git-command app '("log" "--oneline" "-30") "*Git Log*"))
+  "Show git log with graph."
+  (run-git-command app '("log" "--graph" "--oneline" "--decorate" "--all" "-50") "*Git Log*"))
 
 (def (cmd-show-git-diff app)
   "Show git diff with syntax coloring."

@@ -1856,6 +1856,18 @@
   (register-command! 'native-compile-file cmd-native-compile-file)
   (register-command! 'native-compile-async cmd-native-compile-async)
   (register-command! 'screen-reader-mode cmd-screen-reader-mode)
+  ;; Forge: GitHub PR browsing (Qt-specific with async + diff highlight)
+  (register-command! 'forge-browse-pr cmd-forge-browse-pr)
+  (register-command! 'forge-browse-pr-at-point cmd-forge-browse-pr-at-point)
+  (register-command! 'forge-pr-diff cmd-forge-pr-diff)
+  ;; Display-buffer-alist rules
+  (register-command! 'display-buffer-add-rule cmd-display-buffer-add-rule)
+  (register-command! 'display-buffer-list-rules cmd-display-buffer-list-rules)
+  ;; Multi-vterm per-project
+  (register-command! 'project-vterm cmd-project-vterm)
+  (register-command! 'project-vterm-toggle cmd-project-vterm-toggle)
+  ;; Breadcrumb navigation
+  (register-command! 'breadcrumb cmd-breadcrumb)
   ;; Helm commands (real implementations)
   (register-helm-commands!)
   ;; Qt-specific helm commands (uses helm-qt renderer)
