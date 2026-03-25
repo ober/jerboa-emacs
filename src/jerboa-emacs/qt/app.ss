@@ -1234,9 +1234,8 @@
                               (let* ((ed (qt-edit-window-editor (car wins)))
                                      ;; Strip trailing newline — append! adds its own
                                      (trimmed (string-trim-eol output)))
-                                ;; Insert output + new prompt
+                                ;; Insert output (subprocess sends its own prompt)
                                 (qt-plain-text-edit-append! ed trimmed)
-                                (qt-plain-text-edit-append! ed repl-prompt)
                                 (set! (repl-state-prompt-pos rs)
                                   (string-length (qt-plain-text-edit-text ed)))
                                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)

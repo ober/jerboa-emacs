@@ -1531,9 +1531,6 @@
                                      (qt-plain-text-edit-append!
                                        ed
                                        trimmed)
-                                     (qt-plain-text-edit-append!
-                                       ed
-                                       repl-prompt)
                                      (repl-state-prompt-pos-set!
                                        rs
                                        (string-length

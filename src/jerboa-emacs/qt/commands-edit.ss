@@ -1126,16 +1126,13 @@
         ;; Attach buffer to editor
         (qt-buffer-attach! ed buf)
         (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
-        ;; Spawn Chez Scheme subprocess
+        ;; Spawn Jerboa REPL subprocess
         (let ((rs (repl-start!)))
           (hash-put! *repl-state* buf rs)
-          ;; Show prompt immediately — scheme -q in non-interactive mode
-          ;; does NOT send a startup banner, so the timer would never fire and
-          ;; prompt-pos would stay at 999999999, blocking all typing.
-          (qt-plain-text-edit-set-text! ed repl-prompt)
-          (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
-          (set! (repl-state-prompt-pos rs)
-            (string-length repl-prompt)))
+          ;; Don't insert prompt — the subprocess sends its own banner + prompt.
+          ;; Set prompt-pos high to block typing until first poll delivers output.
+          (qt-plain-text-edit-set-text! ed "")
+          (set! (repl-state-prompt-pos rs) 999999999))
         (echo-message! (app-state-echo app) "REPL started")))))
 
 (def (cmd-repl-send app)

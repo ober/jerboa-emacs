@@ -341,9 +341,8 @@
                 (let ((win (find-window-for-buffer (app-state-frame app) buf)))
                   (when win
                     (let ((ed (edit-window-editor win)))
-                      ;; Insert output + new prompt at end
+                      ;; Insert output (subprocess sends its own prompt)
                       (editor-append-text ed output)
-                      (editor-append-text ed repl-prompt)
                       ;; Update prompt-pos to after the new prompt
                       (set! (repl-state-prompt-pos rs)
                         (editor-get-text-length ed))

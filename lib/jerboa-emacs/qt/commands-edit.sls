@@ -1251,11 +1251,8 @@
                (qt-edit-window-buffer-set! (qt-current-window fr) buf)
                (let ([rs (repl-start!)])
                  (hash-put! *repl-state* buf rs)
-                 (qt-plain-text-edit-set-text! ed repl-prompt)
-                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
-                 (repl-state-prompt-pos-set!
-                   rs
-                   (string-length repl-prompt)))
+                 (qt-plain-text-edit-set-text! ed "")
+                 (repl-state-prompt-pos-set! rs 999999999))
                (echo-message! (app-state-echo app) "REPL started")))))
   (def (cmd-repl-send app)
        "Send the current input line to the Chez Scheme subprocess."

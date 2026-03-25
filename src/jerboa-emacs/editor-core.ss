@@ -2199,14 +2199,13 @@
         ;; Attach buffer to editor
         (buffer-attach! ed buf)
         (set! (edit-window-buffer (current-window fr)) buf)
-        ;; Spawn Chez Scheme subprocess
+        ;; Spawn Jerboa REPL subprocess
         (let ((rs (repl-start!)))
           (hash-put! *repl-state* buf rs)
-          ;; Insert initial prompt
-          (editor-set-text ed repl-prompt)
-          (let ((len (editor-get-text-length ed)))
-            (set! (repl-state-prompt-pos rs) len)
-            (editor-goto-pos ed len)))
+          ;; Don't insert prompt — subprocess sends its own banner + prompt.
+          ;; Set prompt-pos high to block typing until first poll delivers output.
+          (editor-set-text ed "")
+          (set! (repl-state-prompt-pos rs) 999999999))
         (echo-message! (app-state-echo app) "REPL started")))))
 
 (def (cmd-repl-send app)
