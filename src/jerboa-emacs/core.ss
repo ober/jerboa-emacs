@@ -1642,7 +1642,7 @@
   ;; Shell and REPL
   (register-command-doc! 'eshell "Open or switch to the built-in Gerbil shell (eshell).")
   (register-command-doc! 'shell "Open or switch to an external shell buffer.")
-  (register-command-doc! 'gerbil-repl "Open or switch to a Gerbil REPL (gxi) buffer.")
+  (register-command-doc! 'gerbil-repl "Open or switch to a Chez Scheme REPL buffer.")
   (register-command-doc! 'eval-expression "Evaluate a Gerbil expression and show the result.")
   (register-command-doc! 'eval-buffer "Evaluate all forms in the current buffer.")
   (register-command-doc! 'load-file "Load and evaluate a Gerbil (.ss) file.")
@@ -1967,32 +1967,34 @@
 ;; tables break when fields like buffer-modified change after hash-put!.
 (def *repl-state* (make-hash-table-eq))
 
-(def *gerbil-eval-initialized* #f)
+(def *eval-initialized* #f)
 
-(def (ensure-gerbil-eval!)
-  "Initialize the Gerbil expander on first use so eval supports full
-   Gerbil syntax (def, defstruct, hash, match, import, etc.).
-   Called lazily to avoid startup cost."
-  (unless *gerbil-eval-initialized*
-    (set! *gerbil-eval-initialized* #t)
-    (jemacs-log! "ensure-gerbil-eval!: initializing expander via __load-gxi")
+(def (ensure-eval!)
+  "Initialize the Chez Scheme eval environment on first use.
+   The jerboa runtime provides full Chez syntax (def, defstruct, etc.)
+   via jerbuild module translation. Called lazily to avoid startup cost."
+  (unless *eval-initialized*
+    (set! *eval-initialized* #t)
+    (jemacs-log! "ensure-eval!: initializing Chez Scheme eval environment")
     (with-catch
       (lambda (e)
         (let ((msg (with-output-to-string (lambda () (display-exception e)))))
-          (jemacs-log! "ensure-gerbil-eval! FAILED: " msg)
-          (append-error-log! (string-append "Expander init failed: " msg "\n"))
+          (jemacs-log! "ensure-eval! FAILED: " msg)
+          (append-error-log! (string-append "Eval init failed: " msg "\n"))
           ;; Reset so user can retry
-          (set! *gerbil-eval-initialized* #f)))
+          (set! *eval-initialized* #f)))
       (lambda ()
-        ;; jsh expander is already loaded via module imports
-        (jemacs-log! "ensure-gerbil-eval!: expander initialized OK")))))
+        (jemacs-log! "ensure-eval!: Chez Scheme eval environment ready")))))
+
+;; Backward compatibility alias
+(def ensure-gerbil-eval! ensure-eval!)
 
 (def (eval-expression-string str)
   "In-process eval: read+eval an expression string, capture output.
    Returns (values result-string error?).
    Stdout/stderr side effects are appended to the captured output/error logs.
-   Full Gerbil syntax supported (def, hash, match, etc.)."
-  (ensure-gerbil-eval!)
+   Full Chez Scheme + jerboa syntax supported (def, defstruct, hash, match, etc.)."
+  (ensure-eval!)
   (with-catch
     (lambda (e)
       (let ((msg (with-output-to-string (lambda () (display-exception e)))))
@@ -2016,10 +2018,10 @@
 
 (def (load-user-file! path)
   "Load a .ss file by reading and evaluating each top-level form.
-   Full Gerbil syntax supported after expander init.
+   Full Chez Scheme + jerboa syntax supported.
    Stdout/stderr side effects are appended to the captured output/error logs.
    Returns (values num-loaded error-msg) where error-msg is #f on success."
-  (ensure-gerbil-eval!)
+  (ensure-eval!)
   (with-catch
     (lambda (e)
       (let ((msg (with-output-to-string (lambda () (display-exception e)))))
@@ -2049,10 +2051,10 @@
 
 (def (load-user-string! str (source "buffer"))
   "Eval all top-level forms in a string.
-   Full Gerbil syntax supported after expander init.
+   Full Chez Scheme + jerboa syntax supported.
    Stdout/stderr side effects are appended to the captured output/error logs.
    Returns (values num-loaded error-msg) where error-msg is #f on success."
-  (ensure-gerbil-eval!)
+  (ensure-eval!)
   (with-catch
     (lambda (e)
       (let ((msg (with-output-to-string (lambda () (display-exception e)))))

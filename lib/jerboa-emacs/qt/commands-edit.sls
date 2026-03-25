@@ -1258,7 +1258,7 @@
                    (string-length repl-prompt)))
                (echo-message! (app-state-echo app) "REPL started")))))
   (def (cmd-repl-send app)
-       "Send the current input line to the gxi subprocess."
+       "Send the current input line to the Chez Scheme subprocess."
        (let* ([buf (current-qt-buffer app)]
               [rs (hash-get *repl-state* buf)])
          (when rs

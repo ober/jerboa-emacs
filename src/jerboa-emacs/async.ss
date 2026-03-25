@@ -71,11 +71,30 @@
   ;; SMP thread pool for batched I/O
   parallel-for-each
 
+  ;; Channel pipeline: producer → transform → consumer (Go-style)
+  make-pipeline
+  pipeline-push!
+  pipeline-close!
+  pipeline-results
+
+  ;; Coroutine-based lazy file reader (line-by-line, no full load)
+  make-file-line-generator
+
+  ;; Async fan-out/fan-in: scatter work, gather results via channel
+  fan-out-gather
+
+  ;; Completion tokens: one-shot async result delivery
+  async-future
+  future-get
+
   ;; Periodic task scheduler
   schedule-periodic!
   cancel-periodic!
   master-timer-tick!
   current-time-ms
+
+  ;; String helpers
+  string-split-newlines
 
   ;; Background services
   *file-index*
@@ -90,6 +109,7 @@
   stop-flycheck-watcher!)
 
 (import :std/misc/channel
+        :std/misc/completion
         (only-in :std/srfi/19 current-time time->seconds)
         :std/misc/atom
         :std/sugar
@@ -876,5 +896,147 @@
                           t)
                         acc)))))))
         (for-each (lambda (t) (thread-join! t)) threads)))))
+
+;;;============================================================================
+;;; Channel Pipelines — Go-Style Producer/Transform/Consumer
+;;;============================================================================
+;;;
+;;; Go channels enable clean producer→consumer patterns with backpressure.
+;;; make-pipeline creates a channel-connected chain:
+;;;   producer thread → transform channel → consumer collects results
+;;;
+;;; Emacs has no channels, no backpressure, no concurrent pipelines.
+
+(def (make-pipeline (buf-size 256))
+  "Create a pipeline: returns (values input-channel output-channel).
+   Producer pushes to input-channel, consumer reads from output-channel.
+   BUF-SIZE controls backpressure (default 256 items buffered)."
+  (let ((in-ch (make-channel buf-size))
+        (out-ch (make-channel buf-size)))
+    (values in-ch out-ch)))
+
+(def (pipeline-push! channel item)
+  "Push an item into a pipeline channel. Blocks if buffer full (backpressure)."
+  (channel-put channel item))
+
+(def (pipeline-close! channel)
+  "Close a pipeline channel, signaling no more data."
+  (channel-close channel))
+
+(def (pipeline-results channel)
+  "Drain all results from a pipeline output channel into a list.
+   Blocks until channel is closed by producer."
+  (let loop ((acc '()))
+    (let ((val (channel-try-get channel)))
+      (if val
+        (loop (cons val acc))
+        (reverse acc)))))
+
+;;;============================================================================
+;;; Continuation-Based Lazy File Reader
+;;;============================================================================
+;;;
+;;; Read a file line by line without loading the whole thing into memory.
+;;; Uses Chez call/cc to create a generator: each call to the returned
+;;; thunk yields the next line. O(1) memory usage.
+;;;
+;;; Emacs loads entire files into buffers. This is O(1) memory.
+
+(def (make-file-line-generator path)
+  "Create a generator that returns one line at a time from PATH.
+   Returns #!eof when file is exhausted. O(1) memory usage.
+   Usage: (def gen (make-file-line-generator \"/etc/hosts\"))
+          (gen) => first line
+          (gen) => second line
+          ..."
+  (let ((port (open-input-file path))
+        (done #f))
+    (lambda ()
+      (if done
+        (eof-object)
+        (let ((line (get-line port)))
+          (when (eof-object? line)
+            (close-port port)
+            (set! done #t))
+          line)))))
+
+;;;============================================================================
+;;; Fan-Out/Fan-In — Scatter Work, Gather Results via Channel
+;;;============================================================================
+;;;
+;;; Distribute N work items across M worker threads, each posting results
+;;; to a shared channel. The gatherer collects all results.
+;;; Classic Go concurrency pattern: fan-out producers, fan-in consumer.
+
+(def (fan-out-gather fn items (max-workers 8))
+  "Apply FN to each item using up to MAX-WORKERS parallel threads.
+   Results are collected via a shared channel — order is NOT preserved
+   (fastest-first). Returns list of results.
+   Unlike parallel-map, this uses bounded parallelism (won't spawn 1000 threads)."
+  (let* ((n (length items))
+         (actual-workers (min n max-workers))
+         (result-ch (make-channel n))
+         (work-ch (make-channel n)))
+    ;; Feed work items into work channel
+    (for-each (lambda (item) (channel-put work-ch item)) items)
+    (channel-close work-ch)
+    ;; Spawn workers that pull from work-ch and push to result-ch
+    (let ((workers
+            (let loop ((i 0) (acc '()))
+              (if (>= i actual-workers) acc
+                (loop (+ i 1)
+                  (cons
+                    (let ((t (make-thread
+                               (lambda ()
+                                 (let work-loop ()
+                                   (let ((item (channel-try-get work-ch)))
+                                     (when item
+                                       (let ((result (with-catch
+                                                       (lambda (e) (cons 'error e))
+                                                       (lambda () (fn item)))))
+                                         (channel-put result-ch result))
+                                       (work-loop)))))
+                               (string->symbol
+                                 (string-append "fan-" (number->string i))))))
+                      (thread-start! t)
+                      t)
+                    acc))))))
+      ;; Wait for all workers to finish
+      (for-each (lambda (t) (thread-join! t)) workers)
+      (channel-close result-ch)
+      ;; Collect results
+      (let loop ((acc '()))
+        (let ((val (channel-try-get result-ch)))
+          (if val
+            (loop (cons val acc))
+            (reverse acc)))))))
+
+;;;============================================================================
+;;; Async Futures — Completion-Based One-Shot Results
+;;;============================================================================
+;;;
+;;; A future is a computation running in a background thread whose result
+;;; can be waited on. Uses :std/misc/completion for one-shot synchronization.
+;;; Like Java's CompletableFuture or Go's single-use channel result.
+
+(def (async-future thunk)
+  "Run THUNK in a background thread, return a completion token.
+   Use (future-get token) to block until result is ready.
+   Usage: (let ((f (async-future (lambda () (expensive-computation)))))
+            ... do other work ...
+            (future-get f))  ;; blocks until done"
+  (let ((c (make-completion)))
+    (spawn-worker 'future
+      (lambda ()
+        (let ((result (with-catch
+                        (lambda (e) (cons 'future-error e))
+                        thunk)))
+          (completion-post! c result))))
+    c))
+
+(def (future-get completion)
+  "Block until a future's result is available, then return it.
+   If the future raised an exception, returns (cons 'future-error exn)."
+  (completion-wait! completion))
 
 

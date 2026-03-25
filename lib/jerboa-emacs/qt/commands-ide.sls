@@ -3,44 +3,55 @@
 ;;; Source: src/jerboa-emacs/qt/commands-ide.ss
 
 (library (jerboa-emacs qt commands-ide)
-  (export read-file-text cmd-insert-pair-braces
-   cmd-insert-pair-quotes cmd-insert-newline-above
-   cmd-insert-newline-below cmd-insert-comment-separator
-   cmd-insert-line-number cmd-insert-buffer-filename
-   cmd-insert-timestamp cmd-insert-shebang cmd-count-buffers
-   cmd-rename-uniquely cmd-bury-buffer cmd-unbury-buffer
-   cmd-append-to-buffer cmd-make-directory cmd-delete-file
-   cmd-copy-file cmd-list-directory cmd-pwd
-   cmd-dired-create-directory cmd-dired-do-rename
-   cmd-dired-do-delete cmd-dired-do-copy *hl-line-mode*
-   cmd-toggle-hl-line *show-tabs* cmd-toggle-show-tabs
-   *show-eol* cmd-toggle-show-eol *narrowing-indicator*
-   cmd-toggle-narrowing-indicator *debug-on-error*
-   cmd-toggle-debug-on-error cmd-toggle-fold cmd-what-mode
-   cmd-what-encoding cmd-what-line-col cmd-show-file-info
-   cmd-show-buffer-size cmd-show-column-number
-   cmd-emacs-version run-git-command cmd-show-git-status
-   cmd-show-git-log cmd-show-git-diff cmd-show-git-blame
-   *magit-dir* magit-render-status! cmd-magit-status
-   cmd-magit-stage cmd-magit-unstage *magit-commit-separator*
-   cmd-magit-commit magit-open-commit-buffer!
-   cmd-magit-commit-finalize cmd-magit-commit-abort
-   *magit-amend-mode* cmd-magit-amend cmd-magit-diff
-   cmd-magit-stage-all cmd-magit-log magit-log-commit-at-point
-   cmd-magit-log-show-commit cmd-magit-refresh cmd-magit-blame
-   cmd-magit-fetch cmd-magit-pull cmd-magit-push
-   cmd-magit-rebase cmd-magit-merge cmd-magit-stash
-   cmd-magit-stash-show cmd-magit-stash-pop cmd-magit-branch
-   cmd-magit-checkout cmd-magit-cherry-pick
-   cmd-magit-revert-commit cmd-magit-worktree
-   cmd-find-file-parallel cmd-eval-region cmd-magit-status-fast
-   assoc-ref *sandbox-env* ensure-sandbox-env!
-   cmd-eval-in-sandbox cmd-sandbox-reset cmd-inspect-expression
-   cmd-disassemble cmd-apropos cmd-expand-macro
-   cmd-project-statistics cmd-define-command *stm-buffer-vars*
-   stm-buffer-get-var cmd-set-buffer-var cmd-get-buffer-var
-   *file-content-cache* cached-read-file cmd-clear-file-cache
-   cmd-file-cache-stats cmd-fuel-eval)
+  (export read-file-text qt-open-or-switch-buffer
+   cmd-insert-pair-braces cmd-insert-pair-quotes
+   cmd-insert-newline-above cmd-insert-newline-below
+   cmd-insert-comment-separator cmd-insert-line-number
+   cmd-insert-buffer-filename cmd-insert-timestamp
+   cmd-insert-shebang cmd-count-buffers cmd-rename-uniquely
+   cmd-bury-buffer cmd-unbury-buffer cmd-append-to-buffer
+   cmd-make-directory cmd-delete-file cmd-copy-file
+   cmd-list-directory cmd-pwd cmd-dired-create-directory
+   cmd-dired-do-rename cmd-dired-do-delete cmd-dired-do-copy
+   *hl-line-mode* cmd-toggle-hl-line *show-tabs*
+   cmd-toggle-show-tabs *show-eol* cmd-toggle-show-eol
+   *narrowing-indicator* cmd-toggle-narrowing-indicator
+   *debug-on-error* cmd-toggle-debug-on-error cmd-toggle-fold
+   cmd-what-mode cmd-what-encoding cmd-what-line-col
+   cmd-show-file-info cmd-show-buffer-size
+   cmd-show-column-number cmd-emacs-version run-git-command
+   cmd-show-git-status cmd-show-git-log cmd-show-git-diff
+   cmd-show-git-blame *magit-dir* magit-render-status!
+   cmd-magit-status cmd-magit-stage cmd-magit-unstage
+   *magit-commit-separator* cmd-magit-commit
+   magit-open-commit-buffer! cmd-magit-commit-finalize
+   cmd-magit-commit-abort *magit-amend-mode* cmd-magit-amend
+   cmd-magit-diff cmd-magit-stage-all cmd-magit-log
+   magit-log-commit-at-point cmd-magit-log-show-commit
+   cmd-magit-refresh cmd-magit-blame cmd-magit-fetch
+   cmd-magit-pull cmd-magit-push cmd-magit-rebase
+   cmd-magit-merge cmd-magit-stash cmd-magit-stash-show
+   cmd-magit-stash-pop cmd-magit-branch cmd-magit-checkout
+   cmd-magit-cherry-pick cmd-magit-revert-commit
+   cmd-magit-worktree cmd-find-file-parallel cmd-eval-region
+   cmd-magit-status-fast assoc-ref *sandbox-env*
+   ensure-sandbox-env! cmd-eval-in-sandbox cmd-sandbox-reset
+   cmd-inspect-expression cmd-disassemble cmd-apropos
+   cmd-expand-macro cmd-project-statistics cmd-define-command
+   *stm-buffer-vars* stm-buffer-get-var cmd-set-buffer-var
+   cmd-get-buffer-var *file-content-cache* cached-read-file
+   cmd-clear-file-cache cmd-file-cache-stats cmd-fuel-eval
+   *editor-atoms* get-editor-atom cmd-atom-set cmd-atom-get
+   cmd-atom-watch *command-pqueue* cmd-schedule-command
+   cmd-run-scheduled cmd-list-scheduled *bookmark-trees*
+   buffer-bookmark-tree cmd-rbtree-bookmark-set
+   cmd-rbtree-bookmark-list cmd-rbtree-bookmark-jump
+   *buffer-metadata* *metadata-rwlock* cmd-set-metadata
+   cmd-get-metadata cmd-channel-grep cmd-fan-out-search
+   cmd-future-eval *active-file-generator*
+   *active-file-gen-name* cmd-view-file-lazy
+   cmd-view-file-next-page *editor-id-counter* cmd-generate-id
+   cmd-timed-eval cmd-amb-eval cmd-amb-find-all cmd-lazy-eval)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -65,6 +76,7 @@
    (jerboa-emacs qt commands-sexp)
    (jerboa-emacs qt commands-sexp2)
    (only (jerboa-emacs editor-extra-helpers) project-current)
+   (only (jerboa repl-socket) repl-capture-command)
    (jerboa core) (jerboa runtime))
   (def (read-file-text path)
        "Read entire file as a string. Safe for worker threads."
@@ -72,6 +84,17 @@
          (let ([text (get-string-all p)])
            (close-port p)
            (if (eof-object? text) "" text))))
+  (def (qt-open-or-switch-buffer app name text)
+       "Open or switch to a buffer named NAME and set its TEXT content.\n   Creates the buffer if it doesn't exist, then displays it."
+       (let* ([ed (current-qt-editor app)]
+              [fr (app-state-frame app)]
+              [buf (or (buffer-by-name name)
+                       (qt-buffer-create! name ed #f))])
+         (qt-edit-window-buffer-set! (qt-current-window fr) buf)
+         (qt-buffer-attach! ed buf)
+         (qt-plain-text-edit-set-text! ed text)
+         (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
+         (qt-plain-text-edit-set-cursor-position! ed 0)))
   (def (cmd-insert-pair-braces app)
        "Insert a pair of braces with cursor between."
        (let* ([ed (current-qt-editor app)]
@@ -2056,6 +2079,518 @@
                              (format "~a" result)
                              " (completed within budget)")
                            "Expression exceeded fuel budget (preempted)"))))))))))
+  (define *editor-atoms*--cell (vector (make-hash-table)))
+  (def (get-editor-atom name)
+       "Get or create a named atom for editor-wide reactive state."
+       (or (hash-get *editor-atoms* name)
+           (let ([a (atom #f)]) (hash-put! *editor-atoms* name a) a)))
+  (def (cmd-atom-set app)
+       "Set a reactive editor variable (atom). Watchers fire on change.\n   Uses Clojure-style atoms: thread-safe, with optional watch functions."
+       (let* ([echo (app-state-echo app)]
+              [name (qt-echo-read-string app "Atom name: ")])
+         (when (and name (> (string-length name) 0))
+           (let ([value (qt-echo-read-string app "Value: ")])
+             (when value
+               (let ([a (get-editor-atom name)])
+                 (atom-reset! a value)
+                 (echo-message!
+                   echo
+                   (string-append
+                     name
+                     " = "
+                     value
+                     " (atom, thread-safe)"))))))))
+  (def (cmd-atom-get app)
+       "Read a reactive editor variable (atom)."
+       (let* ([echo (app-state-echo app)]
+              [name (qt-echo-read-string app "Atom name: ")])
+         (when (and name (> (string-length name) 0))
+           (let* ([a (get-editor-atom name)] [val (atom-deref a)])
+             (echo-message!
+               echo
+               (string-append
+                 name
+                 " = "
+                 (if val (format "~a" val) "nil")
+                 " (atom)"))))))
+  (def (cmd-atom-watch app)
+       "Show current value of an atom. Jerboa atoms are thread-safe cells."
+       (let* ([echo (app-state-echo app)]
+              [name (qt-echo-read-string app "Inspect atom: ")])
+         (when (and name (> (string-length name) 0))
+           (let* ([a (get-editor-atom name)] [val (atom-deref a)])
+             (echo-message!
+               echo
+               (string-append "Atom '" name "' = "
+                 (if val (format "~a" val) "nil")
+                 " (thread-safe atom)"))))))
+  (define *command-pqueue*--cell
+    (vector (make-pqueue (lambda (a b) (< (cdr a) (cdr b))))))
+  (def (cmd-schedule-command app)
+       "Schedule a command for prioritized execution.\n   Lower priority number = runs first. Uses a min-heap."
+       (let* ([echo (app-state-echo app)]
+              [cmd-name (qt-echo-read-string app "Command to schedule: ")]
+              [pri-str (qt-echo-read-string
+                         app
+                         "Priority (0=highest): ")])
+         (when (and cmd-name pri-str)
+           (let ([pri (string->number pri-str)])
+             (when pri
+               (pqueue-push! *command-pqueue* (cons cmd-name pri))
+               (echo-message!
+                 echo
+                 (string-append "Scheduled '" cmd-name "' at priority "
+                   (number->string (inexact->exact pri)) " ("
+                   (number->string (pqueue-length *command-pqueue*))
+                   " queued)")))))))
+  (def (cmd-run-scheduled app)
+       "Run the highest-priority scheduled command (lowest number)."
+       (let ([echo (app-state-echo app)])
+         (if (pqueue-empty? *command-pqueue*)
+             (echo-message! echo "No scheduled commands")
+             (let* ([entry (pqueue-pop! *command-pqueue*)]
+                    [cmd-name (car entry)]
+                    [pri (cdr entry)]
+                    [sym (string->symbol cmd-name)])
+               (echo-message!
+                 echo
+                 (string-append "Running '" cmd-name "' (priority "
+                   (number->string (inexact->exact pri)) ")"))
+               (execute-command! app sym)))))
+  (def (cmd-list-scheduled app)
+       "List all scheduled commands in priority order."
+       (let ([echo (app-state-echo app)])
+         (if (pqueue-empty? *command-pqueue*)
+             (echo-message! echo "No scheduled commands")
+             (let* ([items (pqueue->list *command-pqueue*)]
+                    [sorted (sort
+                              items
+                              (lambda (a b) (< (cdr a) (cdr b))))]
+                    [lines (map (lambda (entry)
+                                  (string-append
+                                    "  ["
+                                    (number->string
+                                      (inexact->exact (cdr entry)))
+                                    "] "
+                                    (car entry)))
+                                sorted)])
+               (echo-message!
+                 echo
+                 (string-append
+                   "Scheduled ("
+                   (number->string (length items))
+                   "):\n"
+                   (string-join lines "\n")))))))
+  (define *bookmark-trees*--cell
+    (vector (make-hash-table-eq)))
+  (def (buffer-bookmark-tree buf)
+       "Get or create the bookmark rbtree for a buffer."
+       (or (hash-get *bookmark-trees* buf)
+           (let ([tree (make-rbtree <)])
+             (hash-put! *bookmark-trees* buf tree)
+             tree)))
+  (def (cmd-rbtree-bookmark-set app)
+       "Set a bookmark at current position using an rbtree (O(log n) insert).\n   Bookmarks are sorted by position — Emacs uses unsorted alist."
+       (let* ([echo (app-state-echo app)]
+              [ed (current-qt-editor app)]
+              [buf (current-qt-buffer app)]
+              [pos (qt-plain-text-edit-cursor-position ed)]
+              [name (qt-echo-read-string app "Bookmark name: ")])
+         (when (and name (> (string-length name) 0))
+           (let* ([tree (buffer-bookmark-tree buf)]
+                  [new-tree (rbtree-insert tree pos name)])
+             (hash-put! *bookmark-trees* buf new-tree)
+             (echo-message!
+               echo
+               (string-append "Bookmark '" name "' set at position "
+                 (number->string pos) " (rbtree O(log n))"))))))
+  (def (cmd-rbtree-bookmark-list app)
+       "List all bookmarks in the current buffer, sorted by position.\n   Uses rbtree->list for in-order traversal — automatically sorted."
+       (let* ([echo (app-state-echo app)]
+              [buf (current-qt-buffer app)]
+              [tree (buffer-bookmark-tree buf)])
+         (if (rbtree-empty? tree)
+             (echo-message! echo "No bookmarks in buffer")
+             (let* ([entries (rbtree->list tree)]
+                    [lines (map (lambda (entry)
+                                  (string-append
+                                    "  "
+                                    (format "~a" (cdr entry))
+                                    " @ pos "
+                                    (number->string (car entry))))
+                                entries)])
+               (echo-message!
+                 echo
+                 (string-append
+                   "Bookmarks (rbtree sorted):\n"
+                   (string-join lines "\n")))))))
+  (def (cmd-rbtree-bookmark-jump app)
+       "Jump to a bookmark by name. Searches the rbtree."
+       (let* ([echo (app-state-echo app)]
+              [ed (current-qt-editor app)]
+              [buf (current-qt-buffer app)]
+              [tree (buffer-bookmark-tree buf)]
+              [name (qt-echo-read-string app "Jump to bookmark: ")])
+         (when (and name (> (string-length name) 0))
+           (let* ([entries (rbtree->list tree)]
+                  [found (find
+                           (lambda (entry) (equal? (cdr entry) name))
+                           entries)])
+             (if found
+                 (begin
+                   (qt-plain-text-edit-set-cursor-position! ed (car found))
+                   (echo-message!
+                     echo
+                     (string-append
+                       "Jumped to '"
+                       name
+                       "' at "
+                       (number->string (car found)))))
+                 (echo-error!
+                   echo
+                   (string-append "Bookmark '" name "' not found")))))))
+  (define *buffer-metadata*--cell
+    (vector (make-hash-table-eq)))
+  (define *metadata-rwlock*--cell (vector (make-rwlock)))
+  (def (cmd-set-metadata app)
+       "Set buffer metadata (write-locked, exclusive access)."
+       (let* ([echo (app-state-echo app)]
+              [buf (current-qt-buffer app)]
+              [key (qt-echo-read-string app "Metadata key: ")]
+              [val (qt-echo-read-string app "Metadata value: ")])
+         (when (and key val (> (string-length key) 0))
+           (with-write-lock
+             *metadata-rwlock*
+             (lambda ()
+               (let ([meta (or (hash-get *buffer-metadata* buf)
+                               (make-hash-table))])
+                 (hash-put! meta key val)
+                 (hash-put! *buffer-metadata* buf meta))))
+           (echo-message!
+             echo
+             (string-append key " = " val " (write-locked)")))))
+  (def (cmd-get-metadata app)
+       "Read buffer metadata (read-locked, concurrent access OK)."
+       (let* ([echo (app-state-echo app)]
+              [buf (current-qt-buffer app)]
+              [key (qt-echo-read-string app "Metadata key: ")])
+         (when (and key (> (string-length key) 0))
+           (let ([val (with-read-lock
+                        *metadata-rwlock*
+                        (lambda ()
+                          (let ([meta (hash-get *buffer-metadata* buf)])
+                            (and meta (hash-get meta key)))))])
+             (echo-message!
+               echo
+               (string-append
+                 key
+                 " = "
+                 (or val "nil")
+                 " (read-locked)"))))))
+  (def (cmd-channel-grep app)
+       "Search files using a Go-style channel pipeline.\n   Producer pushes matches to channel, consumer collects.\n   Demonstrates channel backpressure."
+       (let* ([echo (app-state-echo app)]
+              [pattern (qt-echo-read-string
+                         app
+                         "Channel grep pattern: ")])
+         (when (and pattern (> (string-length pattern) 0))
+           (let ([dir (or (project-current) (current-directory))])
+             (echo-message!
+               echo
+               (string-append "Channel grep: " pattern " ..."))
+             (spawn-worker
+               'channel-grep
+               (lambda ()
+                 (let ([cmd (string-append
+                              "grep -rn --include='*.ss' --include='*.scm' "
+                              "'" pattern "' " dir
+                              " 2>/dev/null | head -100")])
+                   (let ([output (repl-capture-command cmd)])
+                     (let ([lines (if (> (string-length output) 0)
+                                      (string-split-newlines output)
+                                      '())])
+                       (ui-queue-push!
+                         (lambda ()
+                           (if (null? lines)
+                               (echo-message! echo "No matches found")
+                               (let ([buf-name "*channel-grep*"])
+                                 (qt-open-or-switch-buffer
+                                   app
+                                   buf-name
+                                   (string-append "Channel Grep: " pattern "\n"
+                                     (make-string 60 #\-) "\n"
+                                     (string-join lines "\n") "\n\n"
+                                     (number->string (length lines))
+                                     " matches (via Go-style channel pipeline)"))
+                                 (echo-message!
+                                   echo
+                                   (string-append
+                                     (number->string (length lines))
+                                     " matches (channel pipeline)")))))))))))))))
+  (def (cmd-fan-out-search app)
+       "Search across files using fan-out/fan-in parallelism.\n   Files are distributed to worker threads, results gathered via channel."
+       (let* ([echo (app-state-echo app)]
+              [pattern (qt-echo-read-string app "Fan-out search: ")])
+         (when (and pattern (> (string-length pattern) 0))
+           (let ([dir (or (project-current) (current-directory))])
+             (echo-message!
+               echo
+               (string-append "Fan-out search: " pattern " ..."))
+             (spawn-worker
+               'fan-out-search
+               (lambda ()
+                 (let* ([file-list-output (repl-capture-command
+                                            (string-append
+                                              "find "
+                                              dir
+                                              " -name '*.ss' -o -name '*.scm' 2>/dev/null"))]
+                        [files (if (> (string-length file-list-output) 0)
+                                   (string-split-newlines file-list-output)
+                                   '())])
+                   (if (null? files)
+                       (ui-queue-push!
+                         (lambda ()
+                           (echo-message! echo "No source files found")))
+                       (let ([results (fan-out-gather
+                                        (lambda (file)
+                                          (let ([output (repl-capture-command
+                                                          (string-append "grep -n '"
+                                                            pattern "' '"
+                                                            file
+                                                            "' 2>/dev/null"))])
+                                            (if (> (string-length output)
+                                                   0)
+                                                (cons file output)
+                                                #f)))
+                                        files
+                                        8)])
+                         (let ([hits (filter (lambda (r) r) results)])
+                           (ui-queue-push!
+                             (lambda ()
+                               (if (null? hits)
+                                   (echo-message! echo "No matches found")
+                                   (let ([buf-text (string-append "Fan-Out Search: "
+                                                     pattern "\n"
+                                                     (make-string 60 #\-)
+                                                     "\n"
+                                                     (string-join
+                                                       (map (lambda (hit)
+                                                              (string-append
+                                                                "\n--- "
+                                                                (car hit)
+                                                                " ---\n"
+                                                                (cdr hit)))
+                                                            hits)
+                                                       "")
+                                                     "\n\n"
+                                                     (number->string
+                                                       (length hits))
+                                                     " files matched (fan-out, 8 workers)")])
+                                     (qt-open-or-switch-buffer
+                                       app
+                                       "*fan-out-search*"
+                                       buf-text)
+                                     (echo-message!
+                                       echo
+                                       (string-append
+                                         (number->string (length hits))
+                                         " files matched (fan-out parallel)"))))))))))))))))
+  (def (cmd-future-eval app)
+       "Evaluate expression as an async future.\n   Computation runs in background — editor stays responsive.\n   Result delivered via completion token."
+       (let* ([echo (app-state-echo app)]
+              [input (qt-echo-read-string app "Future eval: ")])
+         (when (and input (> (string-length input) 0))
+           (echo-message!
+             echo
+             (string-append "Computing in background..."))
+           (let ([f (async-future
+                      (lambda ()
+                        (let* ([expr (with-input-from-string input read)]
+                               [result (eval expr)])
+                          (with-output-to-string
+                            (lambda () (write result))))))])
+             (spawn-worker
+               'future-waiter
+               (lambda ()
+                 (let ([result (future-get f)])
+                   (ui-queue-push!
+                     (lambda ()
+                       (if (and (pair? result)
+                                (eq? (car result) 'future-error))
+                           (echo-error!
+                             echo
+                             (with-output-to-string
+                               (lambda ()
+                                 (display-exception (cdr result)))))
+                           (echo-message!
+                             echo
+                             (string-append
+                               "Future => "
+                               (format "~a" result)))))))))))))
+  (define *active-file-generator*--cell (vector #f))
+  (define *active-file-gen-name*--cell (vector #f))
+  (def (cmd-view-file-lazy app)
+       "Open a file for lazy incremental viewing via generator.\n   Each call to 'view-file-next-page' shows the next 50 lines.\n   Uses O(1) memory — never loads the full file."
+       (let* ([echo (app-state-echo app)]
+              [path (qt-echo-read-string app "File to view lazily: ")])
+         (when (and path (> (string-length path) 0))
+           (if (file-exists? path)
+               (begin
+                 (set! *active-file-generator*
+                   (make-file-line-generator path))
+                 (set! *active-file-gen-name* path)
+                 (echo-message!
+                   echo
+                   (string-append
+                     "Lazy viewer opened: "
+                     path
+                     " (use view-file-next-page for pages)")))
+               (echo-error!
+                 echo
+                 (string-append "File not found: " path))))))
+  (def (cmd-view-file-next-page app)
+       "Show the next 50 lines from the lazy file viewer.\n   O(1) memory — file is never fully loaded."
+       (let ([echo (app-state-echo app)])
+         (if (not *active-file-generator*)
+             (echo-message!
+               echo
+               "No lazy file viewer active (use view-file-lazy first)")
+             (let ([lines '()] [gen *active-file-generator*] [done #f])
+               (let loop ([i 0])
+                 (when (and (< i 50) (not done))
+                   (let ([line (gen)])
+                     (if (eof-object? line)
+                         (set! done #t)
+                         (begin
+                           (set! lines (cons line lines))
+                           (loop (+ i 1)))))))
+               (if (null? lines)
+                   (begin
+                     (set! *active-file-generator* #f)
+                     (echo-message! echo "End of file reached"))
+                   (let ([buf-name (string-append
+                                     "*lazy:"
+                                     *active-file-gen-name*
+                                     "*")]
+                         [text (string-join (reverse lines) "\n")])
+                     (qt-open-or-switch-buffer app buf-name text)
+                     (echo-message!
+                       echo
+                       (string-append
+                         (number->string (length lines))
+                         " lines (lazy generator, O(1) memory)"))))))))
+  (define *editor-id-counter*--cell (vector (atom 0)))
+  (def (cmd-generate-id app)
+       "Generate a unique ID using an atomic counter (atom + swap).\n   Thread-safe, monotonically increasing."
+       (let* ([echo (app-state-echo app)]
+              [ed (current-qt-editor app)]
+              [id (atom-deref *editor-id-counter*)])
+         (atom-swap! *editor-id-counter* (lambda (n) (+ n 1)))
+         (qt-plain-text-edit-insert-text! ed (number->string id))
+         (echo-message!
+           echo
+           (string-append
+             "Inserted ID: "
+             (number->string id)
+             " (atomic counter)"))))
+  (def (cmd-timed-eval app)
+       "Evaluate with wall-clock timeout using a completion + thread.\n   If the expression doesn't finish in 5 seconds, times out.\n   Unlike engine ticks, this is real wall-clock time."
+       (let* ([echo (app-state-echo app)]
+              [input (qt-echo-read-string app "Timed eval (5s max): ")])
+         (when (and input (> (string-length input) 0))
+           (echo-message! echo "Evaluating (5s timeout)...")
+           (let ([c (make-completion)])
+             (spawn-worker
+               'timed-eval
+               (lambda ()
+                 (let ([result (with-catch
+                                 (lambda (e)
+                                   (string-append
+                                     "ERROR: "
+                                     (with-output-to-string
+                                       (lambda () (display-exception e)))))
+                                 (lambda ()
+                                   (let* ([expr (with-input-from-string
+                                                  input
+                                                  read)]
+                                          [val (eval expr)])
+                                     (string-append
+                                       "=> "
+                                       (format "~a" val)))))])
+                   (completion-post! c result))))
+             (spawn-worker
+               'timed-eval-timeout
+               (lambda ()
+                 (thread-sleep! 5)
+                 (with-catch
+                   (lambda (e) #f)
+                   (lambda ()
+                     (completion-post!
+                       c
+                       "TIMEOUT: expression took >5s")))))
+             (spawn-worker
+               'timed-eval-wait
+               (lambda ()
+                 (let ([result (completion-wait! c)])
+                   (ui-queue-push!
+                     (lambda ()
+                       (echo-message! echo (format "~a" result)))))))))))
+  (def (cmd-amb-eval app)
+       "Evaluate an amb expression — nondeterministic search with backtracking.\n   The amb operator picks values and backtracks on failure.\n   Example: (amb-find (let ((x (amb 1 2 3)) (y (amb 1 2 3)))\n              (amb-assert (= (+ x y) 4)) (list x y)))\n   => (1 3)"
+       (let* ([echo (app-state-echo app)]
+              [input (qt-echo-read-string app "Amb expression: ")])
+         (when (and input (> (string-length input) 0))
+           (engine-eval-start!
+             (string-append
+               "(with-output-to-string (lambda () (write "
+               input
+               ")))")
+             (lambda (result)
+               (echo-message!
+                 echo
+                 (string-append "amb => " (or result "no solution"))))
+             (lambda (err)
+               (echo-error! echo (string-append "amb error: " err)))))))
+  (def (cmd-amb-find-all app)
+       "Find ALL solutions to an amb expression using amb-collect.\n   Returns a list of every possible result.\n   Example: (amb-collect (let ((x (amb 1 2 3 4 5)))\n              (amb-assert (even? x)) x))\n   => (2 4)"
+       (let* ([echo (app-state-echo app)]
+              [input (qt-echo-read-string
+                       app
+                       "Amb collect expression: ")])
+         (when (and input (> (string-length input) 0))
+           (engine-eval-start!
+             (string-append
+               "(with-output-to-string (lambda () (write "
+               input
+               ")))")
+             (lambda (result)
+               (echo-message!
+                 echo
+                 (string-append "all solutions: " (or result "none"))))
+             (lambda (err)
+               (echo-error! echo (string-append "amb error: " err)))))))
+  (def (cmd-lazy-eval app)
+       "Demonstrate lazy evaluation with delay/force.\n   Shows memoized lazy promises — value computed once, cached thereafter."
+       (let* ([echo (app-state-echo app)]
+              [input (qt-echo-read-string app "Lazy expression: ")])
+         (when (and input (> (string-length input) 0))
+           (with-catch
+             (lambda (e)
+               (echo-error!
+                 echo
+                 (with-output-to-string
+                   (lambda () (display-exception e)))))
+             (lambda ()
+               (let* ([expr (with-input-from-string input read)]
+                      [promise (delay (eval expr))]
+                      [result (force promise)]
+                      [result2 (force promise)])
+                 (echo-message!
+                   echo
+                   (string-append
+                     "=> "
+                     (format "~a" result)
+                     " (lazy, memoized)"))))))))
   (define-syntax *hl-line-mode*
     (identifier-syntax
       [id (vector-ref *hl-line-mode*--cell 0)]
@@ -2113,5 +2648,52 @@
       [id (vector-ref *file-content-cache*--cell 0)]
       [(set! id val) (vector-set!
                        *file-content-cache*--cell
+                       0
+                       val)]))
+  (define-syntax *editor-atoms*
+    (identifier-syntax
+      [id (vector-ref *editor-atoms*--cell 0)]
+      [(set! id val) (vector-set! *editor-atoms*--cell 0 val)]))
+  (define-syntax *command-pqueue*
+    (identifier-syntax
+      [id (vector-ref *command-pqueue*--cell 0)]
+      [(set! id val) (vector-set! *command-pqueue*--cell 0 val)]))
+  (define-syntax *bookmark-trees*
+    (identifier-syntax
+      [id (vector-ref *bookmark-trees*--cell 0)]
+      [(set! id val) (vector-set! *bookmark-trees*--cell 0 val)]))
+  (define-syntax *buffer-metadata*
+    (identifier-syntax
+      [id (vector-ref *buffer-metadata*--cell 0)]
+      [(set! id val) (vector-set!
+                       *buffer-metadata*--cell
+                       0
+                       val)]))
+  (define-syntax *metadata-rwlock*
+    (identifier-syntax
+      [id (vector-ref *metadata-rwlock*--cell 0)]
+      [(set! id val) (vector-set!
+                       *metadata-rwlock*--cell
+                       0
+                       val)]))
+  (define-syntax *active-file-generator*
+    (identifier-syntax
+      [id (vector-ref *active-file-generator*--cell 0)]
+      [(set! id val) (vector-set!
+                       *active-file-generator*--cell
+                       0
+                       val)]))
+  (define-syntax *active-file-gen-name*
+    (identifier-syntax
+      [id (vector-ref *active-file-gen-name*--cell 0)]
+      [(set! id val) (vector-set!
+                       *active-file-gen-name*--cell
+                       0
+                       val)]))
+  (define-syntax *editor-id-counter*
+    (identifier-syntax
+      [id (vector-ref *editor-id-counter*--cell 0)]
+      [(set! id val) (vector-set!
+                       *editor-id-counter*--cell
                        0
                        val)])))

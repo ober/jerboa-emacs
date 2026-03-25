@@ -926,11 +926,11 @@
                          (with-output-to-string
                            (lambda () (display result))))))))))))
   (def (cmd-inferior-lisp app)
-       "Start inferior Lisp — opens Gerbil REPL in eshell."
+       "Start inferior Lisp — opens Chez Scheme REPL in eshell."
        (execute-command! app 'eshell)
        (echo-message!
          (app-state-echo app)
-         "Eshell ready — type 'gxi' for Gerbil REPL or 'gambit' for Gambit"))
+         "Eshell ready — type 'scheme' for Chez Scheme REPL"))
   (def (cmd-duplicate-and-comment app)
        (let* ([ed (current-qt-editor app)]
               [line (sci-send

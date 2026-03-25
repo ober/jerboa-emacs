@@ -357,7 +357,10 @@ linux-static-qt-docker:
 	           text/base64.sls text/diff.sls text/glob.sls text/hex.sls text/json.sls \
 	           crypto/digest.sls \
 	           engine.sls fiber.sls guardian.sls select.sls stm.sls task.sls \
+	           amb.sls \
 	           misc/thread.sls misc/wg.sls misc/pqueue.sls misc/lru-cache.sls \
+	           misc/channel.sls misc/atom.sls misc/rbtree.sls \
+	           misc/rwlock.sls misc/completion.sls misc/barrier.sls \
 	           format.sls iter.sls pregexp.sls sort.sls sugar.sls \
 	           srfi/srfi-1.sls srfi/srfi-13.sls srfi/srfi-19.sls; do \
 	           if [ -f /host-jerboa-std/\$$f ]; then \

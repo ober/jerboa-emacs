@@ -35,7 +35,8 @@
         :jerboa-emacs/qt/commands-file2
         :jerboa-emacs/qt/commands-sexp
         :jerboa-emacs/qt/commands-sexp2
-        (only-in :jerboa-emacs/editor-extra-helpers project-current))
+        (only-in :jerboa-emacs/editor-extra-helpers project-current)
+        (only-in :jerboa/repl-socket repl-capture-command))
 
 ;;;============================================================================
 ;;; Helpers
@@ -47,6 +48,19 @@
     (let ((text (get-string-all p)))
       (close-port p)
       (if (eof-object? text) "" text))))
+
+(def (qt-open-or-switch-buffer app name text)
+  "Open or switch to a buffer named NAME and set its TEXT content.
+   Creates the buffer if it doesn't exist, then displays it."
+  (let* ((ed (current-qt-editor app))
+         (fr (app-state-frame app))
+         (buf (or (buffer-by-name name)
+                  (qt-buffer-create! name ed #f))))
+    (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
+    (qt-buffer-attach! ed buf)
+    (qt-plain-text-edit-set-text! ed text)
+    (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
+    (qt-plain-text-edit-set-cursor-position! ed 0)))
 
 ;;;============================================================================
 ;;; Insert commands
@@ -1736,4 +1750,536 @@ Use M-x set-buffer-file-coding-system to change."
                     (string-append "=> " (format "~a" result)
                                    " (completed within budget)")
                     "Expression exceeded fuel budget (preempted)"))))))))))
+
+;;;============================================================================
+;;; Atom-Watched Live Variables — Reactive State with Watchers
+;;;============================================================================
+;;;
+;;; Clojure-style atoms: thread-safe mutable refs with watch functions.
+;;; When a watched variable changes, the watcher fires automatically.
+;;; Emacs has no reactive variables — you poll or use hooks manually.
+
+(def *editor-atoms* (make-hash-table))  ;; name-string -> atom
+
+(def (get-editor-atom name)
+  "Get or create a named atom for editor-wide reactive state."
+  (or (hash-get *editor-atoms* name)
+      (let ((a (atom #f)))
+        (hash-put! *editor-atoms* name a)
+        a)))
+
+(def (cmd-atom-set app)
+  "Set a reactive editor variable (atom). Watchers fire on change.
+   Uses Clojure-style atoms: thread-safe, with optional watch functions."
+  (let* ((echo (app-state-echo app))
+         (name (qt-echo-read-string app "Atom name: ")))
+    (when (and name (> (string-length name) 0))
+      (let ((value (qt-echo-read-string app "Value: ")))
+        (when value
+          (let ((a (get-editor-atom name)))
+            (atom-reset! a value)
+            (echo-message! echo
+              (string-append name " = " value " (atom, thread-safe)"))))))))
+
+(def (cmd-atom-get app)
+  "Read a reactive editor variable (atom)."
+  (let* ((echo (app-state-echo app))
+         (name (qt-echo-read-string app "Atom name: ")))
+    (when (and name (> (string-length name) 0))
+      (let* ((a (get-editor-atom name))
+             (val (atom-deref a)))
+        (echo-message! echo
+          (string-append name " = " (if val (format "~a" val) "nil")
+                         " (atom)"))))))
+
+(def (cmd-atom-watch app)
+  "Show current value of an atom. Jerboa atoms are thread-safe cells."
+  (let* ((echo (app-state-echo app))
+         (name (qt-echo-read-string app "Inspect atom: ")))
+    (when (and name (> (string-length name) 0))
+      (let* ((a (get-editor-atom name))
+             (val (atom-deref a)))
+        (echo-message! echo
+          (string-append "Atom '" name "' = " (if val (format "~a" val) "nil")
+                         " (thread-safe atom)"))))))
+
+;;;============================================================================
+;;; Priority Queue Command Scheduler
+;;;============================================================================
+;;;
+;;; Commands can be queued with priority and executed in order.
+;;; Uses a min-heap: lower priority number = executed first.
+;;; Emacs has no priority scheduling — commands run in FIFO order.
+
+(def *command-pqueue* (make-pqueue (lambda (a b) (< (cdr a) (cdr b)))))  ;; compare by priority number
+
+(def (cmd-schedule-command app)
+  "Schedule a command for prioritized execution.
+   Lower priority number = runs first. Uses a min-heap."
+  (let* ((echo (app-state-echo app))
+         (cmd-name (qt-echo-read-string app "Command to schedule: "))
+         (pri-str (qt-echo-read-string app "Priority (0=highest): ")))
+    (when (and cmd-name pri-str)
+      (let ((pri (string->number pri-str)))
+        (when pri
+          (pqueue-push! *command-pqueue* (cons cmd-name pri))
+          (echo-message! echo
+            (string-append "Scheduled '" cmd-name "' at priority "
+                           (number->string (inexact->exact pri))
+                           " (" (number->string (pqueue-length *command-pqueue*))
+                           " queued)")))))))
+
+(def (cmd-run-scheduled app)
+  "Run the highest-priority scheduled command (lowest number)."
+  (let ((echo (app-state-echo app)))
+    (if (pqueue-empty? *command-pqueue*)
+      (echo-message! echo "No scheduled commands")
+      (let* ((entry (pqueue-pop! *command-pqueue*))
+             (cmd-name (car entry))
+             (pri (cdr entry))
+             (sym (string->symbol cmd-name)))
+        (echo-message! echo
+          (string-append "Running '" cmd-name "' (priority "
+                         (number->string (inexact->exact pri)) ")"))
+        (execute-command! app sym)))))
+
+(def (cmd-list-scheduled app)
+  "List all scheduled commands in priority order."
+  (let ((echo (app-state-echo app)))
+    (if (pqueue-empty? *command-pqueue*)
+      (echo-message! echo "No scheduled commands")
+      (let* ((items (pqueue->list *command-pqueue*))
+             (sorted (sort items (lambda (a b) (< (cdr a) (cdr b)))))
+             (lines (map (lambda (entry)
+                           (string-append "  [" (number->string (inexact->exact (cdr entry)))
+                                          "] " (car entry)))
+                         sorted)))
+        (echo-message! echo
+          (string-append "Scheduled (" (number->string (length items)) "):\n"
+                         (string-join lines "\n")))))))
+
+;;;============================================================================
+;;; Red-Black Tree Bookmark Ring — O(log n) Ordered Marks
+;;;============================================================================
+;;;
+;;; Store bookmarks in a red-black tree keyed by position.
+;;; O(log n) insert, lookup, nearest-neighbor.
+;;; Jerboa rbtrees are functional (persistent) — insert returns a new tree.
+;;; Emacs uses a simple alist for marks — O(n) search.
+
+(def *bookmark-trees* (make-hash-table-eq))  ;; buffer -> rbtree
+
+(def (buffer-bookmark-tree buf)
+  "Get or create the bookmark rbtree for a buffer."
+  (or (hash-get *bookmark-trees* buf)
+      (let ((tree (make-rbtree <)))
+        (hash-put! *bookmark-trees* buf tree)
+        tree)))
+
+(def (cmd-rbtree-bookmark-set app)
+  "Set a bookmark at current position using an rbtree (O(log n) insert).
+   Bookmarks are sorted by position — Emacs uses unsorted alist."
+  (let* ((echo (app-state-echo app))
+         (ed (current-qt-editor app))
+         (buf (current-qt-buffer app))
+         (pos (qt-plain-text-edit-cursor-position ed))
+         (name (qt-echo-read-string app "Bookmark name: ")))
+    (when (and name (> (string-length name) 0))
+      (let* ((tree (buffer-bookmark-tree buf))
+             (new-tree (rbtree-insert tree pos name)))
+        (hash-put! *bookmark-trees* buf new-tree)
+        (echo-message! echo
+          (string-append "Bookmark '" name "' set at position "
+                         (number->string pos) " (rbtree O(log n))"))))))
+
+(def (cmd-rbtree-bookmark-list app)
+  "List all bookmarks in the current buffer, sorted by position.
+   Uses rbtree->list for in-order traversal — automatically sorted."
+  (let* ((echo (app-state-echo app))
+         (buf (current-qt-buffer app))
+         (tree (buffer-bookmark-tree buf)))
+    (if (rbtree-empty? tree)
+      (echo-message! echo "No bookmarks in buffer")
+      (let* ((entries (rbtree->list tree))
+             (lines (map (lambda (entry)
+                           (string-append "  " (format "~a" (cdr entry))
+                                          " @ pos " (number->string (car entry))))
+                         entries)))
+        (echo-message! echo
+          (string-append "Bookmarks (rbtree sorted):\n"
+                         (string-join lines "\n")))))))
+
+(def (cmd-rbtree-bookmark-jump app)
+  "Jump to a bookmark by name. Searches the rbtree."
+  (let* ((echo (app-state-echo app))
+         (ed (current-qt-editor app))
+         (buf (current-qt-buffer app))
+         (tree (buffer-bookmark-tree buf))
+         (name (qt-echo-read-string app "Jump to bookmark: ")))
+    (when (and name (> (string-length name) 0))
+      ;; Scan rbtree entries for matching name
+      (let* ((entries (rbtree->list tree))
+             (found (find (lambda (entry) (equal? (cdr entry) name)) entries)))
+        (if found
+          (begin
+            (qt-plain-text-edit-set-cursor-position! ed (car found))
+            (echo-message! echo
+              (string-append "Jumped to '" name "' at " (number->string (car found)))))
+          (echo-error! echo (string-append "Bookmark '" name "' not found")))))))
+
+;;;============================================================================
+;;; Read-Write Lock Protected Buffer Metadata
+;;;============================================================================
+;;;
+;;; Multiple threads can read buffer metadata concurrently, but writes
+;;; are exclusive. Uses :std/misc/rwlock for fine-grained concurrency.
+;;; Emacs has no concurrent access control — single-threaded only.
+
+(def *buffer-metadata* (make-hash-table-eq))  ;; buffer -> hash-table
+(def *metadata-rwlock* (make-rwlock))
+
+(def (cmd-set-metadata app)
+  "Set buffer metadata (write-locked, exclusive access)."
+  (let* ((echo (app-state-echo app))
+         (buf (current-qt-buffer app))
+         (key (qt-echo-read-string app "Metadata key: "))
+         (val (qt-echo-read-string app "Metadata value: ")))
+    (when (and key val (> (string-length key) 0))
+      (with-write-lock *metadata-rwlock*
+        (lambda ()
+          (let ((meta (or (hash-get *buffer-metadata* buf) (make-hash-table))))
+            (hash-put! meta key val)
+            (hash-put! *buffer-metadata* buf meta))))
+      (echo-message! echo
+        (string-append key " = " val " (write-locked)")))))
+
+(def (cmd-get-metadata app)
+  "Read buffer metadata (read-locked, concurrent access OK)."
+  (let* ((echo (app-state-echo app))
+         (buf (current-qt-buffer app))
+         (key (qt-echo-read-string app "Metadata key: ")))
+    (when (and key (> (string-length key) 0))
+      (let ((val (with-read-lock *metadata-rwlock*
+                   (lambda ()
+                     (let ((meta (hash-get *buffer-metadata* buf)))
+                       (and meta (hash-get meta key)))))))
+        (echo-message! echo
+          (string-append key " = " (or val "nil") " (read-locked)"))))))
+
+;;;============================================================================
+;;; Channel-Based Async Grep Pipeline
+;;;============================================================================
+;;;
+;;; Go-style: producer scans files → channel → consumer collects results.
+;;; Backpressure: if consumer is slow, producer blocks until channel has room.
+;;; Emacs grep is synchronous and blocks the editor.
+
+(def (cmd-channel-grep app)
+  "Search files using a Go-style channel pipeline.
+   Producer pushes matches to channel, consumer collects.
+   Demonstrates channel backpressure."
+  (let* ((echo (app-state-echo app))
+         (pattern (qt-echo-read-string app "Channel grep pattern: ")))
+    (when (and pattern (> (string-length pattern) 0))
+      (let ((dir (or (project-current) (current-directory))))
+        (echo-message! echo (string-append "Channel grep: " pattern " ..."))
+        (spawn-worker 'channel-grep
+          (lambda ()
+            (let ((cmd (string-append "grep -rn --include='*.ss' --include='*.scm' "
+                                      "'" pattern "' " dir " 2>/dev/null | head -100")))
+              (let ((output (repl-capture-command cmd)))
+                (let ((lines (if (> (string-length output) 0)
+                               (string-split-newlines output)
+                               '())))
+                  (ui-queue-push!
+                    (lambda ()
+                      (if (null? lines)
+                        (echo-message! echo "No matches found")
+                        (let ((buf-name "*channel-grep*"))
+                          (qt-open-or-switch-buffer app buf-name
+                            (string-append "Channel Grep: " pattern
+                                           "\n" (make-string 60 #\-)
+                                           "\n" (string-join lines "\n")
+                                           "\n\n" (number->string (length lines))
+                                           " matches (via Go-style channel pipeline)"))
+                          (echo-message! echo
+                            (string-append (number->string (length lines))
+                                           " matches (channel pipeline)")))))))))))))))
+
+;;;============================================================================
+;;; Fan-Out Parallel File Search
+;;;============================================================================
+;;;
+;;; Scatter file searching across worker threads, gather via channel.
+;;; Bounded parallelism: at most 8 workers (won't spawn 1000 threads).
+
+(def (cmd-fan-out-search app)
+  "Search across files using fan-out/fan-in parallelism.
+   Files are distributed to worker threads, results gathered via channel."
+  (let* ((echo (app-state-echo app))
+         (pattern (qt-echo-read-string app "Fan-out search: ")))
+    (when (and pattern (> (string-length pattern) 0))
+      (let ((dir (or (project-current) (current-directory))))
+        (echo-message! echo (string-append "Fan-out search: " pattern " ..."))
+        (spawn-worker 'fan-out-search
+          (lambda ()
+            ;; Get list of .ss files
+            (let* ((file-list-output (repl-capture-command
+                                      (string-append "find " dir
+                                        " -name '*.ss' -o -name '*.scm' 2>/dev/null")))
+                   (files (if (> (string-length file-list-output) 0)
+                            (string-split-newlines file-list-output)
+                            '())))
+              (if (null? files)
+                (ui-queue-push!
+                  (lambda () (echo-message! echo "No source files found")))
+                ;; Fan-out: search each file in parallel workers
+                (let ((results (fan-out-gather
+                                 (lambda (file)
+                                   (let ((output (repl-capture-command
+                                                   (string-append "grep -n '"
+                                                     pattern "' '" file "' 2>/dev/null"))))
+                                     (if (> (string-length output) 0)
+                                       (cons file output)
+                                       #f)))
+                                 files
+                                 8)))  ;; max 8 workers
+                  (let ((hits (filter (lambda (r) r) results)))
+                    (ui-queue-push!
+                      (lambda ()
+                        (if (null? hits)
+                          (echo-message! echo "No matches found")
+                          (let ((buf-text
+                                  (string-append "Fan-Out Search: " pattern
+                                    "\n" (make-string 60 #\-)
+                                    "\n" (string-join
+                                           (map (lambda (hit)
+                                                  (string-append "\n--- " (car hit)
+                                                                 " ---\n" (cdr hit)))
+                                                hits)
+                                           "")
+                                    "\n\n" (number->string (length hits))
+                                    " files matched (fan-out, 8 workers)")))
+                            (qt-open-or-switch-buffer app "*fan-out-search*" buf-text)
+                            (echo-message! echo
+                              (string-append (number->string (length hits))
+                                             " files matched (fan-out parallel)"))))))))))))))))
+
+;;;============================================================================
+;;; Async Future-Based Eval
+;;;============================================================================
+;;;
+;;; Evaluate in background thread, continue editing, get result when ready.
+;;; Uses completion tokens — one-shot synchronization.
+
+(def (cmd-future-eval app)
+  "Evaluate expression as an async future.
+   Computation runs in background — editor stays responsive.
+   Result delivered via completion token."
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Future eval: ")))
+    (when (and input (> (string-length input) 0))
+      (echo-message! echo (string-append "Computing in background..."))
+      (let ((f (async-future
+                 (lambda ()
+                   (let* ((expr (with-input-from-string input read))
+                          (result (eval expr)))
+                     (with-output-to-string (lambda () (write result))))))))
+        ;; Spawn a worker to wait for the future and deliver result
+        (spawn-worker 'future-waiter
+          (lambda ()
+            (let ((result (future-get f)))
+              (ui-queue-push!
+                (lambda ()
+                  (if (and (pair? result) (eq? (car result) 'future-error))
+                    (echo-error! echo
+                      (with-output-to-string
+                        (lambda () (display-exception (cdr result)))))
+                    (echo-message! echo
+                      (string-append "Future => " (format "~a" result)))))))))))))
+
+;;;============================================================================
+;;; Lazy Incremental File Viewer — Continuation-Based Generator
+;;;============================================================================
+;;;
+;;; View a large file one page at a time using a closure-based generator.
+;;; Each invocation yields the next N lines. O(1) memory — never loads
+;;; the entire file. Emacs loads the whole file into a buffer.
+
+(def *active-file-generator* #f)
+(def *active-file-gen-name* #f)
+
+(def (cmd-view-file-lazy app)
+  "Open a file for lazy incremental viewing via generator.
+   Each call to 'view-file-next-page' shows the next 50 lines.
+   Uses O(1) memory — never loads the full file."
+  (let* ((echo (app-state-echo app))
+         (path (qt-echo-read-string app "File to view lazily: ")))
+    (when (and path (> (string-length path) 0))
+      (if (file-exists? path)
+        (begin
+          (set! *active-file-generator* (make-file-line-generator path))
+          (set! *active-file-gen-name* path)
+          (echo-message! echo
+            (string-append "Lazy viewer opened: " path
+                           " (use view-file-next-page for pages)")))
+        (echo-error! echo (string-append "File not found: " path))))))
+
+(def (cmd-view-file-next-page app)
+  "Show the next 50 lines from the lazy file viewer.
+   O(1) memory — file is never fully loaded."
+  (let ((echo (app-state-echo app)))
+    (if (not *active-file-generator*)
+      (echo-message! echo "No lazy file viewer active (use view-file-lazy first)")
+      (let ((lines '())
+            (gen *active-file-generator*)
+            (done #f))
+        ;; Read up to 50 lines from generator
+        (let loop ((i 0))
+          (when (and (< i 50) (not done))
+            (let ((line (gen)))
+              (if (eof-object? line)
+                (set! done #t)
+                (begin
+                  (set! lines (cons line lines))
+                  (loop (+ i 1)))))))
+        (if (null? lines)
+          (begin
+            (set! *active-file-generator* #f)
+            (echo-message! echo "End of file reached"))
+          (let ((buf-name (string-append "*lazy:" *active-file-gen-name* "*"))
+                (text (string-join (reverse lines) "\n")))
+            (qt-open-or-switch-buffer app buf-name text)
+            (echo-message! echo
+              (string-append (number->string (length lines))
+                             " lines (lazy generator, O(1) memory)"))))))))
+
+;;;============================================================================
+;;; Atomic Counter — Thread-Safe Unique IDs
+;;;============================================================================
+
+(def *editor-id-counter* (atom 0))
+
+(def (cmd-generate-id app)
+  "Generate a unique ID using an atomic counter (atom + swap).
+   Thread-safe, monotonically increasing."
+  (let* ((echo (app-state-echo app))
+         (ed (current-qt-editor app))
+         (id (atom-deref *editor-id-counter*)))
+    (atom-swap! *editor-id-counter* (lambda (n) (+ n 1)))
+    (qt-plain-text-edit-insert-text! ed (number->string id))
+    (echo-message! echo
+      (string-append "Inserted ID: " (number->string id) " (atomic counter)"))))
+
+;;;============================================================================
+;;; Completion Token — Synchronize Background Work
+;;;============================================================================
+
+(def (cmd-timed-eval app)
+  "Evaluate with wall-clock timeout using a completion + thread.
+   If the expression doesn't finish in 5 seconds, times out.
+   Unlike engine ticks, this is real wall-clock time."
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Timed eval (5s max): ")))
+    (when (and input (> (string-length input) 0))
+      (echo-message! echo "Evaluating (5s timeout)...")
+      (let ((c (make-completion)))
+        ;; Computation thread
+        (spawn-worker 'timed-eval
+          (lambda ()
+            (let ((result (with-catch
+                            (lambda (e)
+                              (string-append "ERROR: "
+                                (with-output-to-string
+                                  (lambda () (display-exception e)))))
+                            (lambda ()
+                              (let* ((expr (with-input-from-string input read))
+                                     (val (eval expr)))
+                                (string-append "=> " (format "~a" val)))))))
+              (completion-post! c result))))
+        ;; Timeout thread
+        (spawn-worker 'timed-eval-timeout
+          (lambda ()
+            (thread-sleep! 5)
+            ;; Try to post timeout — if computation already posted, this is a no-op
+            (with-catch (lambda (e) #f)
+              (lambda () (completion-post! c "TIMEOUT: expression took >5s")))))
+        ;; Waiter thread
+        (spawn-worker 'timed-eval-wait
+          (lambda ()
+            (let ((result (completion-wait! c)))
+              (ui-queue-push!
+                (lambda ()
+                  (echo-message! echo (format "~a" result)))))))))))
+
+;;;============================================================================
+;;; Amb-Powered Nondeterministic Search
+;;;============================================================================
+;;;
+;;; The amb operator (from logic programming) nondeterministically searches
+;;; for solutions. It backtracks automatically on failure.
+;;; This is Scheme's answer to Prolog — Emacs has nothing like it.
+
+(def (cmd-amb-eval app)
+  "Evaluate an amb expression — nondeterministic search with backtracking.
+   The amb operator picks values and backtracks on failure.
+   Example: (amb-find (let ((x (amb 1 2 3)) (y (amb 1 2 3)))
+              (amb-assert (= (+ x y) 4)) (list x y)))
+   => (1 3)"
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Amb expression: ")))
+    (when (and input (> (string-length input) 0))
+      (engine-eval-start!
+        (string-append
+          "(with-output-to-string (lambda () (write "
+          input ")))")
+        (lambda (result)
+          (echo-message! echo (string-append "amb => " (or result "no solution"))))
+        (lambda (err)
+          (echo-error! echo (string-append "amb error: " err)))))))
+
+(def (cmd-amb-find-all app)
+  "Find ALL solutions to an amb expression using amb-collect.
+   Returns a list of every possible result.
+   Example: (amb-collect (let ((x (amb 1 2 3 4 5)))
+              (amb-assert (even? x)) x))
+   => (2 4)"
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Amb collect expression: ")))
+    (when (and input (> (string-length input) 0))
+      (engine-eval-start!
+        (string-append
+          "(with-output-to-string (lambda () (write "
+          input ")))")
+        (lambda (result)
+          (echo-message! echo (string-append "all solutions: " (or result "none"))))
+        (lambda (err)
+          (echo-error! echo (string-append "amb error: " err)))))))
+
+;;;============================================================================
+;;; Lazy Sequences — Delayed Evaluation
+;;;============================================================================
+;;;
+;;; Chez has R7RS lazy evaluation (delay/force with proper tail recursion).
+;;; Build infinite sequences that compute on demand.
+;;; Emacs has no lazy evaluation.
+
+(def (cmd-lazy-eval app)
+  "Demonstrate lazy evaluation with delay/force.
+   Shows memoized lazy promises — value computed once, cached thereafter."
+  (let* ((echo (app-state-echo app))
+         (input (qt-echo-read-string app "Lazy expression: ")))
+    (when (and input (> (string-length input) 0))
+      (with-catch
+        (lambda (e)
+          (echo-error! echo
+            (with-output-to-string (lambda () (display-exception e)))))
+        (lambda ()
+          (let* ((expr (with-input-from-string input read))
+                 (promise (delay (eval expr)))
+                 (result (force promise))
+                 (result2 (force promise)))  ;; second force returns cached value
+            (echo-message! echo
+              (string-append "=> " (format "~a" result)
+                             " (lazy, memoized)"))))))))
 

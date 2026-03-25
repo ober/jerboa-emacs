@@ -1915,6 +1915,39 @@
   (register-command! 'file-cache-stats cmd-file-cache-stats)
   ;; Fuel-budgeted eval
   (register-command! 'fuel-eval cmd-fuel-eval)
+  ;; Clojure-style atoms (reactive variables)
+  (register-command! 'atom-set cmd-atom-set)
+  (register-command! 'atom-get cmd-atom-get)
+  (register-command! 'atom-watch cmd-atom-watch)
+  ;; Priority queue command scheduler
+  (register-command! 'schedule-command cmd-schedule-command)
+  (register-command! 'run-scheduled cmd-run-scheduled)
+  (register-command! 'list-scheduled cmd-list-scheduled)
+  ;; Red-black tree bookmarks
+  (register-command! 'bookmark-set-rbtree cmd-rbtree-bookmark-set)
+  (register-command! 'bookmark-list-rbtree cmd-rbtree-bookmark-list)
+  (register-command! 'bookmark-jump-rbtree cmd-rbtree-bookmark-jump)
+  ;; Read-write locked buffer metadata
+  (register-command! 'set-metadata cmd-set-metadata)
+  (register-command! 'get-metadata cmd-get-metadata)
+  ;; Channel pipeline grep
+  (register-command! 'channel-grep cmd-channel-grep)
+  ;; Fan-out parallel search
+  (register-command! 'fan-out-search cmd-fan-out-search)
+  ;; Async future eval
+  (register-command! 'future-eval cmd-future-eval)
+  ;; Coroutine lazy file viewer
+  (register-command! 'view-file-lazy cmd-view-file-lazy)
+  (register-command! 'view-file-next-page cmd-view-file-next-page)
+  ;; Atomic counter ID generator
+  (register-command! 'generate-id cmd-generate-id)
+  ;; Wall-clock timed eval
+  (register-command! 'timed-eval cmd-timed-eval)
+  ;; Amb nondeterministic search
+  (register-command! 'amb-eval cmd-amb-eval)
+  (register-command! 'amb-find-all cmd-amb-find-all)
+  ;; Lazy evaluation
+  (register-command! 'lazy-eval cmd-lazy-eval)
   ;; Helm commands (real implementations)
   (register-helm-commands!)
   ;; Qt-specific helm commands (uses helm-qt renderer)

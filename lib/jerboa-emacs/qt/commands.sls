@@ -2183,6 +2183,35 @@
    (register-command! 'clear-file-cache cmd-clear-file-cache)
    (register-command! 'file-cache-stats cmd-file-cache-stats)
    (register-command! 'fuel-eval cmd-fuel-eval)
+   (register-command! 'atom-set cmd-atom-set)
+   (register-command! 'atom-get cmd-atom-get)
+   (register-command! 'atom-watch cmd-atom-watch)
+   (register-command! 'schedule-command cmd-schedule-command)
+   (register-command! 'run-scheduled cmd-run-scheduled)
+   (register-command! 'list-scheduled cmd-list-scheduled)
+   (register-command!
+     'bookmark-set-rbtree
+     cmd-rbtree-bookmark-set)
+   (register-command!
+     'bookmark-list-rbtree
+     cmd-rbtree-bookmark-list)
+   (register-command!
+     'bookmark-jump-rbtree
+     cmd-rbtree-bookmark-jump)
+   (register-command! 'set-metadata cmd-set-metadata)
+   (register-command! 'get-metadata cmd-get-metadata)
+   (register-command! 'channel-grep cmd-channel-grep)
+   (register-command! 'fan-out-search cmd-fan-out-search)
+   (register-command! 'future-eval cmd-future-eval)
+   (register-command! 'view-file-lazy cmd-view-file-lazy)
+   (register-command!
+     'view-file-next-page
+     cmd-view-file-next-page)
+   (register-command! 'generate-id cmd-generate-id)
+   (register-command! 'timed-eval cmd-timed-eval)
+   (register-command! 'amb-eval cmd-amb-eval)
+   (register-command! 'amb-find-all cmd-amb-find-all)
+   (register-command! 'lazy-eval cmd-lazy-eval)
    (register-helm-commands!) (qt-register-helm-commands!)
    (qt-register-parity3-toggles!)
    (qt-register-parity4-commands!)

@@ -2199,7 +2199,7 @@
         ;; Attach buffer to editor
         (buffer-attach! ed buf)
         (set! (edit-window-buffer (current-window fr)) buf)
-        ;; Spawn gxi subprocess
+        ;; Spawn Chez Scheme subprocess
         (let ((rs (repl-start!)))
           (hash-put! *repl-state* buf rs)
           ;; Insert initial prompt
@@ -2210,7 +2210,7 @@
         (echo-message! (app-state-echo app) "REPL started")))))
 
 (def (cmd-repl-send app)
-  "Send the current input line to the gxi subprocess."
+  "Send the current input line to the Chez Scheme subprocess."
   (let* ((buf (current-buffer-from-app app))
          (rs (hash-get *repl-state* buf)))
     (when rs
@@ -2224,7 +2224,7 @@
                       "")))
         ;; Append newline to the buffer
         (editor-append-text ed "\n")
-        ;; Send to gxi
+        ;; Send to Chez Scheme
         (repl-send! rs input)
         ;; Update prompt-pos to after the newline (output will appear here)
         (set! (repl-state-prompt-pos rs) (editor-get-text-length ed))))))
@@ -2361,7 +2361,7 @@
       "  magit-status       Git status (C-x g)\n"
       "  eshell             Open eshell (M-x eshell)\n"
       "  term               Open terminal (M-x term)\n"
-      "  repl               Open Gerbil REPL (M-x repl)\n"))
+      "  repl               Open Chez Scheme REPL (M-x repl)\n"))
   (hash-put! *info-topics* "keybindings"
     (string-append
       "Keybindings\n"

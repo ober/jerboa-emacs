@@ -1476,7 +1476,7 @@
          (echo (app-state-echo app))
          (row (- (frame-height fr) 1))
          (width (frame-width fr))
-         (interp (echo-read-string echo "Interpreter (e.g. gxi, python3): " row width)))
+         (interp (echo-read-string echo "Interpreter (e.g. scheme, python3): " row width)))
     (when (and interp (not (string-empty? interp)))
       (let ((line (string-append "#!/usr/bin/env " interp "\n")))
         (editor-insert-text ed 0 line)

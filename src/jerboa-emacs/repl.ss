@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; REPL subprocess management for jemacs
 ;;;
-;;; Manages a gxi subprocess: spawn, send input, read output, stop.
+;;; Manages a Chez Scheme subprocess: spawn, send input, read output, stop.
 ;;; No backend imports — shared between TUI and Qt.
 
 (export
@@ -25,23 +25,23 @@
    history)      ; list of previous inputs
   transparent: #t)
 
-(def repl-prompt "gerbil> ")
+(def repl-prompt "chez> ")
 
 ;;;============================================================================
 ;;; Lifecycle
 ;;;============================================================================
 
 (def (repl-start!)
-  "Spawn a gxi subprocess and return a repl-state."
+  "Spawn a Chez Scheme subprocess and return a repl-state."
   ;; Chez open-process-ports returns: (write-stdin read-stdout read-stderr pid)
   (let-values (((p-stdin p-stdout p-stderr pid)
-                (open-process-ports "gxi" (buffer-mode none) (native-transcoder))))
+                (open-process-ports "scheme -q" (buffer-mode none) (native-transcoder))))
     (close-port p-stderr)
     ;; Store as (read-port . write-port) per struct contract
     (make-repl-state (cons p-stdout p-stdin) 0 '())))
 
 (def (repl-send! rs input)
-  "Send a line of input to the gxi process."
+  "Send a line of input to the Chez Scheme subprocess."
   (let ((out-port (cdr (repl-state-process rs))))
     (put-string out-port input)
     (put-char out-port #\newline)
@@ -51,7 +51,7 @@
     (cons input (repl-state-history rs))))
 
 (def (repl-read-available rs)
-  "Read all available output from the gxi process (non-blocking).
+  "Read all available output from the Chez subprocess (non-blocking).
    Returns a string, or #f if nothing available."
   (let ((in-port (car (repl-state-process rs))))
     (if (char-ready? in-port)
@@ -67,7 +67,7 @@
       #f)))
 
 (def (repl-stop! rs)
-  "Shut down the gxi subprocess."
+  "Shut down the Chez Scheme subprocess."
   (let ((in-port (car (repl-state-process rs)))
         (out-port (cdr (repl-state-process rs))))
     (with-catch (lambda (_e) (void)) (lambda () (close-port out-port)))

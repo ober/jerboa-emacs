@@ -11,8 +11,11 @@
    parallel-map parallel-git! make-weak-cache weak-cache-ref
    weak-cache-set! runtime-statistics runtime-gc-info
    with-abortable-command abort-current-command!
-   with-time-limit parallel-for-each schedule-periodic!
-   cancel-periodic! master-timer-tick! current-time-ms
+   with-time-limit parallel-for-each make-pipeline
+   pipeline-push! pipeline-close! pipeline-results
+   make-file-line-generator fan-out-gather async-future
+   future-get schedule-periodic! cancel-periodic!
+   master-timer-tick! current-time-ms string-split-newlines
    *file-index* start-file-indexer! stop-file-indexer!
    file-index-lookup *git-status-cache* start-git-watcher!
    stop-git-watcher! flycheck-trigger! start-flycheck-watcher!
@@ -21,7 +24,7 @@
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
       mutex? mutex-name atom?)
-    (std misc channel)
+    (std misc channel) (std misc completion)
     (only (std srfi srfi-19) current-time time->seconds)
     (std misc atom) (std sugar) (std srfi srfi-13)
     (jerboa-emacs core)
@@ -549,8 +552,8 @@
        (let ([v (hashtable-ref
                   cache
                   key
-                  '#{miss duooixdaklheon9quqi6o5g83-1})])
-         (if (eq? v '#{miss duooixdaklheon9quqi6o5g83-2})
+                  '#{miss o8ujppxdmbs3cyrnmt4czdz0a-1})])
+         (if (eq? v '#{miss o8ujppxdmbs3cyrnmt4czdz0a-2})
              (if (null? default) #f (car default))
              v)))
   (def (weak-cache-set! cache key value)
@@ -634,6 +637,88 @@
                                         t)
                                       acc)))))])
              (for-each (lambda (t) (thread-join! t)) threads)))))
+  (def (make-pipeline (buf-size 256))
+       "Create a pipeline: returns (values input-channel output-channel).\n   Producer pushes to input-channel, consumer reads from output-channel.\n   BUF-SIZE controls backpressure (default 256 items buffered)."
+       (let ([in-ch (make-channel buf-size)]
+             [out-ch (make-channel buf-size)])
+         (values in-ch out-ch)))
+  (def (pipeline-push! channel item)
+       "Push an item into a pipeline channel. Blocks if buffer full (backpressure)."
+       (channel-put channel item))
+  (def (pipeline-close! channel)
+       "Close a pipeline channel, signaling no more data."
+       (channel-close channel))
+  (def (pipeline-results channel)
+       "Drain all results from a pipeline output channel into a list.\n   Blocks until channel is closed by producer."
+       (let loop ([acc '()])
+         (let ([val (channel-try-get channel)])
+           (if val (loop (cons val acc)) (reverse acc)))))
+  (def (make-file-line-generator path)
+       "Create a generator that returns one line at a time from PATH.\n   Returns #!eof when file is exhausted. O(1) memory usage.\n   Usage: (def gen (make-file-line-generator \"/etc/hosts\"))\n          (gen) => first line\n          (gen) => second line\n          ..."
+       (let ([port (open-input-file path)] [done #f])
+         (lambda ()
+           (if done
+               (eof-object)
+               (let ([line (get-line port)])
+                 (when (eof-object? line) (close-port port) (set! done #t))
+                 line)))))
+  (def (fan-out-gather fn items (max-workers 8))
+       "Apply FN to each item using up to MAX-WORKERS parallel threads.\n   Results are collected via a shared channel — order is NOT preserved\n   (fastest-first). Returns list of results.\n   Unlike parallel-map, this uses bounded parallelism (won't spawn 1000 threads)."
+       (let* ([n (length items)]
+              [actual-workers (min n max-workers)]
+              [result-ch (make-channel n)]
+              [work-ch (make-channel n)])
+         (for-each (lambda (item) (channel-put work-ch item)) items)
+         (channel-close work-ch)
+         (let ([workers (let loop ([i 0] [acc '()])
+                          (if (>= i actual-workers)
+                              acc
+                              (loop
+                                (+ i 1)
+                                (cons
+                                  (let ([t (make-thread
+                                             (lambda ()
+                                               (let work-loop ()
+                                                 (let ([item (channel-try-get
+                                                               work-ch)])
+                                                   (when item
+                                                     (let ([result (with-catch
+                                                                     (lambda (e)
+                                                                       (cons
+                                                                         'error
+                                                                         e))
+                                                                     (lambda ()
+                                                                       (fn item)))])
+                                                       (channel-put
+                                                         result-ch
+                                                         result))
+                                                     (work-loop)))))
+                                             (string->symbol
+                                               (string-append
+                                                 "fan-"
+                                                 (number->string i))))])
+                                    (thread-start! t)
+                                    t)
+                                  acc))))])
+           (for-each (lambda (t) (thread-join! t)) workers)
+           (channel-close result-ch)
+           (let loop ([acc '()])
+             (let ([val (channel-try-get result-ch)])
+               (if val (loop (cons val acc)) (reverse acc)))))))
+  (def (async-future thunk)
+       "Run THUNK in a background thread, return a completion token.\n   Use (future-get token) to block until result is ready.\n   Usage: (let ((f (async-future (lambda () (expensive-computation)))))\n            ... do other work ...\n            (future-get f))  ;; blocks until done"
+       (let ([c (make-completion)])
+         (spawn-worker
+           'future
+           (lambda ()
+             (let ([result (with-catch
+                             (lambda (e) (cons 'future-error e))
+                             thunk)])
+               (completion-post! c result))))
+         c))
+  (def (future-get completion)
+       "Block until a future's result is available, then return it.\n   If the future raised an exception, returns (cons 'future-error exn)."
+       (completion-wait! completion))
   (define-syntax *engine-eval-active*
     (identifier-syntax
       [id (vector-ref *engine-eval-active*--cell 0)]

@@ -1126,10 +1126,10 @@
         ;; Attach buffer to editor
         (qt-buffer-attach! ed buf)
         (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
-        ;; Spawn gxi subprocess
+        ;; Spawn Chez Scheme subprocess
         (let ((rs (repl-start!)))
           (hash-put! *repl-state* buf rs)
-          ;; Show prompt immediately — gxi in non-interactive mode (pseudo-terminal: #f)
+          ;; Show prompt immediately — scheme -q in non-interactive mode
           ;; does NOT send a startup banner, so the timer would never fire and
           ;; prompt-pos would stay at 999999999, blocking all typing.
           (qt-plain-text-edit-set-text! ed repl-prompt)
@@ -1139,7 +1139,7 @@
         (echo-message! (app-state-echo app) "REPL started")))))
 
 (def (cmd-repl-send app)
-  "Send the current input line to the gxi subprocess."
+  "Send the current input line to the Chez Scheme subprocess."
   (let* ((buf (current-qt-buffer app))
          (rs (hash-get *repl-state* buf)))
     (when rs
@@ -1153,7 +1153,7 @@
                       "")))
         ;; Append newline to the buffer
         (qt-plain-text-edit-append! ed "")
-        ;; Send to gxi (even empty input — gxi ignores it and sends new prompt)
+        ;; Send to Chez Scheme (even empty input)
         (repl-send! rs input)
         ;; Update prompt-pos to after the newline (output will appear here)
         (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)

@@ -118,7 +118,7 @@
     (echo-message! (app-state-echo app) "Gerbil mode")))
 
 (def (cmd-run-scheme app)
-  "Run Scheme REPL — opens Gerbil REPL."
+  "Run Scheme REPL — opens Chez Scheme REPL."
   (execute-command! app 'repl))
 
 (def (cmd-scheme-send-region app)
@@ -883,15 +883,15 @@
     (echo-message! (app-state-echo app) "Lisp interaction mode (C-j to eval)")))
 
 (def (cmd-inferior-lisp app)
-  "Start inferior Lisp process — opens Gerbil REPL."
+  "Start inferior Lisp process — opens Chez Scheme REPL."
   (execute-command! app 'repl))
 
 (def (cmd-slime app)
-  "Start SLIME — delegates to Gerbil REPL."
+  "Start SLIME — delegates to Chez Scheme REPL."
   (execute-command! app 'repl))
 
 (def (cmd-sly app)
-  "Start SLY — delegates to Gerbil REPL."
+  "Start SLY — delegates to Chez Scheme REPL."
   (execute-command! app 'repl))
 
 ;; Code folding extras
