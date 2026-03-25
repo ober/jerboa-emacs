@@ -231,9 +231,12 @@ DEPS_IMAGE := jemacs-deps:$(ARCH)
 
 # Build intermediate deps Docker image (run once, or when deps change).
 # Takes ~45-60 min: Qt6 static + QScintilla + Chez Scheme + all shims.
+CHEZ_COMMIT ?= 902a10098603481afce0ec8588114234c09d6318
+
 docker-deps:
 	DOCKER_BUILDKIT=1 docker build \
 	  --build-arg ARCH=$(ARCH) \
+	  --build-arg CHEZ_COMMIT=$(CHEZ_COMMIT) \
 	  --build-context jerboa-src=$(JERBOA_SRC) \
 	  --build-context gherkin-src=$(GHERKIN_SRC) \
 	  --build-context jsh-src=$(JSH_SRC) \
@@ -266,6 +269,7 @@ build-jemacs-qt-static: check-root
 	cp /src/vendor/jerboa-shell/embed-crypto.c /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/embed-crypto.h /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/ffi-shim.c /deps/jsh/ 2>/dev/null; \
+	cd /src && find lib -name '*.so' -o -name '*.wpo' | xargs rm -f 2>/dev/null; \
 	cd /src && make build SCHEME=/opt/chez/bin/scheme JERBOA=/deps/jerboa && \
 	if [ -f /src/vendor/qt_shim.cpp ]; then \
 	  echo "Rebuilding libqt_shim.a from updated qt_shim.cpp..." && \
@@ -294,10 +298,20 @@ build-jemacs-qt-static: check-root
 	  --compile-imported-libraries --script /src/vendor/chez-scintilla-compile-libs.ss && \
 	rm -f /deps/chez-scintilla/src/chez-scintilla/*.wpo && \
 	cp /src/vendor/jerboa-net-tcp-static.sls /deps/jerboa/lib/std/net/tcp.sls && \
+	cp /src/vendor/jerboa-net-tcp-raw-static.sls /deps/jerboa/lib/std/net/tcp-raw.sls && \
 	cp /src/vendor/jerboa-net-uri.sls /deps/jerboa/lib/std/net/uri.sls && \
-	rm -f /deps/jerboa/lib/std/net/*.wpo && \
+	rm -f /deps/jerboa/lib/std/net/*.wpo /deps/jerboa/lib/std/net/*.so && \
+	cp /src/vendor/jerboa-crypto-native-static.sls /deps/jerboa/lib/std/crypto/native.sls && \
+	rm -f /deps/jerboa/lib/std/crypto/*.wpo /deps/jerboa/lib/std/crypto/*.so && \
+	mkdir -p /deps/jerboa/lib/std/security && \
+	cp /src/vendor/jerboa-security-capsicum-static.sls /deps/jerboa/lib/std/security/capsicum.sls && \
+	rm -f /deps/jerboa/lib/std/security/*.wpo /deps/jerboa/lib/std/security/*.so && \
+	cp /src/vendor/jerboa-os-landlock-static.sls /deps/jerboa/lib/std/os/landlock.sls && \
+	rm -f /deps/jerboa/lib/std/os/landlock.wpo /deps/jerboa/lib/std/os/landlock.so && \
 	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
 	  --compile-imported-libraries --script /src/vendor/jerboa-compile-tcp.ss && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-tcp-raw.ss && \
 	/opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
 	  --compile-imported-libraries --script /src/vendor/jerboa-compile-uri.ss && \
 	rm -f /deps/jerboa/lib/std/net/*.wpo && \
@@ -343,8 +357,10 @@ linux-static-qt-docker:
 	  -v $(CURDIR):/src:z \
 	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
 	  -v $(COREUTILS_SRC)/lib:/host-coreutils:ro \
+	  -v $(JSH_SRC)/src:/host-jsh-src:ro \
 	  $(DEPS_IMAGE) \
 	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
+	         cp -a /host-jsh-src/. /deps/jsh/src/; \
 	         cp -a /host-coreutils/. /deps/coreutils/; \
 	         find /deps/coreutils -name '*.sls' -exec sed -i 's/(load-shared-object #f)/(void)/g' {} +; \
 	         for f in \
@@ -353,7 +369,7 @@ linux-static-qt-docker:
 	           misc/rwlock.sls misc/shuffle.sls misc/string.sls misc/terminal.sls \
 	           cli/getopt.sls \
 	           net/request.sls net/uri.sls \
-	           os/fdio.sls os/signal.sls os/tty.sls \
+	           os/fdio.sls os/signal.sls os/tty.sls os/sandbox.sls \
 	           text/base64.sls text/diff.sls text/glob.sls text/hex.sls text/json.sls \
 	           crypto/digest.sls \
 	           engine.sls fiber.sls guardian.sls select.sls stm.sls task.sls \
@@ -361,12 +377,20 @@ linux-static-qt-docker:
 	           misc/thread.sls misc/wg.sls misc/pqueue.sls misc/lru-cache.sls \
 	           misc/channel.sls misc/atom.sls misc/rbtree.sls \
 	           misc/rwlock.sls misc/completion.sls misc/barrier.sls \
+	           result.sls misc/result.sls misc/fmt.sls \
+	           misc/custodian.sls misc/config.sls misc/memoize.sls \
+	           misc/terminal.sls misc/trie.sls \
+	           actor/mpsc.sls actor/core.sls actor/transport.sls \
+	           crypto/random.sls \
 	           format.sls iter.sls pregexp.sls sort.sls sugar.sls \
 	           srfi/srfi-1.sls srfi/srfi-13.sls srfi/srfi-19.sls; do \
 	           if [ -f /host-jerboa-std/\$$f ]; then \
 	             mkdir -p /deps/jerboa/lib/std/$$(dirname \$$f); \
 	             cp /host-jerboa-std/\$$f /deps/jerboa/lib/std/\$$f; \
 	             rm -f /deps/jerboa/lib/std/\$${f%.sls}.so /deps/jerboa/lib/std/\$${f%.sls}.wpo; \
+	             echo SYNC: \$$f; \
+	           else \
+	             echo SKIP: \$$f not found on host; \
 	           fi; \
 	         done; \
 	         chmod 755 /root && \

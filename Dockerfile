@@ -180,9 +180,14 @@ RUN mkdir -p /opt/qt6-static/lib/pkgconfig && \
 # at runtime via Sscheme_script (which calls dlopen internally).
 # musl's static libdl.a provides dlopen in the final static binary.
 ARG CHEZ_TAG=main
-RUN git clone --depth 1 --branch ${CHEZ_TAG} \
+ARG CHEZ_COMMIT=
+RUN git clone --depth 100 --branch ${CHEZ_TAG} \
       https://github.com/cisco/ChezScheme /tmp/ChezScheme && \
     cd /tmp/ChezScheme && \
+    if [ -n "${CHEZ_COMMIT}" ]; then \
+      echo "Pinning Chez to commit ${CHEZ_COMMIT}"; \
+      git checkout ${CHEZ_COMMIT}; \
+    fi && \
     ./configure --threads --installprefix=/opt/chez && \
     make -j$(nproc) && \
     make install && \

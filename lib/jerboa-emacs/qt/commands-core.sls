@@ -677,13 +677,7 @@
              (echo-message!
                (app-state-echo app)
                "Paredit: cannot delete delimiter")
-             (begin
-               (qt-plain-text-edit-move-cursor!
-                 ed
-                 QT_CURSOR_NEXT_CHAR
-                 'mode:
-                 QT_KEEP_ANCHOR)
-               (qt-plain-text-edit-remove-selected-text! ed)))))
+             (sci-send ed 2180))))
   (def (cmd-backward-delete-char app)
        (let ([buf (current-qt-buffer app)])
          (cond
@@ -692,34 +686,19 @@
                    [pos (qt-plain-text-edit-cursor-position ed)]
                    [ts (hash-get *terminal-state* buf)])
               (when (and ts (> pos (terminal-state-prompt-pos ts)))
-                (qt-plain-text-edit-move-cursor!
-                  ed
-                  QT_CURSOR_PREVIOUS_CHAR
-                  'mode:
-                  QT_KEEP_ANCHOR)
-                (qt-plain-text-edit-remove-selected-text! ed)))]
+                (sci-send ed 2326)))]
            [(repl-buffer? buf)
             (let* ([ed (current-qt-editor app)]
                    [pos (qt-plain-text-edit-cursor-position ed)]
                    [rs (hash-get *repl-state* buf)])
               (when (and rs (> pos (repl-state-prompt-pos rs)))
-                (qt-plain-text-edit-move-cursor!
-                  ed
-                  QT_CURSOR_PREVIOUS_CHAR
-                  'mode:
-                  QT_KEEP_ANCHOR)
-                (qt-plain-text-edit-remove-selected-text! ed)))]
+                (sci-send ed 2326)))]
            [(shell-buffer? buf)
             (let* ([ed (current-qt-editor app)]
                    [pos (qt-plain-text-edit-cursor-position ed)]
                    [ss (hash-get *shell-state* buf)])
               (when (and ss (> pos (shell-state-prompt-pos ss)))
-                (qt-plain-text-edit-move-cursor!
-                  ed
-                  QT_CURSOR_PREVIOUS_CHAR
-                  'mode:
-                  QT_KEEP_ANCHOR)
-                (qt-plain-text-edit-remove-selected-text! ed)))]
+                (sci-send ed 2326)))]
            [else
             (let* ([ed (current-qt-editor app)]
                    [pos (qt-plain-text-edit-cursor-position ed)])
@@ -732,13 +711,7 @@
                   (echo-message!
                     (app-state-echo app)
                     "Paredit: cannot delete delimiter")
-                  (begin
-                    (qt-plain-text-edit-move-cursor!
-                      ed
-                      QT_CURSOR_PREVIOUS_CHAR
-                      'mode:
-                      QT_KEEP_ANCHOR)
-                    (qt-plain-text-edit-remove-selected-text! ed))))])))
+                  (sci-send ed 2326)))])))
   (def (cmd-backward-delete-char-untabify app)
        "Delete backward, converting tabs to spaces if in leading whitespace."
        (let* ([ed (current-qt-editor app)]

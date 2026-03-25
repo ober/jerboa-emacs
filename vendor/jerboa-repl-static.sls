@@ -92,7 +92,7 @@
     repl-history-ref)
 
   (import (except (chezscheme) cpu-time box?)
-          (std misc list))
+          (except (std misc list) partition))
 
   ;;; ========== REPL Configuration ==========
   (define-record-type repl-config

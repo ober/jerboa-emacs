@@ -164,9 +164,24 @@
         "std/misc/list"
         "std/misc/alist"
         "std/misc/thread"
+        "std/misc/fmt"
         "std/os/path"
         "std/os/signal"
-        "std/os/fdio"))
+        "std/os/fdio"
+        "std/misc/custodian"
+        "std/misc/config"
+        "std/misc/memoize"
+        "std/misc/terminal"
+        "std/misc/trie"
+        "std/misc/lru-cache"
+        "std/actor/mpsc"
+        "std/actor/core"
+        "std/actor/transport"
+        "std/crypto/native"
+        "std/crypto/random"
+        "std/os/sandbox"
+        "std/os/landlock"
+        "std/security/capsicum"))
     ;; Jerboa core + sugar + repl
     (map (lambda (m) (format "~a/~a.so" jerboa-dir m))
       '("jerboa/core"
@@ -175,6 +190,7 @@
     ;; std/net/tcp and std/net/uri (compiled by step 1)
     (map (lambda (m) (format "~a/~a.so" jerboa-dir m))
       '("std/net/tcp"
+        "std/net/tcp-raw"
         "std/net/uri"))
     ;; jerboa/repl-socket (non-blocking socket FFI for debug REPL + IPC)
     (list "lib/jerboa/repl-socket.so")
@@ -222,6 +238,12 @@
         "lineedit"
         "startup"
         "stage"
+        "recording-index"
+        "recorder"
+        "player"
+        "conditions"
+        "config"
+        "sandbox"
         "lib"))
     ;; chez-pcre2 (compiled by step 1)
     (map (lambda (m) (format "~a/chez-pcre2/~a.so" pcre2-dir m))
