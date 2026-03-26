@@ -352,6 +352,7 @@ void qt_widget_install_key_handler_consuming(qt_widget_t w,
 int         qt_last_key_code(void);
 int         qt_last_key_modifiers(void);
 const char* qt_last_key_text(void);
+int         qt_last_key_autorepeat(void);
 
 /* ========== Phase 7: Images, Icons, Radio Buttons, GroupBox ========== */
 

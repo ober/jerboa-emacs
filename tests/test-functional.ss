@@ -1685,6 +1685,121 @@
   ;; Should have many lines (header + processes)
   (check (> (length lines) 10) => #t))
 
+;;;============================================================================
+;;; Group: Backward-Delete-Char Comprehensive Tests
+;;; Regression tests for backspace — both execute-command! and sim-key! paths.
+;;;============================================================================
+
+(display "--- backspace: backward-delete-char at position 0 does nothing ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (editor-set-text ed "hello")
+  (editor-goto-pos ed 0)
+  (execute-command! app 'backward-delete-char)
+  (check (editor-get-text ed) => "hello"))
+
+(display "--- backspace: backward-delete-char at end of buffer ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (editor-set-text ed "abc")
+  (editor-goto-pos ed 3)
+  (execute-command! app 'backward-delete-char)
+  (check (editor-get-text ed) => "ab"))
+
+(display "--- backspace: multiple backward-delete-char calls ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (editor-set-text ed "hello")
+  (editor-goto-pos ed 5)
+  (execute-command! app 'backward-delete-char)
+  (execute-command! app 'backward-delete-char)
+  (check (editor-get-text ed) => "hel"))
+
+(display "--- backspace: backward-delete-char removes single char from 1-char buffer ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (editor-set-text ed "x")
+  (editor-goto-pos ed 1)
+  (execute-command! app 'backward-delete-char)
+  (check (editor-get-text ed) => ""))
+
+(display "--- backspace: backward-delete-char preserves text after cursor ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (editor-set-text ed "abcdef")
+  (editor-goto-pos ed 3)
+  (execute-command! app 'backward-delete-char)
+  (check (editor-get-text ed) => "abdef"))
+
+(display "--- backspace: cursor position after backward-delete-char ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (editor-set-text ed "hello")
+  (editor-goto-pos ed 3)
+  (execute-command! app 'backward-delete-char)
+  (check (editor-get-current-pos ed) => 2))
+
+;;;============================================================================
+;;; Group: Split-Window via Key Dispatch (C-x 2, C-x 3)
+;;; Regression tests ensuring C-x prefix followed by "2" or "3" dispatches
+;;; correctly through the key-state machine.
+;;;============================================================================
+
+(display "--- keymap: C-x 2 dispatches split-window via sim-key! ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  ;; C-x is control code 0x18
+  (let ((action1 (sim-key! app (ctrl-ev #x18))))
+    (check action1 => 'prefix)
+    ;; "2" should dispatch split-window (not self-insert)
+    (let ((action2 (sim-key! app (char-ev #\2))))
+      (check action2 => 'command)
+      (check (= (length (frame-windows (app-state-frame app))) 2) => #t))))
+
+(display "--- keymap: C-x 3 dispatches split-window-right via sim-key! ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (sim-key! app (ctrl-ev #x18))
+  (let ((action (sim-key! app (char-ev #\3))))
+    (check action => 'command)
+    (check (= (length (frame-windows (app-state-frame app))) 2) => #t)))
+
+(display "--- keymap: C-x b dispatches switch-buffer via sim-key! ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (let ((action1 (sim-key! app (ctrl-ev #x18))))
+    (check action1 => 'prefix)
+    ;; "b" dispatches switch-buffer; it will try to prompt but won't crash
+    (let ((action2 (sim-key! app (char-ev #\b))))
+      (check action2 => 'command))))
+
+(display "--- keymap: prefix state is set after C-x ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (sim-key! app (ctrl-ev #x18))
+  (let ((ks (app-state-key-state app)))
+    (check (null? (key-state-prefix-keys ks)) => #f)
+    (check (car (key-state-prefix-keys ks)) => "C-x")))
+
+(display "--- keymap: prefix state resets after C-x 2 command ---\n")
+(setup-default-bindings!)
+(register-all-commands!)
+(let-values (((ed app) (make-test-app "test.ss")))
+  (sim-key! app (ctrl-ev #x18))
+  (sim-key! app (char-ev #\2))
+  (let ((ks (app-state-key-state app)))
+    (check (null? (key-state-prefix-keys ks)) => #t)))
+
 ;; Summary
 (newline)
 (display "========================================\n")

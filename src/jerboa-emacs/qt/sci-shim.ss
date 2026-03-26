@@ -74,7 +74,7 @@
   ;; Label
   qt-label-create qt-label-set-alignment! qt-label-set-pixmap! qt-label-set-text! qt-label-text
   ;; Key events
-  qt-last-key-code qt-last-key-modifiers qt-last-key-text
+  qt-last-key-code qt-last-key-modifiers qt-last-key-text qt-last-key-autorepeat?
   ;; Line edit
   qt-line-edit-create qt-line-edit-set-completer! qt-line-edit-set-text! qt-line-edit-text
   ;; List widget

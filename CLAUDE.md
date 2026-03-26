@@ -20,15 +20,19 @@ make run-qt          # Build and run Qt editor
 make static-qt       # Build static jemacs-qt binary via Docker
 ```
 
-## MANDATORY: Verify Binary After Changes
+## MANDATORY: Build, Compile, and Verify After EVERY Change
 
-After ANY code change, you MUST verify the static binary actually works — never tell the user "it's fixed" without testing. Run these steps IN ORDER:
+**NEVER report a fix as "done" without completing ALL of these steps.** This is non-negotiable.
 
-1. `make build` — rebuild `.sls` files from `.ss` sources
-2. `make static-qt` — rebuild the static Docker binary
-3. `./jemacs-qt --version` — verify binary launches without exceptions
+After ANY code change to `.ss` files, you MUST run these steps IN ORDER before responding to the user:
 
-If step 3 throws ANY exception (library not found, unbound variable, dynamic loading errors), the fix is NOT done. Common pitfalls:
+1. `make build` — rebuild `.sls` files from `.ss` sources. Fix any errors before proceeding.
+2. `make static-qt` — rebuild the static Docker binary. Fix any errors before proceeding.
+3. `./jemacs-qt --version` — verify binary launches without exceptions.
+
+If ANY step fails, the fix is NOT done. Do NOT tell the user anything is fixed, working, or ready until all 3 steps pass. Do NOT skip step 2 or 3 — interpreted mode (`make run-qt`) does NOT prove the static binary works.
+
+Common pitfalls when step 3 fails:
 
 - **`library (std ...) not found`**: The Docker image has a stale jerboa `std/` tree. New modules must be added to the sync list in the `linux-static-qt-docker` Makefile target AND compiled into the WPO step in `build-binary-qt.ss`.
 - **`Dynamic loading not supported`**: Any `load-shared-object` call must be guarded with the `JEMACS_STATIC` env var check (the binary sets `JEMACS_STATIC=1`).
@@ -198,6 +202,8 @@ src/jerboa-emacs/
 2. Follow the existing pattern: `(display "--- description ---\n")` then test forms
 3. Use `check` macro: `(check expr => expected-value)`
 4. For git/subprocess tests, use `make-temp-git-repo!` and `cleanup-temp-git-repo!`
+5. **MANDATORY**: When fixing bugs in editing commands (backspace, delete, insert, etc.) or key dispatch (prefix keys, C-x sequences), you MUST add functional tests that reproduce the bug through the dispatch chain BEFORE claiming it is fixed. Use `execute-command!` for command-level tests and `sim-key!` with `ctrl-ev`/`char-ev` for key-dispatch-level tests (e.g., C-x 2 = `(sim-key! app (ctrl-ev #x18))` then `(sim-key! app (char-ev #\2))`).
+6. Run `make build && make test-functional` after adding tests to verify they pass
 
 ## Qt Backend Notes
 

@@ -25,20 +25,20 @@
    cmd-backward-subword cmd-kill-subword
    cmd-beginning-of-buffer cmd-end-of-buffer cmd-scroll-down
    cmd-scroll-up cmd-recenter qt-paredit-strict-allow-delete?
-   cmd-delete-char cmd-backward-delete-char
-   cmd-backward-delete-char-untabify cmd-buffer-list-select
-   current-line-indent cmd-open-line cmd-undo cmd-redo
-   cmd-kill-line cmd-yank cmd-set-mark cmd-kill-region
-   cmd-copy-region path-char-delimiter? file-path-at-point
-   cmd-switch-buffer cmd-split-window cmd-split-window-right
-   cmd-other-window cmd-delete-window cmd-delete-other-windows
-   cmd-ace-window cmd-swap-window cmd-write-file
-   cmd-revert-buffer cmd-select-all cmd-goto-line
-   *mx-command-history* *mx-history-max* qt-mx-history-add!
-   *mx-recent-pinned-count* cmd-execute-extended-command
-   cmd-helm-buffers-list cmd-list-bindings cmd-list-buffers
-   cmd-what-line cmd-duplicate-line cmd-beginning-of-defun
-   cmd-end-of-defun)
+   cmd-delete-char qt-backward-delete-char!
+   cmd-backward-delete-char cmd-backward-delete-char-untabify
+   cmd-buffer-list-select current-line-indent cmd-open-line
+   cmd-undo cmd-redo cmd-kill-line cmd-yank cmd-set-mark
+   cmd-kill-region cmd-copy-region path-char-delimiter?
+   file-path-at-point cmd-switch-buffer cmd-split-window
+   cmd-split-window-right cmd-other-window cmd-delete-window
+   cmd-delete-other-windows cmd-ace-window cmd-swap-window
+   cmd-write-file cmd-revert-buffer cmd-select-all
+   cmd-goto-line *mx-command-history* *mx-history-max*
+   qt-mx-history-add! *mx-recent-pinned-count*
+   cmd-execute-extended-command cmd-helm-buffers-list
+   cmd-list-bindings cmd-list-buffers cmd-what-line
+   cmd-duplicate-line cmd-beginning-of-defun cmd-end-of-defun)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -678,6 +678,26 @@
                (app-state-echo app)
                "Paredit: cannot delete delimiter")
              (sci-send ed 2180))))
+  (def (qt-backward-delete-char! ed)
+       (let ([pos (qt-plain-text-edit-cursor-position ed)]
+             [ro (qt-plain-text-edit-read-only? ed)])
+         (verbose-log! "BKSP pos=" pos " read-only=" ro)
+         (cond
+           [ro (verbose-log! "BKSP BLOCKED: read-only")]
+           [(<= pos 0) (verbose-log! "BKSP BLOCKED: at position 0")]
+           [else
+            (if (and *qt-delete-selection-enabled*
+                     (qt-plain-text-edit-has-selection? ed))
+                (begin
+                  (verbose-log! "BKSP: removing selection")
+                  (qt-plain-text-edit-remove-selected-text! ed))
+                (begin
+                  (verbose-log!
+                    "BKSP: SCI_DELETEBACK at byte-pos="
+                    (sci-send ed 2008 0 0))
+                  (sci-send ed 2326)
+                  (let ([pos2 (qt-plain-text-edit-cursor-position ed)])
+                    (verbose-log! "BKSP: after delete pos=" pos2))))])))
   (def (cmd-backward-delete-char app)
        (let ([buf (current-qt-buffer app)])
          (cond
@@ -685,20 +705,27 @@
             (let* ([ed (current-qt-editor app)]
                    [pos (qt-plain-text-edit-cursor-position ed)]
                    [ts (hash-get *terminal-state* buf)])
-              (when (and ts (> pos (terminal-state-prompt-pos ts)))
-                (sci-send ed 2326)))]
+              (cond
+                [(and ts (terminal-pty-busy? ts))
+                 (terminal-send-input! ts (string (integer->char 127)))]
+                [(and ts (> pos (terminal-state-prompt-pos ts)))
+                 (qt-backward-delete-char! ed)]))]
            [(repl-buffer? buf)
             (let* ([ed (current-qt-editor app)]
                    [pos (qt-plain-text-edit-cursor-position ed)]
                    [rs (hash-get *repl-state* buf)])
               (when (and rs (> pos (repl-state-prompt-pos rs)))
-                (sci-send ed 2326)))]
+                (qt-backward-delete-char! ed)))]
            [(shell-buffer? buf)
             (let* ([ed (current-qt-editor app)]
                    [pos (qt-plain-text-edit-cursor-position ed)]
                    [ss (hash-get *shell-state* buf)])
-              (when (and ss (> pos (shell-state-prompt-pos ss)))
-                (sci-send ed 2326)))]
+              (cond
+                [(and ss (shell-pty-busy? ss))
+                 (shell-send-input! ss (string (integer->char 127)))]
+                [(and ss (> pos (shell-state-prompt-pos ss)))
+                 (qt-backward-delete-char! ed)]
+                [(not ss) (qt-backward-delete-char! ed)]))]
            [else
             (let* ([ed (current-qt-editor app)]
                    [pos (qt-plain-text-edit-cursor-position ed)])
@@ -711,7 +738,7 @@
                   (echo-message!
                     (app-state-echo app)
                     "Paredit: cannot delete delimiter")
-                  (sci-send ed 2326)))])))
+                  (qt-backward-delete-char! ed)))])))
   (def (cmd-backward-delete-char-untabify app)
        "Delete backward, converting tabs to spaces if in leading whitespace."
        (let* ([ed (current-qt-editor app)]

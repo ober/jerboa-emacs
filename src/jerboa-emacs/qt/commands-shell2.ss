@@ -677,7 +677,8 @@ Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
                 (sci-send ed SCI_SETTARGETSTART del-start)
                 (sci-send ed SCI_SETTARGETEND pos)
                 (sci-send/string ed SCI_REPLACETARGET ""))
-              (sci-send ed 2326))) ;; SCI_DELETEBACK
+              ;; Single char delete — SCI_DELETEBACK handles multibyte correctly
+              (sci-send ed 2326)))  ;; SCI_DELETEBACK
           (loop (- i 1)))))))
 
 ;;; ============================================================

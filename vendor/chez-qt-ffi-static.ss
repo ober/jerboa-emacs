@@ -212,6 +212,7 @@
     ;; Keyboard Events
     ffi-qt-install-key-handler ffi-qt-install-key-handler-consuming
     ffi-qt-last-key-code ffi-qt-last-key-modifiers ffi-qt-last-key-text
+    ffi-qt-last-key-autorepeat
 
     ;; Pixmap
     ffi-qt-pixmap-load ffi-qt-pixmap-width ffi-qt-pixmap-height
@@ -1649,6 +1650,8 @@
     (foreign-procedure "qt_last_key_modifiers" () int))
   (define ffi-qt-last-key-text
     (foreign-procedure "qt_last_key_text" () string))
+  (define ffi-qt-last-key-autorepeat
+    (foreign-procedure "qt_last_key_autorepeat" () int))
 
   ;; -----------------------------------------------------------------------
   ;; Pixmap

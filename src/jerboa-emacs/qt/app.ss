@@ -85,7 +85,7 @@
         :jerboa-emacs/ipc
         :jerboa-emacs/vtscreen
         (only-in :jerboa-emacs/editor-extra-web *aggressive-indent-mode*)
-        (only-in :jerboa-emacs/debug-repl start-debug-repl! stop-debug-repl!))
+        (only-in :jerboa-emacs/debug-repl start-debug-repl! stop-debug-repl! debug-repl-bind!))
 
 ;;;============================================================================
 ;;; Vterm render throttle — skip intermediate renders during fast output
@@ -411,6 +411,7 @@
 (def *chord-pending-code* #f)  ;; saved raw Qt event for replay
 (def *chord-pending-mods* #f)
 (def *chord-pending-text* #f)
+(def *chord-timer-fired* #f)   ;; set to #t when timer fires (guards against race)
 
 ;; Tab bar state — populated during qt-main, used by qt-tabbar-update!
 (def *tab-bar-layout* #f)
@@ -810,6 +811,9 @@
                           (qt-widget-set-focus! scroll)))))
                   (begin
                     (qt-hide-image-buffer! editor)
+                    ;; Re-apply syntax highlighting to this editor widget.
+                    ;; QScintilla lexers are per-widget, so splits need re-setup.
+                    (qt-reapply-highlighting! editor buf)
                     (qt-widget-set-focus! editor))))))))
 
       ;; Load recent files, bookmarks, keys, abbrevs, history from disk
@@ -863,6 +867,7 @@
                (let* ((code (qt-last-key-code))
                       (mods (normalize-qt-mods (qt-last-key-modifiers)))
                       (raw-text (qt-last-key-text))
+                      (autorepeat? (qt-last-key-autorepeat?))
                       ;; Apply key translation map to printable characters
                       (text (if (= (string-length raw-text) 1)
                               (string (key-translate-char (string-ref raw-text 0)))
@@ -899,35 +904,97 @@
                 (letrec
                   ((terminal-pty-intercept?
                     ;; Check if we should intercept this key for an active PTY.
+                    ;; When PTY is busy (running an interactive program like claude,
+                    ;; top, vim), ALL keys must go to the PTY — not just Ctrl+letter.
                     ;; Returns #t if the key was sent to the PTY, #f otherwise.
-                    (lambda (code mods)
+                    (lambda (code mods text)
+                      ;; Don't intercept when in a prefix key state (e.g., after C-x,
+                      ;; the next key like "2" or "3" must go to jemacs, not the PTY)
+                      (and (null? (key-state-prefix-keys (app-state-key-state app)))
                       (let* ((ctrl? (not (zero? (bitwise-and mods QT_MOD_CTRL))))
                              (alt?  (not (zero? (bitwise-and mods QT_MOD_ALT))))
                              (buf (qt-current-buffer (app-state-frame app))))
-                        (and ctrl? (not alt?)
-                             ;; Only intercept Ctrl+letter keys (not Ctrl+Shift, etc.)
-                             (>= code QT_KEY_A) (<= code QT_KEY_Z)
-                             ;; Allow C-x (buffer/file ops) and C-g (quit) to pass through
-                             (not (= code (+ QT_KEY_A 23)))  ;; C-x
-                             (not (= code (+ QT_KEY_A 6)))   ;; C-g
-                             (cond
-                               ((terminal-buffer? buf)
-                                (let ((ts (hash-get *terminal-state* buf)))
-                                  (and ts (terminal-pty-busy? ts)
-                                       (let ((ch (integer->char (+ 1 (- code QT_KEY_A)))))
-                                         (terminal-send-input! ts (string ch))
-                                         #t))))
-                               ((shell-buffer? buf)
-                                (let ((ss (hash-get *shell-state* buf)))
-                                  (and ss (shell-pty-busy? ss)
-                                       (let ((ch (integer->char (+ 1 (- code QT_KEY_A)))))
-                                         (shell-send-input! ss (string ch))
-                                         #t))))
-                               (else #f))))))
+                        ;; Allow C-x and C-g to pass through to jemacs
+                        (and (not (and ctrl? (not alt?)
+                                      (or (= code (+ QT_KEY_A 23))    ;; C-x
+                                          (= code (+ QT_KEY_A 6)))))  ;; C-g
+                             (let ((send!
+                                     (cond
+                                       ((terminal-buffer? buf)
+                                        (let ((ts (hash-get *terminal-state* buf)))
+                                          (and ts (terminal-pty-busy? ts)
+                                               (lambda (s) (terminal-send-input! ts s)))))
+                                       ((shell-buffer? buf)
+                                        (let ((ss (hash-get *shell-state* buf)))
+                                          (and ss (shell-pty-busy? ss)
+                                               (lambda (s) (shell-send-input! ss s)))))
+                                       (else #f))))
+                               (and send!
+                                    (cond
+                                      ;; Ctrl+letter → send control character
+                                      ((and ctrl? (not alt?)
+                                            (>= code QT_KEY_A) (<= code QT_KEY_Z))
+                                       (send! (string (integer->char (+ 1 (- code QT_KEY_A)))))
+                                       #t)
+                                      ;; Arrow keys → send ANSI escape sequences
+                                      ((= code QT_KEY_UP)    (send! "\x1b;[A") #t)
+                                      ((= code QT_KEY_DOWN)  (send! "\x1b;[B") #t)
+                                      ((= code QT_KEY_RIGHT) (send! "\x1b;[C") #t)
+                                      ((= code QT_KEY_LEFT)  (send! "\x1b;[D") #t)
+                                      ;; Enter/Return → send CR
+                                      ((or (= code QT_KEY_RETURN) (= code QT_KEY_ENTER))
+                                       (send! "\r") #t)
+                                      ;; Backspace → send DEL (0x7f)
+                                      ((= code QT_KEY_BACKSPACE)
+                                       (send! (string (integer->char 127))) #t)
+                                      ;; Delete → send escape sequence
+                                      ((= code QT_KEY_DELETE) (send! "\x1b;[3~") #t)
+                                      ;; Tab → send tab
+                                      ((= code QT_KEY_TAB) (send! "\t") #t)
+                                      ;; Escape → send ESC
+                                      ((= code QT_KEY_ESCAPE) (send! "\x1b;") #t)
+                                      ;; Home/End
+                                      ((= code QT_KEY_HOME) (send! "\x1b;[H") #t)
+                                      ((= code QT_KEY_END)  (send! "\x1b;[F") #t)
+                                      ;; Page Up/Down
+                                      ((= code QT_KEY_PAGE_UP)   (send! "\x1b;[5~") #t)
+                                      ((= code QT_KEY_PAGE_DOWN) (send! "\x1b;[6~") #t)
+                                      ;; Printable character → send as-is
+                                      ((and (= (string-length text) 1)
+                                            (> (char->integer (string-ref text 0)) 31))
+                                       (send! text) #t)
+                                      (else #f)))))))))
                    (do-normal-key!
                     (lambda (code mods text)
                      ;; Terminal PTY intercept: send control keys directly to PTY
-                     (unless (terminal-pty-intercept? code mods)
+                     (unless (terminal-pty-intercept? code mods text)
+                     ;; Auto-repeat filter for prefix keys: when in C-x (or similar)
+                     ;; Auto-repeat filter: when in prefix state (e.g. C-x), ignore:
+                     ;; 1) The same key-string as the prefix (C-x auto-repeat with Ctrl held)
+                     ;; 2) The bare key (x without Ctrl, when Ctrl released before X)
+                     (let* ((prefix-keys (key-state-prefix-keys (app-state-key-state app)))
+                            (is-prefix-autorepeat?
+                              (and (pair? prefix-keys)
+                                   (let* ((last-prefix (car (reverse prefix-keys)))
+                                          (ks (qt-key-event->string code mods text)))
+                                     (and ks
+                                          (or
+                                            ;; Case 1: exact same key as prefix (C-x → C-x)
+                                            (string=? ks last-prefix)
+                                            ;; Case 2: bare key matching prefix tail (C-x → x)
+                                            (and (zero? (bitwise-and mods QT_MOD_CTRL))
+                                                 (zero? (bitwise-and mods QT_MOD_ALT))
+                                                 (>= (string-length last-prefix) 3)
+                                                 (string=? ks
+                                                   (substring last-prefix
+                                                     (- (string-length last-prefix) 1)
+                                                     (string-length last-prefix))))))))))
+                       (if is-prefix-autorepeat?
+                         (begin
+                           (verbose-log! "PREFIX-AUTOREPEAT ignored key="
+                                         (qt-key-event->string code mods text)
+                                         " prefix=" (car (reverse prefix-keys)))
+                           (void))
                      ;; Repeat-mode: check active repeat map before normal dispatch
                      (if (and (active-repeat-map)
                               (let* ((ks (qt-key-event->string code mods text))
@@ -1133,11 +1200,22 @@
                        (qt-modeline-update! app)
                        (qt-tabbar-update! app)
                        (qt-update-frame-title! app)
-                       (qt-echo-draw! (app-state-echo app) echo-label)))))))  ;; extra parens close begin + repeat-map if + pty-intercept if
+                       (qt-echo-draw! (app-state-echo app) echo-label)))))))))  ;; extra parens close begin + repeat-map if + prefix-autorepeat if/let + pty-intercept if
                   ;; Chord detection logic
+                  (let ((is-printable (and (= (string-length text) 1)
+                                           (> (char->integer (string-ref text 0)) 31)))
+                        (no-ctrl (zero? (bitwise-and mods QT_MOD_CTRL)))
+                        (no-alt  (zero? (bitwise-and mods QT_MOD_ALT))))
+                    (verbose-log! "CHORD-CHECK pending=" (if *chord-pending-char* (string *chord-pending-char*) "#f")
+                                  " key=" (if (and is-printable no-ctrl no-alt) text "non-printable")
+                                  " chord-start?=" (if (and is-printable no-ctrl no-alt)
+                                                     (if (chord-start-char? (string-ref text 0)) "Y" "N")
+                                                     "N/A")
+                                  " autorepeat=" (if autorepeat? "Y" "N")
+                                  " prefix=" (if (null? (key-state-prefix-keys (app-state-key-state app))) "none" "active"))
                   (cond
                     ;; Case 1: A chord is pending and a new key arrived
-                    (*chord-pending-char*
+                    ((and *chord-pending-char* (not *chord-timer-fired*))
                      (let* ((ch1 *chord-pending-char*)
                             (saved-code *chord-pending-code*)
                             (saved-mods *chord-pending-mods*)
@@ -1148,11 +1226,10 @@
                                       (zero? (bitwise-and mods QT_MOD_CTRL))
                                       (zero? (bitwise-and mods QT_MOD_ALT))
                                       (string-ref text 0))))
-                       ;; Auto-repeat filter: when same char + same code arrives,
-                       ;; check if it's a valid same-char chord (e.g. EE→eshell).
-                       ;; If not a valid chord, it's auto-repeat — ignore and keep waiting.
-                       (if (and ch2 (char=? ch1 ch2) (= code saved-code)
-                                (not (chord-lookup ch1 ch2)))
+                       ;; Auto-repeat filter: Qt reports isAutoRepeat for held keys.
+                       ;; Always ignore auto-repeat when a chord is pending — even for
+                       ;; same-char chords (EE, GG) since auto-repeat is NOT two presses.
+                       (if autorepeat?
                          (begin
                            (verbose-log! "CHORD-AUTOREPEAT ignored ch=" (string ch1))
                            (void))  ;; ignore auto-repeat, timer keeps running
@@ -1181,8 +1258,10 @@
 
                     ;; Case 2: Printable key that could start a chord — save and wait
                     ;; Skip chord detection in terminal/shell buffers to avoid
-                    ;; letter doubling/dropping when typing fast
-                    ((and (= (string-length text) 1)
+                    ;; letter doubling/dropping when typing fast.
+                    ;; Skip auto-repeat keys — holding a key should not start a chord.
+                    ((and (not autorepeat?)
+                          (= (string-length text) 1)
                           (> (char->integer (string-ref text 0)) 31)
                           (zero? (bitwise-and mods QT_MOD_CTRL))
                           (zero? (bitwise-and mods QT_MOD_ALT))
@@ -1198,11 +1277,12 @@
                      (set! *chord-pending-code* code)
                      (set! *chord-pending-mods* mods)
                      (set! *chord-pending-text* text)
+                     (set! *chord-timer-fired* #f)
                      (qt-timer-start! *chord-timer* *chord-timeout*))
 
                     ;; Case 3: Normal key — no chord involvement
                     (else
-                     (do-normal-key! code mods text)))))))))))  ; extra paren closes minibuffer-active? when
+                     (do-normal-key! code mods text))))))))))))  ; extra paren closes let + minibuffer-active? when
 
         ;; Install on the initial editor (consuming — editor doesn't see keys)
         (qt-on-key-press-consuming! (qt-current-editor fr) key-handler)
@@ -1509,6 +1589,7 @@
                   (saved-mods *chord-pending-mods*)
                   (saved-text *chord-pending-text*))
               (set! *chord-pending-char* #f)
+              (set! *chord-timer-fired* #t)
               ;; Replay the pending key through normal key processing
               (let-values (((action data new-state)
                             (qt-key-state-feed! (app-state-key-state app)
@@ -1587,7 +1668,68 @@
                                 (and repl-port-env
                                      (cons (string->number repl-port-env) args)))))
         (when repl-info
-          (start-debug-repl! (car repl-info))))
+          (start-debug-repl! (car repl-info))
+          ;; Register key bindings so IPC REPL can access the running app.
+          ;; Only use identifiers that are in scope (imported or defined in this module).
+          (for-each
+            (lambda (pair) (debug-repl-bind! (car pair) (cdr pair)))
+            (list
+              (cons '*app* app)
+              (cons 'app-state-frame app-state-frame)
+              (cons 'app-state-key-state app-state-key-state)
+              (cons 'app-state-echo app-state-echo)
+              (cons 'qt-current-editor qt-current-editor)
+              (cons 'qt-current-buffer qt-current-buffer)
+              (cons 'qt-plain-text-edit-cursor-position qt-plain-text-edit-cursor-position)
+              (cons 'qt-plain-text-edit-read-only? qt-plain-text-edit-read-only?)
+              (cons 'qt-plain-text-edit-has-selection? qt-plain-text-edit-has-selection?)
+              (cons 'qt-plain-text-edit-insert-text! qt-plain-text-edit-insert-text!)
+              (cons 'qt-plain-text-edit-set-selection! qt-plain-text-edit-set-selection!)
+              (cons 'qt-plain-text-edit-remove-selected-text! qt-plain-text-edit-remove-selected-text!)
+              (cons 'sci-send sci-send)
+              (cons 'execute-command! execute-command!)
+              (cons 'find-command find-command)
+              (cons 'verbose-log! verbose-log!)
+              (cons 'key-state-prefix-keys key-state-prefix-keys)
+              (cons '*chord-map* *chord-map*)
+              (cons '*chord-mode* *chord-mode*)
+              (cons '*chord-timeout* *chord-timeout*)
+              (cons 'chord-start-char? chord-start-char?)
+              (cons 'chord-lookup chord-lookup)
+              ;; Chord state accessors (live values, not frozen snapshots)
+              (cons 'chord-pending-char (lambda () *chord-pending-char*))
+              (cons 'chord-pending-info
+                    (lambda () (list 'pending *chord-pending-char*
+                                     'code *chord-pending-code*
+                                     'mods *chord-pending-mods*
+                                     'text *chord-pending-text*)))
+              ;; Buffer type predicates
+              (cons 'terminal-buffer? terminal-buffer?)
+              (cons 'shell-buffer? shell-buffer?)
+              (cons 'gsh-eshell-buffer? gsh-eshell-buffer?)
+              (cons 'buffer-lexer-lang buffer-lexer-lang)
+              ;; Text and key helpers
+              (cons 'qt-plain-text-edit-text qt-plain-text-edit-text)
+              (cons 'qt-key-event->string qt-key-event->string)
+              (cons 'make-initial-key-state make-initial-key-state)
+              ;; Testing helpers
+              (cons 'qt-open-file! qt-open-file!)
+              (cons 'buffer-name buffer-name)
+              (cons 'buffer-text
+                    (lambda ()
+                      (let* ((fr (app-state-frame app))
+                             (ed (qt-current-editor fr)))
+                        (if ed (qt-plain-text-edit-text ed) ""))))
+              (cons 'buffer-cursor-pos
+                    (lambda ()
+                      (let* ((fr (app-state-frame app))
+                             (ed (qt-current-editor fr)))
+                        (if ed (qt-plain-text-edit-cursor-position ed) 0))))
+              (cons 'current-buffer-name
+                    (lambda ()
+                      (let* ((fr (app-state-frame app))
+                             (buf (qt-current-buffer fr)))
+                        (if buf (buffer-name buf) "#<none>"))))))))
       ;; Tree-sitter debounced re-highlight — re-parse when buffer content changes.
       ;; Tracks last-known text length per buffer to detect modifications.
       (schedule-periodic! 'treesitter-reparse 150

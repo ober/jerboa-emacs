@@ -115,7 +115,12 @@
     ;; Bare modifier keys return #f — ignore them
     (if (not key-str)
       (values 'ignore #f state)
-      (let ((binding (keymap-lookup (key-state-keymap state) key-str)))
+      ;; C-g always cancels prefix state and runs keyboard-quit,
+      ;; even if not bound in the current sub-keymap
+      (if (and (string=? key-str "C-g")
+               (pair? (key-state-prefix-keys state)))
+        (values 'command 'keyboard-quit (make-initial-key-state))
+        (let ((binding (keymap-lookup (key-state-keymap state) key-str)))
     (cond
       ;; Sub-keymap -> enter prefix mode
       ((hash-table? binding)
@@ -135,4 +140,4 @@
        (values 'self-insert text (make-initial-key-state)))
       ;; No binding -> undefined
       (else
-       (values 'undefined key-str (make-initial-key-state))))))))
+       (values 'undefined key-str (make-initial-key-state)))))))))

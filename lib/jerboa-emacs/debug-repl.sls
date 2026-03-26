@@ -3,7 +3,11 @@
 ;;; Source: src/jerboa-emacs/debug-repl.ss
 
 (library (jerboa-emacs debug-repl)
-  (export start-debug-repl! stop-debug-repl! debug-repl-port)
+  (export
+    start-debug-repl!
+    stop-debug-repl!
+    debug-repl-port
+    debug-repl-bind!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -24,6 +28,9 @@
   (def *repl-port-file*
        (string-append (getenv "HOME") "/.jerboa-repl-port"))
   (def *repl-env* (interaction-environment))
+  (def (debug-repl-bind! name value)
+       "Register a binding in the debug REPL environment so it's accessible via IPC.\n   Uses Chez's define-top-level-value to inject the value directly."
+       (define-top-level-value name value *repl-env*))
   (def ffi-chmod (foreign-procedure "chmod" (string int) int))
   (def (write-repl-port-file! port-num)
        (delete-repl-port-file!)
@@ -54,10 +61,10 @@
        (set! *repl-authed* #f) (set! *repl-prompted* #f)
        (set! *repl-protocol* 'unknown))
   (def (capture-eval expr-str)
-       "Evaluate expression string, capturing stdout. Returns (values status result stdout)."
+       "Evaluate expression string, capturing stdout. Returns (list status result stdout).\n   Handles expressions that return multiple values by formatting all of them.\n   Returns a LIST (not values) to avoid multi-value issues with with-catch's call/cc."
        (with-catch
          (lambda (e)
-           (values
+           (list
              'error
              (with-catch
                (lambda _ "unknown error")
@@ -68,18 +75,34 @@
              ""))
          (lambda ()
            (let* ([stdout-capture (open-output-string)]
-                  [result (parameterize ([current-output-port
-                                          stdout-capture])
-                            (eval
-                              (read (open-input-string expr-str))
-                              *repl-env*))]
+                  [results (parameterize ([current-output-port
+                                           stdout-capture])
+                             (call-with-values
+                               (lambda ()
+                                 (eval
+                                   (read (open-input-string expr-str))
+                                   *repl-env*))
+                               list))]
                   [stdout-str (get-output-string stdout-capture)])
-             (values 'ok (format "~s" result) stdout-str)))))
+             (list
+               'ok
+               (if (= (length results) 1)
+                   (format "~s" (car results))
+                   (let loop ([rs results] [acc ""])
+                     (if (null? rs)
+                         acc
+                         (loop
+                           (cdr rs)
+                           (string-append
+                             acc
+                             (if (string=? acc "") "" "\n")
+                             (format "~s" (car rs)))))))
+               stdout-str)))))
   (def (capture-eval-region str)
-       "Evaluate multiple forms, return last result."
+       "Evaluate multiple forms, return last result.\n   Returns a LIST (not values) to avoid multi-value issues with with-catch's call/cc."
        (with-catch
          (lambda (e)
-           (values
+           (list
              'error
              (with-catch
                (lambda _ "unknown error")
@@ -91,15 +114,31 @@
          (lambda ()
            (let* ([stdout-capture (open-output-string)]
                   [p (open-input-string str)]
-                  [result (parameterize ([current-output-port
-                                          stdout-capture])
-                            (let loop ([last (void)])
-                              (let ([form (read p)])
-                                (if (eof-object? form)
-                                    last
-                                    (loop (eval form *repl-env*))))))]
+                  [results (parameterize ([current-output-port
+                                           stdout-capture])
+                             (let loop ([last (list (void))])
+                               (let ([form (read p)])
+                                 (if (eof-object? form)
+                                     last
+                                     (loop
+                                       (call-with-values
+                                         (lambda () (eval form *repl-env*))
+                                         list))))))]
                   [stdout-str (get-output-string stdout-capture)])
-             (values 'ok (format "~s" result) stdout-str)))))
+             (list
+               'ok
+               (if (= (length results) 1)
+                   (format "~s" (car results))
+                   (let loop ([rs results] [acc ""])
+                     (if (null? rs)
+                         acc
+                         (loop
+                           (cdr rs)
+                           (string-append
+                             acc
+                             (if (string=? acc "") "" "\n")
+                             (format "~s" (car rs)))))))
+               stdout-str)))))
   (def (safe-format-value val)
        "Format a value to string, safely handling errors."
        (with-catch
@@ -133,14 +172,18 @@
              (case method
                [(ping) (list id ':ok "pong")]
                [(eval)
-                (let-values ([(status result stdout)
-                              (capture-eval (car args))])
+                (let* ([res (capture-eval (car args))]
+                       [status (car res)]
+                       [result (cadr res)]
+                       [stdout (caddr res)])
                   (if (eq? status 'ok)
                       (list id ':ok (list ':value result ':stdout stdout))
                       (list id ':error result)))]
                [(eval-region)
-                (let-values ([(status result stdout)
-                              (capture-eval-region (car args))])
+                (let* ([res (capture-eval-region (car args))]
+                       [status (car res)]
+                       [result (cadr res)]
+                       [stdout (caddr res)])
                   (if (eq? status 'ok)
                       (list id ':ok (list ':value result ':stdout stdout))
                       (list id ':error result)))]
@@ -727,8 +770,10 @@
                       (repl-send!
                         (string-append "ERROR: " (fmt-error e) "\n")))
                     (lambda ()
-                      (let-values ([(status result stdout)
-                                    (capture-eval cmd)])
+                      (let* ([res (capture-eval cmd)]
+                             [status (car res)]
+                             [result (cadr res)]
+                             [stdout (caddr res)])
                         (when (and (string? stdout)
                                    (> (string-length stdout) 0))
                           (repl-send! stdout))

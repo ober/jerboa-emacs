@@ -3,14 +3,15 @@
 ;;; Source: src/jerboa-emacs/qt/highlight.ss
 
 (library (jerboa-emacs qt highlight)
-  (export qt-setup-highlighting! qt-remove-highlighting!
-    qt-setup-org-styles! qt-org-highlight-buffer!
-    qt-org-highlight-buffer-async! qt-update-visual-decorations!
-    qt-highlight-search-matches! qt-clear-search-highlights!
-    qt-enable-code-folding! detect-language
-    qt-org-table-separator? *search-highlight-active*
-    *qt-show-paren-enabled* *qt-delete-selection-enabled*
-    ts-setup-styles! restore-margin-colors!)
+  (export qt-setup-highlighting! qt-reapply-highlighting!
+    qt-remove-highlighting! qt-setup-org-styles!
+    qt-org-highlight-buffer! qt-org-highlight-buffer-async!
+    qt-update-visual-decorations! qt-highlight-search-matches!
+    qt-clear-search-highlights! qt-enable-code-folding!
+    detect-language qt-org-table-separator?
+    *search-highlight-active* *qt-show-paren-enabled*
+    *qt-delete-selection-enabled* ts-setup-styles!
+    restore-margin-colors!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -718,6 +719,52 @@
              [else (void)])
            (restore-margin-colors! ed)
            (qt-enable-code-folding! ed))))
+  (def (qt-reapply-highlighting! ed buf)
+       (let ([lang (buffer-lexer-lang buf)])
+         (when lang
+           (let ([lexer-name (and (not (memq
+                                         lang
+                                         '(dired repl eshell shell)))
+                                  (language->lexer-name lang))])
+             (cond
+               [(eq? lang 'org)
+                (apply-base-theme! ed)
+                (sci-send ed 4033 0)
+                (qt-setup-org-styles! ed)
+                (let ([text (qt-plain-text-edit-text ed)])
+                  (qt-org-highlight-buffer-async! ed text))]
+               [lexer-name
+                (qt-scintilla-set-lexer-language! ed lexer-name)
+                (case lang
+                  [(c)
+                   (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                   (when *c-types*
+                     (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+                  [(javascript)
+                   (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+                   (when *js-builtins*
+                     (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1))]
+                  [(go)
+                   (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+                   (when *go-types*
+                     (sci-send/string ed SCI_SETKEYWORDS *go-types* 1))]
+                  [(rust)
+                   (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
+                   (when *rust-types*
+                     (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1))]
+                  [(java haskell swift elixir)
+                   (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
+                   (when *java-types*
+                     (sci-send/string ed SCI_SETKEYWORDS *java-types* 1))]
+                  [(zig nix)
+                   (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                   (when *c-types*
+                     (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+                  [(shell)
+                   (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0)]
+                  [else (void)])
+                (restore-margin-colors! ed)
+                (qt-enable-code-folding! ed)])))))
   (def (qt-enable-code-folding! ed)
        "Enable code folding margin and markers for QScintilla editor.\n   Sets up margin 2 as fold margin with box-tree style markers.\n   QScintilla lexers compute fold levels automatically."
        (sci-send ed SCI_SETMARGINTYPEN 2 SC_MARGIN_SYMBOL)

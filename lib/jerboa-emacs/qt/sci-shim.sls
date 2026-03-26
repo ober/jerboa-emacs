@@ -76,7 +76,8 @@
    qt-layout-set-stretch-factor! qt-label-create
    qt-label-set-alignment! qt-label-set-pixmap!
    qt-label-set-text! qt-label-text qt-last-key-code
-   qt-last-key-modifiers qt-last-key-text qt-line-edit-create
+   qt-last-key-modifiers qt-last-key-text
+   qt-last-key-autorepeat? qt-line-edit-create
    qt-line-edit-set-completer! qt-line-edit-set-text!
    qt-line-edit-text qt-list-widget-add-item!
    qt-list-widget-clear! qt-list-widget-create

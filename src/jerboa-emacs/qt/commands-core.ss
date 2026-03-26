@@ -721,37 +721,76 @@ Returns #t if changed, #f if not or if no record exists."
       (echo-message! (app-state-echo app) "Paredit: cannot delete delimiter")
       (sci-send ed 2180))))
 
+;; Backward-delete using SCI_DELETEBACK — handles multibyte characters correctly.
+(def (qt-backward-delete-char! ed)
+  (let ((pos (qt-plain-text-edit-cursor-position ed))
+        (ro  (qt-plain-text-edit-read-only? ed)))
+    (verbose-log! "BKSP pos=" pos " read-only=" ro)
+    (cond
+      (ro (verbose-log! "BKSP BLOCKED: read-only"))
+      ((<= pos 0) (verbose-log! "BKSP BLOCKED: at position 0"))
+      (else
+        ;; If there's a selection and delete-selection-mode is on, delete selection
+        (if (and *qt-delete-selection-enabled*
+                 (qt-plain-text-edit-has-selection? ed))
+          (begin
+            (verbose-log! "BKSP: removing selection")
+            (qt-plain-text-edit-remove-selected-text! ed))
+          ;; Use SCI_DELETEBACK (2326) — Scintilla's built-in backspace that
+          ;; handles multibyte characters correctly (no manual byte math needed).
+          (begin
+            (verbose-log! "BKSP: SCI_DELETEBACK at byte-pos=" (sci-send ed 2008 0 0))
+            (sci-send ed 2326)  ;; SCI_DELETEBACK
+            (let ((pos2 (qt-plain-text-edit-cursor-position ed)))
+              (verbose-log! "BKSP: after delete pos=" pos2))))))))
+
 (def (cmd-backward-delete-char app)
   (let ((buf (current-qt-buffer app)))
     (cond
-      ;; Terminal buffers: delete in buffer but not past the prompt
+      ;; Terminal buffers: if PTY is busy, send BS to PTY; otherwise local delete
       ((terminal-buffer? buf)
        (let* ((ed (current-qt-editor app))
               (pos (qt-plain-text-edit-cursor-position ed))
               (ts (hash-get *terminal-state* buf)))
-         (when (and ts (> pos (terminal-state-prompt-pos ts)))
-           (sci-send ed 2326)))) ;; SCI_DELETEBACK
+         (cond
+           ((and ts (terminal-pty-busy? ts))
+            ;; PTY running — send backspace character to child process
+            (terminal-send-input! ts (string (integer->char 127))))
+           ((and ts (> pos (terminal-state-prompt-pos ts)))
+            ;; No PTY — local line editing, don't delete past prompt
+            (qt-backward-delete-char! ed)))))
       ;; In REPL buffers, don't delete past the prompt.
       ((repl-buffer? buf)
        (let* ((ed (current-qt-editor app))
               (pos (qt-plain-text-edit-cursor-position ed))
               (rs (hash-get *repl-state* buf)))
          (when (and rs (> pos (repl-state-prompt-pos rs)))
-           (sci-send ed 2326)))) ;; SCI_DELETEBACK
-      ;; Shell: don't delete past the prompt
+           (qt-backward-delete-char! ed))))
+      ;; Shell: if PTY is busy, send BS to PTY; otherwise local delete
+      ;; Note: shell-buffer? matches any buffer with lexer-lang=shell,
+      ;; including shell script files.  Only buffers with actual shell
+      ;; state (interactive shells) get prompt-guarded deletion.
       ((shell-buffer? buf)
        (let* ((ed (current-qt-editor app))
               (pos (qt-plain-text-edit-cursor-position ed))
               (ss (hash-get *shell-state* buf)))
-         (when (and ss (> pos (shell-state-prompt-pos ss)))
-           (sci-send ed 2326)))) ;; SCI_DELETEBACK
+         (cond
+           ((and ss (shell-pty-busy? ss))
+            ;; PTY running — send backspace character to child process
+            (shell-send-input! ss (string (integer->char 127))))
+           ((and ss (> pos (shell-state-prompt-pos ss)))
+            ;; Interactive shell, no PTY — don't delete past prompt
+            (qt-backward-delete-char! ed))
+           ((not ss)
+            ;; Shell script file (no shell state) — normal editing
+            (qt-backward-delete-char! ed)))))
       (else
        (let* ((ed (current-qt-editor app))
               (pos (qt-plain-text-edit-cursor-position ed)))
          (if (and *paredit-strict-mode* (> pos 0)
                   (not (qt-paredit-strict-allow-delete? ed (- pos 1) 'backward)))
            (echo-message! (app-state-echo app) "Paredit: cannot delete delimiter")
-           (sci-send ed 2326)))))))
+           (qt-backward-delete-char! ed)))))))
 
 (def (cmd-backward-delete-char-untabify app)
   "Delete backward, converting tabs to spaces if in leading whitespace."

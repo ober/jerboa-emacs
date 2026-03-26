@@ -2172,10 +2172,13 @@
 
 ;; Time window in milliseconds for second key of chord.
 ;; Emacs key-chord.el uses 100ms for two-key and 200ms for same-key chords.
-;; We use 500ms by default because Shift+key chords require pressing a modifier
-;; key first, which adds significant latency vs simultaneous unmodified keys.
-(def *chord-timeout* 500)
-(defvar! 'chord-timeout 500 "Milliseconds to wait for second key of a chord"
+;; Default 100ms matches Emacs key-chord.el.  At this duration the pending
+;; character delay is imperceptible to humans (<150ms), yet two intentional
+;; simultaneous keystrokes (typically 30-80ms apart) are reliably caught.
+;; The old 500ms default caused visible typing lag since almost every letter
+;; is a chord-start character with 17+ chords defined.
+(def *chord-timeout* 100)
+(defvar! 'chord-timeout 100 "Milliseconds to wait for second key of a chord"
          setter: (lambda (v) (set! *chord-timeout* v))
          type: 'integer type-args: '(50 . 1000) group: 'keybindings)
 

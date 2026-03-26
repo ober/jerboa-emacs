@@ -5,6 +5,7 @@
 ;;; Detects language from file extension and configures lexer + style colors.
 
 (export qt-setup-highlighting!
+        qt-reapply-highlighting!
         qt-remove-highlighting!
         qt-setup-org-styles!
         qt-org-highlight-buffer!
@@ -717,6 +718,48 @@
           (restore-margin-colors! ed)
           ;; Enable code folding
           (qt-enable-code-folding! ed))))
+
+;; Re-apply stored highlighting to a specific editor widget.
+;; Called when a buffer is displayed in a new split/window — the lexer
+;; must be set per-widget since QScintilla lexers are widget-local.
+(def (qt-reapply-highlighting! ed buf)
+  (let ((lang (buffer-lexer-lang buf)))
+    (when lang
+      (let ((lexer-name (and (not (memq lang '(dired repl eshell shell)))
+                             (language->lexer-name lang))))
+        (cond
+          ((eq? lang 'org)
+           (apply-base-theme! ed)
+           (sci-send ed 4033 0)  ;; SCI_SETILEXER — disable built-in lexer
+           (qt-setup-org-styles! ed)
+           (let ((text (qt-plain-text-edit-text ed)))
+             (qt-org-highlight-buffer-async! ed text)))
+          (lexer-name
+           (qt-scintilla-set-lexer-language! ed lexer-name)
+           (case lang
+             ((c)
+              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+              (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
+             ((javascript)
+              (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+              (when *js-builtins* (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1)))
+             ((go)
+              (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+              (when *go-types* (sci-send/string ed SCI_SETKEYWORDS *go-types* 1)))
+             ((rust)
+              (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
+              (when *rust-types* (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1)))
+             ((java haskell swift elixir)
+              (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
+              (when *java-types* (sci-send/string ed SCI_SETKEYWORDS *java-types* 1)))
+             ((zig nix)
+              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+              (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
+             ((shell)
+              (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0))
+             (else (void)))
+           (restore-margin-colors! ed)
+           (qt-enable-code-folding! ed)))))))
 
 ;;;============================================================================
 ;;; Code folding margin setup

@@ -354,6 +354,7 @@ static std::string s_return_buf;
 static int s_last_key_code = 0;
 static int s_last_key_modifiers = 0;
 static std::string s_last_key_text;
+static int s_last_key_autorepeat = 0;
 
 // Storage for QInputDialog ok/cancel flag
 static bool s_last_input_ok = false;
@@ -376,6 +377,7 @@ public:
             s_last_key_code = ke->key();
             s_last_key_modifiers = static_cast<int>(ke->modifiers());
             s_last_key_text = ke->text().toUtf8().toStdString();
+            s_last_key_autorepeat = ke->isAutoRepeat() ? 1 : 0;
             m_callback(m_callback_id);
         }
         return QObject::eventFilter(obj, event);
@@ -400,6 +402,7 @@ public:
             s_last_key_code = ke->key();
             s_last_key_modifiers = static_cast<int>(ke->modifiers());
             s_last_key_text = ke->text().toUtf8().toStdString();
+            s_last_key_autorepeat = ke->isAutoRepeat() ? 1 : 0;
             m_callback(m_callback_id);
             return true;  // consume the event — widget does NOT see it
         }
@@ -2203,6 +2206,10 @@ extern "C" int qt_last_key_modifiers(void) {
 
 extern "C" const char* qt_last_key_text(void) {
     QT_RETURN(const char*, s_last_key_text.c_str());
+}
+
+extern "C" int qt_last_key_autorepeat(void) {
+    QT_RETURN(int, s_last_key_autorepeat);
 }
 
 // ============================================================

@@ -14,7 +14,7 @@ export CHEZ_QT_SHIM_DIR := .
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
         test-org-duration test-org-element test-org-fold test-org-footnote \
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
-        test-vtscreen test-debug-repl test-qt build-qt binary binary-qt \
+        test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary binary-qt \
         test-pty test-emacs test-functional test-term-hang \
         docker-deps static-qt clean-docker check-root build-jemacs-qt-static
 
@@ -190,6 +190,10 @@ test-debug-repl:
 test-qt: build
 	QT_QPA_PLATFORM=offscreen LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script tests/test-qt.ss
 	QT_QPA_PLATFORM=offscreen LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script tests/test-qt-part2.ss
+
+# End-to-end Qt tests: Xvfb + xdotool + IPC REPL (requires xvfb, xdotool, nc)
+test-qt-e2e:
+	bash tests/test-qt-functional.sh ./jemacs-qt
 
 test-emacs:
 	$(SCHEME) $(LIBDIRS) --program tests/test-emacs.ss

@@ -80,29 +80,34 @@
        (let ([key-str (qt-key-event->string code mods text)])
          (if (not key-str)
              (values 'ignore #f state)
-             (let ([binding (keymap-lookup
-                              (key-state-keymap state)
-                              key-str)])
-               (cond
-                 [(hash-table? binding)
-                  (values
-                    'prefix
-                    key-str
-                    (make-key-state
-                      binding
-                      (append
-                        (key-state-prefix-keys state)
-                        (list key-str))))]
-                 [(symbol? binding)
-                  (values 'command binding (make-initial-key-state))]
-                 [(and (null? (key-state-prefix-keys state))
-                       (= (string-length text) 1)
-                       (> (char->integer (string-ref text 0)) 31)
-                       (not (not (zero? (bitwise-and mods QT_MOD_CTRL))))
-                       (not (not (zero? (bitwise-and mods QT_MOD_ALT)))))
-                  (values 'self-insert text (make-initial-key-state))]
-                 [else
-                  (values
-                    'undefined
-                    key-str
-                    (make-initial-key-state))]))))))
+             (if (and (string=? key-str "C-g")
+                      (pair? (key-state-prefix-keys state)))
+                 (values 'command 'keyboard-quit (make-initial-key-state))
+                 (let ([binding (keymap-lookup
+                                  (key-state-keymap state)
+                                  key-str)])
+                   (cond
+                     [(hash-table? binding)
+                      (values
+                        'prefix
+                        key-str
+                        (make-key-state
+                          binding
+                          (append
+                            (key-state-prefix-keys state)
+                            (list key-str))))]
+                     [(symbol? binding)
+                      (values 'command binding (make-initial-key-state))]
+                     [(and (null? (key-state-prefix-keys state))
+                           (= (string-length text) 1)
+                           (> (char->integer (string-ref text 0)) 31)
+                           (not (not (zero?
+                                       (bitwise-and mods QT_MOD_CTRL))))
+                           (not (not (zero?
+                                       (bitwise-and mods QT_MOD_ALT)))))
+                      (values 'self-insert text (make-initial-key-state))]
+                     [else
+                      (values
+                        'undefined
+                        key-str
+                        (make-initial-key-state))])))))))
