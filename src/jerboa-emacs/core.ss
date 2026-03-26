@@ -1757,8 +1757,9 @@
         (lambda (port) (get-string-all port))))))
 
 (def (write-string-to-file path str)
-  (call-with-output-file path
-    (lambda (port) (display str port))))
+  (let ((port (open-output-file path 'replace)))
+    (display str port)
+    (close-port port)))
 
 ;;;============================================================================
 ;;; Dired (directory listing) shared logic
