@@ -724,7 +724,7 @@
          (when lang
            (let ([lexer-name (and (not (memq
                                          lang
-                                         '(dired repl eshell shell)))
+                                         '(dired repl eshell)))
                                   (language->lexer-name lang))])
              (cond
                [(eq? lang 'org)

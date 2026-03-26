@@ -725,7 +725,7 @@
 (def (qt-reapply-highlighting! ed buf)
   (let ((lang (buffer-lexer-lang buf)))
     (when lang
-      (let ((lexer-name (and (not (memq lang '(dired repl eshell shell)))
+      (let ((lexer-name (and (not (memq lang '(dired repl eshell)))
                              (language->lexer-name lang))))
         (cond
           ((eq? lang 'org)

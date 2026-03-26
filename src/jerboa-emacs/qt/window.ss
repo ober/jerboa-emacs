@@ -303,6 +303,23 @@
          (new-win (make-qt-edit-window new-ed container buf lna #f #f)))
     (qt-scintilla-setup-editor! new-ed)
     (qt-buffer-attach! new-ed buf)
+    ;; Force font family+size on all styles (0-127).
+    ;; QsciLexer's setLexer() overrides style fonts, so we must re-apply
+    ;; after highlighting is set up by qt-buffer-attach!'s hook.
+    (let loop ((i 0))
+      (when (<= i 127)
+        (sci-send/string new-ed SCI_STYLESETFONT *default-font-family* i)
+        (sci-send new-ed SCI_STYLESETSIZE i *default-font-size*)
+        (loop (+ i 1))))
+    ;; Restore margin colors (font loop may corrupt line-number style)
+    (let ((ln-face (face-get 'line-number)))
+      (when (and ln-face (face-bg ln-face))
+        (let-values (((r g b) (parse-hex-color (face-bg ln-face))))
+          (sci-send new-ed SCI_STYLESETBACK STYLE_LINENUMBER (rgb->sci r g b))
+          (sci-send new-ed 2260 0 (rgb->sci r g b))))
+      (when (and ln-face (face-fg ln-face))
+        (let-values (((r g b) (parse-hex-color (face-fg ln-face))))
+          (sci-send new-ed SCI_STYLESETFORE STYLE_LINENUMBER (rgb->sci r g b)))))
     (qt-stacked-widget-add-widget! container new-ed)
     (qt-splitter-add-widget! container-parent container)
     (hash-put! *editor-window-map* new-ed new-win)
