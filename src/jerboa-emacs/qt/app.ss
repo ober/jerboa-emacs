@@ -1754,8 +1754,12 @@
                              (buf (qt-current-buffer fr)))
                         (if buf (buffer-name buf) "#<none>"))))
               ;; Automation bridge (for Claude)
+              ;; send-keys! : synchronous, drains inline (for non-blocking commands)
+              ;; send-keys-async! : fire-and-forget (for M-x, C-x C-f, etc.)
               (cons 'send-keys!
                     (lambda keys (apply automation-send-keys! app keys)))
+              (cons 'send-keys-async!
+                    (lambda keys (apply automation-send-keys-async! app keys)))
               (cons 'screenshot!
                     (lambda (path) (automation-screenshot! app path)))
               (cons 'app-state

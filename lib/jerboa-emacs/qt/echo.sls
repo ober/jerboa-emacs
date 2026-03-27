@@ -15,7 +15,7 @@
     (std sugar) (std sort) (std srfi srfi-1)
     (only (std srfi srfi-13) string-contains string-suffix?)
     (jerboa-emacs qt sci-shim) (jerboa-emacs core)
-    (jerboa-emacs qt window)
+    (jerboa-emacs async) (jerboa-emacs qt window)
     (except (jerboa core) iota any every filter-map take drop
       delete)
     (except (jerboa runtime) iota))
@@ -474,6 +474,7 @@
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
            (qt-drain-pending-callbacks!)
+           (master-timer-tick!)
            (thread-sleep! 0.01)
            (if *mb-result*
                (let ([text (if (pair? *mb-result*)
@@ -513,6 +514,7 @@
            (let loop ()
              (qt-app-process-events! *mb-qt-app*)
              (qt-drain-pending-callbacks!)
+             (master-timer-tick!)
              (thread-sleep! 0.01)
              (if *mb-result*
                  (let ([text (if (pair? *mb-result*)
@@ -550,6 +552,7 @@
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
            (qt-drain-pending-callbacks!)
+           (master-timer-tick!)
            (thread-sleep! 0.01)
            (if *mb-result*
                (let ([text (if (pair? *mb-result*)
@@ -604,6 +607,7 @@
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
            (qt-drain-pending-callbacks!)
+           (master-timer-tick!)
            (thread-sleep! 0.01)
            (if *mb-result*
                (let ([text (if (pair? *mb-result*)
@@ -648,6 +652,7 @@
          (let loop ()
            (qt-app-process-events! *mb-qt-app*)
            (qt-drain-pending-callbacks!)
+           (master-timer-tick!)
            (thread-sleep! 0.01)
            (if *mb-result*
                (let ([text (if (pair? *mb-result*)

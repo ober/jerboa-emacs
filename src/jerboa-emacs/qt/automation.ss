@@ -6,6 +6,7 @@
 ;;; query application state.
 
 (export automation-send-keys!
+        automation-send-keys-async!
         automation-screenshot!
         automation-state
         automation-wait!
@@ -159,38 +160,50 @@
 
 ;;; Send a sequence of Emacs key strings as real Qt key events.
 ;;; Each string is parsed and sent as a press+release pair.
-;;; Multi-character strings that aren't recognized as key names are
-;;; sent as individual character presses (for typing text).
+;;; Drains the callback queue after each key so the Scheme handler fires inline.
+;;; WARNING: Do NOT use for commands that open a blocking minibuffer prompt
+;;; (M-x, C-x C-f, C-s, etc.) — use automation-send-keys-async! instead.
 ;;;
 ;;; Usage:
 ;;;   (automation-send-keys! app "C-x" "2")        ; C-x 2 (split window)
-;;;   (automation-send-keys! app "M-x")             ; open M-x
-;;;   (automation-send-keys! app "find-file" "RET") ; type + enter
+;;;   (automation-send-keys! app "hello")           ; type text
 (def (automation-send-keys! app . key-strings)
-  (let* ((fr (app-state-frame app))
-         (ed (qt-current-editor fr)))
-    (when ed
-      (for-each
-        (lambda (ks)
-          (if (or (<= (string-length ks) 1)
-                  (emacs-special-key ks)
-                  ;; Modifier prefix pattern: C-x, M-x, C-M-x, S-<f1>, etc.
-                  (and (>= (string-length ks) 3)
-                       (or (string=? (substring ks 0 2) "C-")
-                           (string=? (substring ks 0 2) "M-")
-                           (string=? (substring ks 0 2) "S-"))))
-            ;; Single key event
-            (send-one-key! app ks)
-            ;; Multi-char string: send each character individually
-            (let loop ((i 0))
-              (when (< i (string-length ks))
-                (send-one-key! app (string (string-ref ks i)))
-                (loop (+ i 1))))))
-        key-strings))))
+  (for-each (lambda (ks) (dispatch-key-string! app ks #t)) key-strings))
+
+;;; Send keys WITHOUT draining the callback queue.
+;;; The keys are queued and processed by the master timer on the next tick.
+;;; Use this for commands that trigger blocking prompts (M-x, C-x C-f, etc.).
+;;; Follow up with separate REPL calls to interact with the minibuffer.
+;;;
+;;; Usage:
+;;;   (automation-send-keys-async! app "M-x")  ; opens M-x, returns immediately
+;;;   ;; ... in next REPL call, minibuffer is active ...
+;;;   (automation-send-keys-async! app "find-file" "RET")
+(def (automation-send-keys-async! app . key-strings)
+  (for-each (lambda (ks) (dispatch-key-string! app ks #f)) key-strings))
+
+;;; Dispatch a key string — either a single recognized key or individual chars.
+(def (dispatch-key-string! app ks drain?)
+  (if (or (<= (string-length ks) 1)
+          (emacs-special-key ks)
+          ;; Modifier prefix pattern: C-x, M-x, C-M-x, S-<f1>, etc.
+          (and (>= (string-length ks) 3)
+               (or (string=? (substring ks 0 2) "C-")
+                   (string=? (substring ks 0 2) "M-")
+                   (string=? (substring ks 0 2) "S-"))))
+    ;; Single key event
+    (send-one-key! app ks drain?)
+    ;; Multi-char string: send each character individually
+    (let loop ((i 0))
+      (when (< i (string-length ks))
+        (send-one-key! app (string (string-ref ks i)) drain?)
+        (loop (+ i 1))))))
 
 ;;; Send a single key event (press + release) to the focused widget.
 ;;; If the minibuffer is active, sends to the minibuffer input widget instead.
-(def (send-one-key! app key-str)
+;;; When drain? is #t, drains the deferred callback queue after each event
+;;; so the Scheme key handler fires immediately.
+(def (send-one-key! app key-str drain?)
   (let-values (((code mods text) (emacs-key->qt-event key-str)))
     (let* ((fr (app-state-frame app))
            (target (if *minibuffer-active?*
@@ -198,7 +211,9 @@
                      (qt-current-editor fr))))
       (when target
         (qt-send-key-press! target code mods text)
-        (qt-send-key-release! target code mods text)))))
+        (when drain? (qt-drain-pending-callbacks!))
+        (qt-send-key-release! target code mods text)
+        (when drain? (qt-drain-pending-callbacks!))))))
 
 ;;;============================================================================
 ;;; Screenshot

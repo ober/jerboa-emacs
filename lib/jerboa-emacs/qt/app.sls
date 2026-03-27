@@ -2259,6 +2259,10 @@
                   'send-keys!
                   (lambda keys (apply automation-send-keys! app keys)))
                 (cons
+                  'send-keys-async!
+                  (lambda keys
+                    (apply automation-send-keys-async! app keys)))
+                (cons
                   'screenshot!
                   (lambda (path) (automation-screenshot! app path)))
                 (cons 'app-state (lambda () (automation-state app)))

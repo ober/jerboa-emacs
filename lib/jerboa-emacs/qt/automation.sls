@@ -3,9 +3,9 @@
 ;;; Source: src/jerboa-emacs/qt/automation.ss
 
 (library (jerboa-emacs qt automation)
-  (export automation-send-keys! automation-screenshot!
-    automation-state automation-wait! automation-set-qt-app!
-    emacs-key->qt-event)
+  (export automation-send-keys! automation-send-keys-async!
+    automation-screenshot! automation-state automation-wait!
+    automation-set-qt-app! emacs-key->qt-event)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -139,24 +139,26 @@
          [(string=? name "<f12>") (cons QT_KEY_F12 0)]
          [else #f]))
   (def (automation-send-keys! app . key-strings)
-       (let* ([fr (app-state-frame app)]
-              [ed (qt-current-editor fr)])
-         (when ed
-           (for-each
-             (lambda (ks)
-               (if (or (<= (string-length ks) 1)
-                       (emacs-special-key ks)
-                       (and (>= (string-length ks) 3)
-                            (or (string=? (substring ks 0 2) "C-")
-                                (string=? (substring ks 0 2) "M-")
-                                (string=? (substring ks 0 2) "S-"))))
-                   (send-one-key! app ks)
-                   (let loop ([i 0])
-                     (when (< i (string-length ks))
-                       (send-one-key! app (string (string-ref ks i)))
-                       (loop (+ i 1))))))
-             key-strings))))
-  (def (send-one-key! app key-str)
+       (for-each
+         (lambda (ks) (dispatch-key-string! app ks #t))
+         key-strings))
+  (def (automation-send-keys-async! app . key-strings)
+       (for-each
+         (lambda (ks) (dispatch-key-string! app ks #f))
+         key-strings))
+  (def (dispatch-key-string! app ks drain?)
+       (if (or (<= (string-length ks) 1)
+               (emacs-special-key ks)
+               (and (>= (string-length ks) 3)
+                    (or (string=? (substring ks 0 2) "C-")
+                        (string=? (substring ks 0 2) "M-")
+                        (string=? (substring ks 0 2) "S-"))))
+           (send-one-key! app ks drain?)
+           (let loop ([i 0])
+             (when (< i (string-length ks))
+               (send-one-key! app (string (string-ref ks i)) drain?)
+               (loop (+ i 1))))))
+  (def (send-one-key! app key-str drain?)
        (let-values ([(code mods text)
                      (emacs-key->qt-event key-str)])
          (let* ([fr (app-state-frame app)]
@@ -165,7 +167,9 @@
                             (qt-current-editor fr))])
            (when target
              (qt-send-key-press! target code mods text)
-             (qt-send-key-release! target code mods text)))))
+             (when drain? (qt-drain-pending-callbacks!))
+             (qt-send-key-release! target code mods text)
+             (when drain? (qt-drain-pending-callbacks!))))))
   (def (automation-screenshot! app path)
        (let* ([fr (app-state-frame app)]
               [main-win (qt-frame-main-win fr)])

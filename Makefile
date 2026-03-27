@@ -54,6 +54,30 @@ qt_chez_shim.so: vendor/qt_chez_shim.c vendor/qt_shim.h
 run-qt: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
 	LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script qt-main.ss
 
+# Headless Qt with automation REPL (for Claude).  Uses xvfb-run for
+# virtual display (static binary needs xcb).  Auto-assigned REPL port.
+run-qt-test: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	@rm -f $(HOME)/.jerboa-repl-port
+	xvfb-run -a LD_PRELOAD=./qt_chez_shim.so \
+	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl 0 &
+	@for i in $$(seq 1 20); do \
+	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
+	  sleep 0.3; \
+	done
+	@if [ -f $(HOME)/.jerboa-repl-port ]; then \
+	  echo "jemacs-qt running (headless). REPL port: $$(grep -oP '\\d+' $(HOME)/.jerboa-repl-port)"; \
+	else \
+	  echo "ERROR: REPL port file not created after 6s"; exit 1; \
+	fi
+
+stop-qt-test:
+	@PORT=$$(grep -oP '\\d+' $(HOME)/.jerboa-repl-port 2>/dev/null); \
+	if [ -n "$$PORT" ]; then \
+	  PID=$$(lsof -ti :$$PORT 2>/dev/null | head -1); \
+	  [ -n "$$PID" ] && kill $$PID && echo "Killed jemacs-qt (PID $$PID)" || echo "No running jemacs-qt found"; \
+	else echo "No running jemacs-qt found"; fi
+	@rm -f $(HOME)/.jerboa-repl-port
+
 # Qt backend build target
 build-qt: build
 	@echo "╔════════════════════════════════════════════════════════════════╗"

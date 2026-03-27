@@ -20,6 +20,7 @@
         (only-in :std/srfi/13 string-contains string-suffix?)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
+        :jerboa-emacs/async
         :jerboa-emacs/qt/window)
 
 ;;;============================================================================
@@ -490,6 +491,7 @@
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
       (qt-drain-pending-callbacks!)   ; execute enqueued signal callbacks (returnPressed, etc.)
+      (master-timer-tick!)             ; run periodic tasks (debug REPL, etc.)
       (thread-sleep! 0.01)
       (if *mb-result*
         ;; Done — extract result
@@ -540,6 +542,7 @@
       (let loop ()
         (qt-app-process-events! *mb-qt-app*)
         (qt-drain-pending-callbacks!)
+        (master-timer-tick!)
         (thread-sleep! 0.01)
         (if *mb-result*
           ;; Done — extract result
@@ -589,6 +592,7 @@
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
       (qt-drain-pending-callbacks!)
+      (master-timer-tick!)
       (thread-sleep! 0.01)
       (if *mb-result*
         ;; Done — extract result
@@ -654,6 +658,7 @@
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
       (qt-drain-pending-callbacks!)
+      (master-timer-tick!)
       (thread-sleep! 0.01)
       (if *mb-result*
         ;; Done — extract result
@@ -710,6 +715,7 @@
     (let loop ()
       (qt-app-process-events! *mb-qt-app*)
       (qt-drain-pending-callbacks!)
+      (master-timer-tick!)
       (thread-sleep! 0.01)
       (if *mb-result*
         (let ((text (if (pair? *mb-result*)
