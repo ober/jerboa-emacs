@@ -512,7 +512,8 @@
          (let loop ([wins (qt-frame-windows fr)])
            (when (pair? wins)
              (if (eq? (qt-edit-window-buffer (car wins)) buf)
-                 (let ([ed (qt-edit-window-editor (car wins))])
+                 (let ([ed (qt-edit-window-editor (car wins))]
+                       [win (car wins)])
                    (when (and vt (not (terminal-state-pre-pty-text ts)))
                      (let ([pre-text (qt-plain-text-edit-text ed)])
                        (terminal-state-pre-pty-text-set! ts pre-text)
@@ -537,7 +538,8 @@
                          (vterm-cap-scrollback! ts)
                          (when *qt-app-ref*
                            (qt-app-process-events! *qt-app-ref*))
-                         (when (vterm-render-due? ts)
+                         (when (and (eq? (qt-edit-window-buffer win) buf)
+                                    (vterm-render-due? ts))
                            (if (not (hash-ref *vterm-initialized* ts #f))
                                (let* ([rendered (vtscreen-render vt)]
                                       [full (if (vtscreen-alt-screen? vt)
@@ -2383,19 +2385,29 @@
             (qt-buffer-attach! ed buf)
             (qt-edit-window-buffer-set! (qt-current-window fr) buf)
             (if (file-exists? filename)
-                (begin
+                (let ([target-buf buf]
+                      [target-doc (buffer-doc-pointer buf)])
                   (qt-plain-text-edit-set-text! ed "Loading...")
                   (async-read-file!
                     filename
                     (lambda (text)
                       (when text
-                        (let ([ed (qt-current-editor
-                                    (app-state-frame app))])
+                        (let* ([ed (qt-current-editor
+                                     (app-state-frame app))]
+                               [current-doc (sci-send
+                                              ed
+                                              SCI_GETDOCPOINTER
+                                              0)])
+                          (sci-send ed SCI_SETDOCPOINTER 0 target-doc)
                           (qt-plain-text-edit-set-text! ed text)
-                          (qt-text-document-set-modified!
-                            (buffer-doc-pointer buf)
-                            #f)
-                          (qt-plain-text-edit-set-cursor-position! ed 0)))
+                          (qt-text-document-set-modified! target-doc #f)
+                          (sci-send ed SCI_SETDOCPOINTER 0 current-doc)
+                          (when (eq? (qt-current-buffer
+                                       (app-state-frame app))
+                                     target-buf)
+                            (qt-plain-text-edit-set-cursor-position!
+                              ed
+                              0))))
                       (file-mtime-record! filename)
                       (qt-setup-highlighting! app buf)
                       (let ([mode (detect-major-mode filename)])

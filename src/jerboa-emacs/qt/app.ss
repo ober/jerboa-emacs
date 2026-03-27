@@ -559,7 +559,8 @@
     (let loop ((wins (qt-frame-windows fr)))
       (when (pair? wins)
         (if (eq? (qt-edit-window-buffer (car wins)) buf)
-          (let ((ed (qt-edit-window-editor (car wins))))
+          (let ((ed (qt-edit-window-editor (car wins)))
+                (win (car wins)))
             ;; Save pre-PTY text on first data chunk
             (when (and vt (not (terminal-state-pre-pty-text ts)))
               (let ((pre-text (qt-plain-text-edit-text ed)))
@@ -583,8 +584,11 @@
                 ;; stays responsive even when terminal output is flooding.
                 (when *qt-app-ref*
                   (qt-app-process-events! *qt-app-ref*))
-                ;; Only render to the widget if enough time has elapsed
-                (when (vterm-render-due? ts)
+                ;; Re-check: processEvents may have triggered switch-buffer,
+                ;; changing the editor's active document.  If the window no
+                ;; longer shows this terminal buffer, skip the render.
+                (when (and (eq? (qt-edit-window-buffer win) buf)
+                           (vterm-render-due? ts))
                   (if (not (hash-ref *vterm-initialized* ts #f))
                     ;; First render: full set-text to establish the document.
                     ;; Wrap in set-updates-enabled #f/#t to prevent bounce:
@@ -1913,16 +1917,27 @@
        (qt-buffer-attach! ed buf)
        (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
        (if (file-exists? filename)
-         ;; Read file content in background thread
-         (begin
+         ;; Read file content in background thread.
+         ;; Capture the target buffer and its doc pointer NOW — by the time
+         ;; the async callback fires, the user may have switched to a different
+         ;; buffer, so qt-current-editor would write into the wrong document.
+         (let ((target-buf buf)
+               (target-doc (buffer-doc-pointer buf)))
            (qt-plain-text-edit-set-text! ed "Loading...")
            (async-read-file! filename
              (lambda (text)
                (when text
-                 (let ((ed (qt-current-editor (app-state-frame app))))
+                 (let* ((ed (qt-current-editor (app-state-frame app)))
+                        (current-doc (sci-send ed SCI_GETDOCPOINTER 0)))
+                   ;; Switch to the target buffer's document before writing
+                   (sci-send ed SCI_SETDOCPOINTER 0 target-doc)
                    (qt-plain-text-edit-set-text! ed text)
-                   (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
-                   (qt-plain-text-edit-set-cursor-position! ed 0)))
+                   (qt-text-document-set-modified! target-doc #f)
+                   ;; Switch back to whatever document was active
+                   (sci-send ed SCI_SETDOCPOINTER 0 current-doc)
+                   ;; If the target buffer IS the current buffer, also set cursor
+                   (when (eq? (qt-current-buffer (app-state-frame app)) target-buf)
+                     (qt-plain-text-edit-set-cursor-position! ed 0))))
                (file-mtime-record! filename)
                (qt-setup-highlighting! app buf)
                (let ((mode (detect-major-mode filename)))
