@@ -1118,8 +1118,8 @@
     (echo-message! echo "Timer list displayed")))
 
 ;;; --- Aggressive indent mode ---
-
-(def *aggressive-indent-mode* #f)
+;;; *aggressive-indent-mode* and tui-aggressive-indent-line! are defined in
+;;; editor-core.ss so the self-insert path can use them without circular imports.
 
 (def (cmd-toggle-aggressive-indent app)
   "Toggle aggressive auto-indent mode."

@@ -1355,18 +1355,66 @@
         "Indent guides on"
         "Indent guides off"))))
 
-;;; --- Toggle rainbow delimiters mode ---
+;;; --- Rainbow mode: colorize hex color codes inline ---
 
 (def *rainbow-mode* #f)
+(def *rainbow-indicator* 4)
+
+(def (hex-char-value c)
+  "Return 0-15 for hex char, or #f."
+  (cond ((and (char>=? c #\0) (char<=? c #\9)) (- (char->integer c) 48))
+        ((and (char>=? c #\a) (char<=? c #\f)) (+ 10 (- (char->integer c) 97)))
+        ((and (char>=? c #\A) (char<=? c #\F)) (+ 10 (- (char->integer c) 65)))
+        (else #f)))
+
+(def (rainbow-refresh! ed)
+  "Scan the buffer for #rrggbb hex color codes and highlight each with its color."
+  (let* ((text (editor-get-text ed))
+         (len (string-length text)))
+    ;; Clear all rainbow indicators
+    (send-message ed SCI_SETINDICATORCURRENT *rainbow-indicator* 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 len))
+    (send-message ed SCI_INDICSETSTYLE *rainbow-indicator* INDIC_STRAIGHTBOX)
+    (send-message ed SCI_INDICSETUNDER *rainbow-indicator* 1)
+    (send-message ed SCI_INDICSETALPHA *rainbow-indicator* 100)
+    ;; Scan for #rrggbb patterns
+    (let loop ((i 0))
+      (when (< (+ i 6) len)
+        (if (and (char=? (string-ref text i) #\#)
+                 (hex-char-value (string-ref text (+ i 1)))
+                 (hex-char-value (string-ref text (+ i 2)))
+                 (hex-char-value (string-ref text (+ i 3)))
+                 (hex-char-value (string-ref text (+ i 4)))
+                 (hex-char-value (string-ref text (+ i 5)))
+                 (hex-char-value (string-ref text (+ i 6))))
+          (let* ((r (+ (* 16 (hex-char-value (string-ref text (+ i 1))))
+                       (hex-char-value (string-ref text (+ i 2)))))
+                 (g (+ (* 16 (hex-char-value (string-ref text (+ i 3))))
+                       (hex-char-value (string-ref text (+ i 4)))))
+                 (b (+ (* 16 (hex-char-value (string-ref text (+ i 5))))
+                       (hex-char-value (string-ref text (+ i 6)))))
+                 ;; Scintilla uses BGR format
+                 (color (+ b (* 256 g) (* 65536 r))))
+            (send-message ed SCI_INDICSETFORE *rainbow-indicator* color)
+            (send-message ed SCI_SETINDICATORCURRENT *rainbow-indicator* 0)
+            (send-message ed SCI_INDICATORFILLRANGE i 7)
+            (loop (+ i 7)))
+          (loop (+ i 1)))))))
 
 (def (cmd-toggle-rainbow-mode app)
-  "Toggle rainbow delimiter/bracket coloring mode."
-  (let ((echo (app-state-echo app)))
+  "Toggle rainbow mode — colorize #rrggbb hex color codes inline."
+  (let* ((echo (app-state-echo app))
+         (ed (current-editor app)))
     (set! *rainbow-mode* (not *rainbow-mode*))
-    (echo-message! echo
-      (if *rainbow-mode*
-        "Rainbow delimiters on"
-        "Rainbow delimiters off"))))
+    (if *rainbow-mode*
+      (begin
+        (rainbow-refresh! ed)
+        (echo-message! echo "Rainbow mode on (hex colors highlighted)"))
+      (begin
+        (let ((len (editor-get-text-length ed)))
+          (send-message ed SCI_SETINDICATORCURRENT *rainbow-indicator* 0)
+          (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 len)))
+        (echo-message! echo "Rainbow mode off")))))
 
 ;;; --- Quick switch to scratch buffer ---
 
@@ -1432,6 +1480,35 @@
 ;;; --- Toggle electric quote mode ---
 
 (def *electric-quote-mode* #f)
+
+(def (electric-quote-char ch ed)
+  "Return a curly-quote replacement string for CH at the current position in ED,
+   or #f if no replacement should be made.  Uses the character before point to
+   decide opening vs closing: after whitespace/BOL → opening, otherwise → closing."
+  (let* ((pos (editor-get-current-pos ed))
+         (prev-ch (if (> pos 0)
+                    (send-message ed SCI_GETCHARAT (- pos 1) 0)
+                    0))
+         (at-word-boundary? (or (= pos 0)
+                               (= prev-ch 32)    ; space
+                               (= prev-ch 10)    ; newline
+                               (= prev-ch 13)    ; CR
+                               (= prev-ch 9)     ; tab
+                               (= prev-ch 40)    ; (
+                               (= prev-ch 91)    ; [
+                               (= prev-ch 123)))) ; {
+    (cond
+      ;; Double quote → curly double quotes
+      ((= ch 34)  ; "
+       (if at-word-boundary?
+         "\x201C;"   ; left double quotation mark "
+         "\x201D;")) ; right double quotation mark "
+      ;; Single quote / apostrophe → curly single quotes
+      ((= ch 39)  ; '
+       (if at-word-boundary?
+         "\x2018;"   ; left single quotation mark '
+         "\x2019;")) ; right single quotation mark '
+      (else #f))))
 
 (def (cmd-toggle-electric-quote app)
   "Toggle electric quote mode (auto-convert straight quotes to smart quotes)."

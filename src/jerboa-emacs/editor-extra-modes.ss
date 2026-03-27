@@ -2043,10 +2043,54 @@
   "Correct word with jinx — delegates to flyspell-correct."
   (cmd-flyspell-correct-word app))
 
-;; Hl-todo — highlight TODO/FIXME/HACK keywords
+;; Hl-todo — highlight TODO/FIXME/HACK keywords with colored indicators
+(def *hl-todo-indicator* 5)
+(def *hl-todo-keywords*
+  '(("TODO"  . #x00CCFF)   ; orange
+    ("FIXME" . #x0000FF)   ; red
+    ("HACK"  . #x00BBFF)   ; dark orange
+    ("BUG"   . #x0000CC)   ; dark red
+    ("XXX"   . #x0088FF)   ; amber
+    ("NOTE"  . #x00CC00))) ; green
+
+(def (hl-todo-refresh! ed)
+  "Scan the buffer and highlight all TODO-like keywords with colored indicators."
+  (let* ((text (editor-get-text ed))
+         (len (string-length text)))
+    ;; Clear existing hl-todo indicators
+    (send-message ed SCI_SETINDICATORCURRENT *hl-todo-indicator* 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 len))
+    ;; Set up indicator style
+    (send-message ed SCI_INDICSETSTYLE *hl-todo-indicator* INDIC_TEXTFORE)
+    (send-message ed SCI_INDICSETUNDER *hl-todo-indicator* 1)
+    ;; Find and highlight each keyword
+    (for-each
+      (lambda (kw-pair)
+        (let ((kw (car kw-pair))
+              (color (cdr kw-pair))
+              (kw-len (string-length (car kw-pair))))
+          (send-message ed SCI_INDICSETFORE *hl-todo-indicator* color)
+          (send-message ed SCI_SETINDICATORCURRENT *hl-todo-indicator* 0)
+          (let loop ((start 0))
+            (let ((found (string-contains text kw start)))
+              (when found
+                (send-message ed SCI_INDICATORFILLRANGE found kw-len)
+                (loop (+ found kw-len)))))))
+      *hl-todo-keywords*)))
+
+(def (hl-todo-clear! ed)
+  "Remove all hl-todo indicators."
+  (let ((len (editor-get-text-length ed)))
+    (send-message ed SCI_SETINDICATORCURRENT *hl-todo-indicator* 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 len))))
+
 (def (cmd-hl-todo-mode app)
-  "Toggle hl-todo mode — highlights TODO keywords."
-  (let ((on (toggle-mode! 'hl-todo)))
+  "Toggle hl-todo mode — highlights TODO/FIXME/HACK keywords with colors."
+  (let ((on (toggle-mode! 'hl-todo))
+        (ed (current-editor app)))
+    (if on
+      (hl-todo-refresh! ed)
+      (hl-todo-clear! ed))
     (echo-message! (app-state-echo app) (if on "HL-todo: on" "HL-todo: off"))))
 
 (def (cmd-hl-todo-next app)
@@ -2324,10 +2368,72 @@
     (echo-message! echo (if *global-editorconfig*
                           "Global editorconfig ON" "Global editorconfig OFF"))))
 
+(def (dtrt-detect-indent text)
+  "Analyze TEXT to detect indentation style.  Returns (values use-tabs? indent-size)
+   by sampling the first 200 lines.  Counts leading-tab vs leading-space lines,
+   and for spaces, finds the most common indent width (2, 3, 4, or 8)."
+  (let* ((lines (let loop ((i 0) (start 0) (acc '()) (count 0))
+                  (cond
+                    ((or (>= i (string-length text)) (>= count 200))
+                     (reverse acc))
+                    ((char=? (string-ref text i) #\newline)
+                     (loop (+ i 1) (+ i 1)
+                           (cons (substring text start i) acc)
+                           (+ count 1)))
+                    (else (loop (+ i 1) start acc count)))))
+         (tab-lines 0)
+         (space-lines 0)
+         (widths (make-vector 9 0)))  ; index 0-8, count occurrences of each width
+    (for-each
+      (lambda (line)
+        (when (> (string-length line) 0)
+          (cond
+            ((char=? (string-ref line 0) #\tab)
+             (set! tab-lines (+ tab-lines 1)))
+            ((char=? (string-ref line 0) #\space)
+             (let ((n (let loop ((i 0))
+                        (if (and (< i (string-length line))
+                                 (char=? (string-ref line i) #\space))
+                          (loop (+ i 1))
+                          i))))
+               (when (and (> n 0) (<= n 8))
+                 (set! space-lines (+ space-lines 1))
+                 (vector-set! widths n (+ (vector-ref widths n) 1))))))))
+      lines)
+    (if (> tab-lines space-lines)
+      (values #t 8)  ; tabs with 8-wide tab stops
+      ;; Find the most common space width among 2, 3, 4, 8
+      (let ((best-width 4)
+            (best-count 0))
+        (for-each
+          (lambda (w)
+            (when (> (vector-ref widths w) best-count)
+              (set! best-width w)
+              (set! best-count (vector-ref widths w))))
+          '(2 3 4 8))
+        (values #f best-width)))))
+
+(def (dtrt-apply-indent! ed use-tabs? indent-size)
+  "Apply detected indentation settings to a Scintilla editor."
+  (send-message ed SCI_SETUSETABS (if use-tabs? 1 0) 0)
+  (send-message ed SCI_SETTABWIDTH indent-size 0)
+  (send-message ed SCI_SETINDENT indent-size 0))
+
+(def (dtrt-indent-buffer! app)
+  "Auto-detect and apply indentation for the current buffer."
+  (when *global-dtrt-indent*
+    (let* ((ed (current-editor app))
+           (text (editor-get-text ed)))
+      (when (> (string-length text) 0)
+        (let-values (((use-tabs? indent-size) (dtrt-detect-indent text)))
+          (dtrt-apply-indent! ed use-tabs? indent-size))))))
+
 (def (cmd-toggle-global-dtrt-indent app)
   "Toggle global dtrt-indent-mode (auto-detect indentation)."
   (let ((echo (app-state-echo app)))
     (set! *global-dtrt-indent* (not *global-dtrt-indent*))
+    (when *global-dtrt-indent*
+      (dtrt-indent-buffer! app))
     (echo-message! echo (if *global-dtrt-indent*
                           "Global dtrt-indent ON" "Global dtrt-indent OFF"))))
 

@@ -676,9 +676,43 @@
     (echo-message! (app-state-echo app)
       (if on "Superword mode: symbol-aware" "Superword mode off"))))
 
+(def *glasses-indicator* 6)
+
+(def (glasses-refresh! ed)
+  "Scan buffer and mark CamelCase boundaries with a subtle underscore indicator."
+  (let* ((text (editor-get-text ed))
+         (len (string-length text)))
+    ;; Clear existing indicators
+    (send-message ed SCI_SETINDICATORCURRENT *glasses-indicator* 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 len))
+    ;; Set up indicator: thin underline at CamelCase boundaries
+    (send-message ed SCI_INDICSETSTYLE *glasses-indicator* INDIC_COMPOSITIONTHICK)
+    (send-message ed SCI_INDICSETFORE *glasses-indicator* #x888888) ; grey
+    (send-message ed SCI_INDICSETUNDER *glasses-indicator* 1)
+    (send-message ed SCI_SETINDICATORCURRENT *glasses-indicator* 0)
+    ;; Find CamelCase boundaries: lowercase followed by uppercase
+    (let loop ((i 1))
+      (when (< i len)
+        (let ((prev (string-ref text (- i 1)))
+              (cur (string-ref text i)))
+          (when (and (char-lower-case? prev) (char-upper-case? cur))
+            ;; Mark the boundary with a 1-char indicator on the uppercase char
+            (send-message ed SCI_INDICATORFILLRANGE i 1)))
+        (loop (+ i 1))))))
+
+(def (glasses-clear! ed)
+  "Remove all glasses indicators."
+  (let ((len (editor-get-text-length ed)))
+    (send-message ed SCI_SETINDICATORCURRENT *glasses-indicator* 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 len))))
+
 (def (cmd-glasses-mode app)
-  "Toggle glasses mode (visual CamelCase separation)."
-  (let ((on (toggle-mode! 'glasses)))
+  "Toggle glasses mode (visual CamelCase separation with indicators)."
+  (let ((on (toggle-mode! 'glasses))
+        (ed (current-editor app)))
+    (if on
+      (glasses-refresh! ed)
+      (glasses-clear! ed))
     (echo-message! (app-state-echo app)
       (if on "Glasses mode enabled" "Glasses mode disabled"))))
 
@@ -1521,17 +1555,75 @@
                   (number->string (string-length text)) " chars)")))))))))
 
 ;;; --- Highlight changes tracking ---
+;;; Uses Scintilla indicator #3 to mark lines modified since last save.
+;;; Tracks modified line ranges and highlights them with a margin marker.
 
 (def *highlight-changes-mode* #f)
+(def *highlight-changes-indicator* 3)
+(def *highlight-changes-saved-text* (make-hash-table))  ; buffer-name -> text at last save
+
+(def (highlight-changes-snapshot! app)
+  "Snapshot current buffer text as the 'clean' baseline for change tracking."
+  (when *highlight-changes-mode*
+    (let* ((buf (current-buffer-from-app app))
+           (ed (current-editor app))
+           (text (editor-get-text ed)))
+      (when buf
+        (hash-put! *highlight-changes-saved-text* (buffer-name buf) text)))))
+
+(def (highlight-changes-refresh! app)
+  "Refresh change indicators by comparing current text against saved snapshot.
+   Highlights lines that differ from the baseline."
+  (when *highlight-changes-mode*
+    (let* ((ed (current-editor app))
+           (buf (current-buffer-from-app app)))
+      (when (and ed buf)
+        (let* ((name (buffer-name buf))
+               (saved (hash-get *highlight-changes-saved-text* name))
+               (current (editor-get-text ed))
+               (total-len (string-length current)))
+          ;; Clear existing change indicators
+          (send-message ed SCI_SETINDICATORCURRENT *highlight-changes-indicator* 0)
+          (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 total-len))
+          (when (and saved (not (string=? saved current)))
+            ;; Set up indicator style: yellow left-edge bar
+            (send-message ed SCI_INDICSETSTYLE *highlight-changes-indicator* INDIC_FULLBOX)
+            (send-message ed SCI_INDICSETFORE *highlight-changes-indicator* #x60D0FF) ; orange
+            (send-message ed SCI_INDICSETALPHA *highlight-changes-indicator* 40)
+            (send-message ed SCI_INDICSETUNDER *highlight-changes-indicator* 1)
+            (send-message ed SCI_SETINDICATORCURRENT *highlight-changes-indicator* 0)
+            ;; Compare line by line
+            (let* ((saved-lines (string-split saved #\newline))
+                   (cur-lines (string-split current #\newline))
+                   (n-cur (length cur-lines)))
+              (let loop ((i 0) (pos 0) (sl saved-lines) (cl cur-lines))
+                (when (pair? cl)
+                  (let* ((cur-line (car cl))
+                         (line-len (string-length cur-line))
+                         (saved-line (if (pair? sl) (car sl) ""))
+                         (changed? (not (string=? cur-line saved-line))))
+                    (when (and changed? (> line-len 0))
+                      (send-message ed SCI_INDICATORFILLRANGE pos line-len))
+                    ;; +1 for the newline separator
+                    (loop (+ i 1) (+ pos line-len 1)
+                          (if (pair? sl) (cdr sl) '())
+                          (cdr cl))))))))))))
 
 (def (cmd-toggle-highlight-changes app)
   "Toggle tracking of modified regions."
   (let ((echo (app-state-echo app)))
     (set! *highlight-changes-mode* (not *highlight-changes-mode*))
-    (echo-message! echo
-      (if *highlight-changes-mode*
-        "Highlight-changes mode enabled"
-        "Highlight-changes mode disabled"))))
+    (if *highlight-changes-mode*
+      (begin
+        (highlight-changes-snapshot! app)
+        (echo-message! echo "Highlight-changes mode enabled"))
+      (begin
+        ;; Clear indicators when turning off
+        (let* ((ed (current-editor app))
+               (len (editor-get-text-length ed)))
+          (send-message ed SCI_SETINDICATORCURRENT *highlight-changes-indicator* 0)
+          (send-message ed SCI_INDICATORCLEARRANGE 0 (max 1 len)))
+        (echo-message! echo "Highlight-changes mode disabled")))))
 
 ;;; --- Window layout save/restore ---
 

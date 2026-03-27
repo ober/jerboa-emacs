@@ -35,6 +35,7 @@
 ;;;============================================================================
 (def *auto-pair-mode* #t)
 (def *auto-revert-mode* #f)
+(def *aggressive-indent-mode* #f)
 
 ;;;============================================================================
 ;;; Pulse/flash highlight on jump (beacon-like)
@@ -78,6 +79,45 @@
   (when (eq? *pulse-editor* ed)
     (set! *pulse-editor* #f)
     (set! *pulse-countdown* 0)))
+
+;;;============================================================================
+;;; Volatile highlights — flash changed regions (yank, undo)
+;;;============================================================================
+(def *volatile-highlight-indicator* 2)
+(def *volatile-highlight-countdown* 0)
+(def *volatile-highlight-editor* #f)
+
+(def (volatile-highlight! ed start len)
+  "Flash-highlight region [START, START+LEN) briefly when volatile-highlights is on."
+  (when (and *volatile-highlights* (> len 0))
+    ;; Clear any previous volatile highlight
+    (volatile-highlight-clear!)
+    ;; Set up indicator: green-tinted box
+    (send-message ed SCI_INDICSETSTYLE *volatile-highlight-indicator* INDIC_ROUNDBOX)
+    (send-message ed SCI_INDICSETFORE *volatile-highlight-indicator* #x80FF80) ; light green
+    (send-message ed SCI_INDICSETALPHA *volatile-highlight-indicator* 60)
+    (send-message ed SCI_INDICSETUNDER *volatile-highlight-indicator* 1)
+    (send-message ed SCI_SETINDICATORCURRENT *volatile-highlight-indicator* 0)
+    (send-message ed SCI_INDICATORFILLRANGE start len)
+    (set! *volatile-highlight-editor* ed)
+    (set! *volatile-highlight-countdown* 8)))  ; 8 * 50ms = 400ms
+
+(def (volatile-highlight-tick!)
+  "Called each main loop iteration. Decrements volatile highlight countdown."
+  (when (> *volatile-highlight-countdown* 0)
+    (set! *volatile-highlight-countdown* (- *volatile-highlight-countdown* 1))
+    (when (= *volatile-highlight-countdown* 0)
+      (volatile-highlight-clear!))))
+
+(def (volatile-highlight-clear!)
+  "Remove volatile highlight indicator."
+  (when *volatile-highlight-editor*
+    (let ((len (editor-get-text-length *volatile-highlight-editor*)))
+      (send-message *volatile-highlight-editor* SCI_SETINDICATORCURRENT
+                    *volatile-highlight-indicator* 0)
+      (send-message *volatile-highlight-editor* SCI_INDICATORCLEARRANGE 0 len))
+    (set! *volatile-highlight-editor* #f)
+    (set! *volatile-highlight-countdown* 0)))
 
 ;;;============================================================================
 ;;; System clipboard integration (xclip/xsel/wl-copy)
@@ -440,6 +480,19 @@
                                (auto-pair-char ch))))
               (n (get-prefix-arg app))) ; Get prefix arg
          (cond
+           ;; Electric quote mode: convert " and ' to curly quotes
+           ((and *electric-quote-mode* (= n 1)
+                 (or (= ch 34) (= ch 39)))  ; " or '
+            (let* ((pos (editor-get-current-pos ed))
+                   (replacement (electric-quote-char ch ed)))
+              (if replacement
+                (let ((rlen (string-length replacement)))
+                  (editor-insert-text ed pos replacement)
+                  (editor-goto-pos ed (+ pos rlen)))
+                ;; Fallback: insert raw char
+                (begin
+                  (editor-insert-text ed pos (string (integer->char ch)))
+                  (editor-goto-pos ed (+ pos 1))))))
            ;; Auto/electric-pair skip-over: typing a closing delimiter when next char matches
            ((and pair-active (= n 1)
                  (if *electric-pair-mode*
@@ -468,9 +521,64 @@
                    (str (make-string n (integer->char ch))))
               (editor-insert-text ed pos str)
               (editor-goto-pos ed (+ pos n)))))
+         ;; Aggressive indent: reindent current line after each insertion
+         (when (and *aggressive-indent-mode*
+                    (not (dired-buffer? buf))
+                    (not (shell-buffer? buf))
+                    (not (terminal-buffer? buf)))
+           (tui-aggressive-indent-line! ed))
          ;; Auto-fill: break line if past fill-column
          (tui-auto-fill-after-insert! app ed))))))
 
+
+;;;============================================================================
+;;; Aggressive indent — reindent current line based on paren depth
+;;;============================================================================
+
+(def (tui-aggressive-indent-line! ed)
+  "Reindent the current line based on paren/bracket depth of preceding text."
+  (let* ((text (editor-get-text ed))
+         (len (string-length text))
+         (pos (min (editor-get-current-pos ed) len)))
+    (when (> len 0)
+      (let* ((line-start (let loop ((i (- pos 1)))
+                           (cond ((< i 0) 0)
+                                 ((char=? (string-ref text i) #\newline) (+ i 1))
+                                 (else (loop (- i 1))))))
+             (depth (let loop ((i 0) (d 0))
+                      (if (>= i line-start) d
+                        (case (string-ref text i)
+                          ((#\( #\[ #\{) (loop (+ i 1) (+ d 1)))
+                          ((#\) #\] #\}) (loop (+ i 1) (max 0 (- d 1))))
+                          (else (loop (+ i 1) d))))))
+             (line-end (let loop ((i line-start))
+                         (cond ((>= i len) i)
+                               ((char=? (string-ref text i) #\newline) i)
+                               (else (loop (+ i 1))))))
+             (line-text (substring text line-start line-end))
+             (trimmed (string-trim line-text))
+             (close-first (let loop ((i 0) (d 0))
+                            (if (>= i (string-length trimmed)) d
+                              (case (string-ref trimmed i)
+                                ((#\) #\] #\}) (loop (+ i 1) (+ d 1)))
+                                (else d)))))
+             (target-depth (max 0 (- depth close-first)))
+             (target-indent (make-string (* target-depth 2) #\space))
+             (current-indent (let loop ((i 0))
+                               (if (>= i (string-length line-text)) ""
+                                 (if (char-whitespace? (string-ref line-text i))
+                                   (loop (+ i 1))
+                                   (substring line-text 0 i))))))
+        (unless (string=? current-indent target-indent)
+          (let ((new-line (string-append target-indent trimmed)))
+            (send-message ed SCI_SETTARGETSTART line-start 0)
+            (send-message ed SCI_SETTARGETEND line-end 0)
+            (editor-replace-target ed new-line)
+            (let ((new-pos (+ line-start (string-length target-indent)
+                             (max 0 (- pos line-start
+                                       (string-length current-indent))))))
+              (editor-goto-pos ed (min new-pos
+                                       (+ line-start (string-length new-line)))))))))))
 
 ;;;============================================================================
 ;;; Auto-fill check for TUI self-insert
@@ -865,7 +973,9 @@
     (let ((new-pos (editor-get-current-pos ed)))
       (set! (app-state-last-yank-pos app) pos)
       (set! (app-state-last-yank-len app) (- new-pos pos))
-      (set! (app-state-kill-ring-idx app) 0))))
+      (set! (app-state-kill-ring-idx app) 0)
+      ;; Volatile highlight: flash the yanked region
+      (volatile-highlight! ed pos (- new-pos pos)))))
 
 ;;;============================================================================
 ;;; Mark and region

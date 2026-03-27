@@ -562,6 +562,9 @@
       ;; Tick pulse highlight countdown
       (pulse-tick!)
 
+      ;; Tick volatile highlights countdown
+      (volatile-highlight-tick!)
+
       ;; Tick which-key delayed display
       (which-key-tui-tick! app)
 
