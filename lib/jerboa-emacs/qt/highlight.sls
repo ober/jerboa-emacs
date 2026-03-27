@@ -629,10 +629,16 @@
        SCI_STYLESETFORE
        *ts-style-preproc*
        (rgb->sci r g b)))
-   (let loop ([s 90])
-     (when (<= s 108)
-       (sci-send ed SCI_STYLESETBACK s 1579032)
-       (loop (+ s 1)))))
+   (let ([default-face (face-get 'default)])
+     (let ([bg (if (and default-face (face-bg default-face))
+                   (let-values ([(r g b)
+                                 (parse-hex-color (face-bg default-face))])
+                     (rgb->sci r g b))
+                   1579032)])
+       (let loop ([s 1])
+         (when (<= s 19)
+           (sci-send ed SCI_STYLESETBACK s bg)
+           (loop (+ s 1)))))))
   (def (qt-setup-highlighting! app buf)
        (let* ([ext-lang (detect-language (buffer-file-path buf))]
               [shebang-lang (and (not ext-lang)
@@ -686,85 +692,183 @@
            (qt-setup-org-styles! ed)
            (let ([text (qt-plain-text-edit-text ed)])
              (qt-org-highlight-buffer-async! ed text)))
-         (when (and ed lexer-name)
-           (buffer-lexer-lang-set! buf lang)
-           (qt-scintilla-set-lexer-language! ed lexer-name)
-           (case lang
-             [(c)
-              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-              (when *c-types*
-                (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
-             [(javascript)
-              (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
-              (when *js-builtins*
-                (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1))]
-             [(go)
-              (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
-              (when *go-types*
-                (sci-send/string ed SCI_SETKEYWORDS *go-types* 1))]
-             [(rust)
-              (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
-              (when *rust-types*
-                (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1))]
-             [(java haskell swift elixir)
-              (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
-              (when *java-types*
-                (sci-send/string ed SCI_SETKEYWORDS *java-types* 1))]
-             [(zig nix)
-              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-              (when *c-types*
-                (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
-             [(shell)
-              (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0)]
-             [else (void)])
-           (restore-margin-colors! ed)
-           (qt-enable-code-folding! ed))))
+         (when (and ed lang)
+           (let ([ts-name (language->ts-name lang)])
+             (if ts-name
+                 (begin
+                   (buffer-lexer-lang-set! buf lang)
+                   (sci-send ed 4033 0)
+                   (when (not (ts-buffer-state buf))
+                     (ts-buffer-init! buf ts-name))
+                   (ts-setup-styles! ed)
+                   (let loop ([i 0])
+                     (when (<= i 127)
+                       (sci-send/string
+                         ed
+                         SCI_STYLESETFONT
+                         *default-font-family*
+                         i)
+                       (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                       (loop (+ i 1))))
+                   (restore-margin-colors! ed)
+                   (let ([text (qt-plain-text-edit-text ed)])
+                     (when text (ts-buffer-reparse! buf text ed)))
+                   (verbose-log!
+                     "highlight: tree-sitter active for "
+                     (symbol->string lang)))
+                 (when lexer-name
+                   (buffer-lexer-lang-set! buf lang)
+                   (qt-scintilla-set-lexer-language! ed lexer-name)
+                   (case lang
+                     [(c)
+                      (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                      (when *c-types*
+                        (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+                     [(javascript)
+                      (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+                      (when *js-builtins*
+                        (sci-send/string
+                          ed
+                          SCI_SETKEYWORDS
+                          *js-builtins*
+                          1))]
+                     [(go)
+                      (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+                      (when *go-types*
+                        (sci-send/string ed SCI_SETKEYWORDS *go-types* 1))]
+                     [(rust)
+                      (sci-send/string
+                        ed
+                        SCI_SETKEYWORDS
+                        *rust-keywords*
+                        0)
+                      (when *rust-types*
+                        (sci-send/string
+                          ed
+                          SCI_SETKEYWORDS
+                          *rust-types*
+                          1))]
+                     [(java haskell swift elixir)
+                      (sci-send/string
+                        ed
+                        SCI_SETKEYWORDS
+                        *java-keywords*
+                        0)
+                      (when *java-types*
+                        (sci-send/string
+                          ed
+                          SCI_SETKEYWORDS
+                          *java-types*
+                          1))]
+                     [(zig nix)
+                      (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                      (when *c-types*
+                        (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+                     [(shell)
+                      (sci-send/string
+                        ed
+                        SCI_SETKEYWORDS
+                        *shell-keywords*
+                        0)]
+                     [else (void)])
+                   (let loop ([i 0])
+                     (when (<= i 127)
+                       (sci-send/string
+                         ed
+                         SCI_STYLESETFONT
+                         *default-font-family*
+                         i)
+                       (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                       (loop (+ i 1))))
+                   (restore-margin-colors! ed)
+                   (qt-enable-code-folding! ed)))))))
   (def (qt-reapply-highlighting! ed buf)
        (let ([lang (buffer-lexer-lang buf)])
          (when lang
-           (let ([lexer-name (and (not (memq
-                                         lang
-                                         '(dired repl eshell)))
-                                  (language->lexer-name lang))])
-             (cond
-               [(eq? lang 'org)
-                (apply-base-theme! ed)
-                (sci-send ed 4033 0)
-                (qt-setup-org-styles! ed)
-                (let ([text (qt-plain-text-edit-text ed)])
-                  (qt-org-highlight-buffer-async! ed text))]
-               [lexer-name
-                (qt-scintilla-set-lexer-language! ed lexer-name)
-                (case lang
-                  [(c)
-                   (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-                   (when *c-types*
-                     (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
-                  [(javascript)
-                   (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
-                   (when *js-builtins*
-                     (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1))]
-                  [(go)
-                   (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
-                   (when *go-types*
-                     (sci-send/string ed SCI_SETKEYWORDS *go-types* 1))]
-                  [(rust)
-                   (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
-                   (when *rust-types*
-                     (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1))]
-                  [(java haskell swift elixir)
-                   (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
-                   (when *java-types*
-                     (sci-send/string ed SCI_SETKEYWORDS *java-types* 1))]
-                  [(zig nix)
-                   (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-                   (when *c-types*
-                     (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
-                  [(shell)
-                   (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0)]
-                  [else (void)])
-                (restore-margin-colors! ed)
-                (qt-enable-code-folding! ed)])))))
+           (cond
+             [(eq? lang 'org)
+              (apply-base-theme! ed)
+              (sci-send ed 4033 0)
+              (qt-setup-org-styles! ed)
+              (let ([text (qt-plain-text-edit-text ed)])
+                (qt-org-highlight-buffer-async! ed text))]
+             [(ts-buffer-state buf)
+              (sci-send ed 4033 0)
+              (ts-setup-styles! ed)
+              (let loop ([i 0])
+                (when (<= i 127)
+                  (sci-send/string
+                    ed
+                    SCI_STYLESETFONT
+                    *default-font-family*
+                    i)
+                  (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                  (loop (+ i 1))))
+              (restore-margin-colors! ed)
+              (let ([text (qt-plain-text-edit-text ed)])
+                (when text (ts-buffer-reparse! buf text ed)))]
+             [else
+              (let ([lexer-name (and (not (memq
+                                            lang
+                                            '(dired repl eshell)))
+                                     (language->lexer-name lang))])
+                (when lexer-name
+                  (qt-scintilla-set-lexer-language! ed lexer-name)
+                  (case lang
+                    [(c)
+                     (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                     (when *c-types*
+                       (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+                    [(javascript)
+                     (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+                     (when *js-builtins*
+                       (sci-send/string
+                         ed
+                         SCI_SETKEYWORDS
+                         *js-builtins*
+                         1))]
+                    [(go)
+                     (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+                     (when *go-types*
+                       (sci-send/string ed SCI_SETKEYWORDS *go-types* 1))]
+                    [(rust)
+                     (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
+                     (when *rust-types*
+                       (sci-send/string
+                         ed
+                         SCI_SETKEYWORDS
+                         *rust-types*
+                         1))]
+                    [(java haskell swift elixir)
+                     (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
+                     (when *java-types*
+                       (sci-send/string
+                         ed
+                         SCI_SETKEYWORDS
+                         *java-types*
+                         1))]
+                    [(zig nix)
+                     (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                     (when *c-types*
+                       (sci-send/string ed SCI_SETKEYWORDS *c-types* 1))]
+                    [(shell)
+                     (sci-send/string
+                       ed
+                       SCI_SETKEYWORDS
+                       *shell-keywords*
+                       0)]
+                    [else (void)])
+                  (let loop ([i 0])
+                    (when (<= i 127)
+                      (sci-send/string
+                        ed
+                        SCI_STYLESETFONT
+                        *default-font-family*
+                        i)
+                      (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                      (loop (+ i 1))))
+                  (restore-margin-colors! ed)
+                  (qt-enable-code-folding! ed)))]))))
   (def (qt-enable-code-folding! ed)
        "Enable code folding margin and markers for QScintilla editor.\n   Sets up margin 2 as fold margin with box-tree style markers.\n   QScintilla lexers compute fold levels automatically."
        (sci-send ed SCI_SETMARGINTYPEN 2 SC_MARGIN_SYMBOL)

@@ -2172,14 +2172,14 @@
 (def *chord-first-chars* (make-hash-table))
 
 ;; Time window in milliseconds for second key of chord.
-;; Emacs key-chord.el uses 100ms for two-key and 200ms for same-key chords.
-;; Default 100ms matches Emacs key-chord.el.  At this duration the pending
-;; character delay is imperceptible to humans (<150ms), yet two intentional
-;; simultaneous keystrokes (typically 30-80ms apart) are reliably caught.
-;; The old 500ms default caused visible typing lag since almost every letter
-;; is a chord-start character with 17+ chords defined.
-(def *chord-timeout* 100)
-(defvar! 'chord-timeout 100 "Milliseconds to wait for second key of a chord"
+;; The Qt event loop drains the deferred callback queue every ~50ms.
+;; A 100ms timeout can miss the second key when both keys land in
+;; different drain cycles (worst case: 50ms drain delay × 2 + key interval).
+;; 200ms reliably catches all chord pairs while remaining imperceptible
+;; (below the ~250ms human perception threshold).  Since chords use
+;; uppercase-only characters, the delay only affects Shift+letter typing.
+(def *chord-timeout* 200)
+(defvar! 'chord-timeout 200 "Milliseconds to wait for second key of a chord"
          setter: (lambda (v) (set! *chord-timeout* v))
          type: 'integer type-args: '(50 . 1000) group: 'keybindings)
 
@@ -2191,28 +2191,18 @@
 
 (def (key-chord-define-global two-char-str cmd)
   "Bind a 2-character chord to a command symbol.
-   Case-insensitive: 'MT' matches mt, Mt, mT, and MT.
-   Like Emacs key-chord.el, registers BOTH orderings so the chord fires
-   regardless of which key arrives first (e.g. 'MT' matches M→T and T→M)."
-  (let* ((c1 (string-ref two-char-str 0))
-         (c2 (string-ref two-char-str 1))
-         ;; All case variants of each character
-         (c1s (if (char-alphabetic? c1)
-                (list (char-upcase c1) (char-downcase c1))
-                (list c1)))
-         (c2s (if (char-alphabetic? c2)
-                (list (char-upcase c2) (char-downcase c2))
-                (list c2))))
-    ;; Register all case combinations in both orderings
-    (for-each (lambda (a)
-      (for-each (lambda (b)
-        (hash-put! *chord-map* (string a b) cmd)
-        (when (not (char=? a b))
-          (hash-put! *chord-map* (string b a) cmd))
-        (hash-put! *chord-first-chars* a #t)
-        (hash-put! *chord-first-chars* b #t))
-        c2s))
-      c1s)))
+   Case-sensitive: 'MT' only matches M→T and T→M (uppercase).
+   Registers BOTH orderings so the chord fires regardless of which
+   key arrives first.  Use uppercase chords to avoid interfering
+   with normal lowercase typing in terminal buffers."
+  (let ((c1 (string-ref two-char-str 0))
+        (c2 (string-ref two-char-str 1)))
+    ;; Register both orderings: c1c2 and c2c1
+    (hash-put! *chord-map* (string c1 c2) cmd)
+    (when (not (char=? c1 c2))
+      (hash-put! *chord-map* (string c2 c1) cmd))
+    (hash-put! *chord-first-chars* c1 #t)
+    (hash-put! *chord-first-chars* c2 #t)))
 
 (def (chord-lookup ch1 ch2)
   "Look up a chord by two characters."

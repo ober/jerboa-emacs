@@ -927,10 +927,12 @@
                       (let* ((ctrl? (not (zero? (bitwise-and mods QT_MOD_CTRL))))
                              (alt?  (not (zero? (bitwise-and mods QT_MOD_ALT))))
                              (buf (qt-current-buffer (app-state-frame app))))
-                        ;; Allow C-x and C-g to pass through to jemacs
+                        ;; Allow C-x, C-g, and M-x to pass through to jemacs
                         (and (not (and ctrl? (not alt?)
                                       (or (= code (+ QT_KEY_A 23))    ;; C-x
                                           (= code (+ QT_KEY_A 6)))))  ;; C-g
+                             (not (and alt? (not ctrl?)
+                                      (= code (+ QT_KEY_A 23))))      ;; M-x
                              (let ((send!
                                      (cond
                                        ((terminal-buffer? buf)
@@ -1242,14 +1244,36 @@
                        ;; Auto-repeat filter: Qt reports isAutoRepeat for held keys.
                        ;; Always ignore auto-repeat when a chord is pending — even for
                        ;; same-char chords (EE, GG) since auto-repeat is NOT two presses.
-                       (if autorepeat?
-                         (begin
+                       (cond
+                         (autorepeat?
                            (verbose-log! "CHORD-AUTOREPEAT ignored ch=" (string ch1))
                            (void))  ;; ignore auto-repeat, timer keeps running
-                         ;; Real second key — resolve the chord
-                         (let ((chord-cmd (and ch2 (chord-lookup ch1 ch2))))
+                         ;; Ignore bare modifier key releases (Shift, Ctrl, Alt, Meta).
+                         ;; When typing uppercase chord chars (TM), the Shift release
+                         ;; arrives between T and M — don't let it cancel the chord.
+                         ;; Qt key codes: Shift=#x01000020, Ctrl=#x01000021, Meta=#x01000022,
+                         ;; Alt=#x01000023, Super=#x01000053, Hyper=#x01000054, AltGr=#x01001103
+                         ((and (not ch2)
+                               (or (and (>= code #x01000020) (<= code #x01000025))
+                                   (= code #x01000053) (= code #x01000054)
+                                   (= code #x01001103)))
+                           (verbose-log! "CHORD-IGNORE-MODIFIER pending=" (string ch1)
+                                         " code=" (number->string code))
+                           (void))  ;; ignore bare modifier, timer keeps running
+                         ;; Non-chord key while chord pending (e.g. M-x, C-s, Escape):
+                         ;; cancel the chord, replay the pending key, process current key.
+                         ((not ch2)
+                           (verbose-log! "CHORD-CANCEL-NONCHORD pending=" (string ch1)
+                                         " code=" (number->string code))
+                           (qt-timer-stop! *chord-timer*)
+                           (set! *chord-pending-char* #f)
+                           (do-normal-key! saved-code saved-mods saved-text)
+                           (do-normal-key! code mods text))
+                         (else
+                         ;; Real second printable key — resolve the chord
+                         (let ((chord-cmd (chord-lookup ch1 ch2)))
                            (verbose-log! "CHORD-RESOLVE ch1=" (string ch1)
-                                         " ch2=" (if ch2 (string ch2) "#f")
+                                         " ch2=" (string ch2)
                                          " cmd=" (if chord-cmd (symbol->string chord-cmd) "#f"))
                            (qt-timer-stop! *chord-timer*)
                            (set! *chord-pending-char* #f)
@@ -1267,11 +1291,12 @@
                          ;; No chord — replay saved key then process current key
                          (begin
                            (do-normal-key! saved-code saved-mods saved-text)
-                           (do-normal-key! code mods text)))))))
+                           (do-normal-key! code mods text))))))))
 
                     ;; Case 2: Printable key that could start a chord — save and wait
-                    ;; Skip chord detection in terminal/shell buffers to avoid
-                    ;; letter doubling/dropping when typing fast.
+                    ;; Works in ALL buffer types including terminal/shell.
+                    ;; If the chord doesn't match, the replayed keys go through
+                    ;; do-normal-key! which sends them to the PTY as usual.
                     ;; Skip auto-repeat keys — holding a key should not start a chord.
                     ((and (not autorepeat?)
                           (= (string-length text) 1)
@@ -1279,11 +1304,7 @@
                           (zero? (bitwise-and mods QT_MOD_CTRL))
                           (zero? (bitwise-and mods QT_MOD_ALT))
                           (null? (key-state-prefix-keys (app-state-key-state app)))
-                          (chord-start-char? (string-ref text 0))
-                          (let ((cur-buf (qt-current-buffer fr)))
-                            (not (or (terminal-buffer? cur-buf)
-                                     (shell-buffer? cur-buf)
-                                     (gsh-eshell-buffer? cur-buf)))))
+                          (chord-start-char? (string-ref text 0)))
                      (verbose-log! "CHORD-PENDING ch=" (string (string-ref text 0))
                                    " timeout=" (number->string *chord-timeout*) "ms")
                      (set! *chord-pending-char* (string-ref text 0))

@@ -854,15 +854,18 @@
   (define (qt-app-exec! app . args)
     ;; qt_application_exec is a no-op in the C shim — the Qt event loop
     ;; runs in a background pthread. Poll until the event loop exits.
-    ;; Optional first argument: a tick callback invoked every 50ms iteration.
+    ;; Optional first argument: a tick callback invoked every 10ms iteration.
     ;; This allows the caller to merge periodic work (e.g. master timer) into
     ;; the same Chez thread, eliminating multi-thread GC rendezvous deadlocks.
+    ;; 10ms (100 ticks/sec) keeps key chord detection responsive — at 50ms,
+    ;; the deferred callback queue drains too slowly and chord timers can
+    ;; expire before the second key is processed.
     (ffi-qt-app-exec app)
     (let ((tick (if (null? args) #f (car args))))
       (let loop ()
         (when (= (ffi-qt-app-is-running) 1)
           (when tick (tick))
-          (sleep (make-time 'time-duration 50000000 0))
+          (sleep (make-time 'time-duration 10000000 0))
           (loop)))))
   (define (qt-app-quit! app) (ffi-qt-app-quit app))
   (define (qt-app-process-events! app) (ffi-qt-app-process-events app))

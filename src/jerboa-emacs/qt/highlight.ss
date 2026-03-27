@@ -626,11 +626,16 @@
     (sci-send ed SCI_STYLESETFORE *ts-style-builtin* (rgb->sci r g b)))
   (let-values (((r g b) (face-fg-rgb 'font-lock-preprocessor-face)))
     (sci-send ed SCI_STYLESETFORE *ts-style-preproc* (rgb->sci r g b)))
-  ;; Set background for all tree-sitter styles
-  (let loop ((s 90))
-    (when (<= s 108)
-      (sci-send ed SCI_STYLESETBACK s #x181818)
-      (loop (+ s 1)))))
+  ;; Set background for all tree-sitter styles (1-19) to match default face
+  (let ((default-face (face-get 'default)))
+    (let ((bg (if (and default-face (face-bg default-face))
+                (let-values (((r g b) (parse-hex-color (face-bg default-face))))
+                  (rgb->sci r g b))
+                #x181818)))
+      (let loop ((s 1))
+        (when (<= s 19)
+          (sci-send ed SCI_STYLESETBACK s bg)
+          (loop (+ s 1)))))))
 
 ;;;============================================================================
 ;;; Main setup and teardown
@@ -678,88 +683,133 @@
       ;; Apply full-buffer org highlighting in background
       (let ((text (qt-plain-text-edit-text ed)))
         (qt-org-highlight-buffer-async! ed text)))
-    ;; Use raw Lexilla via SCI_SETLEXERLANGUAGE (not QsciLexer wrappers).
-    ;; QsciLexer wrappers override SCI_STYLESETFORE/BACK, but raw Lexilla
-    ;; respects our style settings, so apply-base-theme! and setup-*-styles! work.
-    (when (and ed lexer-name)
-          ;; Store language in buffer
-          (set! (buffer-lexer-lang buf) lang)
-          ;; Use QsciLexer wrappers for tokenization.
-          ;; The C++ function now also sets dark paper on the lexer object
-          ;; after setLexer(), so the background is dark.
-          ;; QsciLexer's own foreground colors (designed for syntax highlighting)
-          ;; are kept as-is — they provide tokenized coloring out of the box.
-          (qt-scintilla-set-lexer-language! ed lexer-name)
-          ;; Set keywords per language (QsciLexer has some defaults,
-          ;; but we override to ensure completeness)
-          (case lang
-            ((c)
-             (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-             (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
-            ((javascript)
-             (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
-             (when *js-builtins* (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1)))
-            ((go)
-             (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
-             (when *go-types* (sci-send/string ed SCI_SETKEYWORDS *go-types* 1)))
-            ((rust)
-             (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
-             (when *rust-types* (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1)))
-            ((java haskell swift elixir)
-             (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
-             (when *java-types* (sci-send/string ed SCI_SETKEYWORDS *java-types* 1)))
-            ((zig nix)
-             (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-             (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
-            ((shell)
-             (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0))
-            (else (void)))
-          ;; Restore margin + default colors (QsciLexer setLexer() resets them)
-          (restore-margin-colors! ed)
-          ;; Enable code folding
-          (qt-enable-code-folding! ed))))
+    ;; Tree-sitter first: use TS for the 14 supported languages.
+    ;; Falls back to Scintilla Lexilla for unsupported languages.
+    ;; TS highlighting uses SCI_STARTSTYLING/SCI_SETSTYLING directly —
+    ;; no setLexer() call, so fonts are NEVER reset.
+    (when (and ed lang)
+      (let ((ts-name (language->ts-name lang)))
+        (if ts-name
+          ;; Tree-sitter path
+          (begin
+            (set! (buffer-lexer-lang buf) lang)
+            ;; Disable any built-in Scintilla lexer
+            (sci-send ed 4033 0)  ;; SCI_SETILEXER = 0
+            ;; Initialize tree-sitter parser + query (idempotent if already init'd)
+            (when (not (ts-buffer-state buf))
+              (ts-buffer-init! buf ts-name))
+            ;; Configure face colors for TS style IDs 1-19
+            (ts-setup-styles! ed)
+            ;; Force font on all styles (no lexer to interfere)
+            (let loop ((i 0))
+              (when (<= i 127)
+                (sci-send/string ed SCI_STYLESETFONT *default-font-family* i)
+                (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                (loop (+ i 1))))
+            (restore-margin-colors! ed)
+            ;; Initial parse + highlight
+            (let ((text (qt-plain-text-edit-text ed)))
+              (when text (ts-buffer-reparse! buf text ed)))
+            (verbose-log! "highlight: tree-sitter active for " (symbol->string lang)))
+          ;; Lexilla fallback for unsupported languages
+          (when lexer-name
+            (set! (buffer-lexer-lang buf) lang)
+            (qt-scintilla-set-lexer-language! ed lexer-name)
+            (case lang
+              ((c)
+               (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+               (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
+              ((javascript)
+               (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+               (when *js-builtins* (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1)))
+              ((go)
+               (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+               (when *go-types* (sci-send/string ed SCI_SETKEYWORDS *go-types* 1)))
+              ((rust)
+               (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
+               (when *rust-types* (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1)))
+              ((java haskell swift elixir)
+               (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
+               (when *java-types* (sci-send/string ed SCI_SETKEYWORDS *java-types* 1)))
+              ((zig nix)
+               (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+               (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
+              ((shell)
+               (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0))
+              (else (void)))
+            ;; Re-apply font after setLexer() resets all styles
+            (let loop ((i 0))
+              (when (<= i 127)
+                (sci-send/string ed SCI_STYLESETFONT *default-font-family* i)
+                (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                (loop (+ i 1))))
+            (restore-margin-colors! ed)
+            (qt-enable-code-folding! ed)))))))
 
 ;; Re-apply stored highlighting to a specific editor widget.
-;; Called when a buffer is displayed in a new split/window — the lexer
-;; must be set per-widget since QScintilla lexers are widget-local.
+;; Called when a buffer is displayed in a new split/window — styles
+;; must be set per-widget since QScintilla styles are widget-local.
 (def (qt-reapply-highlighting! ed buf)
   (let ((lang (buffer-lexer-lang buf)))
     (when lang
-      (let ((lexer-name (and (not (memq lang '(dired repl eshell)))
-                             (language->lexer-name lang))))
-        (cond
-          ((eq? lang 'org)
-           (apply-base-theme! ed)
-           (sci-send ed 4033 0)  ;; SCI_SETILEXER — disable built-in lexer
-           (qt-setup-org-styles! ed)
-           (let ((text (qt-plain-text-edit-text ed)))
-             (qt-org-highlight-buffer-async! ed text)))
-          (lexer-name
-           (qt-scintilla-set-lexer-language! ed lexer-name)
-           (case lang
-             ((c)
-              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-              (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
-             ((javascript)
-              (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
-              (when *js-builtins* (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1)))
-             ((go)
-              (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
-              (when *go-types* (sci-send/string ed SCI_SETKEYWORDS *go-types* 1)))
-             ((rust)
-              (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
-              (when *rust-types* (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1)))
-             ((java haskell swift elixir)
-              (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
-              (when *java-types* (sci-send/string ed SCI_SETKEYWORDS *java-types* 1)))
-             ((zig nix)
-              (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
-              (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
-             ((shell)
-              (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0))
-             (else (void)))
-           (restore-margin-colors! ed)
-           (qt-enable-code-folding! ed)))))))
+      (cond
+        ;; Org mode: manual styling
+        ((eq? lang 'org)
+         (apply-base-theme! ed)
+         (sci-send ed 4033 0)
+         (qt-setup-org-styles! ed)
+         (let ((text (qt-plain-text-edit-text ed)))
+           (qt-org-highlight-buffer-async! ed text)))
+        ;; Tree-sitter path: buffer has TS state
+        ((ts-buffer-state buf)
+         (sci-send ed 4033 0)  ;; Disable built-in lexer
+         (ts-setup-styles! ed)
+         ;; Force font on all styles (no lexer reset!)
+         (let loop ((i 0))
+           (when (<= i 127)
+             (sci-send/string ed SCI_STYLESETFONT *default-font-family* i)
+             (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+             (loop (+ i 1))))
+         (restore-margin-colors! ed)
+         ;; Re-highlight from existing parse tree
+         (let ((text (qt-plain-text-edit-text ed)))
+           (when text (ts-buffer-reparse! buf text ed))))
+        ;; Lexilla fallback
+        (else
+         (let ((lexer-name (and (not (memq lang '(dired repl eshell)))
+                                (language->lexer-name lang))))
+           (when lexer-name
+             (qt-scintilla-set-lexer-language! ed lexer-name)
+             (case lang
+               ((c)
+                (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
+               ((javascript)
+                (sci-send/string ed SCI_SETKEYWORDS *js-keywords* 0)
+                (when *js-builtins* (sci-send/string ed SCI_SETKEYWORDS *js-builtins* 1)))
+               ((go)
+                (sci-send/string ed SCI_SETKEYWORDS *go-keywords* 0)
+                (when *go-types* (sci-send/string ed SCI_SETKEYWORDS *go-types* 1)))
+               ((rust)
+                (sci-send/string ed SCI_SETKEYWORDS *rust-keywords* 0)
+                (when *rust-types* (sci-send/string ed SCI_SETKEYWORDS *rust-types* 1)))
+               ((java haskell swift elixir)
+                (sci-send/string ed SCI_SETKEYWORDS *java-keywords* 0)
+                (when *java-types* (sci-send/string ed SCI_SETKEYWORDS *java-types* 1)))
+               ((zig nix)
+                (sci-send/string ed SCI_SETKEYWORDS *c-keywords* 0)
+                (when *c-types* (sci-send/string ed SCI_SETKEYWORDS *c-types* 1)))
+               ((shell)
+                (sci-send/string ed SCI_SETKEYWORDS *shell-keywords* 0))
+               (else (void)))
+             ;; Re-apply font after setLexer() resets
+             (let loop ((i 0))
+               (when (<= i 127)
+                 (sci-send/string ed SCI_STYLESETFONT *default-font-family* i)
+                 (sci-send ed SCI_STYLESETSIZE i *default-font-size*)
+                 (loop (+ i 1))))
+             (restore-margin-colors! ed)
+             (qt-enable-code-folding! ed))))))))
 
 ;;;============================================================================
 ;;; Code folding margin setup

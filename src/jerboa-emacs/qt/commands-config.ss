@@ -178,18 +178,14 @@
             (sort fonts string<?)))))))
 
 (def (apply-font-to-all-editors! app)
-  "Apply the current global font family and size to all open editors."
+  "Apply the current global font family and size to all open editors.
+   Does NOT re-apply highlighting — just forces font on all 128 styles."
   (let ((fr (app-state-frame app)))
     (for-each
       (lambda (win)
-        (let* ((ed (qt-edit-window-editor win))
-               (buf (qt-edit-window-buffer win)))
-          ;; Re-apply highlighting (restores syntax colors)
-          (when buf
-            (qt-setup-highlighting! app buf))
+        (let ((ed (qt-edit-window-editor win)))
           ;; Force font family and size on ALL styles (0-127).
-          ;; QsciLexer's setLexer() controls style fonts, so we must override
-          ;; each style individually — SCI_STYLECLEARALL would wipe syntax colors.
+          ;; Must be done per-widget because QScintilla styles are per-widget.
           (let loop ((i 0))
             (when (<= i 127)
               (sci-send/string ed SCI_STYLESETFONT *default-font-family* i)

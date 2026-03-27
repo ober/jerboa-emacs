@@ -206,13 +206,11 @@
                    '("Monospace" "Courier" "Monaco")
                    (sort fonts string<?)))))))
   (def (apply-font-to-all-editors! app)
-       "Apply the current global font family and size to all open editors."
+       "Apply the current global font family and size to all open editors.\n   Does NOT re-apply highlighting — just forces font on all 128 styles."
        (let ([fr (app-state-frame app)])
          (for-each
            (lambda (win)
-             (let* ([ed (qt-edit-window-editor win)]
-                    [buf (qt-edit-window-buffer win)])
-               (when buf (qt-setup-highlighting! app buf))
+             (let ([ed (qt-edit-window-editor win)])
                (let loop ([i 0])
                  (when (<= i 127)
                    (sci-send/string

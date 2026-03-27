@@ -900,6 +900,11 @@
                                                                                                    (= code
                                                                                                       (+ QT_KEY_A
                                                                                                          6)))))
+                                                                                     (not (and alt?
+                                                                                               (not ctrl?)
+                                                                                               (= code
+                                                                                                  (+ QT_KEY_A
+                                                                                                     23))))
                                                                                      (let ([send! (cond
                                                                                                     [(terminal-buffer?
                                                                                                        buf)
@@ -1588,60 +1593,90 @@
                                                              (string-ref
                                                                text
                                                                0))])
-                                              (if autorepeat?
-                                                  (begin
-                                                    (verbose-log!
-                                                      "CHORD-AUTOREPEAT ignored ch="
-                                                      (string ch1))
-                                                    (void))
-                                                  (let ([chord-cmd (and ch2
-                                                                        (chord-lookup
-                                                                          ch1
-                                                                          ch2))])
-                                                    (verbose-log! "CHORD-RESOLVE ch1="
-                                                      (string ch1) " ch2="
-                                                      (if ch2
-                                                          (string ch2)
-                                                          "#f")
-                                                      " cmd="
-                                                      (if chord-cmd
-                                                          (symbol->string
-                                                            chord-cmd)
-                                                          "#f"))
-                                                    (qt-timer-stop!
-                                                      *chord-timer*)
-                                                    (set! *chord-pending-char*
-                                                      #f)
-                                                    (if chord-cmd
-                                                        (begin
-                                                          (execute-command!
-                                                            app
-                                                            chord-cmd)
-                                                          (qt-update-visual-decorations!
-                                                            (qt-current-editor
-                                                              (app-state-frame
-                                                                app)))
-                                                          (qt-update-mark-selection!
-                                                            app)
-                                                          (qt-modeline-update!
-                                                            app)
-                                                          (qt-tabbar-update!
-                                                            app)
-                                                          (qt-update-frame-title!
-                                                            app)
-                                                          (qt-echo-draw!
-                                                            (app-state-echo
-                                                              app)
-                                                            echo-label))
-                                                        (begin
-                                                          (do-normal-key!
-                                                            saved-code
-                                                            saved-mods
-                                                            saved-text)
-                                                          (do-normal-key!
-                                                            code
-                                                            mods
-                                                            text))))))]
+                                              (cond
+                                                [autorepeat?
+                                                 (verbose-log!
+                                                   "CHORD-AUTOREPEAT ignored ch="
+                                                   (string ch1))
+                                                 (void)]
+                                                [(and (not ch2)
+                                                      (or (and (>= code
+                                                                   16777248)
+                                                               (<= code
+                                                                   16777253))
+                                                          (= code 16777299)
+                                                          (= code 16777300)
+                                                          (= code
+                                                             16781571)))
+                                                 (verbose-log!
+                                                   "CHORD-IGNORE-MODIFIER pending="
+                                                   (string ch1)
+                                                   " code="
+                                                   (number->string code))
+                                                 (void)]
+                                                [(not ch2)
+                                                 (verbose-log!
+                                                   "CHORD-CANCEL-NONCHORD pending="
+                                                   (string ch1)
+                                                   " code="
+                                                   (number->string code))
+                                                 (qt-timer-stop!
+                                                   *chord-timer*)
+                                                 (set! *chord-pending-char*
+                                                   #f)
+                                                 (do-normal-key!
+                                                   saved-code
+                                                   saved-mods
+                                                   saved-text)
+                                                 (do-normal-key!
+                                                   code
+                                                   mods
+                                                   text)]
+                                                [else
+                                                 (let ([chord-cmd (chord-lookup
+                                                                    ch1
+                                                                    ch2)])
+                                                   (verbose-log! "CHORD-RESOLVE ch1="
+                                                     (string ch1) " ch2="
+                                                     (string ch2) " cmd="
+                                                     (if chord-cmd
+                                                         (symbol->string
+                                                           chord-cmd)
+                                                         "#f"))
+                                                   (qt-timer-stop!
+                                                     *chord-timer*)
+                                                   (set! *chord-pending-char*
+                                                     #f)
+                                                   (if chord-cmd
+                                                       (begin
+                                                         (execute-command!
+                                                           app
+                                                           chord-cmd)
+                                                         (qt-update-visual-decorations!
+                                                           (qt-current-editor
+                                                             (app-state-frame
+                                                               app)))
+                                                         (qt-update-mark-selection!
+                                                           app)
+                                                         (qt-modeline-update!
+                                                           app)
+                                                         (qt-tabbar-update!
+                                                           app)
+                                                         (qt-update-frame-title!
+                                                           app)
+                                                         (qt-echo-draw!
+                                                           (app-state-echo
+                                                             app)
+                                                           echo-label))
+                                                       (begin
+                                                         (do-normal-key!
+                                                           saved-code
+                                                           saved-mods
+                                                           saved-text)
+                                                         (do-normal-key!
+                                                           code
+                                                           mods
+                                                           text))))]))]
                                            [(and (not autorepeat?)
                                                  (= (string-length text) 1)
                                                  (> (char->integer
@@ -1660,15 +1695,7 @@
                                                      (app-state-key-state
                                                        app)))
                                                  (chord-start-char?
-                                                   (string-ref text 0))
-                                                 (let ([cur-buf (qt-current-buffer
-                                                                  fr)])
-                                                   (not (or (terminal-buffer?
-                                                              cur-buf)
-                                                            (shell-buffer?
-                                                              cur-buf)
-                                                            (gsh-eshell-buffer?
-                                                              cur-buf)))))
+                                                   (string-ref text 0)))
                                             (verbose-log! "CHORD-PENDING ch="
                                               (string (string-ref text 0))
                                               " timeout="
