@@ -94,6 +94,11 @@
 ;; Minimum milliseconds between vterm renders (vtscreen → set-text!)
 (def *vterm-render-interval-ms* 33)
 
+;; Maximum bytes of PTY data to process per master-timer tick.
+;; Prevents flooding commands (find ~/ -ls) from blocking the Qt event loop.
+;; Excess data stays in the channel for the next tick (~50ms later).
+(def *pty-batch-budget* 65536)
+
 ;; Maximum number of characters to keep in pre-pty scrollback text
 (def *vterm-scrollback-limit* 100000)
 
@@ -381,6 +386,9 @@
 (def *master-timer-tick-fn* #f)
 (def *pty-poll-logged?* #f)
 
+;; Qt application object — set by qt-do-init!, used for qt-app-process-events!
+(def *qt-app-ref* #f)
+
 ;; Which-key state — show available bindings after prefix key delay
 (def *which-key-timer* #f)
 (def *which-key-pending-keymap* #f)
@@ -570,6 +578,10 @@
                 (vtscreen-feed! vt data)
                 ;; Cap scrollback to prevent unbounded growth
                 (vterm-cap-scrollback! ts)
+                ;; Let Qt process pending events (key presses, etc.) so the UI
+                ;; stays responsive even when terminal output is flooding.
+                (when *qt-app-ref*
+                  (qt-app-process-events! *qt-app-ref*))
                 ;; Only render to the widget if enough time has elapsed
                 (when (vterm-render-due? ts)
                   (if (not (hash-ref *vterm-initialized* ts #f))
@@ -1364,32 +1376,42 @@
                                   (hash-put! *vterm-initialized* ts #f)))
                               (ed-loop (cdr wins))))))))
                   (when (and ts (terminal-pty-busy? ts))
-                    ;; Batch all pending data chunks, then render once
-                    (let drain ((chunks []) (done-msg #f))
-                      (let ((msg (terminal-poll-output ts)))
-                        (cond
-                          ((not msg)
-                           ;; No more messages — render accumulated data
-                           (if (pair? chunks)
-                             (let ((combined (apply string-append (reverse chunks))))
-                               (verbose-log! "PTY-BATCH: " (number->string (string-length combined)) " bytes")
-                               (qt-poll-terminal-pty-batch! fr buf ts combined))
-                             ;; No new data — flush any throttled render
-                             (when (and (terminal-state-vtscreen ts)
-                                        (hash-ref *vterm-initialized* ts #f)
-                                        (vterm-render-due? ts))
-                               (qt-poll-terminal-pty-batch! fr buf ts "")))
-                           (when done-msg
-                             (qt-poll-terminal-pty-msg! fr buf ts done-msg)))
-                          ((eq? (car msg) 'data)
-                           (drain (cons (cdr msg) chunks) done-msg))
-                          (else
-                           ;; 'done message — render data first, then handle done
-                           (when (pair? chunks)
-                             (let ((combined (apply string-append (reverse chunks))))
-                               (verbose-log! "PTY-BATCH+DONE: " (number->string (string-length combined)) " bytes")
-                               (qt-poll-terminal-pty-batch! fr buf ts combined)))
-                           (qt-poll-terminal-pty-msg! fr buf ts msg)))))))))
+                    ;; Batch pending data chunks up to a byte budget, then render.
+                    ;; Cap prevents flooding commands (find ~/ -ls) from blocking
+                    ;; the Qt event loop — excess data stays in the channel for
+                    ;; the next tick.
+                    (let drain ((chunks []) (bytes 0) (done-msg #f))
+                      (if (and (> bytes 0) (>= bytes *pty-batch-budget*))
+                        ;; Budget exhausted — render what we have, leave rest for next tick
+                        (let ((combined (apply string-append (reverse chunks))))
+                          (verbose-log! "PTY-BATCH-CAP: " (number->string (string-length combined)) " bytes (capped)")
+                          (qt-poll-terminal-pty-batch! fr buf ts combined))
+                        (let ((msg (terminal-poll-output ts)))
+                          (cond
+                            ((not msg)
+                             ;; No more messages — render accumulated data
+                             (if (pair? chunks)
+                               (let ((combined (apply string-append (reverse chunks))))
+                                 (verbose-log! "PTY-BATCH: " (number->string (string-length combined)) " bytes")
+                                 (qt-poll-terminal-pty-batch! fr buf ts combined))
+                               ;; No new data — flush any throttled render
+                               (when (and (terminal-state-vtscreen ts)
+                                          (hash-ref *vterm-initialized* ts #f)
+                                          (vterm-render-due? ts))
+                                 (qt-poll-terminal-pty-batch! fr buf ts "")))
+                             (when done-msg
+                               (qt-poll-terminal-pty-msg! fr buf ts done-msg)))
+                            ((eq? (car msg) 'data)
+                             (drain (cons (cdr msg) chunks)
+                                    (+ bytes (string-length (cdr msg)))
+                                    done-msg))
+                            (else
+                             ;; 'done message — render data first, then handle done
+                             (when (pair? chunks)
+                               (let ((combined (apply string-append (reverse chunks))))
+                                 (verbose-log! "PTY-BATCH+DONE: " (number->string (string-length combined)) " bytes")
+                                 (qt-poll-terminal-pty-batch! fr buf ts combined)))
+                             (qt-poll-terminal-pty-msg! fr buf ts msg))))))))))
             (buffer-list))
           ;; Poll chat buffers (Claude CLI)
           (for-each
@@ -1784,6 +1806,7 @@
   ;; Also disable accessibility (AT-SPI) as defense-in-depth.
   (setenv "QT_ACCESSIBILITY" "0")
   (let ((qt-app (qt-app-create)))
+    (set! *qt-app-ref* qt-app)
     (try
       ;; Run initialization synchronously before entering the event loop.
       ;; The primordial thread is pinned to processor 0, so it will always
