@@ -552,14 +552,17 @@ echo OK"
 -ltree-sitter-java -ltree-sitter-css -ltree-sitter-html \
 -ltree-sitter-lua -ltree-sitter-scheme"
                           ts-shim-obj ts-queries-obj ts-lib-dir ts-gram-dir))
+         (crypto-stub (if (file-exists? "/tmp/jemacs-build/crypto_stub.o")
+                       "/tmp/jemacs-build/crypto_stub.o" ""))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
 jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
-jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o \
+jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o ~a \
 jemacs-qt-pty-shim.o jemacs-qt-vterm-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
 qt_static_symbols.o \
 ~a ~a ~a ~a ~a \
 -L~a -lkernel -llz4 -lz \
 -lvterm -lm -ldl -lpthread -luuid -lncurses -lstdc++ 2>&1"
+                      crypto-stub
                       libqt-shim qt-plugins ts-link qt-libs pcre2-libs
                       chez-dir)))
     (printf "  ~a~n" cmd)

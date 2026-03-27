@@ -24,7 +24,8 @@
       pregexp-split)
     (std misc string) (jerboa-emacs qt sci-shim)
     (jerboa-emacs core) (jerboa-emacs async)
-    (jerboa-emacs treesitter)
+    (jerboa-emacs treesitter) (jerboa-emacs face)
+    (jerboa-emacs themes)
     (only (jerboa-emacs org-parse) org-heading-line?
       org-heading-stars-of-line org-comment-line?
       org-keyword-line? org-table-line? org-block-begin?
@@ -505,140 +506,137 @@
          (sci-send ed SCI_STYLESETFORE 10 (rgb->sci r g b)))
        (sci-send/string ed SCI_SETKEYWORDS *perl-keywords* 0))
   (def (ts-setup-styles! ed)
-   "Configure Scintilla style IDs 90-108 with face colors for tree-sitter."
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-keyword-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-keyword*
-       (rgb->sci r g b))
-     (when (face-has-bold? 'font-lock-keyword-face)
-       (sci-send ed SCI_STYLESETBOLD *ts-style-keyword* 1)))
-   (let-values ([(r g b) (face-fg-rgb 'font-lock-string-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-string*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-comment-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-comment*
-       (rgb->sci r g b))
-     (when (face-has-italic? 'font-lock-comment-face)
-       (sci-send ed SCI_STYLESETITALIC *ts-style-comment* 1)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-function-name-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-function*
-       (rgb->sci r g b)))
-   (let-values ([(r g b) (face-fg-rgb 'font-lock-type-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-type*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-variable-name-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-variable*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-constant-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-constant*
-       (rgb->sci r g b))
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-number*
-       (rgb->sci r g b)))
-   (sci-send ed SCI_STYLESETFORE *ts-style-operator* 14211288)
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-variable-name-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-property*
-       (rgb->sci r g b)))
-   (sci-send
-     ed
-     SCI_STYLESETFORE
-     *ts-style-punctuation*
-     8421504)
-   (let-values ([(r g b) (face-fg-rgb 'font-lock-type-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-attribute*
-       (rgb->sci r g b))
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-constructor*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-constant-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-namespace*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-keyword-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-tag*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-constant-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-escape*
-       (rgb->sci r g b))
-     (sci-send ed SCI_STYLESETBOLD *ts-style-escape* 1))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-function-name-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-label*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-builtin-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-builtin*
-       (rgb->sci r g b)))
-   (let-values ([(r g b)
-                 (face-fg-rgb 'font-lock-preprocessor-face)])
-     (sci-send
-       ed
-       SCI_STYLESETFORE
-       *ts-style-preproc*
-       (rgb->sci r g b)))
-   (let ([default-face (face-get 'default)])
-     (let ([bg (if (and default-face (face-bg default-face))
-                   (let-values ([(r g b)
-                                 (parse-hex-color (face-bg default-face))])
-                     (rgb->sci r g b))
-                   1579032)])
-       (let loop ([s 1])
-         (when (<= s 19)
-           (sci-send ed SCI_STYLESETBACK s bg)
-           (loop (+ s 1)))))))
+       "Configure Scintilla style IDs 1-19 with theme colors for tree-sitter.\n   Reads colors directly from the theme alist rather than through face-get,\n   since face-get can fail to resolve faces in the static binary."
+       (let ([theme (or (theme-get *current-theme*) '())])
+         (def (theme-fg face-name default-hex)
+              (let ([entry (assq face-name theme)])
+                (if (and entry (pair? (cdr entry)))
+                    (let scan ([props (cdr entry)])
+                      (cond
+                        [(null? props) (parse-hex->sci default-hex)]
+                        [(and (keyword? (car props))
+                              (eq? (car props) 'fg:)
+                              (pair? (cdr props)))
+                         (parse-hex->sci (cadr props))]
+                        [else (scan (cdr props))]))
+                    (parse-hex->sci default-hex))))
+         (def (theme-bold? face-name)
+              (let ([entry (assq face-name theme)])
+                (if (and entry (pair? (cdr entry)))
+                    (let scan ([props (cdr entry)])
+                      (cond
+                        [(null? props) #f]
+                        [(and (keyword? (car props))
+                              (eq? (car props) 'bold:)
+                              (pair? (cdr props)))
+                         (cadr props)]
+                        [else (scan (cdr props))]))
+                    #f)))
+         (def (theme-italic? face-name)
+              (let ([entry (assq face-name theme)])
+                (if (and entry (pair? (cdr entry)))
+                    (let scan ([props (cdr entry)])
+                      (cond
+                        [(null? props) #f]
+                        [(and (keyword? (car props))
+                              (eq? (car props) 'italic:)
+                              (pair? (cdr props)))
+                         (cadr props)]
+                        [else (scan (cdr props))]))
+                    #f)))
+         (def (parse-hex->sci hex-str)
+              (let-values ([(r g b) (parse-hex-color hex-str)])
+                (rgb->sci r g b)))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-keyword*
+           (theme-fg 'font-lock-keyword-face "#cc99cc"))
+         (when (theme-bold? 'font-lock-keyword-face)
+           (sci-send ed SCI_STYLESETBOLD *ts-style-keyword* 1))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-string*
+           (theme-fg 'font-lock-string-face "#99cc99"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-comment*
+           (theme-fg 'font-lock-comment-face "#999999"))
+         (when (theme-italic? 'font-lock-comment-face)
+           (sci-send ed SCI_STYLESETITALIC *ts-style-comment* 1))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-function*
+           (theme-fg 'font-lock-function-name-face "#6699cc"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-type*
+           (theme-fg 'font-lock-type-face "#ffcc66"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-variable*
+           (theme-fg 'font-lock-variable-name-face "#f2777a"))
+         (let ([c (theme-fg 'font-lock-constant-face "#f99157")])
+           (sci-send ed SCI_STYLESETFORE *ts-style-constant* c)
+           (sci-send ed SCI_STYLESETFORE *ts-style-number* c))
+         (sci-send ed SCI_STYLESETFORE *ts-style-operator* 14211288)
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-property*
+           (theme-fg 'font-lock-variable-name-face "#f2777a"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-punctuation*
+           8421504)
+         (let ([t (theme-fg 'font-lock-type-face "#ffcc66")])
+           (sci-send ed SCI_STYLESETFORE *ts-style-attribute* t)
+           (sci-send ed SCI_STYLESETFORE *ts-style-constructor* t))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-namespace*
+           (theme-fg 'font-lock-constant-face "#f99157"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-tag*
+           (theme-fg 'font-lock-keyword-face "#cc99cc"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-escape*
+           (theme-fg 'font-lock-constant-face "#f99157"))
+         (sci-send ed SCI_STYLESETBOLD *ts-style-escape* 1)
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-label*
+           (theme-fg 'font-lock-function-name-face "#6699cc"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-builtin*
+           (theme-fg 'font-lock-builtin-face "#66cccc"))
+         (sci-send
+           ed
+           SCI_STYLESETFORE
+           *ts-style-preproc*
+           (theme-fg 'font-lock-preprocessor-face "#f99157"))
+         (let ([bg-entry (assq 'bg theme)])
+           (let ([bg (if (and bg-entry (string? (cdr bg-entry)))
+                         (parse-hex->sci (cdr bg-entry))
+                         1579032)])
+             (let loop ([s 1])
+               (when (<= s 19)
+                 (sci-send ed SCI_STYLESETBACK s bg)
+                 (loop (+ s 1))))))))
   (def (qt-setup-highlighting! app buf)
        (let* ([ext-lang (detect-language (buffer-file-path buf))]
               [shebang-lang (and (not ext-lang)
