@@ -201,12 +201,14 @@
             (vtscreen-clear-damage! vt)
             (hash-put! *vterm-dirty-rows* ts (make-hash-table))
             #f)
-           ((and (> n 4) (not (vtscreen-alt-screen? vt)))
-            ;; Many dirty rows in normal mode — full set-text! is faster than N line replacements.
-            ;; Never do this on alt screen (top, htop, etc.) — set-text! replaces the entire
-            ;; document, causing QScintilla to reset scroll/layout and visibly bounce.
+           ;; Alt-screen (top, htop, vim) OR many dirty rows:
+           ;; Full set-text! is more reliable than per-line replacement.
+           ;; setUpdatesEnabled batching (in the caller) prevents bounce.
+           ((or (vtscreen-alt-screen? vt) (> n 4))
             (let* ((rendered (vtscreen-render vt))
-                   (pre-text (or (terminal-state-pre-pty-text ts) "")))
+                   (pre-text (if (vtscreen-alt-screen? vt)
+                               ""  ;; alt-screen: no pre-PTY prefix
+                               (or (terminal-state-pre-pty-text ts) ""))))
               ;; Update cache for all rows
               (let update ((r2 0))
                 (when (< r2 rows)
@@ -218,7 +220,7 @@
               (qt-plain-text-edit-set-text! ed (string-append pre-text rendered))
               #t))
            (else
-            ;; Per-line replacement — only update rows whose text actually changed
+            ;; Few dirty rows in normal mode — per-line replacement
             (vterm-ensure-lines! ed (+ line-offset rows))
             (let ((dirty-set (make-hash-table)))
               (let loop ((r2 0) (any-changed? #f))
@@ -1385,7 +1387,10 @@
                               (let* ((ed (qt-edit-window-editor (car wins)))
                                      (new-rows (max 2 (sci-send ed 2370 0)))
                                      (widget-w (qt-widget-width ed))
-                                     (new-cols (max 20 (quotient widget-w 8)))
+                                     ;; Measure actual character width using Scintilla
+                                     ;; SCI_TEXTWIDTH(style, text) = 2275
+                                     (char-w (max 1 (sci-send/string ed 2275 "0" 0)))
+                                     (new-cols (max 20 (quotient widget-w char-w)))
                                      (old-rows (vtscreen-rows vt))
                                      (old-cols (vtscreen-cols vt)))
                                 (when (or (not (= new-rows old-rows))

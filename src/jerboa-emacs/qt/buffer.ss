@@ -68,6 +68,12 @@
     ;; subsequent buffers uneditable.
     (let ((ro (sci-send editor SCI_GETREADONLY)))
       (sci-send editor SCI_SETREADONLY ro))
+    ;; Terminal buffers: disable line wrap (each vtscreen row = one visual line).
+    ;; Non-terminal buffers: enable word wrap for readability.
+    ;; Must be set per buffer-switch since wrap is a widget property, not per-document.
+    (let ((lang (buffer-lexer-lang buf)))
+      (qt-plain-text-edit-set-line-wrap! editor
+        (not (or (eq? lang 'terminal) (eq? lang 'shell)))))
     (verbose-log! "qt-buffer-attach! post-buffer-attach-hook begin")
     ;; Toggle image/editor display via hook (set up in qt/app.ss)
     (run-hooks! 'post-buffer-attach-hook editor buf)

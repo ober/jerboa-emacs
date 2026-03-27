@@ -49,6 +49,10 @@
          (doc-editor-register! doc editor)
          (let ([ro (sci-send editor SCI_GETREADONLY)])
            (sci-send editor SCI_SETREADONLY ro))
+         (let ([lang (buffer-lexer-lang buf)])
+           (qt-plain-text-edit-set-line-wrap!
+             editor
+             (not (or (eq? lang 'terminal) (eq? lang 'shell)))))
          (verbose-log!
            "qt-buffer-attach! post-buffer-attach-hook begin")
          (run-hooks! 'post-buffer-attach-hook editor buf)

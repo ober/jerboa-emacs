@@ -173,10 +173,12 @@
                  (vtscreen-clear-damage! vt)
                  (hash-put! *vterm-dirty-rows* ts (make-hash-table))
                  #f]
-                [(and (> n 4) (not (vtscreen-alt-screen? vt)))
+                [(or (vtscreen-alt-screen? vt) (> n 4))
                  (let* ([rendered (vtscreen-render vt)]
-                        [pre-text (or (terminal-state-pre-pty-text ts)
-                                      "")])
+                        [pre-text (if (vtscreen-alt-screen? vt)
+                                      ""
+                                      (or (terminal-state-pre-pty-text ts)
+                                          ""))])
                    (let update ([r2 0])
                      (when (< r2 rows)
                        (vector-set! cache r2 (vtscreen-get-row-text vt r2))
@@ -1788,10 +1790,16 @@
                                                            2370
                                                            0))]
                                           [widget-w (qt-widget-width ed)]
+                                          [char-w (max 1
+                                                       (sci-send/string
+                                                         ed
+                                                         2275
+                                                         "0"
+                                                         0))]
                                           [new-cols (max 20
                                                          (quotient
                                                            widget-w
-                                                           8))]
+                                                           char-w))]
                                           [old-rows (vtscreen-rows vt)]
                                           [old-cols (vtscreen-cols vt)])
                                      (when (or (not (= new-rows old-rows))

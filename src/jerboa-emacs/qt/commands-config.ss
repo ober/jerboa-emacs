@@ -715,6 +715,8 @@ modified so the next save uses the new encoding."
          (buf (qt-buffer-create! name ed #f)))
     ;; Mark as terminal buffer
     (set! (buffer-lexer-lang buf) 'terminal)
+    ;; Terminal: disable line wrap — each vtscreen row must be one visual line
+    (qt-plain-text-edit-set-line-wrap! ed #f)
     ;; Attach buffer to editor
     (verbose-log! "cmd-term: qt-buffer-attach! begin")
     (qt-buffer-attach! ed buf)

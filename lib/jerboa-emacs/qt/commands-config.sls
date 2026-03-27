@@ -871,6 +871,7 @@
                             "*")))]
               [buf (qt-buffer-create! name ed #f)])
          (buffer-lexer-lang-set! buf 'terminal)
+         (qt-plain-text-edit-set-line-wrap! ed #f)
          (verbose-log! "cmd-term: qt-buffer-attach! begin")
          (qt-buffer-attach! ed buf)
          (verbose-log! "cmd-term: qt-buffer-attach! done")
