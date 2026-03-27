@@ -353,6 +353,7 @@ int         qt_last_key_code(void);
 int         qt_last_key_modifiers(void);
 const char* qt_last_key_text(void);
 int         qt_last_key_autorepeat(void);
+void        qt_send_key_event(qt_widget_t w, int type, int key, int modifiers, const char* text);
 
 /* ========== Phase 7: Images, Icons, Radio Buttons, GroupBox ========== */
 
@@ -369,6 +370,8 @@ int         qt_pixmap_height(qt_pixmap_t p);
 int         qt_pixmap_is_null(qt_pixmap_t p);
 qt_pixmap_t qt_pixmap_scaled(qt_pixmap_t p, int w, int h);
 void        qt_pixmap_destroy(qt_pixmap_t p);
+int         qt_pixmap_save(qt_pixmap_t p, const char* path, const char* format);
+qt_pixmap_t qt_widget_grab(qt_widget_t w);
 void        qt_label_set_pixmap(qt_label_t label, qt_pixmap_t pixmap);
 
 /* --- Icon --- */

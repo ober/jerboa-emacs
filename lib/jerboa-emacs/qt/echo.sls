@@ -7,7 +7,7 @@
     qt-echo-read-string-with-completion
     qt-echo-read-file-with-completion
     qt-echo-read-file-with-narrowing qt-echo-read-with-narrowing
-    qt-minibuffer-init! *minibuffer-active?*)
+    qt-minibuffer-init! *minibuffer-active?* *mb-input*)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -45,7 +45,7 @@
              (qt-label-set-text! label ""))))
   (def *mb-container* #f)
   (def *mb-prompt* #f)
-  (def *mb-input* #f)
+  (define *mb-input*--cell (vector #f))
   (def *mb-echo-label* #f)
   (def *mb-qt-app* #f)
   (def *mb-editor* #f)
@@ -677,4 +677,8 @@
       [(set! id val) (vector-set!
                        *minibuffer-active?*--cell
                        0
-                       val)])))
+                       val)]))
+  (define-syntax *mb-input*
+    (identifier-syntax
+      [id (vector-ref *mb-input*--cell 0)]
+      [(set! id val) (vector-set! *mb-input*--cell 0 val)])))

@@ -213,10 +213,12 @@
     qt-on-key-press! qt-on-key-press-consuming!
     qt-last-key-code qt-last-key-modifiers qt-last-key-text
     qt-last-key-autorepeat?
+    qt-send-key-press! qt-send-key-release!
 
     ;; Pixmap
     qt-pixmap-load qt-pixmap-width qt-pixmap-height
     qt-pixmap-null? qt-pixmap-scaled qt-pixmap-destroy!
+    qt-pixmap-save! qt-widget-grab qt-widget-screenshot!
     qt-label-set-pixmap!
 
     ;; Icon
@@ -1560,6 +1562,11 @@
   (define (qt-last-key-text) (ffi-qt-last-key-text))
   (define (qt-last-key-autorepeat?) (not (zero? (ffi-qt-last-key-autorepeat))))
 
+  (define (qt-send-key-press! w key mods text)
+    (ffi-qt-send-key-event w 0 key mods text))
+  (define (qt-send-key-release! w key mods text)
+    (ffi-qt-send-key-event w 1 key mods text))
+
   ;; -----------------------------------------------------------------------
   ;; Pixmap
   ;; -----------------------------------------------------------------------
@@ -1570,6 +1577,14 @@
   (define (qt-pixmap-null? p) (not (zero? (ffi-qt-pixmap-is-null p))))
   (define (qt-pixmap-scaled p w h mode) (ffi-qt-pixmap-scaled p w h mode))
   (define (qt-pixmap-destroy! p) (ffi-qt-pixmap-destroy p))
+  (define (qt-pixmap-save! pm path)
+    (= 1 (ffi-qt-pixmap-save pm path "PNG")))
+  (define (qt-widget-grab w) (ffi-qt-widget-grab w))
+  (define (qt-widget-screenshot! w path)
+    (let ((pm (qt-widget-grab w)))
+      (let ((ok (qt-pixmap-save! pm path)))
+        (qt-pixmap-destroy! pm)
+        ok)))
 
   ;; -----------------------------------------------------------------------
   ;; Icon

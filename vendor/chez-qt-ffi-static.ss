@@ -213,10 +213,12 @@
     ffi-qt-install-key-handler ffi-qt-install-key-handler-consuming
     ffi-qt-last-key-code ffi-qt-last-key-modifiers ffi-qt-last-key-text
     ffi-qt-last-key-autorepeat
+    ffi-qt-send-key-event
 
     ;; Pixmap
     ffi-qt-pixmap-load ffi-qt-pixmap-width ffi-qt-pixmap-height
     ffi-qt-pixmap-is-null ffi-qt-pixmap-scaled ffi-qt-pixmap-destroy
+    ffi-qt-pixmap-save ffi-qt-widget-grab
     ffi-qt-label-set-pixmap
 
     ;; Icon
@@ -1652,6 +1654,8 @@
     (foreign-procedure "qt_last_key_text" () string))
   (define ffi-qt-last-key-autorepeat
     (foreign-procedure "qt_last_key_autorepeat" () int))
+  (define ffi-qt-send-key-event
+    (foreign-procedure "qt_send_key_event" (void* int int int string) void))
 
   ;; -----------------------------------------------------------------------
   ;; Pixmap
@@ -1669,6 +1673,10 @@
     (foreign-procedure "qt_pixmap_scaled" (void* int int int) void*))
   (define ffi-qt-pixmap-destroy
     (foreign-procedure "qt_pixmap_destroy" (void*) void))
+  (define ffi-qt-pixmap-save
+    (foreign-procedure "qt_pixmap_save" (void* string string) int))
+  (define ffi-qt-widget-grab
+    (foreign-procedure "qt_widget_grab" (void*) void*))
 
   ;; -----------------------------------------------------------------------
   ;; Icon

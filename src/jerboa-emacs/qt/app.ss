@@ -85,7 +85,8 @@
         :jerboa-emacs/ipc
         :jerboa-emacs/vtscreen
         (only-in :jerboa-emacs/editor-extra-web *aggressive-indent-mode*)
-        (only-in :jerboa-emacs/debug-repl start-debug-repl! stop-debug-repl! debug-repl-bind!))
+        (only-in :jerboa-emacs/debug-repl start-debug-repl! stop-debug-repl! debug-repl-bind!)
+        :jerboa-emacs/qt/automation)
 
 ;;;============================================================================
 ;;; Vterm render throttle — skip intermediate renders during fast output
@@ -1751,7 +1752,21 @@
                     (lambda ()
                       (let* ((fr (app-state-frame app))
                              (buf (qt-current-buffer fr)))
-                        (if buf (buffer-name buf) "#<none>"))))))))
+                        (if buf (buffer-name buf) "#<none>"))))
+              ;; Automation bridge (for Claude)
+              (cons 'send-keys!
+                    (lambda keys (apply automation-send-keys! app keys)))
+              (cons 'screenshot!
+                    (lambda (path) (automation-screenshot! app path)))
+              (cons 'app-state
+                    (lambda () (automation-state app)))
+              (cons 'wait-echo!
+                    (lambda (pat ms)
+                      (automation-wait! app
+                        (lambda (state)
+                          (let ((mb (cdr (assq 'minibuffer state))))
+                            mb))
+                        ms)))))))
       ;; Tree-sitter debounced re-highlight — re-parse when buffer content changes.
       ;; Tracks last-known text length per buffer to detect modifications.
       (schedule-periodic! 'treesitter-reparse 150
@@ -1807,6 +1822,7 @@
   (setenv "QT_ACCESSIBILITY" "0")
   (let ((qt-app (qt-app-create)))
     (set! *qt-app-ref* qt-app)
+    (automation-set-qt-app! qt-app)
     (try
       ;; Run initialization synchronously before entering the event loop.
       ;; The primordial thread is pinned to processor 0, so it will always

@@ -2212,6 +2212,24 @@ extern "C" int qt_last_key_autorepeat(void) {
     QT_RETURN(int, s_last_key_autorepeat);
 }
 
+extern "C" void qt_send_key_event(qt_widget_t w, int type, int key, int modifiers, const char* text) {
+    QT_NULL_CHECK_VOID(w);
+    // Capture primitives by value; construct QKeyEvent inside the lambda
+    // because QKeyEvent is non-copyable in Qt6.
+    int etype_int = type;
+    int key_int = key;
+    int mods_int = modifiers;
+    std::string text_str(text ? text : "");
+    QT_VOID(
+        QEvent::Type etype = (etype_int == 0) ? QEvent::KeyPress : QEvent::KeyRelease;
+        QKeyEvent ev(etype,
+                     static_cast<Qt::Key>(key_int),
+                     static_cast<Qt::KeyboardModifiers>(mods_int),
+                     QString::fromStdString(text_str));
+        QApplication::sendEvent(static_cast<QWidget*>(w), &ev)
+    );
+}
+
 // ============================================================
 // Pixmap
 // ============================================================
@@ -2247,6 +2265,16 @@ extern "C" qt_pixmap_t qt_pixmap_scaled(qt_pixmap_t p, int w, int h) {
 extern "C" void qt_pixmap_destroy(qt_pixmap_t p) {
     QT_NULL_CHECK_VOID(p);
     QT_VOID(delete static_cast<QPixmap*>(p));
+}
+
+extern "C" int qt_pixmap_save(qt_pixmap_t p, const char* path, const char* format) {
+    QT_NULL_CHECK_RET(p, 0);
+    QT_RETURN(int, static_cast<QPixmap*>(p)->save(QString::fromUtf8(path), format) ? 1 : 0);
+}
+
+extern "C" qt_pixmap_t qt_widget_grab(qt_widget_t w) {
+    QT_NULL_CHECK_RET(w, nullptr);
+    QT_RETURN(qt_pixmap_t, new QPixmap(static_cast<QWidget*>(w)->grab()));
 }
 
 extern "C" void qt_label_set_pixmap(qt_label_t label, qt_pixmap_t pixmap) {

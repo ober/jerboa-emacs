@@ -90,7 +90,7 @@
      start-debug-repl!
      stop-debug-repl!
      debug-repl-bind!)
-   (jerboa core) (jerboa runtime))
+   (jerboa-emacs qt automation) (jerboa core) (jerboa runtime))
   (def *vterm-render-interval-ms* 33)
   (def *pty-batch-budget* 65536)
   (def *vterm-scrollback-limit* 100000)
@@ -2254,7 +2254,22 @@
                   (lambda ()
                     (let* ([fr (app-state-frame app)]
                            [buf (qt-current-buffer fr)])
-                      (if buf (buffer-name buf) "#<none>"))))))))
+                      (if buf (buffer-name buf) "#<none>"))))
+                (cons
+                  'send-keys!
+                  (lambda keys (apply automation-send-keys! app keys)))
+                (cons
+                  'screenshot!
+                  (lambda (path) (automation-screenshot! app path)))
+                (cons 'app-state (lambda () (automation-state app)))
+                (cons
+                  'wait-echo!
+                  (lambda (pat ms)
+                    (automation-wait!
+                      app
+                      (lambda (state)
+                        (let ([mb (cdr (assq 'minibuffer state))]) mb))
+                      ms)))))))
          (schedule-periodic!
            'treesitter-reparse
            150
@@ -2292,6 +2307,7 @@
        (setenv "QT_ACCESSIBILITY" "0")
        (let ([qt-app (qt-app-create)])
          (set! *qt-app-ref* qt-app)
+         (automation-set-qt-app! qt-app)
          (try (qt-do-init! qt-app args)
               (qt-app-exec! qt-app *master-timer-tick-fn*) (lsp-stop!)
               (stop-ipc-server!) (stop-debug-repl!)

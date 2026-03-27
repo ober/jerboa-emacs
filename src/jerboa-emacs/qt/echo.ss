@@ -11,7 +11,8 @@
         qt-echo-read-file-with-narrowing
         qt-echo-read-with-narrowing
         qt-minibuffer-init!
-        *minibuffer-active?*)
+        *minibuffer-active?*
+        *mb-input*)
 
 (import :std/sugar
         :std/sort
