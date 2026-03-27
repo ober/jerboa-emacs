@@ -633,6 +633,12 @@ extern "C" void qt_widget_set_style_sheet(qt_widget_t w, const char* css) {
     QT_VOID(static_cast<QWidget*>(w)->setStyleSheet(QString::fromUtf8(css)));
 }
 
+extern "C" void qt_widget_set_attribute(qt_widget_t w, int attribute, int on) {
+    QT_NULL_CHECK_VOID(w);
+    QT_VOID(static_cast<QWidget*>(w)->setAttribute(
+        static_cast<Qt::WidgetAttribute>(attribute), on != 0));
+}
+
 extern "C" void qt_widget_set_tooltip(qt_widget_t w, const char* text) {
     QT_NULL_CHECK_VOID(w);
     QT_VOID(static_cast<QWidget*>(w)->setToolTip(QString::fromUtf8(text)));

@@ -30,7 +30,7 @@
     qt-widget-set-minimum-width! qt-widget-set-minimum-height!
     qt-widget-set-maximum-width! qt-widget-set-maximum-height!
     qt-widget-set-cursor! qt-widget-unset-cursor!
-    qt-widget-resize! qt-widget-set-style-sheet!
+    qt-widget-resize! qt-widget-set-style-sheet! qt-widget-set-attribute!
     qt-widget-set-tooltip! qt-widget-set-font-size!
     qt-widget-destroy!
 
@@ -928,6 +928,7 @@
   (define (qt-widget-unset-cursor! w) (ffi-qt-widget-unset-cursor w))
   (define (qt-widget-resize! w width height) (ffi-qt-widget-resize w width height))
   (define (qt-widget-set-style-sheet! w css) (ffi-qt-widget-set-style-sheet w css))
+  (define (qt-widget-set-attribute! w attr on) (ffi-qt-widget-set-attribute w attr (if on 1 0)))
   (define (qt-widget-set-tooltip! w text) (ffi-qt-widget-set-tooltip w text))
   (define (qt-widget-set-font-size! w size) (ffi-qt-widget-set-font-size w size))
 

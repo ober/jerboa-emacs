@@ -52,8 +52,12 @@
   "Switch editor to display this buffer's document.
    Re-applies the document's read-only state after swap because QScintilla
    may have a widget-level readOnly flag that persists across document switches.
-   Runs post-buffer-attach-hook to handle image/text display toggling."
+   Runs post-buffer-attach-hook to handle image/text display toggling.
+   All visual changes are batched via setUpdatesEnabled to prevent flicker."
   (verbose-log! "qt-buffer-attach! buf=" (buffer-name buf))
+  ;; Suppress intermediate repaints: doc swap + highlight + font loop
+  ;; are 3 visual changes that would flash in sequence without batching.
+  (qt-widget-set-updates-enabled! editor #f)
   (let ((doc (buffer-doc-pointer buf)))
     (verbose-log! "qt-buffer-attach! SCI_SETDOCPOINTER begin")
     (sci-send editor SCI_SETDOCPOINTER 0 doc)
@@ -67,4 +71,5 @@
     (verbose-log! "qt-buffer-attach! post-buffer-attach-hook begin")
     ;; Toggle image/editor display via hook (set up in qt/app.ss)
     (run-hooks! 'post-buffer-attach-hook editor buf)
-    (verbose-log! "qt-buffer-attach! done buf=" (buffer-name buf))))
+    (verbose-log! "qt-buffer-attach! done buf=" (buffer-name buf)))
+  (qt-widget-set-updates-enabled! editor #t))

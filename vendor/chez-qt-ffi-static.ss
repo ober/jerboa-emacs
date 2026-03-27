@@ -23,7 +23,7 @@
     ffi-qt-widget-set-minimum-width ffi-qt-widget-set-minimum-height
     ffi-qt-widget-set-maximum-width ffi-qt-widget-set-maximum-height
     ffi-qt-widget-set-cursor ffi-qt-widget-unset-cursor
-    ffi-qt-widget-resize ffi-qt-widget-set-style-sheet
+    ffi-qt-widget-resize ffi-qt-widget-set-style-sheet ffi-qt-widget-set-attribute
     ffi-qt-widget-set-tooltip ffi-qt-widget-set-font-size
     ffi-qt-widget-destroy
 
@@ -967,6 +967,8 @@
 
   (define ffi-qt-widget-set-style-sheet
     (foreign-procedure "qt_widget_set_style_sheet" (void* string) void))
+  (define ffi-qt-widget-set-attribute
+    (foreign-procedure "qt_widget_set_attribute" (void* int int) void))
 
   (define ffi-qt-widget-set-tooltip
     (foreign-procedure "qt_widget_set_tooltip" (void* string) void))

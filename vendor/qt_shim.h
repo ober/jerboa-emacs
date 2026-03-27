@@ -46,6 +46,7 @@ void qt_widget_set_cursor(qt_widget_t w, int shape);
 void qt_widget_unset_cursor(qt_widget_t w);
 void qt_widget_resize(qt_widget_t w, int width, int height);
 void qt_widget_set_style_sheet(qt_widget_t w, const char* css);
+void qt_widget_set_attribute(qt_widget_t w, int attribute, int on);
 void qt_widget_set_tooltip(qt_widget_t w, const char* text);
 void qt_widget_set_font_size(qt_widget_t w, int size);
 void qt_widget_destroy(qt_widget_t w);

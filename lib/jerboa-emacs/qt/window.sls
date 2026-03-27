@@ -232,43 +232,43 @@
                          (parse-hex-color (face-bg region-face))])
              (sci-send ed 2068 1 (rgb->sci r g b))))))
   (def (qt-scintilla-setup-editor! ed)
-       "Configure QScintilla editor: theme, margins, caret, save-point signals."
-       (qt-apply-editor-theme! ed)
-       (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
-       (sci-send
-         ed
-         SCI_SETMARGINWIDTHN
-         0
-         (max 30 (* *default-font-size* 3)))
-       (sci-send ed SCI_SETMARGINWIDTHN 1 0)
-       (sci-send ed SCI_SETMARGINWIDTHN 2 0)
-       (sci-send ed SCI_SETMARGINWIDTHN 3 0)
-       (sci-send ed SCI_SETMARGINWIDTHN 4 0)
-       (let ([bg (let ([f (face-get 'default)])
-                   (if (and f (face-bg f))
-                       (let-values ([(r g b)
-                                     (parse-hex-color (face-bg f))])
-                         (rgb->sci r g b))
-                       (rgb->sci 30 30 46)))])
-         (sci-send ed 2290 1 bg)
-         (sci-send ed 2291 1 bg))
-       (sci-send ed SCI_SETCARETLINEVISIBLE 1)
-       (sci-send ed SCI_SETTABWIDTH 4)
-       (sci-send ed SCI_SETINDENT 4) (sci-send ed 2563 1)
-       (sci-send ed 2565 1) (sci-send ed 2608 1)
-       (sci-send ed 2567 1)
-       (qt-on-scintilla-save-point-reached!
-         ed
-         (lambda ()
-           (let* ([doc (sci-send ed SCI_GETDOCPOINTER)]
-                  [buf (hash-get *doc-buffer-map* doc)])
-             (when buf (buffer-modified-set! buf #f)))))
-       (qt-on-scintilla-save-point-left!
-         ed
-         (lambda ()
-           (let* ([doc (sci-send ed SCI_GETDOCPOINTER)]
-                  [buf (hash-get *doc-buffer-map* doc)])
-             (when buf (buffer-modified-set! buf #t))))))
+   "Configure QScintilla editor: theme, margins, caret, save-point signals."
+   (qt-apply-editor-theme! ed)
+   (sci-send ed SCI_SETMARGINTYPEN 0 SC_MARGIN_NUMBER)
+   (sci-send
+     ed
+     SCI_SETMARGINWIDTHN
+     0
+     (max 30 (* *default-font-size* 3)))
+   (sci-send ed SCI_SETMARGINWIDTHN 1 0)
+   (sci-send ed SCI_SETMARGINWIDTHN 2 0)
+   (sci-send ed SCI_SETMARGINWIDTHN 3 0)
+   (sci-send ed SCI_SETMARGINWIDTHN 4 0)
+   (let ([bg (let ([f (face-get 'default)])
+               (if (and f (face-bg f))
+                   (let-values ([(r g b) (parse-hex-color (face-bg f))])
+                     (rgb->sci r g b))
+                   (rgb->sci 30 30 46)))])
+     (sci-send ed 2290 1 bg)
+     (sci-send ed 2291 1 bg))
+   (sci-send ed SCI_SETCARETLINEVISIBLE 1)
+   (sci-send ed SCI_SETTABWIDTH 4)
+   (sci-send ed SCI_SETINDENT 4) (sci-send ed 2563 1)
+   (sci-send ed 2565 1) (sci-send ed 2608 1)
+   (sci-send ed 2567 1) (sci-send ed 2035 1)
+   (sci-send ed 2284 1) (qt-widget-set-attribute! ed 4 #t)
+   (qt-on-scintilla-save-point-reached!
+     ed
+     (lambda ()
+       (let* ([doc (sci-send ed SCI_GETDOCPOINTER)]
+              [buf (hash-get *doc-buffer-map* doc)])
+         (when buf (buffer-modified-set! buf #f)))))
+   (qt-on-scintilla-save-point-left!
+     ed
+     (lambda ()
+       (let* ([doc (sci-send ed SCI_GETDOCPOINTER)]
+              [buf (hash-get *doc-buffer-map* doc)])
+         (when buf (buffer-modified-set! buf #t))))))
   (def (qt-make-new-window! container-parent buf)
        "Create a new qt-edit-window with a fresh editor in a new container.\n   CONTAINER-PARENT is the QSplitter that will own the container."
        (let* ([container (qt-stacked-widget-create
@@ -334,6 +334,7 @@
               [main-win (qt-frame-main-win fr)]
               [saved-w (and main-win (qt-widget-width main-win))]
               [saved-h (and main-win (qt-widget-height main-win))])
+         (when main-win (qt-widget-set-updates-enabled! main-win #f))
          (let ([result (cond
                          [(and parent
                                (= (split-node-orientation parent)
@@ -484,6 +485,7 @@
              (qt-widget-resize! main-win saved-w saved-h))
            (when result (qt-widget-set-focus! result))
            (qt-frame-update-visual-indicators! fr)
+           (when main-win (qt-widget-set-updates-enabled! main-win #t))
            result)))
   (def (qt-frame-split! fr)
        "Split vertically: add a new window below. Returns the new editor."

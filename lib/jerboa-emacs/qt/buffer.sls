@@ -39,8 +39,9 @@
          (hash-remove! *doc-buffer-map* doc)
          (buffer-list-remove! buf)))
   (def (qt-buffer-attach! editor buf)
-       "Switch editor to display this buffer's document.\n   Re-applies the document's read-only state after swap because QScintilla\n   may have a widget-level readOnly flag that persists across document switches.\n   Runs post-buffer-attach-hook to handle image/text display toggling."
+       "Switch editor to display this buffer's document.\n   Re-applies the document's read-only state after swap because QScintilla\n   may have a widget-level readOnly flag that persists across document switches.\n   Runs post-buffer-attach-hook to handle image/text display toggling.\n   All visual changes are batched via setUpdatesEnabled to prevent flicker."
        (verbose-log! "qt-buffer-attach! buf=" (buffer-name buf))
+       (qt-widget-set-updates-enabled! editor #f)
        (let ([doc (buffer-doc-pointer buf)])
          (verbose-log! "qt-buffer-attach! SCI_SETDOCPOINTER begin")
          (sci-send editor SCI_SETDOCPOINTER 0 doc)
@@ -53,4 +54,5 @@
          (run-hooks! 'post-buffer-attach-hook editor buf)
          (verbose-log!
            "qt-buffer-attach! done buf="
-           (buffer-name buf)))))
+           (buffer-name buf)))
+       (qt-widget-set-updates-enabled! editor #t)))

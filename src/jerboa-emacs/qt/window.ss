@@ -282,6 +282,16 @@
   (sci-send ed 2565 1)  ; SCI_SETADDITIONALSELECTIONTYPING
   (sci-send ed 2608 1)  ; SCI_SETADDITIONALCARETSVISIBLE
   (sci-send ed 2567 1)  ; SCI_SETADDITIONALCARETSBLINK
+  ;; Scintilla internal double-buffering — reduces flicker during rapid
+  ;; style changes and text updates (on top of Qt's own double-buffering).
+  (sci-send ed 2035 1)  ; SCI_SETBUFFEREDDRAW = on
+  ;; Two-phase drawing: background painted first, then text on top.
+  ;; Smoother than single-phase for syntax-highlighted text.
+  (sci-send ed 2284 1)  ; SCI_SETTWOPHASEDRAW = on
+  ;; WA_OpaquePaintEvent (4): tell Qt not to clear the widget background
+  ;; before painting.  Prevents "white flash" when widgets are created,
+  ;; resized, or switch documents.
+  (qt-widget-set-attribute! ed 4 #t)
   ;; Save-point signals for modified state tracking
   (qt-on-scintilla-save-point-reached! ed
     (lambda ()
@@ -371,6 +381,9 @@
          (saved-w   (and main-win (qt-widget-width main-win)))
          (saved-h   (and main-win (qt-widget-height main-win))))
 
+    ;; Suppress intermediate repaints during split: widget creation,
+    ;; reparenting, and size equalization flash without batching.
+    (when main-win (qt-widget-set-updates-enabled! main-win #f))
     (let ((result
       (cond
         ;; ── Case A: parent has same orientation — add sibling ─────────────────
@@ -470,6 +483,8 @@
       (when result (qt-widget-set-focus! result))
       ;; Update visual indicators
       (qt-frame-update-visual-indicators! fr)
+      ;; Re-enable updates — single
+      (when main-win (qt-widget-set-updates-enabled! main-win #t))
       result)))
 
 (def (qt-frame-split! fr)
