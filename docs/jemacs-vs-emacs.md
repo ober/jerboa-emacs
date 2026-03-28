@@ -2776,6 +2776,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ace-select-window | :orange_circle: | Select window via ace |
 | ace-display-buffer | :orange_circle: | Display buffer in ace window |
 
+### Round 74 — Paredit & Smartparens
+
+| Feature | Status | Notes |
+|---|---|---|
+| paredit-forward-slurp-sexp | :orange_circle: | Slurp next sexp into current |
+| paredit-backward-slurp-sexp | :orange_circle: | Slurp previous sexp into current |
+| paredit-forward-barf-sexp | :orange_circle: | Barf last sexp out forward |
+| paredit-backward-barf-sexp | :orange_circle: | Barf first sexp out backward |
+| paredit-splice-sexp | :orange_circle: | Remove surrounding delimiters |
+| paredit-splice-sexp-killing-backward | :orange_circle: | Splice, kill backward |
+| paredit-splice-sexp-killing-forward | :orange_circle: | Splice, kill forward |
+| paredit-raise-sexp | :orange_circle: | Replace parent with inner sexp |
+| paredit-convolute-sexp | :orange_circle: | Exchange nesting levels |
+| paredit-join-sexps | :orange_circle: | Join adjacent sexps |
+| paredit-split-sexp | :orange_circle: | Split sexp at point |
+| paredit-wrap-round | :orange_circle: | Wrap sexp in () |
+| paredit-wrap-square | :orange_circle: | Wrap sexp in [] |
+| paredit-wrap-curly | :orange_circle: | Wrap sexp in {} |
+| sp-unwrap-sexp | :orange_circle: | Unwrap sexp |
+| sp-rewrap-sexp | :orange_circle: | Rewrap with different delimiters |
+| sp-forward-sexp | :orange_circle: | Move forward one sexp |
+| sp-backward-sexp | :orange_circle: | Move backward one sexp |
+| sp-select-next-thing | :orange_circle: | Select next thing |
+| sp-select-previous-thing | :orange_circle: | Select previous thing |
+
 ---
 
 ## Recommended Development Roadmap

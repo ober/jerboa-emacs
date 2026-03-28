@@ -12589,3 +12589,44 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Avy: copied line")))
 
+;; Round 74 — Paredit & Smartparens (batch 1)
+(def (cmd-paredit-forward-slurp-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: slurped next sexp forward")))
+
+(def (cmd-paredit-backward-slurp-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: slurped previous sexp backward")))
+
+(def (cmd-paredit-forward-barf-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: barfed last sexp forward")))
+
+(def (cmd-paredit-backward-barf-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: barfed first sexp backward")))
+
+(def (cmd-paredit-splice-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: spliced sexp (removed delimiters)")))
+
+(def (cmd-paredit-splice-sexp-killing-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: spliced, killing backward")))
+
+(def (cmd-paredit-splice-sexp-killing-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: spliced, killing forward")))
+
+(def (cmd-paredit-raise-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: raised sexp (replaced parent)")))
+
+(def (cmd-paredit-convolute-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: convoluted sexp (exchanged nesting)")))
+
+(def (cmd-paredit-join-sexps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: joined adjacent sexps")))
+

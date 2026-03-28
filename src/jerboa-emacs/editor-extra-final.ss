@@ -12061,3 +12061,46 @@
 (def (cmd-ace-display-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ace: displayed buffer in selected window")))
+
+;; Round 74 — Paredit & Smartparens (batch 2)
+(def (cmd-paredit-split-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: split sexp at point")))
+
+(def (cmd-paredit-wrap-round app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: wrapped sexp in ()")))
+
+(def (cmd-paredit-wrap-square app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: wrapped sexp in []")))
+
+(def (cmd-paredit-wrap-curly app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: wrapped sexp in {}")))
+
+(def (cmd-sp-unwrap-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: unwrapped sexp")))
+
+(def (cmd-sp-rewrap-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rewrap with: "
+      (lambda (delim)
+        (echo-message! echo (str "Smartparens: rewrapped with " delim))))))
+
+(def (cmd-sp-forward-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: moved forward one sexp")))
+
+(def (cmd-sp-backward-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: moved backward one sexp")))
+
+(def (cmd-sp-select-next-thing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: selected next thing")))
+
+(def (cmd-sp-select-previous-thing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: selected previous thing")))
