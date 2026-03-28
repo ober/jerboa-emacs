@@ -2355,6 +2355,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | projectile-invalidate-cache | :orange_circle: | Invalidate project cache |
 | projectile-recentf | :orange_circle: | Recent project files |
 
+### Round 57 — Display & Text Manipulation
+
+| Feature | Status | Notes |
+|---|---|---|
+| justify-current-line | :orange_circle: | Justify text on current line |
+| center-paragraph | :orange_circle: | Center all lines in paragraph |
+| toggle-truncate-lines | :orange_circle: | Toggle line truncation vs wrapping |
+| adaptive-wrap-mode | :orange_circle: | Smart visual line wrapping |
+| hl-line-mode | :orange_circle: | Highlight current line |
+| show-trailing-whitespace | :orange_circle: | Visualize trailing whitespace |
+| indicate-empty-lines | :orange_circle: | Mark empty lines at buffer end |
+| indicate-buffer-boundaries | :orange_circle: | Show buffer boundary indicators |
+| fringe-mode | :orange_circle: | Toggle fringe display |
+| text-scale-set | :orange_circle: | Set text scale to specific value |
+| subword-transpose | :orange_circle: | Transpose subwords in camelCase |
+| capitalize-dwim | :orange_circle: | Smart capitalize (DWIM) |
+| upcase-dwim | :orange_circle: | Smart upcase (DWIM) |
+| downcase-dwim | :orange_circle: | Smart downcase (DWIM) |
+| pulse-momentary-highlight-region | :orange_circle: | Flash highlight on region |
+| cursor-sensor-mode | :orange_circle: | React to cursor entering/leaving text |
+| cua-selection-mode | :orange_circle: | CUA-style C-x/C-c/C-v selection |
+| rectangle-mark-mode | :orange_circle: | Rectangular region selection |
+| auto-revert-tail-mode | :orange_circle: | Tail file like tail -f |
+| sgml-tag | :orange_circle: | Insert matched SGML/HTML tags |
+| reveal-mode | :orange_circle: | Show invisible text at point |
+| glasses-separator | :orange_circle: | Set glasses mode separator character |
+
 ---
 
 ## Recommended Development Roadmap

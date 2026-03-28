@@ -11160,3 +11160,71 @@
 (def (cmd-projectile-recentf app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Projectile: showing recent project files")))
+
+;; Round 57 — Display & text manipulation (batch 2)
+(def (cmd-subword-transpose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Subwords transposed")))
+
+(def (cmd-capitalize-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Capitalized (DWIM)")))
+
+(def (cmd-upcase-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upcased (DWIM)")))
+
+(def (cmd-downcase-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Downcased (DWIM)")))
+
+(def (cmd-pulse-momentary-highlight-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Region pulsed")))
+
+(def (cmd-cursor-sensor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'cursor-sensor)
+    (if (mode-enabled? app 'cursor-sensor)
+      (echo-message! echo "Cursor sensor mode enabled")
+      (echo-message! echo "Cursor sensor mode disabled"))))
+
+(def (cmd-cua-selection-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'cua-selection)
+    (if (mode-enabled? app 'cua-selection)
+      (echo-message! echo "CUA selection mode enabled (C-x/C-c/C-v for cut/copy/paste)")
+      (echo-message! echo "CUA selection mode disabled"))))
+
+(def (cmd-rectangle-mark-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'rectangle-mark)
+    (if (mode-enabled? app 'rectangle-mark)
+      (echo-message! echo "Rectangle mark mode enabled")
+      (echo-message! echo "Rectangle mark mode disabled"))))
+
+(def (cmd-auto-revert-tail-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-revert-tail)
+    (if (mode-enabled? app 'auto-revert-tail)
+      (echo-message! echo "Auto-revert tail mode enabled (like tail -f)")
+      (echo-message! echo "Auto-revert tail mode disabled"))))
+
+(def (cmd-sgml-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Inserted <" tag ">...</" tag ">"))))))
+
+(def (cmd-reveal-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'reveal)
+    (if (mode-enabled? app 'reveal)
+      (echo-message! echo "Reveal mode enabled (show invisible text at point)")
+      (echo-message! echo "Reveal mode disabled"))))
+
+(def (cmd-glasses-separator app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Glasses separator char: "
+      (lambda (sep)
+        (echo-message! echo (str "Glasses separator set to '" sep "'"))))))

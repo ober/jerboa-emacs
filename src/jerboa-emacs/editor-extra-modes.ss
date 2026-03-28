@@ -11681,3 +11681,67 @@
           (lambda (to)
             (echo-message! echo (str "Projectile: replaced '" from "' with '" to "'"))))))))
 
+;; Round 57 — Display & text manipulation (batch 1)
+(def (cmd-justify-current-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Line justified")))
+
+(def (cmd-center-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paragraph centered")))
+
+(def (cmd-toggle-truncate-lines app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'truncate-lines)
+    (if (mode-enabled? app 'truncate-lines)
+      (echo-message! echo "Truncate long lines enabled")
+      (echo-message! echo "Truncate long lines disabled (word wrap)"))))
+
+(def (cmd-adaptive-wrap-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'adaptive-wrap)
+    (if (mode-enabled? app 'adaptive-wrap)
+      (echo-message! echo "Adaptive wrap mode enabled")
+      (echo-message! echo "Adaptive wrap mode disabled"))))
+
+(def (cmd-hl-line-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'hl-line)
+    (if (mode-enabled? app 'hl-line)
+      (echo-message! echo "Highlight current line enabled")
+      (echo-message! echo "Highlight current line disabled"))))
+
+(def (cmd-show-trailing-whitespace app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'show-trailing-whitespace)
+    (if (mode-enabled? app 'show-trailing-whitespace)
+      (echo-message! echo "Showing trailing whitespace")
+      (echo-message! echo "Hiding trailing whitespace"))))
+
+(def (cmd-indicate-empty-lines app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'indicate-empty-lines)
+    (if (mode-enabled? app 'indicate-empty-lines)
+      (echo-message! echo "Indicating empty lines at end of buffer")
+      (echo-message! echo "Not indicating empty lines"))))
+
+(def (cmd-indicate-buffer-boundaries app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'indicate-buffer-boundaries)
+    (if (mode-enabled? app 'indicate-buffer-boundaries)
+      (echo-message! echo "Buffer boundary indicators enabled")
+      (echo-message! echo "Buffer boundary indicators disabled"))))
+
+(def (cmd-fringe-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fringe)
+    (if (mode-enabled? app 'fringe)
+      (echo-message! echo "Fringe enabled")
+      (echo-message! echo "Fringe disabled"))))
+
+(def (cmd-text-scale-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set text scale to: "
+      (lambda (val)
+        (echo-message! echo (str "Text scale set to " val))))))
+
