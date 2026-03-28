@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 212 — Evil extensions
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| evil-collection-translate-key | :orange_circle: | Translate key in evil collection |
+| evil-collection-swap-key | :orange_circle: | Swap keys in evil collection |
+| evil-surround-edit | :orange_circle: | Edit surround pair |
+| evil-commentary-yank-line | :orange_circle: | Yank and comment line |
+| evil-matchit-jump | :orange_circle: | Jump to matching item |
+| evil-matchit-jump-items | :orange_circle: | Jump between matching items |
+| evil-numbers-increase | :orange_circle: | Increase number at point |
+| evil-numbers-decrease | :orange_circle: | Decrease number at point |
+| evil-owl-goto-char | :orange_circle: | Owl goto char with hints |
+| evil-owl-goto-char-2 | :orange_circle: | Owl goto 2-char with hints |
+| evil-textobj-tree-sitter-goto-node | :orange_circle: | Goto tree-sitter node |
+| evil-textobj-tree-sitter-select-node | :orange_circle: | Select tree-sitter node |
+| evil-args-forward | :orange_circle: | Move to next argument |
+| evil-args-backward | :orange_circle: | Move to previous argument |
+| evil-args-insert | :orange_circle: | Insert argument |
+| evil-args-delete | :orange_circle: | Delete argument |
+| evil-indent-plus-indent | :orange_circle: | Indent at same level |
+| evil-indent-plus-indent-up | :orange_circle: | Indent at upper level |
+| evil-quick-diff | :orange_circle: | Start quick diff |
+| evil-quick-diff-cancel | :orange_circle: | Cancel quick diff |
+
 ### Round 211 — Treemacs ext
 
 | Command | Status | Description |

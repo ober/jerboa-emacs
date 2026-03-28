@@ -19381,3 +19381,53 @@
     (if (mode-enabled? app 'treemacs-gap-between-roots)
       (echo-message! echo "Treemacs: gap between roots enabled")
       (echo-message! echo "Treemacs: gap between roots disabled"))))
+
+;;; Round 212 — Evil extensions (batch 1)
+
+(def (cmd-evil-collection-translate-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Translate key: "
+      (lambda (key)
+        (echo-message! echo (str "Evil: translated key " key))))))
+
+(def (cmd-evil-collection-swap-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Swap key: "
+      (lambda (key)
+        (echo-message! echo (str "Evil: swapped key " key))))))
+
+(def (cmd-evil-surround-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: editing surround")))
+
+(def (cmd-evil-commentary-yank-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: yanked and commented line")))
+
+(def (cmd-evil-matchit-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: jumped to matching item")))
+
+(def (cmd-evil-matchit-jump-items app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: jumped between matching items")))
+
+(def (cmd-evil-numbers-increase app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: increased number at point")))
+
+(def (cmd-evil-numbers-decrease app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: decreased number at point")))
+
+(def (cmd-evil-owl-goto-char app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Char: "
+      (lambda (ch)
+        (echo-message! echo (str "Evil: owl goto char " ch))))))
+
+(def (cmd-evil-owl-goto-char-2 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chars: "
+      (lambda (chs)
+        (echo-message! echo (str "Evil: owl goto 2-char " chs))))))

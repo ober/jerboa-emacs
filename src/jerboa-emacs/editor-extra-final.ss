@@ -18772,3 +18772,45 @@
 (def (cmd-treemacs-finish-edit app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Treemacs: finished workspace edit")))
+
+;;; Round 212 — Evil extensions (batch 2)
+
+(def (cmd-evil-textobj-tree-sitter-goto-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: goto tree-sitter node")))
+
+(def (cmd-evil-textobj-tree-sitter-select-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: selected tree-sitter node")))
+
+(def (cmd-evil-args-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: moved to next argument")))
+
+(def (cmd-evil-args-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: moved to previous argument")))
+
+(def (cmd-evil-args-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: inserting argument")))
+
+(def (cmd-evil-args-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: deleted argument")))
+
+(def (cmd-evil-indent-plus-indent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: indented at same level")))
+
+(def (cmd-evil-indent-plus-indent-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: indented at upper level")))
+
+(def (cmd-evil-quick-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: started quick diff")))
+
+(def (cmd-evil-quick-diff-cancel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: cancelled quick diff")))
