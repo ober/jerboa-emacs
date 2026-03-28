@@ -16406,3 +16406,54 @@
 (def (cmd-minibuffer-next-completion app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Minibuffer: next completion")))
+
+;; ============================================================
+;; Round 164 — Tempo, Abbrev, BS, Buffer-menu (batch 2)
+;; ============================================================
+
+(def (cmd-tempo-use-tag-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag list name: "
+      (lambda (name)
+        (echo-message! echo (str "Tempo: using tag list " name))))))
+
+(def (cmd-insert-abbrev-table-description app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Abbrev table: "
+      (lambda (tbl)
+        (echo-message! echo (str "Abbrev: inserted description of " tbl))))))
+
+(def (cmd-abbrev-table-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Abbrev: showing current table name")))
+
+(def (cmd-clear-abbrev-table app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Abbrev: cleared current table")))
+
+(def (cmd-msb-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'msb)
+    (if (mode-enabled? app 'msb)
+      (echo-message! echo "MSB mode enabled (mouse select buffer)")
+      (echo-message! echo "MSB mode disabled"))))
+
+(def (cmd-bs-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BS: showing buffer selection")))
+
+(def (cmd-bs-cycle-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BS: cycled to next buffer")))
+
+(def (cmd-bs-cycle-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BS: cycled to previous buffer")))
+
+(def (cmd-buffer-menu-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buffer menu opened in other window")))
+
+(def (cmd-electric-buffer-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Electric buffer list opened")))

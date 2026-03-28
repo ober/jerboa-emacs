@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 164 — Abbrev, Skeleton, Tempo, Auto-insert, BS
+
+| Feature | Status | Notes |
+|---|---|---|
+| `add-global-abbrev` | :orange_circle: | Add global abbrev |
+| `add-mode-abbrev` | :orange_circle: | Add mode-specific abbrev |
+| `skeleton-pair-insert-maybe` | :orange_circle: | Insert matching pair |
+| `define-skeleton` | :orange_circle: | Define new skeleton |
+| `tempo-complete-tag` | :orange_circle: | Complete tempo tag |
+| `tempo-define-template` | :orange_circle: | Define tempo template |
+| `tempo-insert-template` | :orange_circle: | Insert tempo template |
+| `tempo-use-tag-list` | :orange_circle: | Use tag list |
+| `auto-insert` | :orange_circle: | Auto-insert template |
+| `define-auto-insert` | :orange_circle: | Define auto-insert rule |
+| `hippie-expand-try-functions-list` | :orange_circle: | Show try-functions |
+| `insert-abbrev-table-description` | :orange_circle: | Insert table description |
+| `abbrev-table-name` | :orange_circle: | Show table name |
+| `clear-abbrev-table` | :orange_circle: | Clear abbrev table |
+| `msb-mode` | :orange_circle: | Mouse select buffer mode |
+| `bs-show` | :orange_circle: | Buffer selection |
+| `bs-cycle-next` | :orange_circle: | Next buffer |
+| `bs-cycle-previous` | :orange_circle: | Previous buffer |
+| `buffer-menu-other-window` | :orange_circle: | Buffer menu other window |
+| `electric-buffer-list` | :orange_circle: | Electric buffer list |
+
 ### Round 163 — Icomplete, Minibuffer, Recentf Extended
 
 | Feature | Status | Notes |

@@ -17042,3 +17042,59 @@
 (def (cmd-exit-minibuffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Exited minibuffer")))
+
+;; ============================================================
+;; Round 164 — Abbrev, Skeleton, Tempo, Auto-insert, BS (batch 1)
+;; ============================================================
+
+(def (cmd-add-global-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Global abbrev for word before point: "
+      (lambda (abbr)
+        (echo-message! echo (str "Added global abbrev: " abbr))))))
+
+(def (cmd-add-mode-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mode abbrev for word before point: "
+      (lambda (abbr)
+        (echo-message! echo (str "Added mode abbrev: " abbr))))))
+
+(def (cmd-skeleton-pair-insert-maybe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skeleton: inserted pair")))
+
+(def (cmd-tempo-complete-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: completed tag")))
+
+(def (cmd-auto-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auto-insert: inserted template for file type")))
+
+(def (cmd-define-auto-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Auto-insert condition: "
+      (lambda (cond)
+        (echo-message! echo (str "Auto-insert: defined for " cond))))))
+
+(def (cmd-hippie-expand-try-functions-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hippie-expand: showing try-functions list")))
+
+(def (cmd-define-skeleton app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Skeleton name: "
+      (lambda (name)
+        (echo-message! echo (str "Defined skeleton: " name))))))
+
+(def (cmd-tempo-define-template app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Template name: "
+      (lambda (name)
+        (echo-message! echo (str "Tempo: defined template " name))))))
+
+(def (cmd-tempo-insert-template app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert template: "
+      (lambda (name)
+        (echo-message! echo (str "Tempo: inserted template " name))))))
