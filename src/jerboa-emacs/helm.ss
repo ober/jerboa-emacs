@@ -47,7 +47,10 @@
   *helm-candidate-limit*
   *helm-follow-delay*
   *orderless-mode*
-  initials-match?)
+  initials-match?
+
+  ;; Annotation hook (for marginalia)
+  *helm-annotate-fn*)
 
 (import :std/sugar
         :std/sort
@@ -66,6 +69,11 @@
 ;; Dynamic parameter: set to current pattern during helm-filter-source.
 ;; Volatile sources (e.g. grep) can read this to use the pattern as a search query.
 (def *helm-current-pattern* (make-parameter ""))
+
+;; Annotation hook for marginalia: (or (-> source-name display-str string) #f)
+;; When set, appends annotation suffix to candidate display strings.
+;; Higher-level code (editor-extra-helpers) sets this based on marginalia-mode.
+(def *helm-annotate-fn* #f)
 
 ;;;============================================================================
 ;;; Data structures
@@ -244,7 +252,10 @@
          (real-fn (helm-source-real-fn source))
          (use-fuzzy? (helm-source-fuzzy? source))
          (limit (or (helm-source-candidate-limit source) *helm-candidate-limit*)))
-    (let* ((scored
+    (let* ((src-name (helm-source-name source))
+           (annotate (and *helm-annotate-fn*
+                          (lambda (s) (*helm-annotate-fn* src-name s))))
+           (scored
              (filter-map
                (lambda (raw)
                  (let* ((display-str (if display-fn (display-fn raw) raw))
@@ -253,7 +264,11 @@
                                  0
                                  (helm-multi-match pattern display-str use-fuzzy?))))
                    (and (>= score 0)
-                        (cons score (make-helm-candidate display-str real-val source)))))
+                        (cons score (make-helm-candidate
+                                      (if annotate
+                                        (string-append display-str (annotate display-str))
+                                        display-str)
+                                      real-val source)))))
                raw-candidates))
            (sorted (if (string=? pattern "")
                      scored  ;; preserve original order when no pattern

@@ -1385,4 +1385,7 @@
   (register-command! 'ifconfig cmd-net-ifconfig)
   (register-command! 'nslookup cmd-net-nslookup)
   (register-command! 'netstat cmd-net-netstat)
+  ;; Perspective management
+  (register-command! 'persp-list cmd-persp-list)
+  (register-command! 'persp-kill cmd-persp-kill)
 )

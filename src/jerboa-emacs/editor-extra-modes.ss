@@ -1365,6 +1365,7 @@
 (def (cmd-marginalia-mode app)
   "Toggle marginalia annotations — show extra info with completions."
   (let ((on (toggle-mode! 'marginalia)))
+    (if on (marginalia-enable!) (marginalia-disable!))
     (echo-message! (app-state-echo app) (if on "Marginalia: on" "Marginalia: off"))))
 
 ;;; Embark target detection — shared between embark-act and embark-dwim
@@ -1591,12 +1592,36 @@
   "Describe key — delegates to describe-key."
   (execute-command! app 'describe-key))
 
-;; Diff-hl — delegates to git-gutter
+;; Diff-hl — real TUI git-gutter integration
 (def (cmd-diff-hl-mode app)
-  "Toggle diff-hl mode — shows VCS changes in margin."
-  (let ((on (toggle-mode! 'diff-hl)))
-    (when on (git-gutter-refresh! app))
-    (echo-message! (app-state-echo app) (if on "Diff-hl: on" "Diff-hl: off"))))
+  "Toggle diff-hl mode — shows VCS changes in margin using Scintilla markers."
+  (let* ((fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file-path (and buf (buffer-file-path buf)))
+         (buf-name (and buf (buffer-name buf)))
+         (echo (app-state-echo app)))
+    (if (not file-path)
+      (echo-error! echo "Buffer has no file for diff-hl")
+      (if *tui-git-gutter-active*
+        ;; Turn off
+        (begin
+          (tui-git-gutter-clear-markers! ed)
+          (send-message ed SCI_SETMARGINWIDTHN *tui-gutter-margin-num* 0)
+          (set! *tui-git-gutter-active* #f)
+          (toggle-mode! 'diff-hl)
+          (echo-message! echo "Diff-hl OFF"))
+        ;; Turn on
+        (begin
+          (toggle-mode! 'diff-hl)
+          (git-gutter-refresh! app)
+          (let ((hunks (or (hash-get *git-gutter-hunks* buf-name) '())))
+            (tui-git-gutter-setup-margin! ed)
+            (tui-git-gutter-apply-markers! ed hunks)
+            (set! *tui-git-gutter-active* #t)
+            (echo-message! echo
+              (string-append "Diff-hl ON: " (number->string (length hunks)) " hunk(s)"))))))))
 
 ;; Wgrep — editable grep results
 (def *wgrep-original-lines* '())
@@ -1756,6 +1781,36 @@
           (filter (lambda (n) (not (string=? n name))) existing))
         (echo-message! (app-state-echo app)
           (string-append "Removed " name " from " *current-perspective*))))))
+
+(def (cmd-persp-list app)
+  "List all perspectives with buffer counts."
+  (let* ((echo (app-state-echo app))
+         (names (hash-keys *perspectives*))
+         (lines (map (lambda (name)
+                       (let* ((bufs (or (hash-get *perspectives* name) '()))
+                              (marker (if (string=? name *current-perspective*) " *" "")))
+                         (string-append name marker " (" (number->string (length bufs)) " buffers)")))
+                     names)))
+    (if (null? lines)
+      (echo-message! echo (string-append "Current: " *current-perspective* " (no saved perspectives)"))
+      (open-output-buffer app "*Perspectives*"
+        (string-append "Perspectives:\n\n"
+          (string-join lines "\n") "\n\nCurrent: " *current-perspective* "\n")))))
+
+(def (cmd-persp-kill app)
+  "Kill a named perspective."
+  (let* ((echo (app-state-echo app))
+         (names (hash-keys *perspectives*))
+         (name (app-read-string app "Kill perspective: ")))
+    (when (and name (not (string-empty? name)))
+      (cond
+        ((string=? name *current-perspective*)
+         (echo-error! echo "Cannot kill active perspective"))
+        ((hash-key? *perspectives* name)
+         (hash-remove! *perspectives* name)
+         (echo-message! echo (string-append "Killed perspective: " name)))
+        (else
+         (echo-error! echo (string-append "No perspective: " name)))))))
 
 ;; Popper — popup management
 (def (cmd-popper-toggle-latest app)
