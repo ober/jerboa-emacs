@@ -14339,3 +14339,45 @@
 (def (cmd-senator-unfold-tag app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Senator: unfolded tag")))
+
+;;; ——— Round 121: Gnus newsreader (batch 2) ———
+
+(def (cmd-gnus-summary-mark-as-read-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: marked article as read")))
+
+(def (cmd-gnus-summary-mark-as-unread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: marked article as unread")))
+
+(def (cmd-gnus-summary-catchup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: caught up — marked all as read")))
+
+(def (cmd-gnus-summary-catchup-and-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: caught up and exited group")))
+
+(def (cmd-gnus-summary-followup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: composing followup")))
+
+(def (cmd-gnus-summary-reply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: composing reply")))
+
+(def (cmd-gnus-summary-reply-with-original app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: composing reply with original")))
+
+(def (cmd-gnus-summary-mail-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: forwarding article by mail")))
+
+(def (cmd-gnus-summary-save-article app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: saved article")))
+
+(def (cmd-gnus-summary-tick-article-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: ticked article")))

@@ -3991,6 +3991,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 121 — Gnus Newsreader
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| gnus-group-get-new-news | :orange_circle: | Check for new news in all groups |
+| gnus-group-read-group | :orange_circle: | Enter a newsgroup |
+| gnus-group-list-all-groups | :orange_circle: | List all available groups |
+| gnus-group-list-groups | :orange_circle: | List subscribed groups |
+| gnus-group-subscribe-by-regexp | :orange_circle: | Subscribe to groups matching regexp |
+| gnus-group-unsubscribe-group | :orange_circle: | Unsubscribe from current group |
+| gnus-summary-next-article | :orange_circle: | Go to next article |
+| gnus-summary-prev-article | :orange_circle: | Go to previous article |
+| gnus-summary-next-unread-article | :orange_circle: | Go to next unread article |
+| gnus-summary-scroll-up | :orange_circle: | Scroll article up |
+| gnus-summary-mark-as-read-forward | :orange_circle: | Mark article as read and advance |
+| gnus-summary-mark-as-unread | :orange_circle: | Mark article as unread |
+| gnus-summary-catchup | :orange_circle: | Mark all articles as read |
+| gnus-summary-catchup-and-exit | :orange_circle: | Catchup and exit group |
+| gnus-summary-followup | :orange_circle: | Post a followup |
+| gnus-summary-reply | :orange_circle: | Reply to article |
+| gnus-summary-reply-with-original | :orange_circle: | Reply with original text quoted |
+| gnus-summary-mail-forward | :orange_circle: | Forward article by mail |
+| gnus-summary-save-article | :orange_circle: | Save article to file |
+| gnus-summary-tick-article-forward | :orange_circle: | Tick article and advance |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

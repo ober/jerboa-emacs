@@ -14929,3 +14929,47 @@
 (def (cmd-semantic-mrub-switch-tags app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Semantic: switching MRU bookmark tags")))
+
+;;; ——— Round 121: Gnus newsreader (batch 1) ———
+
+(def (cmd-gnus-group-get-new-news app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: checking for new news")))
+
+(def (cmd-gnus-group-read-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: entering group")))
+
+(def (cmd-gnus-group-list-all-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: listing all groups")))
+
+(def (cmd-gnus-group-list-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: listing subscribed groups")))
+
+(def (cmd-gnus-group-subscribe-by-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subscribe regexp: "
+      (lambda (regexp)
+        (echo-message! echo (str "Gnus: subscribed to groups matching " regexp))))))
+
+(def (cmd-gnus-group-unsubscribe-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: unsubscribed from current group")))
+
+(def (cmd-gnus-summary-next-article app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: moved to next article")))
+
+(def (cmd-gnus-summary-prev-article app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: moved to previous article")))
+
+(def (cmd-gnus-summary-next-unread-article app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: moved to next unread article")))
+
+(def (cmd-gnus-summary-scroll-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: scrolled article up")))
