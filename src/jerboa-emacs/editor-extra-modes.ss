@@ -7510,3 +7510,240 @@
                                "\n\nFocus on your work!\n"
                                "Use M-x pomodoro-check to see remaining time.\n"))
       (echo-message! echo (str "Pomodoro started: " minutes " minutes")))))
+
+;; ===== Round 19 Batch 1 =====
+
+;; --- Feature 1: Tic Tac Toe ---
+
+(def (cmd-tic-tac-toe app)
+  "Play tic-tac-toe against the computer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*tic-tac-toe*"))
+         (board (make-vector 9 #\space)))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (render (lambda ()
+                     (str "=== Tic Tac Toe ===\n\n"
+                          " " (vector-ref board 0) " | " (vector-ref board 1) " | " (vector-ref board 2) "\n"
+                          "---+---+---\n"
+                          " " (vector-ref board 3) " | " (vector-ref board 4) " | " (vector-ref board 5) "\n"
+                          "---+---+---\n"
+                          " " (vector-ref board 6) " | " (vector-ref board 7) " | " (vector-ref board 8) "\n\n"
+                          "Positions: 1-9 (top-left to bottom-right)\n"
+                          "Use M-x ttt-move to make a move.\n"))))
+      (editor-set-text ed (render))
+      (echo-message! echo "Tic-tac-toe! Use M-x ttt-move"))))
+
+;; --- Feature 2: Rock Paper Scissors ---
+
+(def (cmd-rock-paper-scissors app)
+  "Play rock-paper-scissors against the computer."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (choice (echo-read-string echo "Your choice [rock/paper/scissors]: " row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let* ((player (string-downcase (string-trim choice)))
+             (options '("rock" "paper" "scissors"))
+             (computer (list-ref options (random 3))))
+        (if (not (member player options))
+          (echo-message! echo "Invalid choice. Use: rock, paper, or scissors")
+          (let ((result (cond
+                          ((string=? player computer) "Draw!")
+                          ((and (string=? player "rock") (string=? computer "scissors")) "You win!")
+                          ((and (string=? player "paper") (string=? computer "rock")) "You win!")
+                          ((and (string=? player "scissors") (string=? computer "paper")) "You win!")
+                          (else "Computer wins!"))))
+            (echo-message! echo (str "You: " player " | Computer: " computer " | " result))))))))
+
+;; --- Feature 3: Dice Roller ---
+
+(def (cmd-dice-roller app)
+  "Roll dice (e.g., 2d6, 1d20, 3d8+5)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Dice (e.g. 2d6, 1d20+5): " row width)))
+    (when (and input (not (string-empty? input)))
+      (let ((spec (string-downcase (string-trim input))))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Parse error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "python3 -c '"
+                                 "import re,random,sys;"
+                                 "m=re.match(r\"(\\d+)d(\\d+)([+-]\\d+)?\",sys.argv[1]);"
+                                 "n,d,mod=int(m[1]),int(m[2]),int(m[3] or 0);"
+                                 "rolls=[random.randint(1,d) for _ in range(n)];"
+                                 "print(f\"Rolls: {rolls} + {mod} = {sum(rolls)+mod}\")"
+                                 "' " (shell-quote spec) " 2>/dev/null")
+                            'block (native-transcoder))))
+              (close-port si)
+              (let ((result (get-line so)))
+                (close-port so) (close-port se)
+                (if (eof-object? result)
+                  (echo-message! echo "Could not parse dice notation")
+                  (echo-message! echo (string-trim result)))))))))))
+
+;; --- Feature 4: Coin Flip ---
+
+(def (cmd-coin-flip app)
+  "Flip a coin (heads or tails)."
+  (let* ((echo (app-state-echo app))
+         (result (if (= (random 2) 0) "Heads" "Tails")))
+    (echo-message! echo (str "Coin flip: " result "!"))))
+
+;; --- Feature 5: Towers of Hanoi ---
+
+(def (cmd-towers-of-hanoi app)
+  "Visualize the Towers of Hanoi puzzle."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (n-str (echo-read-string echo "Number of disks (default 4): " row width))
+         (n (or (and n-str (not (string-empty? n-str)) (string->number (string-trim n-str))) 4))
+         (new-buf (create-buffer "*hanoi*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (moves '()))
+      ;; Solve hanoi and collect moves
+      (let solve ((num n) (from "A") (to "C") (aux "B"))
+        (when (> num 0)
+          (solve (- num 1) from aux to)
+          (set! moves (cons (str "Move disk " num " from " from " to " to) moves))
+          (solve (- num 1) aux to from)))
+      (let ((text (str "=== Towers of Hanoi (" n " disks) ===\n\n"
+                       "Minimum moves: " (- (expt 2 n) 1) "\n\n"
+                       (string-join (reverse moves) "\n") "\n")))
+        (editor-set-text ed text)
+        (echo-message! echo (str "Hanoi: " (length moves) " moves"))))))
+
+;; --- Feature 6: System Info ---
+
+(def (cmd-system-info app)
+  "Show comprehensive system information."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*system-info*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        (str "echo '=== System Information ==='; echo;"
+                             "echo 'Hostname:' $(hostname);"
+                             "echo 'Kernel:' $(uname -r);"
+                             "echo 'OS:' $(cat /etc/os-release 2>/dev/null | grep PRETTY_NAME | cut -d= -f2 | tr -d '\"');"
+                             "echo 'Uptime:' $(uptime -p);"
+                             "echo 'CPU:' $(grep 'model name' /proc/cpuinfo | head -1 | cut -d: -f2);"
+                             "echo 'Cores:' $(nproc);"
+                             "echo 'Memory:' $(free -h | awk '/Mem:/{print $3\"/\"$2}');"
+                             "echo 'Disk:' $(df -h / | awk 'NR==2{print $3\"/\"$2\" (\"$5\" used)\"}');"
+                             "echo 'Shell:' $SHELL;"
+                             "echo 'User:' $(whoami)")
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((new-ed (edit-window-editor (current-window frame))))
+                    (editor-set-text new-ed (string-join (reverse lines) "\n")))
+                  (echo-message! echo "System info loaded"))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 7: CPU Info ---
+
+(def (cmd-cpu-info app)
+  "Display CPU information."
+  (let* ((echo (app-state-echo app)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "lscpu | head -20" 'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((frame (app-state-frame app))
+                         (new-buf (create-buffer "*cpu-info*")))
+                    (switch-to-buffer frame new-buf)
+                    (let ((new-ed (edit-window-editor (current-window frame))))
+                      (editor-set-text new-ed (str "=== CPU Info ===\n\n" (string-join (reverse lines) "\n") "\n")))
+                    (echo-message! echo "CPU info loaded")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 8: Free Memory ---
+
+(def (cmd-free-memory app)
+  "Show memory usage."
+  (let* ((echo (app-state-echo app)))
+    (with-catch
+      (lambda (e) (echo-message! echo "Could not read memory info"))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "free -h" 'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (echo-message! echo (string-join (reverse lines) " | ")))
+                (loop (cons (string-trim line) lines))))))))))
+
+;; --- Feature 9: Network Interfaces ---
+
+(def (cmd-network-interfaces app)
+  "List network interfaces and IP addresses."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*network*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "ip -brief addr show 2>/dev/null || ifconfig 2>/dev/null"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((new-ed (edit-window-editor (current-window frame))))
+                    (editor-set-text new-ed (str "=== Network Interfaces ===\n\n"
+                                                 (string-join (reverse lines) "\n") "\n")))
+                  (echo-message! echo "Network interfaces loaded"))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 10: Environment Variables ---
+
+(def (cmd-environment-variables app)
+  "Display all environment variables."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*env*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "env | sort" 'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((new-ed (edit-window-editor (current-window frame))))
+                    (editor-set-text new-ed (str "=== Environment Variables ===\n\n"
+                                                 (string-join (reverse lines) "\n") "\n")))
+                  (echo-message! echo (str (length (reverse lines)) " environment variables")))
+                (loop (cons line lines))))))))))

@@ -1486,6 +1486,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Lolcat | :orange_circle: | Rainbow text simulation |
 | Toggle narrow to region | :orange_circle: | Toggle narrowing to selected region |
 | Password store | :orange_circle: | Interact with pass password manager |
+| Tic-tac-toe | :orange_circle: | Two-player tic-tac-toe game |
+| Rock paper scissors | :orange_circle: | Play against the computer |
+| Dice roller | :orange_circle: | Roll dice with notation (2d6, 1d20+5) |
+| Coin flip | :orange_circle: | Flip a coin (heads/tails) |
+| Towers of Hanoi | :orange_circle: | Hanoi puzzle visualization with solution |
+| System info | :orange_circle: | Comprehensive system information |
+| CPU info | :orange_circle: | Display CPU details via lscpu |
+| Free memory | :orange_circle: | Show memory usage via free |
+| Network interfaces | :orange_circle: | List network interfaces and IPs |
+| Environment variables | :orange_circle: | Display sorted env vars |
+| Kernel info | :orange_circle: | Show kernel information via uname |
+| Hostname info | :orange_circle: | Show hostname and domain |
+| List processes tree | :orange_circle: | Process tree visualization via pstree |
+| Systemd status | :orange_circle: | Show systemd service status |
+| Journal log | :orange_circle: | View journalctl logs |
+| Dmesg view | :orange_circle: | View kernel dmesg messages |
+| Installed packages | :orange_circle: | List installed packages (dpkg/rpm/pacman) |
+| Apt search | :orange_circle: | Search apt packages |
+| Connect Four | :orange_circle: | Connect Four board game |
+| Fifteen puzzle | :orange_circle: | 15-puzzle sliding tile game |
 
 ---
 

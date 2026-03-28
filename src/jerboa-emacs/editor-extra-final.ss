@@ -7112,3 +7112,287 @@
                              (echo-message! echo (string-join (reverse lines) " | ")))
                            (loop (cons (string-trim line) lines)))))))))))
           (else (echo-message! echo (str "Unknown action: " act))))))))
+
+;; ===== Round 19 Batch 2 =====
+
+;; --- Feature 11: Kernel Info ---
+
+(def (cmd-kernel-info app)
+  "Show kernel information."
+  (let* ((echo (app-state-echo app)))
+    (with-catch
+      (lambda (e) (echo-message! echo "Could not read kernel info"))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "uname -a" 'block (native-transcoder))))
+          (close-port si)
+          (let ((info (get-line so)))
+            (close-port so) (close-port se)
+            (if (eof-object? info)
+              (echo-message! echo "Kernel info not available")
+              (echo-message! echo (str "Kernel: " (string-trim info))))))))))
+
+;; --- Feature 12: Hostname Info ---
+
+(def (cmd-hostname-info app)
+  "Show hostname and domain information."
+  (let* ((echo (app-state-echo app)))
+    (with-catch
+      (lambda (e) (echo-message! echo "Could not read hostname"))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "hostname -f 2>/dev/null || hostname"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let ((info (get-line so)))
+            (close-port so) (close-port se)
+            (if (eof-object? info)
+              (echo-message! echo "Hostname not available")
+              (echo-message! echo (str "Hostname: " (string-trim info))))))))))
+
+;; --- Feature 13: List Processes Tree ---
+
+(def (cmd-list-processes-tree app)
+  "Show the process tree."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*process-tree*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "pstree -p | head -60" 'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((new-ed (edit-window-editor (current-window frame))))
+                    (editor-set-text new-ed (str "=== Process Tree ===\n\n"
+                                                 (string-join (reverse lines) "\n") "\n")))
+                  (echo-message! echo "Process tree loaded"))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 14: Systemd Status ---
+
+(def (cmd-systemd-status app)
+  "Show systemd service status."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (service (echo-read-string echo "Service name (or blank for overview): " row width)))
+    (let* ((cmd (if (or (not service) (string-empty? service))
+                  "systemctl list-units --type=service --state=running | head -30"
+                  (str "systemctl status " (shell-quote (string-trim service)) " 2>&1")))
+           (new-buf (create-buffer "*systemd*")))
+      (switch-to-buffer frame new-buf)
+      (with-catch
+        (lambda (e) (echo-message! echo (str "systemd error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports cmd 'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((new-ed (edit-window-editor (current-window frame))))
+                      (editor-set-text new-ed (string-join (reverse lines) "\n")))
+                    (echo-message! echo "Systemd status loaded"))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 15: Journal Log ---
+
+(def (cmd-journal-log app)
+  "View journalctl logs."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (lines-str (echo-read-string echo "Lines to show (default 50): " row width))
+         (n (or (and lines-str (not (string-empty? lines-str))
+                     (string->number (string-trim lines-str)))
+                50))
+         (new-buf (create-buffer "*journal*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "journalctl error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports (str "journalctl --no-pager -n " n " 2>/dev/null")
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((new-ed (edit-window-editor (current-window frame))))
+                    (editor-set-text new-ed (str "=== Journal Log (last " n " entries) ===\n\n"
+                                                 (string-join (reverse lines) "\n") "\n")))
+                  (echo-message! echo "Journal log loaded"))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 16: Dmesg View ---
+
+(def (cmd-dmesg-view app)
+  "View kernel dmesg messages."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*dmesg*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "dmesg error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "dmesg --human 2>/dev/null | tail -50 || dmesg | tail -50"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((new-ed (edit-window-editor (current-window frame))))
+                    (editor-set-text new-ed (str "=== Kernel Messages ===\n\n"
+                                                 (string-join (reverse lines) "\n") "\n")))
+                  (echo-message! echo "dmesg loaded"))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 17: Installed Packages ---
+
+(def (cmd-installed-packages app)
+  "List installed packages."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (filter-str (echo-read-string echo "Filter (blank for all, limited to 100): " row width))
+         (new-buf (create-buffer "*packages*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let* ((filter-cmd (if (or (not filter-str) (string-empty? filter-str))
+                             " | head -100"
+                             (str " | grep -i " (shell-quote (string-trim filter-str)) " | head -100")))
+               (cmd (str "dpkg -l 2>/dev/null" filter-cmd
+                         " || rpm -qa 2>/dev/null" filter-cmd
+                         " || pacman -Q 2>/dev/null" filter-cmd)))
+          (let-values (((si so se pid)
+                        (open-process-ports cmd 'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((new-ed (edit-window-editor (current-window frame))))
+                      (editor-set-text new-ed (str "=== Installed Packages ===\n\n"
+                                                   (string-join (reverse lines) "\n") "\n")))
+                    (echo-message! echo (str (length (reverse lines)) " packages")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 18: Apt Search ---
+
+(def (cmd-apt-search app)
+  "Search for packages via apt."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (query (echo-read-string echo "Search packages: " row width)))
+    (when (and query (not (string-empty? query)))
+      (let ((new-buf (create-buffer "*apt-search*")))
+        (switch-to-buffer frame new-buf)
+        (with-catch
+          (lambda (e) (echo-message! echo (str "apt error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "apt-cache search " (shell-quote (string-trim query))
+                                 " 2>/dev/null | head -50")
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (let ((new-ed (edit-window-editor (current-window frame))))
+                        (editor-set-text new-ed (str "=== Apt Search: " query " ===\n\n"
+                                                     (string-join (reverse lines) "\n") "\n")))
+                      (echo-message! echo (str (length (reverse lines)) " packages found")))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 19: Connect Four ---
+
+(def (cmd-connect-four app)
+  "Play Connect Four against the computer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*connect-four*"))
+         (cols 7) (rows 6))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           ;; Empty board
+           (header " 1   2   3   4   5   6   7\n")
+           (separator "+---+---+---+---+---+---+---+\n")
+           (empty-row "|   |   |   |   |   |   |   |\n")
+           (board-text (str "=== Connect Four ===\n\n"
+                            header separator
+                            (apply str (let build ((i 0) (acc '()))
+                                         (if (>= i rows) (reverse acc)
+                                           (build (+ i 1) (cons (str empty-row separator) acc)))))
+                            "\nUse M-x c4-drop to drop a piece (column 1-7).\n")))
+      (editor-set-text ed board-text)
+      (echo-message! echo "Connect Four! Use M-x c4-drop"))))
+
+;; --- Feature 20: Fifteen Puzzle ---
+
+(def (cmd-fifteen-puzzle app)
+  "Play the 15-puzzle sliding tile game."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*fifteen-puzzle*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           ;; Shuffled tiles
+           (tiles (let ((v (make-vector 16 0)))
+                    (let fill ((i 0))
+                      (when (< i 16)
+                        (vector-set! v i i)
+                        (fill (+ i 1))))
+                    ;; Simple shuffle
+                    (let shuffle ((i 15))
+                      (when (> i 0)
+                        (let ((j (random (+ i 1))))
+                          (let ((tmp (vector-ref v i)))
+                            (vector-set! v i (vector-ref v j))
+                            (vector-set! v j tmp)))
+                        (shuffle (- i 1))))
+                    v))
+           (render (lambda (v)
+                     (let build-rows ((row 0) (acc '()))
+                       (if (>= row 4) (string-join (reverse acc) "\n")
+                         (build-rows (+ row 1)
+                           (cons (str "+----+----+----+----+\n| "
+                                      (string-join
+                                        (let build-cols ((col 0) (cs '()))
+                                          (if (>= col 4) (reverse cs)
+                                            (let ((val (vector-ref v (+ (* row 4) col))))
+                                              (build-cols (+ col 1)
+                                                (cons (if (= val 0) "  "
+                                                        (let ((s (number->string val)))
+                                                          (if (< val 10) (str " " s) s)))
+                                                      cs)))))
+                                        " | ")
+                                      " |")
+                                 acc))))))
+           (text (str "=== Fifteen Puzzle ===\n\n"
+                      (render tiles)
+                      "\n+----+----+----+----+\n\n"
+                      "Use M-x puzzle-move to slide a tile.\n"
+                      "Goal: arrange 1-15 in order with blank in bottom-right.\n")))
+      (editor-set-text ed text)
+      (echo-message! echo "Fifteen puzzle! Use M-x puzzle-move"))))
