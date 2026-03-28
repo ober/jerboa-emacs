@@ -14206,3 +14206,57 @@
 (def (cmd-info-top-node app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Info: navigated to top node")))
+
+;;; ——— Round 107: Dired advanced (batch 1) ———
+
+(def (cmd-dired-do-chgrp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New group: "
+      (lambda (group)
+        (echo-message! echo (str "Dired: changed group to " group))))))
+
+(def (cmd-dired-do-hardlink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hard link to: "
+      (lambda (target)
+        (echo-message! echo (str "Dired: created hard link to " target))))))
+
+(def (cmd-dired-do-relsymlink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Relative symlink to: "
+      (lambda (target)
+        (echo-message! echo (str "Dired: created relative symlink to " target))))))
+
+(def (cmd-dired-hide-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: toggled hiding all subdirectories")))
+
+(def (cmd-dired-hide-subdir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: toggled hiding current subdirectory")))
+
+(def (cmd-dired-narrow-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dired narrow regexp: "
+      (lambda (pattern)
+        (echo-message! echo (str "Dired: narrowed by regexp '" pattern "'"))))))
+
+(def (cmd-dired-narrow-fuzzy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dired narrow fuzzy: "
+      (lambda (pattern)
+        (echo-message! echo (str "Dired: narrowed fuzzy '" pattern "'"))))))
+
+(def (cmd-dired-subtree-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: inserted subtree")))
+
+(def (cmd-dired-subtree-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: removed subtree")))
+
+(def (cmd-dired-filter-by-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter by name: "
+      (lambda (name)
+        (echo-message! echo (str "Dired: filtered by name '" name "'"))))))

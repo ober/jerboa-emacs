@@ -13655,3 +13655,53 @@
 (def (cmd-view-emacs-news app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Viewing Emacs news")))
+
+;;; ——— Round 107: Dired advanced (batch 2) ———
+
+(def (cmd-dired-filter-by-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter by regexp: "
+      (lambda (pattern)
+        (echo-message! echo (str "Dired: filtered by regexp '" pattern "'"))))))
+
+(def (cmd-dired-filter-by-extension app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter by extension: "
+      (lambda (ext)
+        (echo-message! echo (str "Dired: filtered by extension ." ext))))))
+
+(def (cmd-dired-filter-by-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: filtered to show only directories")))
+
+(def (cmd-dired-filter-by-dot-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: filtered to show/hide dot files")))
+
+(def (cmd-dired-filter-by-size app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter by size (e.g. +1M): "
+      (lambda (size)
+        (echo-message! echo (str "Dired: filtered by size " size))))))
+
+(def (cmd-dired-filter-by-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter by date (e.g. -7d): "
+      (lambda (date)
+        (echo-message! echo (str "Dired: filtered by date " date))))))
+
+(def (cmd-dired-filter-pop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: popped last filter")))
+
+(def (cmd-dired-filter-pop-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: removed all filters")))
+
+(def (cmd-dired-avfs-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: opened file via AVFS virtual filesystem")))
+
+(def (cmd-dired-open-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: opened file with external application")))

@@ -3639,6 +3639,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | view-emacs-debugging | :orange_circle: | View Emacs debugging info |
 | view-emacs-news | :orange_circle: | View Emacs news |
 
+### Round 107 — Dired Advanced (Filters, Subtrees, Operations)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| dired-do-chgrp | :orange_circle: | Change group of marked files |
+| dired-do-hardlink | :orange_circle: | Create hard links for marked files |
+| dired-do-relsymlink | :orange_circle: | Create relative symlinks |
+| dired-hide-all | :orange_circle: | Toggle hiding all subdirectories |
+| dired-hide-subdir | :orange_circle: | Toggle hiding current subdirectory |
+| dired-narrow-regexp | :orange_circle: | Narrow dired by regexp |
+| dired-narrow-fuzzy | :orange_circle: | Narrow dired by fuzzy match |
+| dired-subtree-insert | :orange_circle: | Insert subdirectory as subtree |
+| dired-subtree-remove | :orange_circle: | Remove subtree listing |
+| dired-filter-by-name | :orange_circle: | Filter by file name |
+| dired-filter-by-regexp | :orange_circle: | Filter by regexp |
+| dired-filter-by-extension | :orange_circle: | Filter by file extension |
+| dired-filter-by-directory | :orange_circle: | Filter to directories only |
+| dired-filter-by-dot-files | :orange_circle: | Filter dot files |
+| dired-filter-by-size | :orange_circle: | Filter by file size |
+| dired-filter-by-date | :orange_circle: | Filter by modification date |
+| dired-filter-pop | :orange_circle: | Pop last filter |
+| dired-filter-pop-all | :orange_circle: | Remove all filters |
+| dired-avfs-open | :orange_circle: | Open via AVFS virtual filesystem |
+| dired-open-file | :orange_circle: | Open with external application |
+
 ---
 
 ## Recommended Development Roadmap
