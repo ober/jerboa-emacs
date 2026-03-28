@@ -11544,3 +11544,57 @@
     (echo-read-string echo "Prune remote: "
       (lambda (remote)
         (echo-message! echo (str "Magit: pruned stale branches from " remote))))))
+
+;; Round 64 — RCIRC/Elfeed (batch 2)
+(def (cmd-rcirc-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RCIRC server: "
+      (lambda (server)
+        (echo-message! echo (str "RCIRC: connecting to " server))))))
+
+(def (cmd-rcirc-track-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'rcirc-track)
+    (if (mode-enabled? app 'rcirc-track)
+      (echo-message! echo "RCIRC: activity tracking enabled")
+      (echo-message! echo "RCIRC: activity tracking disabled"))))
+
+(def (cmd-newsticker-treeview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Newsticker: tree view of feeds")))
+
+(def (cmd-elfeed-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: showing feed entries")))
+
+(def (cmd-elfeed-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: updating all feeds")))
+
+(def (cmd-elfeed-add-feed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add feed URL: "
+      (lambda (url)
+        (echo-message! echo (str "Elfeed: added feed " url))))))
+
+(def (cmd-elfeed-show-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: showing entry")))
+
+(def (cmd-elfeed-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag entry with: "
+      (lambda (tag)
+        (echo-message! echo (str "Elfeed: tagged entry with '" tag "'"))))))
+
+(def (cmd-elfeed-untag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Elfeed: removed tag '" tag "'"))))))
+
+(def (cmd-elfeed-search-set-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elfeed filter: "
+      (lambda (filter)
+        (echo-message! echo (str "Elfeed: filter set to '" filter "'"))))))

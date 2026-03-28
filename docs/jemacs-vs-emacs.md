@@ -2529,6 +2529,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | magit-bundle-create | :orange_circle: | Create git bundle |
 | magit-remote-prune | :orange_circle: | Prune stale remote branches |
 
+### Round 64 — ERC, RCIRC & Elfeed
+
+| Feature | Status | Notes |
+|---|---|---|
+| erc-track-mode | :orange_circle: | Track channel activity |
+| erc-join-channel | :orange_circle: | Join IRC channel |
+| erc-part-channel | :orange_circle: | Leave IRC channel |
+| erc-nick | :orange_circle: | Change IRC nickname |
+| erc-quit | :orange_circle: | Disconnect from server |
+| erc-list-channels | :orange_circle: | List server channels |
+| erc-whois | :orange_circle: | WHOIS query |
+| erc-autojoin-mode | :orange_circle: | Auto-join channels on connect |
+| erc-fill-mode | :orange_circle: | Fill/wrap messages |
+| rcirc | :orange_circle: | Start RCIRC client |
+| rcirc-connect | :orange_circle: | Connect to IRC server |
+| rcirc-track-mode | :orange_circle: | Track RCIRC activity |
+| newsticker-treeview | :orange_circle: | Tree view of news feeds |
+| elfeed-search | :orange_circle: | Browse feed entries |
+| elfeed-update | :orange_circle: | Update all feeds |
+| elfeed-add-feed | :orange_circle: | Add RSS/Atom feed |
+| elfeed-show-entry | :orange_circle: | Show feed entry |
+| elfeed-tag | :orange_circle: | Tag feed entry |
+| elfeed-untag | :orange_circle: | Remove tag from entry |
+| elfeed-search-set-filter | :orange_circle: | Set search filter |
+
 ---
 
 ## Recommended Development Roadmap

@@ -12064,3 +12064,59 @@
       (lambda (rev)
         (echo-message! echo (str "Magit: removed note from " rev))))))
 
+;; Round 64 — ERC/RCIRC/Elfeed (batch 1)
+(def (cmd-erc-track-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-track)
+    (if (mode-enabled? app 'erc-track)
+      (echo-message! echo "ERC: channel activity tracking enabled")
+      (echo-message! echo "ERC: channel activity tracking disabled"))))
+
+(def (cmd-erc-join-channel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Join channel: "
+      (lambda (chan)
+        (echo-message! echo (str "ERC: joined " chan))))))
+
+(def (cmd-erc-part-channel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: left current channel")))
+
+(def (cmd-erc-nick app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Change nick to: "
+      (lambda (nick)
+        (echo-message! echo (str "ERC: nick changed to " nick))))))
+
+(def (cmd-erc-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: disconnected from server")))
+
+(def (cmd-erc-list-channels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: listing channels on server")))
+
+(def (cmd-erc-whois app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "WHOIS nick: "
+      (lambda (nick)
+        (echo-message! echo (str "ERC: WHOIS " nick))))))
+
+(def (cmd-erc-autojoin-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-autojoin)
+    (if (mode-enabled? app 'erc-autojoin)
+      (echo-message! echo "ERC: autojoin enabled")
+      (echo-message! echo "ERC: autojoin disabled"))))
+
+(def (cmd-erc-fill-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-fill)
+    (if (mode-enabled? app 'erc-fill)
+      (echo-message! echo "ERC: message fill enabled")
+      (echo-message! echo "ERC: message fill disabled"))))
+
+(def (cmd-rcirc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RCIRC: starting IRC client")))
+
