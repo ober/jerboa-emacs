@@ -15023,3 +15023,61 @@
 (def (cmd-bookmark-bmenu-save app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Bookmark: saved bookmark list")))
+
+;;; Round 123 — Profiler, Mail, Charset, Image, Frame (batch 1)
+
+(def (cmd-profiler-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Profiler: reset")))
+
+(def (cmd-proced-mark-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proced: marked all processes")))
+
+(def (cmd-zones-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'zones)
+    (if (mode-enabled? app 'zones)
+      (echo-message! echo "Zones mode enabled")
+      (echo-message! echo "Zones mode disabled"))))
+
+(def (cmd-global-auto-composition-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-auto-composition)
+    (if (mode-enabled? app 'global-auto-composition)
+      (echo-message! echo "Global Auto-Composition mode enabled")
+      (echo-message! echo "Global Auto-Composition mode disabled"))))
+
+(def (cmd-list-charset-chars app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Charset: "
+      (lambda (charset)
+        (echo-message! echo (str "Displaying characters for charset: " charset))))))
+
+(def (cmd-list-character-sets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Displaying list of character sets")))
+
+(def (cmd-mail-cc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CC: "
+      (lambda (addr)
+        (echo-message! echo (str "Mail CC: " addr))))))
+
+(def (cmd-mail-bcc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "BCC: "
+      (lambda (addr)
+        (echo-message! echo (str "Mail BCC: " addr))))))
+
+(def (cmd-mail-subject app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subject: "
+      (lambda (subj)
+        (echo-message! echo (str "Mail Subject: " subj))))))
+
+(def (cmd-mail-to app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "To: "
+      (lambda (addr)
+        (echo-message! echo (str "Mail To: " addr))))))

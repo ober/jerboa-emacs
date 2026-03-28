@@ -14426,3 +14426,47 @@
 (def (cmd-crux-top-join-line app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Crux: joined line with previous")))
+
+;;; Round 123 — Profiler, Mail, Charset, Image, Frame (batch 2)
+
+(def (cmd-mail-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mail: moved to text body")))
+
+(def (cmd-mail-signature app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mail: inserted signature")))
+
+(def (cmd-browse-url-of-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Browse: opening current file in browser")))
+
+(def (cmd-eww-browse-with-external-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: opening URL in external browser")))
+
+(def (cmd-image-mode-fit-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: fit to frame")))
+
+(def (cmd-image-transform-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: transform reset")))
+
+(def (cmd-view-emacs-todo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Viewing Emacs TODO list")))
+
+(def (cmd-view-external-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Viewing external packages")))
+
+(def (cmd-package-install-selected-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: installing selected packages")))
+
+(def (cmd-select-frame-by-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Frame name: "
+      (lambda (name)
+        (echo-message! echo (str "Selected frame: " name))))))

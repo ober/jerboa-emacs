@@ -4045,6 +4045,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 123 — Profiler, Mail, Charset, Image, Frame
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| profiler-reset | :orange_circle: | Reset profiler data |
+| proced-mark-all | :orange_circle: | Mark all processes |
+| zones-mode | :orange_circle: | Toggle zones mode |
+| global-auto-composition-mode | :orange_circle: | Toggle global auto-composition |
+| list-charset-chars | :orange_circle: | List characters in charset |
+| list-character-sets | :orange_circle: | List available character sets |
+| mail-cc | :orange_circle: | Set mail CC field |
+| mail-bcc | :orange_circle: | Set mail BCC field |
+| mail-subject | :orange_circle: | Set mail subject |
+| mail-to | :orange_circle: | Set mail To field |
+| mail-text | :orange_circle: | Move to mail text body |
+| mail-signature | :orange_circle: | Insert mail signature |
+| browse-url-of-file | :orange_circle: | Open file in browser |
+| eww-browse-with-external-browser | :orange_circle: | Open URL in external browser |
+| image-mode-fit-frame | :orange_circle: | Fit image to frame |
+| image-transform-reset | :orange_circle: | Reset image transform |
+| view-emacs-todo | :orange_circle: | View Emacs TODO list |
+| view-external-packages | :orange_circle: | View external packages |
+| package-install-selected-packages | :orange_circle: | Install selected packages |
+| select-frame-by-name | :orange_circle: | Select frame by name |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
