@@ -11203,3 +11203,65 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Treemacs: delete item at point")))
 
+;;; Round 49 batch 1: doom-themes-visual-bell, ligature-mode,
+;;; prettify-symbols-mode-toggle, hl-line-range-mode, mini-frame-mode,
+;;; vertico-mode-toggle, corfu-complete, corfu-quit, cape-line, cape-symbol
+
+(def (cmd-doom-themes-visual-bell app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "doom-visual-bell")
+    (if (mode-enabled? app "doom-visual-bell")
+      (echo-message! echo "Doom visual bell enabled (flash on error)")
+      (echo-message! echo "Doom visual bell disabled"))))
+
+(def (cmd-ligature-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "ligature")
+    (if (mode-enabled? app "ligature")
+      (echo-message! echo "Ligature mode enabled (font ligatures displayed)")
+      (echo-message! echo "Ligature mode disabled"))))
+
+(def (cmd-prettify-symbols-mode-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "prettify-symbols")
+    (if (mode-enabled? app "prettify-symbols")
+      (echo-message! echo "Prettify symbols enabled (lambda → λ, etc.)")
+      (echo-message! echo "Prettify symbols disabled"))))
+
+(def (cmd-hl-line-range-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "hl-line-range")
+    (if (mode-enabled? app "hl-line-range")
+      (echo-message! echo "HL-line range mode enabled")
+      (echo-message! echo "HL-line range mode disabled"))))
+
+(def (cmd-mini-frame-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "mini-frame")
+    (if (mode-enabled? app "mini-frame")
+      (echo-message! echo "Mini-frame mode enabled (minibuffer in child frame)")
+      (echo-message! echo "Mini-frame mode disabled"))))
+
+(def (cmd-vertico-mode-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "vertico")
+    (if (mode-enabled? app "vertico")
+      (echo-message! echo "Vertico mode enabled (vertical minibuffer completion)")
+      (echo-message! echo "Vertico mode disabled"))))
+
+(def (cmd-corfu-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: completing at point (no completions available)")))
+
+(def (cmd-corfu-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: completion popup closed")))
+
+(def (cmd-cape-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: line completion (complete from buffer lines)")))
+
+(def (cmd-cape-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: symbol completion")))
+

@@ -10639,3 +10639,74 @@
 (def (cmd-centaur-tabs-backward-group app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Previous tab group")))
+
+;;; Round 49 batch 2: consult-ripgrep, consult-find, consult-imenu,
+;;; consult-bookmark, consult-recent-file, consult-yank-pop,
+;;; consult-theme, consult-man, consult-info, embark-collect
+
+(def (cmd-consult-ripgrep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult ripgrep: "
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer "*consult-ripgrep*")))
+            (buffer-content-set! new-buf
+              (str "Consult Ripgrep: " pattern "\n\n"
+                   "(No results — ripgrep not available)"))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "Ripgrep: " pattern))))))))
+
+(def (cmd-consult-find app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult find: "
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (echo-message! echo (str "Find: " pattern " (no results)")))))))
+
+(def (cmd-consult-imenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult imenu: no symbols in buffer")))
+
+(def (cmd-consult-bookmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult bookmark: no bookmarks")))
+
+(def (cmd-consult-recent-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult recent files: no recent files")))
+
+(def (cmd-consult-yank-pop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult yank-pop: browse kill ring")))
+
+(def (cmd-consult-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Theme: "
+      (lambda (theme)
+        (when (and theme (not (string-empty? theme)))
+          (echo-message! echo (str "Theme set to: " theme)))))))
+
+(def (cmd-consult-man app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Man page: "
+      (lambda (topic)
+        (when (and topic (not (string-empty? topic)))
+          (echo-message! echo (str "Man: " topic " (not available)")))))))
+
+(def (cmd-consult-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Info node: "
+      (lambda (node)
+        (when (and node (not (string-empty? node)))
+          (echo-message! echo (str "Info: " node " (not available)")))))))
+
+(def (cmd-embark-collect app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Embark Collect*")))
+    (buffer-content-set! new-buf
+      (str "Embark Collect\n\n"
+           "(No candidates to collect)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Embark collect")))

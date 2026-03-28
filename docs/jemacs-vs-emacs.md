@@ -2157,6 +2157,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Centaur tabs forward group | :orange_circle: | Next tab group |
 | Centaur tabs backward group | :orange_circle: | Previous tab group |
 
+### Round 49
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Doom themes visual bell | :orange_circle: | Flash modeline on error |
+| Ligature mode | :orange_circle: | Display font ligatures |
+| Prettify symbols mode toggle | :orange_circle: | Replace symbols with Unicode |
+| HL line range mode | :orange_circle: | Highlight line range |
+| Mini frame mode | :orange_circle: | Minibuffer in child frame |
+| Vertico mode toggle | :orange_circle: | Vertical completion UI |
+| Corfu complete | :orange_circle: | Complete at point with corfu |
+| Corfu quit | :orange_circle: | Close corfu popup |
+| Cape line | :orange_circle: | Complete from buffer lines |
+| Cape symbol | :orange_circle: | Complete symbols |
+| Consult ripgrep | :orange_circle: | Search with ripgrep |
+| Consult find | :orange_circle: | Find files with consult |
+| Consult imenu | :orange_circle: | Browse imenu with consult |
+| Consult bookmark | :orange_circle: | Browse bookmarks with consult |
+| Consult recent file | :orange_circle: | Browse recent files |
+| Consult yank pop | :orange_circle: | Browse kill ring |
+| Consult theme | :orange_circle: | Switch theme with preview |
+| Consult man | :orange_circle: | Browse man pages |
+| Consult info | :orange_circle: | Browse info nodes |
+| Embark collect | :orange_circle: | Collect candidates into buffer |
+
 ---
 
 ## Recommended Development Roadmap
