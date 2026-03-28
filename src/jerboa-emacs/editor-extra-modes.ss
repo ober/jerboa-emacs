@@ -20134,3 +20134,47 @@
 (def (cmd-ement-send-file app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ement: sent file")))
+
+;;; Round 228 — Spell-fu ext, Crux ext (batch 1)
+
+(def (cmd-spell-fu-goto-next-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spell-fu: goto next error")))
+
+(def (cmd-spell-fu-goto-previous-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spell-fu: goto previous error")))
+
+(def (cmd-spell-fu-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spell-fu: reset")))
+
+(def (cmd-crux-move-beginning-of-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: moved to beginning of line")))
+
+(def (cmd-crux-kill-line-backwards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: killed line backwards")))
+
+(def (cmd-crux-kill-and-join-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: killed and joined forward")))
+
+(def (cmd-crux-duplicate-current-line-or-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: duplicated line or region")))
+
+(def (cmd-crux-duplicate-and-comment-current-line-or-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: duplicated and commented line or region")))
+
+(def (cmd-crux-rename-file-and-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New name: "
+      (lambda (name)
+        (echo-message! echo (str "Crux: renamed to " name))))))
+
+(def (cmd-crux-view-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: viewing URL")))

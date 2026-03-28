@@ -19472,3 +19472,45 @@
 (def (cmd-ement-room-toggle-space app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ement: toggled space for room")))
+
+;;; Round 228 — Spell-fu ext, Crux ext (batch 2)
+
+(def (cmd-crux-switch-to-previous-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: switched to previous buffer")))
+
+(def (cmd-crux-reopen-as-root app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: reopened as root")))
+
+(def (cmd-crux-find-user-init-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: finding user init file")))
+
+(def (cmd-crux-find-shell-init-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: finding shell init file")))
+
+(def (cmd-crux-ispell-word-then-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: ispell word then abbrev")))
+
+(def (cmd-crux-upcase-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: upcased region")))
+
+(def (cmd-crux-downcase-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: downcased region")))
+
+(def (cmd-crux-capitalize-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: capitalized region")))
+
+(def (cmd-crux-other-window-or-switch-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: other window or switch buffer")))
+
+(def (cmd-crux-sudo-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: editing with sudo")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 228 — Spell-fu ext, Crux ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| spell-fu-goto-next-error | :orange_circle: | Goto next spelling error |
+| spell-fu-goto-previous-error | :orange_circle: | Goto previous spelling error |
+| spell-fu-reset | :orange_circle: | Reset spell-fu |
+| crux-move-beginning-of-line | :orange_circle: | Smart move to beginning of line |
+| crux-kill-line-backwards | :orange_circle: | Kill line backwards |
+| crux-kill-and-join-forward | :orange_circle: | Kill and join forward |
+| crux-duplicate-current-line-or-region | :orange_circle: | Duplicate line or region |
+| crux-duplicate-and-comment-current-line-or-region | :orange_circle: | Duplicate and comment |
+| crux-rename-file-and-buffer | :orange_circle: | Rename file and buffer |
+| crux-view-url | :orange_circle: | View URL |
+| crux-switch-to-previous-buffer | :orange_circle: | Switch to previous buffer |
+| crux-reopen-as-root | :orange_circle: | Reopen file as root |
+| crux-find-user-init-file | :orange_circle: | Find user init file |
+| crux-find-shell-init-file | :orange_circle: | Find shell init file |
+| crux-ispell-word-then-abbrev | :orange_circle: | Ispell word then abbrev |
+| crux-upcase-region | :orange_circle: | Upcase region |
+| crux-downcase-region | :orange_circle: | Downcase region |
+| crux-capitalize-region | :orange_circle: | Capitalize region |
+| crux-other-window-or-switch-buffer | :orange_circle: | Other window or switch buffer |
+| crux-sudo-edit | :orange_circle: | Edit with sudo |
+
 ### Round 227 — Ement (Matrix client)
 
 | Command | Status | Description |
