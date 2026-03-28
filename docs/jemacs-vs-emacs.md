@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 192 — Ediff-ext, Smerge-ext, VC-ext, Diff-ext, Compilation-ext, Highlight-ext, Windmove-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| ediff-backup | :orange_circle: | Compare with backup file |
+| ediff-show-diff-output | :orange_circle: | Show raw diff output |
+| ediff-toggle-multiframe | :orange_circle: | Toggle multiframe display |
+| smerge-diff-base-lower | :orange_circle: | Diff between base and lower |
+| smerge-diff-base-upper | :orange_circle: | Diff between base and upper |
+| vc-annotate-toggle-annotation-visibility | :orange_circle: | Toggle annotation visibility |
+| diff-restrict-view | :orange_circle: | Restrict view to current hunk |
+| diff-ignore-whitespace-hunk | :orange_circle: | Ignore whitespace in hunk |
+| compilation-next-error-function | :orange_circle: | Jump to next compilation error |
+| compilation-set-skip-threshold | :orange_circle: | Set compilation skip threshold |
+| recompile-with-input | :orange_circle: | Recompile with custom command |
+| next-error-select-buffer | :orange_circle: | Select buffer for next-error |
+| highlight-regexp-unique-match | :orange_circle: | Highlight unique regexp matches |
+| highlight-lines-matching-regexp-toggle | :orange_circle: | Toggle line highlight for regexp |
+| unhighlight-regexp-all | :orange_circle: | Remove all regexp highlights |
+| winner-undo-more | :orange_circle: | Undo more window configurations |
+| windmove-display-default-keybindings | :orange_circle: | Set windmove display keybindings |
+| windmove-swap-states-default-keybindings | :orange_circle: | Set windmove swap keybindings |
+| quail-define-rules | :orange_circle: | Define Quail input method rules |
+| prettify-symbols-unprettify-at-point | :orange_circle: | Show unprettified symbol at point |
+
 ### Round 191 — Browse-url-ext, SHR-ext, URL-ext, Calc-ext, Eglot-ext, Electric-ext
 
 | Feature | Status | Notes |

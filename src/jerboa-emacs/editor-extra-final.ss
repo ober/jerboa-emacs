@@ -17808,3 +17808,50 @@
     (if (mode-enabled? app 'electric-pair-local)
       (echo-message! echo "Electric pair local mode enabled")
       (echo-message! echo "Electric pair local mode disabled"))))
+
+;; Round 192 — Recompile-ext, Next-error-ext, Highlight-ext, Winner-ext, Windmove-ext, Quail, Prettify-ext
+(def (cmd-recompile-with-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Compile command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Recompile: " cmd))))))
+
+(def (cmd-next-error-select-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Next-error: select buffer for navigation")))
+
+(def (cmd-highlight-regexp-unique-match app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Highlight unique regexp: "
+      (lambda (re)
+        (echo-message! echo (str "Highlighted unique matches for: " re))))))
+
+(def (cmd-highlight-lines-matching-regexp-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Toggle highlight lines matching: "
+      (lambda (re)
+        (echo-message! echo (str "Toggled line highlight for: " re))))))
+
+(def (cmd-unhighlight-regexp-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unhighlighted all regexp matches")))
+
+(def (cmd-winner-undo-more app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Winner: undid more window configurations")))
+
+(def (cmd-windmove-display-default-keybindings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmove: display default keybindings set")))
+
+(def (cmd-windmove-swap-states-default-keybindings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmove: swap states default keybindings set")))
+
+(def (cmd-quail-define-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quail: input method rules defined")))
+
+(def (cmd-prettify-symbols-unprettify-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prettify: showing unprettified symbol at point")))

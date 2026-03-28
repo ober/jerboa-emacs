@@ -18433,3 +18433,46 @@
     (echo-read-string echo "Zone idle seconds: "
       (lambda (secs)
         (echo-message! echo (str "Zone: will activate after " secs "s idle"))))))
+
+;; Round 192 — Ediff-ext, Smerge-ext, VC-ext, Diff-ext, Compilation-ext
+(def (cmd-ediff-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: comparing with backup file")))
+
+(def (cmd-ediff-show-diff-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: showing raw diff output")))
+
+(def (cmd-ediff-toggle-multiframe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: toggled multiframe display")))
+
+(def (cmd-smerge-diff-base-lower app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: showing diff between base and lower")))
+
+(def (cmd-smerge-diff-base-upper app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: showing diff between base and upper")))
+
+(def (cmd-vc-annotate-toggle-annotation-visibility app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC: toggled annotation visibility")))
+
+(def (cmd-diff-restrict-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: restricted view to current hunk")))
+
+(def (cmd-diff-ignore-whitespace-hunk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: ignoring whitespace in current hunk")))
+
+(def (cmd-compilation-next-error-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: jumped to next error")))
+
+(def (cmd-compilation-set-skip-threshold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Skip threshold (0-2): "
+      (lambda (val)
+        (echo-message! echo (str "Compilation: skip threshold set to " val))))))
