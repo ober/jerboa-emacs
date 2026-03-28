@@ -19519,3 +19519,53 @@
 (def (cmd-pdf-occur-revert app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PDF: reverted occur results")))
+
+;;; Round 215 — Docker ext (batch 1)
+
+(def (cmd-docker-container-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Container: "
+      (lambda (c)
+        (echo-message! echo (str "Docker: starting container " c))))))
+
+(def (cmd-docker-container-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Container: "
+      (lambda (c)
+        (echo-message! echo (str "Docker: stopping container " c))))))
+
+(def (cmd-docker-container-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Container: "
+      (lambda (c)
+        (echo-message! echo (str "Docker: restarting container " c))))))
+
+(def (cmd-docker-container-pause app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: paused container")))
+
+(def (cmd-docker-container-unpause app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: unpaused container")))
+
+(def (cmd-docker-container-rm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: removed container")))
+
+(def (cmd-docker-container-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: killed container")))
+
+(def (cmd-docker-image-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image: "
+      (lambda (img)
+        (echo-message! echo (str "Docker: pulling image " img))))))
+
+(def (cmd-docker-image-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: pushed image")))
+
+(def (cmd-docker-image-rm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: removed image")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 215 — Docker ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| docker-container-start | :orange_circle: | Start Docker container |
+| docker-container-stop | :orange_circle: | Stop Docker container |
+| docker-container-restart | :orange_circle: | Restart Docker container |
+| docker-container-pause | :orange_circle: | Pause Docker container |
+| docker-container-unpause | :orange_circle: | Unpause Docker container |
+| docker-container-rm | :orange_circle: | Remove Docker container |
+| docker-container-kill | :orange_circle: | Kill Docker container |
+| docker-image-pull | :orange_circle: | Pull Docker image |
+| docker-image-push | :orange_circle: | Push Docker image |
+| docker-image-rm | :orange_circle: | Remove Docker image |
+| docker-volume-create | :orange_circle: | Create Docker volume |
+| docker-volume-rm | :orange_circle: | Remove Docker volume |
+| docker-network-create | :orange_circle: | Create Docker network |
+| docker-network-rm | :orange_circle: | Remove Docker network |
+| docker-compose-restart | :orange_circle: | Restart Compose services |
+| docker-compose-push | :orange_circle: | Push Compose images |
+| docker-compose-stop | :orange_circle: | Stop Compose services |
+| docker-compose-start | :orange_circle: | Start Compose services |
+| docker-compose-rm | :orange_circle: | Remove stopped Compose containers |
+| docker-compose-exec | :orange_circle: | Execute command in Compose service |
+
 ### Round 214 — PDF-tools ext
 
 | Command | Status | Description |

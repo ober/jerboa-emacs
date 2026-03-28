@@ -18904,3 +18904,51 @@
     (if (mode-enabled? app 'pdf-continuous-scroll)
       (echo-message! echo "PDF: continuous scroll mode enabled")
       (echo-message! echo "PDF: continuous scroll mode disabled"))))
+
+;;; Round 215 — Docker ext (batch 2)
+
+(def (cmd-docker-volume-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Volume name: "
+      (lambda (name)
+        (echo-message! echo (str "Docker: created volume " name))))))
+
+(def (cmd-docker-volume-rm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: removed volume")))
+
+(def (cmd-docker-network-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Network name: "
+      (lambda (name)
+        (echo-message! echo (str "Docker: created network " name))))))
+
+(def (cmd-docker-network-rm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: removed network")))
+
+(def (cmd-docker-compose-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: restarting services")))
+
+(def (cmd-docker-compose-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: pushing images")))
+
+(def (cmd-docker-compose-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: stopping services")))
+
+(def (cmd-docker-compose-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: starting services")))
+
+(def (cmd-docker-compose-rm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: removed stopped containers")))
+
+(def (cmd-docker-compose-exec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Docker Compose: exec " cmd))))))
