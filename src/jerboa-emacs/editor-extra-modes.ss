@@ -8919,3 +8919,154 @@
     (editor-set-selection ed 0 len)
     (echo-message! echo "Whole buffer marked")))
 
+;; Round 25 batch 1: count-lines-page, find-file-literally, find-file-read-only,
+;; find-alternate-file, insert-file-contents, recover-this-file, auto-save-mode,
+;; not-modified, set-visited-file-name, toggle-read-only
+
+;; cmd-count-lines-page: Count lines on current page
+(def (cmd-count-lines-page app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (editor-get-text ed))
+         (pos (editor-cursor-position ed))
+         (len (string-length text))
+         (page-start (let loop ((i (- pos 1)))
+                       (if (<= i 0) 0
+                         (if (char=? (string-ref text i) #\x0C) (+ i 1)
+                           (loop (- i 1))))))
+         (page-end (let loop ((i pos))
+                     (if (>= i len) len
+                       (if (char=? (string-ref text i) #\x0C) i
+                         (loop (+ i 1))))))
+         (page-text (substring text page-start page-end))
+         (lines (+ 1 (let loop ((i 0) (n 0))
+                       (if (>= i (string-length page-text)) n
+                         (loop (+ i 1)
+                               (if (char=? (string-ref page-text i) #\newline) (+ n 1) n)))))))
+    (echo-message! echo (str "Page has " lines " lines"))))
+
+;; cmd-find-file-literally: Open file without any conversions
+(def (cmd-find-file-literally app)
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (file (echo-read-string echo "Find file literally: ")))
+    (if (or (not file) (string=? file ""))
+      (echo-message! echo "No file specified")
+      (if (not (file-exists? file))
+        (echo-message! echo (str "File not found: " file))
+        (let* ((content (read-file-string file))
+               (new-buf (create-buffer (path-strip-directory file))))
+          (buffer-file-set! new-buf file)
+          (switch-to-buffer frame new-buf)
+          (let ((ed (edit-window-editor (current-window frame))))
+            (editor-set-text ed content))
+          (echo-message! echo (str "Literally: " file)))))))
+
+;; cmd-find-file-read-only: Open file in read-only mode
+(def (cmd-find-file-read-only app)
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (file (echo-read-string echo "Find file read-only: ")))
+    (if (or (not file) (string=? file ""))
+      (echo-message! echo "No file specified")
+      (if (not (file-exists? file))
+        (echo-message! echo (str "File not found: " file))
+        (let* ((content (read-file-string file))
+               (new-buf (create-buffer (str (path-strip-directory file) " [RO]"))))
+          (buffer-file-set! new-buf file)
+          (switch-to-buffer frame new-buf)
+          (let ((ed (edit-window-editor (current-window frame))))
+            (editor-set-text ed content)
+            (send-message ed SCI_SETREADONLY 1 0))
+          (echo-message! echo (str "Read-only: " file)))))))
+
+;; cmd-find-alternate-file: Replace current buffer with another file
+(def (cmd-find-alternate-file app)
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (file (echo-read-string echo "Find alternate file: ")))
+    (if (or (not file) (string=? file ""))
+      (echo-message! echo "No file specified")
+      (if (not (file-exists? file))
+        (echo-message! echo (str "File not found: " file))
+        (let ((content (read-file-string file)))
+          (buffer-file-set! buf file)
+          (buffer-name-set! buf (path-strip-directory file))
+          (editor-set-text ed content)
+          (echo-message! echo (str "Alternate: " file)))))))
+
+;; cmd-insert-file-contents: Insert file contents at point
+(def (cmd-insert-file-contents app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (file (echo-read-string echo "Insert file: ")))
+    (if (or (not file) (string=? file ""))
+      (echo-message! echo "No file specified")
+      (if (not (file-exists? file))
+        (echo-message! echo (str "File not found: " file))
+        (let* ((content (read-file-string file))
+               (pos (editor-cursor-position ed)))
+          (editor-insert-text ed pos content)
+          (echo-message! echo (str "Inserted " (string-length content) " chars from " file)))))))
+
+;; cmd-recover-this-file: Recover current file from auto-save
+(def (cmd-recover-this-file app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "Buffer has no file")
+      (let ((auto-save (str (path-directory file) "/#" (path-strip-directory file) "#")))
+        (if (not (file-exists? auto-save))
+          (echo-message! echo (str "No auto-save file: " auto-save))
+          (let ((content (read-file-string auto-save)))
+            (editor-set-text ed content)
+            (echo-message! echo (str "Recovered from " auto-save))))))))
+
+;; cmd-auto-save-mode: Toggle auto-save mode
+(def (cmd-auto-save-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-save-mode)
+    (if (mode-enabled? app 'auto-save-mode)
+      (echo-message! echo "Auto-save mode enabled")
+      (echo-message! echo "Auto-save mode disabled"))))
+
+;; cmd-not-modified: Clear the modified flag on current buffer
+(def (cmd-not-modified app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETSAVEPOINT 0 0)
+    (echo-message! echo "Buffer marked as not modified")))
+
+;; cmd-set-visited-file-name: Change the file associated with buffer
+(def (cmd-set-visited-file-name app)
+  (let* ((buf (app-state-current-buffer app))
+         (echo (app-state-echo app))
+         (new-file (echo-read-string echo "Set visited file name: ")))
+    (if (or (not new-file) (string=? new-file ""))
+      (echo-message! echo "No file specified")
+      (begin
+        (buffer-file-set! buf new-file)
+        (buffer-name-set! buf (path-strip-directory new-file))
+        (echo-message! echo (str "Visited file: " new-file))))))
+
+;; cmd-toggle-read-only: Toggle read-only mode on buffer
+(def (cmd-toggle-read-only app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (readonly (= (send-message ed SCI_GETREADONLY 0 0) 1)))
+    (if readonly
+      (begin
+        (send-message ed SCI_SETREADONLY 0 0)
+        (echo-message! echo "Read-only mode disabled"))
+      (begin
+        (send-message ed SCI_SETREADONLY 1 0)
+        (echo-message! echo "Read-only mode enabled")))))
+

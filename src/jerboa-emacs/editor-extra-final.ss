@@ -8461,3 +8461,138 @@
                            (if (>= i len) n
                              (loop (+ i 1) (if (char=? (string-ref text i) #\newline) (+ n 1) n)))))))
         (echo-message! echo (str "Region has " lines " lines, " len " characters"))))))
+
+;; Round 25 batch 2: rename-buffer, clone-buffer, clone-indirect-buffer, bury-buffer,
+;; unbury-buffer, previous-buffer, next-buffer, list-buffers, ibuffer, display-buffer
+
+;; cmd-rename-buffer: Rename current buffer
+(def (cmd-rename-buffer app)
+  (let* ((buf (app-state-current-buffer app))
+         (echo (app-state-echo app))
+         (new-name (echo-read-string echo (str "Rename buffer (was " (buffer-name buf) "): "))))
+    (if (or (not new-name) (string=? new-name ""))
+      (echo-message! echo "No name specified")
+      (begin
+        (buffer-name-set! buf new-name)
+        (echo-message! echo (str "Buffer renamed to: " new-name))))))
+
+;; cmd-clone-buffer: Create a copy of current buffer
+(def (cmd-clone-buffer app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (text (editor-get-text ed))
+         (new-name (str (buffer-name buf) "<clone>"))
+         (new-buf (create-buffer new-name)))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed text))
+    (echo-message! echo (str "Cloned to: " new-name))))
+
+;; cmd-clone-indirect-buffer: Create an indirect buffer (clone with shared content concept)
+(def (cmd-clone-indirect-buffer app)
+  ;; In our implementation, indirect buffers work the same as clones
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (text (editor-get-text ed))
+         (new-name (str (buffer-name buf) "<indirect>"))
+         (new-buf (create-buffer new-name)))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed text))
+    (echo-message! echo (str "Indirect buffer: " new-name))))
+
+;; cmd-bury-buffer: Move current buffer to end of buffer list
+(def (cmd-bury-buffer app)
+  (let* ((buf (app-state-current-buffer app))
+         (echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (frame (app-state-frame app)))
+    (if (<= (length buffers) 1)
+      (echo-message! echo "Only one buffer")
+      (let* ((rest (filter (lambda (b) (not (eq? b buf))) buffers))
+             (new-list (append rest (list buf))))
+        (app-state-buffers-set! app new-list)
+        (switch-to-buffer frame (car rest))
+        (echo-message! echo (str "Buried: " (buffer-name buf)))))))
+
+;; cmd-unbury-buffer: Switch to the least recently used buffer
+(def (cmd-unbury-buffer app)
+  (let* ((echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (frame (app-state-frame app)))
+    (if (<= (length buffers) 1)
+      (echo-message! echo "Only one buffer")
+      (let ((last-buf (list-ref buffers (- (length buffers) 1))))
+        (switch-to-buffer frame last-buf)
+        (echo-message! echo (str "Unburied: " (buffer-name last-buf)))))))
+
+;; cmd-previous-buffer: Switch to previous buffer in list
+(def (cmd-previous-buffer app)
+  (let* ((buf (app-state-current-buffer app))
+         (echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (frame (app-state-frame app))
+         (idx (let loop ((bs buffers) (i 0))
+                (if (null? bs) 0
+                  (if (eq? (car bs) buf) i
+                    (loop (cdr bs) (+ i 1))))))
+         (prev-idx (if (= idx 0) (- (length buffers) 1) (- idx 1)))
+         (prev-buf (list-ref buffers prev-idx)))
+    (switch-to-buffer frame prev-buf)
+    (echo-message! echo (str "Buffer: " (buffer-name prev-buf)))))
+
+;; cmd-next-buffer: Switch to next buffer in list
+(def (cmd-next-buffer app)
+  (let* ((buf (app-state-current-buffer app))
+         (echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (frame (app-state-frame app))
+         (idx (let loop ((bs buffers) (i 0))
+                (if (null? bs) 0
+                  (if (eq? (car bs) buf) i
+                    (loop (cdr bs) (+ i 1))))))
+         (next-idx (if (>= (+ idx 1) (length buffers)) 0 (+ idx 1)))
+         (next-buf (list-ref buffers next-idx)))
+    (switch-to-buffer frame next-buf)
+    (echo-message! echo (str "Buffer: " (buffer-name next-buf)))))
+
+;; cmd-list-buffers: Show list of all buffers (C-x C-b)
+(def (cmd-list-buffers app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (lines (map (lambda (b)
+                       (let* ((name (buffer-name b))
+                              (file (or (buffer-file b) "(no file)"))
+                              (current (if (eq? b buf) " * " "   ")))
+                         (str current name "  " file)))
+                     buffers))
+         (text (str "=== Buffer List ===\n\n"
+                    "   Name                  File\n"
+                    "   ----                  ----\n"
+                    (string-join lines "\n")
+                    "\n\n" (length buffers) " buffers\n")))
+    (editor-set-text ed text)
+    (echo-message! echo (str (length buffers) " buffers"))))
+
+;; cmd-ibuffer: Interactive buffer list (same as list-buffers for now)
+(def (cmd-ibuffer app)
+  (cmd-list-buffers app))
+
+;; cmd-display-buffer: Display a buffer in another window without switching
+(def (cmd-display-buffer app)
+  (let* ((echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (buf-names (map buffer-name buffers))
+         (target-name (echo-read-string-with-completion echo "Display buffer: " buf-names)))
+    (if (or (not target-name) (string=? target-name ""))
+      (echo-message! echo "No buffer specified")
+      (let ((target (find (lambda (b) (string=? (buffer-name b) target-name)) buffers)))
+        (if (not target)
+          (echo-message! echo (str "Buffer not found: " target-name))
+          (echo-message! echo (str "Display buffer: " target-name " (use C-x 2 then switch)")))))))

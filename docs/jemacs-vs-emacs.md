@@ -1606,6 +1606,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | What cursor position | :orange_circle: | Show detailed cursor position info |
 | Count words region | :orange_circle: | Count words in region or buffer |
 | Count lines region | :orange_circle: | Count lines in region or buffer |
+| Count lines page | :orange_circle: | Count lines on current page |
+| Find file literally | :orange_circle: | Open file without conversions |
+| Find file read-only | :orange_circle: | Open file in read-only mode |
+| Find alternate file | :orange_circle: | Replace buffer with another file |
+| Insert file contents | :orange_circle: | Insert file contents at point |
+| Recover this file | :orange_circle: | Recover from auto-save file |
+| Auto-save mode | :orange_circle: | Toggle auto-save mode |
+| Not modified | :orange_circle: | Clear buffer modified flag |
+| Set visited file name | :orange_circle: | Change file associated with buffer |
+| Toggle read-only | :orange_circle: | Toggle read-only mode |
+| Rename buffer | :orange_circle: | Rename current buffer |
+| Clone buffer | :orange_circle: | Create copy of current buffer |
+| Clone indirect buffer | :orange_circle: | Create indirect buffer copy |
+| Bury buffer | :orange_circle: | Move buffer to end of list |
+| Unbury buffer | :orange_circle: | Switch to least recently used buffer |
+| Previous buffer | :orange_circle: | Switch to previous buffer |
+| Next buffer | :orange_circle: | Switch to next buffer |
+| List buffers | :orange_circle: | Show all buffers (C-x C-b) |
+| IBuffer | :orange_circle: | Interactive buffer list |
+| Display buffer | :orange_circle: | Display buffer in other window |
 
 ---
 
