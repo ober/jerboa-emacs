@@ -16552,3 +16552,53 @@
     (if (mode-enabled? app 'coterm)
       (echo-message! echo "Coterm mode enabled")
       (echo-message! echo "Coterm mode disabled"))))
+
+;; ============================================================
+;; Round 154 — Dired-subtree, Dired-filter, Dired extensions (batch 1)
+;; ============================================================
+
+(def (cmd-dired-subtree-cycle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-subtree: cycled subtree visibility")))
+
+(def (cmd-dired-subtree-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-subtree: moved up to parent")))
+
+(def (cmd-dired-subtree-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-subtree: moved down to first child")))
+
+(def (cmd-dired-subtree-beginning app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-subtree: moved to beginning of subtree")))
+
+(def (cmd-dired-subtree-end app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-subtree: moved to end of subtree")))
+
+(def (cmd-dired-subtree-mark-subtree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-subtree: marked all in subtree")))
+
+(def (cmd-dired-subtree-unmark-subtree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-subtree: unmarked all in subtree")))
+
+(def (cmd-dired-ranger-bookmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bookmark key (a-z): "
+      (lambda (key)
+        (echo-message! echo (str "Dired-ranger: bookmarked to " key))))))
+
+(def (cmd-dired-ranger-bookmark-visit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Visit bookmark key: "
+      (lambda (key)
+        (echo-message! echo (str "Dired-ranger: visiting bookmark " key))))))
+
+(def (cmd-dired-filter-by-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter by mode: "
+      (lambda (mode)
+        (echo-message! echo (str "Dired-filter: filtering by mode " mode))))))

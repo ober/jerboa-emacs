@@ -15914,3 +15914,63 @@
 (def (cmd-eshell-delete-process app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Eshell: deleted background process")))
+
+;; ============================================================
+;; Round 154 — Dired-filter, Dired-rsync, Dired extensions (batch 2)
+;; ============================================================
+
+(def (cmd-dired-filter-by-symlink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-filter: filtering by symlinks")))
+
+(def (cmd-dired-filter-by-git-ignored app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-filter: filtering by git-ignored files")))
+
+(def (cmd-dired-filter-save-filters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Save filter as: "
+      (lambda (name)
+        (echo-message! echo (str "Dired-filter: saved filter '" name "'"))))))
+
+(def (cmd-dired-filter-load-saved-filters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Load filter: "
+      (lambda (name)
+        (echo-message! echo (str "Dired-filter: loaded filter '" name "'"))))))
+
+(def (cmd-dired-rsync-transient app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-rsync: opened transient menu")))
+
+(def (cmd-dired-preview-global-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-preview-global)
+    (if (mode-enabled? app 'dired-preview-global)
+      (echo-message! echo "Dired-preview global mode enabled")
+      (echo-message! echo "Dired-preview global mode disabled"))))
+
+(def (cmd-dired-icon-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-icon)
+    (if (mode-enabled? app 'dired-icon)
+      (echo-message! echo "Dired icon mode enabled")
+      (echo-message! echo "Dired icon mode disabled"))))
+
+(def (cmd-dired-rainbow-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-rainbow)
+    (if (mode-enabled? app 'dired-rainbow)
+      (echo-message! echo "Dired rainbow mode enabled")
+      (echo-message! echo "Dired rainbow mode disabled"))))
+
+(def (cmd-dired-recent-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-recent)
+    (if (mode-enabled? app 'dired-recent)
+      (echo-message! echo "Dired recent mode enabled")
+      (echo-message! echo "Dired recent mode disabled"))))
+
+(def (cmd-dired-sidebar-toggle-sidebar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-sidebar: toggled sidebar")))

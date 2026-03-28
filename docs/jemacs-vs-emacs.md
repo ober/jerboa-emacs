@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 154 — Dired-subtree, Dired-filter, Dired Extensions
+
+| Feature | Status | Notes |
+|---|---|---|
+| `dired-subtree-cycle` | :orange_circle: | Cycle subtree visibility |
+| `dired-subtree-up` | :orange_circle: | Move to parent |
+| `dired-subtree-down` | :orange_circle: | Move to first child |
+| `dired-subtree-beginning` | :orange_circle: | Beginning of subtree |
+| `dired-subtree-end` | :orange_circle: | End of subtree |
+| `dired-subtree-mark-subtree` | :orange_circle: | Mark all in subtree |
+| `dired-subtree-unmark-subtree` | :orange_circle: | Unmark all in subtree |
+| `dired-ranger-bookmark` | :orange_circle: | Bookmark directory |
+| `dired-ranger-bookmark-visit` | :orange_circle: | Visit bookmark |
+| `dired-filter-by-mode` | :orange_circle: | Filter by mode |
+| `dired-filter-by-symlink` | :orange_circle: | Filter by symlinks |
+| `dired-filter-by-git-ignored` | :orange_circle: | Filter git-ignored |
+| `dired-filter-save-filters` | :orange_circle: | Save filters |
+| `dired-filter-load-saved-filters` | :orange_circle: | Load saved filters |
+| `dired-rsync-transient` | :orange_circle: | Rsync transient menu |
+| `dired-preview-global-mode` | :orange_circle: | Global preview mode |
+| `dired-icon-mode` | :orange_circle: | File icons mode |
+| `dired-rainbow-mode` | :orange_circle: | Colorize by extension |
+| `dired-recent-mode` | :orange_circle: | Recent directories |
+| `dired-sidebar-toggle-sidebar` | :orange_circle: | Toggle sidebar |
+
 ### Round 153 — Eshell, Shell-pop, Vterm, Eat, Coterm
 
 | Feature | Status | Notes |
