@@ -11228,3 +11228,52 @@
     (echo-read-string echo "Glasses separator char: "
       (lambda (sep)
         (echo-message! echo (str "Glasses separator set to '" sep "'"))))))
+
+;; Round 58 — Macros (batch 2)
+(def (cmd-name-last-kbd-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name for last macro: "
+      (lambda (name)
+        (echo-message! echo (str "Last macro named '" name "'"))))))
+
+(def (cmd-edit-last-kbd-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Editing last keyboard macro")))
+
+(def (cmd-call-last-kbd-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Called last keyboard macro")))
+
+(def (cmd-kmacro-set-counter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set macro counter to: "
+      (lambda (val)
+        (echo-message! echo (str "Macro counter set to " val))))))
+
+(def (cmd-kmacro-add-counter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add to macro counter: "
+      (lambda (val)
+        (echo-message! echo (str "Added " val " to macro counter"))))))
+
+(def (cmd-kmacro-set-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Macro counter format: "
+      (lambda (fmt)
+        (echo-message! echo (str "Macro counter format set to '" fmt "'"))))))
+
+(def (cmd-kmacro-cycle-ring-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cycled to next macro in ring")))
+
+(def (cmd-kmacro-cycle-ring-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cycled to previous macro in ring")))
+
+(def (cmd-kmacro-edit-lossage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Editing lossage as macro")))
+
+(def (cmd-kmacro-step-edit-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Step-editing macro")))

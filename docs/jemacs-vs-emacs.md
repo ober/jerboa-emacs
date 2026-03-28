@@ -2382,6 +2382,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | reveal-mode | :orange_circle: | Show invisible text at point |
 | glasses-separator | :orange_circle: | Set glasses mode separator character |
 
+### Round 58 — Registers, Bookmarks & Keyboard Macros
+
+| Feature | Status | Notes |
+|---|---|---|
+| register-to-point | :orange_circle: | Save point position to register |
+| number-to-register | :orange_circle: | Store number in register |
+| window-configuration-to-register | :orange_circle: | Save window layout to register |
+| frameset-to-register | :orange_circle: | Save frameset to register |
+| bookmark-jump-other-window | :orange_circle: | Jump to bookmark in other window |
+| bookmark-bmenu-list | :orange_circle: | Display bookmark menu |
+| bookmark-relocate | :orange_circle: | Relocate bookmark to new file |
+| bookmark-insert-location | :orange_circle: | Insert bookmark's file location |
+| bookmark-insert | :orange_circle: | Insert bookmark's file contents |
+| apply-macro-to-region-lines | :orange_circle: | Run macro on each line in region |
+| name-last-kbd-macro | :orange_circle: | Name the last keyboard macro |
+| edit-last-kbd-macro | :orange_circle: | Edit last keyboard macro |
+| call-last-kbd-macro | :orange_circle: | Execute last keyboard macro |
+| kmacro-set-counter | :orange_circle: | Set macro counter value |
+| kmacro-add-counter | :orange_circle: | Add to macro counter |
+| kmacro-set-format | :orange_circle: | Set macro counter format string |
+| kmacro-cycle-ring-next | :orange_circle: | Cycle to next macro in ring |
+| kmacro-cycle-ring-previous | :orange_circle: | Cycle to previous macro in ring |
+| kmacro-edit-lossage | :orange_circle: | Edit recent keystrokes as macro |
+| kmacro-step-edit-macro | :orange_circle: | Step through macro interactively |
+
 ---
 
 ## Recommended Development Roadmap

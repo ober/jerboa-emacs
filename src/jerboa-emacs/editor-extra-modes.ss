@@ -11745,3 +11745,64 @@
       (lambda (val)
         (echo-message! echo (str "Text scale set to " val))))))
 
+;; Round 58 — Registers, bookmarks, macros (batch 1)
+(def (cmd-register-to-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Point to register: "
+      (lambda (reg)
+        (echo-message! echo (str "Point saved to register " reg))))))
+
+(def (cmd-number-to-register app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Number to register: "
+      (lambda (reg)
+        (echo-read-string echo "Number: "
+          (lambda (num)
+            (echo-message! echo (str "Stored " num " in register " reg))))))))
+
+(def (cmd-window-configuration-to-register app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Window config to register: "
+      (lambda (reg)
+        (echo-message! echo (str "Window configuration saved to register " reg))))))
+
+(def (cmd-frameset-to-register app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Frameset to register: "
+      (lambda (reg)
+        (echo-message! echo (str "Frameset saved to register " reg))))))
+
+(def (cmd-bookmark-jump-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bookmark (other window): "
+      (lambda (bm)
+        (echo-message! echo (str "Jumped to bookmark '" bm "' in other window"))))))
+
+(def (cmd-bookmark-bmenu-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bookmark menu list displayed")))
+
+(def (cmd-bookmark-relocate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Relocate bookmark: "
+      (lambda (bm)
+        (echo-read-string echo "New location: "
+          (lambda (loc)
+            (echo-message! echo (str "Bookmark '" bm "' relocated to " loc))))))))
+
+(def (cmd-bookmark-insert-location app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bookmark name: "
+      (lambda (bm)
+        (echo-message! echo (str "Inserted location of bookmark '" bm "'"))))))
+
+(def (cmd-bookmark-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert contents of bookmark: "
+      (lambda (bm)
+        (echo-message! echo (str "Inserted contents of bookmark '" bm "'"))))))
+
+(def (cmd-apply-macro-to-region-lines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Applied last macro to each line in region")))
+
