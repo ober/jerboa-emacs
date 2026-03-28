@@ -7396,3 +7396,290 @@
                       "Goal: arrange 1-15 in order with blank in bottom-right.\n")))
       (editor-set-text ed text)
       (echo-message! echo "Fifteen puzzle! Use M-x puzzle-move"))))
+
+;; Round 20 batch 2: paredit-mode, hi-lock-mode, syntax-highlight-region, stack-overflow-search,
+;; cheat-sheet, apropos-documentation, scratch-message, geiser-mode, sly-mode, slime-mode
+
+;; cmd-paredit-mode: Show paredit-style structural editing cheat sheet
+(def (cmd-paredit-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== Paredit Mode Reference ===\n\n"
+                    "Paredit provides structural editing for S-expressions.\n\n"
+                    "Key Bindings (conceptual):\n"
+                    "  C-(         paredit-open-round       Insert () and place cursor inside\n"
+                    "  C-)         paredit-close-round      Move past next closing paren\n"
+                    "  M-(         paredit-wrap-round        Wrap next sexp in ()\n"
+                    "  M-s         paredit-splice-sexp       Remove surrounding parens\n"
+                    "  C-right     paredit-forward-slurp     Pull next sexp into current list\n"
+                    "  C-left      paredit-forward-barf      Push last sexp out of current list\n"
+                    "  M-r         paredit-raise-sexp        Replace parent with current sexp\n"
+                    "  M-S         paredit-split-sexp        Split current sexp at cursor\n"
+                    "  M-J         paredit-join-sexp         Join adjacent sexps\n\n"
+                    "Navigation:\n"
+                    "  C-M-f       forward-sexp\n"
+                    "  C-M-b       backward-sexp\n"
+                    "  C-M-u       backward-up-list\n"
+                    "  C-M-d       down-list\n\n"
+                    "Note: These are reference commands. Full structural\n"
+                    "enforcement is not yet implemented.\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Paredit reference loaded")))
+
+;; cmd-hi-lock-mode: Highlight all occurrences of a pattern in current buffer
+(def (cmd-hi-lock-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pattern (echo-read-string echo "Hi-lock pattern: ")))
+    (if (or (not pattern) (string=? pattern ""))
+      (echo-message! echo "No pattern specified")
+      (let* ((text (editor-get-text ed))
+             (pat-len (string-length pattern))
+             (text-len (string-length text)))
+        (let loop ((pos 0) (count 0))
+          (if (> (+ pos pat-len) text-len)
+            (echo-message! echo (str "Hi-lock: highlighted " count " occurrences of \"" pattern "\""))
+            (let ((idx (string-contains text pattern pos)))
+              (if (not idx)
+                (echo-message! echo (str "Hi-lock: highlighted " count " occurrences of \"" pattern "\""))
+                (begin
+                  (editor-indicator-fill ed 18 idx (+ idx pat-len))
+                  (loop (+ idx pat-len) (+ count 1)))))))))))
+
+;; cmd-syntax-highlight-region: Show syntax info for the selected region
+(def (cmd-syntax-highlight-region app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (let* ((region-text (editor-get-text-range ed sel-start sel-end))
+             (char-count (string-length region-text))
+             (line-count (+ 1 (let loop ((i 0) (n 0))
+                                (if (>= i char-count) n
+                                  (loop (+ i 1) (if (char=? (string-ref region-text i) #\newline) (+ n 1) n))))))
+             (word-count (length (let split ((s region-text) (words '()))
+                                   (let ((trimmed (string-trim s)))
+                                     (if (string=? trimmed "") words
+                                       (let find-space ((i 0))
+                                         (if (>= i (string-length trimmed))
+                                           (cons trimmed words)
+                                           (if (char-whitespace? (string-ref trimmed i))
+                                             (split (substring trimmed i (string-length trimmed))
+                                                    (cons (substring trimmed 0 i) words))
+                                             (find-space (+ i 1))))))))))
+             (text (str "=== Region Syntax Info ===\n\n"
+                        "Selection: " sel-start " to " sel-end "\n"
+                        "Characters: " char-count "\n"
+                        "Lines: " line-count "\n"
+                        "Words: " word-count "\n\n"
+                        "--- Region Content ---\n"
+                        region-text "\n")))
+        (echo-message! echo (str "Region: " char-count " chars, " line-count " lines, " word-count " words"))))))
+
+;; cmd-stack-overflow-search: Search Stack Overflow via DuckDuckGo
+(def (cmd-stack-overflow-search app)
+  (let* ((echo (app-state-echo app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (query (echo-read-string echo "Stack Overflow search: ")))
+    (if (or (not query) (string=? query ""))
+      (echo-message! echo "No query specified")
+      (let* ((encoded-q query)
+             (url (str "https://stackoverflow.com/search?q=" encoded-q))
+             (text (str "=== Stack Overflow Search ===\n\n"
+                        "Query: " query "\n\n"
+                        "URL: " url "\n\n"
+                        "To search Stack Overflow, visit the URL above.\n\n"
+                        "Tips:\n"
+                        "  - Use [tag] syntax to filter by technology\n"
+                        "  - Example: [python] how to read CSV\n"
+                        "  - Use 'is:answer' to only search answers\n"
+                        "  - Use 'score:3' for highly rated content\n"
+                        "  - Use 'user:me' for your own posts\n\n"
+                        "Common Tags:\n"
+                        "  [scheme] [lisp] [emacs] [linux]\n"
+                        "  [python] [javascript] [c] [rust]\n")))
+        (editor-set-text ed text)
+        (echo-message! echo (str "Stack Overflow: " url))))))
+
+;; cmd-cheat-sheet: Display a cheat sheet for common editor commands
+(def (cmd-cheat-sheet app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== jemacs Cheat Sheet ===\n\n"
+                    "--- Movement ---\n"
+                    "  C-f / C-b       Forward/backward char\n"
+                    "  M-f / M-b       Forward/backward word\n"
+                    "  C-a / C-e       Beginning/end of line\n"
+                    "  C-n / C-p       Next/previous line\n"
+                    "  M-< / M->       Beginning/end of buffer\n"
+                    "  C-v / M-v       Page down/up\n"
+                    "  C-l             Recenter\n\n"
+                    "--- Editing ---\n"
+                    "  C-d             Delete char forward\n"
+                    "  Backspace       Delete char backward\n"
+                    "  M-d             Kill word forward\n"
+                    "  C-k             Kill to end of line\n"
+                    "  C-y             Yank (paste)\n"
+                    "  M-y             Yank-pop (cycle kill ring)\n"
+                    "  C-/             Undo\n"
+                    "  C-x u           Undo\n\n"
+                    "--- Search ---\n"
+                    "  C-s             Isearch forward\n"
+                    "  C-r             Isearch backward\n"
+                    "  M-%             Query replace\n\n"
+                    "--- Files ---\n"
+                    "  C-x C-f         Find file\n"
+                    "  C-x C-s         Save file\n"
+                    "  C-x C-w         Write file (save as)\n"
+                    "  C-x b           Switch buffer\n"
+                    "  C-x k           Kill buffer\n\n"
+                    "--- Windows ---\n"
+                    "  C-x 2           Split horizontal\n"
+                    "  C-x 3           Split vertical\n"
+                    "  C-x 1           Delete other windows\n"
+                    "  C-x 0           Delete this window\n"
+                    "  C-x o           Other window\n\n"
+                    "--- Help ---\n"
+                    "  C-h k           Describe key\n"
+                    "  C-h f           Describe function\n"
+                    "  M-x             Execute command\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Cheat sheet displayed")))
+
+;; cmd-apropos-documentation: Search commands by keyword
+(def (cmd-apropos-documentation app)
+  (let* ((echo (app-state-echo app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (query (echo-read-string echo "Apropos: ")))
+    (if (or (not query) (string=? query ""))
+      (echo-message! echo "No query specified")
+      (let* ((all-cmds (hash-keys (app-state-commands app)))
+             (matches (filter (lambda (sym)
+                                (string-contains (symbol->string sym) query))
+                              all-cmds))
+             (sorted (sort string<?
+                           (map symbol->string matches)))
+             (text (str "=== Apropos: \"" query "\" ===\n\n"
+                        "Found " (length sorted) " matching commands:\n\n"
+                        (string-join
+                          (map (lambda (name)
+                                 (str "  M-x " name))
+                               sorted)
+                          "\n")
+                        "\n")))
+        (editor-set-text ed text)
+        (echo-message! echo (str "Apropos: " (length sorted) " matches for \"" query "\""))))))
+
+;; cmd-scratch-message: Insert the default *scratch* buffer message
+(def (cmd-scratch-message app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str ";; This buffer is for text that is not saved, and for Scheme evaluation.\n"
+                    ";; To create a file, visit it with C-x C-f and enter text in its buffer.\n"
+                    ";;\n"
+                    ";; Welcome to jemacs - a Chez Scheme Emacs-like editor.\n"
+                    ";;\n"
+                    ";; Quick start:\n"
+                    ";;   C-x C-f   Open a file\n"
+                    ";;   C-x C-s   Save current buffer\n"
+                    ";;   C-x b     Switch buffer\n"
+                    ";;   C-x k     Kill buffer\n"
+                    ";;   C-h ?     Help\n"
+                    ";;   M-x       Execute command by name\n"
+                    ";;\n"
+                    ";; Type Scheme expressions and use M-x eval-buffer to evaluate.\n\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "*scratch* message inserted")))
+
+;; cmd-geiser-mode: Show Geiser REPL reference for Scheme interaction
+(def (cmd-geiser-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== Geiser Mode Reference ===\n\n"
+                    "Geiser provides Scheme interaction in Emacs.\n\n"
+                    "Key Bindings (GNU Emacs reference):\n"
+                    "  C-c C-z     Switch to REPL\n"
+                    "  C-c C-a     Switch to REPL and enter module\n"
+                    "  C-x C-e    Eval last sexp\n"
+                    "  C-c C-r     Eval region\n"
+                    "  C-c C-b     Eval buffer\n"
+                    "  C-c C-e    Eval last sexp and show result in echo\n"
+                    "  C-c C-d d   Autodoc (show docs)\n"
+                    "  C-c C-d m   Module documentation\n\n"
+                    "Supported Schemes:\n"
+                    "  - Chez Scheme\n"
+                    "  - Guile\n"
+                    "  - Racket\n"
+                    "  - Chicken\n"
+                    "  - MIT/GNU Scheme\n"
+                    "  - Gambit\n\n"
+                    "jemacs equivalent: M-x eval-expression, M-x eval-buffer\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Geiser mode reference loaded")))
+
+;; cmd-sly-mode: Show SLY (Sylvester the Cat's Common Lisp IDE) reference
+(def (cmd-sly-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== SLY Mode Reference ===\n\n"
+                    "SLY is a Common Lisp IDE for Emacs (fork of SLIME).\n\n"
+                    "Key Bindings (GNU Emacs reference):\n"
+                    "  M-x sly          Start SLY\n"
+                    "  C-c C-c          Compile defun at point\n"
+                    "  C-c C-k          Compile and load file\n"
+                    "  C-c C-z          Switch to REPL\n"
+                    "  C-x C-e          Eval last expression\n"
+                    "  M-.              Go to definition\n"
+                    "  M-,              Return from definition\n"
+                    "  C-c C-d d        Describe symbol\n"
+                    "  C-c C-d h        HyperSpec lookup\n"
+                    "  C-c I            Inspect expression\n"
+                    "  C-c C-t          Toggle trace\n\n"
+                    "SLY Features over SLIME:\n"
+                    "  - Stickers (inline value tracking)\n"
+                    "  - Multiple REPLs\n"
+                    "  - Flex completion\n"
+                    "  - Improved backtraces\n\n"
+                    "jemacs equivalent: M-x eval-expression, M-x eval-buffer\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "SLY mode reference loaded")))
+
+;; cmd-slime-mode: Show SLIME (Superior Lisp Interaction Mode) reference
+(def (cmd-slime-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== SLIME Mode Reference ===\n\n"
+                    "SLIME is the Superior Lisp Interaction Mode for Emacs.\n\n"
+                    "Key Bindings (GNU Emacs reference):\n"
+                    "  M-x slime         Start SLIME\n"
+                    "  C-c C-c           Compile defun at point\n"
+                    "  C-c C-k           Compile and load file\n"
+                    "  C-c C-z           Switch to REPL\n"
+                    "  C-x C-e           Eval last expression\n"
+                    "  M-.               Go to definition\n"
+                    "  M-,               Return from definition\n"
+                    "  C-c C-d d         Describe symbol\n"
+                    "  C-c C-d h         HyperSpec lookup\n"
+                    "  C-c C-w c         List callers\n"
+                    "  C-c C-w w         List callees\n"
+                    "  C-c I             Inspect expression\n"
+                    "  C-c C-t           Toggle trace\n"
+                    "  C-c M-d           Disassemble\n\n"
+                    "Connection:\n"
+                    "  SLIME connects to a Swank server running in the\n"
+                    "  Lisp process. Supports SBCL, CCL, CLISP, etc.\n\n"
+                    "jemacs equivalent: M-x eval-expression, M-x eval-buffer\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "SLIME mode reference loaded")))

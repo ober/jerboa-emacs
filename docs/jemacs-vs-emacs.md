@@ -1506,6 +1506,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Apt search | :orange_circle: | Search apt packages |
 | Connect Four | :orange_circle: | Connect Four board game |
 | Fifteen puzzle | :orange_circle: | 15-puzzle sliding tile game |
+| Currency convert | :orange_circle: | Currency conversion via Python |
+| Wikipedia summary | :orange_circle: | Fetch Wikipedia article summaries |
+| Man page | :orange_circle: | View man pages in buffer |
+| Info page | :orange_circle: | View info pages in buffer |
+| TLDR page | :orange_circle: | View tldr simplified man pages |
+| Tutorial mode | :orange_circle: | Built-in jemacs tutorial |
+| Version info | :orange_circle: | Display jemacs version info |
+| Changelog view | :orange_circle: | View git changelog in buffer |
+| Bug report mode | :orange_circle: | Generate bug report template |
+| Color theme select | :orange_circle: | Theme selector with preview |
+| Paredit mode | :orange_circle: | Paredit structural editing reference |
+| Hi-lock mode | :orange_circle: | Highlight pattern occurrences |
+| Syntax highlight region | :orange_circle: | Region syntax statistics |
+| Stack Overflow search | :orange_circle: | Stack Overflow search helper |
+| Cheat sheet | :orange_circle: | Editor keybinding cheat sheet |
+| Apropos documentation | :orange_circle: | Search commands by keyword |
+| Scratch message | :orange_circle: | Insert default *scratch* message |
+| Geiser mode | :orange_circle: | Geiser Scheme interaction reference |
+| SLY mode | :orange_circle: | SLY Common Lisp IDE reference |
+| SLIME mode | :orange_circle: | SLIME Common Lisp IDE reference |
 
 ---
 

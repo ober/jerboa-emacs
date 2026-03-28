@@ -7746,4 +7746,333 @@
                     (editor-set-text new-ed (str "=== Environment Variables ===\n\n"
                                                  (string-join (reverse lines) "\n") "\n")))
                   (echo-message! echo (str (length (reverse lines)) " environment variables")))
+                (loop (cons line lines)))))))))
+
+;; ===== Round 20 Batch 1 =====
+
+;; --- Feature 1: Currency Convert ---
+
+(def (cmd-currency-convert app)
+  "Convert between currencies using exchangerate.host API."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Convert (e.g. 100 USD EUR): " row width)))
+    (when (and input (not (string-empty? input)))
+      (let ((parts (string-split (string-trim input) #\space)))
+        (if (not (= (length parts) 3))
+          (echo-message! echo "Format: AMOUNT FROM TO (e.g. 100 USD EUR)")
+          (let ((amount (car parts)) (from (cadr parts)) (to (caddr parts)))
+            (with-catch
+              (lambda (e) (echo-message! echo (str "Conversion error: " e)))
+              (lambda ()
+                (let-values (((si so se pid)
+                              (open-process-ports
+                                (str "python3 -c 'import urllib.request,json;"
+                                     "r=urllib.request.urlopen(\"https://open.er-api.com/v6/latest/"
+                                     (string-upcase from) "\");"
+                                     "d=json.loads(r.read());"
+                                     "rate=d[\"rates\"][\"" (string-upcase to) "\"];"
+                                     "print(f\"{" amount " * rate:.2f}\")"
+                                     "' 2>/dev/null")
+                                'block (native-transcoder))))
+                  (close-port si)
+                  (let ((result (get-line so)))
+                    (close-port so) (close-port se)
+                    (if (eof-object? result)
+                      (echo-message! echo "Could not fetch exchange rate")
+                      (echo-message! echo (str amount " " (string-upcase from) " = "
+                                               (string-trim result) " " (string-upcase to))))))))))))))
+
+;; --- Feature 2: Wikipedia Summary ---
+
+(def (cmd-wikipedia-summary app)
+  "Fetch a Wikipedia article summary."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (topic (echo-read-string echo "Wikipedia topic: " row width)))
+    (when (and topic (not (string-empty? topic)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Wikipedia error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "curl -sL 'https://en.wikipedia.org/api/rest_v1/page/summary/"
+                               (string-trim topic)
+                               "' 2>/dev/null | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get(\"title\",\"?\"));print();print(d.get(\"extract\",\"Not found\"))' 2>/dev/null")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((result (string-join (reverse lines) "\n"))
+                           (new-buf (create-buffer (str "*wiki: " topic "*"))))
+                      (switch-to-buffer frame new-buf)
+                      (let ((new-ed (edit-window-editor (current-window frame))))
+                        (editor-set-text new-ed result))
+                      (echo-message! echo "Wikipedia summary loaded")))
+                  (loop (cons line lines))))))))))))
+
+;; --- Feature 3: Man Page ---
+
+(def (cmd-man-page app)
+  "View a man page."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (topic (echo-read-string echo "Man page: " row width)))
+    (when (and topic (not (string-empty? topic)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "man error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "man " (shell-quote (string-trim topic)) " 2>/dev/null | col -b | head -200")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((result (string-join (reverse lines) "\n"))
+                           (new-buf (create-buffer (str "*man: " topic "*"))))
+                      (switch-to-buffer frame new-buf)
+                      (let ((new-ed (edit-window-editor (current-window frame))))
+                        (editor-set-text new-ed result))
+                      (echo-message! echo (str "Man page: " topic))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 4: Info Page ---
+
+(def (cmd-info-page app)
+  "View an info page."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (topic (echo-read-string echo "Info page: " row width)))
+    (when (and topic (not (string-empty? topic)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "info error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "info " (shell-quote (string-trim topic)) " 2>/dev/null | head -200")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((result (string-join (reverse lines) "\n"))
+                           (new-buf (create-buffer (str "*info: " topic "*"))))
+                      (switch-to-buffer frame new-buf)
+                      (let ((new-ed (edit-window-editor (current-window frame))))
+                        (editor-set-text new-ed result))
+                      (echo-message! echo (str "Info page: " topic))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 5: TLDR Page ---
+
+(def (cmd-tldr-page app)
+  "View a tldr page (simplified man page)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (cmd (echo-read-string echo "TLDR for command: " row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "tldr error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "tldr " (shell-quote (string-trim cmd)) " 2>/dev/null")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((result (string-join (reverse lines) "\n")))
+                      (if (string-empty? result)
+                        (echo-message! echo (str "No tldr page for: " cmd))
+                        (let* ((new-buf (create-buffer (str "*tldr: " cmd "*"))))
+                          (switch-to-buffer frame new-buf)
+                          (let ((new-ed (edit-window-editor (current-window frame))))
+                            (editor-set-text new-ed result))
+                          (echo-message! echo (str "TLDR: " cmd))))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 6: Tutorial Mode ---
+
+(def (cmd-tutorial-mode app)
+  "Show the jemacs tutorial."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*tutorial*")))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed
+        (str "=== Welcome to jemacs! ===\n\n"
+             "jemacs is a Chez Scheme Emacs-like editor.\n\n"
+             "== Basic Navigation ==\n"
+             "  C-f / Right   Move forward one character\n"
+             "  C-b / Left    Move backward one character\n"
+             "  C-n / Down    Move to next line\n"
+             "  C-p / Up      Move to previous line\n"
+             "  C-a / Home    Move to beginning of line\n"
+             "  C-e / End     Move to end of line\n"
+             "  M-f           Move forward one word\n"
+             "  M-b           Move backward one word\n"
+             "  C-v           Page down\n"
+             "  M-v           Page up\n"
+             "  M-<           Go to beginning of buffer\n"
+             "  M->           Go to end of buffer\n\n"
+             "== Editing ==\n"
+             "  C-d / Delete  Delete character forward\n"
+             "  Backspace     Delete character backward\n"
+             "  C-k           Kill to end of line\n"
+             "  C-w           Kill region\n"
+             "  M-w           Copy region\n"
+             "  C-y           Yank (paste)\n"
+             "  C-/           Undo\n"
+             "  C-space       Set mark\n\n"
+             "== Files and Buffers ==\n"
+             "  C-x C-f       Find (open) file\n"
+             "  C-x C-s       Save buffer\n"
+             "  C-x b         Switch buffer\n"
+             "  C-x k         Kill buffer\n\n"
+             "== Windows ==\n"
+             "  C-x 2         Split window below\n"
+             "  C-x 3         Split window right\n"
+             "  C-x 0         Delete window\n"
+             "  C-x 1         Delete other windows\n"
+             "  C-x o         Other window\n\n"
+             "== Commands ==\n"
+             "  M-x           Execute extended command\n"
+             "  C-g           Cancel/quit\n"
+             "  C-x C-c       Exit jemacs\n\n"
+             "Over 2400 commands available via M-x!\n"))
+      (echo-message! echo "Tutorial loaded"))))
+
+;; --- Feature 7: Version Info ---
+
+(def (cmd-version-info app)
+  "Show detailed jemacs version information."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*version*")))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed
+        (str "=== jemacs Version Info ===\n\n"
+             "jemacs - Chez Scheme Emacs-like Editor\n\n"
+             "Built on:\n"
+             "  Chez Scheme " (scheme-version-number) "\n"
+             "  Jerboa Scheme dialect\n"
+             "  Scintilla editor component\n\n"
+             "Features: 2400+ commands\n"
+             "Modes: TUI (terminal) and Qt (graphical)\n\n"
+             "Project: jerboa-emacs\n"
+             "License: Open Source\n"))
+      (echo-message! echo "Version info displayed"))))
+
+;; --- Feature 8: Changelog View ---
+
+(def (cmd-changelog-view app)
+  "View the project changelog via git log."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*changelog*")))
+    (switch-to-buffer frame new-buf)
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "git log --oneline -50 2>/dev/null"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((new-ed (edit-window-editor (current-window frame))))
+                    (editor-set-text new-ed (str "=== Changelog ===\n\n"
+                                                 (string-join (reverse lines) "\n") "\n")))
+                  (echo-message! echo "Changelog loaded"))
                 (loop (cons line lines))))))))))
+
+;; --- Feature 9: Bug Report Mode ---
+
+(def (cmd-bug-report-mode app)
+  "Create a bug report template."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*bug-report*")))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed
+        (str "=== Bug Report ===\n\n"
+             "Summary: \n\n"
+             "Steps to Reproduce:\n"
+             "1. \n"
+             "2. \n"
+             "3. \n\n"
+             "Expected Behavior:\n\n\n"
+             "Actual Behavior:\n\n\n"
+             "System Info:\n"
+             "  OS: " (with-output-to-string (lambda ()
+                        (with-catch (lambda (e) (display "unknown"))
+                          (lambda ()
+                            (let-values (((si so se pid) (open-process-ports "uname -sr" 'block (native-transcoder))))
+                              (close-port si)
+                              (let ((info (get-line so)))
+                                (close-port so) (close-port se)
+                                (when (not (eof-object? info)) (display (string-trim info)))))))))
+             "\n  Chez: " (scheme-version-number)
+             "\n\nAdditional Notes:\n\n"))
+      (echo-message! echo "Bug report template ready"))))
+
+;; --- Feature 10: Color Theme Select ---
+
+(def (cmd-color-theme-select app)
+  "Select a color theme for the editor."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (themes '("dark" "light" "solarized" "monokai" "dracula" "gruvbox" "nord"))
+         (choice (echo-read-string echo (str "Theme [" (string-join themes "/") "]: ") row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((theme (string-downcase (string-trim choice))))
+        (cond
+          ((string=? theme "dark")
+           (send-message ed SCI_STYLESETBACK 32 #x1E1E1E)
+           (send-message ed SCI_STYLESETFORE 32 #xD4D4D4))
+          ((string=? theme "light")
+           (send-message ed SCI_STYLESETBACK 32 #xFFFFFF)
+           (send-message ed SCI_STYLESETFORE 32 #x000000))
+          ((string=? theme "solarized")
+           (send-message ed SCI_STYLESETBACK 32 #x002B36)
+           (send-message ed SCI_STYLESETFORE 32 #x839496))
+          ((string=? theme "monokai")
+           (send-message ed SCI_STYLESETBACK 32 #x272822)
+           (send-message ed SCI_STYLESETFORE 32 #xF8F8F2))
+          ((string=? theme "dracula")
+           (send-message ed SCI_STYLESETBACK 32 #x282A36)
+           (send-message ed SCI_STYLESETFORE 32 #xF8F8F2))
+          ((string=? theme "gruvbox")
+           (send-message ed SCI_STYLESETBACK 32 #x282828)
+           (send-message ed SCI_STYLESETFORE 32 #xEBDBB2))
+          ((string=? theme "nord")
+           (send-message ed SCI_STYLESETBACK 32 #x2E3440)
+           (send-message ed SCI_STYLESETFORE 32 #xD8DEE9))
+          (else (echo-message! echo (str "Unknown theme: " theme))))
+        (send-message ed SCI_STYLECLEARALL 0 0)
+        (echo-message! echo (str "Theme: " theme))))))
