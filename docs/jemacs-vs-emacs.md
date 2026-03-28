@@ -4558,6 +4558,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 142 — Denote, Citar, Org-ref, BibTeX, Ebib
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| denote-link-backlinks | :orange_circle: | Show Denote backlinks |
+| denote-dired | :orange_circle: | Open Denote notes in dired |
+| denote-sort-dired | :orange_circle: | Sort Denote dired by date |
+| denote-journal-extras-new-entry | :orange_circle: | New Denote journal entry |
+| denote-menu-list-notes | :orange_circle: | List all Denote notes |
+| citar-copy-reference | :orange_circle: | Copy citation reference |
+| org-ref-insert-link | :orange_circle: | Insert org-ref citation |
+| org-ref-cite-hydra | :orange_circle: | Open org-ref citation hydra |
+| zotero-browser | :orange_circle: | Open Zotero browser |
+| bibtex-sort-buffer | :orange_circle: | Sort BibTeX buffer |
+| bibtex-validate | :orange_circle: | Validate BibTeX buffer |
+| bibtex-count-entries | :orange_circle: | Count BibTeX entries |
+| bibtex-find-entry | :orange_circle: | Find BibTeX entry |
+| bibtex-search-entry | :orange_circle: | Search BibTeX entries |
+| bibtex-entry-update-timestamp | :orange_circle: | Update BibTeX timestamp |
+| parsebib-parse-bib-buffer | :orange_circle: | Parse bib buffer |
+| ebib | :orange_circle: | Start Ebib bibliography manager |
+| ebib-open | :orange_circle: | Open bib file in Ebib |
+| ebib-import-file | :orange_circle: | Import file into Ebib |
+| ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

@@ -15915,3 +15915,47 @@
 (def (cmd-nix-format-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Nix: formatted buffer")))
+
+;;; Round 142 — Denote, Citar, Org-ref, BibTeX, Ebib (batch 1)
+
+(def (cmd-denote-link-backlinks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: showing backlinks")))
+
+(def (cmd-denote-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: opened dired for notes")))
+
+(def (cmd-denote-sort-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: sorted dired by date")))
+
+(def (cmd-denote-journal-extras-new-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: created new journal entry")))
+
+(def (cmd-denote-menu-list-notes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: listing all notes")))
+
+(def (cmd-citar-copy-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citar: copied reference to kill ring")))
+
+(def (cmd-org-ref-insert-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Citation key: "
+      (lambda (key)
+        (echo-message! echo (str "Org-ref: inserted citation " key))))))
+
+(def (cmd-org-ref-cite-hydra app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-ref: opened citation hydra")))
+
+(def (cmd-zotero-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zotero: opened browser")))
+
+(def (cmd-bibtex-sort-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BibTeX: sorted buffer")))

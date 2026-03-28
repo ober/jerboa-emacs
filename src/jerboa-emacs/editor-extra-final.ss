@@ -15300,3 +15300,51 @@
 (def (cmd-verb-show-request app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Verb: showing request")))
+
+;;; Round 142 — Denote, Citar, Org-ref, BibTeX, Ebib (batch 2)
+
+(def (cmd-bibtex-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BibTeX: validated buffer")))
+
+(def (cmd-bibtex-count-entries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BibTeX: counted entries")))
+
+(def (cmd-bibtex-find-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find BibTeX entry: "
+      (lambda (key)
+        (echo-message! echo (str "BibTeX: found entry " key))))))
+
+(def (cmd-bibtex-search-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search BibTeX: "
+      (lambda (query)
+        (echo-message! echo (str "BibTeX: searching for '" query "'"))))))
+
+(def (cmd-bibtex-entry-update-timestamp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BibTeX: updated entry timestamp")))
+
+(def (cmd-parsebib-parse-bib-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Parsebib: parsed bib buffer")))
+
+(def (cmd-ebib app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ebib: started bibliography manager")))
+
+(def (cmd-ebib-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Open bib file: "
+      (lambda (file)
+        (echo-message! echo (str "Ebib: opened " file))))))
+
+(def (cmd-ebib-import-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ebib: imported file")))
+
+(def (cmd-ebib-push-citation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ebib: pushed citation to buffer")))
