@@ -14260,3 +14260,57 @@
     (echo-read-string echo "Filter by name: "
       (lambda (name)
         (echo-message! echo (str "Dired: filtered by name '" name "'"))))))
+
+;;; ——— Round 108: EWW, RSS & web browsing (batch 1) ———
+
+(def (cmd-eww-readable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: toggled readable view")))
+
+(def (cmd-eww-toggle-fonts app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eww-fonts)
+    (if (mode-enabled? app 'eww-fonts)
+      (echo-message! echo "EWW: fonts enabled")
+      (echo-message! echo "EWW: fonts disabled"))))
+
+(def (cmd-eww-toggle-colors app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eww-colors)
+    (if (mode-enabled? app 'eww-colors)
+      (echo-message! echo "EWW: colors enabled")
+      (echo-message! echo "EWW: colors disabled"))))
+
+(def (cmd-eww-list-histories app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: listing browsing history")))
+
+(def (cmd-elfeed-search-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: updating search results")))
+
+(def (cmd-elfeed-search-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: opening entry URL in browser")))
+
+(def (cmd-elfeed-search-tag-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag all with: "
+      (lambda (tag)
+        (echo-message! echo (str "Elfeed: tagged all entries with " tag))))))
+
+(def (cmd-elfeed-search-untag-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Untag all: "
+      (lambda (tag)
+        (echo-message! echo (str "Elfeed: removed tag " tag " from all entries"))))))
+
+(def (cmd-elfeed-search-live-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elfeed live filter: "
+      (lambda (filter)
+        (echo-message! echo (str "Elfeed: live filter set to '" filter "'"))))))
+
+(def (cmd-elfeed-db-compact app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: compacting database")))

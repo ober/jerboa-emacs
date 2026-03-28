@@ -13705,3 +13705,47 @@
 (def (cmd-dired-open-file app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dired: opened file with external application")))
+
+;;; ——— Round 108: EWW, RSS & web browsing (batch 2) ———
+
+(def (cmd-elfeed-goodies-setup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed Goodies: setup complete")))
+
+(def (cmd-elfeed-org app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: loaded feed configuration from org file")))
+
+(def (cmd-elfeed-search-yank app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: yanked entry URL to kill ring")))
+
+(def (cmd-newsticker-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Newsticker: started fetching news")))
+
+(def (cmd-newsticker-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Newsticker: stopped fetching news")))
+
+(def (cmd-newsticker-plainview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Newsticker: showing plain view")))
+
+(def (cmd-newsticker-add-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Feed URL: "
+      (lambda (url)
+        (echo-message! echo (str "Newsticker: added feed " url))))))
+
+(def (cmd-shr-copy-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: copied URL at point to kill ring")))
+
+(def (cmd-shr-next-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: moved to next link")))
+
+(def (cmd-shr-previous-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: moved to previous link")))

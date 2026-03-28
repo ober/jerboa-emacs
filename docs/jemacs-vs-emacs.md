@@ -3664,6 +3664,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | dired-avfs-open | :orange_circle: | Open via AVFS virtual filesystem |
 | dired-open-file | :orange_circle: | Open with external application |
 
+### Round 108 — EWW, RSS & Web Browsing
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| eww-readable | :orange_circle: | Toggle readable view in EWW |
+| eww-toggle-fonts | :orange_circle: | Toggle font rendering in EWW |
+| eww-toggle-colors | :orange_circle: | Toggle color rendering in EWW |
+| eww-list-histories | :orange_circle: | List EWW browsing history |
+| elfeed-search-update | :orange_circle: | Update elfeed search results |
+| elfeed-search-browse-url | :orange_circle: | Open entry URL in browser |
+| elfeed-search-tag-all | :orange_circle: | Tag all visible entries |
+| elfeed-search-untag-all | :orange_circle: | Untag all visible entries |
+| elfeed-search-live-filter | :orange_circle: | Set live filter for elfeed |
+| elfeed-db-compact | :orange_circle: | Compact elfeed database |
+| elfeed-goodies-setup | :orange_circle: | Setup elfeed goodies enhancements |
+| elfeed-org | :orange_circle: | Load feeds from org file |
+| elfeed-search-yank | :orange_circle: | Yank entry URL to kill ring |
+| newsticker-start | :orange_circle: | Start fetching news |
+| newsticker-stop | :orange_circle: | Stop fetching news |
+| newsticker-plainview | :orange_circle: | Show newsticker plain view |
+| newsticker-add-url | :orange_circle: | Add a feed URL |
+| shr-copy-url | :orange_circle: | Copy URL at point |
+| shr-next-link | :orange_circle: | Move to next SHR link |
+| shr-previous-link | :orange_circle: | Move to previous SHR link |
+
 ---
 
 ## Recommended Development Roadmap
