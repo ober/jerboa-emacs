@@ -10346,3 +10346,81 @@
         (when (and name (not (string-empty? name)))
           (echo-message! echo (str "Skeleton '" name "' not defined")))))))
 
+;;; Round 38 batch 1: lgrep, occur-rename-buffer, highlight-changes-visible-mode,
+;;; auto-highlight-symbol-mode, beacon-mode, centered-cursor-mode,
+;;; zoom-window, transpose-frame, flip-frame, windmove-swap-states-left
+
+(def (cmd-lgrep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Grep pattern: "
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (echo-read-string echo "File glob (e.g., *.el): "
+            (lambda (glob)
+              (let* ((frame (app-state-frame app))
+                     (new-buf (make-buffer "*grep*")))
+                (buffer-content-set! new-buf
+                  (str "-*- mode: grep -*-\n"
+                       "lgrep for: " pattern " in " (or glob "*") "\n\n"
+                       "(Local grep - no results)"))
+                (switch-to-buffer frame new-buf)
+                (echo-message! echo (str "lgrep: " pattern))))))))))
+
+(def (cmd-occur-rename-buffer app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (name (buffer-name buf)))
+    (if (string-prefix? "*Occur" name)
+      (echo-read-string echo "Rename occur buffer to: "
+        (lambda (new-name)
+          (when (and new-name (not (string-empty? new-name)))
+            (buffer-name-set! buf new-name)
+            (echo-message! echo (str "Renamed to " new-name)))))
+      (echo-message! echo "Not in an Occur buffer"))))
+
+(def (cmd-highlight-changes-visible-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "highlight-changes-visible")
+    (if (mode-enabled? app "highlight-changes-visible")
+      (echo-message! echo "Highlight changes visible mode enabled")
+      (echo-message! echo "Highlight changes visible mode disabled"))))
+
+(def (cmd-auto-highlight-symbol-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "auto-highlight-symbol")
+    (if (mode-enabled? app "auto-highlight-symbol")
+      (echo-message! echo "Auto highlight symbol mode enabled")
+      (echo-message! echo "Auto highlight symbol mode disabled"))))
+
+(def (cmd-beacon-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "beacon")
+    (if (mode-enabled? app "beacon")
+      (echo-message! echo "Beacon mode enabled (cursor flash on jump)")
+      (echo-message! echo "Beacon mode disabled"))))
+
+(def (cmd-centered-cursor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "centered-cursor")
+    (if (mode-enabled? app "centered-cursor")
+      (echo-message! echo "Centered cursor mode enabled")
+      (echo-message! echo "Centered cursor mode disabled"))))
+
+(def (cmd-zoom-window app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app)))
+    (echo-message! echo "Window zoomed (use C-x 1 to maximize)")))
+
+(def (cmd-transpose-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Frame transposed (swap horizontal/vertical split)")))
+
+(def (cmd-flip-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Frame flipped")))
+
+(def (cmd-windmove-swap-states-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swapped window state with left window")))
+

@@ -1882,6 +1882,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Kill compilation | :orange_circle: | Kill running compilation |
 | Grep find | :orange_circle: | Grep with find integration |
 
+### Round 38
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Lgrep | :orange_circle: | Local grep with file glob |
+| Occur rename buffer | :orange_circle: | Rename occur buffer |
+| Highlight changes visible mode | :orange_circle: | Toggle change highlight visibility |
+| Auto highlight symbol mode | :orange_circle: | Auto-highlight symbol at point |
+| Beacon mode | :orange_circle: | Flash cursor on jump |
+| Centered cursor mode | :orange_circle: | Keep cursor centered vertically |
+| Zoom window | :orange_circle: | Zoom current window |
+| Transpose frame | :orange_circle: | Swap horizontal/vertical splits |
+| Flip frame | :orange_circle: | Flip window arrangement |
+| Windmove swap states left | :orange_circle: | Swap window state leftward |
+| Windmove swap states right | :orange_circle: | Swap window state rightward |
+| Windmove swap states up | :orange_circle: | Swap window state upward |
+| Windmove swap states down | :orange_circle: | Swap window state downward |
+| Ace window | :orange_circle: | Quick window selection by number |
+| Avy goto char | :orange_circle: | Jump to character with avy |
+| Avy goto line | :orange_circle: | Jump to line with avy |
+| Avy goto word | :orange_circle: | Jump to word with avy |
+| Emacs version verbose | :orange_circle: | Detailed version information |
+| Insert char by name | :orange_circle: | Insert Unicode character by name |
+| Set input method | :orange_circle: | Set keyboard input method |
+
 ---
 
 ## Recommended Development Roadmap
