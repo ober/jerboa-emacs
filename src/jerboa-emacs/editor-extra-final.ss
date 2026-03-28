@@ -6802,3 +6802,313 @@
                             (editor-set-text new-ed (str "=== Commands matching '" keyword "' ===\n\n" result "\n")))
                           (echo-message! echo (str (length results) " commands found"))))))
                   (loop (cons (string-trim line) lines)))))))))))
+
+;; ===== Round 18 Batch 2 =====
+
+;; --- Feature 11: Stopwatch ---
+
+(def (cmd-stopwatch app)
+  "Display a stopwatch in the echo area."
+  (let* ((echo (app-state-echo app))
+         (start (time-second (current-time)))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*stopwatch*")))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed (str "=== Stopwatch ===\n\n"
+                               "Started at: " start " (epoch)\n\n"
+                               "Use M-x stopwatch-check to see elapsed time.\n"
+                               "Elapsed seconds will be shown in echo area.\n"))
+      (echo-message! echo "Stopwatch started"))))
+
+;; --- Feature 12: Countdown Timer ---
+
+(def (cmd-countdown-timer app)
+  "Start a countdown timer."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (secs-str (echo-read-string echo "Countdown seconds: " row width)))
+    (when (and secs-str (not (string-empty? secs-str)))
+      (let ((secs (string->number (string-trim secs-str))))
+        (when secs
+          (let* ((frame (app-state-frame app))
+                 (end-time (+ (time-second (current-time)) secs))
+                 (new-buf (create-buffer "*countdown*")))
+            (switch-to-buffer frame new-buf)
+            (let ((ed (edit-window-editor (current-window frame))))
+              (editor-set-text ed (str "=== Countdown Timer ===\n\n"
+                                       "Duration: " secs " seconds\n"
+                                       "Ends at epoch: " end-time "\n\n"
+                                       "Use M-x countdown-check to see remaining time.\n"))
+              (echo-message! echo (str "Countdown: " secs " seconds")))))))))
+
+;; --- Feature 13: Snow Effect ---
+
+(def (cmd-snow-effect app)
+  "Display a snow animation in the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*snow*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (w 60) (h 20)
+           (grid (make-vector (* w h) #\space)))
+      ;; Generate snowflakes falling
+      (let animate ((step 0))
+        (when (< step 200)
+          ;; Move existing flakes down
+          (let move-down ((y (- h 1)))
+            (when (> y 0)
+              (let move-col ((x 0))
+                (when (< x w)
+                  (when (char=? (vector-ref grid (+ (* (- y 1) w) x)) #\*)
+                    (vector-set! grid (+ (* y w) x) #\*)
+                    (vector-set! grid (+ (* (- y 1) w) x) #\space))
+                  (move-col (+ x 1))))
+              (move-down (- y 1))))
+          ;; Add new flake at top
+          (when (< (random 3) 1)
+            (vector-set! grid (random w) #\*))
+          (animate (+ step 1))))
+      ;; Render
+      (let* ((lines (let build ((y 0) (acc '()))
+                      (if (>= y h) (reverse acc)
+                        (build (+ y 1)
+                          (cons (list->string
+                                  (let bcol ((x 0) (cs '()))
+                                    (if (>= x w) (reverse cs)
+                                      (bcol (+ x 1)
+                                        (cons (vector-ref grid (+ (* y w) x)) cs)))))
+                                acc)))))
+             (text (str "=== Snow ===\n\n" (string-join lines "\n") "\n")))
+        (editor-set-text ed text)
+        (echo-message! echo "Let it snow!")))))
+
+;; --- Feature 14: Hangman ---
+
+(def (cmd-hangman app)
+  "Play a game of Hangman."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (words '("scheme" "emacs" "buffer" "window" "editor" "lambda" "syntax"
+                  "macro" "compile" "module" "define" "cursor" "indent" "format"))
+         (word (list-ref words (random (length words))))
+         (new-buf (create-buffer "*hangman*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (masked (make-string (string-length word) #\_))
+           (art '("  +---+\n  |   |\n      |\n      |\n      |\n      |\n========="
+                  "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n========="
+                  "  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n========="
+                  "  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n========="
+                  "  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n========="
+                  "  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n========="
+                  "  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n=========")))
+      (editor-set-text ed (str "=== HANGMAN ===\n\n"
+                               (car art) "\n\n"
+                               "Word: " masked "\n\n"
+                               "Guesses: (none)\n"
+                               "Use M-x hangman-guess to guess a letter.\n"))
+      (echo-message! echo "Hangman started! Guess a letter with M-x hangman-guess"))))
+
+;; --- Feature 15: Image to ASCII ---
+
+(def (cmd-image-to-ascii app)
+  "Convert an image file to ASCII art."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (file (echo-read-string echo "Image file: " row width)))
+    (when (and file (not (string-empty? file)))
+      (let ((path (string-trim file)))
+        (if (not (file-exists? path))
+          (echo-message! echo (str "File not found: " path))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "Convert error: " e)))
+            (lambda ()
+              (let-values (((si so se pid)
+                            (open-process-ports
+                              (str "jp2a --width=80 " (shell-quote path)
+                                   " 2>/dev/null || asciiart " (shell-quote path)
+                                   " 2>/dev/null || echo 'Install jp2a for image-to-ascii'")
+                              'block (native-transcoder))))
+                (close-port si)
+                (let loop ((lines '()))
+                  (let ((line (get-line so)))
+                    (if (eof-object? line)
+                      (begin
+                        (close-port so) (close-port se)
+                        (let* ((result (string-join (reverse lines) "\n"))
+                               (new-buf (create-buffer "*ascii-art*")))
+                          (switch-to-buffer frame new-buf)
+                          (let ((new-ed (edit-window-editor (current-window frame))))
+                            (editor-set-text new-ed result))
+                          (echo-message! echo "ASCII art rendered")))
+                      (loop (cons line lines)))))))))))))
+
+;; --- Feature 16: Buffer Menu ---
+
+(def (cmd-buffer-menu app)
+  "Display an enhanced buffer menu with sizes and modification status."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (bufs (frame-buffers frame))
+         (new-buf (create-buffer "*buffer-menu*"))
+         (header "  MR Buffer                         Size  File\n  -- ------                         ----  ----\n")
+         (lines (map (lambda (buf)
+                       (let* ((name (buffer-name buf))
+                              (file (or (buffer-file buf) ""))
+                              (modified (buffer-modified? buf))
+                              (flag-m (if modified "*" " "))
+                              (pad-name (if (< (string-length name) 30)
+                                          (str name (make-string (- 30 (string-length name)) #\space))
+                                          (substring name 0 30))))
+                         (str "  " flag-m "  " pad-name "  " file)))
+                     bufs))
+         (text (str "=== Buffer Menu ===\n\n" header (string-join lines "\n") "\n")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed text))
+    (echo-message! echo (str (length bufs) " buffers"))))
+
+;; --- Feature 17: Fire Effect ---
+
+(def (cmd-fire-effect app)
+  "Display a fire animation effect in the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*fire*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (w 60) (h 15)
+           (chars " .:-=+*#%@")
+           (grid (make-vector (* w h) 0)))
+      ;; Simulate fire
+      (let animate ((step 0))
+        (when (< step 300)
+          ;; Set bottom row to max heat
+          (let set-bottom ((x 0))
+            (when (< x w)
+              (vector-set! grid (+ (* (- h 1) w) x)
+                (+ (quotient (- (string-length chars) 1) 2) (random (quotient (string-length chars) 2))))
+              (set-bottom (+ x 1))))
+          ;; Propagate heat upward with cooling
+          (let prop-row ((y 1))
+            (when (< y h)
+              (let prop-col ((x 0))
+                (when (< x w)
+                  (let* ((below (vector-ref grid (+ (* (min (- h 1) y) w) x)))
+                         (left (if (> x 0) (vector-ref grid (+ (* y w) (- x 1))) 0))
+                         (right (if (< x (- w 1)) (vector-ref grid (+ (* y w) (+ x 1))) 0))
+                         (avg (quotient (+ below left right) 3))
+                         (cooled (max 0 (- avg (random 2)))))
+                    (vector-set! grid (+ (* (- y 1) w) x) cooled))
+                  (prop-col (+ x 1))))
+              (prop-row (+ y 1))))
+          (animate (+ step 1))))
+      ;; Render
+      (let* ((lines (let build ((y 0) (acc '()))
+                      (if (>= y h) (reverse acc)
+                        (build (+ y 1)
+                          (cons (list->string
+                                  (let bcol ((x 0) (cs '()))
+                                    (if (>= x w) (reverse cs)
+                                      (bcol (+ x 1)
+                                        (cons (string-ref chars
+                                                (min (- (string-length chars) 1)
+                                                     (vector-ref grid (+ (* y w) x))))
+                                              cs)))))
+                                acc)))))
+             (text (str "=== Fire ===\n\n" (string-join lines "\n") "\n")))
+        (editor-set-text ed text)
+        (echo-message! echo "Fire effect rendered")))))
+
+;; --- Feature 18: Lolcat ---
+
+(def (cmd-lolcat app)
+  "Show rainbow text info for the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (text (editor-get-text ed)))
+    (if (or (not text) (string-empty? text))
+      (echo-message! echo "Buffer is empty")
+      (let* ((new-buf (create-buffer "*lolcat*"))
+             (info (str "=== Lolcat Mode ===\n\n"
+                        "In a terminal with color support, this would show rainbow text.\n\n"
+                        "To see the actual rainbow effect, pipe through lolcat:\n"
+                        "  cat file.txt | lolcat\n\n"
+                        "Buffer text length: " (string-length text) " characters\n"
+                        "Lines: " (length (string-split text #\newline)) "\n")))
+        (switch-to-buffer frame new-buf)
+        (let ((new-ed (edit-window-editor (current-window frame))))
+          (editor-set-text new-ed info))
+        (echo-message! echo "Lolcat (rainbow text simulation)")))))
+
+;; --- Feature 19: Toggle Narrow to Region ---
+
+(def (cmd-toggle-narrow-to-region app)
+  "Toggle narrowing to the selected region."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "Use M-x widen-buffer to restore full buffer")
+      (let ((text (editor-get-text-range ed start end)))
+        (editor-set-text ed text)
+        (editor-goto-pos ed 0)
+        (echo-message! echo "Narrowed to region")))))
+
+;; --- Feature 20: Password Store ---
+
+(def (cmd-password-store app)
+  "Interact with the pass password store."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (action (echo-read-string echo "pass [list/show/generate/find]: " row width)))
+    (when (and action (not (string-empty? action)))
+      (let ((act (string-trim action)))
+        (cond
+          ((string=? act "list")
+           (with-catch
+             (lambda (e) (echo-message! echo (str "pass error: " e)))
+             (lambda ()
+               (let-values (((si so se pid)
+                             (open-process-ports "pass ls 2>/dev/null || echo 'pass not installed'"
+                               'block (native-transcoder))))
+                 (close-port si)
+                 (let loop ((lines '()))
+                   (let ((line (get-line so)))
+                     (if (eof-object? line)
+                       (begin
+                         (close-port so) (close-port se)
+                         (let* ((result (string-join (reverse lines) "\n"))
+                                (new-buf (create-buffer "*pass*")))
+                           (switch-to-buffer frame new-buf)
+                           (let ((new-ed (edit-window-editor (current-window frame))))
+                             (editor-set-text new-ed (str "=== Password Store ===\n\n" result "\n")))
+                           (echo-message! echo "Password store listed")))
+                       (loop (cons line lines)))))))))
+          ((string=? act "find")
+           (let ((query (echo-read-string echo "Search for: " row width)))
+             (when (and query (not (string-empty? query)))
+               (with-catch
+                 (lambda (e) (echo-message! echo (str "pass error: " e)))
+                 (lambda ()
+                   (let-values (((si so se pid)
+                                 (open-process-ports (str "pass find " (shell-quote (string-trim query)) " 2>/dev/null")
+                                   'block (native-transcoder))))
+                     (close-port si)
+                     (let loop ((lines '()))
+                       (let ((line (get-line so)))
+                         (if (eof-object? line)
+                           (begin
+                             (close-port so) (close-port se)
+                             (echo-message! echo (string-join (reverse lines) " | ")))
+                           (loop (cons (string-trim line) lines)))))))))))
+          (else (echo-message! echo (str "Unknown action: " act))))))))

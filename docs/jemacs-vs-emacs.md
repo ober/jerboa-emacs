@@ -1466,6 +1466,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Locate library | :orange_circle: | Find library file path |
 | Load library | :orange_circle: | Load a Scheme library file |
 | Finder by keyword | :orange_circle: | Find commands by keyword search |
+| Insert Lorem Ipsum | :orange_circle: | Generate Lorem Ipsum placeholder text |
+| Generate password | :orange_circle: | Generate random password (configurable length) |
+| Insert UUID | :orange_circle: | Insert UUID v4 at point |
+| ASCII art text | :orange_circle: | Convert text to ASCII art via figlet |
+| Matrix effect | :orange_circle: | Matrix-style rain animation |
+| Game of Life | :orange_circle: | Conway's Game of Life simulation |
+| Mandelbrot | :orange_circle: | Text-based Mandelbrot set rendering |
+| Maze generator | :orange_circle: | Random maze via recursive backtracker |
+| Typing speed test | :orange_circle: | WPM typing speed test |
+| Pomodoro timer | :orange_circle: | 25-minute work session timer |
+| Stopwatch | :orange_circle: | Simple stopwatch |
+| Countdown timer | :orange_circle: | Countdown timer with configurable duration |
+| Snow effect | :orange_circle: | Animated snowfall in buffer |
+| Hangman | :orange_circle: | Hangman word game |
+| Image to ASCII | :orange_circle: | Convert image to ASCII art via jp2a |
+| Buffer menu | :orange_circle: | Enhanced buffer list with modification status |
+| Fire effect | :orange_circle: | Animated fire simulation |
+| Lolcat | :orange_circle: | Rainbow text simulation |
+| Toggle narrow to region | :orange_circle: | Toggle narrowing to selected region |
+| Password store | :orange_circle: | Interact with pass password manager |
 
 ---
 

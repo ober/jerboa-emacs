@@ -7165,3 +7165,348 @@
     ;; Highlight the line
     (send-message ed SCI_INDICATORFILLRANGE line-start (- line-end line-start))
     (echo-message! (app-state-echo app) "Line pulsed")))
+
+;; ===== Round 18 Batch 1 =====
+
+;; --- Feature 1: Insert Lorem Ipsum ---
+
+(def (cmd-insert-lorem-ipsum app)
+  "Insert Lorem Ipsum placeholder text."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (paragraphs-str (echo-read-string echo "Paragraphs (default 3): " row width))
+         (n (or (and paragraphs-str (not (string-empty? paragraphs-str))
+                     (string->number (string-trim paragraphs-str)))
+                3))
+         (lorem "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+         (extras '("Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris."
+                   "Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus."
+                   "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante."
+                   "Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem, at interdum magna augue eget diam.")))
+         (text (string-join
+                 (let build ((i 0) (acc '()))
+                   (if (>= i n) (reverse acc)
+                     (build (+ i 1)
+                       (cons (if (= i 0) lorem
+                               (list-ref extras (modulo (- i 1) (length extras))))
+                             acc))))
+                 "\n\n")))
+    (send-message ed SCI_INSERTTEXT -1 text)
+    (echo-message! echo (str "Inserted " n " paragraphs of Lorem Ipsum")))
+
+
+;; --- Feature 2: Generate Password ---
+
+(def (cmd-generate-password app)
+  "Generate a random password and insert it."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (len-str (echo-read-string echo "Password length (default 16): " row width))
+         (len (or (and len-str (not (string-empty? len-str))
+                       (string->number (string-trim len-str)))
+                  16))
+         (chars "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?")
+         (password (list->string
+                     (let gen ((i 0) (acc '()))
+                       (if (>= i len) (reverse acc)
+                         (gen (+ i 1)
+                           (cons (string-ref chars (random (string-length chars))) acc)))))))
+    (send-message ed SCI_INSERTTEXT -1 password)
+    (echo-message! echo (str "Generated " len "-char password"))))
+
+;; --- Feature 3: Insert UUID ---
+
+(def (cmd-insert-uuid app)
+  "Insert a UUID (v4) at point."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "UUID error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "python3 -c 'import uuid;print(uuid.uuid4())' 2>/dev/null || cat /proc/sys/kernel/random/uuid 2>/dev/null"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let ((uuid (get-line so)))
+            (close-port so) (close-port se)
+            (if (eof-object? uuid)
+              (echo-message! echo "Could not generate UUID")
+              (let ((id (string-trim uuid)))
+                (send-message ed SCI_INSERTTEXT -1 id)
+                (echo-message! echo (str "UUID: " id))))))))))
+
+;; --- Feature 4: ASCII Art Text ---
+
+(def (cmd-ascii-art-text app)
+  "Convert text to ASCII art using figlet or toilet."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (text (echo-read-string echo "Text for ASCII art: " row width)))
+    (when (and text (not (string-empty? text)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "figlet error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "figlet " (shell-quote (string-trim text))
+                               " 2>/dev/null || toilet " (shell-quote (string-trim text))
+                               " 2>/dev/null || echo " (shell-quote (string-trim text)))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((art (string-join (reverse lines) "\n")))
+                      (send-message ed SCI_INSERTTEXT -1 art)
+                      (echo-message! echo "ASCII art inserted")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 5: Matrix Effect ---
+
+(def (cmd-matrix-effect app)
+  "Display a Matrix-style rain animation in the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*matrix*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (width 80) (height 24)
+           (chars "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*")
+           (grid (make-vector (* width height) #\space)))
+      ;; Generate several frames of matrix rain
+      (let animate ((step 0))
+        (when (< step 100)
+          ;; Drop random characters
+          (let ((col (random width)))
+            (let shift-down ((row (- height 1)))
+              (when (> row 0)
+                (vector-set! grid (+ (* row width) col)
+                  (vector-ref grid (+ (* (- row 1) width) col)))
+                (shift-down (- row 1))))
+            (vector-set! grid col
+              (string-ref chars (random (string-length chars)))))
+          (animate (+ step 1))))
+      ;; Render final frame
+      (let* ((lines (let build-rows ((row 0) (acc '()))
+                      (if (>= row height) (reverse acc)
+                        (let ((line (list->string
+                                      (let build-cols ((col 0) (cs '()))
+                                        (if (>= col width) (reverse cs)
+                                          (build-cols (+ col 1)
+                                            (cons (vector-ref grid (+ (* row width) col)) cs)))))))
+                          (build-rows (+ row 1) (cons line acc))))))
+             (text (string-join lines "\n")))
+        (editor-set-text ed text)
+        (echo-message! echo "Matrix loaded. Press undo to restore.")))))
+
+;; --- Feature 6: Game of Life ---
+
+(def (cmd-game-of-life app)
+  "Run Conway's Game of Life in the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*game-of-life*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (w 40) (h 20)
+           (grid (make-vector (* w h) 0)))
+      ;; Random initial state
+      (let init ((i 0))
+        (when (< i (* w h))
+          (vector-set! grid i (if (< (random 4) 1) 1 0))
+          (init (+ i 1))))
+      ;; Run a few generations
+      (let gen-loop ((gen 0))
+        (when (< gen 50)
+          (let ((new-grid (make-vector (* w h) 0)))
+            (let row-loop ((y 0))
+              (when (< y h)
+                (let col-loop ((x 0))
+                  (when (< x w)
+                    (let* ((neighbors
+                             (let count ((dy -1) (sum 0))
+                               (if (> dy 1) sum
+                                 (count (+ dy 1)
+                                   (+ sum (let count2 ((dx -1) (s2 0))
+                                            (if (> dx 1) s2
+                                              (count2 (+ dx 1)
+                                                (+ s2 (if (and (= dx 0) (= dy 0)) 0
+                                                        (let ((nx (modulo (+ x dx) w))
+                                                              (ny (modulo (+ y dy) h)))
+                                                          (vector-ref grid (+ (* ny w) nx)))))))))))))
+                           (alive (vector-ref grid (+ (* y w) x))))
+                      (vector-set! new-grid (+ (* y w) x)
+                        (cond ((and (= alive 1) (or (= neighbors 2) (= neighbors 3))) 1)
+                              ((and (= alive 0) (= neighbors 3)) 1)
+                              (else 0))))
+                    (col-loop (+ x 1))))
+                (row-loop (+ y 1))))
+            ;; Copy new-grid to grid
+            (let cp ((i 0))
+              (when (< i (* w h))
+                (vector-set! grid i (vector-ref new-grid i))
+                (cp (+ i 1)))))
+          (gen-loop (+ gen 1))))
+      ;; Render
+      (let* ((lines (let build ((y 0) (acc '()))
+                      (if (>= y h) (reverse acc)
+                        (build (+ y 1)
+                          (cons (list->string
+                                  (let bcol ((x 0) (cs '()))
+                                    (if (>= x w) (reverse cs)
+                                      (bcol (+ x 1)
+                                        (cons (if (= (vector-ref grid (+ (* y w) x)) 1) #\# #\.) cs)))))
+                                acc)))))
+             (text (str "=== Game of Life (gen 50) ===\n\n" (string-join lines "\n") "\n")))
+        (editor-set-text ed text)
+        (echo-message! echo "Game of Life rendered")))))
+
+;; --- Feature 7: Mandelbrot ---
+
+(def (cmd-mandelbrot app)
+  "Render a text-based Mandelbrot set."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*mandelbrot*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (w 72) (h 24)
+           (chars " .:-=+*#%@")
+           (max-iter (- (string-length chars) 1))
+           (lines
+             (let row-loop ((y 0) (acc '()))
+               (if (>= y h) (reverse acc)
+                 (row-loop (+ y 1)
+                   (cons (list->string
+                           (let col-loop ((x 0) (cs '()))
+                             (if (>= x w) (reverse cs)
+                               (let* ((cr (+ -2.0 (* 3.0 (/ (inexact x) w))))
+                                      (ci (+ -1.2 (* 2.4 (/ (inexact y) h)))))
+                                 (let iter ((zr 0.0) (zi 0.0) (i 0))
+                                   (if (or (>= i max-iter) (> (+ (* zr zr) (* zi zi)) 4.0))
+                                     (col-loop (+ x 1) (cons (string-ref chars i) cs))
+                                     (iter (+ (- (* zr zr) (* zi zi)) cr)
+                                           (+ (* 2.0 zr zi) ci)
+                                           (+ i 1))))))))
+                         acc)))))
+           (text (str "=== Mandelbrot Set ===\n\n" (string-join lines "\n") "\n")))
+      (editor-set-text ed text)
+      (echo-message! echo "Mandelbrot set rendered"))))
+
+;; --- Feature 8: Maze Generator ---
+
+(def (cmd-maze-generator app)
+  "Generate a random maze in the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*maze*")))
+    (switch-to-buffer frame new-buf)
+    (let* ((ed (edit-window-editor (current-window frame)))
+           (w 21) (h 11)  ;; Must be odd
+           (grid (make-vector (* w h) #\#)))
+      ;; Simple recursive backtracker (iterative version with stack)
+      (let ((start-x 1) (start-y 1))
+        (vector-set! grid (+ (* start-y w) start-x) #\space)
+        (let carve ((stack (list (cons start-x start-y))))
+          (when (not (null? stack))
+            (let* ((pos (car stack))
+                   (cx (car pos)) (cy (cdr pos))
+                   (dirs '((0 . -2) (0 . 2) (-2 . 0) (2 . 0)))
+                   ;; Shuffle directions
+                   (shuffled (let shuffle ((d dirs) (acc '()))
+                               (if (null? d) acc
+                                 (let ((idx (random (length d))))
+                                   (shuffle (append (take d idx) (drop d (+ idx 1)))
+                                     (cons (list-ref d idx) acc)))))))
+              (let try-dirs ((ds shuffled) (moved #f))
+                (if (or moved (null? ds))
+                  (if moved
+                    (carve stack)
+                    (carve (cdr stack)))
+                  (let* ((dx (caar ds)) (dy (cdar ds))
+                         (nx (+ cx dx)) (ny (+ cy dy)))
+                    (if (and (> nx 0) (< nx (- w 1))
+                             (> ny 0) (< ny (- h 1))
+                             (char=? (vector-ref grid (+ (* ny w) nx)) #\#))
+                      (begin
+                        ;; Carve wall between
+                        (vector-set! grid (+ (* (+ cy (quotient dy 2)) w) (+ cx (quotient dx 2))) #\space)
+                        (vector-set! grid (+ (* ny w) nx) #\space)
+                        (try-dirs (cdr ds) #t)
+                        (carve (cons (cons nx ny) stack)))
+                      (try-dirs (cdr ds) moved)))))))))
+      ;; Render
+      (let* ((lines (let build ((y 0) (acc '()))
+                      (if (>= y h) (reverse acc)
+                        (build (+ y 1)
+                          (cons (list->string
+                                  (let bcol ((x 0) (cs '()))
+                                    (if (>= x w) (reverse cs)
+                                      (bcol (+ x 1) (cons (vector-ref grid (+ (* y w) x)) cs)))))
+                                acc)))))
+             (text (str "=== Random Maze ===\n\n" (string-join lines "\n") "\n")))
+        (editor-set-text ed text)
+        (echo-message! echo "Maze generated")))))
+
+;; --- Feature 9: Typing Speed Test ---
+
+(def (cmd-typing-speed-test app)
+  "Test your typing speed (WPM)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (phrases '("the quick brown fox jumps over the lazy dog"
+                    "pack my box with five dozen liquor jugs"
+                    "how vexingly quick daft zebras jump"
+                    "the five boxing wizards jump quickly"
+                    "sphinx of black quartz judge my vow"))
+         (phrase (list-ref phrases (random (length phrases))))
+         (new-buf (create-buffer "*typing-test*")))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed (str "=== Typing Speed Test ===\n\n"
+                               "Type the following phrase:\n\n"
+                               "  " phrase "\n\n"
+                               "When ready, use M-x typing-speed-submit to check your result.\n"))
+      (echo-message! echo (str "Type: " phrase)))))
+
+;; --- Feature 10: Pomodoro Timer ---
+
+(def (cmd-pomodoro-timer app)
+  "Start a Pomodoro timer (25-minute work session)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (duration-str (echo-read-string echo "Minutes (default 25): " row width))
+         (minutes (or (and duration-str (not (string-empty? duration-str))
+                           (string->number (string-trim duration-str)))
+                      25))
+         (new-buf (create-buffer "*pomodoro*")))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed (str "=== Pomodoro Timer ===\n\n"
+                               "Duration: " minutes " minutes\n"
+                               "Started at: " (with-output-to-string
+                                                (lambda ()
+                                                  (let-values (((si so se pid)
+                                                                (open-process-ports "date '+%H:%M:%S'" 'block (native-transcoder))))
+                                                    (close-port si)
+                                                    (let ((t (get-line so)))
+                                                      (close-port so) (close-port se)
+                                                      (when (not (eof-object? t)) (display (string-trim t)))))))
+                               "\n\nFocus on your work!\n"
+                               "Use M-x pomodoro-check to see remaining time.\n"))
+      (echo-message! echo (str "Pomodoro started: " minutes " minutes")))))
