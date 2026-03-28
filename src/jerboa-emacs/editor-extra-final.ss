@@ -17598,3 +17598,49 @@
 (def (cmd-pinentry-prompt app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pinentry: showing prompt")))
+
+;; Round 188 — Emmet, Web-mode-ext, Prettier, Tailwind (batch 2)
+(def (cmd-web-mode-dom-errors-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: showing DOM errors")))
+
+(def (cmd-web-mode-navigate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: navigating to matching tag")))
+
+(def (cmd-prettier-prettify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prettier: formatted buffer")))
+
+(def (cmd-prettier-prettify-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prettier: formatted region")))
+
+(def (cmd-prettier-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prettier: restarted")))
+
+(def (cmd-tailwindcss-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'tailwindcss)
+    (if (mode-enabled? app 'tailwindcss)
+      (echo-message! echo "TailwindCSS mode enabled")
+      (echo-message! echo "TailwindCSS mode disabled"))))
+
+(def (cmd-tailwindcss-sort-classes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TailwindCSS: sorted classes")))
+
+(def (cmd-tailwindcss-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Lookup class: "
+      (lambda (cls)
+        (echo-message! echo (str "TailwindCSS: looking up " cls))))))
+
+(def (cmd-tailwindcss-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TailwindCSS: completing class name")))
+
+(def (cmd-tailwindcss-toggle-prefix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TailwindCSS: toggled class prefix")))

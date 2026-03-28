@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 188 — Emmet, Web-mode-ext, Prettier, Tailwind
+
+| Feature | Status | Notes |
+|---|---|---|
+| emmet-expand-yas | :orange_circle: | Expand Emmet with yasnippet |
+| emmet-next-edit-point | :orange_circle: | Move to next edit point |
+| emmet-prev-edit-point | :orange_circle: | Move to previous edit point |
+| emmet-merge-lines | :orange_circle: | Merge Emmet lines |
+| web-mode-element-clone | :orange_circle: | Clone HTML element |
+| web-mode-element-vanish | :orange_circle: | Remove tag, keep children |
+| web-mode-element-rename | :orange_circle: | Rename HTML element tag |
+| web-mode-element-content-select | :orange_circle: | Select element content |
+| web-mode-element-mute-blanks | :orange_circle: | Mute blanks in element |
+| web-mode-tag-attributes-sort | :orange_circle: | Sort tag attributes |
+| web-mode-dom-errors-show | :orange_circle: | Show DOM errors |
+| web-mode-navigate | :orange_circle: | Navigate to matching tag |
+| prettier-prettify | :orange_circle: | Format buffer with Prettier |
+| prettier-prettify-region | :orange_circle: | Format region with Prettier |
+| prettier-restart | :orange_circle: | Restart Prettier |
+| tailwindcss-mode | :orange_circle: | Toggle TailwindCSS mode |
+| tailwindcss-sort-classes | :orange_circle: | Sort Tailwind classes |
+| tailwindcss-lookup | :orange_circle: | Lookup Tailwind class |
+| tailwindcss-complete | :orange_circle: | Complete Tailwind class |
+| tailwindcss-toggle-prefix | :orange_circle: | Toggle Tailwind prefix |
+
 ### Round 187 — Pass, Auth-source, Keychain, Pinentry
 
 | Feature | Status | Notes |
