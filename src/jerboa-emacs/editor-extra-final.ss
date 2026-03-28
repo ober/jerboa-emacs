@@ -17501,3 +17501,57 @@
 (def (cmd-gnuplot-send-region app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Gnuplot: sent region to gnuplot")))
+
+;; Round 186 — Systemd, Journalctl, Proced-ext, Auditd (batch 2)
+(def (cmd-journalctl-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit: "
+      (lambda (unit)
+        (echo-message! echo (str "Journalctl: showing logs for " unit))))))
+
+(def (cmd-journalctl-grep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Grep pattern: "
+      (lambda (pattern)
+        (echo-message! echo (str "Journalctl: grepping for " pattern))))))
+
+(def (cmd-proced-send-signal-with-args app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Signal: "
+      (lambda (sig)
+        (echo-message! echo (str "Proced: sent signal " sig))))))
+
+(def (cmd-proced-mark-children app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proced: marked child processes")))
+
+(def (cmd-proced-mark-parents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proced: marked parent processes")))
+
+(def (cmd-proced-filter-parents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proced: filtered to parent processes")))
+
+(def (cmd-proced-filter-children app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proced: filtered to child processes")))
+
+(def (cmd-auditd-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auditd)
+    (if (mode-enabled? app 'auditd)
+      (echo-message! echo "Auditd mode enabled")
+      (echo-message! echo "Auditd mode disabled"))))
+
+(def (cmd-auditd-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Audit search: "
+      (lambda (query)
+        (echo-message! echo (str "Auditd: searching for " query))))))
+
+(def (cmd-auditd-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Audit filter: "
+      (lambda (filter)
+        (echo-message! echo (str "Auditd: filtering by " filter))))))

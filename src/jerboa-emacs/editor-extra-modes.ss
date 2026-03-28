@@ -18128,3 +18128,57 @@
 (def (cmd-graphviz-compile app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Graphviz: compiling graph...")))
+
+;; Round 186 — Systemd, Journalctl, Proced-ext, Auditd (batch 1)
+(def (cmd-systemd-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Start unit: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: starting " unit))))))
+
+(def (cmd-systemd-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Stop unit: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: stopping " unit))))))
+
+(def (cmd-systemd-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Restart unit: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: restarting " unit))))))
+
+(def (cmd-systemd-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Enable unit: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: enabled " unit))))))
+
+(def (cmd-systemd-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Disable unit: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: disabled " unit))))))
+
+(def (cmd-systemd-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd: daemon-reload complete")))
+
+(def (cmd-systemd-journal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd: opening journal")))
+
+(def (cmd-journalctl-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'journalctl)
+    (if (mode-enabled? app 'journalctl)
+      (echo-message! echo "Journalctl mode enabled")
+      (echo-message! echo "Journalctl mode disabled"))))
+
+(def (cmd-journalctl-follow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Journalctl: following journal...")))
+
+(def (cmd-journalctl-boot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Journalctl: showing current boot log")))

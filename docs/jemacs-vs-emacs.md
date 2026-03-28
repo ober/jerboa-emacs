@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 186 — Systemd, Journalctl, Proced-ext, Auditd
+
+| Feature | Status | Notes |
+|---|---|---|
+| systemd-start | :orange_circle: | Start systemd unit |
+| systemd-stop | :orange_circle: | Stop systemd unit |
+| systemd-restart | :orange_circle: | Restart systemd unit |
+| systemd-enable | :orange_circle: | Enable systemd unit |
+| systemd-disable | :orange_circle: | Disable systemd unit |
+| systemd-reload | :orange_circle: | Systemd daemon-reload |
+| systemd-journal | :orange_circle: | Open systemd journal |
+| journalctl-mode | :orange_circle: | Toggle journalctl mode |
+| journalctl-follow | :orange_circle: | Follow journal output |
+| journalctl-boot | :orange_circle: | Show current boot log |
+| journalctl-unit | :orange_circle: | Show logs for unit |
+| journalctl-grep | :orange_circle: | Grep journal entries |
+| proced-send-signal-with-args | :orange_circle: | Send signal with arguments |
+| proced-mark-children | :orange_circle: | Mark child processes |
+| proced-mark-parents | :orange_circle: | Mark parent processes |
+| proced-filter-parents | :orange_circle: | Filter to parent processes |
+| proced-filter-children | :orange_circle: | Filter to child processes |
+| auditd-mode | :orange_circle: | Toggle auditd mode |
+| auditd-search | :orange_circle: | Search audit log |
+| auditd-filter | :orange_circle: | Filter audit entries |
+
 ### Round 185 — Mermaid, PlantUML-ext, Graphviz, D2, Ditaa, Gnuplot
 
 | Feature | Status | Notes |
