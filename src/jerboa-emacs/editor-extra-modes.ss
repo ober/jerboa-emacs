@@ -10534,3 +10534,96 @@
             (switch-to-buffer frame new-buf)
             (echo-message! echo (str "Described: " lang))))))))
 
+;;; Round 40 batch 1: erc, erc-tls, elfeed, debbugs-gnu, bug-hunter,
+;;; type-break-mode, display-line-numbers-mode-relative,
+;;; tab-bar-history-back, tab-bar-history-forward, icomplete-vertical-mode
+
+(def (cmd-erc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "IRC server: "
+      (lambda (server)
+        (when (and server (not (string-empty? server)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*erc: " server "*"))))
+            (buffer-content-set! new-buf
+              (str "ERC -- IRC client\n\n"
+                   "Connecting to " server "...\n"
+                   "(Network access not available)\n\n"
+                   "Type /join #channel to join a channel\n"
+                   "Type /quit to disconnect"))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "ERC: " server " (not connected)"))))))))
+
+(def (cmd-erc-tls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "IRC server (TLS): "
+      (lambda (server)
+        (when (and server (not (string-empty? server)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*erc: " server "*"))))
+            (buffer-content-set! new-buf
+              (str "ERC -- IRC client (TLS)\n\n"
+                   "Connecting to " server " via TLS...\n"
+                   "(Network access not available)"))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "ERC TLS: " server " (not connected)"))))))))
+
+(def (cmd-elfeed app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*elfeed-search*")))
+    (buffer-content-set! new-buf
+      (str "Elfeed -- RSS/Atom Feed Reader\n\n"
+           "No feeds configured.\n\n"
+           "Add feeds to elfeed-feeds variable:\n"
+           "  (setq elfeed-feeds '(\"https://example.com/feed\"))\n\n"
+           "g = refresh, s = search, b = browse, q = quit"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Elfeed: no feeds configured")))
+
+(def (cmd-debbugs-gnu app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Debbugs*")))
+    (buffer-content-set! new-buf
+      (str "GNU Bug Tracker\n\n"
+           "Severity: normal\n"
+           "Package: emacs\n\n"
+           "(No bugs fetched - network not available)\n\n"
+           "Use debbugs-gnu to browse GNU bug reports."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Debbugs: network not available")))
+
+(def (cmd-bug-hunter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bug hunter: bisecting init file for errors (not applicable)")))
+
+(def (cmd-type-break-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "type-break")
+    (if (mode-enabled? app "type-break")
+      (echo-message! echo "Type break mode enabled (reminds you to take breaks)")
+      (echo-message! echo "Type break mode disabled"))))
+
+(def (cmd-display-line-numbers-mode-relative app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "relative-line-numbers")
+    (if (mode-enabled? app "relative-line-numbers")
+      (echo-message! echo "Relative line numbers enabled")
+      (echo-message! echo "Relative line numbers disabled"))))
+
+(def (cmd-tab-bar-history-back app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tab bar history: no previous state")))
+
+(def (cmd-tab-bar-history-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tab bar history: no next state")))
+
+(def (cmd-icomplete-vertical-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "icomplete-vertical")
+    (if (mode-enabled? app "icomplete-vertical")
+      (echo-message! echo "Icomplete vertical mode enabled")
+      (echo-message! echo "Icomplete vertical mode disabled"))))
+

@@ -1932,6 +1932,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Package refresh no confirm | :orange_circle: | Refresh package archives |
 | Report emacs bug | :orange_circle: | Compose bug report |
 
+### Round 40
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| ERC | :orange_circle: | IRC client |
+| ERC TLS | :orange_circle: | IRC client with TLS |
+| Elfeed | :orange_circle: | RSS/Atom feed reader |
+| Debbugs GNU | :orange_circle: | GNU bug tracker browser |
+| Bug hunter | :orange_circle: | Bisect init file for errors |
+| Type break mode | :orange_circle: | Typing break reminders |
+| Display line numbers relative | :orange_circle: | Relative line number display |
+| Tab bar history back | :orange_circle: | Navigate tab history backward |
+| Tab bar history forward | :orange_circle: | Navigate tab history forward |
+| Icomplete vertical mode | :orange_circle: | Vertical minibuffer completion |
+| Savehist mode toggle | :orange_circle: | Toggle minibuffer history saving |
+| Winner undo redo | :orange_circle: | Undo/redo window configurations |
+| Emacsclient mail | :orange_circle: | Compose mail via emacsclient |
+| TRAMP cleanup all connections | :orange_circle: | Clean all remote connections |
+| TRAMP cleanup this connection | :orange_circle: | Clean current remote connection |
+| Auto save visited mode | :orange_circle: | Auto-save to visited file |
+| Delete auto save files | :orange_circle: | Delete auto-save files |
+| Make frame on monitor | :orange_circle: | Create frame on specific monitor |
+| Clone frame | :orange_circle: | Clone current frame |
+| Undelete frame | :orange_circle: | Restore deleted frame |
+
 ---
 
 ## Recommended Development Roadmap

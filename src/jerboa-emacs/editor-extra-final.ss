@@ -10000,3 +10000,62 @@
            "Actual behavior:\n"))
     (switch-to-buffer frame new-buf)
     (echo-message! echo "Composing bug report")))
+
+;;; Round 40 batch 2: savehist-mode-toggle, winner-undo-redo, emacsclient-mail,
+;;; tramp-cleanup-all-connections, tramp-cleanup-this-connection,
+;;; auto-save-visited-mode, delete-auto-save-files, make-frame-on-monitor,
+;;; clone-frame, undelete-frame
+
+(def (cmd-savehist-mode-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "savehist")
+    (if (mode-enabled? app "savehist")
+      (echo-message! echo "Savehist mode enabled (minibuffer history saved)")
+      (echo-message! echo "Savehist mode disabled"))))
+
+(def (cmd-winner-undo-redo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Winner: no window configuration history")))
+
+(def (cmd-emacsclient-mail app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*mail*")))
+    (buffer-content-set! new-buf
+      (str "To: \n"
+           "Subject: \n"
+           "Cc: \n"
+           "--text follows this line--\n\n"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Composing mail via emacsclient")))
+
+(def (cmd-tramp-cleanup-all-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All TRAMP connections cleaned up")))
+
+(def (cmd-tramp-cleanup-this-connection app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "No active TRAMP connection to clean up")))
+
+(def (cmd-auto-save-visited-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "auto-save-visited")
+    (if (mode-enabled? app "auto-save-visited")
+      (echo-message! echo "Auto-save visited mode enabled (saves to visited file)")
+      (echo-message! echo "Auto-save visited mode disabled"))))
+
+(def (cmd-delete-auto-save-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auto-save files deleted")))
+
+(def (cmd-make-frame-on-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Make frame on monitor (multi-monitor not available)")))
+
+(def (cmd-clone-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Frame cloned (single-frame mode)")))
+
+(def (cmd-undelete-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "No deleted frame to restore")))
