@@ -1388,4 +1388,10 @@
   ;; Perspective management
   (register-command! 'persp-list cmd-persp-list)
   (register-command! 'persp-kill cmd-persp-kill)
+  ;; Round 2 features: savehist, so-long, prettify-symbols, which-function, recentf
+  (register-command! 'savehist-mode cmd-savehist-mode)
+  (register-command! 'so-long-mode cmd-so-long-mode)
+  (register-command! 'prettify-symbols-mode cmd-toggle-global-prettify)
+  (register-command! 'which-function-mode cmd-which-function-mode)
+  (register-command! 'recentf-mode cmd-recentf-mode)
 )

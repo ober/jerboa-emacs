@@ -36,6 +36,7 @@
 (def *auto-pair-mode* #t)
 (def *auto-revert-mode* #f)
 (def *aggressive-indent-mode* #f)
+(def *delete-selection-mode* #t)  ;; default on, like Emacs
 
 ;;;============================================================================
 ;;; Pulse/flash highlight on jump (beacon-like)
@@ -473,6 +474,12 @@
              (editor-goto-pos ed (+ pos 1))))))
       (else
        (let* ((ed (current-editor app))
+              ;; Delete-selection mode: if there's a selection, delete it first
+              (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+              (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+              (_ (when (and *delete-selection-mode* (> sel-end sel-start))
+                   (send-message/string ed SCI_REPLACESEL "")))
+
               (pair-active (or *auto-pair-mode* *electric-pair-mode*))
               (close-ch (and pair-active
                              (if *electric-pair-mode*

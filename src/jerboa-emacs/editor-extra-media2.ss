@@ -14,7 +14,7 @@
         :chez-scintilla/tui
         :jerboa-emacs/core
         (only-in :jerboa-emacs/editor-core
-                 *auto-save-enabled* make-auto-save-path)
+                 *auto-save-enabled* make-auto-save-path pulse-line!)
         :jerboa-emacs/keymap
         :jerboa-emacs/buffer
         :jerboa-emacs/window
@@ -1672,9 +1672,30 @@
 
 (def *beacon-mode* #f)
 
+(def *beacon-last-line* 0)
+
+(def (beacon-check-jump! app)
+  "Check if cursor moved a large distance and flash if beacon mode is on."
+  (when *beacon-mode*
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed))
+           (cur-line (editor-line-from-position ed pos))
+           (delta (abs (- cur-line *beacon-last-line*))))
+      (set! *beacon-last-line* cur-line)
+      ;; Flash if jumped more than 3 lines
+      (when (> delta 3)
+        (pulse-line! ed cur-line)))))
+
 (def (cmd-beacon-mode app)
   "Toggle beacon mode — flash cursor position after large jumps."
   (set! *beacon-mode* (not *beacon-mode*))
+  (when *beacon-mode*
+    ;; Initialize last line
+    (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+           (pos (editor-get-current-pos ed)))
+      (set! *beacon-last-line* (editor-line-from-position ed pos))))
   (echo-message! (app-state-echo app)
     (if *beacon-mode* "Beacon mode ON" "Beacon mode OFF")))
 
@@ -1746,9 +1767,34 @@
 
 (def *tui-dimmer-mode* #f)
 
+(def (dimmer-apply! app)
+  "Apply dimmer effect: active window full brightness, others dimmed."
+  (let* ((fr (app-state-frame app))
+         (cur-idx (frame-current-idx fr))
+         (wins (frame-windows fr)))
+    (let loop ((ws wins) (i 0))
+      (when (pair? ws)
+        (let ((ed (edit-window-editor (car ws))))
+          (if (= i cur-idx)
+            ;; Active window: full alpha
+            (send-message ed SCI_SETELEMENTCOLOUR 52 #xFF000000)  ;; SC_ELEMENT_WHITE_SPACE_BACK
+            ;; Inactive: darken background by reducing brightness
+            (send-message ed SCI_SETELEMENTCOLOUR 52 #x40111111)))
+        (loop (cdr ws) (+ i 1))))))
+
+(def (dimmer-clear! app)
+  "Remove dimmer effect from all windows."
+  (for-each
+    (lambda (win)
+      (send-message (edit-window-editor win) SCI_SETELEMENTCOLOUR 52 #xFF000000))
+    (frame-windows (app-state-frame app))))
+
 (def (cmd-dimmer-mode app)
   "Toggle dimmer mode — dim non-active windows."
   (set! *tui-dimmer-mode* (not *tui-dimmer-mode*))
+  (if *tui-dimmer-mode*
+    (dimmer-apply! app)
+    (dimmer-clear! app))
   (echo-message! (app-state-echo app)
     (if *tui-dimmer-mode* "Dimmer mode enabled" "Dimmer mode disabled")))
 
@@ -1783,18 +1829,31 @@
 
 (def *tui-centered-cursor* #f)
 
+(def (centered-cursor-apply! app)
+  "Apply centered cursor policy to all windows when mode is on."
+  (when *tui-centered-cursor*
+    (for-each
+      (lambda (win)
+        (let* ((ed (edit-window-editor win))
+               (pos (editor-get-current-pos ed))
+               (cur-line (editor-line-from-position ed pos))
+               (visible-lines (max 1 (- (edit-window-h win) 1)))
+               (target (max 0 (- cur-line (quotient visible-lines 2)))))
+          ;; SCI_SETYCARETPOLICY: CARET_STRICT | CARET_EVEN = 13, with slop = half screen
+          (send-message ed 2403 13 (quotient visible-lines 2))))
+      (frame-windows (app-state-frame app)))))
+
 (def (cmd-centered-cursor-mode app)
   "Toggle centered cursor mode — keep cursor vertically centered."
   (set! *tui-centered-cursor* (not *tui-centered-cursor*))
-  (when *tui-centered-cursor*
-    (let* ((fr (app-state-frame app))
-           (win (current-window fr))
-           (ed (edit-window-editor win))
-           (pos (editor-get-current-pos ed))
-           (cur-line (editor-line-from-position ed pos))
-           (visible-lines (max 1 (- (edit-window-h win) 1)))
-           (target (max 0 (- cur-line (quotient visible-lines 2)))))
-      (send-message ed SCI_SETFIRSTVISIBLELINE target 0)))
+  (let ((fr (app-state-frame app)))
+    (if *tui-centered-cursor*
+      (centered-cursor-apply! app)
+      ;; Restore default caret policy: CARET_EVEN = 8
+      (for-each
+        (lambda (win)
+          (send-message (edit-window-editor win) 2403 8 0))
+        (frame-windows fr))))
   (echo-message! (app-state-echo app)
     (if *tui-centered-cursor* "Centered cursor mode enabled" "Centered cursor mode disabled")))
 

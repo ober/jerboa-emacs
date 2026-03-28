@@ -690,10 +690,83 @@
     (echo-message! (app-state-echo app) (if on "Eldoc mode: on" "Eldoc mode: off"))))
 
 ;; Which-function extras
+(def *which-function-name* "")
+
+(def (which-function-update! app)
+  "Update the current function name (called from tick loop when mode is on)."
+  (when (mode-enabled? 'which-function)
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed))
+           (text (editor-get-text ed))
+           (line (send-message ed 2166 pos 0)))  ;; SCI_LINEFROMPOSITION
+      ;; Search backward for function definition
+      (let loop ((l line))
+        (if (< l 0)
+          (set! *which-function-name* "")
+          (let* ((ls (send-message ed 2167 l 0))   ;; SCI_POSITIONFROMLINE
+                 (le (send-message ed 2136 l 0))   ;; SCI_GETLINEENDPOSITION
+                 (lt (if (and (>= ls 0) (<= le (string-length text)))
+                       (substring text ls (min le (string-length text))) ""))
+                 (name (which-function-find-name lt)))
+            (if name
+              (set! *which-function-name* name)
+              (loop (- l 1)))))))))
+
+(def (which-function-find-name line-text)
+  "Extract function/def name from a line of code."
+  (let ((t (string-trim line-text)))
+    (cond
+      ;; Scheme: (def (name or (define (name
+      ((or (string-contains t "(def (") (string-contains t "(define ("))
+       (let* ((idx (or (string-contains t "(def (") (string-contains t "(define (")))
+              (skip (if (string-contains t "(define (") 9 6))
+              (start (+ idx skip))
+              (end (let loop ((j start))
+                     (if (or (>= j (string-length t))
+                             (memv (string-ref t j) '(#\space #\) #\( #\tab)))
+                       j (loop (+ j 1))))))
+         (if (> end start) (substring t start end) #f)))
+      ;; Python: def name( or class name
+      ((or (string-prefix? "def " t) (string-prefix? "class " t))
+       (let* ((start (if (string-prefix? "class " t) 6 4))
+              (end (let loop ((j start))
+                     (if (or (>= j (string-length t))
+                             (memv (string-ref t j) '(#\( #\: #\space)))
+                       j (loop (+ j 1))))))
+         (if (> end start) (substring t start end) #f)))
+      ;; C/Go/Rust: func/fn name
+      ((or (string-prefix? "func " t) (string-prefix? "fn " t))
+       (let* ((skip (if (string-prefix? "fn " t) 3 5))
+              (end (let loop ((j skip))
+                     (if (or (>= j (string-length t))
+                             (memv (string-ref t j) '(#\( #\space #\{ #\<)))
+                       j (loop (+ j 1))))))
+         (if (> end skip) (substring t skip end) #f)))
+      ;; JS/TS: function name(
+      ((string-prefix? "function " t)
+       (let* ((start 9)
+              (end (let loop ((j start))
+                     (if (or (>= j (string-length t))
+                             (memv (string-ref t j) '(#\( #\space #\{)))
+                       j (loop (+ j 1))))))
+         (if (> end start) (substring t start end) #f)))
+      (else #f))))
+
 (def (cmd-which-function-mode app)
-  "Toggle which-function mode — shows current function name."
+  "Toggle which-function mode — shows current function name in echo area."
   (let ((on (toggle-mode! 'which-function)))
-    (echo-message! (app-state-echo app) (if on "Which-function mode: on" "Which-function mode: off"))))
+    (if on
+      (begin
+        (which-function-update! app)
+        (echo-message! (app-state-echo app)
+          (if (string-empty? *which-function-name*)
+            "Which-function mode: on (not in a function)"
+            (string-append "Which-function mode: on [" *which-function-name* "]"))))
+      (begin
+        (set! *which-function-name* "")
+        (echo-message! (app-state-echo app) "Which-function mode: off")))))
 
 ;; Compilation
 (def (cmd-compilation-mode app)

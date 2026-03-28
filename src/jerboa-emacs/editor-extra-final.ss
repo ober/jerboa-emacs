@@ -84,10 +84,42 @@
   (let ((on (toggle-mode! 'pixel-scroll)))
     (echo-message! (app-state-echo app) (if on "Pixel scroll: on" "Pixel scroll: off"))))
 
+(def *so-long-threshold* 500)  ;; line length threshold
+
+(def (so-long-detect? ed)
+  "Check if buffer has lines longer than threshold."
+  (let* ((text (editor-get-text ed))
+         (len (string-length text)))
+    (let loop ((i 0) (line-start 0) (checked 0))
+      (cond
+        ((>= checked 50) #f)  ;; only check first 50 lines
+        ((>= i len)
+         (> (- i line-start) *so-long-threshold*))
+        ((char=? (string-ref text i) #\newline)
+         (if (> (- i line-start) *so-long-threshold*)
+           #t
+           (loop (+ i 1) (+ i 1) (+ checked 1))))
+        (else (loop (+ i 1) line-start checked))))))
+
+(def (so-long-apply! ed)
+  "Apply so-long optimizations: disable wrap, word wrap, and syntax highlighting."
+  (send-message ed 2469 0 0)    ;; SCI_SETWRAPMODE = SC_WRAP_NONE
+  (send-message ed SCI_SETLEXER 1 0)  ;; SCLEX_NULL = no syntax
+  (send-message ed SCI_SETINDENTATIONGUIDES 0 0))
+
 (def (cmd-so-long-mode app)
-  "Toggle so-long mode for long lines — disables features on long-line files."
-  (let ((on (toggle-mode! 'so-long)))
-    (echo-message! (app-state-echo app) (if on "So-long mode: on" "So-long mode: off"))))
+  "Toggle so-long mode — disable slow features for long-line files."
+  (let* ((on (toggle-mode! 'so-long))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (if on
+      (if (so-long-detect? ed)
+        (begin
+          (so-long-apply! ed)
+          (echo-message! (app-state-echo app) "So-long: on (long lines detected, features disabled)"))
+        (echo-message! (app-state-echo app) "So-long: on (no long lines found)"))
+      (echo-message! (app-state-echo app) "So-long: off"))))
 
 (def (cmd-repeat-mode app)
   "Toggle repeat-mode for transient repeat maps."
@@ -100,24 +132,167 @@
   "Toggle context-menu-mode — N/A in terminal."
   (echo-message! (app-state-echo app) "Context menu: N/A in terminal"))
 
+(def *savehist-file*
+  (string-append (or (getenv "HOME" #f) ".") "/.jemacs-history"))
+
+;; Shared minibuffer history list (strings from echo-read-string)
+(def *savehist-list* '())
+
+(def (savehist-record! input)
+  "Record an input string in the savehist list."
+  (when (and (string? input) (> (string-length input) 0))
+    (set! *savehist-list*
+      (cons input (filter (lambda (s) (not (string=? s input)))
+                          *savehist-list*)))
+    (when (> (length *savehist-list*) 200)
+      (set! *savehist-list* (take *savehist-list* 200)))))
+
+(def (savehist-save!)
+  "Save minibuffer history to disk."
+  (with-exception-catcher
+    (lambda (e) #f)
+    (lambda ()
+      (call-with-output-file *savehist-file*
+        (lambda (port)
+          (for-each (lambda (item)
+                      (write item port) (newline port))
+                    *savehist-list*))))))
+
+(def (savehist-load!)
+  "Load minibuffer history from disk."
+  (with-exception-catcher
+    (lambda (e) #f)
+    (lambda ()
+      (when (file-exists? *savehist-file*)
+        (set! *savehist-list*
+          (call-with-input-file *savehist-file*
+            (lambda (port)
+              (let loop ((acc '()))
+                (let ((item (read port)))
+                  (if (eof-object? item) (reverse acc)
+                    (loop (cons item acc))))))))))))
+
 (def (cmd-savehist-mode app)
-  "Toggle savehist-mode — persist minibuffer history."
+  "Toggle savehist-mode — persist minibuffer history to ~/.jemacs-history."
   (let ((on (toggle-mode! 'savehist)))
-    (echo-message! (app-state-echo app) (if on "Savehist: on" "Savehist: off"))))
+    (if on (savehist-load!) (savehist-save!))
+    (echo-message! (app-state-echo app)
+      (if on
+        (string-append "Savehist: on (" (number->string (length *savehist-list*)) " entries)")
+        "Savehist: off (saved)"))))
+
+(def *recentf-file*
+  (string-append (or (getenv "HOME" #f) ".") "/.jemacs-recentf"))
+
+(def (recentf-save!)
+  "Save recent files list to disk."
+  (with-exception-catcher
+    (lambda (e) #f)
+    (lambda ()
+      (let ((items (if (> (length *recent-files*) 50) (take *recent-files* 50) *recent-files*)))
+        (call-with-output-file *recentf-file*
+          (lambda (port)
+            (for-each (lambda (path)
+                        (write path port) (newline port))
+                      items)))))))
+
+(def (recentf-load!)
+  "Load recent files list from disk."
+  (with-exception-catcher
+    (lambda (e) #f)
+    (lambda ()
+      (when (file-exists? *recentf-file*)
+        (let ((items (call-with-input-file *recentf-file*
+                       (lambda (port)
+                         (let loop ((acc '()))
+                           (let ((item (read port)))
+                             (if (eof-object? item) (reverse acc)
+                               (loop (cons item acc)))))))))
+          ;; Merge loaded files with current, avoiding duplicates
+          (for-each
+            (lambda (path)
+              (unless (member path *recent-files*)
+                (set! *recent-files* (append *recent-files* (list path)))))
+            items))))))
 
 (def (cmd-recentf-mode app)
-  "Toggle recentf-mode — track recent files."
+  "Toggle recentf-mode — persist recent files list to ~/.jemacs-recentf."
   (let ((on (toggle-mode! 'recentf)))
-    (echo-message! (app-state-echo app) (if on "Recentf: on" "Recentf: off"))))
+    (if on (recentf-load!) (recentf-save!))
+    (echo-message! (app-state-echo app)
+      (if on
+        (string-append "Recentf: on (" (number->string (length *recent-files*)) " files)")
+        "Recentf: off (saved)"))))
 
 (def (cmd-winner-undo-2 app)
   "Winner undo alternative binding."
   (cmd-winner-undo app))
 
+(def *subword-mode* #f)
+
+(def (subword-forward-pos ed)
+  "Find next subword boundary position (CamelCase/underscore aware)."
+  (let* ((pos (editor-get-current-pos ed))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    (if (>= pos len) pos
+      (let loop ((i (+ pos 1)))
+        (cond
+          ((>= i len) i)
+          ;; Stop at transitions: lower→upper, letter→non-alphanum, non-alphanum→letter
+          ((and (> i (+ pos 1))
+                (let ((c (string-ref text i))
+                      (p (string-ref text (- i 1))))
+                  (or (and (char-lower-case? p) (char-upper-case? c))
+                      (and (char-alphabetic? p) (char=? c #\_))
+                      (and (char=? p #\_) (char-alphabetic? c))
+                      (and (char-alphabetic? p) (not (char-alphabetic? c)) (not (char=? c #\_)))
+                      (and (not (char-alphabetic? p)) (not (char=? p #\_)) (char-alphabetic? c)))))
+           i)
+          (else (loop (+ i 1))))))))
+
+(def (subword-backward-pos ed)
+  "Find previous subword boundary position."
+  (let* ((pos (editor-get-current-pos ed))
+         (text (editor-get-text ed)))
+    (if (<= pos 0) 0
+      (let loop ((i (- pos 1)))
+        (cond
+          ((< i 1) 0)
+          ((let ((c (string-ref text i))
+                 (p (string-ref text (- i 1))))
+             (or (and (char-upper-case? c) (char-lower-case? p))
+                 (and (char-alphabetic? c) (char=? p #\_))
+                 (and (char=? c #\_) (char-alphabetic? p))
+                 (and (char-alphabetic? c) (not (char-alphabetic? p)) (not (char=? p #\_)))))
+           i)
+          (else (loop (- i 1))))))))
+
+(def (cmd-subword-forward app)
+  "Move forward one subword (CamelCase-aware)."
+  (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+    (editor-goto-pos ed (subword-forward-pos ed))))
+
+(def (cmd-subword-backward app)
+  "Move backward one subword (CamelCase-aware)."
+  (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+    (editor-goto-pos ed (subword-backward-pos ed))))
+
+(def (cmd-subword-kill app)
+  "Kill forward one subword."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (start (editor-get-current-pos ed))
+         (end (subword-forward-pos ed)))
+    (when (> end start)
+      (send-message ed SCI_SETTARGETSTART start 0)
+      (send-message ed SCI_SETTARGETEND end 0)
+      (send-message/string ed SCI_REPLACETARGET ""))))
+
 (def (cmd-global-subword-mode app)
   "Toggle global subword-mode (CamelCase navigation)."
-  (let ((on (toggle-mode! 'global-subword)))
-    (echo-message! (app-state-echo app) (if on "Global subword: on" "Global subword: off"))))
+  (set! *subword-mode* (not *subword-mode*))
+  (echo-message! (app-state-echo app)
+    (if *subword-mode* "Subword mode: on (use M-x subword-forward/backward)" "Subword mode: off")))
 
 (def (cmd-display-fill-column-indicator-mode app)
   "Toggle fill column indicator display."

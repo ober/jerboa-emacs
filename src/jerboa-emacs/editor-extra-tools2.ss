@@ -658,11 +658,70 @@
   (cmd-which-key app))
 
 ;; Programming helpers
+(def *prettify-symbols-table*
+  '(("lambda" . "\x03BB;")      ;; λ
+    ("->" . "\x2192;")           ;; →
+    ("=>" . "\x21D2;")           ;; ⇒
+    ("<-" . "\x2190;")           ;; ←
+    ("!=" . "\x2260;")           ;; ≠
+    (">=" . "\x2265;")           ;; ≥
+    ("<=" . "\x2264;")           ;; ≤
+    ("alpha" . "\x03B1;")        ;; α
+    ("beta" . "\x03B2;")        ;; β
+    ("gamma" . "\x03B3;")       ;; γ
+    ("delta" . "\x03B4;")       ;; δ
+    ("pi" . "\x03C0;")          ;; π
+    ("nil" . "\x2205;")         ;; ∅
+    ("..." . "\x2026;")         ;; …
+    ("not" . "\x00AC;")         ;; ¬
+    ("and" . "\x2227;")         ;; ∧
+    ("or" . "\x2228;")))        ;; ∨
+
+(def *prettify-indicator* 9)
+
+(def (prettify-symbols-apply! ed)
+  "Scan buffer and highlight symbol keywords with indicator 9."
+  (let ((text (editor-get-text ed))
+        (len (send-message ed SCI_GETTEXTLENGTH 0 0)))
+    ;; Clear existing
+    (send-message ed SCI_SETINDICATORCURRENT *prettify-indicator* 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0 len)
+    ;; Setup indicator style: text color substitution
+    (send-message ed SCI_INDICSETSTYLE *prettify-indicator* 6)   ;; INDIC_BOX
+    (send-message ed SCI_INDICSETFORE *prettify-indicator* #x888888)
+    ;; Find and mark each symbol
+    (for-each
+      (lambda (pair)
+        (let* ((sym (car pair))
+               (slen (string-length sym))
+               (text-lower (string-downcase text)))
+          (let loop ((start 0))
+            (let ((pos (string-contains text-lower (string-downcase sym) start)))
+              (when pos
+                ;; Check word boundaries (don't match partial words)
+                (let ((before-ok (or (= pos 0)
+                                     (not (char-alphabetic? (string-ref text (- pos 1))))))
+                      (after-ok (or (>= (+ pos slen) (string-length text))
+                                    (not (char-alphabetic? (string-ref text (+ pos slen)))))))
+                  (when (and before-ok after-ok)
+                    (send-message ed SCI_SETINDICATORCURRENT *prettify-indicator* 0)
+                    (send-message ed SCI_INDICATORFILLRANGE pos slen)))
+                (loop (+ pos slen)))))))
+      *prettify-symbols-table*)))
+
 (def (cmd-toggle-prettify-symbols app)
-  "Toggle prettify-symbols mode."
-  (let ((on (toggle-mode! 'prettify-symbols)))
-    (echo-message! (app-state-echo app)
-      (if on "Prettify-symbols enabled" "Prettify-symbols disabled"))))
+  "Toggle prettify-symbols mode — highlight symbol keywords."
+  (let* ((on (toggle-mode! 'prettify-symbols))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (if on
+      (begin
+        (prettify-symbols-apply! ed)
+        (echo-message! (app-state-echo app) "Prettify-symbols enabled"))
+      (begin
+        (let ((len (send-message ed SCI_GETTEXTLENGTH 0 0)))
+          (send-message ed SCI_SETINDICATORCURRENT *prettify-indicator* 0)
+          (send-message ed SCI_INDICATORCLEARRANGE 0 len))
+        (echo-message! (app-state-echo app) "Prettify-symbols disabled")))))
 
 (def (cmd-subword-mode app)
   "Toggle subword mode for CamelCase-aware navigation."

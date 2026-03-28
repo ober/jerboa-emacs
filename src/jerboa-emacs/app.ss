@@ -27,6 +27,7 @@
         :jerboa-emacs/ipc
         :jerboa-emacs/helm-commands
         (only-in :jerboa-emacs/editor-extra-editing tui-record-edit-position!)
+        (only-in :jerboa-emacs/editor-extra-media2 beacon-check-jump!)
         (only-in :jerboa-emacs/editor-extra-org *desktop-save-mode*)
         (only-in :jerboa-emacs/persist *which-key-mode* *which-key-delay* which-key-summary))
 
@@ -567,6 +568,9 @@
 
       ;; Tick which-key delayed display
       (which-key-tui-tick! app)
+
+      ;; Beacon: check for large cursor jumps and flash
+      (beacon-check-jump! app)
 
       ;; Auto-save and external modification check (~30s at 50ms poll)
       (set! *auto-save-counter* (+ *auto-save-counter* 1))

@@ -17,7 +17,8 @@
         :jerboa-emacs/window
         :jerboa-emacs/modeline
         :jerboa-emacs/echo
-        :jerboa-emacs/editor-extra-helpers)
+        :jerboa-emacs/editor-extra-helpers
+        (only-in :jerboa-emacs/editor-core *delete-selection-mode*))
 
 ;; Additional VC commands
 (def (cmd-vc-register app)
@@ -1403,7 +1404,7 @@
 
 ;;; --- Toggle delete-selection mode (typing replaces selection) ---
 
-(def *delete-selection-mode* #t)
+;; *delete-selection-mode* is defined in editor-core.ss
 
 (def (cmd-toggle-delete-selection app)
   "Toggle delete-selection mode (typing replaces active selection)."
