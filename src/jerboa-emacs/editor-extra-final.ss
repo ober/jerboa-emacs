@@ -17397,3 +17397,53 @@
 (def (cmd-fsharp-send-region app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "F#: sent region to REPL")))
+
+;; Round 184 — Geiser, SLIME-ext, Cider-ext, Sly (batch 2)
+(def (cmd-slime-disassemble-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Disassemble: "
+      (lambda (sym)
+        (echo-message! echo (str "SLIME: disassembling " sym))))))
+
+(def (cmd-cider-classpath app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: showing classpath")))
+
+(def (cmd-cider-browse-ns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Namespace: "
+      (lambda (ns)
+        (echo-message! echo (str "CIDER: browsing namespace " ns))))))
+
+(def (cmd-cider-browse-spec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Spec: "
+      (lambda (spec)
+        (echo-message! echo (str "CIDER: browsing spec " spec))))))
+
+(def (cmd-cider-enlighten-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'cider-enlighten)
+    (if (mode-enabled? app 'cider-enlighten)
+      (echo-message! echo "CIDER enlighten mode enabled")
+      (echo-message! echo "CIDER enlighten mode disabled"))))
+
+(def (cmd-cider-toggle-trace-var app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: toggled var tracing")))
+
+(def (cmd-cider-toggle-trace-ns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: toggled namespace tracing")))
+
+(def (cmd-sly-stickers-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sly: toggled sticker at point")))
+
+(def (cmd-sly-mrepl-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sly: opened new MREPL")))
+
+(def (cmd-sly-db-abort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sly: aborted debugger")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 184 — Geiser, SLIME-ext, Cider-ext, Sly
+
+| Feature | Status | Notes |
+|---|---|---|
+| geiser-doc-symbol-at-point | :orange_circle: | Geiser docs at point |
+| geiser-expand-definition | :orange_circle: | Expand Geiser definition |
+| geiser-squarify | :orange_circle: | Toggle square brackets |
+| geiser-add-to-load-path | :orange_circle: | Add to Geiser load path |
+| slime-apropos | :orange_circle: | SLIME apropos search |
+| slime-hyperspec-lookup | :orange_circle: | HyperSpec lookup |
+| slime-who-calls | :orange_circle: | Find callers of function |
+| slime-who-references | :orange_circle: | Find references to symbol |
+| slime-inspect | :orange_circle: | SLIME inspector |
+| slime-who-macroexpands | :orange_circle: | Find macroexpansions |
+| slime-disassemble-symbol | :orange_circle: | Disassemble symbol |
+| cider-classpath | :orange_circle: | Show CIDER classpath |
+| cider-browse-ns | :orange_circle: | Browse Clojure namespace |
+| cider-browse-spec | :orange_circle: | Browse Clojure spec |
+| cider-enlighten-mode | :orange_circle: | CIDER enlighten mode |
+| cider-toggle-trace-var | :orange_circle: | Toggle var tracing |
+| cider-toggle-trace-ns | :orange_circle: | Toggle namespace tracing |
+| sly-stickers-toggle | :orange_circle: | Toggle Sly sticker |
+| sly-mrepl-new | :orange_circle: | Open new Sly MREPL |
+| sly-db-abort | :orange_circle: | Abort Sly debugger |
+
 ### Round 183 — Idris, PureScript, Elm, F#
 
 | Feature | Status | Notes |

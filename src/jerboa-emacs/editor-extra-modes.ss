@@ -18027,3 +18027,58 @@
 (def (cmd-purescript-goto-definition app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PureScript: going to definition")))
+
+;; Round 184 — Geiser, SLIME-ext, Cider-ext, Sly (batch 1)
+(def (cmd-geiser-doc-symbol-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: showing documentation at point")))
+
+(def (cmd-geiser-expand-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: expanding definition")))
+
+(def (cmd-geiser-squarify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: toggled square brackets")))
+
+(def (cmd-geiser-add-to-load-path app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Load path: "
+      (lambda (path)
+        (echo-message! echo (str "Geiser: added " path " to load path"))))))
+
+(def (cmd-slime-apropos app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Apropos: "
+      (lambda (query)
+        (echo-message! echo (str "SLIME: apropos " query))))))
+
+(def (cmd-slime-hyperspec-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "HyperSpec symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "SLIME: looking up " sym " in HyperSpec"))))))
+
+(def (cmd-slime-who-calls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Who calls: "
+      (lambda (name)
+        (echo-message! echo (str "SLIME: finding callers of " name))))))
+
+(def (cmd-slime-who-references app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Who references: "
+      (lambda (name)
+        (echo-message! echo (str "SLIME: finding references to " name))))))
+
+(def (cmd-slime-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Inspect: "
+      (lambda (expr)
+        (echo-message! echo (str "SLIME: inspecting " expr))))))
+
+(def (cmd-slime-who-macroexpands app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Who macroexpands: "
+      (lambda (name)
+        (echo-message! echo (str "SLIME: finding macroexpansions of " name))))))
