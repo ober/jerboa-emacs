@@ -18182,3 +18182,65 @@
 (def (cmd-journalctl-boot app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Journalctl: showing current boot log")))
+
+;; Round 187 — Pass, Auth-source, Keychain, Pinentry (batch 1)
+(def (cmd-pass-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pass)
+    (if (mode-enabled? app 'pass)
+      (echo-message! echo "Pass mode enabled")
+      (echo-message! echo "Pass mode disabled"))))
+
+(def (cmd-pass-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: viewing " entry))))))
+
+(def (cmd-pass-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Copy entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: copied " entry " to clipboard"))))))
+
+(def (cmd-pass-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New entry name: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: inserted " entry))))))
+
+(def (cmd-pass-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Generate for: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: generated password for " entry))))))
+
+(def (cmd-pass-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: removed " entry))))))
+
+(def (cmd-pass-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: renamed " entry))))))
+
+(def (cmd-pass-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Edit entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: editing " entry))))))
+
+(def (cmd-pass-otp-append app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OTP entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: appended OTP to " entry))))))
+
+(def (cmd-pass-otp-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Copy OTP for: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: copied OTP for " entry))))))

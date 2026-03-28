@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 187 — Pass, Auth-source, Keychain, Pinentry
+
+| Feature | Status | Notes |
+|---|---|---|
+| pass-mode | :orange_circle: | Toggle pass mode |
+| pass-view | :orange_circle: | View pass entry |
+| pass-copy | :orange_circle: | Copy pass entry to clipboard |
+| pass-insert | :orange_circle: | Insert new pass entry |
+| pass-generate | :orange_circle: | Generate password |
+| pass-remove | :orange_circle: | Remove pass entry |
+| pass-rename | :orange_circle: | Rename pass entry |
+| pass-edit | :orange_circle: | Edit pass entry |
+| pass-otp-append | :orange_circle: | Append OTP to entry |
+| pass-otp-copy | :orange_circle: | Copy OTP token |
+| pass-copy-username | :orange_circle: | Copy username from entry |
+| auth-source-forget | :orange_circle: | Forget cached credentials |
+| auth-source-save-behavior | :orange_circle: | Toggle save behavior |
+| keychain-unlock | :orange_circle: | Unlock keychain |
+| keychain-lock | :orange_circle: | Lock keychain |
+| keychain-list | :orange_circle: | List keychain entries |
+| keychain-refresh | :orange_circle: | Refresh keychain |
+| pinentry-start | :orange_circle: | Start pinentry |
+| pinentry-stop | :orange_circle: | Stop pinentry |
+| pinentry-prompt | :orange_circle: | Show pinentry prompt |
+
 ### Round 186 — Systemd, Journalctl, Proced-ext, Auditd
 
 | Feature | Status | Notes |

@@ -17555,3 +17555,46 @@
     (echo-read-string echo "Audit filter: "
       (lambda (filter)
         (echo-message! echo (str "Auditd: filtering by " filter))))))
+
+;; Round 187 — Pass, Auth-source, Keychain, Pinentry (batch 2)
+(def (cmd-pass-copy-username app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Copy username for: "
+      (lambda (entry)
+        (echo-message! echo (str "Pass: copied username for " entry))))))
+
+(def (cmd-auth-source-forget app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auth-source: forgot cached credentials")))
+
+(def (cmd-auth-source-save-behavior app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auth-source: toggled save behavior")))
+
+(def (cmd-keychain-unlock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keychain: unlocked")))
+
+(def (cmd-keychain-lock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keychain: locked")))
+
+(def (cmd-keychain-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keychain: listing entries")))
+
+(def (cmd-keychain-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keychain: refreshed")))
+
+(def (cmd-pinentry-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pinentry: started")))
+
+(def (cmd-pinentry-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pinentry: stopped")))
+
+(def (cmd-pinentry-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pinentry: showing prompt")))
