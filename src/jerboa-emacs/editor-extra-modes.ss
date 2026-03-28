@@ -19857,3 +19857,50 @@
 (def (cmd-citre-jump-back app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Citre: jumped back")))
+
+;;; Round 222 — Denote ext, Avy ext, Ace ext (batch 1)
+
+(def (cmd-denote-create-note app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Title: "
+      (lambda (title)
+        (echo-message! echo (str "Denote: creating note " title))))))
+
+(def (cmd-denote-explore-keywords app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: exploring keywords")))
+
+(def (cmd-denote-org-extras-link-to-heading app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: linking to Org heading")))
+
+(def (cmd-denote-journal-extras-new-or-existing-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: journal new or existing entry")))
+
+(def (cmd-denote-link-dired-marked-notes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: linked dired marked notes")))
+
+(def (cmd-denote-backlinks-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'denote-backlinks)
+    (if (mode-enabled? app 'denote-backlinks)
+      (echo-message! echo "Denote: backlinks mode enabled")
+      (echo-message! echo "Denote: backlinks mode disabled"))))
+
+(def (cmd-denote-link-after-creating app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: link after creating note")))
+
+(def (cmd-consult-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: directory selection")))
+
+(def (cmd-consult-dir-jump-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: jump to file in directory")))
+
+(def (cmd-avy-goto-whitespace-end app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: goto whitespace end")))

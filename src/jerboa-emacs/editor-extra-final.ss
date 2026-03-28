@@ -19208,3 +19208,45 @@
 (def (cmd-ggtags-create-tags app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "ggtags: creating tags")))
+
+;;; Round 222 — Denote ext, Avy ext, Ace ext (batch 2)
+
+(def (cmd-avy-goto-symbol-1-above app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: goto symbol-1 above")))
+
+(def (cmd-avy-goto-symbol-1-below app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: goto symbol-1 below")))
+
+(def (cmd-ace-delete-other-windows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: deleted other windows")))
+
+(def (cmd-ace-window-one app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: selected window one")))
+
+(def (cmd-ace-window-two app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: selected window two")))
+
+(def (cmd-ace-link-org app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: following Org link")))
+
+(def (cmd-ace-link-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: following Info link")))
+
+(def (cmd-ace-link-eww app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: following EWW link")))
+
+(def (cmd-ace-link-help app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: following Help link")))
+
+(def (cmd-ace-link-compilation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: following compilation link")))

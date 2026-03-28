@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 222 — Denote ext, Avy ext, Ace ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| denote-create-note | :orange_circle: | Create a new Denote note |
+| denote-explore-keywords | :orange_circle: | Explore Denote keywords |
+| denote-org-extras-link-to-heading | :orange_circle: | Link to Org heading |
+| denote-journal-extras-new-or-existing-entry | :orange_circle: | New or existing journal entry |
+| denote-link-dired-marked-notes | :orange_circle: | Link dired marked notes |
+| denote-backlinks-mode | :orange_circle: | Toggle backlinks mode |
+| denote-link-after-creating | :orange_circle: | Link after creating note |
+| consult-dir | :orange_circle: | Directory selection |
+| consult-dir-jump-file | :orange_circle: | Jump to file in directory |
+| avy-goto-whitespace-end | :orange_circle: | Goto whitespace end |
+| avy-goto-symbol-1-above | :orange_circle: | Goto symbol-1 above |
+| avy-goto-symbol-1-below | :orange_circle: | Goto symbol-1 below |
+| ace-delete-other-windows | :orange_circle: | Delete other windows via ace |
+| ace-window-one | :orange_circle: | Select window one |
+| ace-window-two | :orange_circle: | Select window two |
+| ace-link-org | :orange_circle: | Follow Org link via ace |
+| ace-link-info | :orange_circle: | Follow Info link via ace |
+| ace-link-eww | :orange_circle: | Follow EWW link via ace |
+| ace-link-help | :orange_circle: | Follow Help link via ace |
+| ace-link-compilation | :orange_circle: | Follow compilation link via ace |
+
 ### Round 221 — Tags/Citre/ggtags
 
 | Command | Status | Description |
