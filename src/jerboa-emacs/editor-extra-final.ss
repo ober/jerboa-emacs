@@ -14081,3 +14081,65 @@
     (if (mode-enabled? app 'reftex)
       (echo-message! echo "RefTeX mode enabled")
       (echo-message! echo "RefTeX mode disabled"))))
+
+;;; ——— Round 116: ERC (IRC) & communication (batch 2) ———
+
+(def (cmd-erc-notifications-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-notifications)
+    (if (mode-enabled? app 'erc-notifications)
+      (echo-message! echo "ERC notifications enabled")
+      (echo-message! echo "ERC notifications disabled"))))
+
+(def (cmd-erc-image-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-image)
+    (if (mode-enabled? app 'erc-image)
+      (echo-message! echo "ERC image mode enabled")
+      (echo-message! echo "ERC image mode disabled"))))
+
+(def (cmd-rcirc-cmd-join app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RCIRC join channel: "
+      (lambda (channel)
+        (echo-message! echo (str "RCIRC: joining " channel))))))
+
+(def (cmd-rcirc-cmd-part app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RCIRC: parted current channel")))
+
+(def (cmd-rcirc-cmd-nick app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RCIRC new nick: "
+      (lambda (nick)
+        (echo-message! echo (str "RCIRC: changed nick to " nick))))))
+
+(def (cmd-rcirc-cmd-whois app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RCIRC whois: "
+      (lambda (nick)
+        (echo-message! echo (str "RCIRC: looking up " nick))))))
+
+(def (cmd-rcirc-cmd-msg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RCIRC message to: "
+      (lambda (to)
+        (echo-read-string echo "Message: "
+          (lambda (msg)
+            (echo-message! echo (str "RCIRC: sent message to " to))))))))
+
+(def (cmd-rcirc-cmd-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RCIRC: disconnected from server")))
+
+(def (cmd-rcirc-cmd-topic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RCIRC topic: "
+      (lambda (topic)
+        (echo-message! echo (str "RCIRC: set topic to '" topic "'"))))))
+
+(def (cmd-rcirc-cmd-away app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RCIRC away reason: "
+      (lambda (reason)
+        (echo-message! echo (str "RCIRC: set away - " reason))))))

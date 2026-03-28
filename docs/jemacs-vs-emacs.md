@@ -3864,6 +3864,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | LaTeX-insert-item | :orange_circle: | Insert item in list |
 | reftex-mode | :orange_circle: | Toggle RefTeX mode |
 
+### Round 116 — ERC (IRC) & RCIRC Communication
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| erc-select | :orange_circle: | Connect to IRC server |
+| erc-join | :orange_circle: | Join IRC channel |
+| erc-part | :orange_circle: | Part current channel |
+| erc-msg | :orange_circle: | Send private message |
+| erc-away | :orange_circle: | Set away status |
+| erc-cmd-TOPIC | :orange_circle: | Set channel topic |
+| erc-match-mode | :orange_circle: | Toggle ERC match highlighting |
+| erc-log-mode | :orange_circle: | Toggle ERC logging |
+| erc-button-mode | :orange_circle: | Toggle ERC clickable buttons |
+| erc-spelling-mode | :orange_circle: | Toggle ERC spell checking |
+| erc-notifications-mode | :orange_circle: | Toggle ERC notifications |
+| erc-image-mode | :orange_circle: | Toggle ERC inline images |
+| rcirc-cmd-join | :orange_circle: | RCIRC join channel |
+| rcirc-cmd-part | :orange_circle: | RCIRC part channel |
+| rcirc-cmd-nick | :orange_circle: | RCIRC change nickname |
+| rcirc-cmd-whois | :orange_circle: | RCIRC whois lookup |
+| rcirc-cmd-msg | :orange_circle: | RCIRC send private message |
+| rcirc-cmd-quit | :orange_circle: | RCIRC disconnect |
+| rcirc-cmd-topic | :orange_circle: | RCIRC set topic |
+| rcirc-cmd-away | :orange_circle: | RCIRC set away |
+
 ---
 
 ## Recommended Development Roadmap

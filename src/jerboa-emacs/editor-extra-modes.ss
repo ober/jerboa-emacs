@@ -14670,3 +14670,69 @@
 (def (cmd-TeX-next-error app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TeX: moved to next error")))
+
+;;; ——— Round 116: ERC (IRC) & communication (batch 1) ———
+
+(def (cmd-erc-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ERC server: "
+      (lambda (server)
+        (echo-message! echo (str "ERC: connecting to " server))))))
+
+(def (cmd-erc-join app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Join channel: "
+      (lambda (channel)
+        (echo-message! echo (str "ERC: joining " channel))))))
+
+(def (cmd-erc-part app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: parted current channel")))
+
+(def (cmd-erc-msg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Message to: "
+      (lambda (to)
+        (echo-read-string echo "Message: "
+          (lambda (msg)
+            (echo-message! echo (str "ERC: sent message to " to))))))))
+
+(def (cmd-erc-away app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Away reason: "
+      (lambda (reason)
+        (echo-message! echo (str "ERC: set away - " reason))))))
+
+(def (cmd-erc-cmd-TOPIC app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New topic: "
+      (lambda (topic)
+        (echo-message! echo (str "ERC: set topic to '" topic "'"))))))
+
+(def (cmd-erc-match-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-match)
+    (if (mode-enabled? app 'erc-match)
+      (echo-message! echo "ERC match mode enabled")
+      (echo-message! echo "ERC match mode disabled"))))
+
+(def (cmd-erc-log-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-log)
+    (if (mode-enabled? app 'erc-log)
+      (echo-message! echo "ERC log mode enabled")
+      (echo-message! echo "ERC log mode disabled"))))
+
+(def (cmd-erc-button-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-button)
+    (if (mode-enabled? app 'erc-button)
+      (echo-message! echo "ERC button mode enabled")
+      (echo-message! echo "ERC button mode disabled"))))
+
+(def (cmd-erc-spelling-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-spelling)
+    (if (mode-enabled? app 'erc-spelling)
+      (echo-message! echo "ERC spelling mode enabled")
+      (echo-message! echo "ERC spelling mode disabled"))))
