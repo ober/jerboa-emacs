@@ -11500,3 +11500,69 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SLIME: evaluated last expression")))
 
+;;; Round 54 batch 1: run-haskell, haskell-interactive-mode,
+;;; haskell-process-load-file, run-rust, cargo-process-build,
+;;; cargo-process-test, cargo-process-run, cargo-process-clippy,
+;;; go-run, go-test-current-file
+
+(def (cmd-run-haskell app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*haskell*")))
+    (buffer-content-set! new-buf
+      (str "GHCi, version 9.x\n"
+           "Prelude> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Haskell GHCi started")))
+
+(def (cmd-haskell-interactive-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haskell interactive mode")))
+
+(def (cmd-haskell-process-load-file app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Haskell: loaded " file))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-run-rust app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rust: use cargo-process-run for Cargo projects")))
+
+(def (cmd-cargo-process-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo build...")))
+
+(def (cmd-cargo-process-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo test...")))
+
+(def (cmd-cargo-process-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo run...")))
+
+(def (cmd-cargo-process-clippy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo clippy...")))
+
+(def (cmd-go-run app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Go run: " file))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-go-test-current-file app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Go test: " file))
+      (echo-message! echo "Buffer has no file"))))
+

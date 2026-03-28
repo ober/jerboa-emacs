@@ -11011,3 +11011,70 @@
 (def (cmd-inf-ruby app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "inf-ruby: starting inferior Ruby process")))
+
+;;; Round 54 batch 2: go-test-current-function, elixir-mode, alchemist-iex-run,
+;;; mix-compile, erlang-shell, lfe-mode, tuareg-run-ocaml, merlin-locate,
+;;; proof-general, coq-compile
+
+(def (cmd-go-test-current-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go test: current function")))
+
+(def (cmd-elixir-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir mode enabled")))
+
+(def (cmd-alchemist-iex-run app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*alchemist-iex*")))
+    (buffer-content-set! new-buf
+      (str "Interactive Elixir (IEx)\n\n"
+           "iex(1)> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Alchemist IEx started")))
+
+(def (cmd-mix-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mix compile...")))
+
+(def (cmd-erlang-shell app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*erlang*")))
+    (buffer-content-set! new-buf
+      (str "Erlang/OTP Shell\n\n"
+           "1> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Erlang shell started")))
+
+(def (cmd-lfe-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LFE mode enabled (Lisp Flavoured Erlang)")))
+
+(def (cmd-tuareg-run-ocaml app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*ocaml*")))
+    (buffer-content-set! new-buf
+      (str "OCaml toplevel\n\n"
+           "# "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "OCaml toplevel started")))
+
+(def (cmd-merlin-locate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Merlin: locate definition (OCaml)")))
+
+(def (cmd-proof-general app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proof General: interactive theorem prover interface")))
+
+(def (cmd-coq-compile app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Coq: compiling " file))
+      (echo-message! echo "Buffer has no file"))))

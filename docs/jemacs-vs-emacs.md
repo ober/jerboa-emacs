@@ -2282,6 +2282,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Run Ruby | :orange_circle: | Start Ruby IRB |
 | Inf Ruby | :orange_circle: | Inferior Ruby process |
 
+### Round 54
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Run Haskell | :orange_circle: | Start GHCi REPL |
+| Haskell interactive mode | :orange_circle: | Haskell interaction |
+| Haskell process load file | :orange_circle: | Load file into GHCi |
+| Run Rust | :orange_circle: | Run Rust project |
+| Cargo process build | :orange_circle: | Cargo build |
+| Cargo process test | :orange_circle: | Cargo test |
+| Cargo process run | :orange_circle: | Cargo run |
+| Cargo process clippy | :orange_circle: | Cargo clippy linter |
+| Go run | :orange_circle: | Run Go file |
+| Go test current file | :orange_circle: | Test current Go file |
+| Go test current function | :orange_circle: | Test current Go function |
+| Elixir mode | :orange_circle: | Elixir editing mode |
+| Alchemist IEx run | :orange_circle: | Start Elixir IEx REPL |
+| Mix compile | :orange_circle: | Compile Elixir project |
+| Erlang shell | :orange_circle: | Start Erlang shell |
+| LFE mode | :orange_circle: | Lisp Flavoured Erlang |
+| Tuareg run OCaml | :orange_circle: | Start OCaml toplevel |
+| Merlin locate | :orange_circle: | OCaml definition lookup |
+| Proof General | :orange_circle: | Theorem prover interface |
+| Coq compile | :orange_circle: | Compile Coq file |
+
 ---
 
 ## Recommended Development Roadmap
