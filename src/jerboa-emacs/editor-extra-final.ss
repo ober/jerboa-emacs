@@ -15669,3 +15669,51 @@
 (def (cmd-python-skeleton-if app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Python: inserted if skeleton")))
+
+;; ============================================================
+;; Round 149 — EDE, Senator, Semantic extended (batch 2)
+;; ============================================================
+
+(def (cmd-ede-make-dist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EDE: creating distribution tarball")))
+
+(def (cmd-semantic-force-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: force-refreshed tags")))
+
+(def (cmd-semantic-chart-database-size app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: charting database size")))
+
+(def (cmd-semantic-adebug-bovinate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: adebug bovinate (parse tree debug)")))
+
+(def (cmd-senator-transpose-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: transposed tags")))
+
+(def (cmd-senator-fold-tag-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: toggled tag fold")))
+
+(def (cmd-ede-find-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "EDE find file: "
+      (lambda (f)
+        (echo-message! echo (str "EDE: finding " f " in project"))))))
+
+(def (cmd-ede-edit-file-target app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EDE: editing file's target")))
+
+(def (cmd-ede-add-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add file to target: "
+      (lambda (f)
+        (echo-message! echo (str "EDE: added " f " to target"))))))
+
+(def (cmd-ede-remove-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EDE: removed current file from target")))

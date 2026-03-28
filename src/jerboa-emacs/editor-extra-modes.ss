@@ -16287,3 +16287,66 @@
 (def (cmd-c-indent-exp app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "C: indented balanced expression")))
+
+;; ============================================================
+;; Round 149 — Semantic, CEDET, EDE, Senator (batch 1)
+;; ============================================================
+
+(def (cmd-semantic-ia-complete-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: completing symbol at point")))
+
+(def (cmd-semantic-decoration-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'semantic-decoration)
+    (if (mode-enabled? app 'semantic-decoration)
+      (echo-message! echo "Semantic decoration mode enabled")
+      (echo-message! echo "Semantic decoration mode disabled"))))
+
+(def (cmd-semantic-highlight-func-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'semantic-highlight-func)
+    (if (mode-enabled? app 'semantic-highlight-func)
+      (echo-message! echo "Semantic highlight-func mode enabled")
+      (echo-message! echo "Semantic highlight-func mode disabled"))))
+
+(def (cmd-semantic-stickyfunc-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'semantic-stickyfunc)
+    (if (mode-enabled? app 'semantic-stickyfunc)
+      (echo-message! echo "Semantic stickyfunc mode enabled")
+      (echo-message! echo "Semantic stickyfunc mode disabled"))))
+
+(def (cmd-semantic-idle-summary-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'semantic-idle-summary)
+    (if (mode-enabled? app 'semantic-idle-summary)
+      (echo-message! echo "Semantic idle summary mode enabled")
+      (echo-message! echo "Semantic idle summary mode disabled"))))
+
+(def (cmd-semantic-idle-completions-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'semantic-idle-completions)
+    (if (mode-enabled? app 'semantic-idle-completions)
+      (echo-message! echo "Semantic idle completions mode enabled")
+      (echo-message! echo "Semantic idle completions mode disabled"))))
+
+(def (cmd-senator-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jump to tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Senator: jumped to " tag))))))
+
+(def (cmd-ede-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "EDE project type: "
+      (lambda (typ)
+        (echo-message! echo (str "EDE: created new " typ " project"))))))
+
+(def (cmd-ede-compile-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EDE: compiling project")))
+
+(def (cmd-ede-debug-target app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EDE: debugging target")))

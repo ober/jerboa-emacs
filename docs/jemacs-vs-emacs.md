@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 149 — Semantic, CEDET, EDE, Senator
+
+| Feature | Status | Notes |
+|---|---|---|
+| `semantic-ia-complete-symbol` | :orange_circle: | Complete symbol at point |
+| `semantic-decoration-mode` | :orange_circle: | Tag decoration mode |
+| `semantic-highlight-func-mode` | :orange_circle: | Highlight current function |
+| `semantic-stickyfunc-mode` | :orange_circle: | Sticky function header |
+| `semantic-idle-summary-mode` | :orange_circle: | Idle summary in echo area |
+| `semantic-idle-completions-mode` | :orange_circle: | Idle completions |
+| `semantic-force-refresh` | :orange_circle: | Force-refresh tags |
+| `semantic-chart-database-size` | :orange_circle: | Chart database size |
+| `semantic-adebug-bovinate` | :orange_circle: | Debug parse tree |
+| `senator-jump` | :orange_circle: | Jump to tag |
+| `senator-transpose-tags` | :orange_circle: | Transpose tags |
+| `senator-fold-tag-toggle` | :orange_circle: | Toggle tag fold |
+| `ede-new` | :orange_circle: | Create new EDE project |
+| `ede-compile-project` | :orange_circle: | Compile project |
+| `ede-debug-target` | :orange_circle: | Debug target |
+| `ede-make-dist` | :orange_circle: | Create distribution |
+| `ede-find-file` | :orange_circle: | Find file in project |
+| `ede-edit-file-target` | :orange_circle: | Edit file's target |
+| `ede-add-file` | :orange_circle: | Add file to target |
+| `ede-remove-file` | :orange_circle: | Remove file from target |
+
 ### Round 148 — CC-mode, Python, SQL Extended
 
 | Feature | Status | Notes |
