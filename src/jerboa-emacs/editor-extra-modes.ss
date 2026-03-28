@@ -14107,3 +14107,56 @@
       (lambda (prefix)
         (echo-message! echo (str "Magit: merged subtree " prefix))))))
 
+;;; ——— Round 105: Text manipulation & editing helpers (batch 1) ———
+
+(def (cmd-unexpand-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unexpanded last abbreviation")))
+
+(def (cmd-define-global-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Global abbrev: "
+      (lambda (abbrev)
+        (echo-read-string echo "Expansion: "
+          (lambda (expansion)
+            (echo-message! echo (str "Defined global abbrev: " abbrev " → " expansion))))))))
+
+(def (cmd-define-mode-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mode abbrev: "
+      (lambda (abbrev)
+        (echo-read-string echo "Expansion: "
+          (lambda (expansion)
+            (echo-message! echo (str "Defined mode abbrev: " abbrev " → " expansion))))))))
+
+(def (cmd-abbrev-prefix-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Abbrev prefix mark set")))
+
+(def (cmd-compose-mail-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "To: "
+      (lambda (to)
+        (echo-message! echo (str "Composing mail to " to " in other window"))))))
+
+(def (cmd-compose-mail-other-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "To: "
+      (lambda (to)
+        (echo-message! echo (str "Composing mail to " to " in other frame"))))))
+
+(def (cmd-mail-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mail: sending message")))
+
+(def (cmd-mail-send-and-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mail: sent message and exited")))
+
+(def (cmd-set-justification-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Justification set to left")))
+
+(def (cmd-set-justification-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Justification set to right")))

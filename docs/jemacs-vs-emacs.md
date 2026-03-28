@@ -3589,6 +3589,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | magit-am-abort | :orange_circle: | Abort patch application |
 | magit-format-patch | :orange_circle: | Format patches for range |
 
+### Round 105 — Text Manipulation & Editing Helpers
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| unexpand-abbrev | :orange_circle: | Undo last abbreviation expansion |
+| define-global-abbrev | :orange_circle: | Define a global abbreviation |
+| define-mode-abbrev | :orange_circle: | Define a mode-specific abbreviation |
+| abbrev-prefix-mark | :orange_circle: | Mark position for abbreviation prefix |
+| compose-mail-other-window | :orange_circle: | Compose mail in other window |
+| compose-mail-other-frame | :orange_circle: | Compose mail in other frame |
+| mail-send | :orange_circle: | Send the current mail message |
+| mail-send-and-exit | :orange_circle: | Send mail and close buffer |
+| set-justification-left | :orange_circle: | Set left justification |
+| set-justification-right | :orange_circle: | Set right justification |
+| set-justification-center | :orange_circle: | Set center justification |
+| set-justification-full | :orange_circle: | Set full justification |
+| set-justification-none | :orange_circle: | Remove justification |
+| picture-mode-exit | :orange_circle: | Exit picture mode |
+| picture-movement-right | :orange_circle: | Set picture movement to right |
+| picture-movement-left | :orange_circle: | Set picture movement to left |
+| picture-movement-up | :orange_circle: | Set picture movement to up |
+| picture-movement-down | :orange_circle: | Set picture movement to down |
+| picture-clear-column | :orange_circle: | Clear column in picture mode |
+| picture-clear-line | :orange_circle: | Clear line in picture mode |
+
 ---
 
 ## Recommended Development Roadmap

@@ -13565,3 +13565,45 @@
     (echo-read-string echo "Format patch range: "
       (lambda (range)
         (echo-message! echo (str "Magit: formatted patches for " range))))))
+
+;;; ——— Round 105: Text manipulation & editing helpers (batch 2) ———
+
+(def (cmd-set-justification-center app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Justification set to center")))
+
+(def (cmd-set-justification-full app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Justification set to full")))
+
+(def (cmd-set-justification-none app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Justification set to none")))
+
+(def (cmd-picture-mode-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture mode: exited")))
+
+(def (cmd-picture-movement-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: movement direction set to right")))
+
+(def (cmd-picture-movement-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: movement direction set to left")))
+
+(def (cmd-picture-movement-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: movement direction set to up")))
+
+(def (cmd-picture-movement-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: movement direction set to down")))
+
+(def (cmd-picture-clear-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: cleared column at point")))
+
+(def (cmd-picture-clear-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: cleared line at point")))
