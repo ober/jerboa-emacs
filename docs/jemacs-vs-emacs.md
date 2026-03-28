@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 208 — Doom-modeline-ext, Modus-themes-ext, Nano, General, Elpaca, ESUP
+
+| Feature | Status | Notes |
+|---|---|---|
+| doom-modeline-set-modeline | :orange_circle: | Set Doom modeline style |
+| doom-modeline-env-setup-python | :orange_circle: | Setup Python env display |
+| doom-modeline-env-setup-ruby | :orange_circle: | Setup Ruby env display |
+| modus-themes-wide-deuteranopia | :orange_circle: | Wide deuteranopia support |
+| nano-modeline-mode | :orange_circle: | Toggle Nano modeline |
+| spacemacs-buffer-goto-link | :orange_circle: | Jump to Spacemacs link |
+| spacemacs-toggle-menu | :orange_circle: | Spacemacs toggle menu |
+| general-describe-keybindings | :orange_circle: | Describe General keybindings |
+| general-override-mode | :orange_circle: | Toggle General override mode |
+| use-package-compute-statistics | :orange_circle: | Compute use-package stats |
+| use-package-jump-to-package-form | :orange_circle: | Jump to package form |
+| straight-thaw-versions | :orange_circle: | Thaw straight.el versions |
+| elpaca-browse-package | :orange_circle: | Browse Elpaca package |
+| elpaca-update-all | :orange_circle: | Update all Elpaca packages |
+| elpaca-delete | :orange_circle: | Delete Elpaca package |
+| elpaca-rebuild | :orange_circle: | Rebuild Elpaca package |
+| elpaca-log | :orange_circle: | Show Elpaca log |
+| quelpa-upgrade-all | :orange_circle: | Upgrade all Quelpa packages |
+| benchmark-init-show-durations-tree | :orange_circle: | Show init durations tree |
+| esup-run | :orange_circle: | Profile startup with ESUP |
+
 ### Round 207 — Treesit-ext, Combobulate, Expreg, Puni
 
 | Feature | Status | Notes |

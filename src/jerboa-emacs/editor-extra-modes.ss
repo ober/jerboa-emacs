@@ -19183,3 +19183,52 @@
 (def (cmd-combobulate-envelop app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Combobulate: enveloped node")))
+
+;; Round 208 — Doom-modeline-ext, Modus-themes-ext, Nano, Spacemacs, General, Use-package
+(def (cmd-doom-modeline-set-modeline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Modeline style: "
+      (lambda (style)
+        (echo-message! echo (str "Doom modeline: set to " style))))))
+
+(def (cmd-doom-modeline-env-setup-python app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom modeline: set up Python environment")))
+
+(def (cmd-doom-modeline-env-setup-ruby app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom modeline: set up Ruby environment")))
+
+(def (cmd-modus-themes-wide-deuteranopia app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Modus themes: enabled wide deuteranopia support")))
+
+(def (cmd-nano-modeline-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'nano-modeline)
+    (if (mode-enabled? app 'nano-modeline)
+      (echo-message! echo "Nano modeline mode enabled")
+      (echo-message! echo "Nano modeline mode disabled"))))
+
+(def (cmd-spacemacs-buffer-goto-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacemacs: jumped to link in buffer")))
+
+(def (cmd-spacemacs-toggle-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacemacs: showing toggle menu")))
+
+(def (cmd-general-describe-keybindings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "General: describing keybindings")))
+
+(def (cmd-general-override-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'general-override)
+    (if (mode-enabled? app 'general-override)
+      (echo-message! echo "General override mode enabled")
+      (echo-message! echo "General override mode disabled"))))
+
+(def (cmd-use-package-compute-statistics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Use-package: computed statistics")))

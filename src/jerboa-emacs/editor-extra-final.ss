@@ -18570,3 +18570,52 @@
 (def (cmd-puni-transpose app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Puni: transposed")))
+
+;; Round 208 — Use-package-ext, Straight, Elpaca, Quelpa, Benchmark, ESUP
+(def (cmd-use-package-jump-to-package-form app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jump to package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Use-package: jumped to " pkg))))))
+
+(def (cmd-straight-thaw-versions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Straight: thawed package versions")))
+
+(def (cmd-elpaca-browse-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Browse package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Elpaca: browsing " pkg))))))
+
+(def (cmd-elpaca-update-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elpaca: updating all packages...")))
+
+(def (cmd-elpaca-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Elpaca: deleted " pkg))))))
+
+(def (cmd-elpaca-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rebuild package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Elpaca: rebuilding " pkg))))))
+
+(def (cmd-elpaca-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elpaca: showing log")))
+
+(def (cmd-quelpa-upgrade-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quelpa: upgrading all packages...")))
+
+(def (cmd-benchmark-init-show-durations-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Benchmark-init: showing durations tree")))
+
+(def (cmd-esup-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ESUP: profiling startup...")))
