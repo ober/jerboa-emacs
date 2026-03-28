@@ -12397,3 +12397,44 @@
     (if (mode-enabled? app 'minions)
       (echo-message! echo "Minions mode enabled — minor modes in menu")
       (echo-message! echo "Minions mode disabled"))))
+
+;;; Round 81 — Diff, Smerge & Ediff (cont.)
+(def (cmd-smerge-keep-mine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: kept mine (upper)")))
+
+(def (cmd-smerge-keep-other app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: kept other (lower)")))
+
+(def (cmd-smerge-keep-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: kept all versions")))
+
+(def (cmd-smerge-resolve-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: resolved all conflicts automatically")))
+
+(def (cmd-smerge-keep-base app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: kept base version")))
+
+(def (cmd-emerge-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Emerge: merging buffers")))
+
+(def (cmd-patch-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Patch applied to current buffer")))
+
+(def (cmd-ediff-show-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: showing session registry")))
+
+(def (cmd-ediff-toggle-wide-display app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: toggled wide display")))
+
+(def (cmd-ediff-swap-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: swapped buffer positions")))

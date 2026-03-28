@@ -2957,6 +2957,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 81 — Diff, Smerge & Ediff
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| diff-goto-source | :orange_circle: | Jump to source from diff |
+| diff-apply-hunk | :orange_circle: | Apply diff hunk |
+| diff-reverse-direction | :orange_circle: | Reverse diff direction |
+| diff-split-hunk | :orange_circle: | Split diff hunk at point |
+| diff-hunk-next | :orange_circle: | Move to next diff hunk |
+| diff-hunk-prev | :orange_circle: | Move to previous diff hunk |
+| diff-file-next | :orange_circle: | Move to next file in diff |
+| diff-file-prev | :orange_circle: | Move to previous file in diff |
+| smerge-next | :orange_circle: | Move to next merge conflict |
+| smerge-prev | :orange_circle: | Move to previous merge conflict |
+| smerge-keep-mine | :orange_circle: | Keep upper/mine version |
+| smerge-keep-other | :orange_circle: | Keep lower/other version |
+| smerge-keep-all | :orange_circle: | Keep all conflict versions |
+| smerge-resolve-all | :orange_circle: | Auto-resolve all conflicts |
+| smerge-keep-base | :orange_circle: | Keep base version |
+| emerge-buffers | :orange_circle: | Merge two buffers |
+| patch-buffer | :orange_circle: | Apply patch to buffer |
+| ediff-show-registry | :orange_circle: | Show ediff session registry |
+| ediff-toggle-wide-display | :orange_circle: | Toggle ediff wide display |
+| ediff-swap-buffers | :orange_circle: | Swap ediff buffer positions |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

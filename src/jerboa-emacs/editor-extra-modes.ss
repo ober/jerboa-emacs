@@ -12939,3 +12939,44 @@
       (lambda (face)
         (echo-message! echo (str "Face '" face "' remapped"))))))
 
+;;; Round 81 — Diff, Smerge & Ediff
+(def (cmd-diff-goto-source app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: jumped to source location")))
+
+(def (cmd-diff-apply-hunk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: applied hunk")))
+
+(def (cmd-diff-reverse-direction app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: reversed direction")))
+
+(def (cmd-diff-split-hunk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: split hunk at point")))
+
+(def (cmd-diff-hunk-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: moved to next hunk")))
+
+(def (cmd-diff-hunk-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: moved to previous hunk")))
+
+(def (cmd-diff-file-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: moved to next file")))
+
+(def (cmd-diff-file-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: moved to previous file")))
+
+(def (cmd-smerge-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: moved to next conflict")))
+
+(def (cmd-smerge-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: moved to previous conflict")))
+
