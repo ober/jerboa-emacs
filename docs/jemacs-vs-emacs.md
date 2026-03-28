@@ -4180,6 +4180,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 128 — Counsel/Swiper, Windmove, Buffer-move, Eyebrowse
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| counsel-set-variable | :orange_circle: | Set variable via Counsel |
+| counsel-yank-pop | :orange_circle: | Browse kill ring via Counsel |
+| swiper-isearch-thing-at-point | :orange_circle: | Swiper isearch thing at point |
+| swiper-thing-at-point | :orange_circle: | Swiper search thing at point |
+| eval-minibuffer | :orange_circle: | Evaluate expression in minibuffer |
+| custom-theme-visit-theme | :orange_circle: | Visit custom theme |
+| package-menu-mark-upgrades | :orange_circle: | Mark package upgrades |
+| windmove-delete-left | :orange_circle: | Delete window to the left |
+| windmove-delete-right | :orange_circle: | Delete window to the right |
+| windmove-delete-up | :orange_circle: | Delete window above |
+| windmove-delete-down | :orange_circle: | Delete window below |
+| buf-move-left | :orange_circle: | Move buffer left |
+| buf-move-right | :orange_circle: | Move buffer right |
+| buf-move-up | :orange_circle: | Move buffer up |
+| buf-move-down | :orange_circle: | Move buffer down |
+| flop-frame | :orange_circle: | Flop frame vertically |
+| rotate-frame-clockwise | :orange_circle: | Rotate frame clockwise |
+| rotate-frame-anticlockwise | :orange_circle: | Rotate frame anticlockwise |
+| eyebrowse-switch-to-window-config-1 | :orange_circle: | Switch to eyebrowse config 1 |
+| eyebrowse-switch-to-window-config-2 | :orange_circle: | Switch to eyebrowse config 2 |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

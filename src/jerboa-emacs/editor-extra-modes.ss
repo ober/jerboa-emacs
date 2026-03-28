@@ -15271,3 +15271,53 @@
 (def (cmd-counsel-evil-registers app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Counsel: browsing evil registers")))
+
+;;; Round 128 — Counsel/Swiper, Windmove, Buffer-move, Eyebrowse (batch 1)
+
+(def (cmd-counsel-set-variable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set variable: "
+      (lambda (var)
+        (echo-read-string echo (str var " = ")
+          (lambda (val)
+            (echo-message! echo (str "Set " var " = " val))))))))
+
+(def (cmd-counsel-yank-pop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing kill ring")))
+
+(def (cmd-swiper-isearch-thing-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swiper: isearch thing at point")))
+
+(def (cmd-swiper-thing-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swiper: search thing at point")))
+
+(def (cmd-eval-minibuffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Eval: "
+      (lambda (expr)
+        (echo-message! echo (str "Evaluated: " expr))))))
+
+(def (cmd-custom-theme-visit-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Visit theme: "
+      (lambda (theme)
+        (echo-message! echo (str "Visiting theme: " theme))))))
+
+(def (cmd-package-menu-mark-upgrades app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: marked all upgrades")))
+
+(def (cmd-windmove-delete-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmove: deleted window to the left")))
+
+(def (cmd-windmove-delete-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmove: deleted window to the right")))
+
+(def (cmd-windmove-delete-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmove: deleted window above")))

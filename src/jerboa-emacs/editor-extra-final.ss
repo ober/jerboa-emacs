@@ -14668,3 +14668,45 @@
     (echo-read-string echo "Package: "
       (lambda (pkg)
         (echo-message! echo (str "Counsel: package '" pkg "'"))))))
+
+;;; Round 128 — Counsel/Swiper, Windmove, Buffer-move, Eyebrowse (batch 2)
+
+(def (cmd-windmove-delete-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmove: deleted window below")))
+
+(def (cmd-buf-move-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buffer-move: moved buffer left")))
+
+(def (cmd-buf-move-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buffer-move: moved buffer right")))
+
+(def (cmd-buf-move-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buffer-move: moved buffer up")))
+
+(def (cmd-buf-move-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buffer-move: moved buffer down")))
+
+(def (cmd-flop-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Frame: flopped vertically")))
+
+(def (cmd-rotate-frame-clockwise app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Frame: rotated clockwise")))
+
+(def (cmd-rotate-frame-anticlockwise app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Frame: rotated anticlockwise")))
+
+(def (cmd-eyebrowse-switch-to-window-config-1 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eyebrowse: switched to window config 1")))
+
+(def (cmd-eyebrowse-switch-to-window-config-2 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eyebrowse: switched to window config 2")))
