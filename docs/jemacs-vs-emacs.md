@@ -1786,6 +1786,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Set mark command repeat | :orange_circle: | Set mark (repeatable) |
 | Mark defun | :orange_circle: | Select top-level form |
 | Narrow to defun | :orange_circle: | Narrow to top-level form |
+| Flycheck mode | :orange_circle: | On-the-fly syntax checking |
+| Flymake mode | :orange_circle: | Built-in syntax checking |
+| Eldoc mode | :orange_circle: | Show docs in echo area |
+| Which-function mode | :orange_circle: | Show current function name |
+| Imenu | :orange_circle: | Navigate definitions in buffer |
+| Imenu add to menubar | :orange_circle: | Add imenu to menu bar |
+| Speedbar | :orange_circle: | File/code browser (placeholder) |
+| Neotree | :orange_circle: | Tree file browser (placeholder) |
+| Treemacs | :orange_circle: | Project tree browser (placeholder) |
+| Project find file | :orange_circle: | Open file in project |
+| Project switch to buffer | :orange_circle: | Switch project buffer |
+| Project find regexp | :orange_circle: | Grep in project files |
+| Project compile | :orange_circle: | Compile project |
+| Project switch project | :orange_circle: | Switch to another project |
+| Xref find definitions | :orange_circle: | Jump to definition |
+| Xref find references | :orange_circle: | Find all references |
+| Xref pop marker stack | :orange_circle: | Go back in xref history |
+| Xref go back | :orange_circle: | Return from definition |
+| Tags search | :orange_circle: | Search TAGS (placeholder) |
+| Tags query replace | :orange_circle: | Replace in TAGS (placeholder) |
 
 ---
 

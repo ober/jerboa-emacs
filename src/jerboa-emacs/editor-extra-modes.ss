@@ -9916,4 +9916,97 @@
       (echo-message! echo "Transient-mark mode enabled")
       (echo-message! echo "Transient-mark mode disabled"))))
 
+;; Round 34 batch 1
+
+(def (cmd-flycheck-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'flycheck-mode)
+    (if (mode-enabled? app 'flycheck-mode)
+      (echo-message! echo "Flycheck mode enabled (on-the-fly syntax checking)")
+      (echo-message! echo "Flycheck mode disabled"))))
+
+(def (cmd-flymake-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'flymake-mode)
+    (if (mode-enabled? app 'flymake-mode)
+      (echo-message! echo "Flymake mode enabled")
+      (echo-message! echo "Flymake mode disabled"))))
+
+(def (cmd-eldoc-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eldoc-mode)
+    (if (mode-enabled? app 'eldoc-mode)
+      (echo-message! echo "Eldoc mode enabled (show docs in echo area)")
+      (echo-message! echo "Eldoc mode disabled"))))
+
+(def (cmd-which-function-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'which-function-mode)
+    (if (mode-enabled? app 'which-function-mode)
+      (echo-message! echo "Which-function mode enabled")
+      (echo-message! echo "Which-function mode disabled"))))
+
+(def (cmd-imenu app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (editor-get-text ed))
+         (lines (string-split text #\newline))
+         (defs '()))
+    ;; Find def/defun/class etc lines
+    (let loop ((ls lines) (n 1))
+      (if (null? ls) #f
+        (begin
+          (let ((line (car ls)))
+            (when (or (string-contains line "(def ")
+                      (string-contains line "(defun ")
+                      (string-contains line "(defstruct ")
+                      (string-contains line "(defclass ")
+                      (string-contains line "function ")
+                      (string-contains line "class "))
+              (set! defs (cons (cons n (string-trim line)) defs))))
+          (loop (cdr ls) (+ n 1)))))
+    (let* ((entries (reverse defs))
+           (result (str "=== Imenu ===\n\n"
+                        (if (null? entries) "No definitions found.\n"
+                          (string-join
+                            (map (lambda (e) (str "  " (number->string (car e)) ": " (cdr e)))
+                                 entries)
+                            "\n"))
+                        "\n")))
+      (editor-set-text ed result)
+      (echo-message! echo (str (length entries) " definitions found")))))
+
+(def (cmd-imenu-add-to-menubar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Imenu added to menu bar (conceptual)")))
+
+(def (cmd-speedbar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar not available (use M-x dired or M-x treemacs)")))
+
+(def (cmd-neotree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neotree not available (use M-x dired for file browsing)")))
+
+(def (cmd-treemacs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs not available (use M-x dired for file browsing)")))
+
+(def (cmd-project-find-file app)
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (file (echo-read-string echo "Project find file: ")))
+    (if (or (not file) (string=? file ""))
+      (echo-message! echo "No file specified")
+      (if (file-exists? file)
+        (let* ((content (read-file-string file))
+               (new-buf (create-buffer (path-strip-directory file))))
+          (buffer-file-set! new-buf file)
+          (switch-to-buffer frame new-buf)
+          (let ((ed (edit-window-editor (current-window frame))))
+            (editor-set-text ed content))
+          (echo-message! echo (str "Opened: " file)))
+        (echo-message! echo (str "File not found: " file))))))
+
 
