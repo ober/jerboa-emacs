@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 237 — Helm ext, Counsel ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| helm-semantic-or-imenu | :orange_circle: | Helm semantic/imenu browser |
+| helm-colors | :orange_circle: | Helm color browser |
+| helm-calcul-expression | :orange_circle: | Helm expression calculator |
+| helm-top | :orange_circle: | Helm system process viewer |
+| helm-select-xfont | :orange_circle: | Helm font selector |
+| helm-run-external-command | :orange_circle: | Run external command via Helm |
+| helm-regexp | :orange_circle: | Helm regexp search |
+| helm-surfraw | :orange_circle: | Helm surfraw web search |
+| helm-info | :orange_circle: | Helm info browser |
+| helm-man-woman | :orange_circle: | Helm man page browser |
+| counsel-git-log | :orange_circle: | Browse git log via Counsel |
+| counsel-mark-ring | :orange_circle: | Browse mark ring via Counsel |
+| counsel-org-goto | :orange_circle: | Navigate org headings via Counsel |
+| counsel-locate | :orange_circle: | Locate files via Counsel |
+| counsel-compile | :orange_circle: | Compile via Counsel |
+| counsel-world-clock | :orange_circle: | World clock via Counsel |
+| counsel-descbinds | :orange_circle: | Describe bindings via Counsel |
+| counsel-rhythmbox | :orange_circle: | Rhythmbox browser via Counsel |
+| counsel-switch-to-shell-buffer | :orange_circle: | Switch to shell buffer via Counsel |
+| counsel-imenu | :orange_circle: | Imenu browser via Counsel |
+
 ### Round 236 — BBDB ext, Gnus ext, SLIME ext
 
 | Command | Status | Description |

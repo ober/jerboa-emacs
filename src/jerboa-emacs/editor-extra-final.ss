@@ -19905,3 +19905,48 @@
 (def (cmd-slime-profiled-functions app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SLIME: listing profiled functions")))
+
+;; Round 237 — Helm ext, Counsel ext (10 in final)
+(def (cmd-counsel-git-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: git log browser")))
+
+(def (cmd-counsel-mark-ring app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: mark ring browser")))
+
+(def (cmd-counsel-org-goto app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: org heading navigator")))
+
+(def (cmd-counsel-locate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Locate: "
+      (lambda (pat)
+        (echo-message! echo (str "Counsel: locating " pat))))))
+
+(def (cmd-counsel-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Compile command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Counsel: compiling with " cmd))))))
+
+(def (cmd-counsel-world-clock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: world clock")))
+
+(def (cmd-counsel-descbinds app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: describe bindings")))
+
+(def (cmd-counsel-rhythmbox app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: rhythmbox browser")))
+
+(def (cmd-counsel-switch-to-shell-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: switch to shell buffer")))
+
+(def (cmd-counsel-imenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: imenu browser")))

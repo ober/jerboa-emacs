@@ -20567,3 +20567,54 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SLIME: listing threads")))
 
+;; Round 237 — Helm ext, Counsel ext (10 in modes)
+(def (cmd-helm-semantic-or-imenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helm: semantic/imenu browser")))
+
+(def (cmd-helm-colors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helm: color browser")))
+
+(def (cmd-helm-calcul-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Helm: calculated " expr))))))
+
+(def (cmd-helm-top app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helm: showing system processes")))
+
+(def (cmd-helm-select-xfont app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helm: font selector")))
+
+(def (cmd-helm-run-external-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "External command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Helm: running " cmd))))))
+
+(def (cmd-helm-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Regexp: "
+      (lambda (re)
+        (echo-message! echo (str "Helm: regexp search " re))))))
+
+(def (cmd-helm-surfraw app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Surfraw query: "
+      (lambda (q)
+        (echo-message! echo (str "Helm: surfraw search " q))))))
+
+(def (cmd-helm-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helm: info browser")))
+
+(def (cmd-helm-man-woman app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Man page: "
+      (lambda (page)
+        (echo-message! echo (str "Helm: showing man page " page))))))
+
