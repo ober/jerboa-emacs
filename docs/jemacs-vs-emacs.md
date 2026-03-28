@@ -1446,6 +1446,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Text scale adjust | :orange_circle: | Interactive text zoom +/-/0 |
 | Memory use counts | :orange_circle: | Display Chez Scheme memory statistics |
 | Execute named kbd macro | :orange_circle: | Execute/list named keyboard macros |
+| Emoji search | :orange_circle: | Search and insert emoji by name |
+| Emoji list | :orange_circle: | Display emoji in a buffer |
+| UCS insert | :orange_circle: | Insert Unicode character by codepoint or name |
+| Char info | :orange_circle: | Show character details (decimal, hex, octal) |
+| List colors display | :orange_circle: | Display named color palette |
+| List faces display | :orange_circle: | Display Scintilla style information |
+| Display battery mode | :orange_circle: | Show battery status from sysfs |
+| View hello file | :orange_circle: | Multilingual HELLO greetings |
+| Auto highlight symbol | :orange_circle: | Highlight all instances of symbol at point |
+| Pulse momentary highlight | :orange_circle: | Flash/pulse current line (indicator overlay) |
+| Prettier mode | :orange_circle: | Format code via prettier |
+| Clang format | :orange_circle: | Format C/C++ via clang-format |
+| Eglot format | :orange_circle: | Format buffer via detected formatter |
+| Reformatter | :orange_circle: | Format with custom formatter command |
+| Nav flash show | :orange_circle: | Flash line after navigation jump |
+| Describe symbol | :orange_circle: | Look up Scheme symbol documentation |
+| Apropos variable | :orange_circle: | Search variables by name pattern |
+| Locate library | :orange_circle: | Find library file path |
+| Load library | :orange_circle: | Load a Scheme library file |
+| Finder by keyword | :orange_circle: | Find commands by keyword search |
 
 ---
 

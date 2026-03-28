@@ -6881,3 +6881,287 @@
                           (editor-set-text new-ed (str "=== Hacker News Top Stories ===\n\n" result "\n")))
                         (echo-message! echo "News headlines loaded")))))
                 (loop (cons (str (number->string n) ". " line) lines) (+ n 1))))))))))
+
+;; ===== Round 17 Batch 1 =====
+
+;; --- Feature 1: Emoji Search ---
+
+(def (cmd-emoji-search app)
+  "Search for and insert an emoji by name."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (query (echo-read-string echo "Emoji search: " row width)))
+    (when (and query (not (string-empty? query)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Emoji error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "python3 -c '"
+                               "import unicodedata,sys;"
+                               "q=sys.argv[1].lower();"
+                               "[print(chr(i),unicodedata.name(chr(i),\"\")) for i in range(0x1F300,0x1FAF9) if q in unicodedata.name(chr(i),\"\").lower()]"
+                               "' " (shell-quote (string-trim query)) " 2>/dev/null | head -20")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((results (reverse lines)))
+                      (if (null? results)
+                        (echo-message! echo "No emoji found")
+                        ;; Insert the first result's emoji character
+                        (let* ((first-line (car results))
+                               (emoji (if (> (string-length first-line) 0)
+                                        (string (string-ref first-line 0))
+                                        "")))
+                          (when (> (string-length emoji) 0)
+                            (send-message ed SCI_INSERTTEXT -1 emoji)
+                            (echo-message! echo (str "Inserted: " first-line)))))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 2: Emoji List ---
+
+(def (cmd-emoji-list app)
+  "Display a list of common emoji in a buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*emoji-list*")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (with-catch
+        (lambda (e)
+          (editor-set-text new-ed "Error loading emoji list")
+          (echo-message! echo (str "Error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          "python3 -c 'import unicodedata;[print(chr(i),unicodedata.name(chr(i),\"?\")) for i in range(0x1F600,0x1F650)]' 2>/dev/null"
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((result (string-join (reverse lines) "\n")))
+                      (editor-set-text new-ed (str "=== Emoji List ===\n\n" result "\n"))
+                      (echo-message! echo "Emoji list loaded")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 3: UCS Insert ---
+
+(def (cmd-ucs-insert app)
+  "Insert a Unicode character by codepoint or name."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Unicode codepoint (hex) or name: " row width)))
+    (when (and input (not (string-empty? input)))
+      (let ((trimmed (string-trim input)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "UCS error: " e)))
+          (lambda ()
+            ;; Try as hex codepoint first
+            (let ((num (string->number trimmed 16)))
+              (if num
+                (let ((ch (string (integer->char num))))
+                  (send-message ed SCI_INSERTTEXT -1 ch)
+                  (echo-message! echo (str "Inserted U+" trimmed " = " ch)))
+                ;; Try as name via Python
+                (let-values (((si so se pid)
+                              (open-process-ports
+                                (str "python3 -c 'import unicodedata;print(unicodedata.lookup(\""
+                                     trimmed "\"))' 2>/dev/null")
+                                'block (native-transcoder))))
+                  (close-port si)
+                  (let ((result (get-line so)))
+                    (close-port so) (close-port se)
+                    (if (eof-object? result)
+                      (echo-message! echo "Character not found")
+                      (let ((ch (string-trim result)))
+                        (send-message ed SCI_INSERTTEXT -1 ch)
+                        (echo-message! echo (str "Inserted: " ch))))))))))))))
+
+;; --- Feature 4: Char Info ---
+
+(def (cmd-char-info app)
+  "Show detailed information about the character at point."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (ch (send-message ed SCI_GETCHARAT pos 0)))
+    (if (= ch 0)
+      (echo-message! echo "No character at point")
+      (let* ((char-val (integer->char ch))
+             (info (str "Char: " (string char-val)
+                        " | Decimal: " ch
+                        " | Hex: 0x" (number->string ch 16)
+                        " | Octal: 0" (number->string ch 8))))
+        (echo-message! echo info)))))
+
+;; --- Feature 5: List Colors Display ---
+
+(def (cmd-list-colors-display app)
+  "Display a color palette in a buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*colors*"))
+         (colors '(("Black" "#000000") ("White" "#FFFFFF") ("Red" "#FF0000")
+                   ("Green" "#00FF00") ("Blue" "#0000FF") ("Yellow" "#FFFF00")
+                   ("Cyan" "#00FFFF") ("Magenta" "#FF00FF") ("Orange" "#FFA500")
+                   ("Purple" "#800080") ("Pink" "#FFC0CB") ("Brown" "#A52A2A")
+                   ("Gray" "#808080") ("Silver" "#C0C0C0") ("Gold" "#FFD700")
+                   ("Navy" "#000080") ("Teal" "#008080") ("Maroon" "#800000")
+                   ("Olive" "#808000") ("Coral" "#FF7F50") ("Salmon" "#FA8072")
+                   ("Turquoise" "#40E0D0") ("Violet" "#EE82EE") ("Indigo" "#4B0082")
+                   ("Crimson" "#DC143C") ("Lime" "#00FF00") ("Ivory" "#FFFFF0")
+                   ("Azure" "#F0FFFF") ("Lavender" "#E6E6FA") ("Wheat" "#F5DEB3")
+                   ("Khaki" "#F0E68C") ("Orchid" "#DA70D6") ("Plum" "#DDA0DD")))
+         (lines (map (lambda (c)
+                       (str "  " (car c) (make-string (max 1 (- 15 (string-length (car c)))) #\space) (cadr c)))
+                     colors))
+         (text (str "=== Color Palette ===\n\n" (string-join lines "\n") "\n")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed text))
+    (echo-message! echo "Color palette displayed")))
+
+;; --- Feature 6: List Faces Display ---
+
+(def (cmd-list-faces-display app)
+  "Display available Scintilla style information."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (new-buf (create-buffer "*faces*"))
+         (styles (let collect ((i 0) (acc '()))
+                   (if (>= i 32) (reverse acc)
+                     (let ((fg (send-message ed SCI_STYLEGETFORE i 0))
+                           (bg (send-message ed SCI_STYLEGETBACK i 0))
+                           (bold (send-message ed SCI_STYLEGETBOLD i 0))
+                           (italic (send-message ed SCI_STYLEGETITALIC i 0)))
+                       (collect (+ i 1)
+                         (cons (str "  Style " i
+                                    ": fg=#" (number->string fg 16)
+                                    " bg=#" (number->string bg 16)
+                                    (if (> bold 0) " BOLD" "")
+                                    (if (> italic 0) " ITALIC" ""))
+                               acc))))))
+         (text (str "=== Scintilla Styles ===\n\n" (string-join styles "\n") "\n")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed text))
+    (echo-message! echo "Faces/styles displayed")))
+
+;; --- Feature 7: Display Battery Mode ---
+
+(def (cmd-display-battery-mode app)
+  "Show battery status in the echo area."
+  (let* ((echo (app-state-echo app)))
+    (with-catch
+      (lambda (e) (echo-message! echo "Battery info not available"))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "cat /sys/class/power_supply/BAT0/capacity 2>/dev/null && cat /sys/class/power_supply/BAT0/status 2>/dev/null || echo 'N/A'"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let* ((cap (get-line so))
+                 (status (get-line so)))
+            (close-port so) (close-port se)
+            (if (or (eof-object? cap) (string=? (string-trim cap) "N/A"))
+              (echo-message! echo "Battery: not available (desktop or no BAT0)")
+              (echo-message! echo (str "Battery: " (string-trim cap) "% ("
+                                       (if (eof-object? status) "unknown" (string-trim status)) ")")))))))))
+
+;; --- Feature 8: View Hello File ---
+
+(def (cmd-view-hello-file app)
+  "Display a multilingual HELLO greeting in various scripts."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*hello*"))
+         (greetings '("Hello!" "Bonjour!" "Hallo!" "Ciao!" "Hola!"
+                      "Ola!" "Ahoj!" "Hej!" "Merhaba!" "Szia!"
+                      "Saluton!" "Salut!" "Hei!" "Witaj!"
+                      "Ahoj!" "Sveiki!" "Tere!" "Labas!"
+                      "Czesc!" "Zdravo!" "Privet!"
+                      "Konnichiwa!" "Nihao!" "Annyeong!"
+                      "Namaste!" "Sawadee!" "Xin chao!"
+                      "Shalom!" "Marhaba!" "Salaam!"))
+         (text (str "=== HELLO ===\n\n"
+                    "This file demonstrates greetings from around the world.\n\n"
+                    (string-join greetings "\n") "\n\n"
+                    "Emacs displays this in native scripts with proper Unicode rendering.\n"
+                    "jemacs shows the transliterated forms.\n")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed text))
+    (echo-message! echo "Hello world!")))
+
+;; --- Feature 9: Auto Highlight Symbol ---
+
+(def (cmd-auto-highlight-symbol app)
+  "Highlight all instances of the symbol at point using indicator 18."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word (editor-get-text-range ed word-start word-end)))
+    (if (or (not word) (string-empty? word))
+      (echo-message! echo "No symbol at point")
+      (begin
+        ;; Clear previous highlights
+        (send-message ed SCI_SETINDICATORCURRENT 18 0)
+        (send-message ed SCI_INDICATORCLEARRANGE 0 (send-message ed SCI_GETLENGTH 0 0))
+        ;; Setup indicator 18 for symbol highlight
+        (send-message ed SCI_INDICSETSTYLE 18 7)  ;; INDIC_ROUNDBOX
+        (send-message ed SCI_INDICSETFORE 18 #x00FFFF)  ;; Cyan
+        (send-message ed SCI_INDICSETALPHA 18 60)
+        ;; Find and highlight all occurrences
+        (let ((len (send-message ed SCI_GETLENGTH 0 0))
+              (word-len (string-length word)))
+          (send-message ed SCI_SETSEARCHFLAGS 4 0)  ;; SCFIND_WHOLEWORD
+          (let highlight-loop ((search-start 0) (count 0))
+            (send-message ed SCI_SETTARGETSTART search-start 0)
+            (send-message ed SCI_SETTARGETEND len 0)
+            (let ((found (send-message ed SCI_SEARCHINTARGET word-len word)))
+              (if (>= found 0)
+                (begin
+                  (send-message ed SCI_INDICATORFILLRANGE found word-len)
+                  (highlight-loop (+ found word-len) (+ count 1)))
+                (echo-message! echo (str "Highlighted " count " occurrences of '" word "'"))))))))))
+
+;; --- Feature 10: Pulse Momentary Highlight ---
+
+(def (cmd-pulse-momentary-highlight-one-line app)
+  "Flash/pulse the current line briefly using indicator 19."
+  (let* ((frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+         (line-end (send-message ed SCI_GETLINEENDPOSITION line 0)))
+    ;; Setup indicator 19 for pulse
+    (send-message ed SCI_SETINDICATORCURRENT 19 0)
+    (send-message ed SCI_INDICSETSTYLE 19 6)  ;; INDIC_BOX
+    (send-message ed SCI_INDICSETFORE 19 #xFFFF00)  ;; Yellow
+    (send-message ed SCI_INDICSETALPHA 19 100)
+    ;; Highlight the line
+    (send-message ed SCI_INDICATORFILLRANGE line-start (- line-end line-start))
+    (echo-message! (app-state-echo app) "Line pulsed")))

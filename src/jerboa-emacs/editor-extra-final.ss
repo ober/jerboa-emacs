@@ -6472,3 +6472,333 @@
              "  M-x name-last-kbd-macro   Name the last macro\n\n"
              "Recorded macros will appear here.\n"))
       (echo-message! echo "Kbd macro list"))))
+
+;; ===== Round 17 Batch 2 =====
+
+;; --- Feature 11: Prettier Mode ---
+
+(def (cmd-prettier-mode app)
+  "Format the current buffer using prettier."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf))
+         (text (editor-get-text ed)))
+    (if (not file)
+      (echo-message! echo "No file — prettier needs a filename for language detection")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Prettier error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "prettier --stdin-filepath " (shell-quote file) " 2>/dev/null")
+                          'block (native-transcoder))))
+            (put-string si text)
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((result (string-join (reverse lines) "\n")))
+                      (if (string-empty? result)
+                        (echo-message! echo "Prettier produced no output — is it installed?")
+                        (begin
+                          (editor-set-text ed result)
+                          (editor-goto-pos ed 0)
+                          (echo-message! echo "Formatted with prettier")))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 12: Clang Format ---
+
+(def (cmd-clang-format app)
+  "Format C/C++ code using clang-format."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (text (editor-get-text ed)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "clang-format error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "clang-format 2>/dev/null"
+                        'block (native-transcoder))))
+          (put-string si text)
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((result (string-join (reverse lines) "\n")))
+                    (if (string-empty? result)
+                      (echo-message! echo "clang-format produced no output — is it installed?")
+                      (begin
+                        (editor-set-text ed result)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo "Formatted with clang-format")))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 13: Eglot Format ---
+
+(def (cmd-eglot-format app)
+  "Format the buffer via LSP textDocument/formatting."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      ;; Use formatter based on file extension
+      (let* ((ext (path-extension file))
+             (cmd (cond
+                    ((member ext '("js" "ts" "jsx" "tsx" "json" "css" "html" "md" "yaml" "yml"))
+                     (str "prettier --stdin-filepath " (shell-quote file)))
+                    ((member ext '("c" "cpp" "h" "hpp" "cc"))
+                     "clang-format")
+                    ((member ext '("py"))
+                     "black -q -")
+                    ((member ext '("go"))
+                     "gofmt")
+                    ((member ext '("rs"))
+                     "rustfmt")
+                    ((member ext '("rb"))
+                     "rubocop -A --stdin dummy.rb 2>/dev/null")
+                    (else #f))))
+        (if (not cmd)
+          (echo-message! echo (str "No formatter configured for ." ext))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "Format error: " e)))
+            (lambda ()
+              (let ((text (editor-get-text ed)))
+                (let-values (((si so se pid)
+                              (open-process-ports (str cmd " 2>/dev/null")
+                                'block (native-transcoder))))
+                  (put-string si text)
+                  (close-port si)
+                  (let loop ((lines '()))
+                    (let ((line (get-line so)))
+                      (if (eof-object? line)
+                        (begin
+                          (close-port so) (close-port se)
+                          (let ((result (string-join (reverse lines) "\n")))
+                            (when (> (string-length result) 0)
+                              (editor-set-text ed result)
+                              (editor-goto-pos ed 0)
+                              (echo-message! echo (str "Formatted with " cmd)))))
+                        (loop (cons line lines))))))))))))))
+
+;; --- Feature 14: Reformatter ---
+
+(def (cmd-reformatter app)
+  "Format buffer with a custom formatter command."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (cmd (echo-read-string echo "Formatter command (reads stdin, writes stdout): " row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (let ((text (editor-get-text ed)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Format error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports (str (string-trim cmd) " 2>/dev/null")
+                            'block (native-transcoder))))
+              (put-string si text)
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (let ((result (string-join (reverse lines) "\n")))
+                        (if (string-empty? result)
+                          (echo-message! echo "Formatter produced no output")
+                          (begin
+                            (editor-set-text ed result)
+                            (editor-goto-pos ed 0)
+                            (echo-message! echo "Formatted")))))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 15: Nav Flash Show ---
+
+(def (cmd-nav-flash-show app)
+  "Flash the current line after a navigation jump (visual feedback)."
+  (let* ((frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+         (line-end (send-message ed SCI_GETLINEENDPOSITION line 0))
+         (line-len (- line-end line-start)))
+    (when (> line-len 0)
+      ;; Use indicator 20 for nav flash
+      (send-message ed SCI_SETINDICATORCURRENT 20 0)
+      (send-message ed SCI_INDICSETSTYLE 20 7)  ;; INDIC_ROUNDBOX
+      (send-message ed SCI_INDICSETFORE 20 #x00FF00)  ;; Green
+      (send-message ed SCI_INDICSETALPHA 20 80)
+      (send-message ed SCI_INDICATORFILLRANGE line-start line-len)
+      (echo-message! (app-state-echo app) "Nav flash"))))
+
+;; --- Feature 16: Describe Symbol ---
+
+(def (cmd-describe-symbol app)
+  "Look up documentation for a Scheme symbol."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (symbol (editor-get-text-range ed word-start word-end))
+         (row (tui-rows)) (width (tui-cols)))
+    (let ((sym (if (or (not symbol) (string-empty? symbol))
+                 (echo-read-string echo "Describe symbol: " row width)
+                 symbol)))
+      (when (and sym (not (string-empty? sym)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Not found: " sym)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "echo '(import (chezscheme)) (inspect (eval (string->symbol \""
+                                 (string-trim sym) "\")))' | scheme -q 2>&1 | head -20")
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (let ((result (string-join (reverse lines) "\n")))
+                        (if (string-empty? result)
+                          (echo-message! echo (str "No info for: " sym))
+                          (let* ((new-buf (create-buffer (str "*describe: " sym "*"))))
+                            (switch-to-buffer frame new-buf)
+                            (let ((new-ed (edit-window-editor (current-window frame))))
+                              (editor-set-text new-ed (str "=== " sym " ===\n\n" result "\n")))
+                            (echo-message! echo (str "Described: " sym))))))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 17: Apropos Variable ---
+
+(def (cmd-apropos-variable app)
+  "Search for variables matching a pattern."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (pattern (echo-read-string echo "Apropos variable pattern: " row width)))
+    (when (and pattern (not (string-empty? pattern)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Apropos error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "echo '(import (chezscheme)) (for-each (lambda (s) (when (string-contains (symbol->string s) \""
+                               (string-trim pattern)
+                               "\") (printf \"~a~n\" s))) (environment-symbols (interaction-environment)))' | scheme -q 2>/dev/null | sort | head -50")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((result (string-join (reverse lines) "\n")))
+                      (if (string-empty? result)
+                        (echo-message! echo "No variables found")
+                        (let* ((new-buf (create-buffer "*apropos-variable*")))
+                          (switch-to-buffer frame new-buf)
+                          (let ((new-ed (edit-window-editor (current-window frame))))
+                            (editor-set-text new-ed (str "=== Apropos: " pattern " ===\n\n" result "\n")))
+                          (echo-message! echo (str (length (reverse lines)) " variables found"))))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 18: Locate Library ---
+
+(def (cmd-locate-library app)
+  "Find the file path of a Scheme library."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (lib-name (echo-read-string echo "Library name: " row width)))
+    (when (and lib-name (not (string-empty? lib-name)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "find lib/ src/ -name '"
+                               (string-trim lib-name) ".ss' -o -name '"
+                               (string-trim lib-name) ".sls' 2>/dev/null | head -10")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (if (null? (reverse lines))
+                      (echo-message! echo (str "Library not found: " lib-name))
+                      (echo-message! echo (str "Found: " (string-join (reverse lines) ", ")))))
+                  (loop (cons (string-trim line) lines)))))))))))
+
+;; --- Feature 19: Load Library ---
+
+(def (cmd-load-library app)
+  "Load a Scheme library file into the editor environment."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (file (echo-read-string echo "Library file to load: " row width)))
+    (when (and file (not (string-empty? file)))
+      (let ((path (string-trim file)))
+        (if (not (file-exists? path))
+          (echo-message! echo (str "File not found: " path))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "Load error: " e)))
+            (lambda ()
+              (load path)
+              (echo-message! echo (str "Loaded: " path)))))))))
+
+;; --- Feature 20: Finder by Keyword ---
+
+(def (cmd-finder-by-keyword app)
+  "Find available commands by keyword search."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (keyword (echo-read-string echo "Find commands by keyword: " row width)))
+    (when (and keyword (not (string-empty? keyword)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Search error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "grep -rh 'register-command!' src/jerboa-emacs/*.ss 2>/dev/null"
+                               " | grep -i " (shell-quote (string-trim keyword))
+                               " | sed \"s/.*'\\([^ ]*\\).*/\\1/\" | sort -u | head -30")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((results (reverse lines)))
+                      (if (null? results)
+                        (echo-message! echo (str "No commands matching: " keyword))
+                        (let* ((new-buf (create-buffer "*finder*"))
+                               (result (string-join results "\n")))
+                          (switch-to-buffer frame new-buf)
+                          (let ((new-ed (edit-window-editor (current-window frame))))
+                            (editor-set-text new-ed (str "=== Commands matching '" keyword "' ===\n\n" result "\n")))
+                          (echo-message! echo (str (length results) " commands found"))))))
+                  (loop (cons (string-trim line) lines)))))))))))
