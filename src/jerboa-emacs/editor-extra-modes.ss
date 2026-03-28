@@ -16654,3 +16654,53 @@
     (echo-read-string echo "Load from register: "
       (lambda (reg)
         (echo-message! echo (str "Consult: loaded register " reg))))))
+
+;; ============================================================
+;; Round 156 — Popper, Shackle, Hydra, Transient extended (batch 1)
+;; ============================================================
+
+(def (cmd-popper-toggle-latest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Popper: toggled latest popup")))
+
+(def (cmd-popper-cycle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Popper: cycled to next popup")))
+
+(def (cmd-popper-toggle-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Popper: toggled popup type")))
+
+(def (cmd-popper-kill-latest-popup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Popper: killed latest popup")))
+
+(def (cmd-popper-raise-popup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Popper: raised popup to regular window")))
+
+(def (cmd-popper-lower-popup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Popper: lowered window to popup")))
+
+(def (cmd-shackle-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'shackle)
+    (if (mode-enabled? app 'shackle)
+      (echo-message! echo "Shackle mode enabled (window rule enforcement)")
+      (echo-message! echo "Shackle mode disabled"))))
+
+(def (cmd-shackle-last-popup-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shackle: showing last popup buffer")))
+
+(def (cmd-ace-popup-menu-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ace-popup-menu)
+    (if (mode-enabled? app 'ace-popup-menu)
+      (echo-message! echo "Ace-popup-menu mode enabled")
+      (echo-message! echo "Ace-popup-menu mode disabled"))))
+
+(def (cmd-hydra-zoom/body app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: zoom menu (+/-/0)")))

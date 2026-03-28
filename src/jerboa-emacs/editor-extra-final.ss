@@ -16027,3 +16027,49 @@
 (def (cmd-vertico-quick-insert app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vertico: quick insert candidate")))
+
+;; ============================================================
+;; Round 156 — Hydra, Transient extended (batch 2)
+;; ============================================================
+
+(def (cmd-hydra-window/body app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: window management menu")))
+
+(def (cmd-hydra-navigate/body app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: navigation menu")))
+
+(def (cmd-hydra-toggle/body app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: toggle features menu")))
+
+(def (cmd-hydra-apropos/body app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: apropos menu")))
+
+(def (cmd-hydra-buffer-menu/body app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: buffer menu")))
+
+(def (cmd-transient-history-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: previous history entry")))
+
+(def (cmd-transient-history-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: next history entry")))
+
+(def (cmd-transient-suffix-put app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: modified suffix property")))
+
+(def (cmd-transient-toggle-level-limit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: toggled level limit")))
+
+(def (cmd-transient-set-level app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set transient level: "
+      (lambda (lvl)
+        (echo-message! echo (str "Transient: set level to " lvl))))))

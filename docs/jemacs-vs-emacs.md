@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 156 — Popper, Shackle, Hydra, Transient Extended
+
+| Feature | Status | Notes |
+|---|---|---|
+| `popper-toggle-latest` | :orange_circle: | Toggle latest popup |
+| `popper-cycle` | :orange_circle: | Cycle popups |
+| `popper-toggle-type` | :orange_circle: | Toggle popup type |
+| `popper-kill-latest-popup` | :orange_circle: | Kill latest popup |
+| `popper-raise-popup` | :orange_circle: | Raise popup to window |
+| `popper-lower-popup` | :orange_circle: | Lower window to popup |
+| `shackle-mode` | :orange_circle: | Window rule enforcement |
+| `shackle-last-popup-buffer` | :orange_circle: | Show last popup buffer |
+| `ace-popup-menu-mode` | :orange_circle: | Ace popup menu mode |
+| `hydra-zoom/body` | :orange_circle: | Zoom hydra menu |
+| `hydra-window/body` | :orange_circle: | Window hydra menu |
+| `hydra-navigate/body` | :orange_circle: | Navigation hydra menu |
+| `hydra-toggle/body` | :orange_circle: | Toggle hydra menu |
+| `hydra-apropos/body` | :orange_circle: | Apropos hydra menu |
+| `hydra-buffer-menu/body` | :orange_circle: | Buffer hydra menu |
+| `transient-history-prev` | :orange_circle: | Previous transient history |
+| `transient-history-next` | :orange_circle: | Next transient history |
+| `transient-suffix-put` | :orange_circle: | Modify suffix property |
+| `transient-toggle-level-limit` | :orange_circle: | Toggle level limit |
+| `transient-set-level` | :orange_circle: | Set transient level |
+
 ### Round 155 — Embark, Consult, Vertico, Corfu, Cape Extended
 
 | Feature | Status | Notes |
