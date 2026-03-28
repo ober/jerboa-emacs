@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 185 — Mermaid, PlantUML-ext, Graphviz, D2, Ditaa, Gnuplot
+
+| Feature | Status | Notes |
+|---|---|---|
+| mermaid-compile | :orange_circle: | Compile Mermaid diagram |
+| mermaid-open-browser | :orange_circle: | Open Mermaid in browser |
+| mermaid-open-doc | :orange_circle: | Open Mermaid documentation |
+| plantuml-preview-buffer | :orange_circle: | Preview PlantUML buffer |
+| plantuml-preview-region | :orange_circle: | Preview PlantUML region |
+| plantuml-complete-symbol | :orange_circle: | Complete PlantUML symbol |
+| plantuml-set-output-type | :orange_circle: | Set PlantUML output type |
+| graphviz-dot-mode | :orange_circle: | Toggle Graphviz-dot mode |
+| graphviz-dot-preview | :orange_circle: | Preview Graphviz graph |
+| graphviz-compile | :orange_circle: | Compile Graphviz graph |
+| graphviz-set-layout | :orange_circle: | Set Graphviz layout engine |
+| d2-mode | :orange_circle: | Toggle D2 diagram mode |
+| d2-compile | :orange_circle: | Compile D2 diagram |
+| d2-open-browser | :orange_circle: | Open D2 in browser |
+| d2-set-theme | :orange_circle: | Set D2 theme |
+| ditaa-mode | :orange_circle: | Toggle Ditaa mode |
+| ditaa-compile | :orange_circle: | Compile Ditaa diagram |
+| gnuplot-mode | :orange_circle: | Toggle Gnuplot mode |
+| gnuplot-send-buffer | :orange_circle: | Send buffer to Gnuplot |
+| gnuplot-send-region | :orange_circle: | Send region to Gnuplot |
+
 ### Round 184 — Geiser, SLIME-ext, Cider-ext, Sly
 
 | Feature | Status | Notes |

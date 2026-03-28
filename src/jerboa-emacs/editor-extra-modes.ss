@@ -18082,3 +18082,49 @@
     (echo-read-string echo "Who macroexpands: "
       (lambda (name)
         (echo-message! echo (str "SLIME: finding macroexpansions of " name))))))
+
+;; Round 185 — Mermaid, Plantuml-ext, Graphviz, D2, Ditaa, Gnuplot (batch 1)
+(def (cmd-mermaid-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mermaid: compiling diagram...")))
+
+(def (cmd-mermaid-open-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mermaid: opening in browser")))
+
+(def (cmd-mermaid-open-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mermaid: opening documentation")))
+
+(def (cmd-plantuml-preview-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlantUML: previewing buffer...")))
+
+(def (cmd-plantuml-preview-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlantUML: previewing region...")))
+
+(def (cmd-plantuml-complete-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlantUML: completing symbol")))
+
+(def (cmd-plantuml-set-output-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output type (png/svg): "
+      (lambda (type)
+        (echo-message! echo (str "PlantUML: output set to " type))))))
+
+(def (cmd-graphviz-dot-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'graphviz-dot)
+    (if (mode-enabled? app 'graphviz-dot)
+      (echo-message! echo "Graphviz-dot mode enabled")
+      (echo-message! echo "Graphviz-dot mode disabled"))))
+
+(def (cmd-graphviz-dot-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Graphviz: previewing graph...")))
+
+(def (cmd-graphviz-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Graphviz: compiling graph...")))

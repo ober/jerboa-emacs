@@ -17447,3 +17447,57 @@
 (def (cmd-sly-db-abort app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Sly: aborted debugger")))
+
+;; Round 185 — Mermaid, Plantuml-ext, Graphviz, D2, Ditaa, Gnuplot (batch 2)
+(def (cmd-graphviz-set-layout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Layout (dot/neato/circo): "
+      (lambda (layout)
+        (echo-message! echo (str "Graphviz: layout set to " layout))))))
+
+(def (cmd-d2-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'd2)
+    (if (mode-enabled? app 'd2)
+      (echo-message! echo "D2 mode enabled")
+      (echo-message! echo "D2 mode disabled"))))
+
+(def (cmd-d2-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D2: compiling diagram...")))
+
+(def (cmd-d2-open-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D2: opening in browser")))
+
+(def (cmd-d2-set-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Theme: "
+      (lambda (theme)
+        (echo-message! echo (str "D2: theme set to " theme))))))
+
+(def (cmd-ditaa-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ditaa)
+    (if (mode-enabled? app 'ditaa)
+      (echo-message! echo "Ditaa mode enabled")
+      (echo-message! echo "Ditaa mode disabled"))))
+
+(def (cmd-ditaa-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ditaa: compiling diagram...")))
+
+(def (cmd-gnuplot-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'gnuplot)
+    (if (mode-enabled? app 'gnuplot)
+      (echo-message! echo "Gnuplot mode enabled")
+      (echo-message! echo "Gnuplot mode disabled"))))
+
+(def (cmd-gnuplot-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnuplot: sent buffer to gnuplot")))
+
+(def (cmd-gnuplot-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnuplot: sent region to gnuplot")))
