@@ -3689,6 +3689,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | shr-next-link | :orange_circle: | Move to next SHR link |
 | shr-previous-link | :orange_circle: | Move to previous SHR link |
 
+### Round 109 — Calendar, Diary & Timeclock
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| calendar-forward-day | :orange_circle: | Move forward one day |
+| calendar-backward-day | :orange_circle: | Move backward one day |
+| calendar-forward-week | :orange_circle: | Move forward one week |
+| calendar-backward-week | :orange_circle: | Move backward one week |
+| calendar-beginning-of-week | :orange_circle: | Move to beginning of week |
+| calendar-end-of-week | :orange_circle: | Move to end of week |
+| calendar-beginning-of-month | :orange_circle: | Move to beginning of month |
+| calendar-end-of-month | :orange_circle: | Move to end of month |
+| calendar-goto-date | :orange_circle: | Jump to specific date |
+| calendar-unmark | :orange_circle: | Clear all calendar marks |
+| calendar-phases-of-moon | :orange_circle: | Show moon phases |
+| calendar-print-day-of-year | :orange_circle: | Show day of year |
+| timeclock-change | :orange_circle: | Change timeclock project |
+| timeclock-status-string | :orange_circle: | Show timeclock status |
+| timeclock-reread-log | :orange_circle: | Reread timeclock log |
+| timeclock-workday-remaining | :orange_circle: | Show remaining workday time |
+| calendar-count-days-region | :orange_circle: | Count days in region |
+| calendar-goto-iso-date | :orange_circle: | Jump to ISO date |
+| calendar-goto-hebrew-date | :orange_circle: | Jump to Hebrew date |
+| calendar-goto-islamic-date | :orange_circle: | Jump to Islamic date |
+
 ---
 
 ## Recommended Development Roadmap

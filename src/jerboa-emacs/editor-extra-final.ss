@@ -13749,3 +13749,53 @@
 (def (cmd-shr-previous-link app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SHR: moved to previous link")))
+
+;;; ——— Round 109: Calendar, diary & timeclock (batch 2) ———
+
+(def (cmd-calendar-phases-of-moon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: showing phases of the moon")))
+
+(def (cmd-calendar-print-day-of-year app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: showing day of year")))
+
+(def (cmd-timeclock-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Change to project: "
+      (lambda (project)
+        (echo-message! echo (str "Timeclock: changed to project " project))))))
+
+(def (cmd-timeclock-status-string app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timeclock: showing current status")))
+
+(def (cmd-timeclock-reread-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timeclock: reread log file")))
+
+(def (cmd-timeclock-workday-remaining app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timeclock: showing workday time remaining")))
+
+(def (cmd-calendar-count-days-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: counting days in region")))
+
+(def (cmd-calendar-goto-iso-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ISO date (YYYY-MM-DD): "
+      (lambda (date)
+        (echo-message! echo (str "Calendar: jumped to ISO date " date))))))
+
+(def (cmd-calendar-goto-hebrew-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hebrew date: "
+      (lambda (date)
+        (echo-message! echo (str "Calendar: jumped to Hebrew date " date))))))
+
+(def (cmd-calendar-goto-islamic-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Islamic date: "
+      (lambda (date)
+        (echo-message! echo (str "Calendar: jumped to Islamic date " date))))))

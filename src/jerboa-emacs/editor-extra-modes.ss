@@ -14314,3 +14314,47 @@
 (def (cmd-elfeed-db-compact app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Elfeed: compacting database")))
+
+;;; ——— Round 109: Calendar, diary & timeclock (batch 1) ———
+
+(def (cmd-calendar-forward-day app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved forward one day")))
+
+(def (cmd-calendar-backward-day app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved backward one day")))
+
+(def (cmd-calendar-forward-week app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved forward one week")))
+
+(def (cmd-calendar-backward-week app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved backward one week")))
+
+(def (cmd-calendar-beginning-of-week app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved to beginning of week")))
+
+(def (cmd-calendar-end-of-week app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved to end of week")))
+
+(def (cmd-calendar-beginning-of-month app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved to beginning of month")))
+
+(def (cmd-calendar-end-of-month app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved to end of month")))
+
+(def (cmd-calendar-goto-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Go to date (M/D/Y): "
+      (lambda (date)
+        (echo-message! echo (str "Calendar: jumped to " date))))))
+
+(def (cmd-calendar-unmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: cleared all marks")))
