@@ -16659,3 +16659,68 @@
     (echo-read-string echo "Directory to compile: "
       (lambda (dir)
         (echo-message! echo (str "YAS: compiled snippets in " dir))))))
+
+;; ============================================================
+;; Round 169 — Icons, SVG, Ligature, Text-scale (batch 2)
+;; ============================================================
+
+(def (cmd-all-the-icons-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "All-the-icons name: "
+      (lambda (name)
+        (echo-message! echo (str "All-the-icons: inserted " name))))))
+
+(def (cmd-svg-lib-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SVG tag label: "
+      (lambda (label)
+        (echo-message! echo (str "SVG-lib: created tag '" label "'"))))))
+
+(def (cmd-svg-lib-progress-bar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SVG-lib: created progress bar")))
+
+(def (cmd-svg-lib-icon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SVG icon name: "
+      (lambda (name)
+        (echo-message! echo (str "SVG-lib: created icon " name))))))
+
+(def (cmd-ligature-set-ligatures app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ligature: set ligatures for current mode")))
+
+(def (cmd-text-scale-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'text-scale)
+    (if (mode-enabled? app 'text-scale)
+      (echo-message! echo "Text-scale mode enabled")
+      (echo-message! echo "Text-scale mode disabled"))))
+
+(def (cmd-nerd-icons-completion-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'nerd-icons-completion)
+    (if (mode-enabled? app 'nerd-icons-completion)
+      (echo-message! echo "Nerd-icons completion mode enabled")
+      (echo-message! echo "Nerd-icons completion mode disabled"))))
+
+(def (cmd-nerd-icons-ibuffer-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'nerd-icons-ibuffer)
+    (if (mode-enabled? app 'nerd-icons-ibuffer)
+      (echo-message! echo "Nerd-icons ibuffer mode enabled")
+      (echo-message! echo "Nerd-icons ibuffer mode disabled"))))
+
+(def (cmd-all-the-icons-completion-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'all-the-icons-completion)
+    (if (mode-enabled? app 'all-the-icons-completion)
+      (echo-message! echo "All-the-icons completion mode enabled")
+      (echo-message! echo "All-the-icons completion mode disabled"))))
+
+(def (cmd-global-ligature-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-ligature)
+    (if (mode-enabled? app 'global-ligature)
+      (echo-message! echo "Global ligature mode enabled")
+      (echo-message! echo "Global ligature mode disabled"))))

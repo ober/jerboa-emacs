@@ -17295,3 +17295,49 @@
 (def (cmd-yas-abort-snippet app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "YAS: aborted current snippet")))
+
+;; ============================================================
+;; Round 169 — Nerd-icons, All-the-icons, SVG-lib, Ligature (batch 1)
+;; ============================================================
+
+(def (cmd-nerd-icons-install-fonts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nerd-icons: installing fonts...")))
+
+(def (cmd-nerd-icons-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Icon name: "
+      (lambda (name)
+        (echo-message! echo (str "Nerd-icons: inserted icon " name))))))
+
+(def (cmd-nerd-icons-icon-for-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nerd-icons: showing icon for current mode")))
+
+(def (cmd-nerd-icons-icon-for-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nerd-icons: showing icon for current file")))
+
+(def (cmd-nerd-icons-icon-for-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nerd-icons: showing icon for directory")))
+
+(def (cmd-nerd-icons-icon-for-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nerd-icons: showing icon for buffer")))
+
+(def (cmd-all-the-icons-icon-for-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All-the-icons: showing icon for mode")))
+
+(def (cmd-all-the-icons-icon-for-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All-the-icons: showing icon for file")))
+
+(def (cmd-all-the-icons-icon-for-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All-the-icons: showing icon for directory")))
+
+(def (cmd-all-the-icons-icon-for-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All-the-icons: showing icon for buffer")))

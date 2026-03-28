@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 169 — Nerd-icons, All-the-icons, SVG-lib, Ligature
+
+| Feature | Status | Notes |
+|---|---|---|
+| nerd-icons-install-fonts | :orange_circle: | Install Nerd Font icon fonts |
+| nerd-icons-insert | :orange_circle: | Insert a Nerd Font icon by name |
+| nerd-icons-icon-for-mode | :orange_circle: | Get icon for a given major mode |
+| nerd-icons-icon-for-file | :orange_circle: | Get icon for a given filename |
+| nerd-icons-icon-for-dir | :orange_circle: | Get icon for a given directory |
+| nerd-icons-icon-for-buffer | :orange_circle: | Get icon for current buffer |
+| all-the-icons-icon-for-mode | :orange_circle: | Get all-the-icons icon for mode |
+| all-the-icons-icon-for-file | :orange_circle: | Get all-the-icons icon for file |
+| all-the-icons-icon-for-dir | :orange_circle: | Get all-the-icons icon for dir |
+| all-the-icons-icon-for-buffer | :orange_circle: | Get all-the-icons icon for buffer |
+| all-the-icons-insert | :orange_circle: | Insert an all-the-icons icon |
+| svg-lib-tag | :orange_circle: | Create SVG tag element |
+| svg-lib-progress-bar | :orange_circle: | Create SVG progress bar |
+| svg-lib-icon | :orange_circle: | Create SVG icon element |
+| ligature-set-ligatures | :orange_circle: | Configure ligature mappings |
+| text-scale-mode | :orange_circle: | Toggle text scaling mode |
+| nerd-icons-completion-mode | :orange_circle: | Nerd icons in completion UI |
+| nerd-icons-ibuffer-mode | :orange_circle: | Nerd icons in ibuffer |
+| all-the-icons-completion-mode | :orange_circle: | All-the-icons in completion UI |
+| global-ligature-mode | :orange_circle: | Toggle global ligature display |
+
 ### Round 168 — Tempel, Yasnippet Extended, Auto-yasnippet
 
 | Feature | Status | Notes |
