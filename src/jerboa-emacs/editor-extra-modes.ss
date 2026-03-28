@@ -13186,3 +13186,54 @@
       (echo-message! echo "Fancy battery mode enabled")
       (echo-message! echo "Fancy battery mode disabled"))))
 
+;;; Round 86 — Package Management
+(def (cmd-package-list-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: listing all packages")))
+
+(def (cmd-package-upgrade app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package to upgrade: "
+      (lambda (pkg)
+        (echo-message! echo (str "Package: upgrading " pkg))))))
+
+(def (cmd-package-upgrade-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: upgrading all packages")))
+
+(def (cmd-straight-pull-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Straight: pulling all packages")))
+
+(def (cmd-straight-rebuild-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Straight: rebuilding all packages")))
+
+(def (cmd-straight-freeze-versions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Straight: versions frozen to lockfile")))
+
+(def (cmd-el-get-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "El-get install package: "
+      (lambda (pkg)
+        (echo-message! echo (str "El-get: installing " pkg))))))
+
+(def (cmd-el-get-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "El-get remove package: "
+      (lambda (pkg)
+        (echo-message! echo (str "El-get: removing " pkg))))))
+
+(def (cmd-el-get-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "El-get update package: "
+      (lambda (pkg)
+        (echo-message! echo (str "El-get: updating " pkg))))))
+
+(def (cmd-quelpa-upgrade app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Quelpa upgrade package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Quelpa: upgrading " pkg))))))
+

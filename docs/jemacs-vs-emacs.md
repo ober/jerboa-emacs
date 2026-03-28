@@ -3092,6 +3092,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 86 — Package Management
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| package-list-packages | :orange_circle: | List all packages |
+| package-upgrade | :orange_circle: | Upgrade a package |
+| package-upgrade-all | :orange_circle: | Upgrade all packages |
+| straight-pull-all | :orange_circle: | Pull all straight.el packages |
+| straight-rebuild-all | :orange_circle: | Rebuild all straight.el packages |
+| straight-freeze-versions | :orange_circle: | Freeze straight.el versions |
+| el-get-install | :orange_circle: | Install package via el-get |
+| el-get-remove | :orange_circle: | Remove package via el-get |
+| el-get-update | :orange_circle: | Update package via el-get |
+| quelpa-upgrade | :orange_circle: | Upgrade package via quelpa |
+| quelpa-self-upgrade | :orange_circle: | Self-upgrade quelpa |
+| package-vc-install | :orange_circle: | Install package from VC |
+| package-vc-update | :orange_circle: | Update VC packages |
+| borg-assimilate | :orange_circle: | Assimilate package via borg |
+| borg-build | :orange_circle: | Build package via borg |
+| borg-activate | :orange_circle: | Activate all borg drones |
+| auto-package-update-now | :orange_circle: | Auto-update packages now |
+| auto-package-update-maybe | :orange_circle: | Check if package update needed |
+| paradox-list-packages | :orange_circle: | List packages with ratings |
+| paradox-upgrade-packages | :orange_circle: | Upgrade all via paradox |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

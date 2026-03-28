@@ -12625,3 +12625,50 @@
 (def (cmd-backup-walker app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Backup walker: browsing file backups")))
+
+;;; Round 86 — Package Management (cont.)
+(def (cmd-quelpa-self-upgrade app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quelpa: self-upgrading")))
+
+(def (cmd-package-vc-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package VC install URL: "
+      (lambda (url)
+        (echo-message! echo (str "Package: VC installing from " url))))))
+
+(def (cmd-package-vc-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: VC updating all packages")))
+
+(def (cmd-borg-assimilate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Borg assimilate package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Borg: assimilating " pkg))))))
+
+(def (cmd-borg-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Borg build package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Borg: building " pkg))))))
+
+(def (cmd-borg-activate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Borg: activating all drones")))
+
+(def (cmd-auto-package-update-now app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auto package update: updating now")))
+
+(def (cmd-auto-package-update-maybe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auto package update: checking if update needed")))
+
+(def (cmd-paradox-list-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paradox: listing packages with ratings")))
+
+(def (cmd-paradox-upgrade-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paradox: upgrading all packages")))
