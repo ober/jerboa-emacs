@@ -4342,6 +4342,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 134 — Lispy, Sly, Geiser, CIDER
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| lispy-flow | :orange_circle: | Flow to next sexp |
+| lispy-knight | :orange_circle: | Knight move |
+| lispy-eval | :orange_circle: | Evaluate sexp |
+| lispy-eval-and-insert | :orange_circle: | Evaluate and insert result |
+| lispy-goto-first | :orange_circle: | Jump to first sexp |
+| lispy-goto-last | :orange_circle: | Jump to last sexp |
+| lispy-beginning-of-defun | :orange_circle: | Move to beginning of defun |
+| sly-connect | :orange_circle: | Connect to Sly server |
+| sly-compile-and-load-file | :orange_circle: | Compile and load file via Sly |
+| sly-documentation-lookup | :orange_circle: | Look up Sly documentation |
+| sly-inspect | :orange_circle: | Inspect via Sly |
+| sly-stickers-toggle-break-on-stickers | :orange_circle: | Toggle break on stickers |
+| geiser-eval-region | :orange_circle: | Evaluate region via Geiser |
+| geiser-doc-module | :orange_circle: | Show Geiser module docs |
+| geiser-expand-current-form | :orange_circle: | Expand current form |
+| geiser-expand-region | :orange_circle: | Expand region |
+| geiser-set-scheme | :orange_circle: | Set Scheme implementation |
+| geiser-compile-current-buffer | :orange_circle: | Compile current buffer |
+| cider-connect | :orange_circle: | Connect to CIDER |
+| cider-eval-defun-at-point | :orange_circle: | Evaluate defun at point via CIDER |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

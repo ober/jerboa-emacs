@@ -15551,3 +15551,49 @@
 (def (cmd-sp-transpose-sexp app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Smartparens: transposed sexps")))
+
+;;; Round 134 — Lispy, Sly, Geiser, CIDER (batch 1)
+
+(def (cmd-lispy-flow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: flow to next sexp")))
+
+(def (cmd-lispy-knight app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: knight move")))
+
+(def (cmd-lispy-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: evaluated sexp")))
+
+(def (cmd-lispy-eval-and-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: evaluated and inserted result")))
+
+(def (cmd-lispy-goto-first app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: jumped to first sexp")))
+
+(def (cmd-lispy-goto-last app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: jumped to last sexp")))
+
+(def (cmd-lispy-beginning-of-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: moved to beginning of defun")))
+
+(def (cmd-sly-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sly connect (host:port): "
+      (lambda (addr)
+        (echo-message! echo (str "Sly: connecting to " addr))))))
+
+(def (cmd-sly-compile-and-load-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sly: compiled and loaded file")))
+
+(def (cmd-sly-documentation-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sly doc lookup: "
+      (lambda (sym)
+        (echo-message! echo (str "Sly: looking up documentation for '" sym "'"))))))

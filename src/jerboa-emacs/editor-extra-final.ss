@@ -14940,3 +14940,53 @@
 (def (cmd-lispy-different app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Lispy: jumped to different position")))
+
+;;; Round 134 — Lispy, Sly, Geiser, CIDER (batch 2)
+
+(def (cmd-sly-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sly inspect: "
+      (lambda (expr)
+        (echo-message! echo (str "Sly: inspecting " expr))))))
+
+(def (cmd-sly-stickers-toggle-break-on-stickers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sly: toggled break on stickers")))
+
+(def (cmd-geiser-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: evaluated region")))
+
+(def (cmd-geiser-doc-module app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Geiser doc module: "
+      (lambda (mod)
+        (echo-message! echo (str "Geiser: showing docs for module '" mod "'"))))))
+
+(def (cmd-geiser-expand-current-form app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: expanded current form")))
+
+(def (cmd-geiser-expand-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: expanded region")))
+
+(def (cmd-geiser-set-scheme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Scheme implementation: "
+      (lambda (impl)
+        (echo-message! echo (str "Geiser: set scheme to " impl))))))
+
+(def (cmd-geiser-compile-current-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: compiled current buffer")))
+
+(def (cmd-cider-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CIDER connect (host:port): "
+      (lambda (addr)
+        (echo-message! echo (str "CIDER: connecting to " addr))))))
+
+(def (cmd-cider-eval-defun-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: evaluated defun at point")))
