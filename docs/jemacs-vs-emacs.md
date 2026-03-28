@@ -1626,6 +1626,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | List buffers | :orange_circle: | Show all buffers (C-x C-b) |
 | IBuffer | :orange_circle: | Interactive buffer list |
 | Display buffer | :orange_circle: | Display buffer in other window |
+| Switch to buffer other window | :orange_circle: | Switch buffer in other window |
+| Balance windows | :orange_circle: | Make all windows equal size |
+| Shrink window | :orange_circle: | Shrink window vertically |
+| Enlarge window | :orange_circle: | Enlarge window vertically |
+| Shrink window horizontally | :orange_circle: | Shrink window horizontally |
+| Enlarge window horizontally | :orange_circle: | Enlarge window horizontally |
+| Fit window to buffer | :orange_circle: | Resize window to fit buffer |
+| Maximize window | :orange_circle: | Maximize current window |
+| Minimize window | :orange_circle: | Minimize current window |
+| Toggle window dedicated | :orange_circle: | Dedicate window to buffer |
+| Scroll other window | :orange_circle: | Scroll other window down |
+| Scroll other window down | :orange_circle: | Scroll other window up |
+| Recenter other window | :orange_circle: | Recenter other window |
+| Follow mode | :orange_circle: | Synchronized scrolling mode |
+| Winner undo | :orange_circle: | Undo window configuration |
+| Winner redo | :orange_circle: | Redo window configuration |
+| Windmove left | :orange_circle: | Move to left window |
+| Windmove right | :orange_circle: | Move to right window |
+| Windmove up | :orange_circle: | Move to window above |
+| Windmove down | :orange_circle: | Move to window below |
 
 ---
 

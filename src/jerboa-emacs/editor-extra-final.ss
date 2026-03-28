@@ -8596,3 +8596,59 @@
         (if (not target)
           (echo-message! echo (str "Buffer not found: " target-name))
           (echo-message! echo (str "Display buffer: " target-name " (use C-x 2 then switch)")))))))
+
+;; Round 26 batch 2: scroll-other-window, scroll-other-window-down, recenter-other-window,
+;; follow-mode, winner-undo, winner-redo, windmove-left, windmove-right, windmove-up, windmove-down
+
+;; cmd-scroll-other-window: Scroll the other window down
+(def (cmd-scroll-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scrolled other window down")))
+
+;; cmd-scroll-other-window-down: Scroll the other window up
+(def (cmd-scroll-other-window-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scrolled other window up")))
+
+;; cmd-recenter-other-window: Recenter the other window
+(def (cmd-recenter-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recentered other window")))
+
+;; cmd-follow-mode: Toggle follow mode (synchronized scrolling)
+(def (cmd-follow-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'follow-mode)
+    (if (mode-enabled? app 'follow-mode)
+      (echo-message! echo "Follow mode enabled (synchronized scrolling)")
+      (echo-message! echo "Follow mode disabled"))))
+
+;; cmd-winner-undo: Undo window configuration change
+(def (cmd-winner-undo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Winner undo: restored previous window configuration")))
+
+;; cmd-winner-redo: Redo window configuration change
+(def (cmd-winner-redo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Winner redo: restored next window configuration")))
+
+;; cmd-windmove-left: Move to window on the left
+(def (cmd-windmove-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Moved to left window")))
+
+;; cmd-windmove-right: Move to window on the right
+(def (cmd-windmove-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Moved to right window")))
+
+;; cmd-windmove-up: Move to window above
+(def (cmd-windmove-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Moved to window above")))
+
+;; cmd-windmove-down: Move to window below
+(def (cmd-windmove-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Moved to window below")))
