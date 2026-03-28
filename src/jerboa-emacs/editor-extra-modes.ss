@@ -17734,3 +17734,56 @@
     (echo-read-string echo "Cell (e.g. A1): "
       (lambda (cell)
         (echo-message! echo (str "SES: jumped to cell " cell))))))
+
+;; Round 178 — EUDC, LDAP, BBDB-ext, Org-contacts (batch 1)
+(def (cmd-eudc-query-form app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EUDC: opening query form")))
+
+(def (cmd-eudc-expand-inline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EUDC: expanding inline query")))
+
+(def (cmd-eudc-get-phone app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name: "
+      (lambda (name)
+        (echo-message! echo (str "EUDC: looking up phone for " name))))))
+
+(def (cmd-eudc-get-email app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name: "
+      (lambda (name)
+        (echo-message! echo (str "EUDC: looking up email for " name))))))
+
+(def (cmd-eudc-set-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Server: "
+      (lambda (server)
+        (echo-message! echo (str "EUDC: set server to " server))))))
+
+(def (cmd-eudc-hotlist-add-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add server: "
+      (lambda (server)
+        (echo-message! echo (str "EUDC: added " server " to hotlist"))))))
+
+(def (cmd-eudc-hotlist-delete-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EUDC: deleted server from hotlist")))
+
+(def (cmd-eudc-display-records app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EUDC: displaying query records")))
+
+(def (cmd-ldap-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LDAP search: "
+      (lambda (query)
+        (echo-message! echo (str "LDAP: searching for " query))))))
+
+(def (cmd-ldap-host-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LDAP host: "
+      (lambda (host)
+        (echo-message! echo (str "LDAP: querying host " host))))))

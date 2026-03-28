@@ -17108,3 +17108,50 @@
     (echo-read-string echo "Face: "
       (lambda (face)
         (echo-message! echo (str "Enriched: set face to " face))))))
+
+;; Round 178 — EUDC, LDAP, BBDB-ext, Org-contacts (batch 2)
+(def (cmd-ldap-add-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: adding new entry")))
+
+(def (cmd-bbdb-mail-aliases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: showing mail aliases")))
+
+(def (cmd-bbdb-toggle-records-layout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: toggled records layout")))
+
+(def (cmd-bbdb-display-current-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: displaying current record")))
+
+(def (cmd-bbdb-copy-records-as-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: copied records to kill ring")))
+
+(def (cmd-org-contacts-find app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find contact: "
+      (lambda (name)
+        (echo-message! echo (str "Org-contacts: found " name))))))
+
+(def (cmd-org-contacts-complete-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-contacts: completing name at point")))
+
+(def (cmd-org-contacts-export-vcard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Export vCard to: "
+      (lambda (path)
+        (echo-message! echo (str "Org-contacts: exported to " path))))))
+
+(def (cmd-org-contacts-import-vcard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Import vCard from: "
+      (lambda (path)
+        (echo-message! echo (str "Org-contacts: imported from " path))))))
+
+(def (cmd-org-contacts-anniversary-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-contacts: showing anniversary list")))

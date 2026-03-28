@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 178 — EUDC, LDAP, BBDB-ext, Org-contacts
+
+| Feature | Status | Notes |
+|---|---|---|
+| eudc-query-form | :orange_circle: | Open EUDC query form |
+| eudc-expand-inline | :orange_circle: | Expand inline EUDC query |
+| eudc-get-phone | :orange_circle: | Look up phone number |
+| eudc-get-email | :orange_circle: | Look up email address |
+| eudc-set-server | :orange_circle: | Set EUDC server |
+| eudc-hotlist-add-server | :orange_circle: | Add server to hotlist |
+| eudc-hotlist-delete-server | :orange_circle: | Delete server from hotlist |
+| eudc-display-records | :orange_circle: | Display EUDC records |
+| ldap-search | :orange_circle: | Search LDAP directory |
+| ldap-host-query | :orange_circle: | Query LDAP host |
+| ldap-add-entry | :orange_circle: | Add LDAP entry |
+| bbdb-mail-aliases | :orange_circle: | Show BBDB mail aliases |
+| bbdb-toggle-records-layout | :orange_circle: | Toggle BBDB records layout |
+| bbdb-display-current-record | :orange_circle: | Display current BBDB record |
+| bbdb-copy-records-as-kill | :orange_circle: | Copy BBDB records to kill ring |
+| org-contacts-find | :orange_circle: | Find org contact |
+| org-contacts-complete-name | :orange_circle: | Complete contact name |
+| org-contacts-export-vcard | :orange_circle: | Export contacts as vCard |
+| org-contacts-import-vcard | :orange_circle: | Import vCard contacts |
+| org-contacts-anniversary-list | :orange_circle: | Show anniversary list |
+
 ### Round 177 — SES, Forms-mode, Enriched-text
 
 | Feature | Status | Notes |
