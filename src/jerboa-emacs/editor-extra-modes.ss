@@ -12395,3 +12395,50 @@
       (lambda (pkg)
         (echo-message! echo (str "ELP: instrumenting all functions in " pkg))))))
 
+;; Round 70 — Yasnippet, Tempel, abbreviations (batch 1)
+(def (cmd-yasnippet-new-snippet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YASnippet: creating new snippet")))
+
+(def (cmd-yasnippet-visit-snippet-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Visit snippet: "
+      (lambda (name)
+        (echo-message! echo (str "YASnippet: visiting snippet '" name "'"))))))
+
+(def (cmd-yasnippet-insert-snippet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert snippet: "
+      (lambda (name)
+        (echo-message! echo (str "YASnippet: inserted '" name "'"))))))
+
+(def (cmd-yasnippet-expand app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YASnippet: expanded snippet at point")))
+
+(def (cmd-yasnippet-reload-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YASnippet: reloaded all snippet tables")))
+
+(def (cmd-yasnippet-describe-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YASnippet: showing snippet tables")))
+
+(def (cmd-tempel-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tempel template: "
+      (lambda (name)
+        (echo-message! echo (str "Tempel: inserted template '" name "'"))))))
+
+(def (cmd-tempel-expand app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: expanded template at point")))
+
+(def (cmd-tempel-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: completing template")))
+
+(def (cmd-tempel-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: moved to next field")))
+

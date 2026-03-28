@@ -2677,6 +2677,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | pp-eval-last-sexp | :orange_circle: | Pretty-print last sexp |
 | pp-macroexpand-last-sexp | :orange_circle: | Pretty-print macro expansion |
 
+### Round 70 — YASnippet, Tempel & Abbreviations
+
+| Feature | Status | Notes |
+|---|---|---|
+| yasnippet-new-snippet | :orange_circle: | Create new snippet |
+| yasnippet-visit-snippet-file | :orange_circle: | Visit snippet source file |
+| yasnippet-insert-snippet | :orange_circle: | Insert snippet by name |
+| yasnippet-expand | :orange_circle: | Expand snippet at point |
+| yasnippet-reload-all | :orange_circle: | Reload all snippet tables |
+| yasnippet-describe-tables | :orange_circle: | Show snippet tables |
+| tempel-insert | :orange_circle: | Insert Tempel template |
+| tempel-expand | :orange_circle: | Expand template at point |
+| tempel-complete | :orange_circle: | Complete template name |
+| tempel-next | :orange_circle: | Next template field |
+| tempel-previous | :orange_circle: | Previous template field |
+| tempo-forward-mark | :orange_circle: | Jump to next tempo mark |
+| tempo-backward-mark | :orange_circle: | Jump to previous tempo mark |
+| edit-abbrevs | :orange_circle: | Edit abbreviation table |
+| write-abbrev-file | :orange_circle: | Write abbrevs to file |
+| read-abbrev-file | :orange_circle: | Read abbrevs from file |
+| inverse-add-global-abbrev | :orange_circle: | Add global abbrev inversely |
+| inverse-add-mode-abbrev | :orange_circle: | Add mode abbrev inversely |
+| insert-abbrevs | :orange_circle: | Insert abbrev table into buffer |
+| kill-all-abbrevs | :orange_circle: | Remove all abbreviations |
+
 ---
 
 ## Recommended Development Roadmap

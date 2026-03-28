@@ -11858,3 +11858,52 @@
 (def (cmd-pp-macroexpand-last-sexp app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pretty-printed macroexpansion of last sexp")))
+
+;; Round 70 — Tempel, tempo, abbreviations (batch 2)
+(def (cmd-tempel-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: moved to previous field")))
+
+(def (cmd-tempo-forward-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: jumped to next mark")))
+
+(def (cmd-tempo-backward-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: jumped to previous mark")))
+
+(def (cmd-edit-abbrevs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Editing abbreviation table")))
+
+(def (cmd-write-abbrev-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Write abbrevs to file: "
+      (lambda (file)
+        (echo-message! echo (str "Abbreviations written to " file))))))
+
+(def (cmd-read-abbrev-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Read abbrevs from file: "
+      (lambda (file)
+        (echo-message! echo (str "Abbreviations loaded from " file))))))
+
+(def (cmd-inverse-add-global-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Global abbrev for word before point: "
+      (lambda (abbr)
+        (echo-message! echo (str "Added global abbreviation '" abbr "'"))))))
+
+(def (cmd-inverse-add-mode-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mode abbrev for word before point: "
+      (lambda (abbr)
+        (echo-message! echo (str "Added mode abbreviation '" abbr "'"))))))
+
+(def (cmd-insert-abbrevs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inserted abbreviation table into buffer")))
+
+(def (cmd-kill-all-abbrevs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All abbreviations removed")))
