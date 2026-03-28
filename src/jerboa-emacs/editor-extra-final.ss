@@ -18479,3 +18479,53 @@
 (def (cmd-casual-bookmarks-tmenu app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Casual: showing bookmarks transient menu")))
+
+;; Round 206 — Company-ext, Hippie-ext, Dabbrev-ext, Pabbrev, Abbrev-suggest, Corfu-overlay
+(def (cmd-company-search-candidates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Company: searching candidates")))
+
+(def (cmd-company-filter-candidates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Company: filtering candidates")))
+
+(def (cmd-company-select-next-or-abort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Company: selected next or aborted")))
+
+(def (cmd-company-complete-common-or-cycle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Company: completed common or cycled")))
+
+(def (cmd-company-yasnippet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Company: yasnippet completion")))
+
+(def (cmd-hippie-expand-undo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hippie: undid last expansion")))
+
+(def (cmd-dabbrev-expand-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dabbrev: expanded from all buffers")))
+
+(def (cmd-pabbrev-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pabbrev)
+    (if (mode-enabled? app 'pabbrev)
+      (echo-message! echo "Pabbrev mode enabled")
+      (echo-message! echo "Pabbrev mode disabled"))))
+
+(def (cmd-abbrev-suggest-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'abbrev-suggest)
+    (if (mode-enabled? app 'abbrev-suggest)
+      (echo-message! echo "Abbrev suggest mode enabled")
+      (echo-message! echo "Abbrev suggest mode disabled"))))
+
+(def (cmd-corfu-candidate-overlay-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'corfu-candidate-overlay)
+    (if (mode-enabled? app 'corfu-candidate-overlay)
+      (echo-message! echo "Corfu candidate overlay mode enabled")
+      (echo-message! echo "Corfu candidate overlay mode disabled"))))

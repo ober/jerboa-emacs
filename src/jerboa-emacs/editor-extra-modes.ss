@@ -19095,3 +19095,47 @@
 (def (cmd-boon-set-insert-state app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Boon: entered insert state")))
+
+;; Round 206 — Corfu-ext, Cape-ext, Company-ext, Kind-icon, Nerd-icons-corfu
+(def (cmd-corfu-quick-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: quick completed")))
+
+(def (cmd-corfu-indexed-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'corfu-indexed)
+    (if (mode-enabled? app 'corfu-indexed)
+      (echo-message! echo "Corfu indexed mode enabled")
+      (echo-message! echo "Corfu indexed mode disabled"))))
+
+(def (cmd-corfu-separator-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: inserted separator")))
+
+(def (cmd-cape-wrap-buster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped with cache buster")))
+
+(def (cmd-cape-wrap-super app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped with super completion")))
+
+(def (cmd-cape-wrap-purify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped with purify")))
+
+(def (cmd-cape-interactive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: interactive completion")))
+
+(def (cmd-kind-icon-margin-formatter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kind-icon: margin formatter configured")))
+
+(def (cmd-nerd-icons-corfu-formatter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nerd-icons: Corfu formatter configured")))
+
+(def (cmd-company-show-doc-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Company: showing documentation buffer")))

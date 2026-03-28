@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 206 — Corfu-ext, Cape-ext, Company-ext, Hippie-ext, Pabbrev, Abbrev-suggest
+
+| Feature | Status | Notes |
+|---|---|---|
+| corfu-quick-complete | :orange_circle: | Quick complete with Corfu |
+| corfu-indexed-mode | :orange_circle: | Toggle Corfu indexed mode |
+| corfu-separator-insert | :orange_circle: | Insert Corfu separator |
+| cape-wrap-buster | :orange_circle: | Cape cache buster wrapper |
+| cape-wrap-super | :orange_circle: | Cape super completion wrapper |
+| cape-wrap-purify | :orange_circle: | Cape purify wrapper |
+| cape-interactive | :orange_circle: | Cape interactive completion |
+| kind-icon-margin-formatter | :orange_circle: | Configure kind-icon formatter |
+| nerd-icons-corfu-formatter | :orange_circle: | Configure nerd-icons Corfu formatter |
+| company-show-doc-buffer | :orange_circle: | Show Company documentation |
+| company-search-candidates | :orange_circle: | Search Company candidates |
+| company-filter-candidates | :orange_circle: | Filter Company candidates |
+| company-select-next-or-abort | :orange_circle: | Select next or abort Company |
+| company-complete-common-or-cycle | :orange_circle: | Complete common or cycle Company |
+| company-yasnippet | :orange_circle: | Company yasnippet backend |
+| hippie-expand-undo | :orange_circle: | Undo hippie expansion |
+| dabbrev-expand-all | :orange_circle: | Expand from all buffers |
+| pabbrev-mode | :orange_circle: | Toggle predictive abbreviation |
+| abbrev-suggest-mode | :orange_circle: | Toggle abbreviation suggestions |
+| corfu-candidate-overlay-mode | :orange_circle: | Toggle Corfu candidate overlay |
+
 ### Round 205 — Evil-ext, Meow, Boon, God-mode-ext, Transient-ext, Casual
 
 | Feature | Status | Notes |
