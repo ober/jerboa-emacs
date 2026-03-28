@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 217 — Notmuch ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| notmuch-search-archive-thread | :orange_circle: | Archive thread in search |
+| notmuch-search-tag | :orange_circle: | Tag thread in search |
+| notmuch-search-filter | :orange_circle: | Filter search results |
+| notmuch-search-filter-by-tag | :orange_circle: | Filter search by tag |
+| notmuch-show-save-attachments | :orange_circle: | Save message attachments |
+| notmuch-show-view-raw-message | :orange_circle: | View raw message |
+| notmuch-show-toggle-visibility-headers | :orange_circle: | Toggle header visibility |
+| notmuch-poll-and-refresh-this-buffer | :orange_circle: | Poll mail and refresh |
+| notmuch-tag-jump | :orange_circle: | Jump to tag operations |
+| notmuch-show-stash-cc | :orange_circle: | Stash CC field |
+| notmuch-show-stash-from | :orange_circle: | Stash From field |
+| notmuch-show-stash-to | :orange_circle: | Stash To field |
+| notmuch-show-stash-subject | :orange_circle: | Stash Subject field |
+| notmuch-show-stash-message-id | :orange_circle: | Stash Message-ID |
+| notmuch-show-stash-date | :orange_circle: | Stash Date field |
+| notmuch-show-stash-tags | :orange_circle: | Stash tags |
+| notmuch-show-stash-filename | :orange_circle: | Stash filename |
+| notmuch-search-stash-thread-id | :orange_circle: | Stash thread ID |
+| notmuch-show-next-thread-show | :orange_circle: | Show next thread |
+| notmuch-show-pipe-message | :orange_circle: | Pipe message to command |
+
 ### Round 216 — CIDER ext
 
 | Command | Status | Description |

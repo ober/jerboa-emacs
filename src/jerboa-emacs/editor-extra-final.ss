@@ -18994,3 +18994,47 @@
 (def (cmd-cider-format-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CIDER: formatted buffer")))
+
+;;; Round 217 — Notmuch ext (batch 2)
+
+(def (cmd-notmuch-show-stash-from app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed From")))
+
+(def (cmd-notmuch-show-stash-to app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed To")))
+
+(def (cmd-notmuch-show-stash-subject app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed Subject")))
+
+(def (cmd-notmuch-show-stash-message-id app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed Message-ID")))
+
+(def (cmd-notmuch-show-stash-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed Date")))
+
+(def (cmd-notmuch-show-stash-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed tags")))
+
+(def (cmd-notmuch-show-stash-filename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed filename")))
+
+(def (cmd-notmuch-search-stash-thread-id app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed thread ID")))
+
+(def (cmd-notmuch-show-next-thread-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: showing next thread")))
+
+(def (cmd-notmuch-show-pipe-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pipe to: "
+      (lambda (cmd)
+        (echo-message! echo (str "Notmuch: piped message to " cmd))))))

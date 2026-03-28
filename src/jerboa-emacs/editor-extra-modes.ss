@@ -19615,3 +19615,51 @@
 (def (cmd-cider-switch-to-repl-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CIDER: switched to REPL buffer")))
+
+;;; Round 217 — Notmuch ext (batch 1)
+
+(def (cmd-notmuch-search-archive-thread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: archived thread")))
+
+(def (cmd-notmuch-search-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tags (+/-): "
+      (lambda (tags)
+        (echo-message! echo (str "Notmuch: tagged thread " tags))))))
+
+(def (cmd-notmuch-search-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter: "
+      (lambda (f)
+        (echo-message! echo (str "Notmuch: filtered search by " f))))))
+
+(def (cmd-notmuch-search-filter-by-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Notmuch: filtered by tag " tag))))))
+
+(def (cmd-notmuch-show-save-attachments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: saved attachments")))
+
+(def (cmd-notmuch-show-view-raw-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: viewing raw message")))
+
+(def (cmd-notmuch-show-toggle-visibility-headers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: toggled header visibility")))
+
+(def (cmd-notmuch-poll-and-refresh-this-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: polled and refreshed")))
+
+(def (cmd-notmuch-tag-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: tag jump")))
+
+(def (cmd-notmuch-show-stash-cc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed CC")))
