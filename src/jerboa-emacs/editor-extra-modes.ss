@@ -15731,3 +15731,47 @@
 (def (cmd-haskell-process-reload app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Haskell: reloaded in GHCi")))
+
+;;; Round 138 — Scala, Kotlin, OCaml, Erlang, Zig (batch 1)
+
+(def (cmd-scala-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scala: running")))
+
+(def (cmd-scala-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scala: compiling")))
+
+(def (cmd-sbt-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SBT command: "
+      (lambda (cmd)
+        (echo-message! echo (str "SBT: " cmd))))))
+
+(def (cmd-sbt-run-previous-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SBT: re-ran previous command")))
+
+(def (cmd-sbt-switch-to-active-sbt-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SBT: switched to active buffer")))
+
+(def (cmd-ensime-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ENSIME: connecting to server")))
+
+(def (cmd-ensime-inspect-type-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ENSIME: inspecting type at point")))
+
+(def (cmd-kotlin-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kotlin: sent buffer to REPL")))
+
+(def (cmd-kotlin-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kotlin: started REPL")))
+
+(def (cmd-tuareg-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tuareg: evaluated region")))

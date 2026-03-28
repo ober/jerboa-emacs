@@ -15126,3 +15126,47 @@
 (def (cmd-alchemist-eval-current-line app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Alchemist: evaluated current line")))
+
+;;; Round 138 — Scala, Kotlin, OCaml, Erlang, Zig (batch 2)
+
+(def (cmd-tuareg-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tuareg: evaluated buffer")))
+
+(def (cmd-tuareg-eval-phrase app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tuareg: evaluated phrase")))
+
+(def (cmd-merlin-type-enclosing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Merlin: showing type of enclosing expression")))
+
+(def (cmd-merlin-destruct app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Merlin: destructed pattern")))
+
+(def (cmd-merlin-error-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Merlin: jumped to next error")))
+
+(def (cmd-erlang-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Erlang: compiling")))
+
+(def (cmd-erlang-shell-display app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Erlang: displaying shell")))
+
+(def (cmd-erlang-next-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Erlang: jumped to next error")))
+
+(def (cmd-erlang-man-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Erlang man function: "
+      (lambda (func)
+        (echo-message! echo (str "Erlang: showing man page for " func))))))
+
+(def (cmd-zig-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: compiling")))

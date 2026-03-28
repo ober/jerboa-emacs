@@ -4450,6 +4450,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 138 — Scala, Kotlin, OCaml, Erlang, Zig Modes
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| scala-run | :orange_circle: | Run Scala project |
+| scala-compile | :orange_circle: | Compile Scala project |
+| sbt-command | :orange_circle: | Run SBT command |
+| sbt-run-previous-command | :orange_circle: | Re-run previous SBT command |
+| sbt-switch-to-active-sbt-buffer | :orange_circle: | Switch to SBT buffer |
+| ensime-connect | :orange_circle: | Connect to ENSIME server |
+| ensime-inspect-type-at-point | :orange_circle: | Inspect type at point |
+| kotlin-send-buffer | :orange_circle: | Send Kotlin buffer to REPL |
+| kotlin-repl | :orange_circle: | Start Kotlin REPL |
+| tuareg-eval-region | :orange_circle: | Evaluate OCaml region |
+| tuareg-eval-buffer | :orange_circle: | Evaluate OCaml buffer |
+| tuareg-eval-phrase | :orange_circle: | Evaluate OCaml phrase |
+| merlin-type-enclosing | :orange_circle: | Show type of enclosing expression |
+| merlin-destruct | :orange_circle: | Destruct OCaml pattern |
+| merlin-error-next | :orange_circle: | Jump to next Merlin error |
+| erlang-compile | :orange_circle: | Compile Erlang module |
+| erlang-shell-display | :orange_circle: | Display Erlang shell |
+| erlang-next-error | :orange_circle: | Jump to next Erlang error |
+| erlang-man-function | :orange_circle: | Show Erlang man page |
+| zig-compile | :orange_circle: | Compile Zig project |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
