@@ -1546,6 +1546,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Make directory | :orange_circle: | Create a new directory |
 | Delete directory | :orange_circle: | Delete a directory recursively |
 | Copy directory | :orange_circle: | Copy a directory recursively |
+| Abbrev mode | :orange_circle: | Toggle abbreviation expansion |
+| Expand abbrev | :orange_circle: | Expand abbreviation at point |
+| Define abbrev | :orange_circle: | Define a new abbreviation |
+| List abbrevs | :orange_circle: | List all defined abbreviations |
+| Insert register | :orange_circle: | Insert text from named register |
+| Copy to register | :orange_circle: | Store region in named register |
+| Point to register | :orange_circle: | Save cursor position to register |
+| Jump to register | :orange_circle: | Jump to saved position in register |
+| View register | :orange_circle: | Show contents of a register |
+| List registers | :orange_circle: | List all registers and contents |
+| Append to buffer | :orange_circle: | Append region to another buffer |
+| Prepend to buffer | :orange_circle: | Prepend region to another buffer |
+| Copy to buffer | :orange_circle: | Replace buffer contents with region |
+| Insert buffer | :orange_circle: | Insert another buffer at point |
+| Append to file | :orange_circle: | Append region to a file |
+| Write region | :orange_circle: | Write region to a file |
+| Print buffer | :orange_circle: | Send buffer to printer via lpr |
+| LPR buffer | :orange_circle: | Print buffer (lpr alias) |
+| Flush lines | :orange_circle: | Delete lines matching pattern |
+| Keep lines | :orange_circle: | Keep only lines matching pattern |
 
 ---
 

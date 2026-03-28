@@ -8328,3 +8328,184 @@
                   (fill ws "" (cons line lines)))
                 (fill (cdr ws) new-line lines)))))))))
 
+;; Round 22 batch 1: abbrev-mode, expand-abbrev, define-abbrev, list-abbrevs,
+;; insert-register, copy-to-register, point-to-register, jump-to-register,
+;; view-register, list-registers
+
+;; cmd-abbrev-mode: Toggle abbreviation expansion mode
+(def (cmd-abbrev-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'abbrev-mode)
+    (if (mode-enabled? app 'abbrev-mode)
+      (echo-message! echo "Abbrev mode enabled")
+      (echo-message! echo "Abbrev mode disabled"))))
+
+;; cmd-expand-abbrev: Expand abbreviation at point
+(def (cmd-expand-abbrev app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         ;; Get word before cursor
+         (line-start (editor-line-start ed (editor-current-line ed)))
+         (before-text (editor-get-text-range ed line-start pos)))
+    ;; Find last word
+    (let loop ((i (- (string-length before-text) 1)) (end (string-length before-text)))
+      (if (or (< i 0) (char-whitespace? (string-ref before-text i)))
+        (let* ((word (substring before-text (+ i 1) end))
+               (abbrevs (or (hash-get (app-state-modes app) 'abbrev-table) (make-hash-table)))
+               (expansion (hash-get abbrevs word)))
+          (if expansion
+            (begin
+              (editor-replace-range ed (+ line-start i 1) pos expansion)
+              (echo-message! echo (str "Expanded \"" word "\" to \"" expansion "\"")))
+            (echo-message! echo (str "No abbrev for \"" word "\""))))
+        (loop (- i 1) end)))))
+
+;; cmd-define-abbrev: Define a new abbreviation
+(def (cmd-define-abbrev app)
+  (let* ((echo (app-state-echo app))
+         (abbrev (echo-read-string echo "Abbrev: ")))
+    (if (or (not abbrev) (string=? abbrev ""))
+      (echo-message! echo "No abbreviation specified")
+      (let ((expansion (echo-read-string echo (str "Expansion for \"" abbrev "\": "))))
+        (if (or (not expansion) (string=? expansion ""))
+          (echo-message! echo "No expansion specified")
+          (let ((table (or (hash-get (app-state-modes app) 'abbrev-table) (make-hash-table))))
+            (hash-put! table abbrev expansion)
+            (hash-put! (app-state-modes app) 'abbrev-table table)
+            (echo-message! echo (str "Defined abbrev: \"" abbrev "\" → \"" expansion "\""))))))))
+
+;; cmd-list-abbrevs: List all defined abbreviations
+(def (cmd-list-abbrevs app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (table (or (hash-get (app-state-modes app) 'abbrev-table) (make-hash-table)))
+         (entries (hash->list table))
+         (text (if (null? entries)
+                 "=== Abbreviations ===\n\nNo abbreviations defined.\nUse M-x define-abbrev to add one.\n"
+                 (str "=== Abbreviations ===\n\n"
+                      (string-join
+                        (map (lambda (pair)
+                               (str "  " (car pair) " → " (cdr pair)))
+                             entries)
+                        "\n")
+                      "\n\nTotal: " (length entries) " abbreviations\n"))))
+    (editor-set-text ed text)
+    (echo-message! echo (str (length entries) " abbreviations"))))
+
+;; cmd-copy-to-register: Store region text in a named register
+(def (cmd-copy-to-register app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (let ((reg-name (echo-read-string echo "Register name (single char): ")))
+        (if (or (not reg-name) (string=? reg-name ""))
+          (echo-message! echo "No register specified")
+          (let* ((text (editor-get-text-range ed sel-start sel-end))
+                 (registers (or (hash-get (app-state-modes app) 'text-registers) (make-hash-table))))
+            (hash-put! registers reg-name text)
+            (hash-put! (app-state-modes app) 'text-registers registers)
+            (echo-message! echo (str "Copied to register " reg-name))))))))
+
+;; cmd-insert-register: Insert text from a named register
+(def (cmd-insert-register app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (reg-name (echo-read-string echo "Insert register: ")))
+    (if (or (not reg-name) (string=? reg-name ""))
+      (echo-message! echo "No register specified")
+      (let* ((registers (or (hash-get (app-state-modes app) 'text-registers) (make-hash-table)))
+             (text (hash-get registers reg-name)))
+        (if text
+          (begin
+            (editor-insert-text ed (editor-cursor-position ed) text)
+            (echo-message! echo (str "Inserted register " reg-name)))
+          (echo-message! echo (str "Register " reg-name " is empty")))))))
+
+;; cmd-point-to-register: Save current position to a register
+(def (cmd-point-to-register app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (reg-name (echo-read-string echo "Point to register: ")))
+    (if (or (not reg-name) (string=? reg-name ""))
+      (echo-message! echo "No register specified")
+      (let ((registers (or (hash-get (app-state-modes app) 'point-registers) (make-hash-table)))
+            (pos (editor-cursor-position ed))
+            (file (buffer-file buf)))
+        (hash-put! registers reg-name (cons (or file (buffer-name buf)) pos))
+        (hash-put! (app-state-modes app) 'point-registers registers)
+        (echo-message! echo (str "Point saved to register " reg-name))))))
+
+;; cmd-jump-to-register: Jump to position saved in a register
+(def (cmd-jump-to-register app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (reg-name (echo-read-string echo "Jump to register: ")))
+    (if (or (not reg-name) (string=? reg-name ""))
+      (echo-message! echo "No register specified")
+      (let* ((registers (or (hash-get (app-state-modes app) 'point-registers) (make-hash-table)))
+             (entry (hash-get registers reg-name)))
+        (if entry
+          (begin
+            (editor-set-cursor ed (cdr entry))
+            (echo-message! echo (str "Jumped to register " reg-name " (pos " (cdr entry) ")")))
+          (echo-message! echo (str "Register " reg-name " has no position")))))))
+
+;; cmd-view-register: Show contents of a register
+(def (cmd-view-register app)
+  (let* ((echo (app-state-echo app))
+         (reg-name (echo-read-string echo "View register: ")))
+    (if (or (not reg-name) (string=? reg-name ""))
+      (echo-message! echo "No register specified")
+      (let* ((text-regs (or (hash-get (app-state-modes app) 'text-registers) (make-hash-table)))
+             (point-regs (or (hash-get (app-state-modes app) 'point-registers) (make-hash-table)))
+             (text (hash-get text-regs reg-name))
+             (point (hash-get point-regs reg-name)))
+        (cond
+          ((and text point)
+           (echo-message! echo (str "Register " reg-name ": text=\"" (if (> (string-length text) 40) (str (substring text 0 40) "...") text) "\" + point=" (cdr point))))
+          (text
+           (echo-message! echo (str "Register " reg-name ": \"" (if (> (string-length text) 60) (str (substring text 0 60) "...") text) "\"")))
+          (point
+           (echo-message! echo (str "Register " reg-name ": position " (cdr point) " in " (car point))))
+          (else
+           (echo-message! echo (str "Register " reg-name " is empty"))))))))
+
+;; cmd-list-registers: List all registers and their contents
+(def (cmd-list-registers app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text-regs (or (hash-get (app-state-modes app) 'text-registers) (make-hash-table)))
+         (point-regs (or (hash-get (app-state-modes app) 'point-registers) (make-hash-table)))
+         (text-entries (hash->list text-regs))
+         (point-entries (hash->list point-regs))
+         (output (str "=== Registers ===\n\n"
+                      "--- Text Registers ---\n"
+                      (if (null? text-entries) "  (none)\n"
+                        (string-join
+                          (map (lambda (pair)
+                                 (let ((val (cdr pair)))
+                                   (str "  " (car pair) ": \"" (if (> (string-length val) 60) (str (substring val 0 60) "...") val) "\"")))
+                               text-entries)
+                          "\n"))
+                      "\n\n--- Point Registers ---\n"
+                      (if (null? point-entries) "  (none)\n"
+                        (string-join
+                          (map (lambda (pair)
+                                 (str "  " (car pair) ": position " (cddr pair) " in " (cadr pair)))
+                               point-entries)
+                          "\n"))
+                      "\n")))
+    (editor-set-text ed output)
+    (echo-message! echo (str (+ (length text-entries) (length point-entries)) " registers"))))
+
