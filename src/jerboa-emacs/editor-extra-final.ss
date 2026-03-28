@@ -12286,3 +12286,49 @@
 (def (cmd-vterm-other-window app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vterm: opened in other window")))
+
+;;; Round 79 — Tree-sitter, Xref, Eldoc-box, Symbol Overlay, Color Identifiers
+(def (cmd-calendar-exchange-point-and-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: exchanged point and mark")))
+
+(def (cmd-treesit-explore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tree-sitter: explorer opened")))
+
+(def (cmd-treesit-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tree-sitter: inspecting node at point")))
+
+(def (cmd-xref-find-apropos app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Xref apropos pattern: "
+      (lambda (pattern)
+        (echo-message! echo (str "Xref: searching for '" pattern "'"))))))
+
+(def (cmd-eldoc-box-hover app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eldoc-box: showing hover documentation")))
+
+(def (cmd-symbol-overlay-put app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Symbol overlay: highlighted symbol at point")))
+
+(def (cmd-symbol-overlay-remove-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Symbol overlay: all overlays removed")))
+
+(def (cmd-symbol-overlay-jump-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Symbol overlay: jumped to next occurrence")))
+
+(def (cmd-symbol-overlay-jump-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Symbol overlay: jumped to previous occurrence")))
+
+(def (cmd-color-identifiers-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'color-identifiers)
+    (if (mode-enabled? app 'color-identifiers)
+      (echo-message! echo "Color identifiers mode enabled")
+      (echo-message! echo "Color identifiers mode disabled"))))

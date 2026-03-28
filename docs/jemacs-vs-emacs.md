@@ -2903,6 +2903,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 79 — Calendar/Diary, Tree-sitter, Symbol Overlay
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| calendar-mark-today | :orange_circle: | Mark today's date in calendar |
+| calendar-forward-month | :orange_circle: | Move calendar forward one month |
+| calendar-backward-month | :orange_circle: | Move calendar backward one month |
+| calendar-forward-year | :orange_circle: | Move calendar forward one year |
+| calendar-backward-year | :orange_circle: | Move calendar backward one year |
+| diary-view-entries | :orange_circle: | View diary entries for selected date |
+| appt-delete | :orange_circle: | Delete an appointment |
+| holidays | :orange_circle: | Display holidays for current period |
+| list-holidays | :orange_circle: | List holidays for a given year |
+| calendar-set-mark | :orange_circle: | Set mark in calendar |
+| calendar-exchange-point-and-mark | :orange_circle: | Exchange point and mark in calendar |
+| treesit-explore | :orange_circle: | Open tree-sitter syntax tree explorer |
+| treesit-inspect | :orange_circle: | Inspect tree-sitter node at point |
+| xref-find-apropos | :orange_circle: | Search xref by pattern |
+| eldoc-box-hover | :orange_circle: | Show eldoc in hover box |
+| symbol-overlay-put | :orange_circle: | Highlight symbol at point |
+| symbol-overlay-remove-all | :orange_circle: | Remove all symbol overlays |
+| symbol-overlay-jump-next | :orange_circle: | Jump to next symbol occurrence |
+| symbol-overlay-jump-prev | :orange_circle: | Jump to previous symbol occurrence |
+| color-identifiers-mode | :orange_circle: | Toggle color identifiers mode |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

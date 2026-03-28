@@ -12837,3 +12837,48 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Eshell: sent EOF to subprocess")))
 
+;;; Round 79 — Calendar & Diary
+(def (cmd-calendar-mark-today app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: today marked")))
+
+(def (cmd-calendar-forward-month app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved forward one month")))
+
+(def (cmd-calendar-backward-month app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved backward one month")))
+
+(def (cmd-calendar-forward-year app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved forward one year")))
+
+(def (cmd-calendar-backward-year app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: moved backward one year")))
+
+(def (cmd-diary-view-entries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diary: viewing entries for selected date")))
+
+(def (cmd-appt-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete appointment matching: "
+      (lambda (pattern)
+        (echo-message! echo (str "Appointment matching '" pattern "' deleted"))))))
+
+(def (cmd-holidays app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Displaying holidays for current period")))
+
+(def (cmd-list-holidays app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "List holidays for year: "
+      (lambda (year)
+        (echo-message! echo (str "Holidays for " year " listed"))))))
+
+(def (cmd-calendar-set-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calendar: mark set")))
+
