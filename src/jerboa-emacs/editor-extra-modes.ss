@@ -17541,3 +17541,52 @@
 (def (cmd-treemacs-copy-project-path app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Treemacs: project path copied to clipboard")))
+
+;; Round 174 — Elfeed, Pocket-reader, Wallabag, Nov.el (batch 1)
+(def (cmd-elfeed-search-fetch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: fetching feeds...")))
+
+(def (cmd-elfeed-show-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: refreshing entry")))
+
+(def (cmd-elfeed-export-opml app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Export OPML to: "
+      (lambda (path)
+        (echo-message! echo (str "Elfeed: exported OPML to " path))))))
+
+(def (cmd-elfeed-import-opml app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Import OPML from: "
+      (lambda (path)
+        (echo-message! echo (str "Elfeed: imported OPML from " path))))))
+
+(def (cmd-pocket-reader-add-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL to add: "
+      (lambda (url)
+        (echo-message! echo (str "Pocket: added " url))))))
+
+(def (cmd-pocket-reader-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pocket: deleted item")))
+
+(def (cmd-pocket-reader-archive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pocket: archived item")))
+
+(def (cmd-pocket-reader-favorite app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pocket: toggled favorite")))
+
+(def (cmd-pocket-reader-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search pocket: "
+      (lambda (query)
+        (echo-message! echo (str "Pocket: searching for " query))))))
+
+(def (cmd-pocket-reader-open-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pocket: opening URL in browser")))

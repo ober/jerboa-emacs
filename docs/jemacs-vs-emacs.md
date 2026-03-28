@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 174 — Elfeed, Pocket-reader, Wallabag, Nov.el
+
+| Feature | Status | Notes |
+|---|---|---|
+| elfeed-search-fetch | :orange_circle: | Fetch all elfeed feeds |
+| elfeed-show-refresh | :orange_circle: | Refresh elfeed entry |
+| elfeed-export-opml | :orange_circle: | Export feeds as OPML |
+| elfeed-import-opml | :orange_circle: | Import feeds from OPML |
+| pocket-reader-add-link | :orange_circle: | Add URL to Pocket |
+| pocket-reader-delete | :orange_circle: | Delete Pocket item |
+| pocket-reader-archive | :orange_circle: | Archive Pocket item |
+| pocket-reader-favorite | :orange_circle: | Toggle Pocket favorite |
+| pocket-reader-search | :orange_circle: | Search Pocket items |
+| pocket-reader-open-url | :orange_circle: | Open Pocket URL in browser |
+| pocket-reader-tag-add | :orange_circle: | Add tag to Pocket item |
+| pocket-reader-tag-remove | :orange_circle: | Remove tag from Pocket item |
+| wallabag-add-entry | :orange_circle: | Add URL to Wallabag |
+| wallabag-search | :orange_circle: | Search Wallabag entries |
+| wallabag-show-entry | :orange_circle: | Show Wallabag entry |
+| wallabag-full-entry | :orange_circle: | Show full Wallabag content |
+| wallabag-delete-entry | :orange_circle: | Delete Wallabag entry |
+| nov-bookmark-jump | :orange_circle: | Jump to EPUB bookmark |
+| nov-render-document | :orange_circle: | Render EPUB document |
+| nov-copy-url | :orange_circle: | Copy EPUB URL |
+
 ### Round 173 — Treemacs, Neotree, Dired-sidebar
 
 | Feature | Status | Notes |

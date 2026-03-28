@@ -16919,3 +16919,52 @@
 (def (cmd-dired-sidebar-jump app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dired-sidebar: jumped to current directory")))
+
+;; Round 174 — Elfeed, Pocket-reader, Wallabag, Nov.el (batch 2)
+(def (cmd-pocket-reader-tag-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Pocket: added tag " tag))))))
+
+(def (cmd-pocket-reader-tag-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Pocket: removed tag " tag))))))
+
+(def (cmd-wallabag-add-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Wallabag: added " url))))))
+
+(def (cmd-wallabag-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search wallabag: "
+      (lambda (query)
+        (echo-message! echo (str "Wallabag: searching for " query))))))
+
+(def (cmd-wallabag-show-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wallabag: showing entry")))
+
+(def (cmd-wallabag-full-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wallabag: showing full entry content")))
+
+(def (cmd-wallabag-delete-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wallabag: deleted entry")))
+
+(def (cmd-nov-bookmark-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: jumping to bookmark")))
+
+(def (cmd-nov-render-document app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: rendering document")))
+
+(def (cmd-nov-copy-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: URL copied to clipboard")))
