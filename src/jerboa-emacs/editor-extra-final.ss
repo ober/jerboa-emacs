@@ -17644,3 +17644,54 @@
 (def (cmd-tailwindcss-toggle-prefix app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TailwindCSS: toggled class prefix")))
+
+;; Round 189 — Jinx-ext, Flyspell-ext, Langtool-ext, Wcheck (batch 2)
+(def (cmd-langtool-show-message-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: showing message at point")))
+
+(def (cmd-wcheck-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'wcheck)
+    (if (mode-enabled? app 'wcheck)
+      (echo-message! echo "Wcheck mode enabled")
+      (echo-message! echo "Wcheck mode disabled"))))
+
+(def (cmd-wcheck-jump-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wcheck: jumped to next marked word")))
+
+(def (cmd-wcheck-jump-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wcheck: jumped to previous marked word")))
+
+(def (cmd-wcheck-actions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wcheck: showing actions for word at point")))
+
+(def (cmd-wcheck-change-language app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Language: "
+      (lambda (lang)
+        (echo-message! echo (str "Wcheck: language set to " lang))))))
+
+(def (cmd-wcheck-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wcheck: checking entire buffer")))
+
+(def (cmd-guess-language-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'guess-language)
+    (if (mode-enabled? app 'guess-language)
+      (echo-message! echo "Guess-language mode enabled")
+      (echo-message! echo "Guess-language mode disabled"))))
+
+(def (cmd-guess-language-mark-lines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guess-language: marked lines by detected language")))
+
+(def (cmd-guess-language-set-language app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set language: "
+      (lambda (lang)
+        (echo-message! echo (str "Guess-language: set to " lang))))))

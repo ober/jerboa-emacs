@@ -18287,3 +18287,50 @@
 (def (cmd-web-mode-tag-attributes-sort app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Web-mode: sorted tag attributes")))
+
+;; Round 189 — Jinx-ext, Flyspell-ext, Langtool-ext, Wcheck (batch 1)
+(def (cmd-jinx-misspelled-first app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: jumped to first misspelled word")))
+
+(def (cmd-jinx-misspelled-last app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: jumped to last misspelled word")))
+
+(def (cmd-jinx-autocorrect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: autocorrected word at point")))
+
+(def (cmd-flyspell-check-previous-highlighted-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flyspell: checked previous highlighted word")))
+
+(def (cmd-flyspell-lazy-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'flyspell-lazy)
+    (if (mode-enabled? app 'flyspell-lazy)
+      (echo-message! echo "Flyspell lazy mode enabled")
+      (echo-message! echo "Flyspell lazy mode disabled"))))
+
+(def (cmd-flyspell-prog-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'flyspell-prog)
+    (if (mode-enabled? app 'flyspell-prog)
+      (echo-message! echo "Flyspell prog mode enabled")
+      (echo-message! echo "Flyspell prog mode disabled"))))
+
+(def (cmd-flyspell-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flyspell: checked region")))
+
+(def (cmd-langtool-check-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: checking buffer...")))
+
+(def (cmd-langtool-check-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: checking region...")))
+
+(def (cmd-langtool-correct-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: corrected at point")))

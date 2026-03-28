@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 189 — Jinx-ext, Flyspell-ext, Langtool-ext, Wcheck
+
+| Feature | Status | Notes |
+|---|---|---|
+| jinx-misspelled-first | :orange_circle: | Jump to first misspelling |
+| jinx-misspelled-last | :orange_circle: | Jump to last misspelling |
+| jinx-autocorrect | :orange_circle: | Auto-correct misspelled word |
+| flyspell-check-previous-highlighted-word | :orange_circle: | Check previous highlighted word |
+| flyspell-lazy-mode | :orange_circle: | Toggle lazy flyspell mode |
+| flyspell-prog-mode | :orange_circle: | Flyspell for programming modes |
+| flyspell-region | :orange_circle: | Spell-check region |
+| langtool-check-buffer | :orange_circle: | Check buffer with LanguageTool |
+| langtool-check-region | :orange_circle: | Check region with LanguageTool |
+| langtool-correct-at-point | :orange_circle: | Correct error at point |
+| langtool-show-message-at-point | :orange_circle: | Show LanguageTool message at point |
+| wcheck-mode | :orange_circle: | Toggle wcheck mode |
+| wcheck-jump-forward | :orange_circle: | Jump to next wcheck match |
+| wcheck-jump-backward | :orange_circle: | Jump to previous wcheck match |
+| wcheck-actions | :orange_circle: | Show wcheck actions |
+| wcheck-change-language | :orange_circle: | Change wcheck language |
+| wcheck-buffer | :orange_circle: | Check entire buffer with wcheck |
+| guess-language-mode | :orange_circle: | Toggle language guessing mode |
+| guess-language-mark-lines | :orange_circle: | Mark lines by language |
+| guess-language-set-language | :orange_circle: | Set buffer language |
+
 ### Round 188 — Emmet, Web-mode-ext, Prettier, Tailwind
 
 | Feature | Status | Notes |
