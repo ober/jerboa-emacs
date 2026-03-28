@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 172 — Helpful, Elisp-refs, Macrostep, Inspector
+
+| Feature | Status | Notes |
+|---|---|---|
+| helpful-callable | :orange_circle: | Show help for callable symbol |
+| helpful-key | :orange_circle: | Show help for key binding |
+| helpful-variable | :orange_circle: | Show help for variable |
+| helpful-update | :orange_circle: | Update helpful buffer |
+| helpful-visit-reference | :orange_circle: | Visit reference at point |
+| elisp-refs-special | :orange_circle: | Find references to special form |
+| elisp-refs-read | :orange_circle: | Find read references to symbol |
+| elisp-refs-widget | :orange_circle: | Find widget references |
+| macrostep-collapse | :orange_circle: | Collapse macro expansion |
+| macrostep-prev-macro | :orange_circle: | Move to previous macro |
+| macrostep-next-macro | :orange_circle: | Move to next macro |
+| macrostep-mode | :orange_circle: | Toggle macrostep mode |
+| macrostep-environment | :orange_circle: | Show expansion environment |
+| inspector-inspect | :orange_circle: | Inspect an object |
+| inspector-pop | :orange_circle: | Pop to previous inspected object |
+| inspector-quit | :orange_circle: | Quit inspector |
+| inspector-next-reference | :orange_circle: | Move to next reference |
+| inspector-inspect-expression | :orange_circle: | Inspect arbitrary expression |
+| inspector-inspect-last-sexp | :orange_circle: | Inspect last sexp |
+| inspector-copy-down | :orange_circle: | Copy inspected object down |
+
 ### Round 171 — Selectrum, Icomplete-ext, Mct, Ivy-posframe
 
 | Feature | Status | Notes |

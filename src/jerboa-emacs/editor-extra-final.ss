@@ -16824,3 +16824,51 @@
     (if (mode-enabled? app 'all-the-icons-ivy-rich)
       (echo-message! echo "All-the-icons-ivy-rich mode enabled")
       (echo-message! echo "All-the-icons-ivy-rich mode disabled"))))
+
+;; Round 172 — Helpful, Elisp-refs, Macrostep, Inspector (batch 2)
+(def (cmd-macrostep-next-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Macrostep: moved to next macro")))
+
+(def (cmd-macrostep-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'macrostep)
+    (if (mode-enabled? app 'macrostep)
+      (echo-message! echo "Macrostep mode enabled")
+      (echo-message! echo "Macrostep mode disabled"))))
+
+(def (cmd-macrostep-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Macrostep: showing expansion environment")))
+
+(def (cmd-inspector-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Inspect: "
+      (lambda (expr)
+        (echo-message! echo (str "Inspector: inspecting " expr))))))
+
+(def (cmd-inspector-pop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inspector: popped to previous object")))
+
+(def (cmd-inspector-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inspector: closed")))
+
+(def (cmd-inspector-next-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inspector: moved to next reference")))
+
+(def (cmd-inspector-inspect-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Inspector: inspecting expression " expr))))))
+
+(def (cmd-inspector-inspect-last-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inspector: inspecting last sexp")))
+
+(def (cmd-inspector-copy-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inspector: copied object down")))

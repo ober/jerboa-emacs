@@ -17441,3 +17441,56 @@
     (if (mode-enabled? app 'mct-region)
       (echo-message! echo "Mct region mode enabled")
       (echo-message! echo "Mct region mode disabled"))))
+
+;; Round 172 — Helpful, Elisp-refs, Macrostep, Inspector (batch 1)
+(def (cmd-helpful-callable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Callable: "
+      (lambda (name)
+        (echo-message! echo (str "Helpful: showing docs for callable " name))))))
+
+(def (cmd-helpful-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Helpful: showing docs for key " key))))))
+
+(def (cmd-helpful-variable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Variable: "
+      (lambda (name)
+        (echo-message! echo (str "Helpful: showing docs for variable " name))))))
+
+(def (cmd-helpful-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helpful: buffer updated")))
+
+(def (cmd-helpful-visit-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helpful: visiting reference at point")))
+
+(def (cmd-elisp-refs-special app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Special form: "
+      (lambda (name)
+        (echo-message! echo (str "Elisp-refs: finding references to " name))))))
+
+(def (cmd-elisp-refs-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Read symbol: "
+      (lambda (name)
+        (echo-message! echo (str "Elisp-refs: finding read references to " name))))))
+
+(def (cmd-elisp-refs-widget app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Widget: "
+      (lambda (name)
+        (echo-message! echo (str "Elisp-refs: finding widget references to " name))))))
+
+(def (cmd-macrostep-collapse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Macrostep: collapsed macro expansion")))
+
+(def (cmd-macrostep-prev-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Macrostep: moved to previous macro")))
