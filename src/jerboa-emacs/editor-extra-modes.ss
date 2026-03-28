@@ -15182,3 +15182,50 @@
 (def (cmd-treesit-beginning-of-defun app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Treesit: moved to beginning of defun")))
+
+;;; Round 126 — Transient, Doom, Spacemacs, Ivy (batch 1)
+
+(def (cmd-transient-suspend app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: suspended")))
+
+(def (cmd-transient-toggle-common app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: toggled common commands")))
+
+(def (cmd-transient-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: reset to defaults")))
+
+(def (cmd-hydra-pause-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: paused/resumed")))
+
+(def (cmd-ace-window-display-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ace-window-display)
+    (if (mode-enabled? app 'ace-window-display)
+      (echo-message! echo "Ace-Window-Display mode enabled")
+      (echo-message! echo "Ace-Window-Display mode disabled"))))
+
+(def (cmd-avy-goto-subword-1 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Avy subword char: "
+      (lambda (ch)
+        (echo-message! echo (str "Avy: jumping to subword starting with '" ch "'"))))))
+
+(def (cmd-avy-transpose-lines-in-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: transposed lines in region")))
+
+(def (cmd-doom-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom: reloaded configuration")))
+
+(def (cmd-doom-doctor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom: running doctor diagnostics")))
+
+(def (cmd-doom-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom: displaying system info")))

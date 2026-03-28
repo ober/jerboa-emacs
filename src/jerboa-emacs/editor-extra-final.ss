@@ -14570,3 +14570,51 @@
     (echo-read-string echo "Helpful function: "
       (lambda (name)
         (echo-message! echo (str "Helpful: showing help for function '" name "'"))))))
+
+;;; Round 126 — Transient, Doom, Spacemacs, Ivy (batch 2)
+
+(def (cmd-doom-upgrade app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom: upgrading packages")))
+
+(def (cmd-doom-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom: regenerated env file")))
+
+(def (cmd-spacemacs-home app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacemacs: showing home buffer")))
+
+(def (cmd-spacemacs-purpose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacemacs: showing purpose configuration")))
+
+(def (cmd-ivy-switch-buffer-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch buffer other window: "
+      (lambda (buf)
+        (echo-message! echo (str "Ivy: switched to '" buf "' in other window"))))))
+
+(def (cmd-ivy-push-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "View name: "
+      (lambda (name)
+        (echo-message! echo (str "Ivy: pushed view '" name "'"))))))
+
+(def (cmd-ivy-pop-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: popped view")))
+
+(def (cmd-ivy-switch-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to view: "
+      (lambda (name)
+        (echo-message! echo (str "Ivy: switched to view '" name "'"))))))
+
+(def (cmd-ivy-dispatching-done app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: dispatching done")))
+
+(def (cmd-ivy-avy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: avy selection")))

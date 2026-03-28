@@ -4126,6 +4126,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 126 — Transient, Doom, Spacemacs, Ivy
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| transient-suspend | :orange_circle: | Suspend transient |
+| transient-toggle-common | :orange_circle: | Toggle common transient commands |
+| transient-reset | :orange_circle: | Reset transient to defaults |
+| hydra-pause-resume | :orange_circle: | Pause/resume hydra |
+| ace-window-display-mode | :orange_circle: | Toggle ace-window display mode |
+| avy-goto-subword-1 | :orange_circle: | Jump to subword by char |
+| avy-transpose-lines-in-region | :orange_circle: | Transpose lines in region via avy |
+| doom-reload | :orange_circle: | Reload Doom configuration |
+| doom-doctor | :orange_circle: | Run Doom doctor diagnostics |
+| doom-info | :orange_circle: | Display Doom system info |
+| doom-upgrade | :orange_circle: | Upgrade Doom packages |
+| doom-env | :orange_circle: | Regenerate Doom env file |
+| spacemacs-home | :orange_circle: | Show Spacemacs home buffer |
+| spacemacs-purpose | :orange_circle: | Show Spacemacs purpose config |
+| ivy-switch-buffer-other-window | :orange_circle: | Switch buffer in other window via Ivy |
+| ivy-push-view | :orange_circle: | Push Ivy view |
+| ivy-pop-view | :orange_circle: | Pop Ivy view |
+| ivy-switch-view | :orange_circle: | Switch Ivy view |
+| ivy-dispatching-done | :orange_circle: | Ivy dispatching done |
+| ivy-avy | :orange_circle: | Ivy avy selection |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
