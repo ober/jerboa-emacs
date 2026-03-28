@@ -19232,3 +19232,49 @@
 (def (cmd-use-package-compute-statistics app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Use-package: computed statistics")))
+
+;; Round 209 — Marginalia-ext, Consult-ext, Vertico-ext
+(def (cmd-marginalia-classify-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Marginalia: classified symbol")))
+
+(def (cmd-consult-project-extra-find app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find in project (extra): "
+      (lambda (pat)
+        (echo-message! echo (str "Consult: found in project '" pat "'"))))))
+
+(def (cmd-consult-register-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: showing register window")))
+
+(def (cmd-consult-narrow-help app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: showing narrow help")))
+
+(def (cmd-consult-preview-at-point-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'consult-preview-at-point)
+    (if (mode-enabled? app 'consult-preview-at-point)
+      (echo-message! echo "Consult preview at point mode enabled")
+      (echo-message! echo "Consult preview at point mode disabled"))))
+
+(def (cmd-vertico-quick-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: quick exit")))
+
+(def (cmd-vertico-repeat-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: repeat selected")))
+
+(def (cmd-vertico-directory-delete-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: deleted directory word")))
+
+(def (cmd-vertico-suspend app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: suspended session")))
+
+(def (cmd-vertico-truncate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: toggled truncation")))

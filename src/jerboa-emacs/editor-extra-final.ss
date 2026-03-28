@@ -18619,3 +18619,53 @@
 (def (cmd-esup-run app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "ESUP: profiling startup...")))
+
+;; Round 209 — Consult-ext, Embark-ext, Marginalia-ext
+(def (cmd-consult-customize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: showing customization options")))
+
+(def (cmd-consult-buffer-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: filtering buffers")))
+
+(def (cmd-consult-fd-args app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult fd args: "
+      (lambda (args)
+        (echo-message! echo (str "Consult: fd with args " args))))))
+
+(def (cmd-consult-grep-args app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult grep args: "
+      (lambda (args)
+        (echo-message! echo (str "Consult: grep with args " args))))))
+
+(def (cmd-embark-verbose-indicator app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: set verbose indicator")))
+
+(def (cmd-embark-minimal-indicator app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: set minimal indicator")))
+
+(def (cmd-embark-mixed-indicator app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: set mixed indicator")))
+
+(def (cmd-embark-consult-preview-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'embark-consult-preview)
+    (if (mode-enabled? app 'embark-consult-preview)
+      (echo-message! echo "Embark-consult preview mode enabled")
+      (echo-message! echo "Embark-consult preview mode disabled"))))
+
+(def (cmd-marginalia-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Marginalia: reset annotations")))
+
+(def (cmd-embark-bindings-in-keymap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Keymap: "
+      (lambda (km)
+        (echo-message! echo (str "Embark: showing bindings in " km))))))

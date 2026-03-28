@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 209 — Marginalia-ext, Consult-ext, Vertico-ext, Embark-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| marginalia-classify-symbol | :orange_circle: | Classify symbol annotation |
+| consult-project-extra-find | :orange_circle: | Find in project (extra) |
+| consult-register-window | :orange_circle: | Show register window |
+| consult-narrow-help | :orange_circle: | Show narrow help |
+| consult-preview-at-point-mode | :orange_circle: | Toggle preview at point |
+| vertico-quick-exit | :orange_circle: | Quick exit Vertico |
+| vertico-repeat-select | :orange_circle: | Repeat select in Vertico |
+| vertico-directory-delete-word | :orange_circle: | Delete directory word |
+| vertico-suspend | :orange_circle: | Suspend Vertico session |
+| vertico-truncate | :orange_circle: | Toggle Vertico truncation |
+| consult-customize | :orange_circle: | Customize Consult options |
+| consult-buffer-filter | :orange_circle: | Filter Consult buffers |
+| consult-fd-args | :orange_circle: | Consult fd with args |
+| consult-grep-args | :orange_circle: | Consult grep with args |
+| embark-verbose-indicator | :orange_circle: | Set verbose indicator |
+| embark-minimal-indicator | :orange_circle: | Set minimal indicator |
+| embark-mixed-indicator | :orange_circle: | Set mixed indicator |
+| embark-consult-preview-minor-mode | :orange_circle: | Toggle Embark-consult preview |
+| marginalia-reset | :orange_circle: | Reset Marginalia annotations |
+| embark-bindings-in-keymap | :orange_circle: | Show Embark bindings in keymap |
+
 ### Round 208 — Doom-modeline-ext, Modus-themes-ext, Nano, General, Elpaca, ESUP
 
 | Feature | Status | Notes |
