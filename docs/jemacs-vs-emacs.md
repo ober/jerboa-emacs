@@ -4315,6 +4315,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 133 — Paredit, Smartparens, Lispy Extended
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| paredit-add-to-next-list | :orange_circle: | Add sexp to next list |
+| paredit-add-to-previous-list | :orange_circle: | Add sexp to previous list |
+| paredit-join-with-next-list | :orange_circle: | Join with next list |
+| paredit-join-with-previous-list | :orange_circle: | Join with previous list |
+| sp-swap-enclosing | :orange_circle: | Swap enclosing delimiters |
+| sp-splice-sexp-killing-around | :orange_circle: | Splice killing around |
+| sp-emit-sexp | :orange_circle: | Emit sexp |
+| sp-absorb-sexp | :orange_circle: | Absorb sexp |
+| sp-convolute-sexp | :orange_circle: | Convolute sexp |
+| sp-transpose-sexp | :orange_circle: | Transpose sexps |
+| sp-split-sexp | :orange_circle: | Split sexp |
+| sp-join-sexp | :orange_circle: | Join sexps |
+| sp-select-next-thing-exchange | :orange_circle: | Select next thing (exchange) |
+| sp-highlight-current-sexp | :orange_circle: | Highlight current sexp |
+| sp-show-enclosing-pair | :orange_circle: | Show enclosing pair |
+| lispy-ace-paren | :orange_circle: | Ace jump to paren |
+| lispy-ace-char | :orange_circle: | Ace jump to char |
+| lispy-ace-symbol | :orange_circle: | Ace jump to symbol |
+| lispy-ace-subword | :orange_circle: | Ace jump to subword |
+| lispy-different | :orange_circle: | Jump to different position |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

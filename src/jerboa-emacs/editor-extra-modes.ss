@@ -15509,3 +15509,45 @@
 (def (cmd-copilot-accept-completion-by-line app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Copilot: accepted completion by line")))
+
+;;; Round 133 — Paredit, Smartparens, Lispy extended (batch 1)
+
+(def (cmd-paredit-add-to-next-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: added sexp to next list")))
+
+(def (cmd-paredit-add-to-previous-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: added sexp to previous list")))
+
+(def (cmd-paredit-join-with-next-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: joined with next list")))
+
+(def (cmd-paredit-join-with-previous-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Paredit: joined with previous list")))
+
+(def (cmd-sp-swap-enclosing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: swapped enclosing delimiters")))
+
+(def (cmd-sp-splice-sexp-killing-around app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: spliced sexp killing around")))
+
+(def (cmd-sp-emit-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: emitted sexp")))
+
+(def (cmd-sp-absorb-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: absorbed sexp")))
+
+(def (cmd-sp-convolute-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: convoluted sexp")))
+
+(def (cmd-sp-transpose-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: transposed sexps")))

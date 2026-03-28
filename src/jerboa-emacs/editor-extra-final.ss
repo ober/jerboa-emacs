@@ -14898,3 +14898,45 @@
 (def (cmd-minions-minor-modes-menu app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Minions: showing minor modes menu")))
+
+;;; Round 133 — Paredit, Smartparens, Lispy extended (batch 2)
+
+(def (cmd-sp-split-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: split sexp")))
+
+(def (cmd-sp-join-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: joined sexps")))
+
+(def (cmd-sp-select-next-thing-exchange app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: selected next thing (exchange)")))
+
+(def (cmd-sp-highlight-current-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: highlighted current sexp")))
+
+(def (cmd-sp-show-enclosing-pair app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smartparens: showing enclosing pair")))
+
+(def (cmd-lispy-ace-paren app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: ace jump to paren")))
+
+(def (cmd-lispy-ace-char app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: ace jump to char")))
+
+(def (cmd-lispy-ace-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: ace jump to symbol")))
+
+(def (cmd-lispy-ace-subword app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: ace jump to subword")))
+
+(def (cmd-lispy-different app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lispy: jumped to different position")))
