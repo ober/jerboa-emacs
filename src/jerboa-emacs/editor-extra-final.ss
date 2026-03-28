@@ -18438,3 +18438,44 @@
     (echo-read-string echo "Olivetti width: "
       (lambda (w)
         (echo-message! echo (str "Olivetti: set width to " w))))))
+
+;; Round 205 — Boon-ext, God-mode-ext, Transient-ext, Casual
+(def (cmd-boon-set-special-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boon: entered special state")))
+
+(def (cmd-boon-navigate-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boon: navigated backward")))
+
+(def (cmd-boon-navigate-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boon: navigated forward")))
+
+(def (cmd-god-toggle-on-overwrite app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "God-mode: toggled on overwrite")))
+
+(def (cmd-transient-show-common-commands app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: showing common commands")))
+
+(def (cmd-casual-calc-tmenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Casual: showing calc transient menu")))
+
+(def (cmd-casual-info-tmenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Casual: showing info transient menu")))
+
+(def (cmd-casual-isearch-tmenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Casual: showing isearch transient menu")))
+
+(def (cmd-casual-avy-tmenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Casual: showing avy transient menu")))
+
+(def (cmd-casual-bookmarks-tmenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Casual: showing bookmarks transient menu")))

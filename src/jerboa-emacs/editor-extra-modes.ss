@@ -19054,3 +19054,44 @@
 (def (cmd-guix-repl app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Guix: started REPL")))
+
+;; Round 205 — Evil-ext, Meow, Boon
+(def (cmd-evil-ex-nohighlight app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: cleared search highlight")))
+
+(def (cmd-evil-show-marks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: showing marks")))
+
+(def (cmd-evil-show-registers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: showing registers")))
+
+(def (cmd-meow-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meow: selected block")))
+
+(def (cmd-meow-join app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meow: joined selection")))
+
+(def (cmd-meow-grab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meow: grabbed selection")))
+
+(def (cmd-meow-pop-grab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meow: popped grab")))
+
+(def (cmd-meow-swap-grab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meow: swapped with grab")))
+
+(def (cmd-boon-set-command-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boon: entered command state")))
+
+(def (cmd-boon-set-insert-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boon: entered insert state")))

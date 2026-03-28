@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 205 — Evil-ext, Meow, Boon, God-mode-ext, Transient-ext, Casual
+
+| Feature | Status | Notes |
+|---|---|---|
+| evil-ex-nohighlight | :orange_circle: | Clear Evil search highlight |
+| evil-show-marks | :orange_circle: | Show Evil marks |
+| evil-show-registers | :orange_circle: | Show Evil registers |
+| meow-block | :orange_circle: | Select block in Meow |
+| meow-join | :orange_circle: | Join selection in Meow |
+| meow-grab | :orange_circle: | Grab selection in Meow |
+| meow-pop-grab | :orange_circle: | Pop grab in Meow |
+| meow-swap-grab | :orange_circle: | Swap with grab in Meow |
+| boon-set-command-state | :orange_circle: | Enter Boon command state |
+| boon-set-insert-state | :orange_circle: | Enter Boon insert state |
+| boon-set-special-state | :orange_circle: | Enter Boon special state |
+| boon-navigate-backward | :orange_circle: | Navigate backward in Boon |
+| boon-navigate-forward | :orange_circle: | Navigate forward in Boon |
+| god-toggle-on-overwrite | :orange_circle: | Toggle God-mode on overwrite |
+| transient-show-common-commands | :orange_circle: | Show common transient commands |
+| casual-calc-tmenu | :orange_circle: | Casual calc transient menu |
+| casual-info-tmenu | :orange_circle: | Casual info transient menu |
+| casual-isearch-tmenu | :orange_circle: | Casual isearch transient menu |
+| casual-avy-tmenu | :orange_circle: | Casual avy transient menu |
+| casual-bookmarks-tmenu | :orange_circle: | Casual bookmarks transient menu |
+
 ### Round 204 — Vterm-ext, Compile-multi, Envrc, Exec-path, Guix, Apheleia, Format-all, Olivetti
 
 | Feature | Status | Notes |
