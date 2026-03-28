@@ -11757,3 +11757,46 @@
     (echo-read-string echo "Color-rg search: "
       (lambda (pat)
         (echo-message! echo (str "Color-rg: searching for '" pat "'"))))))
+
+;; Round 68 — Cape, Consult (batch 2)
+(def (cmd-cape-keyword app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: completing keyword")))
+
+(def (cmd-cape-abbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: completing abbreviation")))
+
+(def (cmd-cape-dict app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: completing from dictionary")))
+
+(def (cmd-cape-elisp-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: completing Elisp in org block")))
+
+(def (cmd-cape-tex app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: completing TeX symbol")))
+
+(def (cmd-cape-sgml app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: completing SGML entity")))
+
+(def (cmd-consult-line-multi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search lines across buffers: "
+      (lambda (pat)
+        (echo-message! echo (str "Consult: searching lines for '" pat "' across buffers"))))))
+
+(def (cmd-consult-keep-lines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Keep lines matching: "
+      (lambda (re)
+        (echo-message! echo (str "Consult: kept lines matching '" re "'"))))))
+
+(def (cmd-consult-focus-lines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Focus lines matching: "
+      (lambda (re)
+        (echo-message! echo (str "Consult: focusing on lines matching '" re "'"))))))

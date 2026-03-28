@@ -2628,6 +2628,30 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | anzu-replace-at-cursor-thing | :orange_circle: | Replace symbol at cursor |
 | color-rg-search-input | :orange_circle: | Color-rg interactive search |
 
+### Round 68 — Vertico, Corfu, Cape & Consult Extensions
+
+| Feature | Status | Notes |
+|---|---|---|
+| vertico-flat-mode | :orange_circle: | Flat completion display |
+| vertico-grid-mode | :orange_circle: | Grid completion display |
+| vertico-reverse-mode | :orange_circle: | Bottom-up completion |
+| vertico-buffer-mode | :orange_circle: | Buffer-based completion |
+| vertico-multiform-mode | :orange_circle: | Per-command display styles |
+| vertico-unobtrusive-mode | :orange_circle: | Minimal completion UI |
+| corfu-history-mode | :orange_circle: | History-based completion sorting |
+| corfu-popupinfo-mode | :orange_circle: | Popup info for completions |
+| corfu-quick-insert | :orange_circle: | Quick insert completion |
+| corfu-doc-toggle | :orange_circle: | Toggle documentation popup |
+| cape-keyword | :orange_circle: | Complete programming keywords |
+| cape-abbrev | :orange_circle: | Complete abbreviations |
+| cape-dict | :orange_circle: | Complete from dictionary |
+| cape-elisp-block | :orange_circle: | Complete Elisp in org blocks |
+| cape-tex | :orange_circle: | Complete TeX symbols |
+| cape-sgml | :orange_circle: | Complete SGML entities |
+| consult-line-multi | :orange_circle: | Search lines across buffers |
+| consult-keep-lines | :orange_circle: | Keep matching lines |
+| consult-focus-lines | :orange_circle: | Focus on matching lines |
+
 ---
 
 ## Recommended Development Roadmap
