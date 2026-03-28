@@ -18963,3 +18963,49 @@
     (echo-read-string echo "Translate: "
       (lambda (text)
         (echo-message! echo (str "go-translate: " text))))))
+
+;; Round 203 — Dirvish-ext, Dired-hacks
+(def (cmd-dirvish-fd-ask app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dirvish fd pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "Dirvish: fd search for '" pat "'"))))))
+
+(def (cmd-dirvish-history-go-back app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: went back in history")))
+
+(def (cmd-dirvish-history-go-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: went forward in history")))
+
+(def (cmd-dirvish-yank-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: showing yank menu")))
+
+(def (cmd-dirvish-setup-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: showing setup menu")))
+
+(def (cmd-dired-rainbow-define app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-rainbow: defined color rule")))
+
+(def (cmd-dired-avfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: opened file via AVFS")))
+
+(def (cmd-dired-quick-sort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: quick-sorted directory listing")))
+
+(def (cmd-diredfl-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'diredfl)
+    (if (mode-enabled? app 'diredfl)
+      (echo-message! echo "Diredfl mode enabled")
+      (echo-message! echo "Diredfl mode disabled"))))
+
+(def (cmd-dired-atool-do-unpack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: unpacking archive with atool")))

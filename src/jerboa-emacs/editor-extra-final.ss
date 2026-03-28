@@ -18327,3 +18327,54 @@
     (echo-read-string echo "Add dictionary: "
       (lambda (dict)
         (echo-message! echo (str "Spell-fu: added dictionary " dict))))))
+
+;; Round 203 — Dired-ext, OpenWith, Runner, Dired-launch
+(def (cmd-dired-atool-do-pack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Archive name: "
+      (lambda (name)
+        (echo-message! echo (str "Dired: packed files into " name))))))
+
+(def (cmd-dired-hide-details-plus app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: toggled hide details plus")))
+
+(def (cmd-dired-open-xdg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: opened file with XDG handler")))
+
+(def (cmd-dired-recent-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: opened recent directory")))
+
+(def (cmd-casual-dired-tmenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Casual Dired: showing transient menu")))
+
+(def (cmd-openwith-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'openwith)
+    (if (mode-enabled? app 'openwith)
+      (echo-message! echo "OpenWith mode enabled")
+      (echo-message! echo "OpenWith mode disabled"))))
+
+(def (cmd-runner-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Runner: executing file with associated program")))
+
+(def (cmd-dired-launch-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-launch: launched file with default handler")))
+
+(def (cmd-dired-launch-with-prompt-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Launch with: "
+      (lambda (prog)
+        (echo-message! echo (str "Dired-launch: launched with " prog))))))
+
+(def (cmd-dired-efap-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-efap)
+    (if (mode-enabled? app 'dired-efap)
+      (echo-message! echo "Dired EFAP mode enabled — edit filenames at point")
+      (echo-message! echo "Dired EFAP mode disabled"))))

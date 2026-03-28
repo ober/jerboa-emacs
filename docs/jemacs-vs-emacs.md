@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 203 — Dirvish-ext, Dired-hacks, Diredfl, OpenWith, Dired-launch
+
+| Feature | Status | Notes |
+|---|---|---|
+| dirvish-fd-ask | :orange_circle: | Dirvish fd file search |
+| dirvish-history-go-back | :orange_circle: | Go back in Dirvish history |
+| dirvish-history-go-forward | :orange_circle: | Go forward in Dirvish history |
+| dirvish-yank-menu | :orange_circle: | Dirvish yank menu |
+| dirvish-setup-menu | :orange_circle: | Dirvish setup menu |
+| dired-rainbow-define | :orange_circle: | Define Dired rainbow color rule |
+| dired-avfs | :orange_circle: | Open file via AVFS |
+| dired-quick-sort | :orange_circle: | Quick sort directory listing |
+| diredfl-mode | :orange_circle: | Toggle Diredfl extra highlighting |
+| dired-atool-do-unpack | :orange_circle: | Unpack archive with atool |
+| dired-atool-do-pack | :orange_circle: | Pack files with atool |
+| dired-hide-details-plus | :orange_circle: | Toggle hide details plus |
+| dired-open-xdg | :orange_circle: | Open with XDG handler |
+| dired-recent-open | :orange_circle: | Open recent directory |
+| casual-dired-tmenu | :orange_circle: | Casual Dired transient menu |
+| openwith-mode | :orange_circle: | Toggle OpenWith mode |
+| runner-run | :orange_circle: | Run file with associated program |
+| dired-launch-command | :orange_circle: | Launch file with default handler |
+| dired-launch-with-prompt-command | :orange_circle: | Launch file with prompted program |
+| dired-efap-mode | :orange_circle: | Edit filenames at point |
+
 ### Round 202 — Dictionary, Thesaurus, Translation, Spell-fu, Flyspell-correct
 
 | Feature | Status | Notes |
