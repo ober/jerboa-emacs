@@ -3145,6 +3145,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 88 — Rust (rustic), Go & Python Testing
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| rustic-cargo-build | :orange_circle: | Run cargo build |
+| rustic-cargo-run | :orange_circle: | Run cargo run |
+| rustic-cargo-test | :orange_circle: | Run cargo test |
+| rustic-cargo-clippy | :orange_circle: | Run cargo clippy |
+| rustic-format-buffer | :orange_circle: | Format buffer with rustfmt |
+| rustic-cargo-add | :orange_circle: | Add cargo dependency |
+| rustic-cargo-bench | :orange_circle: | Run cargo bench |
+| rustic-cargo-doc | :orange_circle: | Generate cargo docs |
+| rustic-cargo-check | :orange_circle: | Run cargo check |
+| rustic-cargo-fmt | :orange_circle: | Run cargo fmt |
+| go-mode | :orange_circle: | Toggle Go mode |
+| gofmt | :orange_circle: | Format Go buffer |
+| go-test-current-test | :orange_circle: | Run current Go test |
+| go-import-add | :orange_circle: | Add Go import |
+| go-goto-function | :orange_circle: | Navigate to Go function |
+| go-fill-struct | :orange_circle: | Fill Go struct with zero values |
+| lsp-go-generate | :orange_circle: | Run go generate via LSP |
+| python-pytest | :orange_circle: | Run pytest |
+| python-pytest-file | :orange_circle: | Run pytest on current file |
+| python-pytest-function | :orange_circle: | Run pytest on current function |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

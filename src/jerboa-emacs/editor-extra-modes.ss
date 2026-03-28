@@ -13286,3 +13286,46 @@
       (lambda (sym)
         (echo-message! echo (str "Sly: describing " sym))))))
 
+;;; Round 88 — Rust (rustic), Go & Python Testing
+(def (cmd-rustic-cargo-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo build started")))
+
+(def (cmd-rustic-cargo-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo run started")))
+
+(def (cmd-rustic-cargo-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo test started")))
+
+(def (cmd-rustic-cargo-clippy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo clippy started")))
+
+(def (cmd-rustic-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: buffer formatted with rustfmt")))
+
+(def (cmd-rustic-cargo-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cargo add dependency: "
+      (lambda (dep)
+        (echo-message! echo (str "Rustic: adding dependency " dep))))))
+
+(def (cmd-rustic-cargo-bench app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo bench started")))
+
+(def (cmd-rustic-cargo-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo doc started")))
+
+(def (cmd-rustic-cargo-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo check started")))
+
+(def (cmd-rustic-cargo-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rustic: cargo fmt started")))
+

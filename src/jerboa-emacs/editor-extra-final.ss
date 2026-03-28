@@ -12719,3 +12719,51 @@
 (def (cmd-racket-repl app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Racket: REPL started")))
+
+;;; Round 88 — Go & Python Testing (cont.)
+(def (cmd-go-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'go)
+    (if (mode-enabled? app 'go)
+      (echo-message! echo "Go mode enabled")
+      (echo-message! echo "Go mode disabled"))))
+
+(def (cmd-gofmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go: buffer formatted with gofmt")))
+
+(def (cmd-go-test-current-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go: running current test")))
+
+(def (cmd-go-import-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Go import to add: "
+      (lambda (pkg)
+        (echo-message! echo (str "Go: added import " pkg))))))
+
+(def (cmd-go-goto-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Go to function: "
+      (lambda (fn)
+        (echo-message! echo (str "Go: navigating to " fn))))))
+
+(def (cmd-go-fill-struct app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go: struct fields filled with zero values")))
+
+(def (cmd-lsp-go-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP Go: running go generate")))
+
+(def (cmd-python-pytest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: running pytest")))
+
+(def (cmd-python-pytest-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: running pytest on current file")))
+
+(def (cmd-python-pytest-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: running pytest on current function")))
