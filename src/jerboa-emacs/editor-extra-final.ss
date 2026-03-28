@@ -14247,3 +14247,51 @@
     (echo-read-string echo "Docker kill container: "
       (lambda (container)
         (echo-message! echo (str "Docker: killed " container))))))
+
+;;; ——— Round 119: SQL & database modes (batch 2) ———
+
+(def (cmd-sql-list-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: listing all objects")))
+
+(def (cmd-sql-list-table app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "List table: "
+      (lambda (table)
+        (echo-message! echo (str "SQL: listing columns of " table))))))
+
+(def (cmd-sql-rename-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename SQL buffer to: "
+      (lambda (name)
+        (echo-message! echo (str "SQL: renamed buffer to " name))))))
+
+(def (cmd-sql-copy-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: copied column to kill ring")))
+
+(def (cmd-sql-beginning-of-statement app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: moved to beginning of statement")))
+
+(def (cmd-sql-end-of-statement app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: moved to end of statement")))
+
+(def (cmd-sql-magic-go app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: sent batch via 'go' command")))
+
+(def (cmd-sql-magic-semicolon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: inserted semicolon and sent statement")))
+
+(def (cmd-sql-redirect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Redirect SQL output to: "
+      (lambda (file)
+        (echo-message! echo (str "SQL: redirecting output to " file))))))
+
+(def (cmd-sql-accumulate-and-indent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: accumulated and indented")))

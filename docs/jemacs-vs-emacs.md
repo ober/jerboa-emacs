@@ -3939,6 +3939,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | docker-inspect | :orange_circle: | Inspect Docker object |
 | docker-kill | :orange_circle: | Kill Docker container |
 
+### Round 119 — SQL & Database Modes
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| sql-send-paragraph | :orange_circle: | Send current paragraph to SQL process |
+| sql-send-string | :orange_circle: | Send string to SQL process |
+| sql-send-line-and-next | :orange_circle: | Send line and move to next |
+| sql-product-interactive | :orange_circle: | Start interactive SQL session |
+| sql-set-sqli-buffer | :orange_circle: | Set SQLi buffer |
+| sql-toggle-pop-to-buffer-after-send-region | :orange_circle: | Toggle pop to buffer after send |
+| sql-highlight-ansi-keywords | :orange_circle: | Highlight ANSI SQL keywords |
+| sql-highlight-oracle-keywords | :orange_circle: | Highlight Oracle keywords |
+| sql-highlight-postgres-keywords | :orange_circle: | Highlight PostgreSQL keywords |
+| sql-highlight-mysql-keywords | :orange_circle: | Highlight MySQL keywords |
+| sql-list-all | :orange_circle: | List all database objects |
+| sql-list-table | :orange_circle: | List table columns |
+| sql-rename-buffer | :orange_circle: | Rename SQL buffer |
+| sql-copy-column | :orange_circle: | Copy column to kill ring |
+| sql-beginning-of-statement | :orange_circle: | Move to beginning of statement |
+| sql-end-of-statement | :orange_circle: | Move to end of statement |
+| sql-magic-go | :orange_circle: | Send batch via 'go' command |
+| sql-magic-semicolon | :orange_circle: | Insert semicolon and send |
+| sql-redirect | :orange_circle: | Redirect SQL output to file |
+| sql-accumulate-and-indent | :orange_circle: | Accumulate and indent SQL |
+
 ---
 
 ## Recommended Development Roadmap

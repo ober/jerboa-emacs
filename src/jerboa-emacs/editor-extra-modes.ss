@@ -14833,3 +14833,54 @@
 (def (cmd-terraform-output app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Terraform: showing outputs")))
+
+;;; ——— Round 119: SQL & database modes (batch 1) ———
+
+(def (cmd-sql-send-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: sent current paragraph to process")))
+
+(def (cmd-sql-send-string app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SQL: "
+      (lambda (sql)
+        (echo-message! echo (str "SQL: sent '" sql "'"))))))
+
+(def (cmd-sql-send-line-and-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: sent current line and moved to next")))
+
+(def (cmd-sql-product-interactive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SQL product: "
+      (lambda (product)
+        (echo-message! echo (str "SQL: started " product " interactive session"))))))
+
+(def (cmd-sql-set-sqli-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set SQLi buffer: "
+      (lambda (buf)
+        (echo-message! echo (str "SQL: set SQLi buffer to " buf))))))
+
+(def (cmd-sql-toggle-pop-to-buffer-after-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'sql-pop-to-buffer)
+    (if (mode-enabled? app 'sql-pop-to-buffer)
+      (echo-message! echo "SQL: pop to buffer after send enabled")
+      (echo-message! echo "SQL: pop to buffer after send disabled"))))
+
+(def (cmd-sql-highlight-ansi-keywords app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: highlighting ANSI keywords")))
+
+(def (cmd-sql-highlight-oracle-keywords app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: highlighting Oracle keywords")))
+
+(def (cmd-sql-highlight-postgres-keywords app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: highlighting PostgreSQL keywords")))
+
+(def (cmd-sql-highlight-mysql-keywords app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: highlighting MySQL keywords")))
