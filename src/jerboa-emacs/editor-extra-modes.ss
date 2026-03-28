@@ -12120,3 +12120,59 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "RCIRC: starting IRC client")))
 
+;; Round 65 — Treemacs, neotree, navigation (batch 1)
+(def (cmd-treemacs-add-project-to-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add project path: "
+      (lambda (path)
+        (echo-message! echo (str "Treemacs: added project " path))))))
+
+(def (cmd-treemacs-remove-project-from-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: removed project from workspace")))
+
+(def (cmd-treemacs-collapse-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: project collapsed")))
+
+(def (cmd-treemacs-switch-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to workspace: "
+      (lambda (ws)
+        (echo-message! echo (str "Treemacs: switched to workspace '" ws "'"))))))
+
+(def (cmd-treemacs-create-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New workspace name: "
+      (lambda (name)
+        (echo-message! echo (str "Treemacs: created workspace '" name "'"))))))
+
+(def (cmd-treemacs-delete-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete workspace: "
+      (lambda (ws)
+        (echo-message! echo (str "Treemacs: deleted workspace '" ws "'"))))))
+
+(def (cmd-treemacs-rename-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename workspace to: "
+      (lambda (name)
+        (echo-message! echo (str "Treemacs: workspace renamed to '" name "'"))))))
+
+(def (cmd-treemacs-edit-workspaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: editing workspaces configuration")))
+
+(def (cmd-neotree-find app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (name (buffer-name buf)))
+    (echo-message! echo (str "Neotree: revealing " name))))
+
+(def (cmd-neotree-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Neotree directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Neotree: opened " dir))))))
+

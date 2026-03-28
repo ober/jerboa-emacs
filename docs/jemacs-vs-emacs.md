@@ -2554,6 +2554,30 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | elfeed-untag | :orange_circle: | Remove tag from entry |
 | elfeed-search-set-filter | :orange_circle: | Set search filter |
 
+### Round 65 — Treemacs, Neotree & Navigation
+
+| Feature | Status | Notes |
+|---|---|---|
+| treemacs-add-project-to-workspace | :orange_circle: | Add project to treemacs workspace |
+| treemacs-remove-project-from-workspace | :orange_circle: | Remove project from workspace |
+| treemacs-collapse-project | :orange_circle: | Collapse project tree |
+| treemacs-switch-workspace | :orange_circle: | Switch treemacs workspace |
+| treemacs-create-workspace | :orange_circle: | Create new workspace |
+| treemacs-delete-workspace | :orange_circle: | Delete workspace |
+| treemacs-rename-workspace | :orange_circle: | Rename workspace |
+| treemacs-edit-workspaces | :orange_circle: | Edit workspace config |
+| neotree-find | :orange_circle: | Reveal current file in neotree |
+| neotree-dir | :orange_circle: | Open directory in neotree |
+| neotree-hidden-file-toggle | :orange_circle: | Toggle hidden files |
+| imenu-list | :orange_circle: | Show buffer symbols list |
+| imenu-list-smart-toggle | :orange_circle: | Toggle imenu list |
+| speedbar-toggle | :orange_circle: | Toggle speedbar |
+| speedbar-get-focus | :orange_circle: | Focus speedbar |
+| speedbar-update | :orange_circle: | Update speedbar |
+| all-the-icons-dired-mode | :orange_circle: | Icons in dired |
+| all-the-icons-ibuffer-mode | :orange_circle: | Icons in ibuffer |
+| nerd-icons-dired-mode | :orange_circle: | Nerd font icons in dired |
+
 ---
 
 ## Recommended Development Roadmap

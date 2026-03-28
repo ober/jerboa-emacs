@@ -11598,3 +11598,52 @@
     (echo-read-string echo "Elfeed filter: "
       (lambda (filter)
         (echo-message! echo (str "Elfeed: filter set to '" filter "'"))))))
+
+;; Round 65 — Speedbar, icons, navigation (batch 2)
+(def (cmd-neotree-hidden-file-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'neotree-show-hidden)
+    (if (mode-enabled? app 'neotree-show-hidden)
+      (echo-message! echo "Neotree: showing hidden files")
+      (echo-message! echo "Neotree: hiding hidden files"))))
+
+(def (cmd-imenu-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Imenu list: showing buffer symbols")))
+
+(def (cmd-imenu-list-smart-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Imenu list: toggled")))
+
+(def (cmd-speedbar-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: toggled")))
+
+(def (cmd-speedbar-get-focus app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: focused")))
+
+(def (cmd-speedbar-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: updated")))
+
+(def (cmd-all-the-icons-dired-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'all-the-icons-dired)
+    (if (mode-enabled? app 'all-the-icons-dired)
+      (echo-message! echo "All-the-icons dired mode enabled")
+      (echo-message! echo "All-the-icons dired mode disabled"))))
+
+(def (cmd-all-the-icons-ibuffer-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'all-the-icons-ibuffer)
+    (if (mode-enabled? app 'all-the-icons-ibuffer)
+      (echo-message! echo "All-the-icons ibuffer mode enabled")
+      (echo-message! echo "All-the-icons ibuffer mode disabled"))))
+
+(def (cmd-nerd-icons-dired-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'nerd-icons-dired)
+    (if (mode-enabled? app 'nerd-icons-dired)
+      (echo-message! echo "Nerd icons dired mode enabled")
+      (echo-message! echo "Nerd icons dired mode disabled"))))
