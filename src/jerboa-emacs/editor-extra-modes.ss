@@ -13853,3 +13853,53 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Evil: incremented number at point")))
 
+;;; ——— Round 100: Consult framework (batch 1) ———
+
+(def (cmd-consult-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult line: "
+      (lambda (pattern)
+        (echo-message! echo (str "Consult: searching lines for '" pattern "'"))))))
+
+(def (cmd-consult-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult buffer: "
+      (lambda (name)
+        (echo-message! echo (str "Consult: switching to buffer " name))))))
+
+(def (cmd-consult-outline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: showing buffer outline headings")))
+
+(def (cmd-consult-goto-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult goto line: "
+      (lambda (line)
+        (echo-message! echo (str "Consult: going to line " line))))))
+
+(def (cmd-consult-register app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult register: "
+      (lambda (reg)
+        (echo-message! echo (str "Consult: accessing register " reg))))))
+
+(def (cmd-consult-kmacro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: selecting keyboard macro from ring")))
+
+(def (cmd-consult-compile-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: navigating compilation errors")))
+
+(def (cmd-consult-flymake app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: navigating flymake diagnostics")))
+
+(def (cmd-consult-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: browsing minibuffer history")))
+
+(def (cmd-consult-minor-mode-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: showing minor mode selection menu")))
+

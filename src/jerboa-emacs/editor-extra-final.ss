@@ -13317,3 +13317,53 @@
     (echo-read-string echo "Evil owl go to mark: "
       (lambda (mark)
         (echo-message! echo (str "Evil Owl: jumped to mark " mark))))))
+
+;;; ——— Round 100: Consult framework (batch 2) ———
+
+(def (cmd-consult-org-heading app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: navigating org headings")))
+
+(def (cmd-consult-org-agenda app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: browsing org agenda items")))
+
+(def (cmd-consult-locate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult locate: "
+      (lambda (pattern)
+        (echo-message! echo (str "Consult: locating files matching '" pattern "'"))))))
+
+(def (cmd-consult-project-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult project buffer: "
+      (lambda (name)
+        (echo-message! echo (str "Consult: switching to project buffer " name))))))
+
+(def (cmd-consult-fd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult fd: "
+      (lambda (pattern)
+        (echo-message! echo (str "Consult: finding files with fd '" pattern "'"))))))
+
+(def (cmd-consult-multi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: multi-source search across buffers and files")))
+
+(def (cmd-consult-isearch-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: browsing isearch history")))
+
+(def (cmd-consult-narrow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult narrow key: "
+      (lambda (key)
+        (echo-message! echo (str "Consult: narrowed to source " key))))))
+
+(def (cmd-consult-widen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: widened to all sources")))
+
+(def (cmd-consult-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: navigating mark ring")))

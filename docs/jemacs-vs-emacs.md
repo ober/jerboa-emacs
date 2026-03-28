@@ -3464,6 +3464,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | evil-collection-init | :orange_circle: | Evil keybinding collection setup |
 | evil-owl-goto-mark | :orange_circle: | Evil visual mark navigation |
 
+### Round 100 — Consult Framework
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| consult-line | :orange_circle: | Search lines in current buffer |
+| consult-buffer | :orange_circle: | Enhanced buffer switching |
+| consult-outline | :orange_circle: | Navigate buffer outline headings |
+| consult-goto-line | :orange_circle: | Jump to line with preview |
+| consult-register | :orange_circle: | Browse and access registers |
+| consult-kmacro | :orange_circle: | Select keyboard macro from ring |
+| consult-compile-error | :orange_circle: | Navigate compilation errors |
+| consult-flymake | :orange_circle: | Navigate flymake diagnostics |
+| consult-history | :orange_circle: | Browse minibuffer history |
+| consult-minor-mode-menu | :orange_circle: | Toggle minor modes via menu |
+| consult-org-heading | :orange_circle: | Navigate org headings |
+| consult-org-agenda | :orange_circle: | Browse org agenda items |
+| consult-locate | :orange_circle: | Find files via locate |
+| consult-project-buffer | :orange_circle: | Switch project-scoped buffers |
+| consult-fd | :orange_circle: | Find files via fd |
+| consult-multi | :orange_circle: | Multi-source search |
+| consult-isearch-history | :orange_circle: | Browse isearch history |
+| consult-narrow | :orange_circle: | Narrow consult to single source |
+| consult-widen | :orange_circle: | Widen consult to all sources |
+| consult-mark | :orange_circle: | Navigate mark ring |
+
 ---
 
 ## Recommended Development Roadmap
