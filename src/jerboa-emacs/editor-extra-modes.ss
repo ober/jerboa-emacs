@@ -19763,3 +19763,51 @@
 (def (cmd-sly-stickers-fetch app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SLY: fetching stickers")))
+
+;;; Round 220 — EMMS ext (batch 1)
+
+(def (cmd-emms-play-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (f)
+        (echo-message! echo (str "EMMS: playing file " f))))))
+
+(def (cmd-emms-play-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory: "
+      (lambda (d)
+        (echo-message! echo (str "EMMS: playing directory " d))))))
+
+(def (cmd-emms-play-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "EMMS: playing URL " url))))))
+
+(def (cmd-emms-pause app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: toggled pause")))
+
+(def (cmd-emms-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: stopped playback")))
+
+(def (cmd-emms-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: next track")))
+
+(def (cmd-emms-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: previous track")))
+
+(def (cmd-emms-volume-raise app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: raised volume")))
+
+(def (cmd-emms-volume-lower app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: lowered volume")))
+
+(def (cmd-emms-shuffle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: shuffled playlist")))

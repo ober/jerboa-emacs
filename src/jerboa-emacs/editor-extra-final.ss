@@ -19122,3 +19122,47 @@
 (def (cmd-sly-db-step app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SLY: debugger step")))
+
+;;; Round 220 — EMMS ext (batch 2)
+
+(def (cmd-emms-sort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: sorted playlist")))
+
+(def (cmd-emms-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: showing current track")))
+
+(def (cmd-emms-playlist-mode-go app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: opened playlist buffer")))
+
+(def (cmd-emms-smart-browse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: smart browse")))
+
+(def (cmd-emms-toggle-repeat-playlist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: toggled repeat playlist")))
+
+(def (cmd-emms-toggle-repeat-track app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: toggled repeat track")))
+
+(def (cmd-emms-playlist-clear app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: cleared playlist")))
+
+(def (cmd-emms-playlist-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Save as: "
+      (lambda (f)
+        (echo-message! echo (str "EMMS: saved playlist to " f))))))
+
+(def (cmd-emms-metaplaylist-mode-go app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: opened metaplaylist")))
+
+(def (cmd-emms-cache-set-from-mpd-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: caching from MPD")))

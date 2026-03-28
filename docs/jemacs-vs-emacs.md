@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 220 — EMMS ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| emms-play-file | :orange_circle: | Play audio file |
+| emms-play-directory | :orange_circle: | Play directory |
+| emms-play-url | :orange_circle: | Play URL stream |
+| emms-pause | :orange_circle: | Toggle pause |
+| emms-stop | :orange_circle: | Stop playback |
+| emms-next | :orange_circle: | Next track |
+| emms-previous | :orange_circle: | Previous track |
+| emms-volume-raise | :orange_circle: | Raise volume |
+| emms-volume-lower | :orange_circle: | Lower volume |
+| emms-shuffle | :orange_circle: | Shuffle playlist |
+| emms-sort | :orange_circle: | Sort playlist |
+| emms-show | :orange_circle: | Show current track |
+| emms-playlist-mode-go | :orange_circle: | Open playlist buffer |
+| emms-smart-browse | :orange_circle: | Smart browse library |
+| emms-toggle-repeat-playlist | :orange_circle: | Toggle repeat playlist |
+| emms-toggle-repeat-track | :orange_circle: | Toggle repeat track |
+| emms-playlist-clear | :orange_circle: | Clear playlist |
+| emms-playlist-save | :orange_circle: | Save playlist |
+| emms-metaplaylist-mode-go | :orange_circle: | Open metaplaylist |
+| emms-cache-set-from-mpd-all | :orange_circle: | Cache from MPD |
+
 ### Round 219 — SLY ext
 
 | Command | Status | Description |
