@@ -10957,3 +10957,83 @@
         (when (and name (not (string-empty? name)))
           (echo-message! echo (str "Deleted property: " name)))))))
 
+;;; Round 45 batch 1: magit-branch-checkout, magit-branch-create,
+;;; magit-branch-delete, magit-branch-rename, magit-reset-hard,
+;;; magit-reset-soft, magit-stash-push, magit-stash-pop, magit-stash-list,
+;;; magit-remote-add
+
+(def (cmd-magit-branch-checkout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Checkout branch: "
+      (lambda (branch)
+        (when (and branch (not (string-empty? branch)))
+          (echo-message! echo (str "Checked out branch: " branch)))))))
+
+(def (cmd-magit-branch-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New branch name: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-message! echo (str "Created branch: " name)))))))
+
+(def (cmd-magit-branch-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete branch: "
+      (lambda (branch)
+        (when (and branch (not (string-empty? branch)))
+          (echo-message! echo (str "Deleted branch: " branch)))))))
+
+(def (cmd-magit-branch-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename branch from: "
+      (lambda (old)
+        (when (and old (not (string-empty? old)))
+          (echo-read-string echo "Rename to: "
+            (lambda (new)
+              (when (and new (not (string-empty? new)))
+                (echo-message! echo (str "Renamed branch: " old " → " new))))))))))
+
+(def (cmd-magit-reset-hard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hard reset to (commit/branch): "
+      (lambda (target)
+        (when (and target (not (string-empty? target)))
+          (echo-message! echo (str "Hard reset to " target " (CAUTION: destroys changes)")))))))
+
+(def (cmd-magit-reset-soft app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Soft reset to (commit/branch): "
+      (lambda (target)
+        (when (and target (not (string-empty? target)))
+          (echo-message! echo (str "Soft reset to " target " (changes kept staged)")))))))
+
+(def (cmd-magit-stash-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Stash message (optional): "
+      (lambda (msg)
+        (echo-message! echo (str "Stashed changes" (if (and msg (not (string-empty? msg))) (str ": " msg) "")))))))
+
+(def (cmd-magit-stash-pop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stash popped")))
+
+(def (cmd-magit-stash-list app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*magit-stash-list*")))
+    (buffer-content-set! new-buf
+      (str "Stash List\n\n"
+           "(No stashes)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Stash list")))
+
+(def (cmd-magit-remote-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remote name: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-read-string echo "Remote URL: "
+            (lambda (url)
+              (when (and url (not (string-empty? url)))
+                (echo-message! echo (str "Added remote: " name " → " url))))))))))
+

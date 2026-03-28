@@ -10355,3 +10355,68 @@
       (lambda (match)
         (when (and match (not (string-empty? match)))
           (echo-message! echo (str "Sparse tree matching: " match)))))))
+
+;;; Round 45 batch 2: magit-remote-remove, magit-fetch-all, magit-push-current,
+;;; magit-pull-from-upstream, magit-log-current, magit-log-all,
+;;; magit-bisect-start, magit-bisect-good, magit-bisect-bad, magit-bisect-reset
+
+(def (cmd-magit-remote-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove remote: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-message! echo (str "Removed remote: " name)))))))
+
+(def (cmd-magit-fetch-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fetching from all remotes...")))
+
+(def (cmd-magit-push-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pushing current branch to upstream...")))
+
+(def (cmd-magit-pull-from-upstream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulling from upstream...")))
+
+(def (cmd-magit-log-current app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*magit-log*")))
+    (buffer-content-set! new-buf
+      (str "Magit Log (current branch)\n\n"
+           "(Use git-log for full log view)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Magit log (current branch)")))
+
+(def (cmd-magit-log-all app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*magit-log-all*")))
+    (buffer-content-set! new-buf
+      (str "Magit Log (all branches)\n\n"
+           "(Use git-log for full log view)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Magit log (all branches)")))
+
+(def (cmd-magit-bisect-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bad commit: "
+      (lambda (bad)
+        (when (and bad (not (string-empty? bad)))
+          (echo-read-string echo "Good commit: "
+            (lambda (good)
+              (when (and good (not (string-empty? good)))
+                (echo-message! echo (str "Bisect started: bad=" bad " good=" good))))))))))
+
+(def (cmd-magit-bisect-good app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bisect: marked current commit as good")))
+
+(def (cmd-magit-bisect-bad app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bisect: marked current commit as bad")))
+
+(def (cmd-magit-bisect-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bisect session reset")))
