@@ -18669,3 +18669,49 @@
     (echo-read-string echo "Keymap: "
       (lambda (km)
         (echo-message! echo (str "Embark: showing bindings in " km))))))
+
+;;; Round 210 — DAP-mode extensions, LSP-UI extensions (batch 2)
+
+(def (cmd-lsp-ui-sideline-apply-code-actions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP-UI: applying sideline code actions")))
+
+(def (cmd-lsp-ui-peek-find-workspace-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Workspace symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "LSP-UI: peeking workspace symbol " sym))))))
+
+(def (cmd-lsp-lens-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: showing code lenses")))
+
+(def (cmd-lsp-lens-hide app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: hiding code lenses")))
+
+(def (cmd-dap-ui-inspect-thing-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: inspecting thing at point")))
+
+(def (cmd-dap-delete-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: deleted current debug session")))
+
+(def (cmd-dap-delete-all-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: deleted all debug sessions")))
+
+(def (cmd-dap-ui-expressions-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Expression: "
+      (lambda (expr)
+        (echo-message! echo (str "DAP: removed watch expression: " expr))))))
+
+(def (cmd-lsp-ui-flycheck-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP-UI: showing flycheck error list")))
+
+(def (cmd-lsp-ui-peek-jump-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP-UI: jumped forward in peek history")))

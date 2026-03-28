@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 210 — DAP-mode ext, LSP-UI ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| dap-debug-edit-template | :orange_circle: | Edit DAP debug template |
+| dap-debug-restart | :orange_circle: | Restart debug session |
+| dap-debug-last | :orange_circle: | Re-run last debug configuration |
+| dap-breakpoint-condition | :orange_circle: | Set conditional breakpoint |
+| dap-breakpoint-log-message | :orange_circle: | Set breakpoint log message |
+| dap-breakpoint-hit-condition | :orange_circle: | Set breakpoint hit count |
+| dap-eval-thing-at-point | :orange_circle: | Evaluate expression at point in debugger |
+| lsp-ui-doc-glance | :orange_circle: | Glance documentation at point |
+| lsp-ui-doc-unfocus-frame | :orange_circle: | Unfocus documentation frame |
+| lsp-ui-sideline-toggle-symbols-info | :orange_circle: | Toggle sideline symbols info |
+| lsp-ui-sideline-apply-code-actions | :orange_circle: | Apply sideline code actions |
+| lsp-ui-peek-find-workspace-symbol | :orange_circle: | Peek workspace symbol |
+| lsp-lens-show | :orange_circle: | Show code lenses |
+| lsp-lens-hide | :orange_circle: | Hide code lenses |
+| dap-ui-inspect-thing-at-point | :orange_circle: | Inspect thing at point in debugger |
+| dap-delete-session | :orange_circle: | Delete current debug session |
+| dap-delete-all-sessions | :orange_circle: | Delete all debug sessions |
+| dap-ui-expressions-remove | :orange_circle: | Remove watch expression |
+| lsp-ui-flycheck-list | :orange_circle: | Show flycheck error list |
+| lsp-ui-peek-jump-forward | :orange_circle: | Jump forward in peek history |
+
 ### Round 209 — Marginalia-ext, Consult-ext, Vertico-ext, Embark-ext
 
 | Feature | Status | Notes |

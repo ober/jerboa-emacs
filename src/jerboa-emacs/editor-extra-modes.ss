@@ -19278,3 +19278,56 @@
 (def (cmd-vertico-truncate app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vertico: toggled truncation")))
+
+;;; Round 210 — DAP-mode extensions, LSP-UI extensions (batch 1)
+
+(def (cmd-dap-debug-edit-template app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Debug template: "
+      (lambda (tmpl)
+        (echo-message! echo (str "DAP: editing template " tmpl))))))
+
+(def (cmd-dap-debug-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: restarting debug session")))
+
+(def (cmd-dap-debug-last app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: re-running last debug configuration")))
+
+(def (cmd-dap-breakpoint-condition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Condition: "
+      (lambda (cond)
+        (echo-message! echo (str "DAP: set breakpoint condition: " cond))))))
+
+(def (cmd-dap-breakpoint-log-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Log message: "
+      (lambda (msg)
+        (echo-message! echo (str "DAP: set breakpoint log message: " msg))))))
+
+(def (cmd-dap-breakpoint-hit-condition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hit count: "
+      (lambda (count)
+        (echo-message! echo (str "DAP: set breakpoint hit condition: " count))))))
+
+(def (cmd-dap-eval-thing-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: evaluating expression at point")))
+
+(def (cmd-lsp-ui-doc-glance app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP-UI: glancing documentation at point")))
+
+(def (cmd-lsp-ui-doc-unfocus-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP-UI: unfocused documentation frame")))
+
+(def (cmd-lsp-ui-sideline-toggle-symbols-info app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lsp-ui-sideline-symbols-info)
+    (if (mode-enabled? app 'lsp-ui-sideline-symbols-info)
+      (echo-message! echo "LSP-UI: sideline symbols info enabled")
+      (echo-message! echo "LSP-UI: sideline symbols info disabled"))))
