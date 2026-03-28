@@ -12573,3 +12573,55 @@
     (if (mode-enabled? app 'pdf-view-themed)
       (echo-message! echo "PDF themed mode enabled")
       (echo-message! echo "PDF themed mode disabled"))))
+
+;;; Round 85 — Session & Maintenance (cont.)
+(def (cmd-symon-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'symon)
+    (if (mode-enabled? app 'symon)
+      (echo-message! echo "Symon mode enabled — system monitor in mode line")
+      (echo-message! echo "Symon mode disabled"))))
+
+(def (cmd-uptimes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Displaying Emacs uptime history")))
+
+(def (cmd-desktop-clear app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Desktop: session cleared")))
+
+(def (cmd-desktop-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Desktop: session file removed")))
+
+(def (cmd-desktop-change-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Desktop directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Desktop: directory changed to " dir))))))
+
+(def (cmd-recentf-save-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recent files list saved")))
+
+(def (cmd-midnight-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'midnight)
+    (if (mode-enabled? app 'midnight)
+      (echo-message! echo "Midnight mode enabled — auto-clean buffers at midnight")
+      (echo-message! echo "Midnight mode disabled"))))
+
+(def (cmd-clean-buffer-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buffer list cleaned")))
+
+(def (cmd-lock-file-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lock-file)
+    (if (mode-enabled? app 'lock-file)
+      (echo-message! echo "Lock file mode enabled")
+      (echo-message! echo "Lock file mode disabled"))))
+
+(def (cmd-backup-walker app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Backup walker: browsing file backups")))

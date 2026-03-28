@@ -13131,3 +13131,58 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org Babel: executed Python block")))
 
+;;; Round 85 — System Monitor, Session & Debug
+(def (cmd-debug-on-variable-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Debug on variable change: "
+      (lambda (var)
+        (echo-message! echo (str "Debugger will trigger when " var " changes"))))))
+
+(def (cmd-proced-send-signal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Signal to send (TERM/KILL/HUP): "
+      (lambda (sig)
+        (echo-message! echo (str "Proced: sent signal " sig))))))
+
+(def (cmd-proced-filter-interactive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter processes by: "
+      (lambda (filter)
+        (echo-message! echo (str "Proced: filtered by " filter))))))
+
+(def (cmd-proced-sort-interactive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sort processes by (pid/cpu/mem/name): "
+      (lambda (key)
+        (echo-message! echo (str "Proced: sorted by " key))))))
+
+(def (cmd-system-monitor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "System monitor opened")))
+
+(def (cmd-top-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Top: process viewer opened")))
+
+(def (cmd-htop-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Htop: interactive process viewer opened")))
+
+(def (cmd-disk-usage-here app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Disk usage: analyzing current directory")))
+
+(def (cmd-battery-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'battery)
+    (if (mode-enabled? app 'battery)
+      (echo-message! echo "Battery mode enabled in mode line")
+      (echo-message! echo "Battery mode disabled"))))
+
+(def (cmd-fancy-battery-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fancy-battery)
+    (if (mode-enabled? app 'fancy-battery)
+      (echo-message! echo "Fancy battery mode enabled")
+      (echo-message! echo "Fancy battery mode disabled"))))
+

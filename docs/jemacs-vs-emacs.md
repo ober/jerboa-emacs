@@ -3065,6 +3065,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 85 — System Monitor, Session & Debug
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| debug-on-variable-change | :orange_circle: | Debug when variable changes |
+| proced-send-signal | :orange_circle: | Send signal to process |
+| proced-filter-interactive | :orange_circle: | Filter process list |
+| proced-sort-interactive | :orange_circle: | Sort process list |
+| system-monitor-mode | :orange_circle: | Open system monitor |
+| top-mode | :orange_circle: | Process viewer (top) |
+| htop-mode | :orange_circle: | Interactive process viewer (htop) |
+| disk-usage-here | :orange_circle: | Analyze disk usage in current dir |
+| battery-mode | :orange_circle: | Show battery in mode line |
+| fancy-battery-mode | :orange_circle: | Enhanced battery display |
+| symon-mode | :orange_circle: | System monitor in mode line |
+| uptimes | :orange_circle: | Show Emacs uptime history |
+| desktop-clear | :orange_circle: | Clear desktop session |
+| desktop-remove | :orange_circle: | Remove desktop session file |
+| desktop-change-dir | :orange_circle: | Change desktop directory |
+| recentf-save-list | :orange_circle: | Save recent files list |
+| midnight-mode | :orange_circle: | Auto-clean buffers at midnight |
+| clean-buffer-list | :orange_circle: | Clean stale buffers |
+| lock-file-mode | :orange_circle: | Toggle file locking |
+| backup-walker | :orange_circle: | Browse file backups |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
