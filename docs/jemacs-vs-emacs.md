@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 202 — Dictionary, Thesaurus, Translation, Spell-fu, Flyspell-correct
+
+| Feature | Status | Notes |
+|---|---|---|
+| dictionary-lookup-definition | :orange_circle: | Look up word definition |
+| thesaurus-lookup-word | :orange_circle: | Look up word in thesaurus |
+| powerthesaurus-lookup-synonyms | :orange_circle: | PowerThesaurus synonyms |
+| powerthesaurus-lookup-antonyms | :orange_circle: | PowerThesaurus antonyms |
+| google-translate-at-point | :orange_circle: | Google Translate at point |
+| google-translate-at-point-reverse | :orange_circle: | Reverse translate at point |
+| google-translate-buffer | :orange_circle: | Translate entire buffer |
+| deepl-translate | :orange_circle: | DeepL translate text |
+| deepl-translate-region | :orange_circle: | DeepL translate region |
+| go-translate-echo-area | :orange_circle: | Translate in echo area |
+| immersive-translate-mode | :orange_circle: | Toggle immersive translate |
+| langtool-server-start | :orange_circle: | Start LanguageTool server |
+| langtool-server-stop | :orange_circle: | Stop LanguageTool server |
+| flyspell-correct-wrapper | :orange_circle: | Show correction options |
+| flyspell-correct-at-point | :orange_circle: | Correct word at point |
+| flyspell-correct-move | :orange_circle: | Move to next misspelling |
+| spell-fu-mode | :orange_circle: | Toggle spell-fu mode |
+| spell-fu-word-add | :orange_circle: | Add word to dictionary |
+| spell-fu-word-remove | :orange_circle: | Remove word from dictionary |
+| spell-fu-dictionary-add | :orange_circle: | Add dictionary |
+
 ### Round 201 — Notmuch-ext, Mu4e-ext, Message-ext, SMTP, MML
 
 | Feature | Status | Notes |

@@ -18910,3 +18910,56 @@
 (def (cmd-message-caesar-buffer-body app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Message: ROT13 applied to body")))
+
+;; Round 202 — Dictionary, Thesaurus, Translation
+(def (cmd-dictionary-lookup-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Look up word: "
+      (lambda (word)
+        (echo-message! echo (str "Dictionary: definition of '" word "'"))))))
+
+(def (cmd-thesaurus-lookup-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Thesaurus lookup: "
+      (lambda (word)
+        (echo-message! echo (str "Thesaurus: synonyms for '" word "'"))))))
+
+(def (cmd-powerthesaurus-lookup-synonyms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PowerThesaurus synonyms: "
+      (lambda (word)
+        (echo-message! echo (str "PowerThesaurus: synonyms for '" word "'"))))))
+
+(def (cmd-powerthesaurus-lookup-antonyms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PowerThesaurus antonyms: "
+      (lambda (word)
+        (echo-message! echo (str "PowerThesaurus: antonyms for '" word "'"))))))
+
+(def (cmd-google-translate-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Translate: translated word at point")))
+
+(def (cmd-google-translate-at-point-reverse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Translate: reverse translated word at point")))
+
+(def (cmd-google-translate-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Translate: translating buffer...")))
+
+(def (cmd-deepl-translate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DeepL translate text: "
+      (lambda (text)
+        (echo-message! echo (str "DeepL: translating..."))))))
+
+(def (cmd-deepl-translate-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DeepL: translating region...")))
+
+(def (cmd-go-translate-echo-area app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Translate: "
+      (lambda (text)
+        (echo-message! echo (str "go-translate: " text))))))

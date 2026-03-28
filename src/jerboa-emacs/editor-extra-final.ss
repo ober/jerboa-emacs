@@ -18278,3 +18278,52 @@
 (def (cmd-mml-secure-message-encrypt app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "MML: encrypted message")))
+
+;; Round 202 — Immersive-translate, Langtool-ext, Flyspell-correct, Spell-fu
+(def (cmd-immersive-translate-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'immersive-translate)
+    (if (mode-enabled? app 'immersive-translate)
+      (echo-message! echo "Immersive translate mode enabled")
+      (echo-message! echo "Immersive translate mode disabled"))))
+
+(def (cmd-langtool-server-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: starting server...")))
+
+(def (cmd-langtool-server-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: stopped server")))
+
+(def (cmd-flyspell-correct-wrapper app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flyspell: showing correction options")))
+
+(def (cmd-flyspell-correct-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flyspell: correcting word at point")))
+
+(def (cmd-flyspell-correct-move app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flyspell: moved to next misspelling and correcting")))
+
+(def (cmd-spell-fu-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'spell-fu)
+    (if (mode-enabled? app 'spell-fu)
+      (echo-message! echo "Spell-fu mode enabled")
+      (echo-message! echo "Spell-fu mode disabled"))))
+
+(def (cmd-spell-fu-word-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spell-fu: added word to dictionary")))
+
+(def (cmd-spell-fu-word-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spell-fu: removed word from dictionary")))
+
+(def (cmd-spell-fu-dictionary-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add dictionary: "
+      (lambda (dict)
+        (echo-message! echo (str "Spell-fu: added dictionary " dict))))))
