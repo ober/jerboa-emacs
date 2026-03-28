@@ -4423,6 +4423,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 137 — Rust, Go, Haskell, Elixir Modes
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| rust-run | :orange_circle: | Run Rust project |
+| rust-compile | :orange_circle: | Compile Rust project |
+| rust-test | :orange_circle: | Run Rust tests |
+| rust-check | :orange_circle: | Check Rust project |
+| rust-clippy | :orange_circle: | Run Rust clippy |
+| rust-format-buffer | :orange_circle: | Format buffer with rustfmt |
+| cargo-process-bench | :orange_circle: | Run Cargo benchmarks |
+| go-remove-unused-imports | :orange_circle: | Remove unused Go imports |
+| go-goto-imports | :orange_circle: | Jump to Go imports |
+| haskell-process-reload | :orange_circle: | Reload in GHCi |
+| haskell-interactive-switch | :orange_circle: | Switch to Haskell interactive |
+| haskell-navigate-imports | :orange_circle: | Navigate to Haskell imports |
+| haskell-sort-imports | :orange_circle: | Sort Haskell imports |
+| haskell-align-imports | :orange_circle: | Align Haskell imports |
+| elixir-format | :orange_circle: | Format Elixir buffer |
+| elixir-mode-open-docs-at-point | :orange_circle: | Open Elixir docs at point |
+| mix-test | :orange_circle: | Run Mix tests |
+| mix-run | :orange_circle: | Run Mix project |
+| mix-deps-get | :orange_circle: | Get Mix dependencies |
+| alchemist-eval-current-line | :orange_circle: | Evaluate current Elixir line |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
