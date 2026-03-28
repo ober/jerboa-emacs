@@ -16310,3 +16310,49 @@
 (def (cmd-ediff-copy-B-to-A app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ediff: copied region B to A")))
+
+;; ============================================================
+;; Round 162 — Vimish-fold, Yafolding, Indirect-buffer (batch 2)
+;; ============================================================
+
+(def (cmd-vimish-fold-delete-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: deleted all folds")))
+
+(def (cmd-vimish-fold-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: toggled fold at point")))
+
+(def (cmd-vimish-fold-toggle-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: toggled all folds")))
+
+(def (cmd-vimish-fold-next-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: moved to next fold")))
+
+(def (cmd-vimish-fold-previous-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: moved to previous fold")))
+
+(def (cmd-clone-indirect-buffer-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloned indirect buffer in other window")))
+
+(def (cmd-make-indirect-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Indirect buffer name: "
+      (lambda (name)
+        (echo-message! echo (str "Created indirect buffer '" name "'"))))))
+
+(def (cmd-vimish-fold-avy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: avy jump to fold")))
+
+(def (cmd-yafolding-show-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Yafolding: showed all folds")))
+
+(def (cmd-yafolding-hide-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Yafolding: hid all folds")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 162 — Origami, Vimish-fold, Yafolding, Indirect-buffer
+
+| Feature | Status | Notes |
+|---|---|---|
+| `origami-previous-fold` | :orange_circle: | Previous fold |
+| `origami-undo` | :orange_circle: | Undo fold action |
+| `origami-redo` | :orange_circle: | Redo fold action |
+| `origami-reset` | :orange_circle: | Reset all folds |
+| `yafolding-toggle-all` | :orange_circle: | Toggle all folds |
+| `yafolding-toggle-element` | :orange_circle: | Toggle element fold |
+| `yafolding-show-all` | :orange_circle: | Show all folds |
+| `yafolding-hide-all` | :orange_circle: | Hide all folds |
+| `vimish-fold` | :orange_circle: | Create fold from region |
+| `vimish-fold-unfold` | :orange_circle: | Unfold at point |
+| `vimish-fold-unfold-all` | :orange_circle: | Unfold all |
+| `vimish-fold-delete` | :orange_circle: | Delete fold |
+| `vimish-fold-delete-all` | :orange_circle: | Delete all folds |
+| `vimish-fold-toggle` | :orange_circle: | Toggle fold |
+| `vimish-fold-toggle-all` | :orange_circle: | Toggle all folds |
+| `vimish-fold-next-fold` | :orange_circle: | Next fold |
+| `vimish-fold-previous-fold` | :orange_circle: | Previous fold |
+| `vimish-fold-avy` | :orange_circle: | Avy jump to fold |
+| `clone-indirect-buffer-other-window` | :orange_circle: | Clone indirect buffer |
+| `make-indirect-buffer` | :orange_circle: | Make indirect buffer |
+
 ### Round 161 — Ediff, Emerge, Compare-windows Extended
 
 | Feature | Status | Notes |

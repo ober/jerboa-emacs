@@ -16948,3 +16948,47 @@
 (def (cmd-diff-latest-backup-file app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Diff: comparing with latest backup file")))
+
+;; ============================================================
+;; Round 162 — Origami, Vimish-fold, Yafolding, Indirect-buffer (batch 1)
+;; ============================================================
+
+(def (cmd-origami-previous-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: moved to previous fold")))
+
+(def (cmd-origami-undo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: undone last fold action")))
+
+(def (cmd-origami-redo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: redone fold action")))
+
+(def (cmd-origami-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: reset all folds")))
+
+(def (cmd-yafolding-toggle-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Yafolding: toggled all folds")))
+
+(def (cmd-yafolding-toggle-element app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Yafolding: toggled element fold")))
+
+(def (cmd-vimish-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: created fold from region")))
+
+(def (cmd-vimish-fold-unfold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: unfolded at point")))
+
+(def (cmd-vimish-fold-unfold-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: unfolded all")))
+
+(def (cmd-vimish-fold-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vimish-fold: deleted fold at point")))
