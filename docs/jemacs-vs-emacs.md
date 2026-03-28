@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 200 — Pomodoro, Focus, Activities, Burly, Bufler, IBuffer-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| pomodoro-start | :orange_circle: | Start Pomodoro timer |
+| pomodoro-stop | :orange_circle: | Stop Pomodoro timer |
+| pomodoro-pause | :orange_circle: | Pause Pomodoro timer |
+| pomodoro-resume | :orange_circle: | Resume Pomodoro timer |
+| pomodoro-status | :orange_circle: | Show Pomodoro status |
+| focus-pin-buffer | :orange_circle: | Pin buffer in focus mode |
+| focus-unpin-buffer | :orange_circle: | Unpin buffer from focus mode |
+| activities-new | :orange_circle: | Create new activity |
+| activities-resume | :orange_circle: | Resume an activity |
+| activities-suspend | :orange_circle: | Suspend current activity |
+| activities-switch | :orange_circle: | Switch to activity |
+| activities-kill | :orange_circle: | Kill current activity |
+| burly-bookmark-frames | :orange_circle: | Bookmark frames |
+| bufler-list | :orange_circle: | Show Bufler buffer list |
+| bufler-switch-buffer | :orange_circle: | Switch buffer with Bufler |
+| ibuffer-filter-by-process | :orange_circle: | Filter by process |
+| ibuffer-filter-by-used-mode | :orange_circle: | Filter by used mode |
+| ibuffer-filter-by-predicate | :orange_circle: | Filter by predicate |
+| ibuffer-decompose-filter | :orange_circle: | Decompose filter group |
+| ibuffer-nesting-filter-groups | :orange_circle: | Nest filter groups |
+
 ### Round 199 — Denote-ext, Org-roam-ext, Citar-ext, Biblio-ext, Org-ql, Org-sidebar
 
 | Feature | Status | Notes |

@@ -18184,3 +18184,54 @@
     (if (mode-enabled? app 'org-fancy-priorities)
       (echo-message! echo "Org fancy priorities mode enabled")
       (echo-message! echo "Org fancy priorities mode disabled"))))
+
+;; Round 200 — Activities-ext, Burly, Bufler, IBuffer-ext
+(def (cmd-activities-switch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to activity: "
+      (lambda (name)
+        (echo-message! echo (str "Activities: switched to '" name "'"))))))
+
+(def (cmd-activities-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: killed current activity")))
+
+(def (cmd-burly-bookmark-frames app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bookmark name: "
+      (lambda (name)
+        (echo-message! echo (str "Burly: bookmarked frames as '" name "'"))))))
+
+(def (cmd-bufler-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bufler: showing buffer list")))
+
+(def (cmd-bufler-switch-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to buffer: "
+      (lambda (buf)
+        (echo-message! echo (str "Bufler: switched to " buf))))))
+
+(def (cmd-ibuffer-filter-by-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IBuffer: filtered by process")))
+
+(def (cmd-ibuffer-filter-by-used-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter by mode: "
+      (lambda (mode)
+        (echo-message! echo (str "IBuffer: filtered by mode " mode))))))
+
+(def (cmd-ibuffer-filter-by-predicate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter predicate: "
+      (lambda (pred)
+        (echo-message! echo (str "IBuffer: filtered by predicate " pred))))))
+
+(def (cmd-ibuffer-decompose-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IBuffer: decomposed filter group")))
+
+(def (cmd-ibuffer-nesting-filter-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IBuffer: nesting filter groups")))

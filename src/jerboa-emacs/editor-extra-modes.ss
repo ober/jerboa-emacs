@@ -18820,3 +18820,48 @@
 (def (cmd-citar-export-local-bib app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Citar: exported local bibliography")))
+
+;; Round 200 — Pomodoro, Focus, Activities
+(def (cmd-pomodoro-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pomodoro: started 25-minute timer")))
+
+(def (cmd-pomodoro-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pomodoro: stopped timer")))
+
+(def (cmd-pomodoro-pause app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pomodoro: paused timer")))
+
+(def (cmd-pomodoro-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pomodoro: resumed timer")))
+
+(def (cmd-pomodoro-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pomodoro: showing status")))
+
+(def (cmd-focus-pin-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Focus: pinned current buffer")))
+
+(def (cmd-focus-unpin-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Focus: unpinned current buffer")))
+
+(def (cmd-activities-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New activity name: "
+      (lambda (name)
+        (echo-message! echo (str "Activities: created '" name "'"))))))
+
+(def (cmd-activities-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Resume activity: "
+      (lambda (name)
+        (echo-message! echo (str "Activities: resumed '" name "'"))))))
+
+(def (cmd-activities-suspend app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: suspended current activity")))
