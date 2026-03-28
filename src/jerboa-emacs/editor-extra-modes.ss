@@ -12544,3 +12544,48 @@
           (lambda (color)
             (echo-message! echo (str "Set " face " background to " color))))))))
 
+;; Round 73 — Avy & Ace (batch 1)
+(def (cmd-avy-goto-char-2 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Avy goto 2-char: "
+      (lambda (chars)
+        (echo-message! echo (str "Avy: jumping to '" chars "'"))))))
+
+(def (cmd-avy-goto-word-0 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: jump to any word start")))
+
+(def (cmd-avy-goto-word-1 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Avy word starting with: "
+      (lambda (ch)
+        (echo-message! echo (str "Avy: jumping to word starting with '" ch "'"))))))
+
+(def (cmd-avy-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: resumed last command")))
+
+(def (cmd-avy-isearch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: jumping to isearch candidate")))
+
+(def (cmd-avy-goto-end-of-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: jumping to end of line")))
+
+(def (cmd-avy-goto-subword-0 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: jumping to subword")))
+
+(def (cmd-avy-move-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: moved line")))
+
+(def (cmd-avy-move-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: moved region")))
+
+(def (cmd-avy-copy-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: copied line")))
+

@@ -2751,6 +2751,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | font-lock-profiler | :orange_circle: | Profile font-lock performance |
 | ov-highlight-mode | :orange_circle: | Overlay-based highlighting |
 
+### Round 73 — Avy & Ace Navigation
+
+| Feature | Status | Notes |
+|---|---|---|
+| avy-goto-char-2 | :orange_circle: | Jump to 2-character sequence |
+| avy-goto-word-0 | :orange_circle: | Jump to any word start |
+| avy-goto-word-1 | :orange_circle: | Jump to word by first char |
+| avy-resume | :orange_circle: | Resume last avy command |
+| avy-isearch | :orange_circle: | Jump to isearch candidate |
+| avy-goto-end-of-line | :orange_circle: | Jump to end of any line |
+| avy-goto-subword-0 | :orange_circle: | Jump to subword |
+| avy-move-line | :orange_circle: | Move line via avy |
+| avy-move-region | :orange_circle: | Move region via avy |
+| avy-copy-line | :orange_circle: | Copy line via avy |
+| avy-copy-region | :orange_circle: | Copy region via avy |
+| avy-kill-whole-line | :orange_circle: | Kill whole line via avy |
+| avy-kill-region | :orange_circle: | Kill region via avy |
+| avy-kill-ring-save-whole-line | :orange_circle: | Save line to kill ring via avy |
+| avy-kill-ring-save-region | :orange_circle: | Save region to kill ring via avy |
+| ace-swap-window | :orange_circle: | Swap windows via ace |
+| ace-delete-window | :orange_circle: | Delete window via ace |
+| ace-maximize-window | :orange_circle: | Maximize window via ace |
+| ace-select-window | :orange_circle: | Select window via ace |
+| ace-display-buffer | :orange_circle: | Display buffer in ace window |
+
 ---
 
 ## Recommended Development Roadmap

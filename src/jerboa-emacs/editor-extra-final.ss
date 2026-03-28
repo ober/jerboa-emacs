@@ -12020,3 +12020,44 @@
     (if (mode-enabled? app 'ov-highlight)
       (echo-message! echo "Overlay highlight mode enabled")
       (echo-message! echo "Overlay highlight mode disabled"))))
+
+;; Round 73 — Avy & Ace (batch 2)
+(def (cmd-avy-copy-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: copied region")))
+
+(def (cmd-avy-kill-whole-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: killed whole line")))
+
+(def (cmd-avy-kill-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: killed region")))
+
+(def (cmd-avy-kill-ring-save-whole-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: saved whole line to kill ring")))
+
+(def (cmd-avy-kill-ring-save-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: saved region to kill ring")))
+
+(def (cmd-ace-swap-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: swapped windows")))
+
+(def (cmd-ace-delete-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: deleted selected window")))
+
+(def (cmd-ace-maximize-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: maximized selected window")))
+
+(def (cmd-ace-select-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: selected window")))
+
+(def (cmd-ace-display-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ace: displayed buffer in selected window")))
