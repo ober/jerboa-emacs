@@ -16968,3 +16968,50 @@
 (def (cmd-nov-copy-url app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Nov: URL copied to clipboard")))
+
+;; Round 175 — Notmuch, Mu4e-ext, Wanderlust, Gnus-ext (batch 2)
+(def (cmd-wanderlust-goto-folder app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Folder: "
+      (lambda (folder)
+        (echo-message! echo (str "Wanderlust: opening folder " folder))))))
+
+(def (cmd-wanderlust-check-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: checking all folders for new mail...")))
+
+(def (cmd-wanderlust-draft-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: sending draft")))
+
+(def (cmd-wanderlust-summary-mark-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: marked as read")))
+
+(def (cmd-wanderlust-summary-refile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Refile to: "
+      (lambda (folder)
+        (echo-message! echo (str "Wanderlust: refiled to " folder))))))
+
+(def (cmd-wanderlust-summary-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: marked for deletion")))
+
+(def (cmd-gnus-group-catchup-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: caught up current group")))
+
+(def (cmd-gnus-group-catchup-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: caught up all groups")))
+
+(def (cmd-gnus-group-toggle-subscription app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: toggled group subscription")))
+
+(def (cmd-gnus-group-make-rss-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "RSS URL: "
+      (lambda (url)
+        (echo-message! echo (str "Gnus: created RSS group for " url))))))

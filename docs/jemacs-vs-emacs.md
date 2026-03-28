@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 175 — Notmuch, Mu4e-ext, Wanderlust, Gnus-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| notmuch-tree-from-search-thread | :orange_circle: | Tree view from search thread |
+| notmuch-jump-search | :orange_circle: | Jump to saved search |
+| notmuch-address-harvest | :orange_circle: | Harvest addresses from messages |
+| notmuch-draft-save | :orange_circle: | Save notmuch draft |
+| notmuch-draft-resume | :orange_circle: | Resume notmuch draft |
+| notmuch-poll | :orange_circle: | Poll for new mail |
+| notmuch-tag-undo | :orange_circle: | Undo last tag operation |
+| mu4e-compose-edit | :orange_circle: | Edit message as new |
+| mu4e-compose-resend | :orange_circle: | Resend message |
+| mu4e-headers-action | :orange_circle: | Perform action on headers |
+| wanderlust-goto-folder | :orange_circle: | Go to Wanderlust folder |
+| wanderlust-check-all | :orange_circle: | Check all folders for new mail |
+| wanderlust-draft-send | :orange_circle: | Send Wanderlust draft |
+| wanderlust-summary-mark-read | :orange_circle: | Mark message as read |
+| wanderlust-summary-refile | :orange_circle: | Refile message to folder |
+| wanderlust-summary-delete | :orange_circle: | Mark message for deletion |
+| gnus-group-catchup-current | :orange_circle: | Catch up current Gnus group |
+| gnus-group-catchup-all | :orange_circle: | Catch up all Gnus groups |
+| gnus-group-toggle-subscription | :orange_circle: | Toggle group subscription |
+| gnus-group-make-rss-group | :orange_circle: | Create RSS group |
+
 ### Round 174 — Elfeed, Pocket-reader, Wallabag, Nov.el
 
 | Feature | Status | Notes |

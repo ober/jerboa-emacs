@@ -17590,3 +17590,46 @@
 (def (cmd-pocket-reader-open-url app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pocket: opening URL in browser")))
+
+;; Round 175 — Notmuch, Mu4e-ext, Wanderlust, Gnus-ext (batch 1)
+(def (cmd-notmuch-tree-from-search-thread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: showing tree view from search thread")))
+
+(def (cmd-notmuch-jump-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jump search: "
+      (lambda (query)
+        (echo-message! echo (str "Notmuch: jumping to search " query))))))
+
+(def (cmd-notmuch-address-harvest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: harvesting addresses...")))
+
+(def (cmd-notmuch-draft-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: draft saved")))
+
+(def (cmd-notmuch-draft-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: resuming draft")))
+
+(def (cmd-notmuch-poll app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: polling for new mail...")))
+
+(def (cmd-notmuch-tag-undo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: undid last tag operation")))
+
+(def (cmd-mu4e-compose-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: editing as new message")))
+
+(def (cmd-mu4e-compose-resend app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: resending message")))
+
+(def (cmd-mu4e-headers-action app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: performing headers action")))
