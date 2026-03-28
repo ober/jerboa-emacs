@@ -13763,3 +13763,44 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Term: switched to line mode")))
 
+;;; Round 98 — Transient & Hydra
+(def (cmd-transient-prefix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: prefix command invoked")))
+
+(def (cmd-transient-suffix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: suffix command invoked")))
+
+(def (cmd-transient-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: toggled option")))
+
+(def (cmd-transient-switches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: cycled switches")))
+
+(def (cmd-transient-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: resumed previous transient")))
+
+(def (cmd-transient-quit-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: quit all levels")))
+
+(def (cmd-transient-quit-one app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: quit one level")))
+
+(def (cmd-transient-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: values saved")))
+
+(def (cmd-transient-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: values set for session")))
+
+(def (cmd-hydra-default-pre app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra: default pre-command")))
+

@@ -3414,6 +3414,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 98 — Transient & Hydra
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| transient-prefix | :orange_circle: | Invoke transient prefix |
+| transient-suffix | :orange_circle: | Invoke transient suffix |
+| transient-toggle | :orange_circle: | Toggle transient option |
+| transient-switches | :orange_circle: | Cycle transient switches |
+| transient-resume | :orange_circle: | Resume previous transient |
+| transient-quit-all | :orange_circle: | Quit all transient levels |
+| transient-quit-one | :orange_circle: | Quit one transient level |
+| transient-save | :orange_circle: | Save transient values |
+| transient-set | :orange_circle: | Set transient values |
+| hydra-default-pre | :orange_circle: | Hydra default pre-command |
+| hydra-keyboard-quit | :orange_circle: | Quit hydra |
+| hydra-text-scale | :orange_circle: | Hydra text scale menu |
+| hydra-buffer | :orange_circle: | Hydra buffer menu |
+| hydra-git | :orange_circle: | Hydra git menu |
+| hydra-project | :orange_circle: | Hydra project menu |
+| hydra-org | :orange_circle: | Hydra org menu |
+| hydra-flycheck | :orange_circle: | Hydra flycheck menu |
+| hydra-lsp | :orange_circle: | Hydra LSP menu |
+| hydra-smerge | :orange_circle: | Hydra smerge menu |
+| hydra-rectangle | :orange_circle: | Hydra rectangle menu |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
