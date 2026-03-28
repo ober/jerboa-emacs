@@ -8927,3 +8927,99 @@
                     "\n\nTotal: " (length sorted) " active minor modes\n")))
     (editor-set-text ed text)
     (echo-message! echo (str (length sorted) " active modes"))))
+
+;; Round 29 batch 2: profiler-stop, profiler-report, memory-report, emacs-uptime,
+;; emacs-version, emacs-init-time, list-packages, package-install, package-delete,
+;; package-refresh-contents
+
+;; cmd-profiler-stop: Stop the CPU profiler
+(def (cmd-profiler-stop app)
+  (let* ((echo (app-state-echo app))
+         (start (hash-get (app-state-modes app) 'profiler-start-time)))
+    (if (not start)
+      (echo-message! echo "Profiler not running")
+      (let ((elapsed (- (time-second (current-time)) start)))
+        (hash-put! (app-state-modes app) 'profiler-elapsed elapsed)
+        (hash-remove! (app-state-modes app) 'profiler-start-time)
+        (echo-message! echo (str "Profiler stopped after " elapsed " seconds"))))))
+
+;; cmd-profiler-report: Show profiler report
+(def (cmd-profiler-report app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (elapsed (or (hash-get (app-state-modes app) 'profiler-elapsed) 0))
+         (text (str "=== Profiler Report ===\n\n"
+                    "Profile duration: " elapsed " seconds\n\n"
+                    "(Detailed CPU profiling requires Chez Scheme's\n"
+                    " profile-dump-data and related forms.\n"
+                    " Use M-x profiler-start/stop to time sections.)\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Profiler report")))
+
+;; cmd-memory-report: Show memory usage information
+(def (cmd-memory-report app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (buf-count (length buffers))
+         (total-chars (apply + (map (lambda (b) (editor-get-length (buffer-editor b))) buffers)))
+         (text (str "=== Memory Report ===\n\n"
+                    "Buffers: " buf-count "\n"
+                    "Total buffer text: " total-chars " characters\n"
+                    "Estimated buffer memory: ~" (quotient (* total-chars 4) 1024) " KB\n\n"
+                    "Chez Scheme heap:\n"
+                    "  (Use scheme's (statistics) for detailed GC info)\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Memory report")))
+
+;; cmd-emacs-uptime: Show how long jemacs has been running
+(def (cmd-emacs-uptime app)
+  (let* ((echo (app-state-echo app))
+         (start (or (hash-get (app-state-modes app) 'start-time) (time-second (current-time))))
+         (now (time-second (current-time)))
+         (elapsed (- now start))
+         (hours (quotient elapsed 3600))
+         (minutes (quotient (remainder elapsed 3600) 60))
+         (seconds (remainder elapsed 60)))
+    (echo-message! echo (str "Uptime: " hours "h " minutes "m " seconds "s"))))
+
+;; cmd-emacs-version: Show jemacs version
+(def (cmd-emacs-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "jemacs (jerboa-emacs) on Chez Scheme 10.x")))
+
+;; cmd-emacs-init-time: Show initialization time
+(def (cmd-emacs-init-time app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Init time: <not measured> (see startup log)")))
+
+;; cmd-list-packages: List available packages/extensions
+(def (cmd-list-packages app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== Package List ===\n\n"
+                    "jemacs does not yet have a package manager.\n\n"
+                    "Built-in features are available via M-x.\n"
+                    "Custom extensions can be added as .ss files\n"
+                    "in the src/jerboa-emacs/ directory.\n\n"
+                    "For Emacs packages, see: https://melpa.org\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Package list (no package manager yet)")))
+
+;; cmd-package-install: Install a package
+(def (cmd-package-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package manager not available. Add .ss files to src/ instead.")))
+
+;; cmd-package-delete: Delete a package
+(def (cmd-package-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package manager not available.")))
+
+;; cmd-package-refresh-contents: Refresh package list
+(def (cmd-package-refresh-contents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package manager not available.")))

@@ -1686,6 +1686,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Describe key briefly | :orange_circle: | Show key's command |
 | Describe bindings | :orange_circle: | Show all key bindings |
 | Describe mode | :orange_circle: | Show current modes |
+| Describe face | :orange_circle: | Show face/style at point |
+| Describe char | :orange_circle: | Show character details at point |
+| Describe syntax | :orange_circle: | Show syntax class of char at point |
+| Describe categories | :orange_circle: | Show character categories |
+| Apropos command | :orange_circle: | Search commands by pattern |
+| Info/Emacs manual | :orange_circle: | Show jemacs manual reference |
+| View echo area messages | :orange_circle: | Show message history |
+| Toggle debug on error | :orange_circle: | Toggle debug-on-error |
+| Toggle debug on quit | :orange_circle: | Toggle debug-on-quit |
+| Profiler start | :orange_circle: | Start CPU profiler |
+| Profiler stop | :orange_circle: | Stop CPU profiler |
+| Profiler report | :orange_circle: | Show profiler report |
+| Memory report | :orange_circle: | Show memory usage |
+| Emacs uptime | :orange_circle: | Show session uptime |
+| Emacs version | :orange_circle: | Show jemacs version |
+| Emacs init time | :orange_circle: | Show init time |
+| List packages | :orange_circle: | List available packages |
+| Package install | :orange_circle: | Install package (placeholder) |
+| Package delete | :orange_circle: | Delete package (placeholder) |
+| Package refresh contents | :orange_circle: | Refresh packages (placeholder) |
 
 ---
 

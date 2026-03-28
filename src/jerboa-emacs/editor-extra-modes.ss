@@ -9356,3 +9356,150 @@
     (send-message ed SCI_SETREADONLY 1 0)
     (echo-message! echo "Compilation mode")))
 
+;; Round 29 batch 1: describe-face, describe-char, describe-syntax, describe-categories,
+;; apropos-command, info-emacs-manual, view-echo-area-messages, toggle-debug-on-error,
+;; toggle-debug-on-quit, profiler-start
+
+;; cmd-describe-face: Show information about face/style at point
+(def (cmd-describe-face app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (style (send-message ed SCI_GETSTYLEAT pos 0)))
+    (echo-message! echo (str "Face at point: style " style))))
+
+;; cmd-describe-char: Show detailed information about character at point
+(def (cmd-describe-char app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    (if (>= pos len)
+      (echo-message! echo "End of buffer")
+      (let* ((c (string-ref text pos))
+             (code (char->integer c))
+             (info (str "Character: " (if (char=? c #\space) "SPACE" (string c))
+                        "\n  Unicode: U+" (let ((h (number->string code 16)))
+                                            (if (< (string-length h) 4)
+                                              (str (make-string (- 4 (string-length h)) #\0) h) h))
+                        "\n  Decimal: " code
+                        "\n  Octal: " (number->string code 8)
+                        "\n  Category: " (cond
+                                          ((char-alphabetic? c) "letter")
+                                          ((char-numeric? c) "digit")
+                                          ((char-whitespace? c) "whitespace")
+                                          (else "other")))))
+        (echo-message! echo info)))))
+
+;; cmd-describe-syntax: Show syntax table info for character at point
+(def (cmd-describe-syntax app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    (if (>= pos len)
+      (echo-message! echo "End of buffer")
+      (let* ((c (string-ref text pos))
+             (syntax (cond
+                       ((char-alphabetic? c) "word constituent")
+                       ((char-numeric? c) "word constituent")
+                       ((char-whitespace? c) "whitespace")
+                       ((memv c '(#\( #\[ #\{)) "open paren")
+                       ((memv c '(#\) #\] #\})) "close paren")
+                       ((memv c '(#\" #\')) "string quote")
+                       ((char=? c #\;) "comment start")
+                       ((char=? c #\\) "escape")
+                       (else "punctuation"))))
+        (echo-message! echo (str "Syntax of '" (string c) "': " syntax))))))
+
+;; cmd-describe-categories: Show character categories
+(def (cmd-describe-categories app)
+  (let* ((echo (app-state-echo app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (text (str "=== Character Categories ===\n\n"
+                    "a - ASCII\n"
+                    "l - Latin\n"
+                    "g - Greek\n"
+                    "c - Chinese/CJK\n"
+                    "j - Japanese\n"
+                    "k - Korean\n"
+                    "h - Hebrew\n"
+                    "r - Arabic\n"
+                    ". - Base (all others)\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Character categories listed")))
+
+;; cmd-apropos-command: Search for commands matching pattern
+(def (cmd-apropos-command app)
+  (let* ((echo (app-state-echo app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (pattern (echo-read-string echo "Apropos command: ")))
+    (if (or (not pattern) (string=? pattern ""))
+      (echo-message! echo "No pattern specified")
+      (let* ((cmds (hash-keys (app-state-commands app)))
+             (matches (filter (lambda (sym) (string-contains (symbol->string sym) pattern)) cmds))
+             (sorted (sort string<? (map symbol->string matches)))
+             (text (str "=== Apropos Command: \"" pattern "\" ===\n\n"
+                        (if (null? sorted) "No matches found.\n"
+                          (str (string-join (map (lambda (s) (str "  M-x " s)) sorted) "\n")
+                               "\n\n" (length sorted) " commands\n")))))
+        (editor-set-text ed text)
+        (echo-message! echo (str (length sorted) " commands matching \"" pattern "\""))))))
+
+;; cmd-info-emacs-manual: Open the Emacs manual reference
+(def (cmd-info-emacs-manual app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== jemacs Manual ===\n\n"
+                    "jemacs is a Chez Scheme Emacs-like editor.\n\n"
+                    "For help:\n"
+                    "  C-h k     Describe a key binding\n"
+                    "  C-h f     Describe a function\n"
+                    "  M-x cheat-sheet    Quick reference\n"
+                    "  M-x describe-bindings   All key bindings\n"
+                    "  M-x apropos-command    Search commands\n"
+                    "  M-x tutorial-mode      Interactive tutorial\n\n"
+                    "For GNU Emacs manual: https://www.gnu.org/software/emacs/manual/\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "jemacs manual")))
+
+;; cmd-view-echo-area-messages: Show recent echo area messages
+(def (cmd-view-echo-area-messages app)
+  (let* ((echo (app-state-echo app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf)))
+    (editor-set-text ed (str "=== *Messages* ===\n\n"
+                             "(Echo area message history is not persisted yet.\n"
+                             " Recent messages appear in the echo area at bottom.)\n"))
+    (echo-message! echo "Messages buffer")))
+
+;; cmd-toggle-debug-on-error: Toggle debug-on-error mode
+(def (cmd-toggle-debug-on-error app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'debug-on-error)
+    (if (mode-enabled? app 'debug-on-error)
+      (echo-message! echo "Debug on error enabled")
+      (echo-message! echo "Debug on error disabled"))))
+
+;; cmd-toggle-debug-on-quit: Toggle debug-on-quit mode
+(def (cmd-toggle-debug-on-quit app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'debug-on-quit)
+    (if (mode-enabled? app 'debug-on-quit)
+      (echo-message! echo "Debug on quit enabled")
+      (echo-message! echo "Debug on quit disabled"))))
+
+;; cmd-profiler-start: Start the CPU profiler
+(def (cmd-profiler-start app)
+  (let* ((echo (app-state-echo app)))
+    (hash-put! (app-state-modes app) 'profiler-start-time (time-second (current-time)))
+    (echo-message! echo "Profiler started")))
+
