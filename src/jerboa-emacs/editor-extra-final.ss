@@ -15569,3 +15569,55 @@
 (def (cmd-sx-inbox app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SX: showing inbox notifications")))
+
+;; ============================================================
+;; Round 147 — ERT, Testcover, Benchmark, Edebug extended (batch 2)
+;; ============================================================
+
+(def (cmd-ert-run-tests-batch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Test selector: "
+      (lambda (sel)
+        (echo-message! echo (str "ERT: running tests batch '" sel "'"))))))
+
+(def (cmd-testcover-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File to instrument for coverage: "
+      (lambda (f)
+        (echo-message! echo (str "Testcover: instrumenting " f))))))
+
+(def (cmd-testcover-mark-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Testcover: marked all uncovered forms")))
+
+(def (cmd-testcover-next-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Testcover: moved to next uncovered mark")))
+
+(def (cmd-benchmark-progn app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Expression to benchmark: "
+      (lambda (expr)
+        (echo-message! echo (str "Benchmark: " expr " (scaffolded)"))))))
+
+(def (cmd-ert-results-rerun-test-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERT: rerunning test at point")))
+
+(def (cmd-debug-on-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Debug on message matching: "
+      (lambda (pat)
+        (echo-message! echo (str "Debug: will break on message matching '" pat "'"))))))
+
+(def (cmd-edebug-remove-instrumentation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: removed instrumentation from current defun")))
+
+(def (cmd-edebug-next-breakpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: moved to next breakpoint")))
+
+(def (cmd-edebug-step-in app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: stepped into function")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 147 — ELP, Trace, Debugger, Edebug, ERT, Testcover
+
+| Feature | Status | Notes |
+|---|---|---|
+| `elp-restore-all` | :orange_circle: | Restore all ELP-instrumented functions |
+| `trace-function-foreground` | :orange_circle: | Trace function in foreground |
+| `trace-function-background` | :orange_circle: | Trace function in background |
+| `cancel-edebug-on-entry` | :orange_circle: | Cancel edebug-on-entry |
+| `cancel-debug-on-variable-change` | :orange_circle: | Cancel variable watch |
+| `backtrace-toggle-locals` | :orange_circle: | Toggle locals in backtrace |
+| `debugger-step-through` | :orange_circle: | Step through in debugger |
+| `debugger-continue` | :orange_circle: | Continue execution |
+| `debugger-return-value` | :orange_circle: | Return value from frame |
+| `debugger-frame` | :orange_circle: | Show current frame |
+| `ert-run-tests-batch` | :orange_circle: | Run ERT tests in batch |
+| `ert-results-rerun-test-at-point` | :orange_circle: | Rerun test at point |
+| `testcover-start` | :orange_circle: | Start testcover instrumentation |
+| `testcover-mark-all` | :orange_circle: | Mark all uncovered forms |
+| `testcover-next-mark` | :orange_circle: | Next uncovered mark |
+| `benchmark-progn` | :orange_circle: | Benchmark expression |
+| `debug-on-message` | :orange_circle: | Break on matching message |
+| `edebug-remove-instrumentation` | :orange_circle: | Remove edebug instrumentation |
+| `edebug-next-breakpoint` | :orange_circle: | Next edebug breakpoint |
+| `edebug-step-in` | :orange_circle: | Step into function |
+
 ### Round 146 — ERC Extended, Rcirc, SX, Debbugs, Bug-hunter, Misc
 
 | Feature | Status | Notes |

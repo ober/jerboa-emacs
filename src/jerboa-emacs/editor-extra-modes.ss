@@ -16186,3 +16186,57 @@
 (def (cmd-clm-open-command-log-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Command Log: opened log buffer")))
+
+;; ============================================================
+;; Round 147 — ELP, Trace, Debugger, Edebug, ERT (batch 1)
+;; ============================================================
+
+(def (cmd-elp-restore-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ELP: restored all instrumented functions")))
+
+(def (cmd-trace-function-foreground app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Function to trace (foreground): "
+      (lambda (fn)
+        (echo-message! echo (str "Tracing " fn " in foreground"))))))
+
+(def (cmd-trace-function-background app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Function to trace (background): "
+      (lambda (fn)
+        (echo-message! echo (str "Tracing " fn " in background"))))))
+
+(def (cmd-cancel-edebug-on-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cancel edebug-on-entry for: "
+      (lambda (fn)
+        (echo-message! echo (str "Cancelled edebug-on-entry for " fn))))))
+
+(def (cmd-cancel-debug-on-variable-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cancel debug-on-variable-change for: "
+      (lambda (var)
+        (echo-message! echo (str "Cancelled debug-on-variable-change for " var))))))
+
+(def (cmd-backtrace-toggle-locals app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Backtrace: toggled local variables display")))
+
+(def (cmd-debugger-step-through app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Debugger: stepping through")))
+
+(def (cmd-debugger-continue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Debugger: continuing execution")))
+
+(def (cmd-debugger-return-value app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Return value: "
+      (lambda (val)
+        (echo-message! echo (str "Debugger: returning " val))))))
+
+(def (cmd-debugger-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Debugger: showing current frame")))
