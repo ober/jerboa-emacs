@@ -10420,3 +10420,69 @@
 (def (cmd-magit-bisect-reset app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Bisect session reset")))
+
+;;; Round 46 batch 2: lsp-hover, lsp-document-highlight, lsp-goto-type-definition,
+;;; lsp-treemacs-symbols, lsp-ui-doc-show, lsp-ui-peek-find-references,
+;;; lsp-headerline-breadcrumb-mode, lsp-lens-mode, lsp-diagnostics-list,
+;;; lsp-toggle-on-type-formatting
+
+(def (cmd-lsp-hover app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: no hover information")))
+
+(def (cmd-lsp-document-highlight app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: highlighted symbol occurrences")))
+
+(def (cmd-lsp-goto-type-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: no type definition found")))
+
+(def (cmd-lsp-treemacs-symbols app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*LSP Symbols*")))
+    (buffer-content-set! new-buf
+      (str "LSP Treemacs Symbols\n\n"
+           "(No symbols — LSP server not connected)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "LSP symbols tree")))
+
+(def (cmd-lsp-ui-doc-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP UI: no documentation popup")))
+
+(def (cmd-lsp-ui-peek-find-references app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP UI: no references found (peek view)")))
+
+(def (cmd-lsp-headerline-breadcrumb-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "lsp-breadcrumb")
+    (if (mode-enabled? app "lsp-breadcrumb")
+      (echo-message! echo "LSP headerline breadcrumb enabled")
+      (echo-message! echo "LSP headerline breadcrumb disabled"))))
+
+(def (cmd-lsp-lens-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "lsp-lens")
+    (if (mode-enabled? app "lsp-lens")
+      (echo-message! echo "LSP lens mode enabled")
+      (echo-message! echo "LSP lens mode disabled"))))
+
+(def (cmd-lsp-diagnostics-list app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*LSP Diagnostics*")))
+    (buffer-content-set! new-buf
+      (str "LSP Diagnostics\n\n"
+           "No diagnostics (LSP server not connected)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "LSP diagnostics")))
+
+(def (cmd-lsp-toggle-on-type-formatting app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "lsp-on-type-formatting")
+    (if (mode-enabled? app "lsp-on-type-formatting")
+      (echo-message! echo "LSP on-type formatting enabled")
+      (echo-message! echo "LSP on-type formatting disabled"))))

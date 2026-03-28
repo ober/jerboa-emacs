@@ -2082,6 +2082,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Magit bisect bad | :orange_circle: | Mark commit as bad |
 | Magit bisect reset | :orange_circle: | Reset bisect session |
 
+### Round 46
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| LSP describe thing at point | :orange_circle: | Show LSP documentation |
+| LSP find implementation | :orange_circle: | Jump to implementation |
+| LSP workspace restart | :orange_circle: | Restart LSP server |
+| LSP workspace shutdown | :orange_circle: | Shutdown LSP server |
+| LSP organize imports | :orange_circle: | Auto-organize imports |
+| LSP format region | :orange_circle: | Format selected region |
+| LSP rename symbol | :orange_circle: | Rename symbol across project |
+| LSP code actions | :orange_circle: | Show available code actions |
+| LSP execute code action | :orange_circle: | Execute a code action |
+| LSP signature help | :orange_circle: | Show function signature |
+| LSP hover | :orange_circle: | Show hover information |
+| LSP document highlight | :orange_circle: | Highlight symbol occurrences |
+| LSP goto type definition | :orange_circle: | Jump to type definition |
+| LSP treemacs symbols | :orange_circle: | Show symbols in tree view |
+| LSP UI doc show | :orange_circle: | Show documentation popup |
+| LSP UI peek find references | :orange_circle: | Peek at references |
+| LSP headerline breadcrumb | :orange_circle: | Toggle breadcrumb display |
+| LSP lens mode | :orange_circle: | Toggle code lens annotations |
+| LSP diagnostics list | :orange_circle: | List all diagnostics |
+| LSP toggle on type formatting | :orange_circle: | Toggle format-as-you-type |
+
 ---
 
 ## Recommended Development Roadmap

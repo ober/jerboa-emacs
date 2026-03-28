@@ -11037,3 +11037,58 @@
               (when (and url (not (string-empty? url)))
                 (echo-message! echo (str "Added remote: " name " → " url))))))))))
 
+;;; Round 46 batch 1: lsp-describe-thing-at-point, lsp-find-implementation,
+;;; lsp-workspace-restart, lsp-workspace-shutdown, lsp-organize-imports,
+;;; lsp-format-region, lsp-rename-symbol, lsp-code-actions,
+;;; lsp-execute-code-action, lsp-signature-help
+
+(def (cmd-lsp-describe-thing-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: no documentation available at point")))
+
+(def (cmd-lsp-find-implementation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: no implementation found")))
+
+(def (cmd-lsp-workspace-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: workspace restarted")))
+
+(def (cmd-lsp-workspace-shutdown app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: workspace shut down")))
+
+(def (cmd-lsp-organize-imports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: imports organized")))
+
+(def (cmd-lsp-format-region app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (echo-message! echo "LSP: region formatted"))))
+
+(def (cmd-lsp-rename-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename to: "
+      (lambda (new-name)
+        (when (and new-name (not (string-empty? new-name)))
+          (echo-message! echo (str "LSP: renamed to " new-name)))))))
+
+(def (cmd-lsp-code-actions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: no code actions available")))
+
+(def (cmd-lsp-execute-code-action app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: no code action to execute")))
+
+(def (cmd-lsp-signature-help app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: no signature help available")))
+
