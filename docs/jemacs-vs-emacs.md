@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 160 — Outline, Origami Folding
+
+| Feature | Status | Notes |
+|---|---|---|
+| `outline-minor-mode` | :orange_circle: | Outline minor mode |
+| `outline-hide-entry` | :orange_circle: | Hide entry body |
+| `outline-show-entry` | :orange_circle: | Show entry body |
+| `outline-hide-leaves` | :orange_circle: | Hide leaves |
+| `outline-show-branches` | :orange_circle: | Show branches |
+| `outline-hide-other` | :orange_circle: | Hide everything else |
+| `outline-show-children` | :orange_circle: | Show direct children |
+| `outline-mark-subtree` | :orange_circle: | Mark subtree |
+| `outline-move-subtree-up` | :orange_circle: | Move subtree up |
+| `outline-move-subtree-down` | :orange_circle: | Move subtree down |
+| `outline-promote` | :orange_circle: | Promote heading |
+| `outline-demote` | :orange_circle: | Demote heading |
+| `origami-toggle-node` | :orange_circle: | Toggle fold |
+| `origami-toggle-all-nodes` | :orange_circle: | Toggle all folds |
+| `origami-close-node` | :orange_circle: | Close fold |
+| `origami-open-node` | :orange_circle: | Open fold |
+| `origami-close-all-nodes` | :orange_circle: | Close all folds |
+| `origami-open-all-nodes` | :orange_circle: | Open all folds |
+| `origami-show-only-node` | :orange_circle: | Show only current |
+| `origami-next-fold` | :orange_circle: | Next fold |
+
 ### Round 159 — Magit, Git-link, Blamer, Smerge Extended
 
 | Feature | Status | Notes |

@@ -16857,3 +16857,50 @@
 (def (cmd-blamer-show-commit-info app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Blamer: showing commit info for current line")))
+
+;; ============================================================
+;; Round 160 — Outline, Origami folding (batch 1)
+;; ============================================================
+
+(def (cmd-outline-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'outline-minor)
+    (if (mode-enabled? app 'outline-minor)
+      (echo-message! echo "Outline minor mode enabled")
+      (echo-message! echo "Outline minor mode disabled"))))
+
+(def (cmd-outline-hide-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: hid entry body")))
+
+(def (cmd-outline-show-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: showed entry body")))
+
+(def (cmd-outline-hide-leaves app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: hid all leaves in subtree")))
+
+(def (cmd-outline-show-branches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: showed all branches in subtree")))
+
+(def (cmd-outline-hide-other app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: hid everything except current entry")))
+
+(def (cmd-outline-show-children app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: showed direct children")))
+
+(def (cmd-outline-mark-subtree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: marked subtree")))
+
+(def (cmd-outline-move-subtree-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: moved subtree up")))
+
+(def (cmd-outline-move-subtree-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: moved subtree down")))

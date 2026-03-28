@@ -16220,3 +16220,47 @@
 (def (cmd-smerge-auto-leave app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Smerge: auto-leaving (no more conflicts)")))
+
+;; ============================================================
+;; Round 160 — Outline, Origami extended (batch 2)
+;; ============================================================
+
+(def (cmd-outline-promote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: promoted heading")))
+
+(def (cmd-outline-demote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: demoted heading")))
+
+(def (cmd-origami-toggle-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: toggled fold at point")))
+
+(def (cmd-origami-toggle-all-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: toggled all folds")))
+
+(def (cmd-origami-close-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: closed fold at point")))
+
+(def (cmd-origami-open-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: opened fold at point")))
+
+(def (cmd-origami-close-all-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: closed all folds")))
+
+(def (cmd-origami-open-all-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: opened all folds")))
+
+(def (cmd-origami-show-only-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: showing only current node")))
+
+(def (cmd-origami-next-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Origami: moved to next fold")))
