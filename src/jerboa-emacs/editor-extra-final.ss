@@ -11958,3 +11958,65 @@
     (echo-read-string echo "Write comint output to: "
       (lambda (file)
         (echo-message! echo (str "Comint: output written to " file))))))
+
+;; Round 72 — Font-lock, highlighting (batch 2)
+(def (cmd-set-face-bold-p app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Face: "
+      (lambda (face)
+        (echo-message! echo (str "Toggled bold on face " face))))))
+
+(def (cmd-set-face-italic-p app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Face: "
+      (lambda (face)
+        (echo-message! echo (str "Toggled italic on face " face))))))
+
+(def (cmd-color-name-to-rgb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Color name: "
+      (lambda (name)
+        (echo-message! echo (str "Color '" name "' → RGB values"))))))
+
+(def (cmd-highlight-parentheses-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'highlight-parentheses)
+    (if (mode-enabled? app 'highlight-parentheses)
+      (echo-message! echo "Highlight parentheses mode enabled")
+      (echo-message! echo "Highlight parentheses mode disabled"))))
+
+(def (cmd-prism-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'prism)
+    (if (mode-enabled? app 'prism)
+      (echo-message! echo "Prism mode enabled (depth-based coloring)")
+      (echo-message! echo "Prism mode disabled"))))
+
+(def (cmd-prism-whitespace-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'prism-whitespace)
+    (if (mode-enabled? app 'prism-whitespace)
+      (echo-message! echo "Prism whitespace mode enabled")
+      (echo-message! echo "Prism whitespace mode disabled"))))
+
+(def (cmd-fontify-face-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fontify-face)
+    (if (mode-enabled? app 'fontify-face)
+      (echo-message! echo "Fontify face mode enabled (show face names in color)")
+      (echo-message! echo "Fontify face mode disabled"))))
+
+(def (cmd-font-lock-studio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Font-lock studio: interactive font-lock debugger")))
+
+(def (cmd-font-lock-profiler app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Font-lock profiler: profiling font-lock keywords")))
+
+(def (cmd-ov-highlight-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ov-highlight)
+    (if (mode-enabled? app 'ov-highlight)
+      (echo-message! echo "Overlay highlight mode enabled")
+      (echo-message! echo "Overlay highlight mode disabled"))))

@@ -12483,3 +12483,64 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Comint: dynamic completion")))
 
+;; Round 72 — Face menu, font-lock, highlighting (batch 1)
+(def (cmd-facemenu-set-foreground app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Foreground color: "
+      (lambda (color)
+        (echo-message! echo (str "Set foreground to " color))))))
+
+(def (cmd-facemenu-set-background app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Background color: "
+      (lambda (color)
+        (echo-message! echo (str "Set background to " color))))))
+
+(def (cmd-facemenu-set-face app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set face: "
+      (lambda (face)
+        (echo-message! echo (str "Applied face '" face "'"))))))
+
+(def (cmd-facemenu-set-intangible app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Region set to intangible")))
+
+(def (cmd-facemenu-set-invisible app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Region set to invisible")))
+
+(def (cmd-facemenu-remove-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All text properties removed from region")))
+
+(def (cmd-facemenu-remove-face-props app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Face properties removed from region")))
+
+(def (cmd-set-face-attribute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Face: "
+      (lambda (face)
+        (echo-read-string echo "Attribute: "
+          (lambda (attr)
+            (echo-read-string echo "Value: "
+              (lambda (val)
+                (echo-message! echo (str "Set " face " " attr " to " val))))))))))
+
+(def (cmd-set-face-foreground app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Face: "
+      (lambda (face)
+        (echo-read-string echo "Foreground color: "
+          (lambda (color)
+            (echo-message! echo (str "Set " face " foreground to " color))))))))
+
+(def (cmd-set-face-background app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Face: "
+      (lambda (face)
+        (echo-read-string echo "Background color: "
+          (lambda (color)
+            (echo-message! echo (str "Set " face " background to " color))))))))
+

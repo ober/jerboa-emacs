@@ -2726,6 +2726,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | comint-truncate-buffer | :orange_circle: | Truncate comint buffer |
 | comint-write-output | :orange_circle: | Write output to file |
 
+### Round 72 — Face Menu, Font-Lock & Highlighting
+
+| Feature | Status | Notes |
+|---|---|---|
+| facemenu-set-foreground | :orange_circle: | Set text foreground color |
+| facemenu-set-background | :orange_circle: | Set text background color |
+| facemenu-set-face | :orange_circle: | Apply named face to region |
+| facemenu-set-intangible | :orange_circle: | Make region intangible |
+| facemenu-set-invisible | :orange_circle: | Make region invisible |
+| facemenu-remove-all | :orange_circle: | Remove all text properties |
+| facemenu-remove-face-props | :orange_circle: | Remove face properties |
+| set-face-attribute | :orange_circle: | Set face attribute |
+| set-face-foreground | :orange_circle: | Set face foreground |
+| set-face-background | :orange_circle: | Set face background |
+| set-face-bold-p | :orange_circle: | Toggle face bold |
+| set-face-italic-p | :orange_circle: | Toggle face italic |
+| color-name-to-rgb | :orange_circle: | Convert color name to RGB |
+| highlight-parentheses-mode | :orange_circle: | Highlight surrounding parens |
+| prism-mode | :orange_circle: | Depth-based code coloring |
+| prism-whitespace-mode | :orange_circle: | Prism for whitespace |
+| fontify-face-mode | :orange_circle: | Show face names in color |
+| font-lock-studio | :orange_circle: | Interactive font-lock debugger |
+| font-lock-profiler | :orange_circle: | Profile font-lock performance |
+| ov-highlight-mode | :orange_circle: | Overlay-based highlighting |
+
 ---
 
 ## Recommended Development Roadmap
