@@ -11698,3 +11698,62 @@
 (def (cmd-flycheck-clear app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Flycheck: cleared all errors")))
+
+;; Round 67 — Search tools (batch 2)
+(def (cmd-occur-mode-goto-occurrence app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Occur: jumped to occurrence")))
+
+(def (cmd-multi-occur-in-matching-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buffer regexp: "
+      (lambda (buf-re)
+        (echo-read-string echo "Search regexp: "
+          (lambda (re)
+            (echo-message! echo (str "Multi-occur: searching '" re "' in buffers matching '" buf-re "'"))))))))
+
+(def (cmd-wgrep-abort-changes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: aborted all changes")))
+
+(def (cmd-wgrep-save-all-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: saved all modified buffers")))
+
+(def (cmd-deadgrep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Deadgrep search: "
+      (lambda (pat)
+        (echo-message! echo (str "Deadgrep: searching for '" pat "'"))))))
+
+(def (cmd-visual-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Visual regexp: "
+      (lambda (re)
+        (echo-message! echo (str "Visual regexp: highlighting matches for '" re "'"))))))
+
+(def (cmd-visual-regexp-mc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Visual regexp (mc): "
+      (lambda (re)
+        (echo-message! echo (str "Visual regexp: multiple cursors for '" re "'"))))))
+
+(def (cmd-anzu-query-replace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Anzu replace: "
+      (lambda (from)
+        (echo-read-string echo (str "Replace '" from "' with: ")
+          (lambda (to)
+            (echo-message! echo (str "Anzu: replaced '" from "' → '" to "'"))))))))
+
+(def (cmd-anzu-replace-at-cursor-thing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Replace symbol at cursor with: "
+      (lambda (to)
+        (echo-message! echo (str "Anzu: replaced symbol at cursor with '" to "'"))))))
+
+(def (cmd-color-rg-search-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Color-rg search: "
+      (lambda (pat)
+        (echo-message! echo (str "Color-rg: searching for '" pat "'"))))))

@@ -2603,6 +2603,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | flycheck-buffer | :orange_circle: | Check current buffer |
 | flycheck-clear | :orange_circle: | Clear all errors |
 
+### Round 67 — Isearch Extensions & Search Tools
+
+| Feature | Status | Notes |
+|---|---|---|
+| isearch-toggle-lax-whitespace | :orange_circle: | Toggle lax whitespace matching |
+| isearch-toggle-case-fold | :orange_circle: | Toggle case sensitivity |
+| isearch-toggle-invisible | :orange_circle: | Toggle invisible text search |
+| isearch-toggle-word | :orange_circle: | Toggle word search mode |
+| isearch-toggle-symbol | :orange_circle: | Toggle symbol search mode |
+| isearch-yank-word-or-char | :orange_circle: | Yank word/char into search |
+| isearch-yank-line | :orange_circle: | Yank rest of line into search |
+| isearch-yank-kill | :orange_circle: | Yank kill ring into search |
+| isearch-del-char | :orange_circle: | Delete char from search string |
+| isearch-describe-bindings | :orange_circle: | Show isearch bindings |
+| occur-mode-goto-occurrence | :orange_circle: | Jump to occur match |
+| multi-occur-in-matching-buffers | :orange_circle: | Multi-occur in matching buffers |
+| wgrep-abort-changes | :orange_circle: | Abort wgrep changes |
+| wgrep-save-all-buffers | :orange_circle: | Save all wgrep buffers |
+| deadgrep | :orange_circle: | Fast ripgrep-based search |
+| visual-regexp | :orange_circle: | Visual regexp highlighting |
+| visual-regexp-mc | :orange_circle: | Visual regexp with multiple cursors |
+| anzu-query-replace | :orange_circle: | Anzu search-and-replace |
+| anzu-replace-at-cursor-thing | :orange_circle: | Replace symbol at cursor |
+| color-rg-search-input | :orange_circle: | Color-rg interactive search |
+
 ---
 
 ## Recommended Development Roadmap

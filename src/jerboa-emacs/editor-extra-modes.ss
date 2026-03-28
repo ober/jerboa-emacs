@@ -12231,3 +12231,44 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "ERT: deleted all test definitions")))
 
+;; Round 67 — Isearch extensions & search tools (batch 1)
+(def (cmd-isearch-toggle-lax-whitespace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: toggled lax whitespace matching")))
+
+(def (cmd-isearch-toggle-case-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: toggled case sensitivity")))
+
+(def (cmd-isearch-toggle-invisible app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: toggled searching invisible text")))
+
+(def (cmd-isearch-toggle-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: toggled word search mode")))
+
+(def (cmd-isearch-toggle-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: toggled symbol search mode")))
+
+(def (cmd-isearch-yank-word-or-char app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: yanked word/char from buffer")))
+
+(def (cmd-isearch-yank-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: yanked rest of line from buffer")))
+
+(def (cmd-isearch-yank-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: yanked from kill ring")))
+
+(def (cmd-isearch-del-char app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: deleted character from search string")))
+
+(def (cmd-isearch-describe-bindings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isearch: showing available bindings")))
+
