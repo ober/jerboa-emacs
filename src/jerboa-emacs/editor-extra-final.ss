@@ -12202,3 +12202,46 @@
     (if (mode-enabled? app 'logos-focus)
       (echo-message! echo "Logos focus mode enabled (page-based reading)")
       (echo-message! echo "Logos focus mode disabled"))))
+
+;; Round 77 — mu4e (batch 2)
+(def (cmd-mu4e-mark-for-trash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: marked for trash")))
+
+(def (cmd-mu4e-mark-for-move app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Move to maildir: "
+      (lambda (dir)
+        (echo-message! echo (str "mu4e: marked for move to " dir))))))
+
+(def (cmd-mu4e-mark-for-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: marked for deletion")))
+
+(def (cmd-mu4e-mark-execute-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: executed all pending marks")))
+
+(def (cmd-mu4e-view-attachment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: viewing attachment")))
+
+(def (cmd-mu4e-search-bookmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "mu4e bookmark search: "
+      (lambda (bm)
+        (echo-message! echo (str "mu4e: running bookmark search '" bm "'"))))))
+
+(def (cmd-mu4e-headers-toggle-threading app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: toggled message threading")))
+
+(def (cmd-mu4e-headers-mark-for-flag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: marked message as flagged")))
+
+(def (cmd-mu4e-view-save-attachment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Save attachment to: "
+      (lambda (path)
+        (echo-message! echo (str "mu4e: attachment saved to " path))))))

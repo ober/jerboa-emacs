@@ -2850,6 +2850,30 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | titlecase-dwim | :orange_circle: | Smart title case |
 | logos-focus-mode | :orange_circle: | Page-based focused reading |
 
+### Round 77 — Notmuch & mu4e Mail
+
+| Feature | Status | Notes |
+|---|---|---|
+| notmuch | :orange_circle: | Open Notmuch mail client |
+| notmuch-mua-send | :orange_circle: | Send message via Notmuch |
+| notmuch-mua-new-mail | :orange_circle: | Compose new mail |
+| notmuch-hello | :orange_circle: | Notmuch hello screen |
+| mu4e | :orange_circle: | Open mu4e mail client |
+| mu4e-compose-new | :orange_circle: | Compose new mu4e message |
+| mu4e-headers-search | :orange_circle: | Search mail headers |
+| mu4e-update-mail-and-index | :orange_circle: | Fetch and index mail |
+| mu4e-compose-reply | :orange_circle: | Reply to message |
+| mu4e-compose-forward | :orange_circle: | Forward message |
+| mu4e-mark-for-trash | :orange_circle: | Mark for trash |
+| mu4e-mark-for-move | :orange_circle: | Mark for move to maildir |
+| mu4e-mark-for-delete | :orange_circle: | Mark for deletion |
+| mu4e-mark-execute-all | :orange_circle: | Execute all marks |
+| mu4e-view-attachment | :orange_circle: | View attachment |
+| mu4e-search-bookmark | :orange_circle: | Search by bookmark |
+| mu4e-headers-toggle-threading | :orange_circle: | Toggle message threading |
+| mu4e-headers-mark-for-flag | :orange_circle: | Flag message |
+| mu4e-view-save-attachment | :orange_circle: | Save attachment to file |
+
 ---
 
 ## Recommended Development Roadmap

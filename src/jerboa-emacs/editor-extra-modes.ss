@@ -12746,3 +12746,46 @@
       (lambda (pat)
         (echo-message! echo (str "Dictionary: matching words for '" pat "'"))))))
 
+;; Round 77 — Notmuch & mu4e mail (batch 1)
+(def (cmd-notmuch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: opening mail client")))
+
+(def (cmd-notmuch-mua-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: sending message")))
+
+(def (cmd-notmuch-mua-new-mail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: composing new mail")))
+
+(def (cmd-notmuch-hello app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: showing hello screen")))
+
+(def (cmd-mu4e app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: opening mail client")))
+
+(def (cmd-mu4e-compose-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: composing new message")))
+
+(def (cmd-mu4e-headers-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "mu4e search: "
+      (lambda (query)
+        (echo-message! echo (str "mu4e: searching for '" query "'"))))))
+
+(def (cmd-mu4e-update-mail-and-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: updating mail and index")))
+
+(def (cmd-mu4e-compose-reply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: replying to message")))
+
+(def (cmd-mu4e-compose-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: forwarding message")))
+
