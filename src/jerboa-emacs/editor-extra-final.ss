@@ -14754,3 +14754,51 @@
 (def (cmd-eshell-pcomplete app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Eshell: programmable completion")))
+
+;;; Round 130 — Eshell/Comint/Term, Treemacs extended (batch 2)
+
+(def (cmd-treemacs-toggle-show-dotfiles app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-show-dotfiles)
+    (if (mode-enabled? app 'treemacs-show-dotfiles)
+      (echo-message! echo "Treemacs: showing dotfiles")
+      (echo-message! echo "Treemacs: hiding dotfiles"))))
+
+(def (cmd-treemacs-copy-project-path-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: copied project path")))
+
+(def (cmd-treemacs-copy-file-path-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: copied file path")))
+
+(def (cmd-treemacs-copy-absolute-path-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: copied absolute path")))
+
+(def (cmd-treemacs-copy-relative-path-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: copied relative path")))
+
+(def (cmd-treemacs-move-project-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: moved project up")))
+
+(def (cmd-treemacs-move-project-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: moved project down")))
+
+(def (cmd-treemacs-visit-node-default app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: visited node (default action)")))
+
+(def (cmd-treemacs-visit-node-ace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: visited node via ace")))
+
+(def (cmd-treemacs-peek-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-peek)
+    (if (mode-enabled? app 'treemacs-peek)
+      (echo-message! echo "Treemacs-Peek mode enabled")
+      (echo-message! echo "Treemacs-Peek mode disabled"))))

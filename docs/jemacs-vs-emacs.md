@@ -4234,6 +4234,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 130 — Eshell/Comint/Term, Treemacs Extended
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| eshell-list-history | :orange_circle: | List eshell command history |
+| eshell-previous-prompt | :orange_circle: | Move to previous eshell prompt |
+| eshell-next-prompt | :orange_circle: | Move to next eshell prompt |
+| comint-previous-matching-input-from-input | :orange_circle: | Previous matching comint input |
+| comint-next-matching-input-from-input | :orange_circle: | Next matching comint input |
+| term-send-raw | :orange_circle: | Send raw character in term |
+| term-send-raw-meta | :orange_circle: | Send raw meta character in term |
+| term-pager-toggle | :orange_circle: | Toggle term pager |
+| treemacs-expand-project | :orange_circle: | Expand treemacs project |
+| treemacs-display-current-project-exclusively | :orange_circle: | Display only current project |
+| treemacs-toggle-show-dotfiles | :orange_circle: | Toggle showing dotfiles |
+| treemacs-copy-project-path-at-point | :orange_circle: | Copy project path |
+| treemacs-copy-file-path-at-point | :orange_circle: | Copy file path |
+| treemacs-copy-absolute-path-at-point | :orange_circle: | Copy absolute path |
+| treemacs-copy-relative-path-at-point | :orange_circle: | Copy relative path |
+| treemacs-move-project-up | :orange_circle: | Move project up in tree |
+| treemacs-move-project-down | :orange_circle: | Move project down in tree |
+| treemacs-visit-node-default | :orange_circle: | Visit node (default) |
+| treemacs-visit-node-ace | :orange_circle: | Visit node via ace |
+| treemacs-peek-mode | :orange_circle: | Toggle treemacs peek mode |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

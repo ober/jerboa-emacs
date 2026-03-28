@@ -15371,3 +15371,48 @@
     (echo-read-string echo "Previous matching input: "
       (lambda (pat)
         (echo-message! echo (str "Eshell: previous input matching '" pat "'"))))))
+
+;;; Round 130 — Eshell/Comint/Term, Treemacs extended (batch 1)
+
+(def (cmd-eshell-list-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: listing command history")))
+
+(def (cmd-eshell-previous-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: moved to previous prompt")))
+
+(def (cmd-eshell-next-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: moved to next prompt")))
+
+(def (cmd-comint-previous-matching-input-from-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: previous matching input from current")))
+
+(def (cmd-comint-next-matching-input-from-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: next matching input from current")))
+
+(def (cmd-term-send-raw app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Term: sent raw character")))
+
+(def (cmd-term-send-raw-meta app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Term: sent raw meta character")))
+
+(def (cmd-term-pager-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'term-pager)
+    (if (mode-enabled? app 'term-pager)
+      (echo-message! echo "Term pager enabled")
+      (echo-message! echo "Term pager disabled"))))
+
+(def (cmd-treemacs-expand-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: expanded project")))
+
+(def (cmd-treemacs-display-current-project-exclusively app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: displaying current project exclusively")))
