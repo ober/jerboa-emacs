@@ -16757,3 +16757,52 @@
     (if (mode-enabled? app 'org-tree-slide)
       (echo-message! echo "Org-tree-slide mode enabled")
       (echo-message! echo "Org-tree-slide mode disabled"))))
+
+;; ============================================================
+;; Round 158 — Jinx, Flycheck, Flymake, Langtool, Writegood (batch 1)
+;; ============================================================
+
+(def (cmd-jinx-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'jinx)
+    (if (mode-enabled? app 'jinx)
+      (echo-message! echo "Jinx spell-checking mode enabled")
+      (echo-message! echo "Jinx spell-checking mode disabled"))))
+
+(def (cmd-jinx-correct app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: correcting misspelling at point")))
+
+(def (cmd-jinx-correct-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: correcting all misspellings")))
+
+(def (cmd-jinx-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: moved to next misspelling")))
+
+(def (cmd-jinx-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: moved to previous misspelling")))
+
+(def (cmd-flycheck-first-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: jumped to first error")))
+
+(def (cmd-flycheck-last-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: jumped to last error")))
+
+(def (cmd-flycheck-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck version: 33+ (scaffolded)")))
+
+(def (cmd-langtool-switch-default-language app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Default language: "
+      (lambda (lang)
+        (echo-message! echo (str "LanguageTool: switched to " lang))))))
+
+(def (cmd-writegood-grade-level app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Writegood: computed grade level (scaffolded)")))

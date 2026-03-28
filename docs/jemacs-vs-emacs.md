@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 158 — Jinx, Flycheck, Flymake, Langtool, Writegood
+
+| Feature | Status | Notes |
+|---|---|---|
+| `jinx-mode` | :orange_circle: | Jinx spell-checking mode |
+| `jinx-correct` | :orange_circle: | Correct at point |
+| `jinx-correct-all` | :orange_circle: | Correct all misspellings |
+| `jinx-correct-nearest` | :orange_circle: | Correct nearest |
+| `jinx-correct-word` | :orange_circle: | Correct word at point |
+| `jinx-next` | :orange_circle: | Next misspelling |
+| `jinx-previous` | :orange_circle: | Previous misspelling |
+| `jinx-add-to-dictionary` | :orange_circle: | Add to dictionary |
+| `jinx-ignore` | :orange_circle: | Ignore word |
+| `flycheck-first-error` | :orange_circle: | First error |
+| `flycheck-last-error` | :orange_circle: | Last error |
+| `flycheck-version` | :orange_circle: | Show version |
+| `flycheck-manual` | :orange_circle: | Open manual |
+| `flycheck-display-error-explanation` | :orange_circle: | Error explanation |
+| `flycheck-mode-line-status-text` | :orange_circle: | Mode line status |
+| `flymake-running-backends` | :orange_circle: | Running backends |
+| `flymake-reporting-backends` | :orange_circle: | Reporting backends |
+| `langtool-switch-default-language` | :orange_circle: | Switch language |
+| `writegood-grade-level` | :orange_circle: | Compute grade level |
+| `writegood-reading-ease` | :orange_circle: | Compute reading ease |
+
 ### Round 157 — Org-babel, Org-present, Org-tree-slide, Org-reveal, Org-download
 
 | Feature | Status | Notes |

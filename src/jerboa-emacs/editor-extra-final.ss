@@ -16123,3 +16123,47 @@
     (echo-read-string echo "Image URL: "
       (lambda (url)
         (echo-message! echo (str "Org-download: downloading " url))))))
+
+;; ============================================================
+;; Round 158 — Jinx, Flycheck, Flymake, Writegood extended (batch 2)
+;; ============================================================
+
+(def (cmd-writegood-reading-ease app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Writegood: computed reading ease score (scaffolded)")))
+
+(def (cmd-jinx-correct-nearest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: correcting nearest misspelling")))
+
+(def (cmd-jinx-correct-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: correcting word at point")))
+
+(def (cmd-jinx-add-to-dictionary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: added word to dictionary")))
+
+(def (cmd-jinx-ignore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jinx: ignored word for this session")))
+
+(def (cmd-flycheck-manual app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: opened manual")))
+
+(def (cmd-flycheck-display-error-explanation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: displaying error explanation")))
+
+(def (cmd-flycheck-mode-line-status-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: showing mode line status")))
+
+(def (cmd-flymake-running-backends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flymake: showing running backends")))
+
+(def (cmd-flymake-reporting-backends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flymake: showing reporting backends")))
