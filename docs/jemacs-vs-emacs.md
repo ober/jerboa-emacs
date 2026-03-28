@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 229 — Nov ext, Djvu ext, Calibredb
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| nov-browse-url | :orange_circle: | Browse URL in epub |
+| nov-render-title | :orange_circle: | Render epub title |
+| nov-search | :orange_circle: | Search in epub |
+| nov-history-back | :orange_circle: | Navigate back in epub |
+| nov-history-forward | :orange_circle: | Navigate forward in epub |
+| djvu-goto-page | :orange_circle: | Goto DjVu page |
+| djvu-next-page | :orange_circle: | Next DjVu page |
+| djvu-prev-page | :orange_circle: | Previous DjVu page |
+| djvu-continuous-mode | :orange_circle: | Toggle continuous DjVu mode |
+| djvu-occur | :orange_circle: | Search in DjVu |
+| djvu-outline | :orange_circle: | Show DjVu outline |
+| djvu-find-file | :orange_circle: | Find DjVu file |
+| calibredb-list | :orange_circle: | List Calibre books |
+| calibredb-add | :orange_circle: | Add book to Calibre |
+| calibredb-remove | :orange_circle: | Remove book from Calibre |
+| calibredb-search | :orange_circle: | Search Calibre library |
+| calibredb-find-counsel | :orange_circle: | Find via counsel |
+| calibredb-set-metadata | :orange_circle: | Set book metadata |
+| calibredb-open-file-with-default-tool | :orange_circle: | Open with default tool |
+| calibredb-fetch-metadata | :orange_circle: | Fetch metadata |
+
 ### Round 228 — Spell-fu ext, Crux ext
 
 | Command | Status | Description |

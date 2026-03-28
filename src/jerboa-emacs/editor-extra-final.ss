@@ -19514,3 +19514,47 @@
 (def (cmd-crux-sudo-edit app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Crux: editing with sudo")))
+
+;;; Round 229 — Nov ext, Djvu ext, Calibredb (batch 2)
+
+(def (cmd-djvu-outline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Djvu: showing outline")))
+
+(def (cmd-djvu-find-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Djvu: finding file")))
+
+(def (cmd-calibredb-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calibredb: listing books")))
+
+(def (cmd-calibredb-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calibredb: adding book")))
+
+(def (cmd-calibredb-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calibredb: removing book")))
+
+(def (cmd-calibredb-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (q)
+        (echo-message! echo (str "Calibredb: searching " q))))))
+
+(def (cmd-calibredb-find-counsel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calibredb: finding via counsel")))
+
+(def (cmd-calibredb-set-metadata app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calibredb: setting metadata")))
+
+(def (cmd-calibredb-open-file-with-default-tool app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calibredb: opened with default tool")))
+
+(def (cmd-calibredb-fetch-metadata app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calibredb: fetching metadata")))

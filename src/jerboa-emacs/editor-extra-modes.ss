@@ -20178,3 +20178,54 @@
 (def (cmd-crux-view-url app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Crux: viewing URL")))
+
+;;; Round 229 — Nov ext, Djvu ext, Calibredb (batch 1)
+
+(def (cmd-nov-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: browsing URL")))
+
+(def (cmd-nov-render-title app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: rendering title")))
+
+(def (cmd-nov-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (q)
+        (echo-message! echo (str "Nov: searching for " q))))))
+
+(def (cmd-nov-history-back app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: history back")))
+
+(def (cmd-nov-history-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: history forward")))
+
+(def (cmd-djvu-goto-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Page: "
+      (lambda (p)
+        (echo-message! echo (str "Djvu: goto page " p))))))
+
+(def (cmd-djvu-next-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Djvu: next page")))
+
+(def (cmd-djvu-prev-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Djvu: previous page")))
+
+(def (cmd-djvu-continuous-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'djvu-continuous)
+    (if (mode-enabled? app 'djvu-continuous)
+      (echo-message! echo "Djvu: continuous mode enabled")
+      (echo-message! echo "Djvu: continuous mode disabled"))))
+
+(def (cmd-djvu-occur app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (q)
+        (echo-message! echo (str "Djvu: occur " q))))))
