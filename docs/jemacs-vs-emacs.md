@@ -3839,6 +3839,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | cua-toggle-global-mark | :orange_circle: | Toggle CUA global mark |
 | speedbar-toggle-show-all-files | :orange_circle: | Toggle speedbar all files |
 
+### Round 115 — LaTeX, AUCTeX & RefTeX
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| latex-mode | :orange_circle: | Activate LaTeX major mode |
+| latex-close-block | :orange_circle: | Close current LaTeX block |
+| latex-insert-block | :orange_circle: | Insert a LaTeX block |
+| latex-insert-environment | :orange_circle: | Insert begin/end environment |
+| latex-insert-item | :orange_circle: | Insert \\item |
+| TeX-command-master | :orange_circle: | Run TeX on master file |
+| TeX-command-region | :orange_circle: | Run TeX on region |
+| TeX-command-buffer | :orange_circle: | Run TeX on buffer |
+| TeX-view | :orange_circle: | View compiled output |
+| TeX-next-error | :orange_circle: | Move to next TeX error |
+| TeX-previous-error | :orange_circle: | Move to previous TeX error |
+| TeX-clean | :orange_circle: | Clean auxiliary files |
+| TeX-kill-job | :orange_circle: | Kill running TeX job |
+| TeX-recenter-output-buffer | :orange_circle: | Recenter TeX output buffer |
+| LaTeX-environment | :orange_circle: | Insert LaTeX environment |
+| LaTeX-section | :orange_circle: | Insert LaTeX section |
+| LaTeX-fill-environment | :orange_circle: | Fill current environment |
+| LaTeX-close-environment | :orange_circle: | Close current environment |
+| LaTeX-insert-item | :orange_circle: | Insert item in list |
+| reftex-mode | :orange_circle: | Toggle RefTeX mode |
+
 ---
 
 ## Recommended Development Roadmap

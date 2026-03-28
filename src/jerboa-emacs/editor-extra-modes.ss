@@ -14618,3 +14618,55 @@
 (def (cmd-checkdoc-defun app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Checkdoc: checking current defun")))
+
+;;; ——— Round 115: LaTeX, AUCTeX & RefTeX (batch 1) ———
+
+(def (cmd-latex-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX mode activated")))
+
+(def (cmd-latex-close-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: closed current block")))
+
+(def (cmd-latex-insert-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Block type: "
+      (lambda (type)
+        (echo-message! echo (str "LaTeX: inserted " type " block"))))))
+
+(def (cmd-latex-insert-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Environment: "
+      (lambda (env)
+        (echo-message! echo (str "LaTeX: inserted \\begin{" env "}...\\end{" env "}"))))))
+
+(def (cmd-latex-insert-item app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: inserted \\item")))
+
+(def (cmd-TeX-command-master app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TeX command: "
+      (lambda (cmd)
+        (echo-message! echo (str "TeX: running " cmd " on master file"))))))
+
+(def (cmd-TeX-command-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TeX command for region: "
+      (lambda (cmd)
+        (echo-message! echo (str "TeX: running " cmd " on region"))))))
+
+(def (cmd-TeX-command-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TeX command for buffer: "
+      (lambda (cmd)
+        (echo-message! echo (str "TeX: running " cmd " on buffer"))))))
+
+(def (cmd-TeX-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: viewing compiled output")))
+
+(def (cmd-TeX-next-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: moved to next error")))

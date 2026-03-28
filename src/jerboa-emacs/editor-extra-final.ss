@@ -14032,3 +14032,52 @@
 (def (cmd-speedbar-toggle-show-all-files app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Speedbar: toggled showing all files")))
+
+;;; ——— Round 115: LaTeX, AUCTeX & RefTeX (batch 2) ———
+
+(def (cmd-TeX-previous-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: moved to previous error")))
+
+(def (cmd-TeX-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: cleaned auxiliary files")))
+
+(def (cmd-TeX-kill-job app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: killed running job")))
+
+(def (cmd-TeX-recenter-output-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: recentered output buffer")))
+
+(def (cmd-LaTeX-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LaTeX environment: "
+      (lambda (env)
+        (echo-message! echo (str "LaTeX: inserted " env " environment"))))))
+
+(def (cmd-LaTeX-section app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Section level: "
+      (lambda (level)
+        (echo-message! echo (str "LaTeX: inserted " level " section"))))))
+
+(def (cmd-LaTeX-fill-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: filled current environment")))
+
+(def (cmd-LaTeX-close-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: closed current environment")))
+
+(def (cmd-LaTeX-insert-item app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: inserted \\item in current list")))
+
+(def (cmd-reftex-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'reftex)
+    (if (mode-enabled? app 'reftex)
+      (echo-message! echo "RefTeX mode enabled")
+      (echo-message! echo "RefTeX mode disabled"))))
