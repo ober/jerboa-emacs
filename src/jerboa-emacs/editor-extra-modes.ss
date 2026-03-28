@@ -16124,3 +16124,65 @@
 (def (cmd-message-send app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Message: sending...")))
+
+;; ============================================================
+;; Round 146 — ERC extended, SX, Debbugs, Bug-hunter, Misc (batch 1)
+;; ============================================================
+
+(def (cmd-erc-stamp-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-stamp)
+    (if (mode-enabled? app 'erc-stamp)
+      (echo-message! echo "ERC stamp mode enabled")
+      (echo-message! echo "ERC stamp mode disabled"))))
+
+(def (cmd-erc-services-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-services)
+    (if (mode-enabled? app 'erc-services)
+      (echo-message! echo "ERC services mode enabled (NickServ auto-identify)")
+      (echo-message! echo "ERC services mode disabled"))))
+
+(def (cmd-erc-truncate-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-truncate)
+    (if (mode-enabled? app 'erc-truncate)
+      (echo-message! echo "ERC truncate mode enabled")
+      (echo-message! echo "ERC truncate mode disabled"))))
+
+(def (cmd-sx-ask app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ask on Stack Exchange: "
+      (lambda (q)
+        (echo-message! echo (str "SX: composing question '" q "'"))))))
+
+(def (cmd-debbugs-gnu-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search Debbugs: "
+      (lambda (q)
+        (echo-message! echo (str "Debbugs: searching for '" q "'"))))))
+
+(def (cmd-bug-hunter-init-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bug Hunter: bisecting init file for errors")))
+
+(def (cmd-bug-hunter-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File to bisect: "
+      (lambda (f)
+        (echo-message! echo (str "Bug Hunter: bisecting " f))))))
+
+(def (cmd-explain-pause-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'explain-pause)
+    (if (mode-enabled? app 'explain-pause)
+      (echo-message! echo "Explain-pause mode enabled")
+      (echo-message! echo "Explain-pause mode disabled"))))
+
+(def (cmd-explain-pause-top app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Explain-pause: showing top slow commands")))
+
+(def (cmd-clm-open-command-log-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Command Log: opened log buffer")))

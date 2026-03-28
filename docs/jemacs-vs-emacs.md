@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 146 — ERC Extended, Rcirc, SX, Debbugs, Bug-hunter, Misc
+
+| Feature | Status | Notes |
+|---|---|---|
+| `erc-stamp-mode` | :orange_circle: | ERC timestamp mode |
+| `erc-services-mode` | :orange_circle: | NickServ auto-identify |
+| `erc-truncate-mode` | :orange_circle: | Truncate long buffers |
+| `erc-netsplit-mode` | :orange_circle: | Netsplit detection |
+| `erc-ring-mode` | :orange_circle: | Input history ring |
+| `erc-pcomplete-mode` | :orange_circle: | Programmable completion |
+| `erc-move-to-prompt-mode` | :orange_circle: | Auto-move to prompt |
+| `erc-noncommands-mode` | :orange_circle: | Hide non-commands |
+| `erc-readonly-mode` | :orange_circle: | Read-only channel buffers |
+| `erc-irccontrols-mode` | :orange_circle: | IRC control codes |
+| `rcirc-track-minor-mode` | :orange_circle: | Track rcirc activity |
+| `rcirc-multiline-minor-mode` | :orange_circle: | Multiline input |
+| `sx-ask` | :orange_circle: | Ask on Stack Exchange |
+| `sx-inbox` | :orange_circle: | SX inbox notifications |
+| `debbugs-gnu-search` | :orange_circle: | Search GNU bug tracker |
+| `bug-hunter-init-file` | :orange_circle: | Bisect init file |
+| `bug-hunter-file` | :orange_circle: | Bisect arbitrary file |
+| `explain-pause-mode` | :orange_circle: | Profile slow commands |
+| `explain-pause-top` | :orange_circle: | Show top slow commands |
+| `clm-open-command-log-buffer` | :orange_circle: | Open command log buffer |
+
 ### Round 145 — BBDB, Message Mode, Newsticker, SMTP
 
 | Feature | Status | Notes |
