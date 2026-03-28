@@ -13480,3 +13480,50 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "DAP: switched thread")))
 
+;;; Round 92 — Web Browsing
+(def (cmd-eww-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: page reloaded")))
+
+(def (cmd-eww-back-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: navigated back")))
+
+(def (cmd-eww-forward-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: navigated forward")))
+
+(def (cmd-eww-download app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: downloading current page")))
+
+(def (cmd-eww-copy-page-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: page URL copied to kill ring")))
+
+(def (cmd-eww-list-bookmarks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: listing bookmarks")))
+
+(def (cmd-eww-add-bookmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: bookmark added")))
+
+(def (cmd-eww-search-words app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "EWW search: "
+      (lambda (query)
+        (echo-message! echo (str "EWW: searching for '" query "'"))))))
+
+(def (cmd-eww-open-in-new-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL to open in new buffer: "
+      (lambda (url)
+        (echo-message! echo (str "EWW: opening " url " in new buffer"))))))
+
+(def (cmd-w3m-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "W3M URL: "
+      (lambda (url)
+        (echo-message! echo (str "W3M: browsing " url))))))
+

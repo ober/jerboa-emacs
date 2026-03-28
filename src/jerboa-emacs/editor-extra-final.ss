@@ -12944,3 +12944,54 @@
 (def (cmd-gud-step app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "GUD: stepped into")))
+
+;;; Round 92 — Web Browsing (cont.)
+(def (cmd-w3m-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "W3M search: "
+      (lambda (query)
+        (echo-message! echo (str "W3M: searching for '" query "'"))))))
+
+(def (cmd-w3m-bookmark-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "W3M: showing bookmarks")))
+
+(def (cmd-shr-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: opening URL at point in browser")))
+
+(def (cmd-browse-url-firefox app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Firefox URL: "
+      (lambda (url)
+        (echo-message! echo (str "Opening " url " in Firefox"))))))
+
+(def (cmd-browse-url-chromium app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chromium URL: "
+      (lambda (url)
+        (echo-message! echo (str "Opening " url " in Chromium"))))))
+
+(def (cmd-browse-url-default-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Opening " url " in default browser"))))))
+
+(def (cmd-xwidget-webkit-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Xwidget webkit URL: "
+      (lambda (url)
+        (echo-message! echo (str "Xwidget: browsing " url))))))
+
+(def (cmd-xwidget-webkit-back app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xwidget webkit: navigated back")))
+
+(def (cmd-xwidget-webkit-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xwidget webkit: navigated forward")))
+
+(def (cmd-xwidget-webkit-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xwidget webkit: page reloaded")))

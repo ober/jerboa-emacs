@@ -3253,6 +3253,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 92 — Web Browsing
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| eww-reload | :orange_circle: | Reload EWW page |
+| eww-back-url | :orange_circle: | EWW navigate back |
+| eww-forward-url | :orange_circle: | EWW navigate forward |
+| eww-download | :orange_circle: | Download current EWW page |
+| eww-copy-page-url | :orange_circle: | Copy EWW page URL |
+| eww-list-bookmarks | :orange_circle: | List EWW bookmarks |
+| eww-add-bookmark | :orange_circle: | Add EWW bookmark |
+| eww-search-words | :orange_circle: | Search web via EWW |
+| eww-open-in-new-buffer | :orange_circle: | Open URL in new EWW buffer |
+| w3m-browse-url | :orange_circle: | Browse URL in w3m |
+| w3m-search | :orange_circle: | Search via w3m |
+| w3m-bookmark-view | :orange_circle: | View w3m bookmarks |
+| shr-browse-url | :orange_circle: | Open URL at point in browser |
+| browse-url-firefox | :orange_circle: | Open URL in Firefox |
+| browse-url-chromium | :orange_circle: | Open URL in Chromium |
+| browse-url-default-browser | :orange_circle: | Open URL in default browser |
+| xwidget-webkit-browse-url | :orange_circle: | Browse URL in xwidget webkit |
+| xwidget-webkit-back | :orange_circle: | Xwidget webkit back |
+| xwidget-webkit-forward | :orange_circle: | Xwidget webkit forward |
+| xwidget-webkit-reload | :orange_circle: | Xwidget webkit reload |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
