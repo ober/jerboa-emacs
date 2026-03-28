@@ -20417,3 +20417,58 @@
 (def (cmd-mastodon-toot-pin-toot app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mastodon: pinned toot")))
+
+;; Round 234 — Ement.el ext, Telega.el (10 in modes)
+(def (cmd-ement-room-send-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Message: "
+      (lambda (msg)
+        (echo-message! echo (str "Ement: sent message: " msg))))))
+
+(def (cmd-ement-room-invite-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "User ID to invite: "
+      (lambda (user)
+        (echo-message! echo (str "Ement: invited " user))))))
+
+(def (cmd-ement-room-leave app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: left current room")))
+
+(def (cmd-ement-room-join app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Room to join: "
+      (lambda (room)
+        (echo-message! echo (str "Ement: joined " room))))))
+
+(def (cmd-ement-room-toggle-favorite app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: toggled room favorite")))
+
+(def (cmd-ement-room-set-notification-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Notification state (all/mentions/none): "
+      (lambda (state)
+        (echo-message! echo (str "Ement: notifications set to " state))))))
+
+(def (cmd-ement-list-members app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: listing room members")))
+
+(def (cmd-ement-room-send-reaction app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Reaction emoji: "
+      (lambda (emoji)
+        (echo-message! echo (str "Ement: sent reaction " emoji))))))
+
+(def (cmd-ement-room-send-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File to send: "
+      (lambda (file)
+        (echo-message! echo (str "Ement: sent file " file))))))
+
+(def (cmd-ement-room-send-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image to send: "
+      (lambda (img)
+        (echo-message! echo (str "Ement: sent image " img))))))

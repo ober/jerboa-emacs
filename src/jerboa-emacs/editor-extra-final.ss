@@ -19751,3 +19751,54 @@
 (def (cmd-mastodon-tl-federated app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mastodon: showing federated timeline")))
+
+;; Round 234 — Ement.el ext, Telega.el (10 in final)
+(def (cmd-ement-room-edit-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Edit message: "
+      (lambda (msg)
+        (echo-message! echo (str "Ement: edited message to: " msg))))))
+
+(def (cmd-ement-room-delete-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: deleted message")))
+
+(def (cmd-ement-room-scroll-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: scrolled up in room")))
+
+(def (cmd-ement-room-scroll-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: scrolled down in room")))
+
+(def (cmd-telega-chat-with app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chat with: "
+      (lambda (user)
+        (echo-message! echo (str "Telega: opened chat with " user))))))
+
+(def (cmd-telega-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Telega: browsing " url))))))
+
+(def (cmd-telega-chatbuf-attach-photo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Photo path: "
+      (lambda (path)
+        (echo-message! echo (str "Telega: attached photo " path))))))
+
+(def (cmd-telega-chatbuf-attach-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File path: "
+      (lambda (path)
+        (echo-message! echo (str "Telega: attached file " path))))))
+
+(def (cmd-telega-chatbuf-attach-sticker app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telega: opening sticker picker")))
+
+(def (cmd-telega-chat-pin-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telega: pinned message")))

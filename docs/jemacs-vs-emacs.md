@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 234 — Ement.el ext, Telega.el
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| ement-room-send-message | :orange_circle: | Send message in Matrix room |
+| ement-room-invite-user | :orange_circle: | Invite user to Matrix room |
+| ement-room-leave | :orange_circle: | Leave current Matrix room |
+| ement-room-join | :orange_circle: | Join a Matrix room |
+| ement-room-toggle-favorite | :orange_circle: | Toggle room as favorite |
+| ement-room-set-notification-state | :orange_circle: | Set room notification level |
+| ement-list-members | :orange_circle: | List members in current room |
+| ement-room-send-reaction | :orange_circle: | Send emoji reaction to message |
+| ement-room-send-file | :orange_circle: | Send file in Matrix room |
+| ement-room-send-image | :orange_circle: | Send image in Matrix room |
+| ement-room-edit-message | :orange_circle: | Edit a sent message |
+| ement-room-delete-message | :orange_circle: | Delete a sent message |
+| ement-room-scroll-up | :orange_circle: | Scroll up in room history |
+| ement-room-scroll-down | :orange_circle: | Scroll down in room history |
+| telega-chat-with | :orange_circle: | Open Telegram chat with user |
+| telega-browse-url | :orange_circle: | Browse URL in Telegram |
+| telega-chatbuf-attach-photo | :orange_circle: | Attach photo to Telegram chat |
+| telega-chatbuf-attach-file | :orange_circle: | Attach file to Telegram chat |
+| telega-chatbuf-attach-sticker | :orange_circle: | Attach sticker to Telegram chat |
+| telega-chat-pin-message | :orange_circle: | Pin message in Telegram chat |
+
 ### Round 233 — Mastodon.el
 
 | Command | Status | Description |
