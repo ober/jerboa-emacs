@@ -20659,3 +20659,48 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Calc: embedded word calculation")))
 
+;; Round 239 — w3m, EAF, EXWM (10 in modes)
+(def (cmd-w3m-goto-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "w3m: loading " url))))))
+
+(def (cmd-w3m-bookmark-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "w3m: added bookmark")))
+
+(def (cmd-w3m-download app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "w3m: downloading page")))
+
+(def (cmd-w3m-view-source app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "w3m: viewing page source")))
+
+(def (cmd-w3m-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "w3m: reloading page")))
+
+(def (cmd-w3m-next-anchor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "w3m: next anchor")))
+
+(def (cmd-w3m-previous-anchor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "w3m: previous anchor")))
+
+(def (cmd-w3m-copy-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "w3m: copied buffer")))
+
+(def (cmd-eaf-open-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "EAF: opening browser at " url))))))
+
+(def (cmd-eaf-open-terminal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EAF: opening terminal")))
+

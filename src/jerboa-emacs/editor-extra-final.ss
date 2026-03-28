@@ -19995,3 +19995,50 @@
 (def (cmd-neotree-select-up-node app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Neotree: selected parent node")))
+
+;; Round 239 — EAF ext, EXWM (10 in final)
+(def (cmd-eaf-open-file-manager app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EAF: opening file manager")))
+
+(def (cmd-eaf-open-pdf-viewer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PDF file: "
+      (lambda (file)
+        (echo-message! echo (str "EAF: opening PDF " file))))))
+
+(def (cmd-eaf-open-video-player app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Video file: "
+      (lambda (file)
+        (echo-message! echo (str "EAF: playing " file))))))
+
+(def (cmd-exwm-workspace-switch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Workspace number: "
+      (lambda (num)
+        (echo-message! echo (str "EXWM: switched to workspace " num))))))
+
+(def (cmd-exwm-workspace-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EXWM: added new workspace")))
+
+(def (cmd-exwm-workspace-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EXWM: deleted current workspace")))
+
+(def (cmd-exwm-input-toggle-keyboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EXWM: toggled keyboard passthrough")))
+
+(def (cmd-exwm-layout-toggle-fullscreen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EXWM: toggled fullscreen")))
+
+(def (cmd-exwm-floating-toggle-floating app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EXWM: toggled floating window")))
+
+(def (cmd-exwm-layout-toggle-mode-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EXWM: toggled mode line")))

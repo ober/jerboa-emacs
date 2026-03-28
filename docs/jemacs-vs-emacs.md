@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 239 — w3m, EAF, EXWM
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| w3m-goto-url | :orange_circle: | Open URL in w3m browser |
+| w3m-bookmark-add | :orange_circle: | Add w3m bookmark |
+| w3m-download | :orange_circle: | Download current page |
+| w3m-view-source | :orange_circle: | View page source |
+| w3m-reload | :orange_circle: | Reload current page |
+| w3m-next-anchor | :orange_circle: | Move to next anchor |
+| w3m-previous-anchor | :orange_circle: | Move to previous anchor |
+| w3m-copy-buffer | :orange_circle: | Copy w3m buffer |
+| eaf-open-browser | :orange_circle: | Open EAF browser |
+| eaf-open-terminal | :orange_circle: | Open EAF terminal |
+| eaf-open-file-manager | :orange_circle: | Open EAF file manager |
+| eaf-open-pdf-viewer | :orange_circle: | Open EAF PDF viewer |
+| eaf-open-video-player | :orange_circle: | Open EAF video player |
+| exwm-workspace-switch | :orange_circle: | Switch EXWM workspace |
+| exwm-workspace-add | :orange_circle: | Add EXWM workspace |
+| exwm-workspace-delete | :orange_circle: | Delete EXWM workspace |
+| exwm-input-toggle-keyboard | :orange_circle: | Toggle keyboard passthrough |
+| exwm-layout-toggle-fullscreen | :orange_circle: | Toggle fullscreen layout |
+| exwm-floating-toggle-floating | :orange_circle: | Toggle floating window |
+| exwm-layout-toggle-mode-line | :orange_circle: | Toggle mode line in EXWM |
+
 ### Round 238 — Consult ext, Vertico ext, Speedbar ext, Neotree ext
 
 | Command | Status | Description |
