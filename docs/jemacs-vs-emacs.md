@@ -1982,6 +1982,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Dired do find regexp and replace | :orange_circle: | Search/replace in marked files |
 | Dired do touch | :orange_circle: | Update timestamps on marked files |
 
+### Round 42
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Ediff buffers | :orange_circle: | Compare two buffers |
+| Ediff files | :orange_circle: | Compare two files |
+| Ediff directories | :orange_circle: | Compare two directories |
+| Ediff regions linewise | :orange_circle: | Compare regions line by line |
+| Ediff windows linewise | :orange_circle: | Compare visible windows |
+| Ediff merge files | :orange_circle: | Three-way merge of files |
+| Ediff merge buffers | :orange_circle: | Three-way merge of buffers |
+| Ediff patch file | :orange_circle: | Apply patch to file |
+| Ediff revision | :orange_circle: | Compare file with VCS revision |
+| Emerge files | :orange_circle: | Alternative merge tool |
+| VC annotate show log | :orange_circle: | Show log from annotate |
+| VC create tag | :orange_circle: | Create VCS tag |
+| VC retrieve tag | :orange_circle: | Retrieve VCS tag |
+| VC delete file | :orange_circle: | Delete file under version control |
+| VC rename file | :orange_circle: | Rename file under version control |
+| VC ignore | :orange_circle: | Add pattern to .gitignore |
+| VC root diff | :orange_circle: | Diff from repository root |
+| VC root log | :orange_circle: | Log from repository root |
+| VC dir mark | :orange_circle: | Mark file in VC directory |
+| VC dir unmark | :orange_circle: | Unmark file in VC directory |
+
 ---
 
 ## Recommended Development Roadmap

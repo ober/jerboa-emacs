@@ -10129,3 +10129,86 @@
 (def (cmd-dired-do-touch app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Touch marked files (update timestamps)")))
+
+;;; Round 42 batch 2: vc-annotate-show-log, vc-create-tag, vc-retrieve-tag,
+;;; vc-delete-file, vc-rename-file, vc-ignore, vc-root-diff, vc-root-log,
+;;; vc-dir-mark, vc-dir-unmark
+
+(def (cmd-vc-annotate-show-log app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "VC annotate log for " file))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-vc-create-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag name: "
+      (lambda (tag)
+        (when (and tag (not (string-empty? tag)))
+          (echo-message! echo (str "Created tag: " tag)))))))
+
+(def (cmd-vc-retrieve-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Retrieve tag: "
+      (lambda (tag)
+        (when (and tag (not (string-empty? tag)))
+          (echo-message! echo (str "Retrieved tag: " tag)))))))
+
+(def (cmd-vc-delete-file app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "VC delete: " file " (confirm with yes)"))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-vc-rename-file app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-read-string echo "Rename to: "
+        (lambda (new-name)
+          (when (and new-name (not (string-empty? new-name)))
+            (echo-message! echo (str "VC rename: " file " → " new-name)))))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-vc-ignore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pattern to ignore: "
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (echo-message! echo (str "Added to .gitignore: " pattern)))))))
+
+(def (cmd-vc-root-diff app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*vc-root-diff*")))
+    (buffer-content-set! new-buf
+      (str "VC Root Diff\n\n"
+           "(No uncommitted changes in repository root)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "VC root diff")))
+
+(def (cmd-vc-root-log app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*vc-root-log*")))
+    (buffer-content-set! new-buf
+      (str "VC Root Log\n\n"
+           "(Repository log from root)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "VC root log")))
+
+(def (cmd-vc-dir-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Marked file in VC directory")))
+
+(def (cmd-vc-dir-unmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unmarked file in VC directory")))

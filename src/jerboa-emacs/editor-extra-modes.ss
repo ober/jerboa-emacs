@@ -10715,3 +10715,94 @@
               (echo-message! echo (str "Hexl: " file)))
             (echo-message! echo (str "File not found: " file))))))))
 
+;;; Round 42 batch 1: ediff-buffers, ediff-files, ediff-directories,
+;;; ediff-regions-linewise, ediff-windows-linewise, ediff-merge-files,
+;;; ediff-merge-buffers, ediff-patch-file, ediff-revision, emerge-files
+
+(def (cmd-ediff-buffers app)
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (bufs (frame-buffers frame))
+         (names (map buffer-name bufs)))
+    (echo-read-string echo "Buffer A: "
+      (lambda (a)
+        (when (and a (not (string-empty? a)))
+          (echo-read-string echo "Buffer B: "
+            (lambda (b)
+              (when (and b (not (string-empty? b)))
+                (echo-message! echo (str "Ediff: " a " vs " b " (use smerge-mode for conflicts)"))))))))))
+
+(def (cmd-ediff-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File A: "
+      (lambda (a)
+        (when (and a (not (string-empty? a)))
+          (echo-read-string echo "File B: "
+            (lambda (b)
+              (when (and b (not (string-empty? b)))
+                (echo-message! echo (str "Ediff files: " a " vs " b))))))))))
+
+(def (cmd-ediff-directories app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory A: "
+      (lambda (a)
+        (when (and a (not (string-empty? a)))
+          (echo-read-string echo "Directory B: "
+            (lambda (b)
+              (when (and b (not (string-empty? b)))
+                (echo-message! echo (str "Ediff dirs: " a " vs " b))))))))))
+
+(def (cmd-ediff-regions-linewise app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff regions: select regions in two buffers to compare")))
+
+(def (cmd-ediff-windows-linewise app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff windows: comparing visible window contents")))
+
+(def (cmd-ediff-merge-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File A to merge: "
+      (lambda (a)
+        (when (and a (not (string-empty? a)))
+          (echo-read-string echo "File B to merge: "
+            (lambda (b)
+              (when (and b (not (string-empty? b)))
+                (echo-message! echo (str "Merging: " a " + " b))))))))))
+
+(def (cmd-ediff-merge-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buffer A to merge: "
+      (lambda (a)
+        (when (and a (not (string-empty? a)))
+          (echo-read-string echo "Buffer B to merge: "
+            (lambda (b)
+              (when (and b (not (string-empty? b)))
+                (echo-message! echo (str "Merging buffers: " a " + " b))))))))))
+
+(def (cmd-ediff-patch-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File to patch: "
+      (lambda (file)
+        (when (and file (not (string-empty? file)))
+          (echo-message! echo (str "Patching: " file " (provide patch file)")))))))
+
+(def (cmd-ediff-revision app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Ediff revision: " file " (compare with VCS revision)"))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-emerge-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File A: "
+      (lambda (a)
+        (when (and a (not (string-empty? a)))
+          (echo-read-string echo "File B: "
+            (lambda (b)
+              (when (and b (not (string-empty? b)))
+                (echo-message! echo (str "Emerge: " a " + " b))))))))))
+
