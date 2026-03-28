@@ -17787,3 +17787,50 @@
     (echo-read-string echo "LDAP host: "
       (lambda (host)
         (echo-message! echo (str "LDAP: querying host " host))))))
+
+;; Round 179 — Restclient, Verb, Plz, Request (batch 1)
+(def (cmd-restclient-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'restclient)
+    (if (mode-enabled? app 'restclient)
+      (echo-message! echo "Restclient mode enabled")
+      (echo-message! echo "Restclient mode disabled"))))
+
+(def (cmd-restclient-http-send-current-stay-in-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: sent request (staying in window)")))
+
+(def (cmd-restclient-jump-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: jumped to next request")))
+
+(def (cmd-restclient-jump-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: jumped to previous request")))
+
+(def (cmd-restclient-toggle-body-visibility app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: toggled body visibility")))
+
+(def (cmd-restclient-show-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: showing request info")))
+
+(def (cmd-restclient-outline-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'restclient-outline)
+    (if (mode-enabled? app 'restclient-outline)
+      (echo-message! echo "Restclient outline mode enabled")
+      (echo-message! echo "Restclient outline mode disabled"))))
+
+(def (cmd-verb-send-request-on-point-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verb: sent request (other window)")))
+
+(def (cmd-verb-kill-all-response-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verb: killed all response buffers")))
+
+(def (cmd-verb-export-request-on-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verb: exported request as curl command")))

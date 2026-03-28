@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 179 — Restclient, Verb, Plz, Request
+
+| Feature | Status | Notes |
+|---|---|---|
+| restclient-mode | :orange_circle: | Toggle restclient mode |
+| restclient-http-send-current-stay-in-window | :orange_circle: | Send request, stay in window |
+| restclient-jump-next | :orange_circle: | Jump to next request |
+| restclient-jump-prev | :orange_circle: | Jump to previous request |
+| restclient-toggle-body-visibility | :orange_circle: | Toggle body visibility |
+| restclient-show-info | :orange_circle: | Show request info |
+| restclient-outline-mode | :orange_circle: | Toggle restclient outline mode |
+| verb-send-request-on-point-other-window | :orange_circle: | Send verb request, other window |
+| verb-kill-all-response-buffers | :orange_circle: | Kill all verb response buffers |
+| verb-export-request-on-point | :orange_circle: | Export verb request as curl |
+| verb-set-var | :orange_circle: | Set verb variable |
+| plz-get | :orange_circle: | HTTP GET with plz |
+| plz-post | :orange_circle: | HTTP POST with plz |
+| plz-put | :orange_circle: | HTTP PUT with plz |
+| plz-delete | :orange_circle: | HTTP DELETE with plz |
+| plz-head | :orange_circle: | HTTP HEAD with plz |
+| plz-patch | :orange_circle: | HTTP PATCH with plz |
+| request-response-header | :orange_circle: | Show response headers |
+| request-abort | :orange_circle: | Abort current request |
+| request-log-buffer | :orange_circle: | Show request log buffer |
+
 ### Round 178 — EUDC, LDAP, BBDB-ext, Org-contacts
 
 | Feature | Status | Notes |

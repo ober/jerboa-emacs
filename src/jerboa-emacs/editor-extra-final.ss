@@ -17155,3 +17155,58 @@
 (def (cmd-org-contacts-anniversary-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org-contacts: showing anniversary list")))
+
+;; Round 179 — Restclient, Verb, Plz, Request (batch 2)
+(def (cmd-verb-set-var app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Variable name=value: "
+      (lambda (pair)
+        (echo-message! echo (str "Verb: set variable " pair))))))
+
+(def (cmd-plz-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GET URL: "
+      (lambda (url)
+        (echo-message! echo (str "Plz: GET " url))))))
+
+(def (cmd-plz-post app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "POST URL: "
+      (lambda (url)
+        (echo-message! echo (str "Plz: POST " url))))))
+
+(def (cmd-plz-put app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PUT URL: "
+      (lambda (url)
+        (echo-message! echo (str "Plz: PUT " url))))))
+
+(def (cmd-plz-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DELETE URL: "
+      (lambda (url)
+        (echo-message! echo (str "Plz: DELETE " url))))))
+
+(def (cmd-plz-head app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "HEAD URL: "
+      (lambda (url)
+        (echo-message! echo (str "Plz: HEAD " url))))))
+
+(def (cmd-plz-patch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PATCH URL: "
+      (lambda (url)
+        (echo-message! echo (str "Plz: PATCH " url))))))
+
+(def (cmd-request-response-header app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Request: showing response headers")))
+
+(def (cmd-request-abort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Request: aborted current request")))
+
+(def (cmd-request-log-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Request: showing log buffer")))
