@@ -3439,6 +3439,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | hydra-smerge | :orange_circle: | Hydra smerge menu |
 | hydra-rectangle | :orange_circle: | Hydra rectangle menu |
 
+### Round 99 — Evil Extensions
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| evil-window-delete | :orange_circle: | Evil delete current window |
+| evil-window-next | :orange_circle: | Evil cycle to next window |
+| evil-surround-region | :orange_circle: | Evil surround visual selection |
+| evil-surround-change | :orange_circle: | Evil change surrounding delimiters |
+| evil-surround-delete | :orange_circle: | Evil delete surrounding delimiters |
+| evil-commentary | :orange_circle: | Evil toggle comment operator |
+| evil-commentary-line | :orange_circle: | Evil comment current line |
+| evil-exchange | :orange_circle: | Evil exchange operator |
+| evil-exchange-cancel | :orange_circle: | Evil cancel pending exchange |
+| evil-numbers-increment | :orange_circle: | Evil increment number at point |
+| evil-numbers-decrement | :orange_circle: | Evil decrement number at point |
+| evil-matchit | :orange_circle: | Evil jump to matching delimiter |
+| evil-lion-left | :orange_circle: | Evil align operator (left) |
+| evil-lion-right | :orange_circle: | Evil align operator (right) |
+| evil-snipe-f | :orange_circle: | Evil 2-char forward find |
+| evil-snipe-F | :orange_circle: | Evil 2-char backward find |
+| evil-snipe-s | :orange_circle: | Evil 2-char forward seek |
+| evil-snipe-S | :orange_circle: | Evil 2-char backward seek |
+| evil-collection-init | :orange_circle: | Evil keybinding collection setup |
+| evil-owl-goto-mark | :orange_circle: | Evil visual mark navigation |
+
 ---
 
 ## Recommended Development Roadmap

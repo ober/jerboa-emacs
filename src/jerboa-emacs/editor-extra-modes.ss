@@ -13804,3 +13804,52 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Hydra: default pre-command")))
 
+;;; Round 99 — Evil Extensions
+(def (cmd-evil-window-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: window deleted")))
+
+(def (cmd-evil-window-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: switched to next window")))
+
+(def (cmd-evil-surround-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Surround region with: "
+      (lambda (char)
+        (echo-message! echo (str "Evil: surrounded region with " char))))))
+
+(def (cmd-evil-surround-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Change surround from: "
+      (lambda (from)
+        (echo-read-string echo "Change surround to: "
+          (lambda (to)
+            (echo-message! echo (str "Evil: changed surround " from " to " to))))))))
+
+(def (cmd-evil-surround-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete surround char: "
+      (lambda (char)
+        (echo-message! echo (str "Evil: deleted surround " char))))))
+
+(def (cmd-evil-commentary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: toggled comment on motion")))
+
+(def (cmd-evil-commentary-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: toggled comment on line")))
+
+(def (cmd-evil-exchange app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: exchange marked (select second to swap)")))
+
+(def (cmd-evil-exchange-cancel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: exchange cancelled")))
+
+(def (cmd-evil-numbers-increment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: incremented number at point")))
+

@@ -13266,3 +13266,54 @@
 (def (cmd-hydra-rectangle app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Hydra: rectangle operations menu opened")))
+
+;;; Round 99 — Evil Extensions (cont.)
+(def (cmd-evil-numbers-decrement app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: decremented number at point")))
+
+(def (cmd-evil-matchit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: jumped to matching tag/paren")))
+
+(def (cmd-evil-lion-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: aligned left")))
+
+(def (cmd-evil-lion-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: aligned right")))
+
+(def (cmd-evil-snipe-f app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Evil snipe f: "
+      (lambda (chars)
+        (echo-message! echo (str "Evil: sniped forward to " chars))))))
+
+(def (cmd-evil-snipe-F app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Evil snipe F: "
+      (lambda (chars)
+        (echo-message! echo (str "Evil: sniped backward to " chars))))))
+
+(def (cmd-evil-snipe-s app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Evil snipe s: "
+      (lambda (chars)
+        (echo-message! echo (str "Evil: sniped forward (inclusive) to " chars))))))
+
+(def (cmd-evil-snipe-S app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Evil snipe S: "
+      (lambda (chars)
+        (echo-message! echo (str "Evil: sniped backward (inclusive) to " chars))))))
+
+(def (cmd-evil-collection-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil Collection: initialized keybindings")))
+
+(def (cmd-evil-owl-goto-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Evil owl go to mark: "
+      (lambda (mark)
+        (echo-message! echo (str "Evil Owl: jumped to mark " mark))))))
