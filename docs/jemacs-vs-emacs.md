@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 151 — Avy Extended, Wgrep, Deadgrep, Color-rg
+
+| Feature | Status | Notes |
+|---|---|---|
+| `avy-goto-char-timer` | :orange_circle: | Avy jump with timer |
+| `avy-goto-word-or-subword-1` | :orange_circle: | Jump to word/subword |
+| `avy-goto-line-above` | :orange_circle: | Jump to line above |
+| `avy-goto-line-below` | :orange_circle: | Jump to line below |
+| `avy-org-goto-heading-timer` | :orange_circle: | Jump to org heading |
+| `wgrep-change-to-wgrep-mode` | :orange_circle: | Writable grep mode |
+| `wgrep-finish-edit` | :orange_circle: | Apply wgrep edits |
+| `wgrep-mark-deletion` | :orange_circle: | Mark for deletion |
+| `wgrep-remove-change` | :orange_circle: | Remove change at point |
+| `wgrep-remove-all-change` | :orange_circle: | Remove all changes |
+| `wgrep-toggle-readonly-area` | :orange_circle: | Toggle readonly |
+| `deadgrep-edit-mode` | :orange_circle: | Deadgrep edit mode |
+| `deadgrep-kill-process` | :orange_circle: | Kill search process |
+| `deadgrep-restart` | :orange_circle: | Restart search |
+| `deadgrep-toggle-file-results` | :orange_circle: | Toggle file results |
+| `deadgrep-directory` | :orange_circle: | Set search directory |
+| `deadgrep-search-term` | :orange_circle: | Set search term |
+| `color-rg-search-symbol` | :orange_circle: | Search symbol at point |
+| `color-rg-search-input-in-project` | :orange_circle: | Search in project |
+| `color-rg-search-input-in-current-file` | :orange_circle: | Search in current file |
+
 ### Round 150 — AUCTeX, RefTeX, CDLaTeX, Preview-latex
 
 | Feature | Status | Notes |

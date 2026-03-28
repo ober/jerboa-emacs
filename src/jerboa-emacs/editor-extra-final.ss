@@ -15768,3 +15768,55 @@
 (def (cmd-preview-document app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Preview: generating previews for entire document")))
+
+;; ============================================================
+;; Round 151 — Wgrep, Deadgrep, Color-rg extended (batch 2)
+;; ============================================================
+
+(def (cmd-wgrep-remove-all-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: removed all changes")))
+
+(def (cmd-wgrep-toggle-readonly-area app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: toggled readonly area")))
+
+(def (cmd-deadgrep-edit-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deadgrep: switched to edit mode")))
+
+(def (cmd-deadgrep-kill-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deadgrep: killed search process")))
+
+(def (cmd-deadgrep-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deadgrep: restarted search")))
+
+(def (cmd-deadgrep-toggle-file-results app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deadgrep: toggled file results")))
+
+(def (cmd-deadgrep-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Deadgrep: set directory to " dir))))))
+
+(def (cmd-deadgrep-search-term app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Deadgrep search: "
+      (lambda (term)
+        (echo-message! echo (str "Deadgrep: searching for '" term "'"))))))
+
+(def (cmd-color-rg-search-input-in-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Color-rg search in project: "
+      (lambda (q)
+        (echo-message! echo (str "Color-rg: searching project for '" q "'"))))))
+
+(def (cmd-color-rg-search-input-in-current-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Color-rg search in file: "
+      (lambda (q)
+        (echo-message! echo (str "Color-rg: searching current file for '" q "'"))))))

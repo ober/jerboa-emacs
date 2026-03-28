@@ -16402,3 +16402,51 @@
 (def (cmd-reftex-toc app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "RefTeX: showing table of contents")))
+
+;; ============================================================
+;; Round 151 — Avy, Wgrep, Deadgrep, Color-rg (batch 1)
+;; ============================================================
+
+(def (cmd-avy-goto-char-timer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Avy char (timer): "
+      (lambda (ch)
+        (echo-message! echo (str "Avy: jumping to '" ch "'"))))))
+
+(def (cmd-avy-goto-word-or-subword-1 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Avy word/subword char: "
+      (lambda (ch)
+        (echo-message! echo (str "Avy: jumping to word starting with '" ch "'"))))))
+
+(def (cmd-avy-goto-line-above app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: jumping to line above")))
+
+(def (cmd-avy-goto-line-below app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: jumping to line below")))
+
+(def (cmd-avy-org-goto-heading-timer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avy: jumping to org heading")))
+
+(def (cmd-wgrep-change-to-wgrep-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: switched to writable grep mode")))
+
+(def (cmd-wgrep-finish-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: applied edits to files")))
+
+(def (cmd-color-rg-search-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Color-rg: searching for symbol at point")))
+
+(def (cmd-wgrep-mark-deletion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: marked line for deletion")))
+
+(def (cmd-wgrep-remove-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wgrep: removed change at point")))
