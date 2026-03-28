@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 235 — Wanderlust, mu4e ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| wl-summary-goto-folder | :orange_circle: | Switch to Wanderlust folder |
+| wl-summary-sync-current-folder | :orange_circle: | Sync current folder |
+| wl-summary-mark-as-read | :orange_circle: | Mark message as read |
+| wl-summary-mark-as-unread | :orange_circle: | Mark message as unread |
+| wl-summary-delete | :orange_circle: | Delete message |
+| wl-summary-refile | :orange_circle: | Refile message to folder |
+| wl-summary-reply-with-citation | :orange_circle: | Reply with citation |
+| wl-draft-send | :orange_circle: | Send current draft |
+| wl-draft-save | :orange_circle: | Save current draft |
+| wl-draft-kill | :orange_circle: | Kill current draft |
+| mu4e-compose-attach | :orange_circle: | Attach file to email |
+| mu4e-view-save-attachments | :orange_circle: | Save email attachments |
+| mu4e-headers-toggle-include-related | :orange_circle: | Toggle include related messages |
+| mu4e-context-switch | :orange_circle: | Switch mu4e context |
+| mu4e-update-index | :orange_circle: | Update mu4e mail index |
+| mu4e-headers-query-prev | :orange_circle: | Previous search query |
+| mu4e-headers-query-next | :orange_circle: | Next search query |
+| mu4e-view-open-attachment | :orange_circle: | Open email attachment |
+| mu4e-headers-mark-for-trash | :orange_circle: | Mark message for trash |
+| mu4e-headers-mark-for-refile | :orange_circle: | Mark message for refile |
+
 ### Round 234 — Ement.el ext, Telega.el
 
 | Command | Status | Description |

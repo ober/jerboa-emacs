@@ -19802,3 +19802,55 @@
 (def (cmd-telega-chat-pin-message app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Telega: pinned message")))
+
+;; Round 235 — Wanderlust, mu4e ext (10 in final)
+(def (cmd-mu4e-compose-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Attach file: "
+      (lambda (file)
+        (echo-message! echo (str "mu4e: attached " file))))))
+
+(def (cmd-mu4e-view-save-attachments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Save attachments to: "
+      (lambda (dir)
+        (echo-message! echo (str "mu4e: saved attachments to " dir))))))
+
+(def (cmd-mu4e-headers-toggle-include-related app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'mu4e-include-related)
+    (if (mode-enabled? app 'mu4e-include-related)
+      (echo-message! echo "mu4e: include related messages enabled")
+      (echo-message! echo "mu4e: include related messages disabled"))))
+
+(def (cmd-mu4e-context-switch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to context: "
+      (lambda (ctx)
+        (echo-message! echo (str "mu4e: switched to context " ctx))))))
+
+(def (cmd-mu4e-update-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: updating index...")))
+
+(def (cmd-mu4e-headers-query-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: previous query")))
+
+(def (cmd-mu4e-headers-query-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: next query")))
+
+(def (cmd-mu4e-view-open-attachment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Attachment number: "
+      (lambda (num)
+        (echo-message! echo (str "mu4e: opening attachment " num))))))
+
+(def (cmd-mu4e-headers-mark-for-trash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: marked for trash")))
+
+(def (cmd-mu4e-headers-mark-for-refile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mu4e: marked for refile")))

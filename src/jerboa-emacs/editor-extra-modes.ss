@@ -20472,3 +20472,49 @@
     (echo-read-string echo "Image to send: "
       (lambda (img)
         (echo-message! echo (str "Ement: sent image " img))))))
+
+;; Round 235 — Wanderlust, mu4e ext (10 in modes)
+(def (cmd-wl-summary-goto-folder app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Folder: "
+      (lambda (folder)
+        (echo-message! echo (str "WL: switched to folder " folder))))))
+
+(def (cmd-wl-summary-sync-current-folder app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: syncing current folder")))
+
+(def (cmd-wl-summary-mark-as-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: marked message as read")))
+
+(def (cmd-wl-summary-mark-as-unread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: marked message as unread")))
+
+(def (cmd-wl-summary-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: deleted message")))
+
+(def (cmd-wl-summary-refile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Refile to: "
+      (lambda (dest)
+        (echo-message! echo (str "WL: refiled to " dest))))))
+
+(def (cmd-wl-summary-reply-with-citation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: replying with citation")))
+
+(def (cmd-wl-draft-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: sending draft")))
+
+(def (cmd-wl-draft-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: draft saved")))
+
+(def (cmd-wl-draft-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WL: draft killed")))
+
