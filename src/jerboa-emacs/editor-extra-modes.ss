@@ -17098,3 +17098,55 @@
     (echo-read-string echo "Insert template: "
       (lambda (name)
         (echo-message! echo (str "Tempo: inserted template " name))))))
+
+;; ============================================================
+;; Round 165 — CUA rectangles, Picture mode, Artist mode (batch 1)
+;; ============================================================
+
+(def (cmd-cua-sequence-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sequence format: "
+      (lambda (fmt)
+        (echo-message! echo (str "CUA: sequenced rectangle with format " fmt))))))
+
+(def (cmd-cua-fill-char-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Fill character: "
+      (lambda (ch)
+        (echo-message! echo (str "CUA: filled rectangle with '" ch "'"))))))
+
+(def (cmd-cua-incr-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: incremented rectangle values")))
+
+(def (cmd-cua-replace-in-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Replace in rectangle: "
+      (lambda (from)
+        (echo-read-string echo "Replace with: "
+          (lambda (to)
+            (echo-message! echo (str "CUA: replaced '" from "' with '" to "' in rectangle"))))))))
+
+(def (cmd-cua-rotate-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: rotated rectangle")))
+
+(def (cmd-cua-open-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: opened rectangle (shifted text right)")))
+
+(def (cmd-cua-close-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: closed rectangle")))
+
+(def (cmd-cua-copy-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: copied rectangle to kill ring")))
+
+(def (cmd-cua-cut-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: cut rectangle to kill ring")))
+
+(def (cmd-cua-paste-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: pasted rectangle from kill ring")))

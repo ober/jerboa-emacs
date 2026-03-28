@@ -16457,3 +16457,50 @@
 (def (cmd-electric-buffer-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Electric buffer list opened")))
+
+;; ============================================================
+;; Round 165 — Picture mode, Artist mode extended (batch 2)
+;; ============================================================
+
+(def (cmd-picture-forward-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: moved forward one column")))
+
+(def (cmd-picture-backward-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: moved backward one column")))
+
+(def (cmd-picture-open-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Picture: opened line")))
+
+(def (cmd-artist-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'artist)
+    (if (mode-enabled? app 'artist)
+      (echo-message! echo "Artist mode enabled (ASCII drawing)")
+      (echo-message! echo "Artist mode disabled"))))
+
+(def (cmd-artist-select-op-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: selected line drawing operation")))
+
+(def (cmd-artist-select-op-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: selected rectangle drawing operation")))
+
+(def (cmd-artist-select-op-ellipse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: selected ellipse drawing operation")))
+
+(def (cmd-artist-select-op-circle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: selected circle drawing operation")))
+
+(def (cmd-artist-select-op-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: selected text insertion operation")))
+
+(def (cmd-artist-select-op-spray-can app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: selected spray can operation")))

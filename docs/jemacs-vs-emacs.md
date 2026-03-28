@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 165 — CUA Rectangles, Picture Mode, Artist Mode
+
+| Feature | Status | Notes |
+|---|---|---|
+| `cua-sequence-rectangle` | :orange_circle: | Sequence rectangle |
+| `cua-fill-char-rectangle` | :orange_circle: | Fill rectangle with char |
+| `cua-incr-rectangle` | :orange_circle: | Increment rectangle values |
+| `cua-replace-in-rectangle` | :orange_circle: | Replace in rectangle |
+| `cua-rotate-rectangle` | :orange_circle: | Rotate rectangle |
+| `cua-open-rectangle` | :orange_circle: | Open rectangle |
+| `cua-close-rectangle` | :orange_circle: | Close rectangle |
+| `cua-copy-rectangle` | :orange_circle: | Copy rectangle |
+| `cua-cut-rectangle` | :orange_circle: | Cut rectangle |
+| `cua-paste-rectangle` | :orange_circle: | Paste rectangle |
+| `picture-forward-column` | :orange_circle: | Forward column |
+| `picture-backward-column` | :orange_circle: | Backward column |
+| `picture-open-line` | :orange_circle: | Open line |
+| `artist-mode` | :orange_circle: | ASCII drawing mode |
+| `artist-select-op-line` | :orange_circle: | Draw line |
+| `artist-select-op-rectangle` | :orange_circle: | Draw rectangle |
+| `artist-select-op-ellipse` | :orange_circle: | Draw ellipse |
+| `artist-select-op-circle` | :orange_circle: | Draw circle |
+| `artist-select-op-text` | :orange_circle: | Insert text |
+| `artist-select-op-spray-can` | :orange_circle: | Spray can |
+
 ### Round 164 — Abbrev, Skeleton, Tempo, Auto-insert, BS
 
 | Feature | Status | Notes |
