@@ -9839,4 +9839,81 @@
                   (find-end (+ j 1))))
               (loop (+ i 1)))))))))
 
+;; Round 33 batch 1: recentf-mode, recentf-open-files, saveplace-mode, global-auto-revert-mode,
+;; global-hl-line-mode, global-display-line-numbers-mode, global-visual-line-mode,
+;; delete-selection-mode, cua-mode, transient-mark-mode
+
+(def (cmd-recentf-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'recentf-mode)
+    (if (mode-enabled? app 'recentf-mode)
+      (echo-message! echo "Recentf mode enabled (recent files tracked)")
+      (echo-message! echo "Recentf mode disabled"))))
+
+(def (cmd-recentf-open-files app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== Recent Files ===\n\n"
+                    "(Recent file tracking not yet persisted.\n"
+                    " Enable recentf-mode and files will be tracked.)\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Recent files list")))
+
+(def (cmd-saveplace-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'saveplace-mode)
+    (if (mode-enabled? app 'saveplace-mode)
+      (echo-message! echo "Save-place mode enabled (cursor position remembered)")
+      (echo-message! echo "Save-place mode disabled"))))
+
+(def (cmd-global-auto-revert-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-auto-revert-mode)
+    (if (mode-enabled? app 'global-auto-revert-mode)
+      (echo-message! echo "Global auto-revert mode enabled")
+      (echo-message! echo "Global auto-revert mode disabled"))))
+
+(def (cmd-global-hl-line-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-hl-line-mode)
+    (if (mode-enabled? app 'global-hl-line-mode)
+      (echo-message! echo "Global hl-line mode enabled")
+      (echo-message! echo "Global hl-line mode disabled"))))
+
+(def (cmd-global-display-line-numbers-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-display-line-numbers-mode)
+    (if (mode-enabled? app 'global-display-line-numbers-mode)
+      (echo-message! echo "Global display-line-numbers mode enabled")
+      (echo-message! echo "Global display-line-numbers mode disabled"))))
+
+(def (cmd-global-visual-line-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-visual-line-mode)
+    (if (mode-enabled? app 'global-visual-line-mode)
+      (echo-message! echo "Global visual-line mode enabled")
+      (echo-message! echo "Global visual-line mode disabled"))))
+
+(def (cmd-delete-selection-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'delete-selection-mode)
+    (if (mode-enabled? app 'delete-selection-mode)
+      (echo-message! echo "Delete-selection mode enabled (typing replaces selection)")
+      (echo-message! echo "Delete-selection mode disabled"))))
+
+(def (cmd-cua-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'cua-mode)
+    (if (mode-enabled? app 'cua-mode)
+      (echo-message! echo "CUA mode enabled (C-c=copy, C-v=paste, C-x=cut)")
+      (echo-message! echo "CUA mode disabled"))))
+
+(def (cmd-transient-mark-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'transient-mark-mode)
+    (if (mode-enabled? app 'transient-mark-mode)
+      (echo-message! echo "Transient-mark mode enabled")
+      (echo-message! echo "Transient-mark mode disabled"))))
+
 

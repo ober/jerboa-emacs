@@ -1766,6 +1766,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Fido mode | :orange_circle: | Toggle fido completion |
 | Fido vertical mode | :orange_circle: | Toggle fido vertical display |
 | Savehist mode | :orange_circle: | Toggle history persistence |
+| Recentf mode | :orange_circle: | Toggle recent files tracking |
+| Recentf open files | :orange_circle: | Show recent files list |
+| Saveplace mode | :orange_circle: | Remember cursor position per file |
+| Global auto-revert mode | :orange_circle: | Toggle global auto-revert |
+| Global hl-line mode | :orange_circle: | Toggle global line highlighting |
+| Global display line numbers | :orange_circle: | Toggle global line numbers |
+| Global visual-line mode | :orange_circle: | Toggle global word wrap |
+| Delete-selection mode | :orange_circle: | Typing replaces selection |
+| CUA mode | :orange_circle: | CUA keybindings (C-c/v/x) |
+| Transient-mark mode | :orange_circle: | Toggle transient mark |
+| Shift-select mode | :orange_circle: | Toggle shift-select |
+| Set mark command | :orange_circle: | Set mark at point |
+| Exchange point and mark | :orange_circle: | Swap cursor and mark |
+| Pop mark | :orange_circle: | Pop mark from ring |
+| Pop global mark | :orange_circle: | Pop from global mark ring |
+| Push mark | :orange_circle: | Push mark to ring |
+| Mark ring max | :orange_circle: | Show mark ring limit |
+| Set mark command repeat | :orange_circle: | Set mark (repeatable) |
+| Mark defun | :orange_circle: | Select top-level form |
+| Narrow to defun | :orange_circle: | Narrow to top-level form |
 
 ---
 
