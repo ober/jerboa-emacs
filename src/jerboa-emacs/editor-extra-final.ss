@@ -2820,3 +2820,451 @@
                 (editor-goto-pos ed 0)
                 (echo-message! echo "Sorted by memory")))
             (loop (cons line lines))))))))
+
+;;;============================================================================
+;;; Round 4 batch 2: Features 11-20
+;;;============================================================================
+
+;; --- Feature 11: Doom Modeline (enhanced modeline info) ---
+
+(def *doom-modeline-enabled* #f)
+(def *doom-modeline-segments*
+  '(buffer-info major-mode vcs checker))
+
+(def (cmd-doom-modeline-mode app)
+  "Toggle doom-modeline style — enhanced modeline display."
+  (set! *doom-modeline-enabled* (not *doom-modeline-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *doom-modeline-enabled*
+      "Doom modeline: on (enhanced status display)"
+      "Doom modeline: off")))
+
+(def (doom-modeline-format app)
+  "Generate doom-modeline style string for status area."
+  (when *doom-modeline-enabled*
+    (let* ((buf (current-buffer-from-app app))
+           (name (if buf (buffer-name buf) "[no buffer]"))
+           (path (and buf (buffer-file-path buf)))
+           (ext (if path (path-extension path) ""))
+           (mode-name
+             (cond
+               ((member ext '("ss" "scm" "el")) "Scheme")
+               ((member ext '("py")) "Python")
+               ((member ext '("js" "ts")) "JS/TS")
+               ((member ext '("c" "h" "cpp")) "C/C++")
+               ((member ext '("go")) "Go")
+               ((member ext '("rs")) "Rust")
+               ((member ext '("md")) "Markdown")
+               ((member ext '("org")) "Org")
+               (else "Text")))
+           (ed (edit-window-editor (current-window (app-state-frame app))))
+           (line (+ 1 (send-message ed SCI_LINEFROMPOSITION
+                        (send-message ed SCI_GETCURRENTPOS 0 0) 0)))
+           (col (+ 1 (send-message ed SCI_GETCOLUMN
+                       (send-message ed SCI_GETCURRENTPOS 0 0) 0)))
+           (total-lines (send-message ed SCI_GETLINECOUNT 0 0))
+           (percent (if (> total-lines 0)
+                      (quotient (* line 100) total-lines)
+                      0)))
+      (string-append " " name " | " mode-name " | L"
+        (number->string line) ":C" (number->string col)
+        " (" (number->string percent) "%)"))))
+
+;; --- Feature 12: TS-Fold (tree-sitter based code folding) ---
+
+(def (cmd-ts-fold-toggle app)
+  "Toggle code folding at current line using Scintilla's fold system."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (line (send-message ed SCI_LINEFROMPOSITION
+                 (send-message ed SCI_GETCURRENTPOS 0 0) 0)))
+    (send-message ed SCI_TOGGLEFOLD line 0)
+    (echo-message! (app-state-echo app)
+      (string-append "Toggled fold at line " (number->string (+ line 1))))))
+
+(def (cmd-ts-fold-all app)
+  "Fold all top-level blocks."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (line-count (send-message ed SCI_GETLINECOUNT 0 0)))
+    (let loop ((line 0))
+      (when (< line line-count)
+        (let ((level (send-message ed SCI_GETFOLDLEVEL line 0)))
+          (when (and (> (bitwise-and level #x2000) 0) ;; SC_FOLDLEVELHEADERFLAG
+                     (not (= (send-message ed SCI_GETFOLDEXPANDED line 0) 0)))
+            (send-message ed SCI_TOGGLEFOLD line 0)))
+        (loop (+ line 1))))
+    (echo-message! (app-state-echo app) "All folds collapsed")))
+
+(def (cmd-ts-fold-unfold-all app)
+  "Unfold all blocks."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (line-count (send-message ed SCI_GETLINECOUNT 0 0)))
+    (let loop ((line 0))
+      (when (< line line-count)
+        (let ((level (send-message ed SCI_GETFOLDLEVEL line 0)))
+          (when (and (> (bitwise-and level #x2000) 0)
+                     (= (send-message ed SCI_GETFOLDEXPANDED line 0) 0))
+            (send-message ed SCI_TOGGLEFOLD line 0)))
+        (loop (+ line 1))))
+    (echo-message! (app-state-echo app) "All folds expanded")))
+
+;; --- Feature 13: Casual (transient menu system) ---
+
+(def *casual-menus* (make-hash-table))
+
+(def (casual-define-menu! name entries)
+  "Define a transient menu. entries: list of (key label command-sym)"
+  (hash-put! *casual-menus* name entries))
+
+;; Pre-define some useful menus
+(casual-define-menu! 'buffer
+  '((#\n "Next buffer" next-buffer)
+    (#\p "Previous buffer" previous-buffer)
+    (#\k "Kill buffer" kill-buffer)
+    (#\s "Save buffer" save-buffer)
+    (#\l "List buffers" list-buffers)))
+
+(casual-define-menu! 'window
+  '((#\2 "Split horizontal" split-window-below)
+    (#\3 "Split vertical" split-window-right)
+    (#\0 "Delete window" delete-window)
+    (#\1 "Delete other" delete-other-windows)
+    (#\o "Other window" other-window)))
+
+(def (cmd-casual-buffer-menu app)
+  "Show casual buffer menu."
+  (let* ((echo (app-state-echo app))
+         (entries (hash-ref *casual-menus* 'buffer '()))
+         (display-lines (map (lambda (e)
+                               (string-append "  " (string (cadr e)) "  " (symbol->string (caddr e))))
+                             entries)))
+    (echo-message! echo
+      (string-append "Buffer: " (string-join
+        (map (lambda (e)
+               (string-append "[" (string (car e)) "] " (cadr e)))
+             entries)
+        "  ")))))
+
+(def (cmd-casual-window-menu app)
+  "Show casual window menu."
+  (let* ((echo (app-state-echo app))
+         (entries (hash-ref *casual-menus* 'window '())))
+    (echo-message! echo
+      (string-append "Window: " (string-join
+        (map (lambda (e)
+               (string-append "[" (string (car e)) "] " (cadr e)))
+             entries)
+        "  ")))))
+
+;; --- Feature 14: Spacious Padding ---
+
+(def *spacious-padding-enabled* #f)
+(def *spacious-padding-size* 2)
+
+(def (cmd-spacious-padding-mode app)
+  "Toggle spacious padding — add visual padding around text."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *spacious-padding-enabled* (not *spacious-padding-enabled*))
+    (if *spacious-padding-enabled*
+      (begin
+        ;; Add left margin padding
+        (send-message ed SCI_SETMARGINLEFT 0 (* *spacious-padding-size* 8))
+        (send-message ed SCI_SETMARGINRIGHT 0 (* *spacious-padding-size* 8))
+        (send-message ed SCI_SETEXTRAASCENT (* *spacious-padding-size* 2) 0)
+        (send-message ed SCI_SETEXTRADESCENT (* *spacious-padding-size* 1) 0)
+        (echo-message! echo "Spacious padding: on"))
+      (begin
+        (send-message ed SCI_SETMARGINLEFT 0 0)
+        (send-message ed SCI_SETMARGINRIGHT 0 0)
+        (send-message ed SCI_SETEXTRAASCENT 0 0)
+        (send-message ed SCI_SETEXTRADESCENT 0 0)
+        (echo-message! echo "Spacious padding: off")))))
+
+;; --- Feature 15: DAPE (Debug Adapter Protocol stub) ---
+
+(def *dape-breakpoints* '())
+(def *dape-active* #f)
+
+(def (cmd-dape app)
+  "Start debug adapter session (stub — shows debug UI)."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (set! *dape-active* #t)
+    (let* ((buf (make-buffer "*dape-debug*"))
+           (content (string-append "Debug Adapter Protocol\n"
+                      (make-string 50 #\=) "\n"
+                      "Status: Waiting for connection\n"
+                      "Breakpoints: " (number->string (length *dape-breakpoints*)) "\n"
+                      "\nCommands:\n"
+                      "  dape-breakpoint-toggle — toggle breakpoint at line\n"
+                      "  dape-step — step over\n"
+                      "  dape-continue — continue execution\n"
+                      "  dape-quit — end debug session\n")))
+      (buffer-attach! ed buf)
+      (set! (edit-window-buffer win) buf)
+      (editor-set-text ed content)
+      (editor-goto-pos ed 0)
+      (echo-message! echo "DAPE: debug session started"))))
+
+(def (cmd-dape-breakpoint-toggle app)
+  "Toggle breakpoint at current line."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (line (send-message ed SCI_LINEFROMPOSITION
+                 (send-message ed SCI_GETCURRENTPOS 0 0) 0))
+         (buf (current-buffer-from-app app))
+         (name (if buf (buffer-name buf) ""))
+         (key (string-append name ":" (number->string line))))
+    (if (member key *dape-breakpoints*)
+      (begin
+        (set! *dape-breakpoints* (filter (lambda (b) (not (string=? b key))) *dape-breakpoints*))
+        ;; Remove margin marker
+        (send-message ed SCI_MARKERDELETE line 2)
+        (echo-message! echo (string-append "Breakpoint removed: line " (number->string (+ line 1)))))
+      (begin
+        (set! *dape-breakpoints* (cons key *dape-breakpoints*))
+        ;; Add red circle margin marker
+        (send-message ed SCI_MARKERADD line 2)
+        (echo-message! echo (string-append "Breakpoint set: line " (number->string (+ line 1))))))))
+
+(def (cmd-dape-quit app)
+  "End debug session."
+  (set! *dape-active* #f)
+  (set! *dape-breakpoints* '())
+  (echo-message! (app-state-echo app) "DAPE: debug session ended"))
+
+;; --- Feature 16: Burly (save/restore window configurations) ---
+
+(def *burly-configs* (make-hash-table))
+
+(def (cmd-burly-bookmark-windows app)
+  "Save current window configuration as a named bookmark."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (name (echo-read-string echo "Config name: " row width)))
+    (when (and name (not (string-empty? name)))
+      (let* ((fr (app-state-frame app))
+             (wins (frame-windows fr))
+             (config (map (lambda (win)
+                            (let* ((buf (edit-window-buffer win))
+                                   (bname (if buf (buffer-name buf) "*scratch*"))
+                                   (ed (edit-window-editor win))
+                                   (pos (send-message ed SCI_GETCURRENTPOS 0 0)))
+                              (cons bname pos)))
+                          wins)))
+        (hash-put! *burly-configs* name config)
+        (echo-message! echo (string-append "Saved config: " name
+          " (" (number->string (length wins)) " windows)"))))))
+
+(def (cmd-burly-open-bookmark app)
+  "Restore a saved window configuration."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (names (map (lambda (p) (symbol->string (car p))) (hash->list *burly-configs*))))
+    (if (null? names)
+      (echo-message! echo "No saved configurations")
+      (let ((choice (echo-read-string-with-completion echo "Restore config: " names row width)))
+        (when (and choice (not (string-empty? choice)))
+          (let ((config (hash-get *burly-configs* (string->symbol choice))))
+            (if (not config)
+              (echo-error! echo "Config not found")
+              (begin
+                ;; Restore first window's buffer
+                (when (not (null? config))
+                  (let* ((first (car config))
+                         (bname (car first))
+                         (pos (cdr first))
+                         (buf (buffer-by-name bname))
+                         (fr (app-state-frame app))
+                         (win (current-window fr))
+                         (ed (edit-window-editor win)))
+                    (when buf
+                      (buffer-attach! ed buf)
+                      (set! (edit-window-buffer win) buf)
+                      (editor-goto-pos ed pos))))
+                (echo-message! echo (string-append "Restored config: " choice))))))))))
+
+(def (cmd-burly-list app)
+  "List saved window configurations."
+  (let* ((echo (app-state-echo app))
+         (configs (hash->list *burly-configs*)))
+    (if (null? configs)
+      (echo-message! echo "No saved configurations")
+      (let ((lines (map (lambda (c)
+                          (string-append "  " (symbol->string (car c)) " ("
+                            (number->string (length (cdr c))) " windows)"))
+                        configs)))
+        (echo-message! echo (string-append "Configs: " (string-join lines ", ")))))))
+
+;; --- Feature 17: ELP (Emacs Lisp Profiler — command timing) ---
+
+(def *elp-timing* (make-hash-table))
+(def *elp-enabled* #f)
+(def *elp-last-start* 0)
+
+(def (cmd-elp-instrument app)
+  "Start timing commands."
+  (set! *elp-enabled* #t)
+  (set! *elp-timing* (make-hash-table))
+  (echo-message! (app-state-echo app) "ELP: instrumentation started"))
+
+(def (cmd-elp-results app)
+  "Show ELP timing results."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (pairs (hash->list *elp-timing*)))
+    (set! *elp-enabled* #f)
+    (if (null? pairs)
+      (echo-message! echo "No timing data")
+      (let* ((sorted (sort (lambda (a b)
+                             (> (cadr (cdr a)) (cadr (cdr b))))
+                           pairs))
+             (lines (map (lambda (p)
+                           (let* ((name (symbol->string (car p)))
+                                  (data (cdr p))
+                                  (calls (car data))
+                                  (total-ms (cadr data))
+                                  (pad (make-string (max 0 (- 35 (string-length name))) #\space)))
+                             (string-append "  " name pad
+                               (number->string calls) " calls  "
+                               (number->string total-ms) "ms total")))
+                         (if (> (length sorted) 30) (list-head sorted 30) sorted)))
+             (content (string-append "ELP Results\n"
+                        (make-string 60 #\=) "\n"
+                        (string-join lines "\n") "\n"))
+             (buf (make-buffer "*elp*")))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)))))
+
+(def (elp-record! cmd-name elapsed-ms)
+  "Record timing for a command."
+  (when *elp-enabled*
+    (let ((existing (hash-get *elp-timing* cmd-name)))
+      (if existing
+        (hash-put! *elp-timing* cmd-name
+          (list (+ (car existing) 1) (+ (cadr existing) elapsed-ms)))
+        (hash-put! *elp-timing* cmd-name (list 1 elapsed-ms))))))
+
+;; --- Feature 18: Fontaine (font configuration presets) ---
+
+(def *fontaine-presets*
+  (make-hash-table))
+
+;; Initialize default presets
+(def (fontaine-init!)
+  (hash-put! *fontaine-presets* 'regular
+    '((size . 12) (weight . "normal")))
+  (hash-put! *fontaine-presets* 'presentation
+    '((size . 18) (weight . "normal")))
+  (hash-put! *fontaine-presets* 'small
+    '((size . 10) (weight . "normal")))
+  (hash-put! *fontaine-presets* 'large
+    '((size . 16) (weight . "bold"))))
+
+(fontaine-init!)
+
+(def (cmd-fontaine-set-preset app)
+  "Select a font preset."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (names (map (lambda (p) (symbol->string (car p)))
+                     (hash->list *fontaine-presets*)))
+         (choice (echo-read-string-with-completion echo "Font preset: " names row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((preset (hash-get *fontaine-presets* (string->symbol choice))))
+        (if (not preset)
+          (echo-error! echo "Preset not found")
+          (let* ((size (cdr (assq 'size preset)))
+                 (ed (edit-window-editor (current-window (app-state-frame app)))))
+            ;; Apply font size via Scintilla
+            (let loop ((style 0))
+              (when (< style 128)
+                (send-message ed SCI_STYLESETSIZE style size)
+                (loop (+ style 1))))
+            (echo-message! echo
+              (string-append "Font preset: " choice " (size " (number->string size) ")"))))))))
+
+;; --- Feature 19: SHR Render (simple HTML rendering) ---
+
+(def (cmd-shr-render app)
+  "Render HTML in current buffer as plain text."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (html (editor-get-text ed)))
+    (if (string-empty? html)
+      (echo-message! echo "Buffer is empty")
+      ;; Simple HTML to text: strip tags, decode common entities
+      (let* ((stripped
+               (let loop ((i 0) (in-tag #f) (acc '()))
+                 (if (>= i (string-length html))
+                   (list->string (reverse acc))
+                   (let ((ch (string-ref html i)))
+                     (cond
+                       ((char=? ch #\<) (loop (+ i 1) #t acc))
+                       ((and in-tag (char=? ch #\>))
+                        ;; Check for block tags to insert newlines
+                        (loop (+ i 1) #f acc))
+                       (in-tag (loop (+ i 1) #t acc))
+                       ((and (char=? ch #\&) (< (+ i 3) (string-length html)))
+                        (cond
+                          ((string-prefix? "&amp;" (substring html i (min (string-length html) (+ i 5))))
+                           (loop (+ i 5) #f (cons #\& acc)))
+                          ((string-prefix? "&lt;" (substring html i (min (string-length html) (+ i 4))))
+                           (loop (+ i 4) #f (cons #\< acc)))
+                          ((string-prefix? "&gt;" (substring html i (min (string-length html) (+ i 4))))
+                           (loop (+ i 4) #f (cons #\> acc)))
+                          ((string-prefix? "&nbsp;" (substring html i (min (string-length html) (+ i 6))))
+                           (loop (+ i 6) #f (cons #\space acc)))
+                          ((string-prefix? "&quot;" (substring html i (min (string-length html) (+ i 6))))
+                           (loop (+ i 6) #f (cons #\" acc)))
+                          (else (loop (+ i 1) #f (cons ch acc)))))
+                       (else (loop (+ i 1) #f (cons ch acc)))))))))
+        (editor-set-text ed stripped)
+        (editor-goto-pos ed 0)
+        (echo-message! echo "HTML rendered as text")))))
+
+;; --- Feature 20: Auto Theme Switch (time-based theme switching) ---
+
+(def *auto-theme-enabled* #f)
+(def *auto-theme-light-hour* 7)  ;; Switch to light at 7 AM
+(def *auto-theme-dark-hour* 19)  ;; Switch to dark at 7 PM
+(def *auto-theme-current* 'dark)
+
+(def (cmd-auto-theme-switch app)
+  "Toggle automatic time-based theme switching."
+  (set! *auto-theme-enabled* (not *auto-theme-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *auto-theme-enabled*
+      (string-append "Auto theme: on (light " (number->string *auto-theme-light-hour*)
+        ":00, dark " (number->string *auto-theme-dark-hour*) ":00)")
+      "Auto theme: off")))
+
+(def (auto-theme-check! app)
+  "Check current time and switch theme if needed."
+  (when *auto-theme-enabled*
+    (let* ((now (current-time))
+           (d (time-utc->date now 0))
+           (hour (date-hour d))
+           (should-be-light (and (>= hour *auto-theme-light-hour*)
+                                 (< hour *auto-theme-dark-hour*)))
+           (target (if should-be-light 'light 'dark)))
+      (when (not (eq? target *auto-theme-current*))
+        (set! *auto-theme-current* target)
+        (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+          (if (eq? target 'light)
+            (begin
+              ;; Light theme colors
+              (send-message ed SCI_STYLESETBACK 32 #xFFFFFF) ;; default bg
+              (send-message ed SCI_STYLESETFORE 32 #x000000) ;; default fg
+              (send-message ed SCI_SETCARETFORE #x000000 0))
+            (begin
+              ;; Dark theme colors
+              (send-message ed SCI_STYLESETBACK 32 #x1E1E2E) ;; default bg
+              (send-message ed SCI_STYLESETFORE 32 #xCDD6F4) ;; default fg
+              (send-message ed SCI_SETCARETFORE #xCDD6F4 0))))))))

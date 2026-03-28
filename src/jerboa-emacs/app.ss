@@ -28,7 +28,8 @@
         :jerboa-emacs/helm-commands
         (only-in :jerboa-emacs/editor-extra-editing tui-record-edit-position!)
         (only-in :jerboa-emacs/editor-extra-media2 beacon-check-jump!)
-        (only-in :jerboa-emacs/editor-extra-final follow-mode-sync!)
+        (only-in :jerboa-emacs/editor-extra-final follow-mode-sync! auto-theme-check!)
+        (only-in :jerboa-emacs/editor-extra-media2 nav-flash-check!)
         (only-in :jerboa-emacs/editor-extra-org *desktop-save-mode*)
         (only-in :jerboa-emacs/persist *which-key-mode* *which-key-delay* which-key-summary))
 
@@ -575,6 +576,12 @@
 
       ;; Follow mode: sync adjacent windows
       (follow-mode-sync! app)
+
+      ;; Nav-flash: flash line on navigation jumps
+      (nav-flash-check! app)
+
+      ;; Auto-theme: check time-based theme switching (~every 30s)
+      (auto-theme-check! app)
 
       ;; Auto-save and external modification check (~30s at 50ms poll)
       (set! *auto-save-counter* (+ *auto-save-counter* 1))

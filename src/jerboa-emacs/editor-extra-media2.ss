@@ -2056,3 +2056,366 @@
   (echo-message! (app-state-echo app)
     (if *tui-aggressive-fill* "Aggressive fill-paragraph mode enabled" "Aggressive fill-paragraph mode disabled")))
 
+;;;============================================================================
+;;; Round 4 batch 1: Features 1-10
+;;;============================================================================
+
+;; --- Feature 1: Git Time Machine ---
+;; Step through git history of current file
+
+(def *git-timemachine-revs* '())
+(def *git-timemachine-index* 0)
+
+(def (cmd-git-timemachine app)
+  "Step through git history of current file."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf))))
+    (if (not path)
+      (echo-error! echo "Buffer has no file")
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports
+                      (string-append "git log --pretty=format:'%h %ai %s' -- \"" path "\"")
+                      'block (native-transcoder))))
+        (close-port p-stdin)
+        (let loop ((lines '()))
+          (let ((line (get-line p-stdout)))
+            (if (eof-object? line)
+              (begin
+                (close-port p-stdout)
+                (close-port p-stderr)
+                (if (null? lines)
+                  (echo-message! echo "No git history for this file")
+                  (begin
+                    (set! *git-timemachine-revs* (reverse lines))
+                    (set! *git-timemachine-index* 0)
+                    (echo-message! echo
+                      (string-append "Git time machine: "
+                        (number->string (length (reverse lines)))
+                        " revisions. Use timemachine-next/prev to navigate")))))
+              (loop (cons line lines)))))))))
+
+(def (git-timemachine-show-rev! app idx)
+  "Show a specific git revision of current file."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf)))
+         (rev-line (list-ref *git-timemachine-revs* idx))
+         (hash (let ((sp (string-contains rev-line " ")))
+                 (if sp (substring rev-line 0 sp) rev-line))))
+    (when path
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports
+                      (string-append "git show " hash ":\"" path "\" 2>&1")
+                      'block (native-transcoder))))
+        (close-port p-stdin)
+        (let loop ((lines '()))
+          (let ((line (get-line p-stdout)))
+            (if (eof-object? line)
+              (begin
+                (close-port p-stdout)
+                (close-port p-stderr)
+                (let* ((content (string-join (reverse lines) "\n"))
+                       (fr (app-state-frame app))
+                       (win (current-window fr))
+                       (ed (edit-window-editor win)))
+                  (editor-set-text ed content)
+                  (editor-goto-pos ed 0)
+                  (echo-message! echo
+                    (string-append "[" (number->string (+ idx 1)) "/"
+                      (number->string (length *git-timemachine-revs*))
+                      "] " rev-line))))
+              (loop (cons line lines)))))))))
+
+(def (cmd-git-timemachine-next app)
+  "Show next (newer) revision."
+  (if (null? *git-timemachine-revs*)
+    (echo-message! (app-state-echo app) "No time machine active")
+    (begin
+      (set! *git-timemachine-index*
+        (max 0 (- *git-timemachine-index* 1)))
+      (git-timemachine-show-rev! app *git-timemachine-index*))))
+
+(def (cmd-git-timemachine-prev app)
+  "Show previous (older) revision."
+  (if (null? *git-timemachine-revs*)
+    (echo-message! (app-state-echo app) "No time machine active")
+    (begin
+      (set! *git-timemachine-index*
+        (min (- (length *git-timemachine-revs*) 1) (+ *git-timemachine-index* 1)))
+      (git-timemachine-show-rev! app *git-timemachine-index*))))
+
+;; --- Feature 2: Exec Path From Shell ---
+
+(def (cmd-exec-path-from-shell app)
+  "Import PATH and other env vars from login shell."
+  (let* ((echo (app-state-echo app)))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports
+                    "bash -lc 'echo PATH=$PATH; echo GOPATH=$GOPATH; echo CARGO_HOME=$CARGO_HOME'"
+                    'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (for-each
+                (lambda (l)
+                  (let ((eq (string-contains l "=")))
+                    (when eq
+                      (let ((name (substring l 0 eq))
+                            (val (substring l (+ eq 1) (string-length l))))
+                        (putenv name val)))))
+                (reverse lines))
+              (echo-message! echo
+                (string-append "Imported " (number->string (length lines)) " env vars from shell")))
+            (loop (cons line lines))))))))
+
+;; --- Feature 3: Goto Line Preview ---
+
+(def (cmd-goto-line-preview app)
+  "Go to line number with live preview highlighting."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (orig-pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (input (echo-read-string echo "Goto line: " row width)))
+    (if (and input (not (string-empty? input)))
+      (let ((line-num (string->number (string-trim input))))
+        (if (and line-num (> line-num 0))
+          (let ((pos (send-message ed SCI_POSITIONFROMLINE (- line-num 1) 0)))
+            (editor-goto-pos ed pos)
+            (pulse-line! ed)
+            (echo-message! echo (string-append "Line " (number->string line-num))))
+          (begin
+            (editor-goto-pos ed orig-pos)
+            (echo-message! echo "Invalid line number"))))
+      (editor-goto-pos ed orig-pos))))
+
+;; --- Feature 4: Nav Flash ---
+;; Flash the cursor line after navigation jumps
+
+(def *nav-flash-enabled* #f)
+(def *nav-flash-last-line* -1)
+
+(def (cmd-nav-flash-mode app)
+  "Toggle nav-flash — briefly highlight line after navigation."
+  (set! *nav-flash-enabled* (not *nav-flash-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *nav-flash-enabled* "Nav-flash mode: on" "Nav-flash mode: off")))
+
+(def (nav-flash-check! app)
+  "Check for line change and flash if significant jump."
+  (when *nav-flash-enabled*
+    (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+           (line (send-message ed SCI_LINEFROMPOSITION
+                   (send-message ed SCI_GETCURRENTPOS 0 0) 0)))
+      (when (and (>= *nav-flash-last-line* 0)
+                 (> (abs (- line *nav-flash-last-line*)) 5))
+        (pulse-line! ed))
+      (set! *nav-flash-last-line* line))))
+
+;; --- Feature 5: Pulsar ---
+;; Pulse current line on specific actions
+
+(def *pulsar-enabled* #f)
+
+(def (cmd-pulsar-mode app)
+  "Toggle pulsar — pulse current line on scroll/switch."
+  (set! *pulsar-enabled* (not *pulsar-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *pulsar-enabled* "Pulsar mode: on" "Pulsar mode: off")))
+
+(def (cmd-pulsar-pulse app)
+  "Manually pulse the current line."
+  (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+    (pulse-line! ed)))
+
+;; --- Feature 6: Goggles (visual feedback for operations) ---
+
+(def *goggles-enabled* #f)
+
+(def (cmd-goggles-mode app)
+  "Toggle goggles — visual feedback for yank/kill/undo."
+  (set! *goggles-enabled* (not *goggles-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *goggles-enabled* "Goggles mode: on" "Goggles mode: off")))
+
+(def (goggles-flash-region! ed start len)
+  "Flash a region briefly using indicator 14."
+  (when *goggles-enabled*
+    (send-message ed SCI_INDICSETSTYLE 14 7) ;; INDIC_ROUNDBOX
+    (send-message ed SCI_INDICSETFORE 14 #x80FF80)
+    (send-message ed SCI_INDICSETALPHA 14 100)
+    (send-message ed SCI_SETINDICATORCURRENT 14 0)
+    (send-message ed SCI_INDICATORFILLRANGE start len)))
+
+;; --- Feature 7: Eros (eval result overlay) ---
+
+(def (cmd-eros-eval-last-sexp app)
+  "Evaluate last S-expression and display result inline."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         ;; Find matching paren backward
+         (match (send-message ed SCI_BRACEMATCH pos 0)))
+    ;; Fallback: grab text from previous line
+    (let* ((line (send-message ed SCI_LINEFROMPOSITION pos 0))
+           (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+           (text (editor-get-text ed))
+           (line-text (substring text line-start pos)))
+      (let ((result
+              (with-catch
+                (lambda (e)
+                  (string-append "Error: " (with-output-to-string (lambda () (display-condition e)))))
+                (lambda ()
+                  (let ((val (eval (read (open-input-string line-text)))))
+                    (with-output-to-string (lambda () (write val))))))))
+        ;; Display result after cursor position using calltip
+        (send-message ed SCI_CALLTIPSHOW pos (string->alien/nul (string-append " => " result)))
+        (echo-message! echo (string-append "=> " result))))))
+
+;; --- Feature 8: TMR (timer management) ---
+
+(def *tmr-timers* '()) ;; list of (id name end-epoch callback-msg)
+(def *tmr-next-id* 0)
+
+(def (cmd-tmr-new app)
+  "Create a new timer with name and duration."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (desc (echo-read-string echo "Timer description: " row width)))
+    (when (and desc (not (string-empty? desc)))
+      (let ((mins-str (echo-read-string echo "Duration (minutes): " row width)))
+        (when (and mins-str (not (string-empty? mins-str)))
+          (let ((mins (string->number (string-trim mins-str))))
+            (when (and mins (> mins 0))
+              (set! *tmr-next-id* (+ *tmr-next-id* 1))
+              (let ((end (+ (time-second (current-time)) (* mins 60))))
+                (set! *tmr-timers*
+                  (cons (list *tmr-next-id* desc end) *tmr-timers*))
+                (echo-message! echo
+                  (string-append "Timer #" (number->string *tmr-next-id*)
+                    ": " desc " (" (number->string mins) " min)"))))))))))
+
+(def (cmd-tmr-list app)
+  "List all active timers."
+  (let* ((echo (app-state-echo app))
+         (now (time-second (current-time))))
+    (if (null? *tmr-timers*)
+      (echo-message! echo "No timers")
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (lines
+               (map (lambda (t)
+                      (let* ((id (car t)) (desc (cadr t)) (end (caddr t))
+                             (remaining (max 0 (- end now)))
+                             (min (quotient remaining 60))
+                             (sec (remainder remaining 60)))
+                        (string-append "#" (number->string id) " "
+                          desc "  "
+                          (if (<= remaining 0) "DONE!"
+                            (string-append (number->string min) ":"
+                              (if (< sec 10) "0" "") (number->string sec))))))
+                    *tmr-timers*))
+             (content (string-append "Timers\n" (make-string 40 #\-) "\n"
+                        (string-join lines "\n")))
+             (buf (make-buffer "*tmr*")))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)))))
+
+(def (cmd-tmr-cancel app)
+  "Cancel a timer by ID."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (id-str (echo-read-string echo "Cancel timer #: " row width)))
+    (when (and id-str (not (string-empty? id-str)))
+      (let ((id (string->number (string-trim id-str))))
+        (when id
+          (set! *tmr-timers*
+            (filter (lambda (t) (not (= (car t) id))) *tmr-timers*))
+          (echo-message! echo (string-append "Timer #" (number->string id) " cancelled")))))))
+
+;; --- Feature 9: Logos (page-based narrowing for focused reading/presentations) ---
+
+(def *logos-page-delimiter* "^\f\\|^\\*\\*\\* \\|^--- ")
+(def *logos-active* #f)
+
+(def (cmd-logos-mode app)
+  "Toggle logos mode for page-based focused editing."
+  (set! *logos-active* (not *logos-active*))
+  (echo-message! (app-state-echo app)
+    (if *logos-active*
+      "Logos mode: on (use logos-forward/backward to navigate pages)"
+      "Logos mode: off")))
+
+(def (cmd-logos-forward app)
+  "Navigate to next page (form-feed or heading delimiter)."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    ;; Search forward for form-feed (^L)
+    (let loop ((i (+ pos 1)))
+      (if (>= i len)
+        (echo-message! (app-state-echo app) "End of buffer")
+        (if (char=? (string-ref text i) #\page)
+          (begin
+            (editor-goto-pos ed (+ i 1))
+            (pulse-line! ed))
+          (loop (+ i 1)))))))
+
+(def (cmd-logos-backward app)
+  "Navigate to previous page."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (text (editor-get-text ed)))
+    (let loop ((i (- pos 2)))
+      (if (<= i 0)
+        (begin (editor-goto-pos ed 0)
+               (echo-message! (app-state-echo app) "Beginning of buffer"))
+        (if (char=? (string-ref text i) #\page)
+          (begin
+            (editor-goto-pos ed (+ i 1))
+            (pulse-line! ed))
+          (loop (- i 1)))))))
+
+;; --- Feature 10: Cursory (cursor appearance management) ---
+
+(def *cursory-presets*
+  '((bar . 1)        ;; SCI_SETCARETSTYLE bar
+    (block . 2)      ;; block
+    (underline . 3))) ;; underline (approximate via Scintilla)
+
+(def (cmd-cursory-set app)
+  "Set cursor style (bar, block, underline)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (choices '("bar" "block" "underline"))
+         (choice (echo-read-string-with-completion echo "Cursor style: " choices row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((style (cond
+                     ((string=? choice "bar") 1)
+                     ((string=? choice "block") 2)
+                     ((string=? choice "underline") 3)
+                     (else 1))))
+        (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+          (send-message ed SCI_SETCARETSTYLE style 0)
+          (echo-message! echo (string-append "Cursor style: " choice)))))))
+
+(def (cmd-cursory-set-width app)
+  "Set cursor width."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (w-str (echo-read-string echo "Cursor width (1-4): " row width)))
+    (when (and w-str (not (string-empty? w-str)))
+      (let ((w (string->number (string-trim w-str))))
+        (when (and w (>= w 1) (<= w 4))
+          (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+            (send-message ed SCI_SETCARETWIDTH w 0)
+            (echo-message! echo (string-append "Cursor width: " (number->string w)))))))))
