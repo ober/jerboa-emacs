@@ -3226,6 +3226,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 91 — DAP & Debugger
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| dap-breakpoint-delete-all | :orange_circle: | Delete all breakpoints |
+| dap-restart-frame | :orange_circle: | Restart current frame |
+| dap-ui-locals | :orange_circle: | Show local variables |
+| dap-ui-breakpoints | :orange_circle: | Show breakpoints panel |
+| dap-ui-sessions | :orange_circle: | Show debug sessions |
+| dap-hydra | :orange_circle: | Open debug hydra menu |
+| dap-ui-expressions-add | :orange_circle: | Add watch expression |
+| dap-tooltip-at-point | :orange_circle: | Show value at point |
+| dap-switch-stack-frame | :orange_circle: | Switch stack frame |
+| dap-switch-thread | :orange_circle: | Switch debug thread |
+| dap-toggle-breakpoint-condition | :orange_circle: | Set conditional breakpoint |
+| realgud-gdb | :orange_circle: | Debug with GDB (RealGUD) |
+| realgud-pdb | :orange_circle: | Debug with PDB (RealGUD) |
+| realgud-node-inspect | :orange_circle: | Debug with Node inspector |
+| realgud-lldb | :orange_circle: | Debug with LLDB (RealGUD) |
+| gdb-many-windows | :orange_circle: | GDB many-windows layout |
+| gud-gdb | :orange_circle: | Start GDB via GUD |
+| gud-break | :orange_circle: | Set GUD breakpoint |
+| gud-remove | :orange_circle: | Remove GUD breakpoint |
+| gud-step | :orange_circle: | GUD step into |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

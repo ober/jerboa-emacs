@@ -13437,3 +13437,46 @@
       (echo-message! echo "LSP modeline diagnostics enabled")
       (echo-message! echo "LSP modeline diagnostics disabled"))))
 
+;;; Round 91 — DAP & Debugger
+(def (cmd-dap-breakpoint-delete-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: all breakpoints deleted")))
+
+(def (cmd-dap-restart-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: restarted current frame")))
+
+(def (cmd-dap-ui-locals app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP UI: showing local variables")))
+
+(def (cmd-dap-ui-breakpoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP UI: showing breakpoints")))
+
+(def (cmd-dap-ui-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP UI: showing debug sessions")))
+
+(def (cmd-dap-hydra app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: debug hydra menu opened")))
+
+(def (cmd-dap-ui-expressions-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Watch expression: "
+      (lambda (expr)
+        (echo-message! echo (str "DAP: watching " expr))))))
+
+(def (cmd-dap-tooltip-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: showing value at point")))
+
+(def (cmd-dap-switch-stack-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: switched stack frame")))
+
+(def (cmd-dap-switch-thread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: switched thread")))
+

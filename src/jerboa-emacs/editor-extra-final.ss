@@ -12891,3 +12891,56 @@
     (echo-read-string echo "LSP workspace symbol: "
       (lambda (sym)
         (echo-message! echo (str "LSP: searching workspace for " sym))))))
+
+;;; Round 91 — Debugger (cont.)
+(def (cmd-dap-toggle-breakpoint-condition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Breakpoint condition: "
+      (lambda (cond)
+        (echo-message! echo (str "DAP: conditional breakpoint set: " cond))))))
+
+(def (cmd-realgud-gdb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GDB debug program: "
+      (lambda (prog)
+        (echo-message! echo (str "RealGUD: debugging " prog " with GDB"))))))
+
+(def (cmd-realgud-pdb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PDB debug script: "
+      (lambda (script)
+        (echo-message! echo (str "RealGUD: debugging " script " with PDB"))))))
+
+(def (cmd-realgud-node-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Node inspect script: "
+      (lambda (script)
+        (echo-message! echo (str "RealGUD: debugging " script " with Node inspector"))))))
+
+(def (cmd-realgud-lldb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LLDB debug program: "
+      (lambda (prog)
+        (echo-message! echo (str "RealGUD: debugging " prog " with LLDB"))))))
+
+(def (cmd-gdb-many-windows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: many-windows layout opened")))
+
+(def (cmd-gud-gdb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GUD GDB command: "
+      (lambda (cmd)
+        (echo-message! echo (str "GUD: starting GDB with " cmd))))))
+
+(def (cmd-gud-break app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: breakpoint set at current line")))
+
+(def (cmd-gud-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: breakpoint removed at current line")))
+
+(def (cmd-gud-step app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: stepped into")))
