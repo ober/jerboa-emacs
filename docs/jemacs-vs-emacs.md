@@ -1566,6 +1566,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | LPR buffer | :orange_circle: | Print buffer (lpr alias) |
 | Flush lines | :orange_circle: | Delete lines matching pattern |
 | Keep lines | :orange_circle: | Keep only lines matching pattern |
+| How many | :orange_circle: | Count occurrences of a pattern |
+| Count matches | :orange_circle: | Count pattern matches (alias) |
+| Occur mode | :orange_circle: | Show all lines matching pattern |
+| Delete matching lines | :orange_circle: | Delete lines matching pattern |
+| Delete non-matching lines | :orange_circle: | Keep only matching lines |
+| Transpose lines | :orange_circle: | Swap current and previous line |
+| Transpose words | :orange_circle: | Swap words around cursor |
+| Transpose sexps | :orange_circle: | Swap S-expressions (placeholder) |
+| Transpose paragraphs | :orange_circle: | Swap current and previous paragraph |
+| Upcase word | :orange_circle: | Convert word to uppercase |
+| Downcase word | :orange_circle: | Convert word to lowercase |
+| Capitalize word | :orange_circle: | Capitalize word at cursor |
+| Upcase initials | :orange_circle: | Upcase first letter of each word |
+| Tabify | :orange_circle: | Convert spaces to tabs in region |
+| Untabify | :orange_circle: | Convert tabs to spaces in region |
+| Indent region | :orange_circle: | Indent all lines in region |
+| Back to indentation | :orange_circle: | Move to first non-whitespace on line |
+| Delete indentation | :orange_circle: | Join line with previous |
+| Fixup whitespace | :orange_circle: | Collapse whitespace around point |
+| Just one space | :orange_circle: | Replace whitespace with single space |
 
 ---
 
