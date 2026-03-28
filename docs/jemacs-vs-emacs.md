@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 171 — Selectrum, Icomplete-ext, Mct, Ivy-posframe
+
+| Feature | Status | Notes |
+|---|---|---|
+| selectrum-prescient-mode | :orange_circle: | Prescient scoring in Selectrum |
+| selectrum-cycle | :orange_circle: | Cycle Selectrum candidates |
+| selectrum-toggle-display | :orange_circle: | Toggle Selectrum display style |
+| selectrum-repeat | :orange_circle: | Repeat last Selectrum selection |
+| icomplete-toggle-prefix | :orange_circle: | Toggle prefix display in icomplete |
+| icomplete-force-complete | :orange_circle: | Force icomplete completion |
+| icomplete-minibuffer-setup | :orange_circle: | Setup icomplete in minibuffer |
+| mct-mode | :orange_circle: | Toggle Mct completion mode |
+| mct-minibuffer-mode | :orange_circle: | Mct in minibuffer only |
+| mct-region-mode | :orange_circle: | Mct in region completion |
+| mct-toggle-completions | :orange_circle: | Toggle Mct completions display |
+| ivy-posframe-mode | :orange_circle: | Show Ivy in posframe popup |
+| ivy-posframe-display-at-frame-center | :orange_circle: | Posframe at frame center |
+| ivy-posframe-display-at-point | :orange_circle: | Posframe at point |
+| ivy-posframe-display-at-window-center | :orange_circle: | Posframe at window center |
+| mini-frame-show-parameters | :orange_circle: | Show mini-frame parameters |
+| ivy-rich-mode | :orange_circle: | Rich annotations in Ivy |
+| ivy-rich-modify-columns | :orange_circle: | Modify Ivy-rich columns |
+| ivy-rich-set-display-transformer | :orange_circle: | Set Ivy-rich display transformer |
+| all-the-icons-ivy-rich-mode | :orange_circle: | Icons in Ivy-rich annotations |
+
 ### Round 170 — Marginalia, Orderless, Prescient, Hotfuzz
 
 | Feature | Status | Notes |

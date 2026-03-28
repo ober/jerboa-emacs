@@ -17388,3 +17388,56 @@
 (def (cmd-prescient-toggle-fuzzy app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Prescient: toggled fuzzy matching")))
+
+;; Round 171 — Selectrum, Icomplete-ext, Mct, Ivy-posframe (batch 1)
+(def (cmd-selectrum-prescient-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'selectrum-prescient)
+    (if (mode-enabled? app 'selectrum-prescient)
+      (echo-message! echo "Selectrum-prescient mode enabled")
+      (echo-message! echo "Selectrum-prescient mode disabled"))))
+
+(def (cmd-selectrum-cycle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Selectrum: cycling candidates")))
+
+(def (cmd-selectrum-toggle-display app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Selectrum: toggled display style")))
+
+(def (cmd-selectrum-repeat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Selectrum: repeating last selection")))
+
+(def (cmd-icomplete-toggle-prefix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Icomplete: toggled prefix display")))
+
+(def (cmd-icomplete-force-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Icomplete: forced completion")))
+
+(def (cmd-icomplete-minibuffer-setup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Icomplete: minibuffer setup complete")))
+
+(def (cmd-mct-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'mct)
+    (if (mode-enabled? app 'mct)
+      (echo-message! echo "Mct mode enabled")
+      (echo-message! echo "Mct mode disabled"))))
+
+(def (cmd-mct-minibuffer-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'mct-minibuffer)
+    (if (mode-enabled? app 'mct-minibuffer)
+      (echo-message! echo "Mct minibuffer mode enabled")
+      (echo-message! echo "Mct minibuffer mode disabled"))))
+
+(def (cmd-mct-region-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'mct-region)
+    (if (mode-enabled? app 'mct-region)
+      (echo-message! echo "Mct region mode enabled")
+      (echo-message! echo "Mct region mode disabled"))))

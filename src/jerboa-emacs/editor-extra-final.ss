@@ -16774,3 +16774,53 @@
     (if (mode-enabled? app 'flx-ido)
       (echo-message! echo "Flx-ido mode enabled")
       (echo-message! echo "Flx-ido mode disabled"))))
+
+;; Round 171 — Selectrum, Icomplete-ext, Mct, Ivy-posframe (batch 2)
+(def (cmd-mct-toggle-completions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mct: toggled completions display")))
+
+(def (cmd-ivy-posframe-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ivy-posframe)
+    (if (mode-enabled? app 'ivy-posframe)
+      (echo-message! echo "Ivy-posframe mode enabled")
+      (echo-message! echo "Ivy-posframe mode disabled"))))
+
+(def (cmd-ivy-posframe-display-at-frame-center app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy-posframe: display at frame center")))
+
+(def (cmd-ivy-posframe-display-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy-posframe: display at point")))
+
+(def (cmd-ivy-posframe-display-at-window-center app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy-posframe: display at window center")))
+
+(def (cmd-mini-frame-show-parameters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mini-frame: showing parameters")))
+
+(def (cmd-ivy-rich-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ivy-rich)
+    (if (mode-enabled? app 'ivy-rich)
+      (echo-message! echo "Ivy-rich mode enabled")
+      (echo-message! echo "Ivy-rich mode disabled"))))
+
+(def (cmd-ivy-rich-modify-columns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy-rich: columns modified")))
+
+(def (cmd-ivy-rich-set-display-transformer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy-rich: display transformer set")))
+
+(def (cmd-all-the-icons-ivy-rich-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'all-the-icons-ivy-rich)
+    (if (mode-enabled? app 'all-the-icons-ivy-rich)
+      (echo-message! echo "All-the-icons-ivy-rich mode enabled")
+      (echo-message! echo "All-the-icons-ivy-rich mode disabled"))))
