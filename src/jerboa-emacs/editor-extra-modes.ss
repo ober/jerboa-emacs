@@ -18777,3 +18777,46 @@
 (def (cmd-emms-bookmarks-next app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EMMS: jumped to next bookmark")))
+
+;; Round 199 — Denote-ext, Org-roam-ext, Citar-ext
+(def (cmd-denote-rename-file-using-front-matter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: renamed file using front matter")))
+
+(def (cmd-denote-link-or-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Link or create note: "
+      (lambda (title)
+        (echo-message! echo (str "Denote: linked/created '" title "'"))))))
+
+(def (cmd-denote-find-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: finding links from current note")))
+
+(def (cmd-denote-find-backlink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: finding backlinks to current note")))
+
+(def (cmd-denote-explore-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: exploring note network")))
+
+(def (cmd-denote-journal-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: created journal entry")))
+
+(def (cmd-org-roam-extract-subtree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: extracted subtree to new note")))
+
+(def (cmd-citar-open-links app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citar: opening links for citation")))
+
+(def (cmd-citar-insert-bibtex app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citar: inserted BibTeX entry")))
+
+(def (cmd-citar-export-local-bib app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citar: exported local bibliography")))

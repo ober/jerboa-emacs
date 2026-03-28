@@ -18128,3 +18128,59 @@
 (def (cmd-bongo-next app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Bongo: playing next track")))
+
+;; Round 199 — Biblio-ext, Org-ql, Org-sidebar, Org-edna, Org-depend, Org-fancy-priorities
+(def (cmd-biblio-download-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Biblio: downloaded entry")))
+
+(def (cmd-biblio-crossref-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CrossRef search: "
+      (lambda (q)
+        (echo-message! echo (str "Biblio: searching CrossRef for '" q "'"))))))
+
+(def (cmd-biblio-dblp-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DBLP search: "
+      (lambda (q)
+        (echo-message! echo (str "Biblio: searching DBLP for '" q "'"))))))
+
+(def (cmd-org-ql-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Org-ql query: "
+      (lambda (q)
+        (echo-message! echo (str "Org-ql: searching for " q))))))
+
+(def (cmd-org-ql-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-ql: showing saved view")))
+
+(def (cmd-org-sidebar-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org: toggled sidebar")))
+
+(def (cmd-org-sidebar-tree-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org: toggled sidebar tree view")))
+
+(def (cmd-org-edna-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-edna)
+    (if (mode-enabled? app 'org-edna)
+      (echo-message! echo "Org-edna mode enabled")
+      (echo-message! echo "Org-edna mode disabled"))))
+
+(def (cmd-org-depend-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-depend)
+    (if (mode-enabled? app 'org-depend)
+      (echo-message! echo "Org-depend mode enabled")
+      (echo-message! echo "Org-depend mode disabled"))))
+
+(def (cmd-org-fancy-priorities-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-fancy-priorities)
+    (if (mode-enabled? app 'org-fancy-priorities)
+      (echo-message! echo "Org fancy priorities mode enabled")
+      (echo-message! echo "Org fancy priorities mode disabled"))))

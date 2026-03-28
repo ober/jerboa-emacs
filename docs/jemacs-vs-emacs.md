@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 199 — Denote-ext, Org-roam-ext, Citar-ext, Biblio-ext, Org-ql, Org-sidebar
+
+| Feature | Status | Notes |
+|---|---|---|
+| denote-rename-file-using-front-matter | :orange_circle: | Rename using front matter |
+| denote-link-or-create | :orange_circle: | Link to or create note |
+| denote-find-link | :orange_circle: | Find links from current note |
+| denote-find-backlink | :orange_circle: | Find backlinks to current note |
+| denote-explore-network | :orange_circle: | Explore note network |
+| denote-journal-entry | :orange_circle: | Create journal entry |
+| org-roam-extract-subtree | :orange_circle: | Extract subtree to new note |
+| citar-open-links | :orange_circle: | Open citation links |
+| citar-insert-bibtex | :orange_circle: | Insert BibTeX entry |
+| citar-export-local-bib | :orange_circle: | Export local bibliography |
+| biblio-download-entry | :orange_circle: | Download bibliography entry |
+| biblio-crossref-lookup | :orange_circle: | Search CrossRef |
+| biblio-dblp-lookup | :orange_circle: | Search DBLP |
+| org-ql-search | :orange_circle: | Search with org-ql query |
+| org-ql-view | :orange_circle: | Show org-ql saved view |
+| org-sidebar-toggle | :orange_circle: | Toggle org sidebar |
+| org-sidebar-tree-toggle | :orange_circle: | Toggle org sidebar tree |
+| org-edna-mode | :orange_circle: | Toggle org-edna mode |
+| org-depend-mode | :orange_circle: | Toggle org-depend mode |
+| org-fancy-priorities-mode | :orange_circle: | Toggle fancy priorities mode |
+
 ### Round 198 — ERC-ext, EMMS, Bongo
 
 | Feature | Status | Notes |
