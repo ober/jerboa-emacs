@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 183 — Idris, PureScript, Elm, F#
+
+| Feature | Status | Notes |
+|---|---|---|
+| idris-mode | :orange_circle: | Toggle Idris mode |
+| idris-load-file | :orange_circle: | Load Idris file |
+| idris-type-at-point | :orange_circle: | Show type at point |
+| idris-case-split | :orange_circle: | Case split on variable |
+| idris-add-clause | :orange_circle: | Add initial clause |
+| idris-proof-search | :orange_circle: | Search for proof |
+| purescript-mode | :orange_circle: | Toggle PureScript mode |
+| purescript-build | :orange_circle: | Build PureScript project |
+| purescript-repl | :orange_circle: | Start PureScript REPL |
+| purescript-goto-definition | :orange_circle: | Go to definition |
+| elm-mode | :orange_circle: | Toggle Elm mode |
+| elm-compile-buffer | :orange_circle: | Compile Elm buffer |
+| elm-format-buffer | :orange_circle: | Format Elm buffer |
+| elm-test-project | :orange_circle: | Run Elm project tests |
+| elm-repl | :orange_circle: | Start Elm REPL |
+| fsharp-mode | :orange_circle: | Toggle F# mode |
+| fsharp-build | :orange_circle: | Build F# project |
+| fsharp-run | :orange_circle: | Run F# project |
+| fsharp-format-buffer | :orange_circle: | Format F# buffer |
+| fsharp-send-region | :orange_circle: | Send region to F# REPL |
+
 ### Round 182 — Proof-general, Coq, Lean, Agda
 
 | Feature | Status | Notes |

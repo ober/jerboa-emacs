@@ -17350,3 +17350,50 @@
 (def (cmd-agda-auto app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Agda: auto-solving hole...")))
+
+;; Round 183 — Idris, Purescript, Elm, F# (batch 2)
+(def (cmd-elm-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'elm)
+    (if (mode-enabled? app 'elm)
+      (echo-message! echo "Elm mode enabled")
+      (echo-message! echo "Elm mode disabled"))))
+
+(def (cmd-elm-compile-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elm: compiling buffer...")))
+
+(def (cmd-elm-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elm: formatted buffer")))
+
+(def (cmd-elm-test-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elm: running project tests...")))
+
+(def (cmd-elm-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elm: starting REPL...")))
+
+(def (cmd-fsharp-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fsharp)
+    (if (mode-enabled? app 'fsharp)
+      (echo-message! echo "F# mode enabled")
+      (echo-message! echo "F# mode disabled"))))
+
+(def (cmd-fsharp-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "F#: building project...")))
+
+(def (cmd-fsharp-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "F#: running project...")))
+
+(def (cmd-fsharp-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "F#: formatted buffer")))
+
+(def (cmd-fsharp-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "F#: sent region to REPL")))

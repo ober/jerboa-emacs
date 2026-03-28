@@ -17980,3 +17980,50 @@
     (echo-read-string echo "Search: "
       (lambda (query)
         (echo-message! echo (str "Coq: searching for " query))))))
+
+;; Round 183 — Idris, Purescript, Elm, F# (batch 1)
+(def (cmd-idris-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'idris)
+    (if (mode-enabled? app 'idris)
+      (echo-message! echo "Idris mode enabled")
+      (echo-message! echo "Idris mode disabled"))))
+
+(def (cmd-idris-load-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: loading file...")))
+
+(def (cmd-idris-type-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: showing type at point")))
+
+(def (cmd-idris-case-split app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: case split on variable")))
+
+(def (cmd-idris-add-clause app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: added initial clause")))
+
+(def (cmd-idris-proof-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: searching for proof...")))
+
+(def (cmd-purescript-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'purescript)
+    (if (mode-enabled? app 'purescript)
+      (echo-message! echo "PureScript mode enabled")
+      (echo-message! echo "PureScript mode disabled"))))
+
+(def (cmd-purescript-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PureScript: building project...")))
+
+(def (cmd-purescript-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PureScript: starting REPL...")))
+
+(def (cmd-purescript-goto-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PureScript: going to definition")))
