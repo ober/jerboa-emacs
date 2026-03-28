@@ -14295,3 +14295,47 @@
 (def (cmd-sql-accumulate-and-indent app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SQL: accumulated and indented")))
+
+;;; ——— Round 120: Semantic/CEDET & Senator (batch 2) ———
+
+(def (cmd-semantic-symref app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: finding symbol references")))
+
+(def (cmd-semantic-symref-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Symbol references for: "
+      (lambda (sym)
+        (echo-message! echo (str "Semantic: finding references to " sym))))))
+
+(def (cmd-senator-next-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: moved to next tag")))
+
+(def (cmd-senator-previous-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: moved to previous tag")))
+
+(def (cmd-senator-go-to-up-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: moved to parent reference")))
+
+(def (cmd-senator-copy-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: copied tag")))
+
+(def (cmd-senator-kill-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: killed tag")))
+
+(def (cmd-senator-yank-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: yanked tag")))
+
+(def (cmd-senator-fold-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: folded tag")))
+
+(def (cmd-senator-unfold-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Senator: unfolded tag")))

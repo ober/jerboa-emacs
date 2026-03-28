@@ -3964,6 +3964,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | sql-redirect | :orange_circle: | Redirect SQL output to file |
 | sql-accumulate-and-indent | :orange_circle: | Accumulate and indent SQL |
 
+### Round 120 — Semantic/CEDET & Senator
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| semantic-mode | :orange_circle: | Toggle Semantic mode |
+| semantic-complete-analyze-inline | :orange_circle: | Inline completion analysis |
+| semantic-complete-jump | :orange_circle: | Jump to completion target |
+| semantic-complete-self-insert | :orange_circle: | Self-insert with completion |
+| semantic-decoration-include-visit | :orange_circle: | Visit included file |
+| semantic-ia-describe-class | :orange_circle: | Describe class at point |
+| semantic-ia-fast-jump | :orange_circle: | Fast jump to definition |
+| semantic-ia-show-doc | :orange_circle: | Show documentation |
+| semantic-ia-show-summary | :orange_circle: | Show summary |
+| semantic-mrub-switch-tags | :orange_circle: | Switch MRU bookmark tags |
+| semantic-symref | :orange_circle: | Find symbol references |
+| semantic-symref-symbol | :orange_circle: | Find references to symbol |
+| senator-next-tag | :orange_circle: | Move to next tag |
+| senator-previous-tag | :orange_circle: | Move to previous tag |
+| senator-go-to-up-reference | :orange_circle: | Move to parent reference |
+| senator-copy-tag | :orange_circle: | Copy tag |
+| senator-kill-tag | :orange_circle: | Kill tag |
+| senator-yank-tag | :orange_circle: | Yank tag |
+| senator-fold-tag | :orange_circle: | Fold tag |
+| senator-unfold-tag | :orange_circle: | Unfold tag |
+
 ---
 
 ## Recommended Development Roadmap

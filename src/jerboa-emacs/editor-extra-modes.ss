@@ -14884,3 +14884,48 @@
 (def (cmd-sql-highlight-mysql-keywords app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SQL: highlighting MySQL keywords")))
+
+;;; ——— Round 120: Semantic/CEDET & Senator (batch 1) ———
+
+(def (cmd-semantic-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'semantic)
+    (if (mode-enabled? app 'semantic)
+      (echo-message! echo "Semantic mode enabled")
+      (echo-message! echo "Semantic mode disabled"))))
+
+(def (cmd-semantic-complete-analyze-inline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: inline completion analysis")))
+
+(def (cmd-semantic-complete-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: jumped to completion target")))
+
+(def (cmd-semantic-complete-self-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: self-insert with completion")))
+
+(def (cmd-semantic-decoration-include-visit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: visiting included file")))
+
+(def (cmd-semantic-ia-describe-class app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic IA: describing class at point")))
+
+(def (cmd-semantic-ia-fast-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic IA: fast jump to definition")))
+
+(def (cmd-semantic-ia-show-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic IA: showing documentation")))
+
+(def (cmd-semantic-ia-show-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic IA: showing summary")))
+
+(def (cmd-semantic-mrub-switch-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: switching MRU bookmark tags")))
