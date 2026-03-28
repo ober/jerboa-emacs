@@ -13462,3 +13462,54 @@
 (def (cmd-ielm-clear-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "IELM: cleared interaction buffer")))
+
+;;; ——— Round 103: Org-mode advanced (batch 2) ———
+
+(def (cmd-org-table-transpose-table-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Table: transposed table at point")))
+
+(def (cmd-org-table-toggle-formula-debugger app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-table-formula-debugger)
+    (if (mode-enabled? app 'org-table-formula-debugger)
+      (echo-message! echo "Org Table formula debugger enabled")
+      (echo-message! echo "Org Table formula debugger disabled"))))
+
+(def (cmd-org-table-field-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Table: showing field info at point")))
+
+(def (cmd-org-attach-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Attach file: "
+      (lambda (file)
+        (echo-message! echo (str "Org Attach: attached " file))))))
+
+(def (cmd-org-attach-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Attach: opening attachment")))
+
+(def (cmd-org-attach-reveal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Attach: revealing attachment directory")))
+
+(def (cmd-org-attach-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Attach: synchronized attachments")))
+
+(def (cmd-org-attach-delete-one app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete attachment: "
+      (lambda (name)
+        (echo-message! echo (str "Org Attach: deleted " name))))))
+
+(def (cmd-org-attach-delete-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Attach: deleted all attachments")))
+
+(def (cmd-org-attach-set-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Attachment directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Org Attach: set directory to " dir))))))

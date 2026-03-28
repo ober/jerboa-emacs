@@ -3539,6 +3539,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ielm-return | :orange_circle: | IELM newline or send |
 | ielm-clear-buffer | :orange_circle: | Clear IELM interaction buffer |
 
+### Round 103 — Org-mode Advanced (Babel, Tables, Attachments)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| org-babel-detangle | :orange_circle: | Detangle source blocks back to org |
+| org-babel-tangle-file | :orange_circle: | Tangle a specific org file |
+| org-babel-load-file | :orange_circle: | Load and evaluate org file |
+| org-babel-sha1-hash | :orange_circle: | Compute SHA1 hash of source block |
+| org-babel-check-src-block | :orange_circle: | Check source block for errors |
+| org-babel-switch-to-session | :orange_circle: | Switch to babel session buffer |
+| org-babel-result-hide-all | :orange_circle: | Hide all babel results |
+| org-table-create-with-table-el | :orange_circle: | Create table.el table |
+| org-table-recalculate | :orange_circle: | Recalculate current table field |
+| org-table-recalculate-buffer-tables | :orange_circle: | Recalculate all tables in buffer |
+| org-table-transpose-table-at-point | :orange_circle: | Transpose table at point |
+| org-table-toggle-formula-debugger | :orange_circle: | Toggle formula debugger |
+| org-table-field-info | :orange_circle: | Show field info at point |
+| org-attach-attach | :orange_circle: | Attach file to org heading |
+| org-attach-open | :orange_circle: | Open attachment |
+| org-attach-reveal | :orange_circle: | Reveal attachment directory |
+| org-attach-sync | :orange_circle: | Synchronize attachments |
+| org-attach-delete-one | :orange_circle: | Delete one attachment |
+| org-attach-delete-all | :orange_circle: | Delete all attachments |
+| org-attach-set-directory | :orange_circle: | Set attachment directory |
+
 ---
 
 ## Recommended Development Roadmap
