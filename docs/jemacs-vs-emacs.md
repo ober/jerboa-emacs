@@ -4018,6 +4018,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 122 — Speedbar, Flyspell, Bookmarks, Crux
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| speedbar-expand-line | :orange_circle: | Expand speedbar line |
+| speedbar-contract-line | :orange_circle: | Contract speedbar line |
+| speedbar-refresh | :orange_circle: | Refresh speedbar |
+| speedbar-update-contents | :orange_circle: | Update speedbar contents |
+| flyspell-auto-correct-previous-word | :orange_circle: | Auto-correct previous misspelled word |
+| flyspell-correct-word-before-point | :orange_circle: | Correct word before point |
+| bookmark-bmenu-search | :orange_circle: | Search bookmark list |
+| bookmark-bmenu-rename | :orange_circle: | Rename bookmark |
+| bookmark-bmenu-delete | :orange_circle: | Delete bookmark |
+| bookmark-bmenu-save | :orange_circle: | Save bookmark list |
+| symbol-overlay-next | :orange_circle: | Jump to next symbol overlay |
+| symbol-overlay-prev | :orange_circle: | Jump to previous symbol overlay |
+| symbol-overlay-mode | :orange_circle: | Toggle symbol overlay mode |
+| move-dup-move-lines-up | :orange_circle: | Move lines up |
+| move-dup-move-lines-down | :orange_circle: | Move lines down |
+| move-dup-duplicate-up | :orange_circle: | Duplicate lines up |
+| move-dup-duplicate-down | :orange_circle: | Duplicate lines down |
+| crux-smart-open-line | :orange_circle: | Smart open line below |
+| crux-smart-open-line-above | :orange_circle: | Smart open line above |
+| crux-top-join-line | :orange_circle: | Join line with previous |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

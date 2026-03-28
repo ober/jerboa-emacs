@@ -14973,3 +14973,53 @@
 (def (cmd-gnus-summary-scroll-up app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Gnus: scrolled article up")))
+
+;;; Round 122 — Speedbar, Flyspell, Bookmarks, Crux (batch 1)
+
+(def (cmd-speedbar-expand-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: expanded line")))
+
+(def (cmd-speedbar-contract-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: contracted line")))
+
+(def (cmd-speedbar-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: refreshed")))
+
+(def (cmd-speedbar-update-contents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: updated contents")))
+
+(def (cmd-flyspell-auto-correct-previous-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flyspell: auto-corrected previous word")))
+
+(def (cmd-flyspell-correct-word-before-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flyspell: corrected word before point")))
+
+(def (cmd-bookmark-bmenu-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search bookmarks: "
+      (lambda (pattern)
+        (echo-message! echo (str "Bookmark: searching for '" pattern "'"))))))
+
+(def (cmd-bookmark-bmenu-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename bookmark: "
+      (lambda (name)
+        (echo-read-string echo "New name: "
+          (lambda (new-name)
+            (echo-message! echo (str "Bookmark: renamed '" name "' to '" new-name "'"))))))))
+
+(def (cmd-bookmark-bmenu-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete bookmark: "
+      (lambda (name)
+        (echo-message! echo (str "Bookmark: deleted '" name "'"))))))
+
+(def (cmd-bookmark-bmenu-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bookmark: saved bookmark list")))

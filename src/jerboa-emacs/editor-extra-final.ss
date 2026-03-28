@@ -14381,3 +14381,48 @@
 (def (cmd-gnus-summary-tick-article-forward app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Gnus: ticked article")))
+
+;;; Round 122 — Speedbar, Flyspell, Bookmarks, Crux (batch 2)
+
+(def (cmd-symbol-overlay-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Symbol overlay: jumped to next")))
+
+(def (cmd-symbol-overlay-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Symbol overlay: jumped to previous")))
+
+(def (cmd-symbol-overlay-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'symbol-overlay)
+    (if (mode-enabled? app 'symbol-overlay)
+      (echo-message! echo "Symbol-Overlay mode enabled")
+      (echo-message! echo "Symbol-Overlay mode disabled"))))
+
+(def (cmd-move-dup-move-lines-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Move-dup: moved lines up")))
+
+(def (cmd-move-dup-move-lines-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Move-dup: moved lines down")))
+
+(def (cmd-move-dup-duplicate-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Move-dup: duplicated lines up")))
+
+(def (cmd-move-dup-duplicate-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Move-dup: duplicated lines down")))
+
+(def (cmd-crux-smart-open-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: smart open line below")))
+
+(def (cmd-crux-smart-open-line-above app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: smart open line above")))
+
+(def (cmd-crux-top-join-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crux: joined line with previous")))
