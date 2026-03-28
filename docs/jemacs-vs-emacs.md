@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 155 — Embark, Consult, Vertico, Corfu, Cape Extended
+
+| Feature | Status | Notes |
+|---|---|---|
+| `embark-dwim` | :orange_circle: | Do-what-I-mean action |
+| `embark-export` | :orange_circle: | Export candidates to buffer |
+| `embark-live` | :orange_circle: | Live updating collect |
+| `embark-become` | :orange_circle: | Become different command |
+| `embark-select` | :orange_circle: | Select candidate |
+| `embark-prefix-help-command` | :orange_circle: | Prefix key help |
+| `consult-grep` | :orange_circle: | Grep with consult |
+| `consult-git-grep` | :orange_circle: | Git-grep with consult |
+| `consult-register-store` | :orange_circle: | Store to register |
+| `consult-register-load` | :orange_circle: | Load from register |
+| `vertico-indexed-mode` | :orange_circle: | Indexed candidate mode |
+| `vertico-mouse-mode` | :orange_circle: | Mouse support |
+| `vertico-quick-jump` | :orange_circle: | Quick jump to candidate |
+| `vertico-quick-insert` | :orange_circle: | Quick insert candidate |
+| `corfu-echo-mode` | :orange_circle: | Echo area completion info |
+| `cape-file` | :orange_circle: | File name completion |
+| `cape-elisp-symbol` | :orange_circle: | Elisp symbol completion |
+| `cape-rfc1345` | :orange_circle: | RFC 1345 char completion |
+| `cape-emoji` | :orange_circle: | Emoji completion |
+| `cape-ispell` | :orange_circle: | Ispell completion |
+
 ### Round 154 — Dired-subtree, Dired-filter, Dired Extensions
 
 | Feature | Status | Notes |

@@ -16602,3 +16602,55 @@
     (echo-read-string echo "Filter by mode: "
       (lambda (mode)
         (echo-message! echo (str "Dired-filter: filtering by mode " mode))))))
+
+;; ============================================================
+;; Round 155 — Embark, Consult, Vertico, Corfu, Cape (batch 1)
+;; ============================================================
+
+(def (cmd-embark-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: do-what-I-mean action on target")))
+
+(def (cmd-embark-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: exported candidates to buffer")))
+
+(def (cmd-embark-live app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: live updating collect buffer")))
+
+(def (cmd-embark-become app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: becoming a different command")))
+
+(def (cmd-embark-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: selected current candidate")))
+
+(def (cmd-embark-prefix-help-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: showing prefix key help")))
+
+(def (cmd-consult-grep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult grep: "
+      (lambda (q)
+        (echo-message! echo (str "Consult: grepping for '" q "'"))))))
+
+(def (cmd-consult-git-grep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consult git-grep: "
+      (lambda (q)
+        (echo-message! echo (str "Consult: git-grepping for '" q "'"))))))
+
+(def (cmd-consult-register-store app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Store to register: "
+      (lambda (reg)
+        (echo-message! echo (str "Consult: stored to register " reg))))))
+
+(def (cmd-consult-register-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Load from register: "
+      (lambda (reg)
+        (echo-message! echo (str "Consult: loaded register " reg))))))

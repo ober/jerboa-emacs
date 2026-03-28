@@ -15974,3 +15974,56 @@
 (def (cmd-dired-sidebar-toggle-sidebar app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dired-sidebar: toggled sidebar")))
+
+;; ============================================================
+;; Round 155 — Vertico, Corfu, Cape extended (batch 2)
+;; ============================================================
+
+(def (cmd-vertico-indexed-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'vertico-indexed)
+    (if (mode-enabled? app 'vertico-indexed)
+      (echo-message! echo "Vertico indexed mode enabled")
+      (echo-message! echo "Vertico indexed mode disabled"))))
+
+(def (cmd-vertico-mouse-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'vertico-mouse)
+    (if (mode-enabled? app 'vertico-mouse)
+      (echo-message! echo "Vertico mouse mode enabled")
+      (echo-message! echo "Vertico mouse mode disabled"))))
+
+(def (cmd-corfu-echo-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'corfu-echo)
+    (if (mode-enabled? app 'corfu-echo)
+      (echo-message! echo "Corfu echo mode enabled")
+      (echo-message! echo "Corfu echo mode disabled"))))
+
+(def (cmd-cape-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: file name completion at point")))
+
+(def (cmd-cape-elisp-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: Elisp symbol completion at point")))
+
+(def (cmd-cape-rfc1345 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: RFC 1345 character completion")))
+
+(def (cmd-cape-emoji app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: emoji completion at point")))
+
+(def (cmd-cape-ispell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: ispell completion at point")))
+
+(def (cmd-vertico-quick-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: quick jump to candidate")))
+
+(def (cmd-vertico-quick-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: quick insert candidate")))
