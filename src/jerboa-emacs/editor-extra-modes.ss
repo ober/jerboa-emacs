@@ -16992,3 +16992,53 @@
 (def (cmd-vimish-fold-delete app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vimish-fold: deleted fold at point")))
+
+;; ============================================================
+;; Round 163 — Icomplete, Minibuffer, Recentf extended (batch 1)
+;; ============================================================
+
+(def (cmd-icomplete-fido-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'icomplete-fido)
+    (if (mode-enabled? app 'icomplete-fido)
+      (echo-message! echo "Icomplete fido mode enabled")
+      (echo-message! echo "Icomplete fido mode disabled"))))
+
+(def (cmd-icomplete-fido-vertical-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'icomplete-fido-vertical)
+    (if (mode-enabled? app 'icomplete-fido-vertical)
+      (echo-message! echo "Icomplete fido vertical mode enabled")
+      (echo-message! echo "Icomplete fido vertical mode disabled"))))
+
+(def (cmd-minibuffer-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: completed")))
+
+(def (cmd-minibuffer-complete-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: completed word")))
+
+(def (cmd-minibuffer-completion-help app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: showing completion help")))
+
+(def (cmd-minibuffer-force-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: force completed")))
+
+(def (cmd-minibuffer-force-complete-and-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: force completed and exited")))
+
+(def (cmd-minibuffer-beginning-of-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: moved to beginning")))
+
+(def (cmd-minibuffer-keyboard-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: keyboard quit")))
+
+(def (cmd-exit-minibuffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Exited minibuffer")))

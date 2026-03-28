@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 163 — Icomplete, Minibuffer, Recentf Extended
+
+| Feature | Status | Notes |
+|---|---|---|
+| `icomplete-fido-mode` | :orange_circle: | Fido completion mode |
+| `icomplete-fido-vertical-mode` | :orange_circle: | Fido vertical mode |
+| `minibuffer-complete` | :orange_circle: | Complete in minibuffer |
+| `minibuffer-complete-word` | :orange_circle: | Complete word |
+| `minibuffer-completion-help` | :orange_circle: | Show completion help |
+| `minibuffer-force-complete` | :orange_circle: | Force complete |
+| `minibuffer-force-complete-and-exit` | :orange_circle: | Force complete and exit |
+| `minibuffer-beginning-of-buffer` | :orange_circle: | Beginning of minibuffer |
+| `minibuffer-keyboard-quit` | :orange_circle: | Keyboard quit |
+| `exit-minibuffer` | :orange_circle: | Exit minibuffer |
+| `minibuffer-electric-default-mode` | :orange_circle: | Electric default mode |
+| `minibuffer-depth-indicate-mode` | :orange_circle: | Depth indicate mode |
+| `minibuffer-next-completion` | :orange_circle: | Next completion |
+| `recentf-open-more-files` | :orange_circle: | Show more recent files |
+| `recentf-load-list` | :orange_circle: | Load file list |
+| `recentf-edit-list` | :orange_circle: | Edit file list |
+| `recentf-dialog` | :orange_circle: | Open recentf dialog |
+| `recentf-track-opened-file` | :orange_circle: | Track opened file |
+| `read-extended-command` | :orange_circle: | Read extended command |
+| `execute-extended-command-for-buffer` | :orange_circle: | Execute for buffer |
+
 ### Round 162 — Origami, Vimish-fold, Yafolding, Indirect-buffer
 
 | Feature | Status | Notes |

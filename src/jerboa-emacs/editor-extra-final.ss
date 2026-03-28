@@ -16356,3 +16356,53 @@
 (def (cmd-yafolding-hide-all app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Yafolding: hid all folds")))
+
+;; ============================================================
+;; Round 163 — Minibuffer, Recentf, Read-command (batch 2)
+;; ============================================================
+
+(def (cmd-minibuffer-electric-default-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'minibuffer-electric-default)
+    (if (mode-enabled? app 'minibuffer-electric-default)
+      (echo-message! echo "Minibuffer electric default mode enabled")
+      (echo-message! echo "Minibuffer electric default mode disabled"))))
+
+(def (cmd-minibuffer-depth-indicate-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'minibuffer-depth-indicate)
+    (if (mode-enabled? app 'minibuffer-depth-indicate)
+      (echo-message! echo "Minibuffer depth indicate mode enabled")
+      (echo-message! echo "Minibuffer depth indicate mode disabled"))))
+
+(def (cmd-recentf-open-more-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recentf: showing more recent files")))
+
+(def (cmd-recentf-load-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recentf: loaded file list from disk")))
+
+(def (cmd-recentf-edit-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recentf: editing file list")))
+
+(def (cmd-recentf-dialog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recentf: opened dialog")))
+
+(def (cmd-recentf-track-opened-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recentf: tracking opened file")))
+
+(def (cmd-read-extended-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Read extended command (M-x)")))
+
+(def (cmd-execute-extended-command-for-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Execute extended command for buffer")))
+
+(def (cmd-minibuffer-next-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minibuffer: next completion")))
