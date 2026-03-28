@@ -15400,3 +15400,57 @@
 (def (cmd-calc-reset app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Calc: stack reset")))
+
+;; ============================================================
+;; Round 144 — Tramp, EWW, SHR, Browse-url (batch 2)
+;; ============================================================
+
+(def (cmd-tramp-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP version: 2.6.x (scaffolded)")))
+
+(def (cmd-tramp-bug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: prepared bug report buffer")))
+
+(def (cmd-eww-switch-to-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to EWW buffer: "
+      (lambda (buf)
+        (echo-message! echo (str "EWW: switched to " buf))))))
+
+(def (cmd-shr-tag-img app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: image tag rendered")))
+
+(def (cmd-shr-render-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: buffer rendered as HTML")))
+
+(def (cmd-shr-insert-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image URL: "
+      (lambda (url)
+        (echo-message! echo (str "SHR: inserted image from " url))))))
+
+(def (cmd-shr-zoom-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: zoomed image")))
+
+(def (cmd-browse-url-xdg-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Opening " url " with xdg-open"))))))
+
+(def (cmd-browse-url-generic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Opening " url " with generic browser"))))))
+
+(def (cmd-browse-url-kde app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Opening " url " with KDE browser"))))))

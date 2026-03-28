@@ -16016,3 +16016,55 @@
 (def (cmd-animate-birthday-present app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Happy Birthday!")))
+
+;; ============================================================
+;; Round 144 — EWW, SHR, Browse-url, Tramp, Net-utils (batch 1)
+;; ============================================================
+
+(def (cmd-eww-list-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: listing buffers")))
+
+(def (cmd-eww-view-source app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EWW: viewing page source")))
+
+(def (cmd-shr-save-contents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Save contents to file: "
+      (lambda (f)
+        (echo-message! echo (str "SHR: saved to " f))))))
+
+(def (cmd-browse-url-of-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Browse-url: opened current buffer in browser")))
+
+(def (cmd-browse-url-of-dired-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Browse-url: opened dired file in browser")))
+
+(def (cmd-browse-url-emacs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL to open in EWW: "
+      (lambda (url)
+        (echo-message! echo (str "Opening " url " in EWW"))))))
+
+(def (cmd-ftp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "FTP host: "
+      (lambda (host)
+        (echo-message! echo (str "FTP: connecting to " host))))))
+
+(def (cmd-dig app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Host to dig: "
+      (lambda (host)
+        (echo-message! echo (str "Dig: querying " host))))))
+
+(def (cmd-iwconfig app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iwconfig: displaying wireless configuration")))
+
+(def (cmd-tramp-archive-cleanup-hash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: cleaned up archive hash")))

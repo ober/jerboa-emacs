@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 144 — EWW, SHR, Browse-url, Tramp, Net-utils
+
+| Feature | Status | Notes |
+|---|---|---|
+| `eww-list-buffers` | :orange_circle: | List EWW buffers |
+| `eww-view-source` | :orange_circle: | View page source |
+| `eww-switch-to-buffer` | :orange_circle: | Switch to EWW buffer |
+| `shr-save-contents` | :orange_circle: | Save rendered contents |
+| `shr-tag-img` | :orange_circle: | Render image tag |
+| `shr-render-buffer` | :orange_circle: | Render buffer as HTML |
+| `shr-insert-image` | :orange_circle: | Insert image from URL |
+| `shr-zoom-image` | :orange_circle: | Zoom image |
+| `browse-url-of-buffer` | :orange_circle: | Open buffer URL in browser |
+| `browse-url-of-dired-file` | :orange_circle: | Open dired file in browser |
+| `browse-url-emacs` | :orange_circle: | Open URL in EWW |
+| `browse-url-xdg-open` | :orange_circle: | Open URL with xdg-open |
+| `browse-url-generic` | :orange_circle: | Open URL with generic browser |
+| `browse-url-kde` | :orange_circle: | Open URL with KDE browser |
+| `tramp-archive-cleanup-hash` | :orange_circle: | Clean up TRAMP archive hash |
+| `tramp-version` | :orange_circle: | Show TRAMP version |
+| `tramp-bug` | :orange_circle: | Prepare TRAMP bug report |
+| `ftp` | :orange_circle: | FTP client |
+| `dig` | :orange_circle: | DNS lookup with dig |
+| `iwconfig` | :orange_circle: | Wireless configuration |
+
 ### Round 143 — Calc Extended, Prodigy, Forge, Games/Fun
 
 | Feature | Status | Notes |
