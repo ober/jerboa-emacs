@@ -3620,3 +3620,488 @@
         (send-message ed SCI_INDICATORCLEARRANGE 0
           (send-message ed SCI_GETLENGTH 0 0))
         (echo-message! echo "Sentence highlighting: off")))))
+
+;; ===== Round 8 Batch 1 =====
+
+;; --- Feature 1: Newsticker (RSS Reader) ---
+
+(def *newsticker-feeds*
+  '(("Hacker News" . "https://news.ycombinator.com/rss")
+    ("Lobsters" . "https://lobste.rs/rss")
+    ("Planet Emacs" . "https://planet.emacslife.com/atom.xml")))
+
+(def (cmd-newsticker app)
+  "Open RSS feed reader — fetches and displays configured feeds."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (feed-names (map car *newsticker-feeds*))
+         (choice (echo-read-string-with-completion
+                   echo "Feed: " feed-names row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let* ((pair (assoc choice *newsticker-feeds*))
+             (url (if pair (cdr pair) choice)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "RSS error: " e)))
+          (lambda ()
+            (let-values (((p-stdin p-stdout p-stderr pid)
+                          (open-process-ports
+                            (string-append "curl -sL --max-time 10 " (shell-quote url))
+                            'block (native-transcoder))))
+              (close-port p-stdin)
+              (let loop ((lines '()))
+                (let ((line (get-line p-stdout)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port p-stdout) (close-port p-stderr)
+                      (let* ((raw (string-join (reverse lines) "\n"))
+                             ;; Extract titles from <title>...</title> tags
+                             (titles (let extract ((s raw) (acc '()))
+                                       (let ((start (string-contains s "<title>")))
+                                         (if start
+                                           (let* ((rest (substring s (+ start 7) (string-length s)))
+                                                  (end (string-contains rest "</title>")))
+                                             (if end
+                                               (extract (substring rest (+ end 8) (string-length rest))
+                                                        (cons (substring rest 0 end) acc))
+                                               (reverse acc)))
+                                           (reverse acc)))))
+                             (content (string-append "Newsticker: " (or choice "Feed") "\n"
+                                        (make-string 50 #\=) "\n\n"
+                                        (if (null? titles) "No items found"
+                                          (string-join
+                                            (map (lambda (t) (string-append "  * " t))
+                                                 (if (> (length titles) 1) (cdr titles) titles))
+                                            "\n"))))
+                             (nbuf (make-buffer "*newsticker*")))
+                        (buffer-attach! ed nbuf)
+                        (set! (edit-window-buffer win) nbuf)
+                        (editor-set-text ed content)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo (str "Fetched " (length titles) " items"))))
+                    (loop (cons line lines))))))))))))
+
+(def (cmd-newsticker-add-feed app)
+  "Add a new RSS feed URL to the newsticker feed list."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (name (echo-read-string echo "Feed name: " row width)))
+    (when (and name (not (string-empty? name)))
+      (let ((url (echo-read-string echo "Feed URL: " row width)))
+        (when (and url (not (string-empty? url)))
+          (set! *newsticker-feeds* (cons (cons name url) *newsticker-feeds*))
+          (echo-message! echo (str "Added feed: " name)))))))
+
+;; --- Feature 2: Auth-source (Credential Store) ---
+
+(def *auth-source-entries* (make-hash-table))
+
+(def (cmd-auth-source-save app)
+  "Save a credential to the in-memory auth-source store."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (host (echo-read-string echo "Host: " row width)))
+    (when (and host (not (string-empty? host)))
+      (let ((user (echo-read-string echo "User: " row width)))
+        (when (and user (not (string-empty? user)))
+          (let ((pass (echo-read-string echo "Secret: " row width)))
+            (when (and pass (not (string-empty? pass)))
+              (hash-put! *auth-source-entries* (str host ":" user)
+                         (list (cons 'host host) (cons 'user user) (cons 'secret pass)))
+              (echo-message! echo (str "Saved credential for " user "@" host)))))))))
+
+(def (cmd-auth-source-search app)
+  "Search auth-source for a credential by host."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (hosts (map (lambda (e) (cdr (assoc 'host (cdr e))))
+                     (hash->list *auth-source-entries*)))
+         (host (echo-read-string-with-completion echo "Host: " hosts row width)))
+    (when (and host (not (string-empty? host)))
+      (let* ((matches (filter (lambda (e)
+                                (string-contains (car e) host))
+                              (hash->list *auth-source-entries*))))
+        (if (null? matches)
+          (echo-message! echo "No credentials found")
+          (let ((entry (cdar matches)))
+            (echo-message! echo (str "Found: " (cdr (assoc 'user entry))
+                                     "@" (cdr (assoc 'host entry))))))))))
+
+;; --- Feature 3: Gomoku (Five in a Row) ---
+
+(def *gomoku-board* #f)
+(def *gomoku-size* 15)
+(def *gomoku-turn* 'x)
+
+(def (gomoku-init!)
+  (set! *gomoku-board* (make-vector (* *gomoku-size* *gomoku-size*) #\.))
+  (set! *gomoku-turn* 'x))
+
+(def (gomoku-get r c)
+  (vector-ref *gomoku-board* (+ (* r *gomoku-size*) c)))
+
+(def (gomoku-set! r c v)
+  (vector-set! *gomoku-board* (+ (* r *gomoku-size*) c) v))
+
+(def (gomoku-check-win r c sym)
+  "Check if placing sym at (r,c) wins."
+  (define (count-dir dr dc)
+    (let loop ((i 1))
+      (let ((nr (+ r (* i dr))) (nc (+ c (* i dc))))
+        (if (and (>= nr 0) (< nr *gomoku-size*)
+                 (>= nc 0) (< nc *gomoku-size*)
+                 (eqv? (gomoku-get nr nc) sym))
+          (loop (+ i 1))
+          (- i 1)))))
+  (or (>= (+ 1 (count-dir 0 1) (count-dir 0 -1)) 5)
+      (>= (+ 1 (count-dir 1 0) (count-dir -1 0)) 5)
+      (>= (+ 1 (count-dir 1 1) (count-dir -1 -1)) 5)
+      (>= (+ 1 (count-dir 1 -1) (count-dir -1 1)) 5)))
+
+(def (gomoku-render)
+  (let ((lines '()))
+    (do ((r 0 (+ r 1)))
+        ((= r *gomoku-size*))
+      (let ((row-chars '()))
+        (do ((c 0 (+ c 1)))
+            ((= c *gomoku-size*))
+          (set! row-chars (cons (str " " (gomoku-get r c)) row-chars)))
+        (set! lines (cons (string-append (format "~2d " r)
+                            (apply string-append (reverse row-chars)))
+                          lines))))
+    (string-append "   " (apply string-append
+                           (map (lambda (i) (format "~2d" i)) (iota *gomoku-size*)))
+                   "\n"
+                   (string-join (reverse lines) "\n")
+                   "\n\nTurn: " (symbol->string *gomoku-turn*))))
+
+(def (cmd-gomoku app)
+  "Play Gomoku (five in a row). Enter moves as 'row col'."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (gomoku-init!)
+    (let ((gbuf (make-buffer "*gomoku*")))
+      (buffer-attach! ed gbuf)
+      (set! (edit-window-buffer win) gbuf)
+      (editor-set-text ed (gomoku-render))
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Gomoku: Enter 'row col' to place, e.g. '7 7'"))))
+
+(def (cmd-gomoku-move app)
+  "Make a move in Gomoku."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Move (row col): " row width)))
+    (when (and input (not (string-empty? input)) *gomoku-board*)
+      (let* ((parts (string-split (string-trim input) #\space))
+             (r (and (>= (length parts) 2) (string->number (car parts))))
+             (c (and (>= (length parts) 2) (string->number (cadr parts)))))
+        (when (and r c (>= r 0) (< r *gomoku-size*) (>= c 0) (< c *gomoku-size*)
+                   (eqv? (gomoku-get r c) #\.))
+          (let ((sym (if (eq? *gomoku-turn* 'x) #\X #\O)))
+            (gomoku-set! r c sym)
+            (if (gomoku-check-win r c sym)
+              (begin
+                (editor-set-text ed (string-append (gomoku-render) "\n\n*** "
+                                      (symbol->string *gomoku-turn*) " wins! ***"))
+                (echo-message! echo (str (symbol->string *gomoku-turn*) " wins!")))
+              (begin
+                (set! *gomoku-turn* (if (eq? *gomoku-turn* 'x) 'o 'x))
+                (editor-set-text ed (gomoku-render))
+                (editor-goto-pos ed 0)))))))))
+
+;; --- Feature 4: Dissociated Press ---
+
+(def (cmd-dissociated-press app)
+  "Dissociated Press: scramble current buffer text by mixing n-grams."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 10))
+      (let* ((words (string-split text #\space))
+             (n (length words))
+             (out-len (min 200 n))
+             (result '()))
+        (do ((i 0 (+ i 1)))
+            ((= i out-len))
+          (set! result (cons (list-ref words (random n)) result)))
+        (let ((dbuf (make-buffer "*dissociated*")))
+          (buffer-attach! ed dbuf)
+          (set! (edit-window-buffer win) dbuf)
+          (editor-set-text ed (string-join (reverse result) " "))
+          (editor-goto-pos ed 0)
+          (echo-message! echo "Dissociated Press output generated"))))))
+
+;; --- Feature 5: MPUZ (Multiplication Puzzle) ---
+
+(def (mpuz-generate)
+  "Generate a multiplication puzzle: AB * C = DEF with unique digits."
+  (let loop ()
+    (let* ((a (+ 10 (random 90)))
+           (b (+ 2 (random 8)))
+           (product (* a b)))
+      (if (and (> product 99) (< product 1000))
+        (let* ((digits (map (lambda (c) (- (char->integer c) 48))
+                            (string->list (str a b product))))
+               (unique (let uniq ((lst digits) (seen '()))
+                         (cond ((null? lst) (reverse seen))
+                               ((memv (car lst) seen) (uniq (cdr lst) seen))
+                               (else (uniq (cdr lst) (cons (car lst) seen)))))))
+          (if (>= (length unique) 5)
+            (list a b product)
+            (loop)))
+        (loop)))))
+
+(def (cmd-mpuz app)
+  "Start a multiplication puzzle — guess the hidden digits."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (puzzle (mpuz-generate))
+         (a (car puzzle)) (b (cadr puzzle)) (product (caddr puzzle))
+         (display-text (string-append
+                         "Multiplication Puzzle\n"
+                         (make-string 30 #\=) "\n\n"
+                         "   " (make-string (string-length (number->string a)) #\?) "\n"
+                         " x " (make-string 1 #\?) "\n"
+                         " ---\n"
+                         "   " (make-string (string-length (number->string product)) #\?) "\n\n"
+                         "Guess the digits! Answer: " (number->string a)
+                         " x " (number->string b) " = " (number->string product) "\n"
+                         "(Answer is revealed above for this implementation)"))
+         (pbuf (make-buffer "*mpuz*")))
+    (buffer-attach! ed pbuf)
+    (set! (edit-window-buffer win) pbuf)
+    (editor-set-text ed display-text)
+    (editor-goto-pos ed 0)
+    (echo-message! echo "MPUZ: Multiplication puzzle")))
+
+;; --- Feature 6: Blackbox (Logic Puzzle) ---
+
+(def *blackbox-size* 8)
+(def *blackbox-atoms* '())
+(def *blackbox-guesses* '())
+(def *blackbox-score* 0)
+
+(def (blackbox-init! n-atoms)
+  (set! *blackbox-atoms* '())
+  (set! *blackbox-guesses* '())
+  (set! *blackbox-score* 0)
+  (let loop ((i 0))
+    (when (< i n-atoms)
+      (let ((r (+ 1 (random (- *blackbox-size* 2))))
+            (c (+ 1 (random (- *blackbox-size* 2)))))
+        (if (member (cons r c) *blackbox-atoms*)
+          (loop i)
+          (begin (set! *blackbox-atoms* (cons (cons r c) *blackbox-atoms*))
+                 (loop (+ i 1))))))))
+
+(def (blackbox-render show-atoms?)
+  (let ((lines (list "Blackbox Puzzle" (make-string 30 #\=) "")))
+    (do ((r 0 (+ r 1)))
+        ((= r *blackbox-size*))
+      (let ((row-str ""))
+        (do ((c 0 (+ c 1)))
+            ((= c *blackbox-size*))
+          (set! row-str
+            (string-append row-str
+              (cond
+                ((and show-atoms? (member (cons r c) *blackbox-atoms*)) " @")
+                ((member (cons r c) *blackbox-guesses*) " *")
+                (else " .")))))
+        (set! lines (cons row-str lines))))
+    (set! lines (cons (str "\nScore: " *blackbox-score*
+                           "  Atoms: " (length *blackbox-atoms*)
+                           "  Guesses: " (length *blackbox-guesses*)) lines))
+    (string-join (reverse lines) "\n")))
+
+(def (cmd-blackbox app)
+  "Start a Blackbox logic puzzle."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (blackbox-init! 4)
+    (let ((bbuf (make-buffer "*blackbox*")))
+      (buffer-attach! ed bbuf)
+      (set! (edit-window-buffer win) bbuf)
+      (editor-set-text ed (blackbox-render #f))
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Blackbox: Guess atom positions with 'row col'"))))
+
+(def (cmd-blackbox-guess app)
+  "Make a guess in Blackbox."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Guess (row col): " row width)))
+    (when (and input (not (string-empty? input)))
+      (let* ((parts (string-split (string-trim input) #\space))
+             (r (and (>= (length parts) 2) (string->number (car parts))))
+             (c (and (>= (length parts) 2) (string->number (cadr parts)))))
+        (when (and r c)
+          (let ((guess (cons r c)))
+            (unless (member guess *blackbox-guesses*)
+              (set! *blackbox-guesses* (cons guess *blackbox-guesses*))
+              (if (member guess *blackbox-atoms*)
+                (set! *blackbox-score* (+ *blackbox-score* 1))
+                (set! *blackbox-score* (- *blackbox-score* 1))))
+            (editor-set-text ed (blackbox-render #f))
+            (editor-goto-pos ed 0)))))))
+
+(def (cmd-blackbox-reveal app)
+  "Reveal all atoms in Blackbox puzzle."
+  (let* ((frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (editor-set-text ed (blackbox-render #t))
+    (editor-goto-pos ed 0)
+    (echo-message! (app-state-echo app)
+      (str "Revealed! Score: " *blackbox-score* "/" (length *blackbox-atoms*)))))
+
+;; --- Feature 7: Literate-calc (Inline Calculations) ---
+
+(def (cmd-literate-calc app)
+  "Evaluate arithmetic expressions found in the current line and insert results."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (line-num (send-message ed SCI_LINEFROMPOSITION
+                     (send-message ed SCI_GETCURRENTPOS 0 0) 0))
+         (start (send-message ed SCI_POSITIONFROMLINE line-num 0))
+         (end (send-message ed SCI_GETLINEENDPOSITION line-num 0))
+         (len (- end start))
+         (line-text (editor-get-text-range ed start len)))
+    (when (and line-text (> (string-length line-text) 0))
+      ;; Try to evaluate as a simple expression
+      (with-catch
+        (lambda (e) (echo-message! echo "No evaluable expression found"))
+        (lambda ()
+          (let* ((trimmed (string-trim line-text))
+                 ;; Try scheme eval on the expression
+                 (result (eval (read (open-input-string trimmed)))))
+            (when (number? result)
+              (send-message ed SCI_GOTOPOS end 0)
+              (let ((result-str (str " => " result)))
+                (editor-insert-text ed result-str)
+                (echo-message! echo (str "Result: " result))))))))))
+
+;; --- Feature 8: Htmlize (Export Buffer as HTML) ---
+
+(def (cmd-htmlize app)
+  "Export current buffer content as an HTML file."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len))
+         (buf-name (buffer-name (edit-window-buffer win)))
+         (row (tui-rows)) (width (tui-cols))
+         (out-file (echo-read-string echo "Save HTML to: "
+                     row width)))
+    (when (and out-file (not (string-empty? out-file)) text)
+      (let* ((escaped (let loop ((chars (string->list text)) (acc '()))
+                        (if (null? chars)
+                          (list->string (reverse acc))
+                          (let ((c (car chars)))
+                            (cond
+                              ((char=? c #\<) (loop (cdr chars) (append (reverse (string->list "&lt;")) acc)))
+                              ((char=? c #\>) (loop (cdr chars) (append (reverse (string->list "&gt;")) acc)))
+                              ((char=? c #\&) (loop (cdr chars) (append (reverse (string->list "&amp;")) acc)))
+                              (else (loop (cdr chars) (cons c acc))))))))
+             (html (string-append
+                     "<!DOCTYPE html>\n<html>\n<head>\n"
+                     "<meta charset=\"utf-8\">\n"
+                     "<title>" buf-name "</title>\n"
+                     "<style>body{font-family:monospace;white-space:pre;background:#1e1e1e;color:#d4d4d4;padding:20px;}</style>\n"
+                     "</head>\n<body>\n"
+                     escaped
+                     "\n</body>\n</html>\n")))
+        (write-file-string out-file html)
+        (echo-message! echo (str "Exported to " out-file))))))
+
+;; --- Feature 9: Keycast (Show Keys in Modeline) ---
+
+(def *keycast-enabled* #f)
+(def *keycast-last-key* "")
+(def *keycast-last-command* "")
+
+(def (keycast-record! key-name command-name)
+  "Record a key press for keycast display."
+  (when *keycast-enabled*
+    (set! *keycast-last-key* (if (string? key-name) key-name (str key-name)))
+    (set! *keycast-last-command* (if (string? command-name) command-name
+                                   (symbol->string command-name)))))
+
+(def (keycast-format)
+  "Format the keycast display string."
+  (if (and *keycast-enabled* (not (string-empty? *keycast-last-key*)))
+    (str " [" *keycast-last-key* " → " *keycast-last-command* "]")
+    ""))
+
+(def (cmd-keycast-mode app)
+  "Toggle keycast mode — show last key press and command in echo area."
+  (set! *keycast-enabled* (not *keycast-enabled*))
+  (let ((echo (app-state-echo app)))
+    (if *keycast-enabled*
+      (echo-message! echo "Keycast mode: on")
+      (begin
+        (set! *keycast-last-key* "")
+        (set! *keycast-last-command* "")
+        (echo-message! echo "Keycast mode: off")))))
+
+;; --- Feature 10: Command-log (Log Commands to Buffer) ---
+
+(def *command-log-enabled* #f)
+(def *command-log-entries* '())
+(def *command-log-max* 500)
+
+(def (command-log-record! cmd-name)
+  "Record a command execution for the command log."
+  (when *command-log-enabled*
+    (set! *command-log-entries*
+      (take (cons (cons (current-time) cmd-name) *command-log-entries*)
+            (min (+ (length *command-log-entries*) 1) *command-log-max*)))))
+
+(def (cmd-command-log-mode app)
+  "Toggle command logging."
+  (set! *command-log-enabled* (not *command-log-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *command-log-enabled* "Command log: on" "Command log: off")))
+
+(def (cmd-command-log-show app)
+  "Show the command log in a buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (content (string-append "Command Log\n"
+                    (make-string 50 #\=) "\n\n"
+                    (if (null? *command-log-entries*)
+                      "No commands logged yet"
+                      (string-join
+                        (map (lambda (e)
+                               (str "  " (symbol->string (cdr e))))
+                             *command-log-entries*)
+                        "\n"))))
+         (lbuf (make-buffer "*command-log*")))
+    (buffer-attach! ed lbuf)
+    (set! (edit-window-buffer win) lbuf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (echo-message! echo (str (length *command-log-entries*) " commands logged"))))

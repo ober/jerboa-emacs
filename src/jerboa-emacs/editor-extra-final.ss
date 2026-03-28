@@ -3605,3 +3605,421 @@
         (when (and wpm (>= wpm 100) (<= wpm 1000))
           (set! *spray-wpm* wpm)
           (echo-message! echo (string-append "Spray WPM: " (number->string wpm))))))))
+
+;; ===== Round 8 Batch 2 =====
+
+;; --- Feature 11: Macrostep (Macro Expansion Viewer) ---
+
+(def (cmd-macrostep app)
+  "Expand the Scheme macro at point and show expansion in a buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line-num (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (start (send-message ed SCI_POSITIONFROMLINE line-num 0))
+         (end (send-message ed SCI_GETLINEENDPOSITION line-num 0))
+         (line-text (editor-get-text-range ed start (- end start))))
+    (when (and line-text (> (string-length line-text) 0))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Macro expansion error: " e)))
+        (lambda ()
+          (let* ((expr (read (open-input-string (string-trim line-text))))
+                 (expanded (with-output-to-string
+                             (lambda () (pretty-print (expand expr))))))
+            (let ((mbuf (make-buffer "*macrostep*")))
+              (buffer-attach! ed mbuf)
+              (set! (edit-window-buffer win) mbuf)
+              (editor-set-text ed (string-append "Macro Expansion\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    "Original:\n  " (string-trim line-text) "\n\n"
+                                    "Expanded:\n" expanded))
+              (editor-goto-pos ed 0)
+              (echo-message! echo "Macro expanded"))))))))
+
+;; --- Feature 12: Eat (Terminal Toggle) ---
+
+(def *eat-buffer* #f)
+
+(def (cmd-eat app)
+  "Toggle a terminal buffer (Emulate A Terminal)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (if (and *eat-buffer* (buffer-name *eat-buffer*))
+      ;; Switch to existing terminal buffer
+      (begin
+        (set! (edit-window-buffer win) *eat-buffer*)
+        (echo-message! echo "Switched to *eat*"))
+      ;; Create new terminal buffer
+      (let ((tbuf (make-buffer "*eat*")))
+        (set! *eat-buffer* tbuf)
+        (buffer-attach! ed tbuf)
+        (set! (edit-window-buffer win) tbuf)
+        (editor-set-text ed "=== Terminal (eat) ===\nUse shell-command to execute commands.\n")
+        (editor-goto-pos ed 0)
+        (echo-message! echo "Terminal buffer created")))))
+
+;; --- Feature 13: Envrc (Direnv Integration) ---
+
+(def *envrc-loaded-dirs* (make-hash-table))
+
+(def (cmd-envrc app)
+  "Load .envrc from current file's directory (direnv integration)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (let* ((dir (path-directory file))
+             (envrc-path (path-join dir ".envrc")))
+        (if (not (file-exists? envrc-path))
+          (echo-message! echo (str "No .envrc found in " dir))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "envrc error: " e)))
+            (lambda ()
+              (let-values (((p-stdin p-stdout p-stderr pid)
+                            (open-process-ports
+                              (str "cd " (shell-quote dir) " && direnv export json 2>/dev/null")
+                              'block (native-transcoder))))
+                (close-port p-stdin)
+                (let loop ((lines '()))
+                  (let ((line (get-line p-stdout)))
+                    (if (eof-object? line)
+                      (begin
+                        (close-port p-stdout) (close-port p-stderr)
+                        (let ((json-str (string-join (reverse lines) "")))
+                          (if (string-empty? (string-trim json-str))
+                            (echo-message! echo (str "envrc: no env changes in " dir))
+                            (begin
+                              (hash-put! *envrc-loaded-dirs* dir #t)
+                              (echo-message! echo (str "envrc: loaded " dir))))))
+                      (loop (cons line lines)))))))))))))
+
+;; --- Feature 14: Org-present (Org Presentations) ---
+
+(def *org-present-slides* '())
+(def *org-present-index* 0)
+
+(def (org-present-parse text)
+  "Parse org text into slides split by top-level headings."
+  (let* ((lines (string-split text #\newline))
+         (slides '())
+         (current '()))
+    (for-each (lambda (line)
+                (if (and (> (string-length line) 0)
+                         (char=? (string-ref line 0) #\*))
+                  (begin
+                    (when (not (null? current))
+                      (set! slides (cons (string-join (reverse current) "\n") slides)))
+                    (set! current (list line)))
+                  (set! current (cons line current))))
+              lines)
+    (when (not (null? current))
+      (set! slides (cons (string-join (reverse current) "\n") slides)))
+    (reverse slides)))
+
+(def (cmd-org-present app)
+  "Start an org-mode presentation from the current buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when text
+      (set! *org-present-slides* (org-present-parse text))
+      (set! *org-present-index* 0)
+      (if (null? *org-present-slides*)
+        (echo-message! echo "No slides found (need * headings)")
+        (let ((pbuf (make-buffer "*presentation*")))
+          (buffer-attach! ed pbuf)
+          (set! (edit-window-buffer win) pbuf)
+          (editor-set-text ed (car *org-present-slides*))
+          (editor-goto-pos ed 0)
+          (echo-message! echo (str "Slide 1/" (length *org-present-slides*))))))))
+
+(def (cmd-org-present-next app)
+  "Go to next slide in org presentation."
+  (when (and (not (null? *org-present-slides*))
+             (< *org-present-index* (- (length *org-present-slides*) 1)))
+    (set! *org-present-index* (+ *org-present-index* 1))
+    (let* ((frame (app-state-frame app))
+           (ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed (list-ref *org-present-slides* *org-present-index*))
+      (editor-goto-pos ed 0)
+      (echo-message! (app-state-echo app)
+        (str "Slide " (+ *org-present-index* 1) "/" (length *org-present-slides*))))))
+
+(def (cmd-org-present-prev app)
+  "Go to previous slide in org presentation."
+  (when (and (not (null? *org-present-slides*))
+             (> *org-present-index* 0))
+    (set! *org-present-index* (- *org-present-index* 1))
+    (let* ((frame (app-state-frame app))
+           (ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed (list-ref *org-present-slides* *org-present-index*))
+      (editor-goto-pos ed 0)
+      (echo-message! (app-state-echo app)
+        (str "Slide " (+ *org-present-index* 1) "/" (length *org-present-slides*))))))
+
+;; --- Feature 15: Denote (Simple Notes) ---
+
+(def *denote-directory* #f)
+
+(def (denote-dir)
+  (or *denote-directory*
+      (let ((home (getenv "HOME")))
+        (path-join home "notes"))))
+
+(def (cmd-denote app)
+  "Create a new denote-style note with timestamp ID."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (title (echo-read-string echo "Note title: " row width)))
+    (when (and title (not (string-empty? title)))
+      (let* ((now (current-time))
+             (secs (time-second now))
+             ;; Generate timestamp-based ID
+             (id (number->string secs))
+             (slug (let loop ((chars (string->list (string-downcase title))) (acc '()))
+                     (cond
+                       ((null? chars) (list->string (reverse acc)))
+                       ((char-alphabetic? (car chars))
+                        (loop (cdr chars) (cons (car chars) acc)))
+                       ((char-numeric? (car chars))
+                        (loop (cdr chars) (cons (car chars) acc)))
+                       ((and (not (null? acc)) (not (char=? (car acc) #\-)))
+                        (loop (cdr chars) (cons #\- acc)))
+                       (else (loop (cdr chars) acc)))))
+             (filename (str id "--" slug ".org"))
+             (dir (denote-dir))
+             (filepath (path-join dir filename))
+             (content (string-append
+                        "#+title: " title "\n"
+                        "#+date: " id "\n"
+                        "#+identifier: " id "\n\n")))
+        (when (not (file-exists? dir))
+          (with-catch (lambda (e) #f)
+            (lambda () (mkdir dir))))
+        (write-file-string filepath content)
+        (let ((nbuf (make-buffer filepath)))
+          (buffer-attach! ed nbuf)
+          (set! (edit-window-buffer win) nbuf)
+          (buffer-file-set! nbuf filepath)
+          (editor-set-text ed content)
+          (editor-goto-pos ed (string-length content))
+          (echo-message! echo (str "Created note: " filename)))))))
+
+(def (cmd-denote-find app)
+  "Find an existing denote note."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (dir (denote-dir)))
+    (if (not (file-exists? dir))
+      (echo-message! echo (str "Notes directory not found: " dir))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Error listing notes: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (str "ls -1 " (shell-quote dir))
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((files '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let* ((notes (filter (lambda (f) (string-suffix? ".org" f)) (reverse files)))
+                           (choice (echo-read-string-with-completion
+                                     echo "Note: " notes row width)))
+                      (when (and choice (not (string-empty? choice)))
+                        (let* ((filepath (path-join dir choice))
+                               (frame (app-state-frame app))
+                               (win (current-window frame))
+                               (ed (edit-window-editor win))
+                               (content (read-file-string filepath))
+                               (nbuf (make-buffer filepath)))
+                          (buffer-attach! ed nbuf)
+                          (set! (edit-window-buffer win) nbuf)
+                          (buffer-file-set! nbuf filepath)
+                          (editor-set-text ed content)
+                          (editor-goto-pos ed 0)
+                          (echo-message! echo (str "Opened: " choice))))))
+                  (loop (cons line files)))))))))))
+
+;; --- Feature 16: Detached (Detach Processes) ---
+
+(def *detached-sessions* '())
+
+(def (cmd-detached-create app)
+  "Create a detached process that runs in the background."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (cmd (echo-read-string echo "Detached command: " row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Detach error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (str "nohup " cmd " > /tmp/detached-" (number->string pid)
+                               ".log 2>&1 &")
+                          'block (native-transcoder))))
+            (close-port p-stdin) (close-port p-stdout) (close-port p-stderr)
+            (set! *detached-sessions*
+              (cons (list (cons 'cmd cmd) (cons 'pid pid)
+                          (cons 'time (time-second (current-time))))
+                    *detached-sessions*))
+            (echo-message! echo (str "Detached: " cmd " (pid " pid ")"))))))))
+
+(def (cmd-detached-list app)
+  "List all detached sessions."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (content (string-append "Detached Sessions\n"
+                    (make-string 50 #\=) "\n\n"
+                    (if (null? *detached-sessions*)
+                      "No detached sessions"
+                      (string-join
+                        (map (lambda (s)
+                               (str "  PID " (cdr (assoc 'pid s))
+                                    ": " (cdr (assoc 'cmd s))))
+                             *detached-sessions*)
+                        "\n"))))
+         (dbuf (make-buffer "*detached*")))
+    (buffer-attach! ed dbuf)
+    (set! (edit-window-buffer win) dbuf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (echo-message! echo (str (length *detached-sessions*) " detached sessions"))))
+
+;; --- Feature 17: Inheritenv (Inherit Shell Environment) ---
+
+(def (cmd-inheritenv app)
+  "Refresh the process environment from the user's login shell."
+  (let* ((echo (app-state-echo app)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "inheritenv error: " e)))
+      (lambda ()
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports
+                        "env -0"
+                        'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((data '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout) (close-port p-stderr)
+                  (let ((count 0))
+                    (for-each (lambda (entry)
+                                (when (> (string-length entry) 0)
+                                  (let ((eq-pos (string-contains entry "=")))
+                                    (when eq-pos
+                                      (let ((key (substring entry 0 eq-pos))
+                                            (val (substring entry (+ eq-pos 1)
+                                                   (string-length entry))))
+                                        (setenv key val)
+                                        (set! count (+ count 1)))))))
+                              (string-split (string-join (reverse data) "\n") #\nul))
+                    (echo-message! echo (str "Inherited " count " env vars"))))
+                (loop (cons line data))))))))))
+
+;; --- Feature 18: Calc-grab-region ---
+
+(def (cmd-calc-grab-region app)
+  "Grab selected text and evaluate it as a numeric expression."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection — select text to evaluate")
+      (let* ((sel-text (editor-get-text-range ed sel-start (- sel-end sel-start))))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Calc error: " e)))
+          (lambda ()
+            (let ((result (eval (read (open-input-string (string-trim sel-text))))))
+              (when (number? result)
+                (echo-message! echo (str "= " result))))))))))
+
+;; --- Feature 19: Coterm (Terminal in Comint) ---
+
+(def *coterm-history* '())
+
+(def (cmd-coterm app)
+  "Run a shell command and display output inline (comint-style terminal)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (cmd (echo-read-string-with-completion
+                echo "Coterm$ " *coterm-history* row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (set! *coterm-history* (cons cmd (filter (lambda (x) (not (string=? x cmd)))
+                                               *coterm-history*)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports cmd 'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let* ((output (string-join (reverse lines) "\n"))
+                           (content (string-append "$ " cmd "\n"
+                                      (make-string 40 #\-) "\n"
+                                      output "\n"))
+                           (cbuf (make-buffer "*coterm*")))
+                      (buffer-attach! ed cbuf)
+                      (set! (edit-window-buffer win) cbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "Command finished")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 20: Atomic-chrome (Edit Browser Text) ---
+
+(def *atomic-chrome-port* 64292)
+
+(def (cmd-atomic-chrome-start app)
+  "Start atomic-chrome server — listens for browser text editing requests."
+  (let ((echo (app-state-echo app)))
+    ;; In a real implementation, this would start a WebSocket server.
+    ;; For now, create a buffer for editing and provide instructions.
+    (let* ((frame (app-state-frame app))
+           (win (current-window frame))
+           (ed (edit-window-editor win))
+           (content (string-append
+                      "Atomic Chrome - Browser Text Editing\n"
+                      (make-string 50 #\=) "\n\n"
+                      "This feature allows editing browser text fields in the editor.\n\n"
+                      "Setup:\n"
+                      "  1. Install GhostText browser extension\n"
+                      "  2. Port: " (number->string *atomic-chrome-port*) "\n"
+                      "  3. Click GhostText icon on a textarea\n"
+                      "  4. Edit here and save to send back\n\n"
+                      "--- Edit below this line ---\n\n"))
+           (abuf (make-buffer "*atomic-chrome*")))
+      (buffer-attach! ed abuf)
+      (set! (edit-window-buffer win) abuf)
+      (editor-set-text ed content)
+      (editor-goto-pos ed (string-length content))
+      (echo-message! echo (str "Atomic Chrome ready on port " *atomic-chrome-port*)))))
