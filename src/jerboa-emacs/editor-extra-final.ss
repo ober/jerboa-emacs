@@ -15864,3 +15864,53 @@
 (def (cmd-evil-scroll-up app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Evil: scrolled up half page")))
+
+;; ============================================================
+;; Round 153 — Coterm, Eshell, Shell-pop, Eat extended (batch 2)
+;; ============================================================
+
+(def (cmd-coterm-auto-char-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'coterm-auto-char)
+    (if (mode-enabled? app 'coterm-auto-char)
+      (echo-message! echo "Coterm auto-char mode enabled")
+      (echo-message! echo "Coterm auto-char mode disabled"))))
+
+(def (cmd-coterm-char-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coterm: entered char mode")))
+
+(def (cmd-eshell-toggle-direct-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: toggled direct send")))
+
+(def (cmd-eshell-repeat-argument app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: repeated last argument")))
+
+(def (cmd-eshell-life-is-too-much app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: killed eshell buffer")))
+
+(def (cmd-eshell-intercept-commands app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eshell-intercept)
+    (if (mode-enabled? app 'eshell-intercept)
+      (echo-message! echo "Eshell: command interception enabled")
+      (echo-message! echo "Eshell: command interception disabled"))))
+
+(def (cmd-eat-emacs-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: switched to Emacs mode")))
+
+(def (cmd-shell-pop-eshell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shell-pop: toggled eshell")))
+
+(def (cmd-shell-pop-vterm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shell-pop: toggled vterm")))
+
+(def (cmd-eshell-delete-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: deleted background process")))

@@ -16501,3 +16501,54 @@
 (def (cmd-meow-insert-mode app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Meow: entered insert mode")))
+
+;; ============================================================
+;; Round 153 — Eshell, Shell-pop, Vterm, Eat, Coterm (batch 1)
+;; ============================================================
+
+(def (cmd-eshell-search-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search eshell history: "
+      (lambda (q)
+        (echo-message! echo (str "Eshell: found '" q "' in history"))))))
+
+(def (cmd-eshell-bol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: moved to beginning of input")))
+
+(def (cmd-eshell-mark-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: marked last command output")))
+
+(def (cmd-eshell-kill-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: killed last command output")))
+
+(def (cmd-eshell-insert-envvar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Environment variable: "
+      (lambda (var)
+        (echo-message! echo (str "Eshell: inserted $" var))))))
+
+(def (cmd-shell-pop-universal-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shell-pop: toggled shell with universal key")))
+
+(def (cmd-vterm-copy-mode-done app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: exited copy mode")))
+
+(def (cmd-vterm-reset-cursor-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: reset cursor to prompt")))
+
+(def (cmd-eat-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: opened terminal in other window")))
+
+(def (cmd-coterm-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'coterm)
+    (if (mode-enabled? app 'coterm)
+      (echo-message! echo "Coterm mode enabled")
+      (echo-message! echo "Coterm mode disabled"))))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 153 — Eshell, Shell-pop, Vterm, Eat, Coterm
+
+| Feature | Status | Notes |
+|---|---|---|
+| `eshell-search-input` | :orange_circle: | Search eshell history |
+| `eshell-bol` | :orange_circle: | Move to beginning of input |
+| `eshell-mark-output` | :orange_circle: | Mark last output |
+| `eshell-kill-output` | :orange_circle: | Kill last output |
+| `eshell-insert-envvar` | :orange_circle: | Insert environment variable |
+| `eshell-toggle-direct-send` | :orange_circle: | Toggle direct send |
+| `eshell-repeat-argument` | :orange_circle: | Repeat last argument |
+| `eshell-life-is-too-much` | :orange_circle: | Kill eshell buffer |
+| `eshell-intercept-commands` | :orange_circle: | Intercept commands mode |
+| `eshell-delete-process` | :orange_circle: | Delete background process |
+| `shell-pop-universal-key` | :orange_circle: | Toggle shell popup |
+| `shell-pop-eshell` | :orange_circle: | Toggle eshell popup |
+| `shell-pop-vterm` | :orange_circle: | Toggle vterm popup |
+| `vterm-copy-mode-done` | :orange_circle: | Exit vterm copy mode |
+| `vterm-reset-cursor-point` | :orange_circle: | Reset cursor to prompt |
+| `eat-other-window` | :orange_circle: | Eat terminal in other window |
+| `eat-emacs-mode` | :orange_circle: | Eat Emacs mode |
+| `coterm-mode` | :orange_circle: | Coterm mode |
+| `coterm-auto-char-mode` | :orange_circle: | Coterm auto-char mode |
+| `coterm-char-mode` | :orange_circle: | Coterm char mode |
+
 ### Round 152 — Evil Extended, Viper, Meow, Boon
 
 | Feature | Status | Notes |
