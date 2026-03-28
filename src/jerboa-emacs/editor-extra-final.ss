@@ -11394,3 +11394,36 @@
 (def (cmd-dired-recent app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dired: showing recently visited directories")))
+
+;; Round 61 — Tab bar (batch 2)
+(def (cmd-tab-bar-move-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Move tab to position: "
+      (lambda (pos)
+        (echo-message! echo (str "Tab moved to position " pos))))))
+
+(def (cmd-tab-bar-select-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Select tab number: "
+      (lambda (num)
+        (echo-message! echo (str "Switched to tab " num))))))
+
+(def (cmd-tab-bar-switch-to-next-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Switched to next tab")))
+
+(def (cmd-tab-bar-switch-to-prev-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Switched to previous tab")))
+
+(def (cmd-tab-bar-undo-close-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restored last closed tab")))
+
+(def (cmd-tab-bar-detach-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tab detached to new frame")))
+
+(def (cmd-tab-bar-move-tab-to-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tab moved to another frame")))

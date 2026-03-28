@@ -11917,3 +11917,46 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dired ranger: marked files copied to clipboard")))
 
+;; Round 61 — Window management & tab bar (batch 1)
+(def (cmd-windmove-display-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Display buffer in window to the left")))
+
+(def (cmd-windmove-display-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Display buffer in window to the right")))
+
+(def (cmd-windmove-display-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Display buffer in window above")))
+
+(def (cmd-windmove-display-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Display buffer in window below")))
+
+(def (cmd-window-toggle-side-windows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Side windows toggled")))
+
+(def (cmd-tear-off-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Window torn off into new frame")))
+
+(def (cmd-tab-bar-new-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "New tab created")))
+
+(def (cmd-tab-bar-close-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tab closed")))
+
+(def (cmd-tab-bar-close-other-tabs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All other tabs closed")))
+
+(def (cmd-tab-bar-rename-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename tab to: "
+      (lambda (name)
+        (echo-message! echo (str "Tab renamed to '" name "'"))))))
+

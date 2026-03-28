@@ -2458,6 +2458,28 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | dired-filter-mode | :orange_circle: | Interactive file filtering |
 | dired-recent | :orange_circle: | Show recently visited directories |
 
+### Round 61 — Window Management & Tab Bar
+
+| Feature | Status | Notes |
+|---|---|---|
+| windmove-display-left | :orange_circle: | Display buffer in left window |
+| windmove-display-right | :orange_circle: | Display buffer in right window |
+| windmove-display-up | :orange_circle: | Display buffer in upper window |
+| windmove-display-down | :orange_circle: | Display buffer in lower window |
+| window-toggle-side-windows | :orange_circle: | Toggle side windows |
+| tear-off-window | :orange_circle: | Move window to new frame |
+| tab-bar-new-tab | :orange_circle: | Create new tab |
+| tab-bar-close-tab | :orange_circle: | Close current tab |
+| tab-bar-close-other-tabs | :orange_circle: | Close all other tabs |
+| tab-bar-rename-tab | :orange_circle: | Rename current tab |
+| tab-bar-move-tab | :orange_circle: | Move tab to position |
+| tab-bar-select-tab | :orange_circle: | Select tab by number |
+| tab-bar-switch-to-next-tab | :orange_circle: | Switch to next tab |
+| tab-bar-switch-to-prev-tab | :orange_circle: | Switch to previous tab |
+| tab-bar-undo-close-tab | :orange_circle: | Restore last closed tab |
+| tab-bar-detach-tab | :orange_circle: | Detach tab to new frame |
+| tab-bar-move-tab-to-frame | :orange_circle: | Move tab to another frame |
+
 ---
 
 ## Recommended Development Roadmap
