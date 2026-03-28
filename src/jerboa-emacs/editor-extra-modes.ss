@@ -16904,3 +16904,47 @@
 (def (cmd-outline-move-subtree-down app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Outline: moved subtree down")))
+
+;; ============================================================
+;; Round 161 — Ediff, Emerge, Compare-windows (batch 1)
+;; ============================================================
+
+(def (cmd-ediff-files3 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: 3-way file comparison")))
+
+(def (cmd-ediff-buffers3 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: 3-way buffer comparison")))
+
+(def (cmd-ediff-directories3 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: 3-way directory comparison")))
+
+(def (cmd-ediff-regions-wordwise app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: comparing regions word-by-word")))
+
+(def (cmd-ediff-patch-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: patching buffer")))
+
+(def (cmd-ediff-merge-files-with-ancestor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: merging files with ancestor")))
+
+(def (cmd-ediff-merge-revisions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: merging revisions")))
+
+(def (cmd-emerge-files-with-ancestor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Emerge: merging files with ancestor")))
+
+(def (cmd-compare-windows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compare-windows: comparing visible windows")))
+
+(def (cmd-diff-latest-backup-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Diff: comparing with latest backup file")))

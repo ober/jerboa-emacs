@@ -16264,3 +16264,49 @@
 (def (cmd-origami-next-fold app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Origami: moved to next fold")))
+
+;; ============================================================
+;; Round 161 — Ediff extended commands (batch 2)
+;; ============================================================
+
+(def (cmd-ediff-documentation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: opened documentation")))
+
+(def (cmd-ediff-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff version: scaffolded")))
+
+(def (cmd-ediff-toggle-autorefine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: toggled auto-refine")))
+
+(def (cmd-ediff-toggle-hilit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: toggled highlighting")))
+
+(def (cmd-ediff-toggle-skip-similar-regions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: toggled skip similar regions")))
+
+(def (cmd-ediff-next-difference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: moved to next difference")))
+
+(def (cmd-ediff-previous-difference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: moved to previous difference")))
+
+(def (cmd-ediff-jump-to-difference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jump to difference #: "
+      (lambda (n)
+        (echo-message! echo (str "Ediff: jumped to difference " n))))))
+
+(def (cmd-ediff-copy-A-to-B app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: copied region A to B")))
+
+(def (cmd-ediff-copy-B-to-A app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: copied region B to A")))

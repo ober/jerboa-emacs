@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 161 — Ediff, Emerge, Compare-windows Extended
+
+| Feature | Status | Notes |
+|---|---|---|
+| `ediff-files3` | :orange_circle: | 3-way file comparison |
+| `ediff-buffers3` | :orange_circle: | 3-way buffer comparison |
+| `ediff-directories3` | :orange_circle: | 3-way directory comparison |
+| `ediff-regions-wordwise` | :orange_circle: | Word-by-word region compare |
+| `ediff-patch-buffer` | :orange_circle: | Patch buffer |
+| `ediff-merge-files-with-ancestor` | :orange_circle: | Merge with ancestor |
+| `ediff-merge-revisions` | :orange_circle: | Merge revisions |
+| `ediff-documentation` | :orange_circle: | Ediff documentation |
+| `ediff-version` | :orange_circle: | Ediff version |
+| `ediff-toggle-autorefine` | :orange_circle: | Toggle auto-refine |
+| `ediff-toggle-hilit` | :orange_circle: | Toggle highlighting |
+| `ediff-toggle-skip-similar-regions` | :orange_circle: | Toggle skip similar |
+| `ediff-next-difference` | :orange_circle: | Next difference |
+| `ediff-previous-difference` | :orange_circle: | Previous difference |
+| `ediff-jump-to-difference` | :orange_circle: | Jump to difference # |
+| `ediff-copy-A-to-B` | :orange_circle: | Copy region A to B |
+| `ediff-copy-B-to-A` | :orange_circle: | Copy region B to A |
+| `emerge-files-with-ancestor` | :orange_circle: | Emerge with ancestor |
+| `compare-windows` | :orange_circle: | Compare visible windows |
+| `diff-latest-backup-file` | :orange_circle: | Diff with latest backup |
+
 ### Round 160 — Outline, Origami Folding
 
 | Feature | Status | Notes |
