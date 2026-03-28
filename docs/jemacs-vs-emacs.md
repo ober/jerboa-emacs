@@ -3789,6 +3789,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | gud-refresh | :orange_circle: | Refresh GUD display |
 | gdb-display-disassembly-buffer | :orange_circle: | Display disassembly buffer |
 
+### Round 113 — TRAMP, System Tools & Calc
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| tramp-append-tramp-buffers | :orange_circle: | Append TRAMP debug buffers |
+| tramp-revert-buffer-check | :orange_circle: | Check remote buffer for changes |
+| tramp-rename-these-files | :orange_circle: | Rename TRAMP files |
+| make-serial-process | :orange_circle: | Connect to serial port |
+| proced-mark | :orange_circle: | Mark process in proced |
+| proced-unmark | :orange_circle: | Unmark process in proced |
+| proced-toggle-tree | :orange_circle: | Toggle proced tree view |
+| proced-renice | :orange_circle: | Change process priority |
+| proced-refine | :orange_circle: | Refine proced listing |
+| list-system-processes | :orange_circle: | List all system processes |
+| battery | :orange_circle: | Display battery status |
+| disk-usage-by-types | :orange_circle: | Show disk usage by file types |
+| net-utils-run-simple | :orange_circle: | Run simple network utility |
+| nslookup-host | :orange_circle: | DNS lookup for host |
+| route | :orange_circle: | Display routing table |
+| display-time-world | :orange_circle: | Show world clock |
+| time-stamp | :orange_circle: | Update timestamp in buffer |
+| calc-trail-display | :orange_circle: | Display calc trail buffer |
+| calc-keypad | :orange_circle: | Open calculator keypad |
+| calc-embedded | :orange_circle: | Toggle calc embedded mode |
+
 ---
 
 ## Recommended Development Roadmap

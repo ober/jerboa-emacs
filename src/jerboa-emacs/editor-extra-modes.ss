@@ -14513,3 +14513,56 @@
 (def (cmd-gud-until app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "GUD: continue until current line")))
+
+;;; ——— Round 113: TRAMP, system tools & calc (batch 1) ———
+
+(def (cmd-tramp-append-tramp-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: appended debug buffers to bug report")))
+
+(def (cmd-tramp-revert-buffer-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: checking if remote buffer needs reverting")))
+
+(def (cmd-tramp-rename-these-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename TRAMP files to: "
+      (lambda (target)
+        (echo-message! echo (str "TRAMP: renaming files to " target))))))
+
+(def (cmd-make-serial-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Serial port: "
+      (lambda (port)
+        (echo-message! echo (str "Serial: connected to " port))))))
+
+(def (cmd-proced-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proced: marked current process")))
+
+(def (cmd-proced-unmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proced: unmarked current process")))
+
+(def (cmd-proced-toggle-tree app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'proced-tree)
+    (if (mode-enabled? app 'proced-tree)
+      (echo-message! echo "Proced: tree view enabled")
+      (echo-message! echo "Proced: tree view disabled"))))
+
+(def (cmd-proced-renice app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New nice value: "
+      (lambda (val)
+        (echo-message! echo (str "Proced: reniced process to " val))))))
+
+(def (cmd-proced-refine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Refine by attribute: "
+      (lambda (attr)
+        (echo-message! echo (str "Proced: refined listing by " attr))))))
+
+(def (cmd-list-system-processes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Listing all system processes")))

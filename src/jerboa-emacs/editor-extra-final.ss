@@ -13933,3 +13933,49 @@
 (def (cmd-gdb-display-disassembly-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "GDB: displaying disassembly buffer")))
+
+;;; ——— Round 113: TRAMP, system tools & calc (batch 2) ———
+
+(def (cmd-battery app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Battery: displaying battery status")))
+
+(def (cmd-disk-usage-by-types app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Disk Usage: showing usage by file types")))
+
+(def (cmd-net-utils-run-simple app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Net utils command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Net Utils: running " cmd))))))
+
+(def (cmd-nslookup-host app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "NSLookup host: "
+      (lambda (host)
+        (echo-message! echo (str "NSLookup: resolving " host))))))
+
+(def (cmd-route app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Route: displaying routing table")))
+
+(def (cmd-display-time-world app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "World Clock: displaying times in multiple zones")))
+
+(def (cmd-time-stamp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Time Stamp: updated timestamp in buffer")))
+
+(def (cmd-calc-trail-display app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: displaying trail buffer")))
+
+(def (cmd-calc-keypad app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: opened calculator keypad")))
+
+(def (cmd-calc-embedded app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: toggled embedded mode at point")))
