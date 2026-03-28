@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 170 — Marginalia, Orderless, Prescient, Hotfuzz
+
+| Feature | Status | Notes |
+|---|---|---|
+| marginalia-mode | :orange_circle: | Toggle rich annotations in minibuffer |
+| marginalia-cycle | :orange_circle: | Cycle marginalia annotation style |
+| marginalia-classify-by-command-name | :orange_circle: | Classify candidates by command name |
+| marginalia-classify-by-prompt | :orange_circle: | Classify candidates by prompt text |
+| orderless-define-completion-style | :orange_circle: | Define orderless completion style |
+| orderless-compile | :orange_circle: | Compile orderless pattern |
+| orderless-highlight-matches | :orange_circle: | Highlight orderless matches |
+| orderless-filter | :orange_circle: | Filter candidates with orderless |
+| prescient-persist-mode | :orange_circle: | Persist prescient frequency data |
+| prescient-toggle-fuzzy | :orange_circle: | Toggle fuzzy matching in prescient |
+| prescient-sort-full-match | :orange_circle: | Sort by full match in prescient |
+| prescient-reset-frequency | :orange_circle: | Reset prescient frequency data |
+| hotfuzz-mode | :orange_circle: | Toggle hotfuzz completion |
+| hotfuzz-highlight | :orange_circle: | Highlight hotfuzz matches |
+| hotfuzz-all-completions | :orange_circle: | Compute all hotfuzz completions |
+| hotfuzz-filter | :orange_circle: | Filter with hotfuzz algorithm |
+| fussy-mode | :orange_circle: | Toggle fussy completion scoring |
+| fussy-score | :orange_circle: | Compute fussy score |
+| flx-score | :orange_circle: | Compute flx flex score |
+| flx-ido-mode | :orange_circle: | Toggle flx scoring in ido |
+
 ### Round 169 — Nerd-icons, All-the-icons, SVG-lib, Ligature
 
 | Feature | Status | Notes |

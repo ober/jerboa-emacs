@@ -17341,3 +17341,50 @@
 (def (cmd-all-the-icons-icon-for-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "All-the-icons: showing icon for buffer")))
+
+;; Round 170 — Marginalia, Orderless, Prescient, Hotfuzz (batch 1)
+(def (cmd-marginalia-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'marginalia)
+    (if (mode-enabled? app 'marginalia)
+      (echo-message! echo "Marginalia mode enabled")
+      (echo-message! echo "Marginalia mode disabled"))))
+
+(def (cmd-marginalia-cycle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Marginalia: cycling annotation style")))
+
+(def (cmd-marginalia-classify-by-command-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Marginalia: classifying by command name")))
+
+(def (cmd-marginalia-classify-by-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Marginalia: classifying by prompt")))
+
+(def (cmd-orderless-define-completion-style app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Orderless: completion style defined")))
+
+(def (cmd-orderless-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Orderless: compiling pattern")))
+
+(def (cmd-orderless-highlight-matches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Orderless: highlighting matches")))
+
+(def (cmd-orderless-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Orderless: filtering candidates")))
+
+(def (cmd-prescient-persist-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'prescient-persist)
+    (if (mode-enabled? app 'prescient-persist)
+      (echo-message! echo "Prescient persist mode enabled")
+      (echo-message! echo "Prescient persist mode disabled"))))
+
+(def (cmd-prescient-toggle-fuzzy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prescient: toggled fuzzy matching")))

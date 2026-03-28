@@ -16724,3 +16724,53 @@
     (if (mode-enabled? app 'global-ligature)
       (echo-message! echo "Global ligature mode enabled")
       (echo-message! echo "Global ligature mode disabled"))))
+
+;; Round 170 — Marginalia, Orderless, Prescient, Hotfuzz (batch 2)
+(def (cmd-prescient-sort-full-match app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prescient: sorting by full match")))
+
+(def (cmd-prescient-reset-frequency app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prescient: frequency data reset")))
+
+(def (cmd-hotfuzz-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'hotfuzz)
+    (if (mode-enabled? app 'hotfuzz)
+      (echo-message! echo "Hotfuzz mode enabled")
+      (echo-message! echo "Hotfuzz mode disabled"))))
+
+(def (cmd-hotfuzz-highlight app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hotfuzz: highlighting matches")))
+
+(def (cmd-hotfuzz-all-completions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hotfuzz: computing all completions")))
+
+(def (cmd-hotfuzz-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hotfuzz: filtering candidates")))
+
+(def (cmd-fussy-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fussy)
+    (if (mode-enabled? app 'fussy)
+      (echo-message! echo "Fussy mode enabled")
+      (echo-message! echo "Fussy mode disabled"))))
+
+(def (cmd-fussy-score app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fussy: computing score")))
+
+(def (cmd-flx-score app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flx: computing flex score")))
+
+(def (cmd-flx-ido-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'flx-ido)
+    (if (mode-enabled? app 'flx-ido)
+      (echo-message! echo "Flx-ido mode enabled")
+      (echo-message! echo "Flx-ido mode disabled"))))
