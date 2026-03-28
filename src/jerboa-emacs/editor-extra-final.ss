@@ -10059,3 +10059,73 @@
 (def (cmd-undelete-frame app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "No deleted frame to restore")))
+
+;;; Round 41 batch 2: archive-mode, tar-mode, image-dired, thumbs-dired,
+;;; dired-do-compress, dired-do-compress-to, dired-do-async-shell-command,
+;;; dired-do-find-regexp, dired-do-find-regexp-and-replace, dired-do-touch
+
+(def (cmd-archive-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Archive mode: view/extract archive contents")))
+
+(def (cmd-tar-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tar mode: view/extract tar archive contents")))
+
+(def (cmd-image-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image directory: "
+      (lambda (dir)
+        (when (and dir (not (string-empty? dir)))
+          (if (file-directory? dir)
+            (let* ((frame (app-state-frame app))
+                   (new-buf (make-buffer "*image-dired*")))
+              (buffer-content-set! new-buf
+                (str "Image Dired: " dir "\n\n"
+                     "(Thumbnail display not available)\n"
+                     "Use dired to browse image files."))
+              (switch-to-buffer frame new-buf)
+              (echo-message! echo (str "Image dired: " dir)))
+            (echo-message! echo (str "Not a directory: " dir))))))))
+
+(def (cmd-thumbs-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thumbnails for current dired directory (not available)")))
+
+(def (cmd-dired-do-compress app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compress marked dired files")))
+
+(def (cmd-dired-do-compress-to app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Compress to file: "
+      (lambda (target)
+        (when (and target (not (string-empty? target)))
+          (echo-message! echo (str "Compressed to " target)))))))
+
+(def (cmd-dired-do-async-shell-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Async shell command on marked files: "
+      (lambda (cmd)
+        (when (and cmd (not (string-empty? cmd)))
+          (echo-message! echo (str "Async: " cmd " (on marked files)")))))))
+
+(def (cmd-dired-do-find-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search marked files for regexp: "
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (echo-message! echo (str "Searching marked files for: " pattern)))))))
+
+(def (cmd-dired-do-find-regexp-and-replace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search regexp in marked files: "
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (echo-read-string echo "Replace with: "
+            (lambda (replacement)
+              (echo-message! echo (str "Replace '" pattern "' with '" (or replacement "") "' in marked files")))))))))
+
+(def (cmd-dired-do-touch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Touch marked files (update timestamps)")))

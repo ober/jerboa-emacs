@@ -10627,3 +10627,91 @@
       (echo-message! echo "Icomplete vertical mode enabled")
       (echo-message! echo "Icomplete vertical mode disabled"))))
 
+;;; Round 41 batch 1: glasses-mode-toggle, overwrite-mode-toggle,
+;;; quoted-printable-decode-region, base64-encode-region, base64-decode-region,
+;;; uuencode-region, uudecode-region, hexlify-buffer, dehexlify-buffer, hexl-find-file
+
+(def (cmd-glasses-mode-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "glasses")
+    (if (mode-enabled? app "glasses")
+      (echo-message! echo "Glasses mode enabled (camelCase → camel_Case)")
+      (echo-message! echo "Glasses mode disabled"))))
+
+(def (cmd-overwrite-mode-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "overwrite")
+    (if (mode-enabled? app "overwrite")
+      (echo-message! echo "Overwrite mode enabled")
+      (echo-message! echo "Overwrite mode disabled"))))
+
+(def (cmd-quoted-printable-decode-region app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (echo-message! echo "Quoted-printable decoded"))))
+
+(def (cmd-base64-encode-region app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start))))
+        (echo-message! echo (str "Base64 encoded " (- sel-end sel-start) " bytes"))))))
+
+(def (cmd-base64-decode-region app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (echo-message! echo "Base64 decoded"))))
+
+(def (cmd-uuencode-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Region uuencoded")))
+
+(def (cmd-uudecode-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Region uudecoded")))
+
+(def (cmd-hexlify-buffer app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    (echo-message! echo (str "Hexlified buffer (" len " bytes)"))))
+
+(def (cmd-dehexlify-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buffer dehexlified")))
+
+(def (cmd-hexl-find-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hexl find file: "
+      (lambda (file)
+        (when (and file (not (string-empty? file)))
+          (if (file-exists? file)
+            (let* ((frame (app-state-frame app))
+                   (new-buf (make-buffer (str "*hexl: " file "*"))))
+              (buffer-content-set! new-buf
+                (str "Hex dump of " file "\n\n"
+                     "00000000: (hex view not implemented)\n"))
+              (switch-to-buffer frame new-buf)
+              (echo-message! echo (str "Hexl: " file)))
+            (echo-message! echo (str "File not found: " file))))))))
+

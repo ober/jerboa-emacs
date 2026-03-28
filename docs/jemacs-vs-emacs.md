@@ -1957,6 +1957,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Clone frame | :orange_circle: | Clone current frame |
 | Undelete frame | :orange_circle: | Restore deleted frame |
 
+### Round 41
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Glasses mode toggle | :orange_circle: | Toggle camelCase separator display |
+| Overwrite mode toggle | :orange_circle: | Toggle overwrite/insert mode |
+| Quoted printable decode region | :orange_circle: | Decode quoted-printable encoding |
+| Base64 encode region | :orange_circle: | Base64 encode selected region |
+| Base64 decode region | :orange_circle: | Base64 decode selected region |
+| Uuencode region | :orange_circle: | Uuencode selected region |
+| Uudecode region | :orange_circle: | Uudecode selected region |
+| Hexlify buffer | :orange_circle: | Convert buffer to hex representation |
+| Dehexlify buffer | :orange_circle: | Convert hex back to text |
+| Hexl find file | :orange_circle: | Open file in hex editor mode |
+| Archive mode | :orange_circle: | View/extract archive contents |
+| Tar mode | :orange_circle: | View/extract tar archives |
+| Image dired | :orange_circle: | Browse image thumbnails (placeholder) |
+| Thumbs dired | :orange_circle: | Thumbnail browser for dired |
+| Dired do compress | :orange_circle: | Compress marked dired files |
+| Dired do compress to | :orange_circle: | Compress marked files to target |
+| Dired do async shell command | :orange_circle: | Async shell on marked files |
+| Dired do find regexp | :orange_circle: | Search marked files by regexp |
+| Dired do find regexp and replace | :orange_circle: | Search/replace in marked files |
+| Dired do touch | :orange_circle: | Update timestamps on marked files |
+
 ---
 
 ## Recommended Development Roadmap
