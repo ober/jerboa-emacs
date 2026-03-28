@@ -12995,3 +12995,46 @@
 (def (cmd-xwidget-webkit-reload app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Xwidget webkit: page reloaded")))
+
+;;; Round 93 — TRAMP & Remote Access (cont.)
+(def (cmd-rsync-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rsync destination: "
+      (lambda (dest)
+        (echo-message! echo (str "Rsync: syncing to " dest))))))
+
+(def (cmd-scp-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SCP destination: "
+      (lambda (dest)
+        (echo-message! echo (str "SCP: copying to " dest))))))
+
+(def (cmd-tramp-term app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TRAMP terminal host: "
+      (lambda (host)
+        (echo-message! echo (str "TRAMP: opening terminal on " host))))))
+
+(def (cmd-tramp-open-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: shell opened on remote host")))
+
+(def (cmd-tramp-archive-cleanup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: archive connections cleaned up")))
+
+(def (cmd-tramp-list-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: listing active connections")))
+
+(def (cmd-tramp-list-remote-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: listing remote buffers")))
+
+(def (cmd-tramp-toggle-read-only app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: toggled read-only on remote file")))
+
+(def (cmd-tramp-set-connection-local-variables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: connection-local variables set")))

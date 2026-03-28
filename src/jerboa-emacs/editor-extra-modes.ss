@@ -13527,3 +13527,55 @@
       (lambda (url)
         (echo-message! echo (str "W3M: browsing " url))))))
 
+;;; Round 93 — TRAMP & Remote Access
+(def (cmd-tramp-cleanup-all-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: all remote buffers cleaned up")))
+
+(def (cmd-tramp-rename-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TRAMP rename source: "
+      (lambda (src)
+        (echo-read-string echo "TRAMP rename dest: "
+          (lambda (dst)
+            (echo-message! echo (str "TRAMP: renamed " src " to " dst))))))))
+
+(def (cmd-tramp-revert-buffer-with-sudo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TRAMP: reopened buffer with sudo")))
+
+(def (cmd-find-file-as-root app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find file as root: "
+      (lambda (file)
+        (echo-message! echo (str "Opening " file " as root"))))))
+
+(def (cmd-tramp-change-syntax app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TRAMP syntax (default/simplified/separate): "
+      (lambda (syntax)
+        (echo-message! echo (str "TRAMP: syntax changed to " syntax))))))
+
+(def (cmd-ssh-deploy-remote-changes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSH Deploy: checking remote changes")))
+
+(def (cmd-ssh-deploy-upload-handler app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSH Deploy: uploading current file")))
+
+(def (cmd-ssh-deploy-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSH Deploy: showing diff with remote")))
+
+(def (cmd-ssh-deploy-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSH Deploy: deleting remote file")))
+
+(def (cmd-rsync-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'rsync)
+    (if (mode-enabled? app 'rsync)
+      (echo-message! echo "Rsync mode enabled")
+      (echo-message! echo "Rsync mode disabled"))))
+

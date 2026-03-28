@@ -3280,6 +3280,32 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 93 — TRAMP & Remote Access
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| tramp-cleanup-all-buffers | :orange_circle: | Clean up all remote buffers |
+| tramp-rename-files | :orange_circle: | Rename remote files |
+| tramp-revert-buffer-with-sudo | :orange_circle: | Reopen buffer with sudo |
+| find-file-as-root | :orange_circle: | Open file as root |
+| tramp-change-syntax | :orange_circle: | Change TRAMP syntax |
+| ssh-deploy-remote-changes | :orange_circle: | Check remote changes |
+| ssh-deploy-upload-handler | :orange_circle: | Upload file to remote |
+| ssh-deploy-diff | :orange_circle: | Diff with remote file |
+| ssh-deploy-delete | :orange_circle: | Delete remote file |
+| rsync-mode | :orange_circle: | Toggle rsync mode |
+| rsync-file | :orange_circle: | Rsync file to destination |
+| scp-file | :orange_circle: | SCP file to destination |
+| tramp-term | :orange_circle: | Open terminal on remote host |
+| tramp-open-shell | :orange_circle: | Open shell on remote host |
+| tramp-archive-cleanup | :orange_circle: | Clean up archive connections |
+| tramp-list-connections | :orange_circle: | List active TRAMP connections |
+| tramp-list-remote-buffers | :orange_circle: | List remote buffers |
+| tramp-toggle-read-only | :orange_circle: | Toggle read-only on remote file |
+| tramp-set-connection-local-variables | :orange_circle: | Set connection-local variables |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
