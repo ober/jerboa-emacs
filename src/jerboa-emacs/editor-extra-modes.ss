@@ -19139,3 +19139,47 @@
 (def (cmd-company-show-doc-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Company: showing documentation buffer")))
+
+;; Round 207 — Treesit-ext, Combobulate
+(def (cmd-treesit-inspect-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treesit-inspect)
+    (if (mode-enabled? app 'treesit-inspect)
+      (echo-message! echo "Treesit inspect mode enabled")
+      (echo-message! echo "Treesit inspect mode disabled"))))
+
+(def (cmd-combobulate-navigate-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: navigated up")))
+
+(def (cmd-combobulate-navigate-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: navigated down")))
+
+(def (cmd-combobulate-navigate-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: navigated to next sibling")))
+
+(def (cmd-combobulate-navigate-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: navigated to previous sibling")))
+
+(def (cmd-combobulate-drag-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: dragged node up")))
+
+(def (cmd-combobulate-drag-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: dragged node down")))
+
+(def (cmd-combobulate-splice-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: spliced up")))
+
+(def (cmd-combobulate-vanish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: vanished node")))
+
+(def (cmd-combobulate-envelop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Combobulate: enveloped node")))

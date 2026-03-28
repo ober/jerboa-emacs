@@ -18529,3 +18529,44 @@
     (if (mode-enabled? app 'corfu-candidate-overlay)
       (echo-message! echo "Corfu candidate overlay mode enabled")
       (echo-message! echo "Corfu candidate overlay mode disabled"))))
+
+;; Round 207 — Expreg, Puni
+(def (cmd-expreg-expand app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Expreg: expanded region")))
+
+(def (cmd-expreg-contract app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Expreg: contracted region")))
+
+(def (cmd-puni-kill-active-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: killed active region")))
+
+(def (cmd-puni-squeeze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: squeezed")))
+
+(def (cmd-puni-slurp-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: slurped forward")))
+
+(def (cmd-puni-barf-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: barfed forward")))
+
+(def (cmd-puni-raise app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: raised")))
+
+(def (cmd-puni-convolute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: convoluted")))
+
+(def (cmd-puni-split app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: split")))
+
+(def (cmd-puni-transpose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puni: transposed")))

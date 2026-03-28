@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 207 — Treesit-ext, Combobulate, Expreg, Puni
+
+| Feature | Status | Notes |
+|---|---|---|
+| treesit-inspect-mode | :orange_circle: | Toggle treesit inspect mode |
+| combobulate-navigate-up | :orange_circle: | Navigate up in AST |
+| combobulate-navigate-down | :orange_circle: | Navigate down in AST |
+| combobulate-navigate-next | :orange_circle: | Navigate to next sibling |
+| combobulate-navigate-previous | :orange_circle: | Navigate to previous sibling |
+| combobulate-drag-up | :orange_circle: | Drag node up |
+| combobulate-drag-down | :orange_circle: | Drag node down |
+| combobulate-splice-up | :orange_circle: | Splice up in AST |
+| combobulate-vanish | :orange_circle: | Vanish node |
+| combobulate-envelop | :orange_circle: | Envelop node |
+| expreg-expand | :orange_circle: | Expand region by expression |
+| expreg-contract | :orange_circle: | Contract region by expression |
+| puni-kill-active-region | :orange_circle: | Kill active region (Puni) |
+| puni-squeeze | :orange_circle: | Squeeze (Puni) |
+| puni-slurp-forward | :orange_circle: | Slurp forward (Puni) |
+| puni-barf-forward | :orange_circle: | Barf forward (Puni) |
+| puni-raise | :orange_circle: | Raise (Puni) |
+| puni-convolute | :orange_circle: | Convolute (Puni) |
+| puni-split | :orange_circle: | Split (Puni) |
+| puni-transpose | :orange_circle: | Transpose (Puni) |
+
 ### Round 206 — Corfu-ext, Cape-ext, Company-ext, Hippie-ext, Pabbrev, Abbrev-suggest
 
 | Feature | Status | Notes |
