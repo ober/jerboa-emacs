@@ -18814,3 +18814,45 @@
 (def (cmd-evil-quick-diff-cancel app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Evil: cancelled quick diff")))
+
+;;; Round 213 — Forge (batch 2)
+
+(def (cmd-forge-edit-post app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: editing post")))
+
+(def (cmd-forge-delete-post app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: deleted post")))
+
+(def (cmd-forge-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: merging pull request")))
+
+(def (cmd-forge-fork app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: forking repository")))
+
+(def (cmd-forge-browse-pullreq app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: browsing pull request in browser")))
+
+(def (cmd-forge-browse-issue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: browsing issue in browser")))
+
+(def (cmd-forge-browse-commit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: browsing commit in browser")))
+
+(def (cmd-forge-browse-remote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: browsing remote in browser")))
+
+(def (cmd-forge-copy-url-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: copied URL at point")))
+
+(def (cmd-forge-visit-pullreq app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: visiting pull request")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 213 — Forge (Magit GitHub/GitLab)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| forge-list-pullreqs | :orange_circle: | List pull requests |
+| forge-list-issues | :orange_circle: | List issues |
+| forge-list-notifications | :orange_circle: | List notifications |
+| forge-list-repositories | :orange_circle: | List repositories |
+| forge-list-topics | :orange_circle: | List topics |
+| forge-pull-pullreq | :orange_circle: | Pull PR data from remote |
+| forge-pull-topic | :orange_circle: | Pull topic data from remote |
+| forge-create-pullreq | :orange_circle: | Create new pull request |
+| forge-create-issue | :orange_circle: | Create new issue |
+| forge-create-post | :orange_circle: | Create new post/comment |
+| forge-edit-post | :orange_circle: | Edit post/comment |
+| forge-delete-post | :orange_circle: | Delete post/comment |
+| forge-merge | :orange_circle: | Merge pull request |
+| forge-fork | :orange_circle: | Fork repository |
+| forge-browse-pullreq | :orange_circle: | Browse PR in browser |
+| forge-browse-issue | :orange_circle: | Browse issue in browser |
+| forge-browse-commit | :orange_circle: | Browse commit in browser |
+| forge-browse-remote | :orange_circle: | Browse remote in browser |
+| forge-copy-url-at-point | :orange_circle: | Copy URL at point |
+| forge-visit-pullreq | :orange_circle: | Visit pull request |
+
 ### Round 212 — Evil extensions
 
 | Command | Status | Description |
