@@ -8652,3 +8652,93 @@
 (def (cmd-windmove-down app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Moved to window below")))
+
+;; Round 27 batch 2: electric-indent-mode, auto-composition-mode, auto-encryption-mode,
+;; auto-compression-mode, prettify-symbols-mode, subword-mode, superword-mode,
+;; overwrite-mode, binary-overwrite-mode, enriched-mode
+
+;; cmd-electric-indent-mode: Toggle automatic indentation on newline
+(def (cmd-electric-indent-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'electric-indent-mode)
+    (if (mode-enabled? app 'electric-indent-mode)
+      (echo-message! echo "Electric-indent mode enabled (auto-indent on enter)")
+      (echo-message! echo "Electric-indent mode disabled"))))
+
+;; cmd-auto-composition-mode: Toggle automatic character composition
+(def (cmd-auto-composition-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-composition-mode)
+    (if (mode-enabled? app 'auto-composition-mode)
+      (echo-message! echo "Auto-composition mode enabled")
+      (echo-message! echo "Auto-composition mode disabled"))))
+
+;; cmd-auto-encryption-mode: Toggle automatic file encryption/decryption
+(def (cmd-auto-encryption-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-encryption-mode)
+    (if (mode-enabled? app 'auto-encryption-mode)
+      (echo-message! echo "Auto-encryption mode enabled")
+      (echo-message! echo "Auto-encryption mode disabled"))))
+
+;; cmd-auto-compression-mode: Toggle automatic file compression/decompression
+(def (cmd-auto-compression-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-compression-mode)
+    (if (mode-enabled? app 'auto-compression-mode)
+      (echo-message! echo "Auto-compression mode enabled (.gz/.bz2 transparent)")
+      (echo-message! echo "Auto-compression mode disabled"))))
+
+;; cmd-prettify-symbols-mode: Toggle symbol prettification (e.g., lambda → λ)
+(def (cmd-prettify-symbols-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'prettify-symbols-mode)
+    (if (mode-enabled? app 'prettify-symbols-mode)
+      (echo-message! echo "Prettify-symbols mode enabled (lambda → \x03BB;)")
+      (echo-message! echo "Prettify-symbols mode disabled"))))
+
+;; cmd-subword-mode: Toggle treating camelCase as separate words
+(def (cmd-subword-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'subword-mode)
+    (if (mode-enabled? app 'subword-mode)
+      (echo-message! echo "Subword mode enabled (camelCase = separate words)")
+      (echo-message! echo "Subword mode disabled"))))
+
+;; cmd-superword-mode: Toggle treating symbol_name as one word
+(def (cmd-superword-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'superword-mode)
+    (if (mode-enabled? app 'superword-mode)
+      (echo-message! echo "Superword mode enabled (symbol_name = one word)")
+      (echo-message! echo "Superword mode disabled"))))
+
+;; cmd-overwrite-mode: Toggle overwrite mode
+(def (cmd-overwrite-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (toggle-mode! app 'overwrite-mode)
+    (if (mode-enabled? app 'overwrite-mode)
+      (begin
+        (send-message ed SCI_SETOVERTYPE 1 0)
+        (echo-message! echo "Overwrite mode enabled"))
+      (begin
+        (send-message ed SCI_SETOVERTYPE 0 0)
+        (echo-message! echo "Overwrite mode disabled")))))
+
+;; cmd-binary-overwrite-mode: Toggle binary overwrite mode
+(def (cmd-binary-overwrite-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'binary-overwrite-mode)
+    (if (mode-enabled? app 'binary-overwrite-mode)
+      (echo-message! echo "Binary overwrite mode enabled")
+      (echo-message! echo "Binary overwrite mode disabled"))))
+
+;; cmd-enriched-mode: Toggle enriched text mode
+(def (cmd-enriched-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'enriched-mode)
+    (if (mode-enabled? app 'enriched-mode)
+      (echo-message! echo "Enriched mode enabled (rich text editing)")
+      (echo-message! echo "Enriched mode disabled"))))

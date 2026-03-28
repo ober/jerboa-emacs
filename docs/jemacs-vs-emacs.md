@@ -1646,6 +1646,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Windmove right | :orange_circle: | Move to right window |
 | Windmove up | :orange_circle: | Move to window above |
 | Windmove down | :orange_circle: | Move to window below |
+| Highlight symbol at point | :orange_circle: | Highlight all occurrences of symbol |
+| Unhighlight regexp | :orange_circle: | Remove regexp highlights |
+| Highlight regexp | :orange_circle: | Highlight all regexp matches |
+| Highlight lines matching regexp | :orange_circle: | Highlight matching lines |
+| Highlight phrase | :orange_circle: | Highlight phrase (case-insensitive) |
+| Font-lock mode | :orange_circle: | Toggle syntax highlighting |
+| Global font-lock mode | :orange_circle: | Toggle global syntax highlighting |
+| Font-lock fontify buffer | :orange_circle: | Re-fontify buffer |
+| Show-paren mode | :orange_circle: | Toggle matching paren highlight |
+| Electric-pair mode | :orange_circle: | Toggle auto-close brackets |
+| Electric-indent mode | :orange_circle: | Toggle auto-indent on newline |
+| Auto-composition mode | :orange_circle: | Toggle character composition |
+| Auto-encryption mode | :orange_circle: | Toggle file encryption/decryption |
+| Auto-compression mode | :orange_circle: | Toggle transparent .gz/.bz2 |
+| Prettify-symbols mode | :orange_circle: | Toggle symbol prettification |
+| Subword mode | :orange_circle: | Treat camelCase as separate words |
+| Superword mode | :orange_circle: | Treat symbol_name as one word |
+| Overwrite mode | :orange_circle: | Toggle overwrite/insert mode |
+| Binary overwrite mode | :orange_circle: | Toggle binary overwrite |
+| Enriched mode | :orange_circle: | Toggle rich text editing |
 
 ---
 

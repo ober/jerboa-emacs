@@ -9132,3 +9132,143 @@
       (echo-message! echo "Window is now dedicated to this buffer")
       (echo-message! echo "Window is no longer dedicated"))))
 
+;; Round 27 batch 1: highlight-symbol-at-point, unhighlight-regexp, highlight-regexp,
+;; highlight-lines-matching-regexp, highlight-phrase, font-lock-mode, global-font-lock-mode,
+;; font-lock-fontify-buffer, show-paren-mode, electric-pair-mode
+
+;; cmd-highlight-symbol-at-point: Highlight all occurrences of symbol at point
+(def (cmd-highlight-symbol-at-point app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    (let* ((word-start (let loop ((i pos))
+                         (if (or (<= i 0) (not (char-alphabetic? (string-ref text (- i 1)))))
+                           i (loop (- i 1)))))
+           (word-end (let loop ((i pos))
+                       (if (or (>= i len) (not (char-alphabetic? (string-ref text i))))
+                         i (loop (+ i 1))))))
+      (if (= word-start word-end)
+        (echo-message! echo "No symbol at point")
+        (let* ((symbol (substring text word-start word-end))
+               (sym-len (string-length symbol)))
+          (let loop ((p 0) (count 0))
+            (let ((idx (string-contains text symbol p)))
+              (if (not idx)
+                (echo-message! echo (str "Highlighted " count " occurrences of \"" symbol "\""))
+                (begin
+                  (editor-indicator-fill ed 18 idx (+ idx sym-len))
+                  (loop (+ idx sym-len) (+ count 1)))))))))))
+
+;; cmd-unhighlight-regexp: Remove highlighting
+(def (cmd-unhighlight-regexp app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (len (editor-get-length ed)))
+    (editor-indicator-clear ed 18 0 len)
+    (echo-message! echo "Highlights removed")))
+
+;; cmd-highlight-regexp: Highlight all matches of a regexp
+(def (cmd-highlight-regexp app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pattern (echo-read-string echo "Highlight regexp: ")))
+    (if (or (not pattern) (string=? pattern ""))
+      (echo-message! echo "No pattern specified")
+      (let* ((text (editor-get-text ed))
+             (pat-len (string-length pattern)))
+        (let loop ((pos 0) (count 0))
+          (let ((idx (string-contains text pattern pos)))
+            (if (not idx)
+              (echo-message! echo (str "Highlighted " count " matches of \"" pattern "\""))
+              (begin
+                (editor-indicator-fill ed 18 idx (+ idx pat-len))
+                (loop (+ idx pat-len) (+ count 1))))))))))
+
+;; cmd-highlight-lines-matching-regexp: Highlight entire lines matching pattern
+(def (cmd-highlight-lines-matching-regexp app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pattern (echo-read-string echo "Highlight lines matching: ")))
+    (if (or (not pattern) (string=? pattern ""))
+      (echo-message! echo "No pattern specified")
+      (let* ((total-lines (editor-line-count ed)))
+        (let loop ((ln 0) (count 0))
+          (if (>= ln total-lines)
+            (echo-message! echo (str "Highlighted " count " lines matching \"" pattern "\""))
+            (let ((line-text (editor-get-line ed ln)))
+              (if (string-contains line-text pattern)
+                (let ((start (editor-line-start ed ln))
+                      (end (editor-line-end ed ln)))
+                  (editor-indicator-fill ed 18 start end)
+                  (loop (+ ln 1) (+ count 1)))
+                (loop (+ ln 1) count)))))))))
+
+;; cmd-highlight-phrase: Highlight a phrase (case-insensitive substring)
+(def (cmd-highlight-phrase app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (phrase (echo-read-string echo "Highlight phrase: ")))
+    (if (or (not phrase) (string=? phrase ""))
+      (echo-message! echo "No phrase specified")
+      (let* ((text (string-downcase (editor-get-text ed)))
+             (pat (string-downcase phrase))
+             (pat-len (string-length pat)))
+        (let loop ((pos 0) (count 0))
+          (let ((idx (string-contains text pat pos)))
+            (if (not idx)
+              (echo-message! echo (str "Highlighted " count " occurrences of \"" phrase "\""))
+              (begin
+                (editor-indicator-fill ed 18 idx (+ idx pat-len))
+                (loop (+ idx pat-len) (+ count 1))))))))))
+
+;; cmd-font-lock-mode: Toggle syntax highlighting
+(def (cmd-font-lock-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'font-lock-mode)
+    (if (mode-enabled? app 'font-lock-mode)
+      (echo-message! echo "Font-lock mode enabled (syntax highlighting on)")
+      (echo-message! echo "Font-lock mode disabled (syntax highlighting off)"))))
+
+;; cmd-global-font-lock-mode: Toggle global syntax highlighting
+(def (cmd-global-font-lock-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-font-lock-mode)
+    (if (mode-enabled? app 'global-font-lock-mode)
+      (echo-message! echo "Global font-lock mode enabled")
+      (echo-message! echo "Global font-lock mode disabled"))))
+
+;; cmd-font-lock-fontify-buffer: Re-fontify the entire buffer
+(def (cmd-font-lock-fontify-buffer app)
+  (let* ((echo (app-state-echo app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf)))
+    (send-message ed SCI_COLOURISE 0 -1)
+    (echo-message! echo "Buffer re-fontified")))
+
+;; cmd-show-paren-mode: Toggle matching paren highlighting
+(def (cmd-show-paren-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (toggle-mode! app 'show-paren-mode)
+    (if (mode-enabled? app 'show-paren-mode)
+      (begin
+        (send-message ed SCI_BRACEHIGHLIGHTINDICATOR 1 17)
+        (echo-message! echo "Show-paren mode enabled"))
+      (echo-message! echo "Show-paren mode disabled"))))
+
+;; cmd-electric-pair-mode: Toggle auto-insertion of matching pairs
+(def (cmd-electric-pair-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'electric-pair-mode)
+    (if (mode-enabled? app 'electric-pair-mode)
+      (echo-message! echo "Electric-pair mode enabled (auto-close brackets)")
+      (echo-message! echo "Electric-pair mode disabled"))))
+
