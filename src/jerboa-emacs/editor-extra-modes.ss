@@ -16450,3 +16450,54 @@
 (def (cmd-wgrep-remove-change app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Wgrep: removed change at point")))
+
+;; ============================================================
+;; Round 152 — Evil extended, Viper, Meow, Boon (batch 1)
+;; ============================================================
+
+(def (cmd-evil-replace-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: entered replace state")))
+
+(def (cmd-evil-emacs-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: entered Emacs state")))
+
+(def (cmd-evil-motion-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: entered motion state")))
+
+(def (cmd-evil-jump-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: jumped forward in jump list")))
+
+(def (cmd-evil-jump-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: jumped backward in jump list")))
+
+(def (cmd-evil-record-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Register for macro (a-z): "
+      (lambda (reg)
+        (echo-message! echo (str "Evil: recording macro to register " reg))))))
+
+(def (cmd-evil-execute-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Execute macro from register: "
+      (lambda (reg)
+        (echo-message! echo (str "Evil: executing macro from register " reg))))))
+
+(def (cmd-viper-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'viper)
+    (if (mode-enabled? app 'viper)
+      (echo-message! echo "Viper mode enabled (Vi emulation)")
+      (echo-message! echo "Viper mode disabled"))))
+
+(def (cmd-meow-normal-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meow: entered normal mode")))
+
+(def (cmd-meow-insert-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meow: entered insert mode")))

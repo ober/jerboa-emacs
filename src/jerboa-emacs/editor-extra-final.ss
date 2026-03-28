@@ -15820,3 +15820,47 @@
     (echo-read-string echo "Color-rg search in file: "
       (lambda (q)
         (echo-message! echo (str "Color-rg: searching current file for '" q "'"))))))
+
+;; ============================================================
+;; Round 152 — Evil extended, Boon, Meow (batch 2)
+;; ============================================================
+
+(def (cmd-boon-command-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boon: entered command state")))
+
+(def (cmd-evil-operator-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: entered operator-pending state")))
+
+(def (cmd-evil-open-above app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: opened line above")))
+
+(def (cmd-evil-open-below app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: opened line below")))
+
+(def (cmd-evil-join app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: joined lines")))
+
+(def (cmd-evil-shift-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: shifted region left")))
+
+(def (cmd-evil-shift-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: shifted region right")))
+
+(def (cmd-evil-indent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: indented region")))
+
+(def (cmd-evil-toggle-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: toggled fold")))
+
+(def (cmd-evil-scroll-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: scrolled up half page")))

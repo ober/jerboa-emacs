@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 152 — Evil Extended, Viper, Meow, Boon
+
+| Feature | Status | Notes |
+|---|---|---|
+| `evil-replace-state` | :orange_circle: | Enter replace state |
+| `evil-emacs-state` | :orange_circle: | Enter Emacs state |
+| `evil-motion-state` | :orange_circle: | Enter motion state |
+| `evil-operator-state` | :orange_circle: | Enter operator-pending state |
+| `evil-jump-forward` | :orange_circle: | Jump forward in jump list |
+| `evil-jump-backward` | :orange_circle: | Jump backward in jump list |
+| `evil-record-macro` | :orange_circle: | Record macro to register |
+| `evil-execute-macro` | :orange_circle: | Execute macro from register |
+| `evil-open-above` | :orange_circle: | Open line above |
+| `evil-open-below` | :orange_circle: | Open line below |
+| `evil-join` | :orange_circle: | Join lines |
+| `evil-shift-left` | :orange_circle: | Shift region left |
+| `evil-shift-right` | :orange_circle: | Shift region right |
+| `evil-indent` | :orange_circle: | Indent region |
+| `evil-toggle-fold` | :orange_circle: | Toggle fold |
+| `evil-scroll-up` | :orange_circle: | Scroll up half page |
+| `viper-mode` | :orange_circle: | Vi emulation mode |
+| `meow-normal-mode` | :orange_circle: | Meow normal mode |
+| `meow-insert-mode` | :orange_circle: | Meow insert mode |
+| `boon-command-state` | :orange_circle: | Boon command state |
+
 ### Round 151 — Avy Extended, Wgrep, Deadgrep, Color-rg
 
 | Feature | Status | Notes |
