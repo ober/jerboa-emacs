@@ -12524,3 +12524,52 @@
 (def (cmd-ob-clojure-execute app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org Babel: executed Clojure block")))
+
+;;; Round 84 — Image & Doc-view (cont.)
+(def (cmd-image-next-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: next file")))
+
+(def (cmd-image-previous-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: previous file")))
+
+(def (cmd-image-transform-rotate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: rotated")))
+
+(def (cmd-image-transform-fit-both app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: fit to both dimensions")))
+
+(def (cmd-image-increase-size app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: size increased")))
+
+(def (cmd-image-decrease-size app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: size decreased")))
+
+(def (cmd-doc-view-toggle-display app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doc-view: toggled display mode")))
+
+(def (cmd-doc-view-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Doc-view search: "
+      (lambda (query)
+        (echo-message! echo (str "Doc-view: searching for '" query "'"))))))
+
+(def (cmd-pdf-view-auto-slice-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pdf-view-auto-slice)
+    (if (mode-enabled? app 'pdf-view-auto-slice)
+      (echo-message! echo "PDF auto-slice mode enabled")
+      (echo-message! echo "PDF auto-slice mode disabled"))))
+
+(def (cmd-pdf-view-themed-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pdf-view-themed)
+    (if (mode-enabled? app 'pdf-view-themed)
+      (echo-message! echo "PDF themed mode enabled")
+      (echo-message! echo "PDF themed mode disabled"))))

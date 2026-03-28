@@ -3038,6 +3038,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 84 — PDF, Image & Doc-view
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| pdf-view-scroll-up | :orange_circle: | Scroll PDF up |
+| pdf-view-scroll-down | :orange_circle: | Scroll PDF down |
+| pdf-view-fit-width | :orange_circle: | Fit PDF to width |
+| pdf-view-fit-height | :orange_circle: | Fit PDF to height |
+| pdf-annot-add-highlight | :orange_circle: | Add PDF highlight annotation |
+| pdf-annot-add-text | :orange_circle: | Add PDF text annotation |
+| pdf-annot-list-annotations | :orange_circle: | List PDF annotations |
+| pdf-occur | :orange_circle: | Search in PDF document |
+| pdf-outline | :orange_circle: | Show PDF outline |
+| nov-goto-toc | :orange_circle: | Go to epub table of contents |
+| image-next-file | :orange_circle: | Next image file |
+| image-previous-file | :orange_circle: | Previous image file |
+| image-transform-rotate | :orange_circle: | Rotate image |
+| image-transform-fit-both | :orange_circle: | Fit image to both dimensions |
+| image-increase-size | :orange_circle: | Increase image size |
+| image-decrease-size | :orange_circle: | Decrease image size |
+| doc-view-toggle-display | :orange_circle: | Toggle doc-view display mode |
+| doc-view-search | :orange_circle: | Search in doc-view |
+| pdf-view-auto-slice-mode | :orange_circle: | Toggle PDF auto-slice mode |
+| pdf-view-themed-minor-mode | :orange_circle: | Toggle PDF themed mode |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

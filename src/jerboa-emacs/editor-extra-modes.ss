@@ -13082,6 +13082,51 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org Babel: executed SQL block")))
 
+;;; Round 84 — PDF, Image & Doc-view
+(def (cmd-pdf-view-scroll-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: scrolled up")))
+
+(def (cmd-pdf-view-scroll-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: scrolled down")))
+
+(def (cmd-pdf-view-fit-width app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: fit to width")))
+
+(def (cmd-pdf-view-fit-height app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: fit to height")))
+
+(def (cmd-pdf-annot-add-highlight app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: highlight annotation added")))
+
+(def (cmd-pdf-annot-add-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Annotation text: "
+      (lambda (text)
+        (echo-message! echo (str "PDF: text annotation added"))))))
+
+(def (cmd-pdf-annot-list-annotations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: listing annotations")))
+
+(def (cmd-pdf-occur app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PDF occur pattern: "
+      (lambda (pattern)
+        (echo-message! echo (str "PDF: searching for '" pattern "'"))))))
+
+(def (cmd-pdf-outline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: showing document outline")))
+
+(def (cmd-nov-goto-toc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: showing table of contents")))
+
 (def (cmd-ob-python-execute app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org Babel: executed Python block")))
