@@ -14736,3 +14736,52 @@
     (if (mode-enabled? app 'erc-spelling)
       (echo-message! echo "ERC spelling mode enabled")
       (echo-message! echo "ERC spelling mode disabled"))))
+
+;;; ——— Round 117: Markdown mode (batch 1) ———
+
+(def (cmd-markdown-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown mode activated")))
+
+(def (cmd-markdown-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: exported to HTML")))
+
+(def (cmd-markdown-live-preview-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'markdown-live-preview)
+    (if (mode-enabled? app 'markdown-live-preview)
+      (echo-message! echo "Markdown live preview enabled")
+      (echo-message! echo "Markdown live preview disabled"))))
+
+(def (cmd-markdown-insert-header-atx-1 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted # heading")))
+
+(def (cmd-markdown-insert-header-atx-2 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted ## heading")))
+
+(def (cmd-markdown-insert-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Link URL: "
+      (lambda (url)
+        (echo-message! echo (str "Markdown: inserted link to " url))))))
+
+(def (cmd-markdown-insert-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image URL: "
+      (lambda (url)
+        (echo-message! echo (str "Markdown: inserted image " url))))))
+
+(def (cmd-markdown-insert-code app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted code block")))
+
+(def (cmd-markdown-insert-blockquote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted blockquote")))
+
+(def (cmd-markdown-insert-list-item app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted list item")))

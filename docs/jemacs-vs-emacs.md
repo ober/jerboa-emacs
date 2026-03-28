@@ -3889,6 +3889,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | rcirc-cmd-topic | :orange_circle: | RCIRC set topic |
 | rcirc-cmd-away | :orange_circle: | RCIRC set away |
 
+### Round 117 — Markdown Mode
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| markdown-mode | :orange_circle: | Activate Markdown mode |
+| markdown-export | :orange_circle: | Export to HTML |
+| markdown-live-preview-mode | :orange_circle: | Toggle live preview |
+| markdown-insert-header-atx-1 | :orange_circle: | Insert # heading |
+| markdown-insert-header-atx-2 | :orange_circle: | Insert ## heading |
+| markdown-insert-link | :orange_circle: | Insert link |
+| markdown-insert-image | :orange_circle: | Insert image |
+| markdown-insert-code | :orange_circle: | Insert code block |
+| markdown-insert-blockquote | :orange_circle: | Insert blockquote |
+| markdown-insert-list-item | :orange_circle: | Insert list item |
+| markdown-insert-footnote | :orange_circle: | Insert footnote |
+| markdown-insert-hr | :orange_circle: | Insert horizontal rule |
+| markdown-toggle-markup-hiding | :orange_circle: | Toggle markup hiding |
+| markdown-toggle-fontify-code-blocks-natively | :orange_circle: | Toggle native code fontification |
+| markdown-move-up | :orange_circle: | Move element up |
+| markdown-move-down | :orange_circle: | Move element down |
+| markdown-outline-previous | :orange_circle: | Move to previous heading |
+| markdown-outline-next | :orange_circle: | Move to next heading |
+| markdown-insert-header-atx-3 | :orange_circle: | Insert ### heading |
+| markdown-insert-bold | :orange_circle: | Insert bold markup |
+
 ---
 
 ## Recommended Development Roadmap

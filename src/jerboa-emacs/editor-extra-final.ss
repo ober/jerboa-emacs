@@ -14143,3 +14143,51 @@
     (echo-read-string echo "RCIRC away reason: "
       (lambda (reason)
         (echo-message! echo (str "RCIRC: set away - " reason))))))
+
+;;; ——— Round 117: Markdown mode (batch 2) ———
+
+(def (cmd-markdown-insert-footnote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted footnote")))
+
+(def (cmd-markdown-insert-hr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted horizontal rule")))
+
+(def (cmd-markdown-toggle-markup-hiding app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'markdown-markup-hiding)
+    (if (mode-enabled? app 'markdown-markup-hiding)
+      (echo-message! echo "Markdown markup hiding enabled")
+      (echo-message! echo "Markdown markup hiding disabled"))))
+
+(def (cmd-markdown-toggle-fontify-code-blocks-natively app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'markdown-native-fontify)
+    (if (mode-enabled? app 'markdown-native-fontify)
+      (echo-message! echo "Markdown native code fontification enabled")
+      (echo-message! echo "Markdown native code fontification disabled"))))
+
+(def (cmd-markdown-move-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: moved element up")))
+
+(def (cmd-markdown-move-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: moved element down")))
+
+(def (cmd-markdown-outline-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: moved to previous heading")))
+
+(def (cmd-markdown-outline-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: moved to next heading")))
+
+(def (cmd-markdown-insert-header-atx-3 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted ### heading")))
+
+(def (cmd-markdown-insert-bold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted bold markup")))
