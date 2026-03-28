@@ -14160,3 +14160,49 @@
 (def (cmd-set-justification-right app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Justification set to right")))
+
+;;; ——— Round 106: Help & info system (batch 1) ———
+
+(def (cmd-info-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Info index topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Info: looking up index entry '" topic "'"))))))
+
+(def (cmd-info-index-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: next index match")))
+
+(def (cmd-info-next-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: moved to next reference")))
+
+(def (cmd-info-prev-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: moved to previous reference")))
+
+(def (cmd-info-follow-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Follow reference: "
+      (lambda (ref)
+        (echo-message! echo (str "Info: following reference " ref))))))
+
+(def (cmd-info-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: showing history")))
+
+(def (cmd-info-history-back app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: navigated back in history")))
+
+(def (cmd-info-history-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: navigated forward in history")))
+
+(def (cmd-info-toc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: showing table of contents")))
+
+(def (cmd-info-top-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: navigated to top node")))

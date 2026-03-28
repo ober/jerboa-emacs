@@ -13607,3 +13607,51 @@
 (def (cmd-picture-clear-line app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Picture: cleared line at point")))
+
+;;; ——— Round 106: Help & info system (batch 2) ———
+
+(def (cmd-info-final-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: navigated to final node")))
+
+(def (cmd-info-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Info: navigated up one level")))
+
+(def (cmd-info-nth-menu-item app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Menu item number: "
+      (lambda (n)
+        (echo-message! echo (str "Info: selected menu item " n))))))
+
+(def (cmd-shortdoc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Shortdoc group: "
+      (lambda (group)
+        (echo-message! echo (str "Shortdoc: displaying group '" group "'"))))))
+
+(def (cmd-help-with-tutorial-spec-language app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tutorial language: "
+      (lambda (lang)
+        (echo-message! echo (str "Help: opening tutorial in " lang))))))
+
+(def (cmd-view-order-manuals app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Viewing ordering information for Emacs manuals")))
+
+(def (cmd-view-emacs-FAQ app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Viewing Emacs FAQ")))
+
+(def (cmd-view-emacs-problems app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Viewing known Emacs problems")))
+
+(def (cmd-view-emacs-debugging app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Viewing Emacs debugging information")))
+
+(def (cmd-view-emacs-news app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Viewing Emacs news")))

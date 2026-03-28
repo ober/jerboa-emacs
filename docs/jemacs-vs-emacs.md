@@ -3614,6 +3614,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | picture-clear-column | :orange_circle: | Clear column in picture mode |
 | picture-clear-line | :orange_circle: | Clear line in picture mode |
 
+### Round 106 — Help & Info System
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| info-index | :orange_circle: | Look up index entry in Info |
+| info-index-next | :orange_circle: | Next index match |
+| info-next-reference | :orange_circle: | Move to next cross-reference |
+| info-prev-reference | :orange_circle: | Move to previous cross-reference |
+| info-follow-reference | :orange_circle: | Follow a cross-reference |
+| info-history | :orange_circle: | Show Info history |
+| info-history-back | :orange_circle: | Navigate back in Info history |
+| info-history-forward | :orange_circle: | Navigate forward in Info history |
+| info-toc | :orange_circle: | Show Info table of contents |
+| info-top-node | :orange_circle: | Go to top Info node |
+| info-final-node | :orange_circle: | Go to final Info node |
+| info-up | :orange_circle: | Navigate up one Info level |
+| info-nth-menu-item | :orange_circle: | Select nth menu item |
+| shortdoc | :orange_circle: | Display shortdoc function group |
+| help-with-tutorial-spec-language | :orange_circle: | Open tutorial in specific language |
+| view-order-manuals | :orange_circle: | View manual ordering info |
+| view-emacs-FAQ | :orange_circle: | View Emacs FAQ |
+| view-emacs-problems | :orange_circle: | View known Emacs problems |
+| view-emacs-debugging | :orange_circle: | View Emacs debugging info |
+| view-emacs-news | :orange_circle: | View Emacs news |
+
 ---
 
 ## Recommended Development Roadmap
