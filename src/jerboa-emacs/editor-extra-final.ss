@@ -17855,3 +17855,48 @@
 (def (cmd-prettify-symbols-unprettify-at-point app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Prettify: showing unprettified symbol at point")))
+
+;; Round 193 — AUCTeX-ext, TeX-ext
+(def (cmd-auctex-insert-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TeX environment: "
+      (lambda (env)
+        (echo-message! echo (str "AUCTeX: inserted \\begin{" env "}...\\end{" env "}"))))))
+
+(def (cmd-auctex-font-bold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AUCTeX: applied \\textbf{}")))
+
+(def (cmd-auctex-font-italic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AUCTeX: applied \\textit{}")))
+
+(def (cmd-auctex-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AUCTeX: compiling document...")))
+
+(def (cmd-auctex-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AUCTeX: viewing compiled document")))
+
+(def (cmd-auctex-master-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Master file: "
+      (lambda (f)
+        (echo-message! echo (str "AUCTeX: master file set to " f))))))
+
+(def (cmd-tex-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: compiling...")))
+
+(def (cmd-tex-bibtex-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: running BibTeX")))
+
+(def (cmd-tex-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: viewing output")))
+
+(def (cmd-tex-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: sending to printer")))

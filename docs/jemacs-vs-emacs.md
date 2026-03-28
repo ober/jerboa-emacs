@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 193 — Org-babel-ext, Markdown-ext, AUCTeX, TeX-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| org-babel-load-in-session | :orange_circle: | Load org-babel block in session |
+| org-babel-open-src-block-result | :orange_circle: | Open source block result |
+| org-table-toggle-coordinate-overlays | :orange_circle: | Toggle table coordinate overlays |
+| markdown-toggle-url-hidden | :orange_circle: | Toggle URL hidden display |
+| markdown-insert-gfm-checkbox | :orange_circle: | Insert GFM checkbox |
+| markdown-toggle-gfm-checkbox | :orange_circle: | Toggle GFM checkbox |
+| markdown-table-align | :orange_circle: | Align markdown table |
+| markdown-table-sort-lines | :orange_circle: | Sort markdown table lines |
+| markdown-footnote-goto-text | :orange_circle: | Jump to footnote text |
+| auctex-insert-macro | :orange_circle: | Insert TeX macro |
+| auctex-insert-environment | :orange_circle: | Insert TeX environment |
+| auctex-font-bold | :orange_circle: | Apply bold formatting |
+| auctex-font-italic | :orange_circle: | Apply italic formatting |
+| auctex-compile | :orange_circle: | Compile TeX document |
+| auctex-view | :orange_circle: | View compiled document |
+| auctex-master-file | :orange_circle: | Set master file |
+| tex-compile | :orange_circle: | Compile TeX file |
+| tex-bibtex-file | :orange_circle: | Run BibTeX |
+| tex-view | :orange_circle: | View TeX output |
+| tex-print | :orange_circle: | Print TeX output |
+
 ### Round 192 — Ediff-ext, Smerge-ext, VC-ext, Diff-ext, Compilation-ext, Highlight-ext, Windmove-ext
 
 | Feature | Status | Notes |

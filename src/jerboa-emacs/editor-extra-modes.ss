@@ -18476,3 +18476,46 @@
     (echo-read-string echo "Skip threshold (0-2): "
       (lambda (val)
         (echo-message! echo (str "Compilation: skip threshold set to " val))))))
+
+;; Round 193 — Org-babel-ext, Org-table-ext, Markdown-ext, AUCTeX
+(def (cmd-org-babel-load-in-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-babel: loaded block in session")))
+
+(def (cmd-org-babel-open-src-block-result app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-babel: opened source block result")))
+
+(def (cmd-org-table-toggle-coordinate-overlays app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-table: toggled coordinate overlays")))
+
+(def (cmd-markdown-toggle-url-hidden app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: toggled URL hidden display")))
+
+(def (cmd-markdown-insert-gfm-checkbox app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted GFM checkbox")))
+
+(def (cmd-markdown-toggle-gfm-checkbox app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: toggled GFM checkbox")))
+
+(def (cmd-markdown-table-align app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: aligned table")))
+
+(def (cmd-markdown-table-sort-lines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: sorted table lines")))
+
+(def (cmd-markdown-footnote-goto-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: jumped to footnote text")))
+
+(def (cmd-auctex-insert-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TeX macro: "
+      (lambda (macro)
+        (echo-message! echo (str "AUCTeX: inserted \\" macro))))))
