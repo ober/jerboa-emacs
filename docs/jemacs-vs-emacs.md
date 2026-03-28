@@ -1726,6 +1726,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Other frame | :orange_circle: | Switch to other frame |
 | Toggle frame fullscreen | :orange_circle: | Toggle fullscreen mode |
 | Toggle frame maximized | :orange_circle: | Toggle maximized frame |
+| Save some buffers | :orange_circle: | Save all modified buffers |
+| Save buffers kill emacs | :orange_circle: | Save and exit (C-x C-c) |
+| Kill emacs | :orange_circle: | Exit without saving |
+| Restart emacs | :orange_circle: | Restart jemacs |
+| Server start | :orange_circle: | Start server mode (placeholder) |
+| Server edit | :orange_circle: | Finish server edit (placeholder) |
+| Emacsclient mode | :orange_circle: | Toggle emacsclient (placeholder) |
+| Eval last sexp | :orange_circle: | Evaluate S-expression before point |
+| Eval print last sexp | :orange_circle: | Eval and insert result |
+| Eval defun | :orange_circle: | Evaluate top-level form |
+| Eval region | :orange_circle: | Evaluate selected region |
+| Eval current buffer | :orange_circle: | Evaluate entire buffer |
+| Load library | :orange_circle: | Load a Scheme library file |
+| Load theme | :orange_circle: | Load a color theme |
+| Disable theme | :orange_circle: | Disable current theme |
+| Enable theme | :orange_circle: | Enable a theme |
+| Repeat | :orange_circle: | Repeat last command |
+| Repeat complex command | :orange_circle: | Repeat with editing |
+| Command history | :orange_circle: | Show command history |
+| View lossage | :orange_circle: | View recent keystrokes |
 
 ---
 

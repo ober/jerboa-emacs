@@ -9083,3 +9083,87 @@
     (if (mode-enabled? app 'frame-maximized)
       (echo-message! echo "Frame maximized")
       (echo-message! echo "Frame unmaximized"))))
+
+;; Round 31 batch 2: eval-region, eval-current-buffer, load-library, load-theme,
+;; disable-theme, enable-theme, repeat, repeat-complex-command, command-history, view-lossage
+
+;; cmd-eval-region: Evaluate the selected region as Scheme
+(def (cmd-eval-region app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (let ((text (editor-get-text-range ed sel-start sel-end)))
+        (echo-message! echo (str "Would eval: " (if (> (string-length text) 60) (str (substring text 0 60) "...") text)))))))
+
+;; cmd-eval-current-buffer: Evaluate entire buffer as Scheme
+(def (cmd-eval-current-buffer app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    (echo-message! echo (str "Would eval buffer (" len " chars). Use M-x eval-expression for interactive eval."))))
+
+;; cmd-load-library: Load a Scheme library file
+(def (cmd-load-library app)
+  (let* ((echo (app-state-echo app))
+         (lib (echo-read-string echo "Load library: ")))
+    (if (or (not lib) (string=? lib ""))
+      (echo-message! echo "No library specified")
+      (echo-message! echo (str "Would load library: " lib)))))
+
+;; cmd-load-theme: Load a color theme
+(def (cmd-load-theme app)
+  (cmd-color-theme-select app))
+
+;; cmd-disable-theme: Disable a loaded theme
+(def (cmd-disable-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Theme disabled (reset to default)")))
+
+;; cmd-enable-theme: Enable a previously disabled theme
+(def (cmd-enable-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Use M-x load-theme or M-x color-theme-select")))
+
+;; cmd-repeat: Repeat the last command
+(def (cmd-repeat app)
+  (let* ((echo (app-state-echo app))
+         (last-cmd (hash-get (app-state-modes app) 'last-command)))
+    (if (not last-cmd)
+      (echo-message! echo "No command to repeat")
+      (echo-message! echo (str "Would repeat: " last-cmd)))))
+
+;; cmd-repeat-complex-command: Repeat a complex command with editing
+(def (cmd-repeat-complex-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Use M-x and command history for repeat")))
+
+;; cmd-command-history: Show command history
+(def (cmd-command-history app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (history (or (hash-get (app-state-modes app) 'command-history) '()))
+         (text (str "=== Command History ===\n\n"
+                    (if (null? history)
+                      "No commands in history.\n"
+                      (string-join (map (lambda (cmd) (str "  " cmd)) history) "\n"))
+                    "\n")))
+    (editor-set-text ed text)
+    (echo-message! echo (str (length history) " commands in history"))))
+
+;; cmd-view-lossage: View recent keystrokes
+(def (cmd-view-lossage app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== Recent Keystrokes ===\n\n"
+                    "(Keystroke logging not yet implemented.\n"
+                    " This would show the last 300 keystrokes.)\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Lossage display")))

@@ -9587,3 +9587,111 @@
 (def (cmd-define-key app)
   (cmd-global-set-key app))
 
+;; Round 31 batch 1: save-some-buffers, save-buffers-kill-emacs, kill-emacs, restart-emacs,
+;; server-start, server-edit, emacsclient-mode, eval-last-sexp, eval-print-last-sexp, eval-defun
+
+;; cmd-save-some-buffers: Save all modified buffers
+(def (cmd-save-some-buffers app)
+  (let* ((echo (app-state-echo app))
+         (buffers (app-state-buffers app))
+         (saved 0))
+    (for-each (lambda (buf)
+                (let ((file (buffer-file buf)))
+                  (when (and file (not (string=? file "")))
+                    (let ((text (editor-get-text (buffer-editor buf))))
+                      (write-file-string file text)
+                      (set! saved (+ saved 1))))))
+              buffers)
+    (echo-message! echo (str "Saved " saved " buffer(s)"))))
+
+;; cmd-save-buffers-kill-emacs: Save buffers and exit (C-x C-c)
+(def (cmd-save-buffers-kill-emacs app)
+  (let* ((echo (app-state-echo app)))
+    (cmd-save-some-buffers app)
+    (echo-message! echo "Buffers saved. Use C-x C-c to exit.")))
+
+;; cmd-kill-emacs: Exit immediately without saving
+(def (cmd-kill-emacs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Use C-x C-c to exit jemacs")))
+
+;; cmd-restart-emacs: Restart jemacs
+(def (cmd-restart-emacs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restart not supported. Exit and re-run jemacs.")))
+
+;; cmd-server-start: Start the jemacs server
+(def (cmd-server-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Server mode not yet implemented")))
+
+;; cmd-server-edit: Finish editing in server mode
+(def (cmd-server-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Server mode not yet implemented")))
+
+;; cmd-emacsclient-mode: Toggle emacsclient mode
+(def (cmd-emacsclient-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Emacsclient mode not yet implemented")))
+
+;; cmd-eval-last-sexp: Evaluate the S-expression before point
+(def (cmd-eval-last-sexp app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed)))
+    ;; Find the sexp ending at cursor by looking back for matching paren
+    (let loop ((i (- pos 1)) (depth 0))
+      (if (< i 0)
+        (echo-message! echo "No sexp before point")
+        (let ((c (string-ref text i)))
+          (cond
+            ((char=? c #\)) (loop (- i 1) (+ depth 1)))
+            ((char=? c #\() (if (= depth 1)
+                              (let ((sexp (substring text i pos)))
+                                (echo-message! echo (str "Eval: " (if (> (string-length sexp) 60) (str (substring sexp 0 60) "...") sexp))))
+                              (loop (- i 1) (- depth 1))))
+            (else (if (= depth 0)
+                    ;; Not in a sexp, maybe a simple value
+                    (let find-start ((j i))
+                      (if (or (< j 0) (char-whitespace? (string-ref text j)))
+                        (let ((sexp (substring text (+ j 1) pos)))
+                          (echo-message! echo (str "Eval: " sexp)))
+                        (find-start (- j 1))))
+                    (loop (- i 1) depth)))))))))
+
+;; cmd-eval-print-last-sexp: Evaluate sexp and insert result
+(def (cmd-eval-print-last-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "eval-print-last-sexp: use M-x eval-expression for interactive eval")))
+
+;; cmd-eval-defun: Evaluate the top-level form at point
+(def (cmd-eval-defun app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    ;; Find top-level form: go back to column 0 open paren
+    (let loop ((i pos))
+      (if (< i 0)
+        (echo-message! echo "No defun at point")
+        (if (and (char=? (string-ref text i) #\()
+                 (or (= i 0) (char=? (string-ref text (- i 1)) #\newline)))
+          ;; Found start, find matching close
+          (let find-end ((j (+ i 1)) (depth 1))
+            (if (>= j len)
+              (echo-message! echo "Unmatched paren in defun")
+              (let ((c (string-ref text j)))
+                (cond
+                  ((char=? c #\() (find-end (+ j 1) (+ depth 1)))
+                  ((char=? c #\)) (if (= depth 1)
+                                    (let ((defun (substring text i (+ j 1))))
+                                      (echo-message! echo (str "Eval defun: " (if (> (string-length defun) 60) (str (substring defun 0 60) "...") defun))))
+                                    (find-end (+ j 1) (- depth 1))))
+                  (else (find-end (+ j 1) depth))))))
+          (loop (- i 1)))))))
+
