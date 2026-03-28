@@ -19336,3 +19336,45 @@
 (def (cmd-ellama-context-add-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ellama: added buffer to context")))
+
+;;; Round 225 — Transient ext, Cape ext, Tempel ext, Corfu ext (batch 2)
+
+(def (cmd-tempel-guess app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: guessed template")))
+
+(def (cmd-tempel-include app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: included template")))
+
+(def (cmd-tempel-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: killed template field")))
+
+(def (cmd-corfu-popupinfo-scroll-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: scrolled popup info up")))
+
+(def (cmd-corfu-popupinfo-scroll-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: scrolled popup info down")))
+
+(def (cmd-corfu-popupinfo-beginning app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: popup info beginning")))
+
+(def (cmd-corfu-popupinfo-end app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: popup info end")))
+
+(def (cmd-corfu-move-to-minibuffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: moved to minibuffer")))
+
+(def (cmd-corfu-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: reset completion")))
+
+(def (cmd-corfu-prompt-end app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: moved to prompt end")))

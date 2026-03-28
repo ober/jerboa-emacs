@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 225 — Transient ext, Cape ext, Tempel ext, Corfu ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| transient-quit-seq | :orange_circle: | Quit transient sequence |
+| transient-show | :orange_circle: | Show transient |
+| transient-help | :orange_circle: | Show transient help |
+| cape-wrap-nonexclusive | :orange_circle: | Wrap capf as nonexclusive |
+| cape-wrap-silent | :orange_circle: | Wrap capf silently |
+| cape-wrap-case-fold | :orange_circle: | Wrap capf with case folding |
+| cape-wrap-noninterruptible | :orange_circle: | Wrap capf as noninterruptible |
+| cape-wrap-prefix-length | :orange_circle: | Wrap capf with prefix length |
+| cape-wrap-inside-code | :orange_circle: | Wrap capf for inside code |
+| cape-capf-inside-comment | :orange_circle: | Capf inside comment |
+| tempel-guess | :orange_circle: | Guess template |
+| tempel-include | :orange_circle: | Include template |
+| tempel-kill | :orange_circle: | Kill template field |
+| corfu-popupinfo-scroll-up | :orange_circle: | Scroll popup info up |
+| corfu-popupinfo-scroll-down | :orange_circle: | Scroll popup info down |
+| corfu-popupinfo-beginning | :orange_circle: | Popup info beginning |
+| corfu-popupinfo-end | :orange_circle: | Popup info end |
+| corfu-move-to-minibuffer | :orange_circle: | Move completion to minibuffer |
+| corfu-reset | :orange_circle: | Reset completion |
+| corfu-prompt-end | :orange_circle: | Move to prompt end |
+
 ### Round 224 — GPTel ext, Copilot ext, Ellama ext
 
 | Command | Status | Description |

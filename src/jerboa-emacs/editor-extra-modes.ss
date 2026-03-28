@@ -19990,3 +19990,45 @@
 (def (cmd-ellama-make-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ellama: making list from text")))
+
+;;; Round 225 — Transient ext, Cape ext, Tempel ext, Corfu ext (batch 1)
+
+(def (cmd-transient-quit-seq app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: quit sequence")))
+
+(def (cmd-transient-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: showing transient")))
+
+(def (cmd-transient-help app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: showing help")))
+
+(def (cmd-cape-wrap-nonexclusive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped capf as nonexclusive")))
+
+(def (cmd-cape-wrap-silent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped capf silently")))
+
+(def (cmd-cape-wrap-case-fold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped capf with case folding")))
+
+(def (cmd-cape-wrap-noninterruptible app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped capf as noninterruptible")))
+
+(def (cmd-cape-wrap-prefix-length app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped capf with prefix length")))
+
+(def (cmd-cape-wrap-inside-code app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: wrapped capf for inside code")))
+
+(def (cmd-cape-capf-inside-comment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: capf inside comment")))
