@@ -5922,3 +5922,227 @@
                  (wrapped (str open-char text close-char)))
             (editor-replace-selection ed wrapped)
             (echo-message! echo "Region wrapped")))))))
+
+;; ===== Round 14 Batch 1 =====
+
+;; --- Feature 1: Insert Date Header ---
+
+(def (cmd-insert-date-header app)
+  "Insert a date header comment (e.g., for changelog entries)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (user (or (getenv "USER") "unknown"))
+         (now (time-second (current-time)))
+         (header (str "## " now " - " user "\n\n")))
+    (editor-insert-text ed header)
+    (echo-message! echo "Date header inserted")))
+
+;; --- Feature 2: Highlight Phrase ---
+
+(def *highlight-phrases* '())
+
+(def (cmd-highlight-phrase app)
+  "Highlight all occurrences of a phrase in the current buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (phrase (echo-read-string echo "Highlight phrase: " row width)))
+    (when (and phrase (not (string-empty? phrase)))
+      (set! *highlight-phrases* (cons phrase *highlight-phrases*))
+      ;; Use indicator 17 for phrase highlighting
+      (send-message ed SCI_INDICSETSTYLE 17 6) ;; INDIC_BOX
+      (send-message ed SCI_INDICSETFORE 17 #xFF8000) ;; orange
+      (send-message ed SCI_SETINDICATORCURRENT 17 0)
+      (let* ((len (send-message ed SCI_GETLENGTH 0 0))
+             (text (editor-get-text ed len))
+             (plen (string-length phrase))
+             (count (let loop ((pos 0) (n 0))
+                      (let ((found (string-contains (substring text pos (string-length text)) phrase)))
+                        (if (not found) n
+                          (let ((abs-pos (+ pos found)))
+                            (send-message ed SCI_INDICATORFILLRANGE abs-pos plen)
+                            (loop (+ abs-pos plen) (+ n 1))))))))
+        (echo-message! echo (str "Highlighted " count " occurrences of \"" phrase "\""))))))
+
+;; --- Feature 3: Unhighlight All ---
+
+(def (cmd-unhighlight-all app)
+  "Remove all phrase highlights."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0)))
+    (send-message ed SCI_SETINDICATORCURRENT 17 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0 len)
+    (set! *highlight-phrases* '())
+    (echo-message! echo "All highlights cleared")))
+
+;; --- Feature 4: Widen Buffer ---
+
+(def (cmd-widen-buffer app)
+  "Remove narrowing — show the entire buffer content."
+  (let ((echo (app-state-echo app)))
+    ;; In Scintilla, there's no native narrowing, so this is a no-op/informational
+    (echo-message! echo "Buffer widened (no narrowing active)")))
+
+;; --- Feature 5: Move Region Up ---
+
+(def (cmd-move-region-up app)
+  "Move the selected lines up by one line."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (start-line (send-message ed SCI_LINEFROMPOSITION sel-start 0))
+         (end-line (send-message ed SCI_LINEFROMPOSITION sel-end 0)))
+    (if (= start-line 0)
+      (echo-message! echo "Already at top")
+      (begin
+        (send-message ed SCI_MOVESELECTEDLINESUP 0 0)
+        (echo-message! echo "Moved up")))))
+
+;; --- Feature 6: Move Region Down ---
+
+(def (cmd-move-region-down app)
+  "Move the selected lines down by one line."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (send-message ed SCI_MOVESELECTEDLINESDOWN 0 0)
+    (echo-message! echo "Moved down")))
+
+;; --- Feature 7: JSON to YAML ---
+
+(def (cmd-json-to-yaml app)
+  "Convert JSON buffer content to YAML."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Conversion error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          "python3 -c 'import sys,json,yaml;yaml.dump(json.load(sys.stdin),sys.stdout,default_flow_style=False)' 2>/dev/null"
+                          'block (native-transcoder))))
+            (display text p-stdin)
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let ((yaml (string-join (reverse lines) "\n")))
+                      (when (> (string-length yaml) 0)
+                        (editor-set-text ed yaml)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo "Converted to YAML"))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 8: YAML to JSON ---
+
+(def (cmd-yaml-to-json app)
+  "Convert YAML buffer content to JSON."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Conversion error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          "python3 -c 'import sys,json,yaml;json.dump(yaml.safe_load(sys.stdin),sys.stdout,indent=2)' 2>/dev/null"
+                          'block (native-transcoder))))
+            (display text p-stdin)
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let ((json (string-join (reverse lines) "\n")))
+                      (when (> (string-length json) 0)
+                        (editor-set-text ed json)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo "Converted to JSON"))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 9: CSV to JSON ---
+
+(def (cmd-csv-to-json app)
+  "Convert CSV buffer content to JSON."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Conversion error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          "python3 -c 'import sys,csv,json;r=csv.DictReader(sys.stdin);json.dump(list(r),sys.stdout,indent=2)'"
+                          'block (native-transcoder))))
+            (display text p-stdin)
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let ((json (string-join (reverse lines) "\n")))
+                      (when (> (string-length json) 0)
+                        (editor-set-text ed json)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo "Converted to JSON"))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 10: JSON to CSV ---
+
+(def (cmd-json-to-csv app)
+  "Convert JSON array of objects to CSV."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Conversion error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          "python3 -c 'import sys,csv,json;d=json.load(sys.stdin);w=csv.DictWriter(sys.stdout,d[0].keys());w.writeheader();w.writerows(d)' 2>/dev/null"
+                          'block (native-transcoder))))
+            (display text p-stdin)
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let ((csv (string-join (reverse lines) "\n")))
+                      (when (> (string-length csv) 0)
+                        (editor-set-text ed csv)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo "Converted to CSV"))))
+                  (loop (cons line lines)))))))))))

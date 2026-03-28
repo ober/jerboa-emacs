@@ -5584,3 +5584,349 @@
                       (editor-goto-pos ed 0)
                       (echo-message! echo (str "Opened with sudo: " file))))
                   (loop (cons line lines)))))))))))
+
+;; ===== Round 14 Batch 2 =====
+
+;; --- Feature 1: Hex to RGB ---
+
+(def (cmd-hex-to-rgb app)
+  "Convert a hex color code at point or in selection to RGB format."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection — select a hex color like #FF8800")
+      (let* ((text (editor-get-text-range ed start end))
+             (hex (if (and (> (string-length text) 0) (char=? (string-ref text 0) #\#))
+                    (substring text 1 (string-length text))
+                    text)))
+        (if (not (= (string-length hex) 6))
+          (echo-message! echo "Invalid hex color — expected 6 hex digits")
+          (with-catch
+            (lambda (e) (echo-message! echo (str "Parse error: " e)))
+            (lambda ()
+              (let* ((r (string->number (substring hex 0 2) 16))
+                     (g (string->number (substring hex 2 4) 16))
+                     (b (string->number (substring hex 4 6) 16))
+                     (rgb (str "rgb(" r ", " g ", " b ")")))
+                (send-message ed SCI_DELETERANGE start (- end start))
+                (send-message ed SCI_INSERTTEXT start rgb)
+                (echo-message! echo (str "Converted to: " rgb))))))))))
+
+;; --- Feature 2: RGB to Hex ---
+
+(def (cmd-rgb-to-hex app)
+  "Convert an RGB color at point or in selection to hex format."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection — select an rgb(...) value")
+      (let* ((text (editor-get-text-range ed start end))
+             (nums (with-catch
+                     (lambda (e) #f)
+                     (lambda ()
+                       (let-values (((si so se pid)
+                                     (open-process-ports
+                                       (str "echo " (shell-quote text)
+                                            " | grep -oP '\\d+' | head -3")
+                                       'block (native-transcoder))))
+                         (close-port si)
+                         (let loop ((vals '()))
+                           (let ((line (get-line so)))
+                             (if (eof-object? line)
+                               (begin (close-port so) (close-port se) (reverse vals))
+                               (loop (cons (string->number (string-trim line)) vals))))))))))
+        (if (or (not nums) (not (= (length nums) 3)))
+          (echo-message! echo "Could not parse RGB values")
+          (let* ((r (car nums)) (g (cadr nums)) (b (caddr nums))
+                 (hex (str "#"
+                           (if (< r 16) "0" "") (number->string r 16)
+                           (if (< g 16) "0" "") (number->string g 16)
+                           (if (< b 16) "0" "") (number->string b 16))))
+            (send-message ed SCI_DELETERANGE start (- end start))
+            (send-message ed SCI_INSERTTEXT start (string-upcase hex))
+            (echo-message! echo (str "Converted to: " (string-upcase hex)))))))))
+
+;; --- Feature 3: Unix Timestamp ---
+
+(def (cmd-unix-timestamp app)
+  "Insert or convert a Unix timestamp at point."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (choice (echo-read-string echo "Timestamp [now/from-date/to-date]: " row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((cmd (string-trim choice)))
+        (cond
+          ((string=? cmd "now")
+           (let ((ts (number->string (time-second (current-time)))))
+             (send-message ed SCI_INSERTTEXT -1 ts)
+             (echo-message! echo (str "Inserted timestamp: " ts))))
+          ((string=? cmd "from-date")
+           (let* ((date-str (echo-read-string echo "Date (YYYY-MM-DD HH:MM:SS): " row width)))
+             (when (and date-str (not (string-empty? date-str)))
+               (with-catch
+                 (lambda (e) (echo-message! echo (str "Error: " e)))
+                 (lambda ()
+                   (let-values (((si so se pid)
+                                 (open-process-ports
+                                   (str "date -d " (shell-quote (string-trim date-str)) " +%s")
+                                   'block (native-transcoder))))
+                     (close-port si)
+                     (let ((ts (get-line so)))
+                       (close-port so) (close-port se)
+                       (when (not (eof-object? ts))
+                         (send-message ed SCI_INSERTTEXT -1 (string-trim ts))
+                         (echo-message! echo (str "Timestamp: " (string-trim ts)))))))))))
+          ((string=? cmd "to-date")
+           (let* ((ts-str (echo-read-string echo "Unix timestamp: " row width)))
+             (when (and ts-str (not (string-empty? ts-str)))
+               (with-catch
+                 (lambda (e) (echo-message! echo (str "Error: " e)))
+                 (lambda ()
+                   (let-values (((si so se pid)
+                                 (open-process-ports
+                                   (str "date -d @" (string-trim ts-str))
+                                   'block (native-transcoder))))
+                     (close-port si)
+                     (let ((date (get-line so)))
+                       (close-port so) (close-port se)
+                       (when (not (eof-object? date))
+                         (send-message ed SCI_INSERTTEXT -1 (string-trim date))
+                         (echo-message! echo (str "Date: " (string-trim date)))))))))))
+          (else (echo-message! echo "Unknown option. Use: now, from-date, to-date")))))))
+
+;; --- Feature 4: Format JSON ---
+
+(def (cmd-format-json app)
+  "Pretty-print JSON in the current buffer or selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (has-sel (not (= start end)))
+         (text (if has-sel
+                 (editor-get-text-range ed start end)
+                 (editor-get-text ed))))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "JSON format error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "python3 -m json.tool"
+                        'block (native-transcoder))))
+          (put-string si text)
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((result (string-join (reverse lines) "\n")))
+                    (if has-sel
+                      (begin
+                        (send-message ed SCI_DELETERANGE start (- end start))
+                        (send-message ed SCI_INSERTTEXT start result))
+                      (begin
+                        (editor-set-text ed result)
+                        (editor-goto-pos ed 0)))
+                    (echo-message! echo "JSON formatted")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 5: Minify JSON ---
+
+(def (cmd-minify-json app)
+  "Minify JSON in the current buffer or selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (has-sel (not (= start end)))
+         (text (if has-sel
+                 (editor-get-text-range ed start end)
+                 (editor-get-text ed))))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "JSON minify error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "python3 -c 'import sys,json; print(json.dumps(json.load(sys.stdin),separators=(\",\",\":\")))')"
+                        'block (native-transcoder))))
+          (put-string si text)
+          (close-port si)
+          (let ((result (get-line so)))
+            (close-port so) (close-port se)
+            (when (not (eof-object? result))
+              (let ((minified (string-trim result)))
+                (if has-sel
+                  (begin
+                    (send-message ed SCI_DELETERANGE start (- end start))
+                    (send-message ed SCI_INSERTTEXT start minified))
+                  (begin
+                    (editor-set-text ed minified)
+                    (editor-goto-pos ed 0)))
+                (echo-message! echo (str "JSON minified (" (string-length minified) " chars)"))))))))))
+
+;; --- Feature 6: File Info ---
+
+(def (cmd-file-info app)
+  "Show detailed information about the current file."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "file-info error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "stat --printf='Size: %s bytes\\nModified: %y\\nPermissions: %A\\nOwner: %U:%G\\n' "
+                               (shell-quote file)
+                               " && file --brief " (shell-quote file)
+                               " && wc -l < " (shell-quote file))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (echo-message! echo (string-join (reverse lines) " | ")))
+                  (loop (cons (string-trim line) lines)))))))))))
+
+;; --- Feature 7: Git Contributors ---
+
+(def (cmd-git-contributors app)
+  "Show top contributors for the current repository."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "git error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "git shortlog -sn --all | head -20"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((result (string-join (reverse lines) "\n")))
+                    (when (not (string-empty? result))
+                      (let* ((new-buf (create-buffer "*git-contributors*")))
+                        (switch-to-buffer (app-state-frame app) new-buf)
+                        (let ((new-ed (edit-window-editor (current-window (app-state-frame app)))))
+                          (editor-set-text new-ed (str "=== Git Contributors ===\n\n" result "\n")))
+                        (echo-message! echo "Git contributors loaded")))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 8: Git File History ---
+
+(def (cmd-git-file-history app)
+  "Show the git log for the current file."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "git error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "git log --oneline -30 -- " (shell-quote file))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((result (string-join (reverse lines) "\n")))
+                      (if (string-empty? result)
+                        (echo-message! echo "No git history for this file")
+                        (let* ((new-buf (create-buffer "*git-file-history*")))
+                          (switch-to-buffer (app-state-frame app) new-buf)
+                          (let ((new-ed (edit-window-editor (current-window (app-state-frame app)))))
+                            (editor-set-text new-ed (str "=== Git History: " file " ===\n\n" result "\n")))
+                          (echo-message! echo "Git file history loaded")))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 9: Copy Git Branch ---
+
+(def (cmd-copy-git-branch app)
+  "Copy the current git branch name to the kill ring."
+  (let* ((echo (app-state-echo app)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "git error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "git rev-parse --abbrev-ref HEAD"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let ((branch (get-line so)))
+            (close-port so) (close-port se)
+            (if (eof-object? branch)
+              (echo-message! echo "Not in a git repository")
+              (let ((name (string-trim branch)))
+                (let* ((frame (app-state-frame app))
+                       (win (current-window frame))
+                       (ed (edit-window-editor win)))
+                  (send-message ed SCI_COPYTEXT (string-length name) name)
+                  (echo-message! echo (str "Copied branch: " name)))))))))))
+
+;; --- Feature 10: Eval and Replace ---
+
+(def (cmd-eval-and-replace app)
+  "Evaluate the selected text as a shell expression and replace with result."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection — select an expression to evaluate")
+      (let ((text (editor-get-text-range ed start end)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Eval error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports (str "echo " (shell-quote text) " | bc -l 2>/dev/null || eval " (shell-quote text))
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (let ((result (string-join (reverse lines) "\n")))
+                        (if (string-empty? result)
+                          (echo-message! echo "No output from evaluation")
+                          (begin
+                            (send-message ed SCI_DELETERANGE start (- end start))
+                            (send-message ed SCI_INSERTTEXT start result)
+                            (echo-message! echo (str "Replaced with: " result))))))
+                    (loop (cons line lines))))))))))))

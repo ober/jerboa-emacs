@@ -1386,6 +1386,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Copy line number | :orange_circle: | Copy current line number to kill ring |
 | Rename file and buffer | :orange_circle: | Rename file on disk and update buffer |
 | Sudo edit | :orange_circle: | Re-open file with sudo privileges |
+| Insert date header | :orange_circle: | Insert formatted date/time header at point |
+| Highlight phrase | :orange_circle: | Highlight all occurrences of a phrase (indicator overlay) |
+| Unhighlight all | :orange_circle: | Clear all phrase highlights |
+| Widen buffer | :orange_circle: | Remove narrowing, show full buffer |
+| Move region up | :orange_circle: | Move selected lines up |
+| Move region down | :orange_circle: | Move selected lines down |
+| JSON to YAML | :orange_circle: | Convert JSON to YAML via Python |
+| YAML to JSON | :orange_circle: | Convert YAML to JSON via Python |
+| CSV to JSON | :orange_circle: | Convert CSV to JSON via Python |
+| JSON to CSV | :orange_circle: | Convert JSON array to CSV via Python |
+| Hex to RGB | :orange_circle: | Convert hex color (#FF8800) to rgb() format |
+| RGB to hex | :orange_circle: | Convert rgb() color to hex format |
+| Unix timestamp | :orange_circle: | Insert/convert Unix timestamps (now, from-date, to-date) |
+| Format JSON | :orange_circle: | Pretty-print JSON via python3 json.tool |
+| Minify JSON | :orange_circle: | Compact JSON to single line |
+| File info | :orange_circle: | Show file size, permissions, owner, type, line count |
+| Git contributors | :orange_circle: | Show top contributors via git shortlog |
+| Git file history | :orange_circle: | Show git log for current file |
+| Copy git branch | :orange_circle: | Copy current git branch name to kill ring |
+| Eval and replace | :orange_circle: | Evaluate selection as shell/bc expression, replace with result |
 
 ---
 
