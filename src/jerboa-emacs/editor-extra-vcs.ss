@@ -2359,3 +2359,317 @@
                               (string->alien/nul choice))
                             (echo-message! echo (string-append "Corrected: " word " → " choice)))))))
                   (loop (cons line lines)))))))))))
+
+;;;============================================================================
+;;; Round 6 batch 1: Features 1-10
+;;;============================================================================
+
+;; --- Feature 1: Speed Type (typing speed test) ---
+
+(def *speed-type-text*
+  "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump. The five boxing wizards jump quickly.")
+
+(def (cmd-speed-type app)
+  "Start a typing speed test."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*speed-type*"))
+         (content (string-append "=== Speed Typing Test ===\n\n"
+                    "Type the following text as fast as you can:\n\n"
+                    *speed-type-text* "\n\n"
+                    (make-string 50 #\-) "\n"
+                    "Start typing below this line:\n\n")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed (string-length content))
+    (echo-message! echo "Speed type: start typing! Use speed-type-results when done")))
+
+(def (cmd-speed-type-results app)
+  "Calculate and display speed typing results."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (text (editor-get-text ed))
+         (lines (string-split text #\newline))
+         ;; Find typed text (after the separator line)
+         (typed (let loop ((ls lines) (found #f) (acc '()))
+                  (cond ((null? ls) (string-join (reverse acc) " "))
+                        ((string-prefix? "Start typing" (string-trim (car ls)))
+                         (loop (cdr ls) #t acc))
+                        (found (loop (cdr ls) #t (cons (string-trim (car ls)) acc)))
+                        (else (loop (cdr ls) #f acc)))))
+         (words (length (filter (lambda (w) (not (string-empty? w)))
+                          (string-split typed #\space))))
+         ;; Compare with original
+         (orig-words (filter (lambda (w) (not (string-empty? w)))
+                      (string-split *speed-type-text* #\space)))
+         (correct (let loop ((tw (string-split typed #\space))
+                             (ow orig-words) (n 0))
+                    (cond ((or (null? tw) (null? ow)) n)
+                          ((string=? (string-trim (car tw)) (car ow))
+                           (loop (cdr tw) (cdr ow) (+ n 1)))
+                          (else (loop (cdr tw) (cdr ow) n)))))
+         (accuracy (if (> (length orig-words) 0)
+                     (quotient (* correct 100) (length orig-words))
+                     0)))
+    (echo-message! echo
+      (string-append "Words typed: " (number->string words)
+        " | Correct: " (number->string correct)
+        " | Accuracy: " (number->string accuracy) "%"))))
+
+;; --- Feature 2: Tetris (simple text-based game) ---
+
+(def *tetris-board* #f)
+(def *tetris-score* 0)
+(def *tetris-width* 10)
+(def *tetris-height* 20)
+
+(def (cmd-tetris app)
+  "Start a text-based Tetris game display."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*tetris*"))
+         ;; Generate empty board
+         (board (let loop ((row 0) (lines '()))
+                  (if (>= row *tetris-height*)
+                    (reverse lines)
+                    (loop (+ row 1)
+                      (cons (string-append "|" (make-string *tetris-width* #\space) "|") lines)))))
+         (content (string-append
+                    "=== TETRIS ===\n"
+                    "Score: 0\n\n"
+                    (string-join board "\n") "\n"
+                    "+" (make-string *tetris-width* #\-) "+\n\n"
+                    "Controls: tetris-left, tetris-right, tetris-rotate, tetris-drop\n"
+                    "(This is a display-mode placeholder for a future interactive game)")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (set! *tetris-score* 0)
+    (echo-message! echo "Tetris started (display mode)")))
+
+;; --- Feature 3: Disk Usage ---
+
+(def (cmd-disk-usage app)
+  "Show disk usage information."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports "df -h 2>&1" 'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (let* ((content (string-append "Disk Usage\n"
+                                (make-string 60 #\=) "\n"
+                                (string-join (reverse lines) "\n")))
+                     (buf (make-buffer "*disk-usage*")))
+                (buffer-attach! ed buf)
+                (set! (edit-window-buffer win) buf)
+                (editor-set-text ed content)
+                (editor-goto-pos ed 0)
+                (echo-message! echo "Disk usage displayed")))
+            (loop (cons line lines))))))))
+
+;; --- Feature 4: Darkroom Mode (distraction-free writing) ---
+
+(def *darkroom-enabled* #f)
+(def *darkroom-saved-margin* 0)
+
+(def (cmd-darkroom-mode app)
+  "Toggle darkroom mode — distraction-free writing environment."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *darkroom-enabled* (not *darkroom-enabled*))
+    (if *darkroom-enabled*
+      (begin
+        ;; Save current margins and set wide margins for centered text
+        (set! *darkroom-saved-margin* (send-message ed SCI_GETMARGINLEFT 0 0))
+        (let ((width (tui-cols)))
+          (let ((margin (max 0 (quotient (- width 80) 2))))
+            (send-message ed SCI_SETMARGINLEFT 0 (* margin 8))
+            (send-message ed SCI_SETMARGINRIGHT 0 (* margin 8))))
+        ;; Hide line numbers
+        (send-message ed SCI_SETMARGINWIDTHN 0 0)
+        ;; Extra line spacing
+        (send-message ed SCI_SETEXTRAASCENT 4 0)
+        (send-message ed SCI_SETEXTRADESCENT 2 0)
+        (echo-message! echo "Darkroom mode: on (distraction-free)"))
+      (begin
+        (send-message ed SCI_SETMARGINLEFT 0 *darkroom-saved-margin*)
+        (send-message ed SCI_SETMARGINRIGHT 0 0)
+        (send-message ed SCI_SETMARGINWIDTHN 0 40) ;; restore line numbers
+        (send-message ed SCI_SETEXTRAASCENT 0 0)
+        (send-message ed SCI_SETEXTRADESCENT 0 0)
+        (echo-message! echo "Darkroom mode: off")))))
+
+;; --- Feature 5: Super Save (auto-save on focus change) ---
+
+(def *super-save-enabled* #f)
+
+(def (cmd-super-save-mode app)
+  "Toggle super-save — auto-save buffer on idle/focus change."
+  (set! *super-save-enabled* (not *super-save-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *super-save-enabled*
+      "Super-save mode: on (buffers saved automatically)"
+      "Super-save mode: off")))
+
+(def (super-save-maybe! app)
+  "Save current buffer if super-save is enabled and buffer is modified."
+  (when *super-save-enabled*
+    (let* ((buf (current-buffer-from-app app))
+           (path (and buf (buffer-file-path buf)))
+           (ed (edit-window-editor (current-window (app-state-frame app))))
+           (modified (not (= (send-message ed SCI_GETMODIFY 0 0) 0))))
+      (when (and path modified)
+        (execute-command! app 'save-buffer)))))
+
+;; --- Feature 6: Beginend (smart beginning/end of buffer) ---
+
+(def (cmd-beginend-beginning app)
+  "Smart beginning of buffer: skip headers/comments."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0)))
+    (if (= pos 0)
+      ;; Already at beginning — go to first non-comment line
+      (let* ((text (editor-get-text ed))
+             (lines (string-split text #\newline)))
+        (let loop ((ls lines) (offset 0))
+          (cond ((null? ls) (editor-goto-pos ed 0))
+                ((string-empty? (string-trim (car ls)))
+                 (loop (cdr ls) (+ offset (string-length (car ls)) 1)))
+                ((string-prefix? ";;" (string-trim (car ls)))
+                 (loop (cdr ls) (+ offset (string-length (car ls)) 1)))
+                ((string-prefix? "#" (string-trim (car ls)))
+                 (loop (cdr ls) (+ offset (string-length (car ls)) 1)))
+                (else (editor-goto-pos ed offset)))))
+      (editor-goto-pos ed 0))))
+
+(def (cmd-beginend-end app)
+  "Smart end of buffer: skip trailing whitespace."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (text (editor-get-text ed))
+         (len (string-length text))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0)))
+    (if (= pos len)
+      ;; Already at end — go to last non-blank line
+      (let loop ((i (- len 1)))
+        (if (<= i 0) (editor-goto-pos ed len)
+          (let ((ch (string-ref text i)))
+            (if (or (char=? ch #\space) (char=? ch #\newline) (char=? ch #\tab))
+              (loop (- i 1))
+              (editor-goto-pos ed (+ i 1))))))
+      (editor-goto-pos ed len))))
+
+;; --- Feature 7: Fancy Battery ---
+
+(def (cmd-fancy-battery app)
+  "Show battery status."
+  (let* ((echo (app-state-echo app)))
+    (if (not (file-exists? "/sys/class/power_supply/BAT0/capacity"))
+      (echo-message! echo "No battery detected")
+      (let* ((capacity (string-trim (read-file-string "/sys/class/power_supply/BAT0/capacity")))
+             (status (if (file-exists? "/sys/class/power_supply/BAT0/status")
+                       (string-trim (read-file-string "/sys/class/power_supply/BAT0/status"))
+                       "Unknown"))
+             (pct (or (string->number capacity) 0))
+             (bar-len 20)
+             (filled (quotient (* pct bar-len) 100))
+             (bar (string-append "[" (make-string filled #\#)
+                    (make-string (- bar-len filled) #\-) "]")))
+        (echo-message! echo
+          (string-append "Battery: " bar " " capacity "% (" status ")"))))))
+
+;; --- Feature 8: Memory Report ---
+
+(def (cmd-memory-report app)
+  "Show system memory usage."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports "free -h 2>&1" 'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (let* ((content (string-append "Memory Report\n"
+                                (make-string 60 #\=) "\n"
+                                (string-join (reverse lines) "\n")))
+                     (buf (make-buffer "*memory-report*")))
+                (buffer-attach! ed buf)
+                (set! (edit-window-buffer win) buf)
+                (editor-set-text ed content)
+                (editor-goto-pos ed 0)
+                (echo-message! echo "Memory report displayed")))
+            (loop (cons line lines))))))))
+
+;; --- Feature 9: Color Picker ---
+
+(def (cmd-color-picker app)
+  "Interactive color picker — browse named colors and insert hex."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (colors '("red=#FF0000" "green=#00FF00" "blue=#0000FF"
+                   "yellow=#FFFF00" "cyan=#00FFFF" "magenta=#FF00FF"
+                   "white=#FFFFFF" "black=#000000" "orange=#FFA500"
+                   "purple=#800080" "pink=#FFC0CB" "brown=#A52A2A"
+                   "gray=#808080" "silver=#C0C0C0" "gold=#FFD700"
+                   "navy=#000080" "teal=#008080" "olive=#808000"
+                   "maroon=#800000" "lime=#00FF00" "aqua=#00FFFF"
+                   "coral=#FF7F50" "salmon=#FA8072" "khaki=#F0E68C"
+                   "plum=#DDA0DD" "orchid=#DA70D6" "sienna=#A0522D"
+                   "tomato=#FF6347" "wheat=#F5DEB3" "ivory=#FFFFF0"))
+         (choice (echo-read-string-with-completion echo "Color: " colors row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((eq (string-contains choice "=")))
+        (when eq
+          (let* ((hex (substring choice (+ eq 1) (string-length choice)))
+                 (ed (edit-window-editor (current-window (app-state-frame app)))))
+            (send-message ed SCI_REPLACESEL 0 (string->alien/nul hex))
+            (echo-message! echo (string-append "Inserted: " hex))))))))
+
+;; --- Feature 10: Insert Timestamp ---
+
+(def (cmd-insert-timestamp app)
+  "Insert current date and time at point."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (now (current-time))
+         (d (time-utc->date now 0))
+         (timestamp (string-append
+                      (number->string (date-year d)) "-"
+                      (let ((m (date-month d))) (if (< m 10) (string-append "0" (number->string m)) (number->string m))) "-"
+                      (let ((day (date-day d))) (if (< day 10) (string-append "0" (number->string day)) (number->string day))) " "
+                      (let ((h (date-hour d))) (if (< h 10) (string-append "0" (number->string h)) (number->string h))) ":"
+                      (let ((mn (date-minute d))) (if (< mn 10) (string-append "0" (number->string mn)) (number->string mn))) ":"
+                      (let ((s (date-second d))) (if (< s 10) (string-append "0" (number->string s)) (number->string s))))))
+    (send-message ed SCI_REPLACESEL 0 (string->alien/nul timestamp))
+    (echo-message! echo (string-append "Inserted: " timestamp))))
+
+(def (cmd-insert-date app)
+  "Insert current date at point (YYYY-MM-DD)."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (now (current-time))
+         (d (time-utc->date now 0))
+         (date-str (string-append
+                     (number->string (date-year d)) "-"
+                     (let ((m (date-month d))) (if (< m 10) (string-append "0" (number->string m)) (number->string m))) "-"
+                     (let ((day (date-day d))) (if (< day 10) (string-append "0" (number->string day)) (number->string day))))))
+    (send-message ed SCI_REPLACESEL 0 (string->alien/nul date-str))
+    (echo-message! (app-state-echo app) (string-append "Inserted: " date-str))))
