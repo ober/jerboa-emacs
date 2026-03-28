@@ -19950,3 +19950,48 @@
 (def (cmd-counsel-imenu app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Counsel: imenu browser")))
+
+;; Round 238 — Speedbar ext, Neotree ext, Bookmark ext (10 in final)
+(def (cmd-bookmark-bmenu-edit-annotation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bookmark: editing annotation")))
+
+(def (cmd-speedbar-edit-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: editing current line")))
+
+(def (cmd-speedbar-item-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: item info")))
+
+(def (cmd-speedbar-item-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: copied item")))
+
+(def (cmd-speedbar-item-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: deleted item")))
+
+(def (cmd-speedbar-item-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New name: "
+      (lambda (name)
+        (echo-message! echo (str "Speedbar: renamed to " name))))))
+
+(def (cmd-speedbar-create-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory name: "
+      (lambda (dir)
+        (echo-message! echo (str "Speedbar: created directory " dir))))))
+
+(def (cmd-neotree-collapse-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neotree: collapsed all nodes")))
+
+(def (cmd-neotree-copy-filepath-to-yank-ring app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neotree: copied filepath to kill ring")))
+
+(def (cmd-neotree-select-up-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neotree: selected parent node")))

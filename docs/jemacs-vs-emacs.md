@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 238 — Consult ext, Vertico ext, Speedbar ext, Neotree ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| consult-complex-command | :orange_circle: | Browse complex command history |
+| consult-completing-read-multiple | :orange_circle: | Complete multiple items |
+| consult-preview-at-point | :orange_circle: | Preview candidate at point |
+| vertico-repeat-last | :orange_circle: | Repeat last Vertico completion |
+| vertico-sort-alpha | :orange_circle: | Sort candidates alphabetically |
+| vertico-sort-history | :orange_circle: | Sort candidates by history |
+| vertico-sort-length | :orange_circle: | Sort candidates by length |
+| embark-cycle | :orange_circle: | Cycle through Embark targets |
+| calc-grab-rectangle | :orange_circle: | Grab rectangle into Calc |
+| calc-embedded-word | :orange_circle: | Calc embedded word mode |
+| bookmark-bmenu-edit-annotation | :orange_circle: | Edit bookmark annotation |
+| speedbar-edit-line | :orange_circle: | Edit current Speedbar line |
+| speedbar-item-info | :orange_circle: | Show Speedbar item info |
+| speedbar-item-copy | :orange_circle: | Copy Speedbar item |
+| speedbar-item-delete | :orange_circle: | Delete Speedbar item |
+| speedbar-item-rename | :orange_circle: | Rename Speedbar item |
+| speedbar-create-directory | :orange_circle: | Create directory in Speedbar |
+| neotree-collapse-all | :orange_circle: | Collapse all Neotree nodes |
+| neotree-copy-filepath-to-yank-ring | :orange_circle: | Copy filepath to kill ring |
+| neotree-select-up-node | :orange_circle: | Select parent node in Neotree |
+
 ### Round 237 — Helm ext, Counsel ext
 
 | Command | Status | Description |

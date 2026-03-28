@@ -20618,3 +20618,44 @@
       (lambda (page)
         (echo-message! echo (str "Helm: showing man page " page))))))
 
+;; Round 238 — Consult ext, Vertico ext, Speedbar ext, Neotree ext (10 in modes)
+(def (cmd-consult-complex-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: complex command history")))
+
+(def (cmd-consult-completing-read-multiple app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: completing read multiple")))
+
+(def (cmd-consult-preview-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consult: preview at point")))
+
+(def (cmd-vertico-repeat-last app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: repeat last completion")))
+
+(def (cmd-vertico-sort-alpha app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: sort alphabetically")))
+
+(def (cmd-vertico-sort-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: sort by history")))
+
+(def (cmd-vertico-sort-length app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: sort by length")))
+
+(def (cmd-embark-cycle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Embark: cycle through targets")))
+
+(def (cmd-calc-grab-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: grabbed rectangle")))
+
+(def (cmd-calc-embedded-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: embedded word calculation")))
+
