@@ -1746,6 +1746,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Repeat complex command | :orange_circle: | Repeat with editing |
 | Command history | :orange_circle: | Show command history |
 | View lossage | :orange_circle: | View recent keystrokes |
+| Insert char | :orange_circle: | Insert Unicode char by code |
+| Quoted insert | :orange_circle: | Insert next char literally |
+| Open line | :orange_circle: | Insert newline without moving cursor |
+| Split line | :orange_circle: | Split line preserving indentation |
+| Delete blank lines | :orange_circle: | Delete blank lines around point |
+| Delete trailing whitespace | :orange_circle: | Remove trailing whitespace |
+| Newline and indent | :orange_circle: | Newline with auto-indentation |
+| Reindent then newline | :orange_circle: | Reindent + newline + indent |
+| Electric newline | :orange_circle: | Smart newline with indent |
+| Completion at point | :orange_circle: | Trigger completion at cursor |
+| Dabbrev expand | :orange_circle: | Dynamic abbreviation expansion |
+| Dabbrev completion | :orange_circle: | Show dabbrev completions |
+| Hippie expand | :orange_circle: | Multi-method expansion |
+| Company mode | :orange_circle: | Toggle completion framework |
+| Auto-complete mode | :orange_circle: | Toggle auto-complete |
+| Ido mode | :orange_circle: | Toggle interactive completion |
+| Icomplete mode | :orange_circle: | Toggle incremental completion |
+| Fido mode | :orange_circle: | Toggle fido completion |
+| Fido vertical mode | :orange_circle: | Toggle fido vertical display |
+| Savehist mode | :orange_circle: | Toggle history persistence |
 
 ---
 

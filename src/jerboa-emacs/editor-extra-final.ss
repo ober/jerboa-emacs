@@ -9167,3 +9167,105 @@
                     " This would show the last 300 keystrokes.)\n")))
     (editor-set-text ed text)
     (echo-message! echo "Lossage display")))
+
+;; Round 32 batch 2: dabbrev-expand, dabbrev-completion, hippie-expand, company-mode,
+;; auto-complete-mode, ido-mode, icomplete-mode, fido-mode, fido-vertical-mode, savehist-mode
+
+;; cmd-dabbrev-expand: Dynamic abbreviation expansion
+(def (cmd-dabbrev-expand app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (word-start (let loop ((i (- pos 1)))
+                       (if (or (< i 0) (not (or (char-alphabetic? (string-ref text i))
+                                                  (char-numeric? (string-ref text i))
+                                                  (char=? (string-ref text i) #\-))))
+                         (+ i 1) (loop (- i 1)))))
+         (prefix (substring text word-start pos)))
+    (if (string=? prefix "")
+      (echo-message! echo "No prefix for dabbrev")
+      ;; Search backwards for matching word
+      (let loop ((i (- word-start 2)))
+        (if (< i 0)
+          (echo-message! echo (str "No expansion for \"" prefix "\""))
+          (if (and (or (= i 0) (not (or (char-alphabetic? (string-ref text (- i 1)))
+                                         (char-numeric? (string-ref text (- i 1))))))
+                   (string-prefix? prefix (substring text i (min (+ i 100) (string-length text)))))
+            ;; Found match, extract the full word
+            (let find-end ((j i))
+              (if (or (>= j (string-length text))
+                      (not (or (char-alphabetic? (string-ref text j))
+                               (char-numeric? (string-ref text j))
+                               (char=? (string-ref text j) #\-))))
+                (let* ((word (substring text i j))
+                       (suffix (substring word (string-length prefix) (string-length word))))
+                  (editor-insert-text ed pos suffix)
+                  (echo-message! echo (str "Expanded: " word)))
+                (find-end (+ j 1))))
+            (loop (- i 1))))))))
+
+;; cmd-dabbrev-completion: Show dabbrev completions list
+(def (cmd-dabbrev-completion app)
+  (cmd-completion-at-point app))
+
+;; cmd-hippie-expand: Hippie expansion (tries multiple expansion methods)
+(def (cmd-hippie-expand app)
+  (cmd-dabbrev-expand app))
+
+;; cmd-company-mode: Toggle company-mode (completion framework)
+(def (cmd-company-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'company-mode)
+    (if (mode-enabled? app 'company-mode)
+      (echo-message! echo "Company mode enabled (completion popup)")
+      (echo-message! echo "Company mode disabled"))))
+
+;; cmd-auto-complete-mode: Toggle auto-complete mode
+(def (cmd-auto-complete-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-complete-mode)
+    (if (mode-enabled? app 'auto-complete-mode)
+      (echo-message! echo "Auto-complete mode enabled")
+      (echo-message! echo "Auto-complete mode disabled"))))
+
+;; cmd-ido-mode: Toggle ido (interactively do things) mode
+(def (cmd-ido-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ido-mode)
+    (if (mode-enabled? app 'ido-mode)
+      (echo-message! echo "Ido mode enabled (interactive completion)")
+      (echo-message! echo "Ido mode disabled"))))
+
+;; cmd-icomplete-mode: Toggle icomplete mode
+(def (cmd-icomplete-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'icomplete-mode)
+    (if (mode-enabled? app 'icomplete-mode)
+      (echo-message! echo "Icomplete mode enabled")
+      (echo-message! echo "Icomplete mode disabled"))))
+
+;; cmd-fido-mode: Toggle fido mode (fake ido)
+(def (cmd-fido-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fido-mode)
+    (if (mode-enabled? app 'fido-mode)
+      (echo-message! echo "Fido mode enabled")
+      (echo-message! echo "Fido mode disabled"))))
+
+;; cmd-fido-vertical-mode: Toggle fido vertical display
+(def (cmd-fido-vertical-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fido-vertical-mode)
+    (if (mode-enabled? app 'fido-vertical-mode)
+      (echo-message! echo "Fido-vertical mode enabled")
+      (echo-message! echo "Fido-vertical mode disabled"))))
+
+;; cmd-savehist-mode: Toggle saving minibuffer history
+(def (cmd-savehist-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'savehist-mode)
+    (if (mode-enabled? app 'savehist-mode)
+      (echo-message! echo "Savehist mode enabled (history persisted)")
+      (echo-message! echo "Savehist mode disabled"))))

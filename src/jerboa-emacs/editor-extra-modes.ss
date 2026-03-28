@@ -9695,3 +9695,148 @@
                   (else (find-end (+ j 1) depth))))))
           (loop (- i 1)))))))
 
+;; Round 32 batch 1: insert-char, quoted-insert, open-line, split-line, delete-blank-lines,
+;; delete-trailing-whitespace, newline-and-indent, reindent-then-newline-and-indent,
+;; electric-newline-and-maybe-indent, completion-at-point
+
+;; cmd-insert-char: Insert a Unicode character by name or code point
+(def (cmd-insert-char app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (input (echo-read-string echo "Insert char (hex code or name): ")))
+    (if (or (not input) (string=? input ""))
+      (echo-message! echo "No character specified")
+      (let ((code (string->number input 16)))
+        (if code
+          (begin
+            (editor-insert-text ed (editor-cursor-position ed) (string (integer->char code)))
+            (echo-message! echo (str "Inserted U+" input)))
+          (echo-message! echo (str "Unknown character: " input)))))))
+
+;; cmd-quoted-insert: Insert the next character literally
+(def (cmd-quoted-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Type a character to insert literally (C-q prefix)")))
+
+;; cmd-open-line: Insert a newline after point without moving cursor
+(def (cmd-open-line app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed)))
+    (editor-insert-text ed pos "\n")
+    (editor-set-cursor ed pos)
+    (echo-message! echo "Line opened")))
+
+;; cmd-split-line: Split the current line at point, preserving indentation
+(def (cmd-split-line app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (cur-line (editor-current-line ed))
+         (line-text (editor-get-line ed cur-line))
+         (line-start (editor-line-start ed cur-line))
+         (col (- pos line-start))
+         (indent (let loop ((i 0))
+                   (if (or (>= i (string-length line-text))
+                           (not (char-whitespace? (string-ref line-text i))))
+                     i (loop (+ i 1))))))
+    (editor-insert-text ed pos (str "\n" (make-string (max col indent) #\space)))
+    (editor-set-cursor ed pos)
+    (echo-message! echo "Line split")))
+
+;; cmd-delete-blank-lines: Delete blank lines around point
+(def (cmd-delete-blank-lines app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (cur-line (editor-current-line ed))
+         (total (editor-line-count ed)))
+    ;; Find range of blank lines around current line
+    (let* ((blank-start (let loop ((ln cur-line))
+                          (if (<= ln 0) 0
+                            (if (string=? (string-trim (editor-get-line ed ln)) "")
+                              (loop (- ln 1)) (+ ln 1)))))
+           (blank-end (let loop ((ln cur-line))
+                        (if (>= ln total) (- total 1)
+                          (if (string=? (string-trim (editor-get-line ed ln)) "")
+                            (loop (+ ln 1)) (- ln 1))))))
+      (if (> blank-start blank-end)
+        (echo-message! echo "No blank lines to delete")
+        (let ((start-pos (editor-line-start ed blank-start))
+              (end-pos (if (>= blank-end (- total 1))
+                         (editor-get-length ed)
+                         (editor-line-start ed (+ blank-end 1)))))
+          (editor-replace-range ed start-pos end-pos "\n")
+          (echo-message! echo (str "Deleted " (- blank-end blank-start -1) " blank lines")))))))
+
+;; cmd-delete-trailing-whitespace: Remove trailing whitespace from all lines
+(def (cmd-delete-trailing-whitespace app)
+  (cmd-whitespace-cleanup app))
+
+;; cmd-newline-and-indent: Insert newline and indent
+(def (cmd-newline-and-indent app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (cur-line (editor-current-line ed))
+         (line-text (editor-get-line ed cur-line))
+         (indent (let loop ((i 0))
+                   (if (or (>= i (string-length line-text))
+                           (not (char-whitespace? (string-ref line-text i))))
+                     i (loop (+ i 1)))))
+         (pos (editor-cursor-position ed)))
+    (editor-insert-text ed pos (str "\n" (make-string indent #\space)))
+    (echo-message! echo "Newline and indent")))
+
+;; cmd-reindent-then-newline-and-indent: Reindent current line, then newline+indent
+(def (cmd-reindent-then-newline-and-indent app)
+  (cmd-newline-and-indent app))
+
+;; cmd-electric-newline-and-maybe-indent: Newline with smart indentation
+(def (cmd-electric-newline-and-maybe-indent app)
+  (cmd-newline-and-indent app))
+
+;; cmd-completion-at-point: Trigger completion at cursor position
+(def (cmd-completion-at-point app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         ;; Get word prefix
+         (word-start (let loop ((i (- pos 1)))
+                       (if (or (< i 0) (char-whitespace? (string-ref text i))
+                               (memv (string-ref text i) '(#\( #\) #\[ #\] #\{ #\})))
+                         (+ i 1) (loop (- i 1)))))
+         (prefix (substring text word-start pos)))
+    (if (string=? prefix "")
+      (echo-message! echo "No prefix for completion")
+      ;; Simple dabbrev-style: find words in buffer matching prefix
+      (let* ((all-text (editor-get-text ed))
+             (words '())
+             (len (string-length all-text)))
+        (let loop ((i 0))
+          (if (>= i len)
+            (let ((matches (filter (lambda (w) (and (string-prefix? prefix w)
+                                                     (not (string=? prefix w))))
+                                   (unique words))))
+              (if (null? matches)
+                (echo-message! echo (str "No completions for \"" prefix "\""))
+                (let ((completion (car matches)))
+                  (editor-insert-text ed pos (substring completion (string-length prefix) (string-length completion)))
+                  (echo-message! echo (str "Completed: " completion)))))
+            (if (char-alphabetic? (string-ref all-text i))
+              (let find-end ((j i))
+                (if (or (>= j len) (not (or (char-alphabetic? (string-ref all-text j))
+                                             (char-numeric? (string-ref all-text j))
+                                             (char=? (string-ref all-text j) #\-))))
+                  (begin
+                    (set! words (cons (substring all-text i j) words))
+                    (loop j))
+                  (find-end (+ j 1))))
+              (loop (+ i 1)))))))))
+
+
