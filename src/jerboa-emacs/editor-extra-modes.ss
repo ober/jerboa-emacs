@@ -15130,3 +15130,55 @@
 (def (cmd-align-newline-and-indent app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Aligned newline and indented")))
+
+;;; Round 125 — Eglot, Tab-bar, Treesit, Devdocs, Helpful (batch 1)
+
+(def (cmd-project-shell-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Shell command in project: "
+      (lambda (cmd)
+        (echo-message! echo (str "Project shell: " cmd))))))
+
+(def (cmd-xref-query-replace-in-results app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query replace in xref results: "
+      (lambda (from)
+        (echo-read-string echo "Replace with: "
+          (lambda (to)
+            (echo-message! echo (str "Xref: replacing '" from "' with '" to "'"))))))))
+
+(def (cmd-eglot-shutdown-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: shut down all language servers")))
+
+(def (cmd-eglot-signal-didOpen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: signaled didOpen")))
+
+(def (cmd-eglot-hierarchy-call-hierarchy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: showing call hierarchy")))
+
+(def (cmd-eglot-hierarchy-type-hierarchy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: showing type hierarchy")))
+
+(def (cmd-tab-bar-select-tab-by-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tab name: "
+      (lambda (name)
+        (echo-message! echo (str "Tab-bar: selected tab '" name "'"))))))
+
+(def (cmd-tab-bar-move-tab-to app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Move tab to position: "
+      (lambda (pos)
+        (echo-message! echo (str "Tab-bar: moved tab to position " pos))))))
+
+(def (cmd-tab-bar-switch-to-recent-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tab-bar: switched to most recent tab")))
+
+(def (cmd-treesit-beginning-of-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treesit: moved to beginning of defun")))

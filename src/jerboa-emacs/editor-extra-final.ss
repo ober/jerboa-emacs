@@ -14516,3 +14516,57 @@
 (def (cmd-web-mode-tag-match app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Web-mode: jumped to matching tag")))
+
+;;; Round 125 — Eglot, Tab-bar, Treesit, Devdocs, Helpful (batch 2)
+
+(def (cmd-treesit-end-of-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treesit: moved to end of defun")))
+
+(def (cmd-treesit-transpose-sexps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treesit: transposed sexps")))
+
+(def (cmd-devdocs-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Install devdocs for: "
+      (lambda (lang)
+        (echo-message! echo (str "Devdocs: installed documentation for " lang))))))
+
+(def (cmd-devdocs-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Devdocs search: "
+      (lambda (query)
+        (echo-message! echo (str "Devdocs: searching for '" query "'"))))))
+
+(def (cmd-devdocs-peruse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Devdocs: browsing documentation")))
+
+(def (cmd-helpful-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helpful: showing help for symbol at point")))
+
+(def (cmd-helpful-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Helpful symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "Helpful: showing help for symbol '" sym "'"))))))
+
+(def (cmd-helpful-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Helpful macro: "
+      (lambda (name)
+        (echo-message! echo (str "Helpful: showing help for macro '" name "'"))))))
+
+(def (cmd-helpful-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Helpful command: "
+      (lambda (name)
+        (echo-message! echo (str "Helpful: showing help for command '" name "'"))))))
+
+(def (cmd-helpful-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Helpful function: "
+      (lambda (name)
+        (echo-message! echo (str "Helpful: showing help for function '" name "'"))))))

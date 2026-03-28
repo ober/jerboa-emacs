@@ -4099,6 +4099,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 125 — Eglot, Tab-bar, Treesit, Devdocs, Helpful
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| project-shell-command | :orange_circle: | Run shell command in project |
+| xref-query-replace-in-results | :orange_circle: | Query replace in xref results |
+| eglot-shutdown-all | :orange_circle: | Shut down all Eglot servers |
+| eglot-signal-didOpen | :orange_circle: | Signal didOpen to LSP server |
+| eglot-hierarchy-call-hierarchy | :orange_circle: | Show call hierarchy |
+| eglot-hierarchy-type-hierarchy | :orange_circle: | Show type hierarchy |
+| tab-bar-select-tab-by-name | :orange_circle: | Select tab by name |
+| tab-bar-move-tab-to | :orange_circle: | Move tab to position |
+| tab-bar-switch-to-recent-tab | :orange_circle: | Switch to most recent tab |
+| treesit-beginning-of-defun | :orange_circle: | Move to beginning of defun (treesit) |
+| treesit-end-of-defun | :orange_circle: | Move to end of defun (treesit) |
+| treesit-transpose-sexps | :orange_circle: | Transpose sexps (treesit) |
+| devdocs-install | :orange_circle: | Install devdocs documentation |
+| devdocs-search | :orange_circle: | Search devdocs |
+| devdocs-peruse | :orange_circle: | Browse devdocs |
+| helpful-at-point | :orange_circle: | Help for symbol at point |
+| helpful-symbol | :orange_circle: | Help for symbol |
+| helpful-macro | :orange_circle: | Help for macro |
+| helpful-command | :orange_circle: | Help for command |
+| helpful-function | :orange_circle: | Help for function |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
