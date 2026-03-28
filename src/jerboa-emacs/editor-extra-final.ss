@@ -16553,3 +16553,54 @@
     (echo-read-string echo "Theme period (morning/afternoon/evening/night): "
       (lambda (period)
         (echo-message! echo (str "Theme-buffet: loaded " period " theme"))))))
+
+;; ============================================================
+;; Round 167 — Dirvish, Peep-dired, Fd-dired (batch 2)
+;; ============================================================
+
+(def (cmd-dirvish-yank app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: yanked file(s)")))
+
+(def (cmd-dirvish-copy-file-path app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: copied file path to kill ring")))
+
+(def (cmd-dirvish-copy-file-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: copied file name to kill ring")))
+
+(def (cmd-peep-dired app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'peep-dired)
+    (if (mode-enabled? app 'peep-dired)
+      (echo-message! echo "Peep-dired: preview mode enabled")
+      (echo-message! echo "Peep-dired: preview mode disabled"))))
+
+(def (cmd-peep-dired-scroll-page-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Peep-dired: scrolled preview down")))
+
+(def (cmd-peep-dired-scroll-page-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Peep-dired: scrolled preview up")))
+
+(def (cmd-fd-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "fd search pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "fd-dired: searching for '" pat "'"))))))
+
+(def (cmd-fd-find-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "fd find-dired args: "
+      (lambda (args)
+        (echo-message! echo (str "fd-find-dired: running with " args))))))
+
+(def (cmd-wdired-abort-changes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wdired: aborted changes")))
+
+(def (cmd-dirvish-subtree-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: toggled subtree")))

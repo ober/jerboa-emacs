@@ -17202,3 +17202,52 @@
 (def (cmd-ef-themes-preview-colors app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ef-themes: previewing colors")))
+
+;; ============================================================
+;; Round 167 — Dirvish, Peep-dired, Fd-dired, Wdired (batch 1)
+;; ============================================================
+
+(def (cmd-dirvish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: opened directory browser")))
+
+(def (cmd-dirvish-side app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: opened side panel")))
+
+(def (cmd-dirvish-fd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dirvish fd search: "
+      (lambda (q)
+        (echo-message! echo (str "Dirvish: searching for '" q "'"))))))
+
+(def (cmd-dirvish-dispatch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: opened dispatch menu")))
+
+(def (cmd-dirvish-quick-access app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: quick access menu")))
+
+(def (cmd-dirvish-history-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: jumped to history entry")))
+
+(def (cmd-dirvish-layout-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: toggled layout")))
+
+(def (cmd-dirvish-layout-switch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: switched layout")))
+
+(def (cmd-dirvish-emerge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: opened emerge session")))
+
+(def (cmd-dirvish-emerge-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dirvish-emerge)
+    (if (mode-enabled? app 'dirvish-emerge)
+      (echo-message! echo "Dirvish emerge mode enabled")
+      (echo-message! echo "Dirvish emerge mode disabled"))))

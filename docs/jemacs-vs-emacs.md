@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 167 — Dirvish, Peep-dired, Fd-dired, Wdired
+
+| Feature | Status | Notes |
+|---|---|---|
+| `dirvish` | :orange_circle: | Directory browser |
+| `dirvish-side` | :orange_circle: | Side panel |
+| `dirvish-fd` | :orange_circle: | Fd search |
+| `dirvish-dispatch` | :orange_circle: | Dispatch menu |
+| `dirvish-quick-access` | :orange_circle: | Quick access |
+| `dirvish-history-jump` | :orange_circle: | History jump |
+| `dirvish-layout-toggle` | :orange_circle: | Toggle layout |
+| `dirvish-layout-switch` | :orange_circle: | Switch layout |
+| `dirvish-emerge` | :orange_circle: | Emerge session |
+| `dirvish-emerge-mode` | :orange_circle: | Emerge mode |
+| `dirvish-yank` | :orange_circle: | Yank files |
+| `dirvish-copy-file-path` | :orange_circle: | Copy file path |
+| `dirvish-copy-file-name` | :orange_circle: | Copy file name |
+| `dirvish-subtree-toggle` | :orange_circle: | Toggle subtree |
+| `peep-dired` | :orange_circle: | Preview mode |
+| `peep-dired-scroll-page-down` | :orange_circle: | Scroll preview down |
+| `peep-dired-scroll-page-up` | :orange_circle: | Scroll preview up |
+| `fd-dired` | :orange_circle: | fd search in dired |
+| `fd-find-dired` | :orange_circle: | fd find-dired |
+| `wdired-abort-changes` | :orange_circle: | Abort wdired changes |
+
 ### Round 166 — Pulsar, Lin, Modus/Ef/Doom Themes
 
 | Feature | Status | Notes |
