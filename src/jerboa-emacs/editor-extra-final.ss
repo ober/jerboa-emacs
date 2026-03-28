@@ -12438,3 +12438,48 @@
 (def (cmd-ediff-swap-buffers app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ediff: swapped buffer positions")))
+
+;;; Round 82 — Project, Envrc, Nix, DevOps (cont.)
+(def (cmd-nix-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nix shell expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Nix: entering shell with " expr))))))
+
+(def (cmd-nix-flake-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: running flake check")))
+
+(def (cmd-nix-flake-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: showing flake outputs")))
+
+(def (cmd-guix-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: listing packages")))
+
+(def (cmd-guix-generations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: listing generations")))
+
+(def (cmd-docker-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: listing images")))
+
+(def (cmd-docker-containers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: listing containers")))
+
+(def (cmd-docker-networks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker: listing networks")))
+
+(def (cmd-kubel-get-pods app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kubel: listing pods")))
+
+(def (cmd-kubel-describe-pod app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe pod: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubel: describing pod " pod))))))

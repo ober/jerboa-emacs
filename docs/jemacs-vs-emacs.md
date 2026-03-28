@@ -2984,6 +2984,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 82 — Project, Envrc, Nix & DevOps
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| project-find-dir | :orange_circle: | Find directory in project |
+| project-or-external-find-file | :orange_circle: | Find file in project or externally |
+| project-kill-buffers | :orange_circle: | Kill all project buffers |
+| project-async-shell-command | :orange_circle: | Run async shell in project |
+| envrc-mode | :orange_circle: | Toggle envrc mode |
+| envrc-allow | :orange_circle: | Allow .envrc file |
+| envrc-deny | :orange_circle: | Deny .envrc file |
+| envrc-reload | :orange_circle: | Reload envrc environment |
+| direnv-mode | :orange_circle: | Toggle direnv integration |
+| nix-build | :orange_circle: | Run nix build |
+| nix-shell | :orange_circle: | Enter nix shell |
+| nix-flake-check | :orange_circle: | Run nix flake check |
+| nix-flake-show | :orange_circle: | Show nix flake outputs |
+| guix-packages | :orange_circle: | List Guix packages |
+| guix-generations | :orange_circle: | List Guix generations |
+| docker-images | :orange_circle: | List Docker images |
+| docker-containers | :orange_circle: | List Docker containers |
+| docker-networks | :orange_circle: | List Docker networks |
+| kubel-get-pods | :orange_circle: | List Kubernetes pods |
+| kubel-describe-pod | :orange_circle: | Describe a Kubernetes pod |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

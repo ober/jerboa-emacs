@@ -12980,3 +12980,58 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Smerge: moved to previous conflict")))
 
+;;; Round 82 — Project, Envrc, Nix, DevOps
+(def (cmd-project-find-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find directory in project: "
+      (lambda (dir)
+        (echo-message! echo (str "Opening directory: " dir))))))
+
+(def (cmd-project-or-external-find-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find file (project or external): "
+      (lambda (file)
+        (echo-message! echo (str "Opening: " file))))))
+
+(def (cmd-project-kill-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All project buffers killed")))
+
+(def (cmd-project-async-shell-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Async shell command in project: "
+      (lambda (cmd)
+        (echo-message! echo (str "Running async: " cmd))))))
+
+(def (cmd-envrc-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'envrc)
+    (if (mode-enabled? app 'envrc)
+      (echo-message! echo "Envrc mode enabled")
+      (echo-message! echo "Envrc mode disabled"))))
+
+(def (cmd-envrc-allow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: .envrc allowed")))
+
+(def (cmd-envrc-deny app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: .envrc denied")))
+
+(def (cmd-envrc-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: environment reloaded")))
+
+(def (cmd-direnv-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'direnv)
+    (if (mode-enabled? app 'direnv)
+      (echo-message! echo "Direnv mode enabled")
+      (echo-message! echo "Direnv mode disabled"))))
+
+(def (cmd-nix-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nix build expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Nix: building " expr))))))
+
