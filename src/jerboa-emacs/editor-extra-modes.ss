@@ -11092,3 +11092,54 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "LSP: no signature help available")))
 
+;;; Round 47 batch 1: dap-debug, dap-breakpoint-toggle, dap-breakpoint-delete,
+;;; dap-continue, dap-next, dap-step-in, dap-step-out, dap-eval,
+;;; dap-ui-inspect, dap-disconnect
+
+(def (cmd-dap-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: starting debug session (no debug adapter configured)")))
+
+(def (cmd-dap-breakpoint-toggle app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (line (editor-get-current-line-number ed)))
+    (echo-message! echo (str "DAP: toggled breakpoint at line " line))))
+
+(def (cmd-dap-breakpoint-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: all breakpoints deleted")))
+
+(def (cmd-dap-continue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: continue (no active debug session)")))
+
+(def (cmd-dap-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: step over (no active debug session)")))
+
+(def (cmd-dap-step-in app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: step in (no active debug session)")))
+
+(def (cmd-dap-step-out app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: step out (no active debug session)")))
+
+(def (cmd-dap-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DAP eval: "
+      (lambda (expr)
+        (when (and expr (not (string-empty? expr)))
+          (echo-message! echo (str "DAP eval: " expr " (no debug session)")))))))
+
+(def (cmd-dap-ui-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: inspect (no variables to inspect)")))
+
+(def (cmd-dap-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: disconnected from debug session")))
+

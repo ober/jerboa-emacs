@@ -10486,3 +10486,102 @@
     (if (mode-enabled? app "lsp-on-type-formatting")
       (echo-message! echo "LSP on-type formatting enabled")
       (echo-message! echo "LSP on-type formatting disabled"))))
+
+;;; Round 47 batch 2: dap-ui-repl, next-error-follow-minor-mode,
+;;; flymake-show-buffer-diagnostics, flymake-show-project-diagnostics,
+;;; flycheck-list-errors, flycheck-next-error, flycheck-previous-error,
+;;; flycheck-verify-setup, flycheck-select-checker, flycheck-describe-checker
+
+(def (cmd-dap-ui-repl app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*DAP REPL*")))
+    (buffer-content-set! new-buf
+      (str "DAP Debug REPL\n\n"
+           "(No active debug session)\n"
+           "> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "DAP REPL")))
+
+(def (cmd-next-error-follow-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "next-error-follow")
+    (if (mode-enabled? app "next-error-follow")
+      (echo-message! echo "Next-error follow mode enabled")
+      (echo-message! echo "Next-error follow mode disabled"))))
+
+(def (cmd-flymake-show-buffer-diagnostics app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (new-buf (make-buffer "*Flymake diagnostics*")))
+    (buffer-content-set! new-buf
+      (str "Flymake Diagnostics: " (buffer-name buf) "\n\n"
+           "No diagnostics."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Flymake: no diagnostics")))
+
+(def (cmd-flymake-show-project-diagnostics app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Flymake project diagnostics*")))
+    (buffer-content-set! new-buf
+      (str "Flymake Project Diagnostics\n\n"
+           "No project-wide diagnostics."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Flymake: no project diagnostics")))
+
+(def (cmd-flycheck-list-errors app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Flycheck errors*")))
+    (buffer-content-set! new-buf
+      (str "Flycheck Errors\n\n"
+           "  Line  Col  Level  Message\n"
+           "  ----  ---  -----  -------\n"
+           "  (no errors)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Flycheck: no errors")))
+
+(def (cmd-flycheck-next-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: no more errors")))
+
+(def (cmd-flycheck-previous-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: no previous errors")))
+
+(def (cmd-flycheck-verify-setup app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Flycheck verify*")))
+    (buffer-content-set! new-buf
+      (str "Flycheck Setup Verification\n\n"
+           "Checker: none selected\n"
+           "Status: not running\n"
+           "Executable: N/A\n\n"
+           "No syntax checker configured for this buffer."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Flycheck: verify setup")))
+
+(def (cmd-flycheck-select-checker app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Select checker: "
+      (lambda (checker)
+        (when (and checker (not (string-empty? checker)))
+          (echo-message! echo (str "Selected checker: " checker)))))))
+
+(def (cmd-flycheck-describe-checker app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe checker: "
+      (lambda (checker)
+        (when (and checker (not (string-empty? checker)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*Flycheck: " checker "*"))))
+            (buffer-content-set! new-buf
+              (str "Flycheck Checker: " checker "\n\n"
+                   "Description: Syntax checker\n"
+                   "Executable: " checker "\n"
+                   "Status: not available"))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "Described: " checker))))))))

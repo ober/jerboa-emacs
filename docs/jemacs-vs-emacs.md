@@ -2107,6 +2107,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | LSP diagnostics list | :orange_circle: | List all diagnostics |
 | LSP toggle on type formatting | :orange_circle: | Toggle format-as-you-type |
 
+### Round 47
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| DAP debug | :orange_circle: | Start debug session |
+| DAP breakpoint toggle | :orange_circle: | Toggle breakpoint at line |
+| DAP breakpoint delete | :orange_circle: | Delete all breakpoints |
+| DAP continue | :orange_circle: | Continue execution |
+| DAP next | :orange_circle: | Step over |
+| DAP step in | :orange_circle: | Step into function |
+| DAP step out | :orange_circle: | Step out of function |
+| DAP eval | :orange_circle: | Evaluate expression in debug |
+| DAP UI inspect | :orange_circle: | Inspect variable |
+| DAP disconnect | :orange_circle: | Disconnect debugger |
+| DAP UI REPL | :orange_circle: | Debug REPL buffer |
+| Next error follow minor mode | :orange_circle: | Auto-follow next-error |
+| Flymake show buffer diagnostics | :orange_circle: | List buffer diagnostics |
+| Flymake show project diagnostics | :orange_circle: | List project diagnostics |
+| Flycheck list errors | :orange_circle: | List all flycheck errors |
+| Flycheck next error | :orange_circle: | Jump to next error |
+| Flycheck previous error | :orange_circle: | Jump to previous error |
+| Flycheck verify setup | :orange_circle: | Verify checker configuration |
+| Flycheck select checker | :orange_circle: | Select syntax checker |
+| Flycheck describe checker | :orange_circle: | Describe checker details |
+
 ---
 
 ## Recommended Development Roadmap
