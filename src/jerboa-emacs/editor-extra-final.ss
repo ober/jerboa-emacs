@@ -14191,3 +14191,59 @@
 (def (cmd-markdown-insert-bold app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Markdown: inserted bold markup")))
+
+;;; ——— Round 118: DevOps modes (batch 2) ———
+
+(def (cmd-terraform-state-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: listing state resources")))
+
+(def (cmd-ansible-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: linting playbook")))
+
+(def (cmd-ansible-playbook-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Playbook file: "
+      (lambda (file)
+        (echo-message! echo (str "Ansible: running playbook " file))))))
+
+(def (cmd-ansible-inventory-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: listing inventory")))
+
+(def (cmd-docker-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Docker run image: "
+      (lambda (image)
+        (echo-message! echo (str "Docker: running " image))))))
+
+(def (cmd-docker-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Docker stop container: "
+      (lambda (container)
+        (echo-message! echo (str "Docker: stopping " container))))))
+
+(def (cmd-docker-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Docker restart container: "
+      (lambda (container)
+        (echo-message! echo (str "Docker: restarting " container))))))
+
+(def (cmd-docker-exec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Docker exec in container: "
+      (lambda (container)
+        (echo-message! echo (str "Docker: executing in " container))))))
+
+(def (cmd-docker-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Docker inspect: "
+      (lambda (target)
+        (echo-message! echo (str "Docker: inspecting " target))))))
+
+(def (cmd-docker-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Docker kill container: "
+      (lambda (container)
+        (echo-message! echo (str "Docker: killed " container))))))

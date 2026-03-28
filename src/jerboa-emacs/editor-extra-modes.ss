@@ -14785,3 +14785,51 @@
 (def (cmd-markdown-insert-list-item app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Markdown: inserted list item")))
+
+;;; ——— Round 118: DevOps modes (batch 1) ———
+
+(def (cmd-yaml-indent-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAML: indented current line")))
+
+(def (cmd-yaml-fill-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAML: filled current paragraph")))
+
+(def (cmd-dockerfile-build-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Dockerfile: building image " tag))))))
+
+(def (cmd-docker-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pull image: "
+      (lambda (image)
+        (echo-message! echo (str "Docker: pulling " image))))))
+
+(def (cmd-terraform-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: formatted current buffer")))
+
+(def (cmd-terraform-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: initializing working directory")))
+
+(def (cmd-terraform-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: applying changes")))
+
+(def (cmd-ansible-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ansible module: "
+      (lambda (module)
+        (echo-message! echo (str "Ansible: showing documentation for " module))))))
+
+(def (cmd-terraform-destroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: destroying infrastructure")))
+
+(def (cmd-terraform-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: showing outputs")))

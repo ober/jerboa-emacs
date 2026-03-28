@@ -3914,6 +3914,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | markdown-insert-header-atx-3 | :orange_circle: | Insert ### heading |
 | markdown-insert-bold | :orange_circle: | Insert bold markup |
 
+### Round 118 — DevOps Modes (YAML, Docker, Terraform, Ansible)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| yaml-indent-line | :orange_circle: | Indent YAML line |
+| yaml-fill-paragraph | :orange_circle: | Fill YAML paragraph |
+| dockerfile-build-buffer | :orange_circle: | Build Docker image from buffer |
+| docker-pull | :orange_circle: | Pull Docker image |
+| terraform-format-buffer | :orange_circle: | Format Terraform buffer |
+| terraform-init | :orange_circle: | Initialize Terraform |
+| terraform-apply | :orange_circle: | Apply Terraform changes |
+| ansible-doc | :orange_circle: | Show Ansible module documentation |
+| terraform-destroy | :orange_circle: | Destroy Terraform infrastructure |
+| terraform-output | :orange_circle: | Show Terraform outputs |
+| terraform-state-list | :orange_circle: | List Terraform state resources |
+| ansible-lint | :orange_circle: | Lint Ansible playbook |
+| ansible-playbook-run | :orange_circle: | Run Ansible playbook |
+| ansible-inventory-list | :orange_circle: | List Ansible inventory |
+| docker-run | :orange_circle: | Run Docker container |
+| docker-stop | :orange_circle: | Stop Docker container |
+| docker-restart | :orange_circle: | Restart Docker container |
+| docker-exec | :orange_circle: | Execute in Docker container |
+| docker-inspect | :orange_circle: | Inspect Docker object |
+| docker-kill | :orange_circle: | Kill Docker container |
+
 ---
 
 ## Recommended Development Roadmap
