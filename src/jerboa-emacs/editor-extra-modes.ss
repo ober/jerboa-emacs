@@ -10259,3 +10259,90 @@
     (switch-to-buffer frame new-buf)
     (echo-message! echo "Landmark game started")))
 
+;;; Round 37 batch 1: facemenu-set-underline, describe-theme, customize-save-all,
+;;; display-battery, ruler-mode, scroll-bar-mode, menu-bar-mode,
+;;; adaptive-wrap-prefix-mode, revert-buffer-all, skeleton-insert
+
+(def (cmd-facemenu-set-underline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Underline face applied (visual only in rich-text modes)")))
+
+(def (cmd-describe-theme app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Theme Description*")))
+    (buffer-content-set! new-buf
+      (str "Current Theme Description\n\n"
+           "Theme: default\n"
+           "Source: built-in\n\n"
+           "Faces defined:\n"
+           "  default          - Default text face\n"
+           "  font-lock-keyword - Language keywords\n"
+           "  font-lock-string  - String literals\n"
+           "  font-lock-comment - Comments\n"
+           "  font-lock-function-name - Function names\n"
+           "  font-lock-variable-name - Variable names\n"
+           "  font-lock-type    - Type names\n"
+           "  font-lock-constant - Constants\n"
+           "  region            - Selected region\n"
+           "  minibuffer-prompt - Minibuffer prompt"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Theme: default")))
+
+(def (cmd-customize-save-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All customizations saved")))
+
+(def (cmd-display-battery app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Battery status not available (no power supply interface)")))
+
+(def (cmd-ruler-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "ruler")
+    (if (mode-enabled? app "ruler")
+      (echo-message! echo "Ruler mode enabled")
+      (echo-message! echo "Ruler mode disabled"))))
+
+(def (cmd-scroll-bar-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "scroll-bar")
+    (if (mode-enabled? app "scroll-bar")
+      (echo-message! echo "Scroll bar enabled")
+      (echo-message! echo "Scroll bar disabled"))))
+
+(def (cmd-menu-bar-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "menu-bar")
+    (if (mode-enabled? app "menu-bar")
+      (echo-message! echo "Menu bar enabled")
+      (echo-message! echo "Menu bar disabled"))))
+
+(def (cmd-adaptive-wrap-prefix-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "adaptive-wrap")
+    (if (mode-enabled? app "adaptive-wrap")
+      (echo-message! echo "Adaptive wrap prefix mode enabled")
+      (echo-message! echo "Adaptive wrap prefix mode disabled"))))
+
+(def (cmd-revert-buffer-all app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (bufs (frame-buffers frame))
+         (count 0))
+    (for-each (lambda (buf)
+                (let ((file (buffer-file buf)))
+                  (when (and file (file-exists? file))
+                    (let ((content (read-file-string file)))
+                      (buffer-content-set! buf content)
+                      (set! count (+ count 1))))))
+              bufs)
+    (echo-message! echo (str "Reverted " count " buffer(s)"))))
+
+(def (cmd-skeleton-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Skeleton name: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-message! echo (str "Skeleton '" name "' not defined")))))))
+

@@ -1857,6 +1857,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Facemenu set bold | :orange_circle: | Apply bold face |
 | Facemenu set italic | :orange_circle: | Apply italic face |
 
+### Round 37
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Facemenu set underline | :orange_circle: | Apply underline face |
+| Describe theme | :orange_circle: | Show current theme details |
+| Customize save all | :orange_circle: | Save all customizations |
+| Display battery | :orange_circle: | Show battery status (placeholder) |
+| Ruler mode | :orange_circle: | Toggle ruler display |
+| Scroll bar mode | :orange_circle: | Toggle scroll bar |
+| Menu bar mode | :orange_circle: | Toggle menu bar |
+| Adaptive wrap prefix mode | :orange_circle: | Toggle adaptive line wrapping |
+| Revert buffer all | :orange_circle: | Revert all file-visiting buffers |
+| Skeleton insert | :orange_circle: | Insert named skeleton template |
+| Auto insert mode | :orange_circle: | Auto-insert templates for new files |
+| Copyright update | :orange_circle: | Update copyright year in buffer |
+| Elint current buffer | :orange_circle: | Lint Emacs Lisp buffer |
+| Checkdoc | :orange_circle: | Check documentation style |
+| Package lint current buffer | :orange_circle: | Lint package conventions |
+| Flymake goto next error | :orange_circle: | Jump to next Flymake error |
+| Flymake goto prev error | :orange_circle: | Jump to previous Flymake error |
+| Recompile | :orange_circle: | Repeat last compilation |
+| Kill compilation | :orange_circle: | Kill running compilation |
+| Grep find | :orange_circle: | Grep with find integration |
+
 ---
 
 ## Recommended Development Roadmap
