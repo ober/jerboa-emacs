@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 214 — PDF-tools ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| pdf-view-scroll-up-or-next-page | :orange_circle: | Scroll up or go to next page |
+| pdf-view-scroll-down-or-previous-page | :orange_circle: | Scroll down or go to previous page |
+| pdf-view-enlarge | :orange_circle: | Enlarge PDF view |
+| pdf-view-shrink | :orange_circle: | Shrink PDF view |
+| pdf-view-rotate | :orange_circle: | Rotate PDF page |
+| pdf-annot-add-strikeout-markup-annotation | :orange_circle: | Add strikeout annotation |
+| pdf-view-extract-region-to-string | :orange_circle: | Extract region to string |
+| pdf-view-set-slice-from-bounding-box | :orange_circle: | Set slice from bounding box |
+| pdf-view-reset-slice | :orange_circle: | Reset page slice |
+| pdf-occur-revert | :orange_circle: | Revert occur results |
+| pdf-isearch-minor-mode | :orange_circle: | Toggle PDF isearch mode |
+| pdf-sync-forward-search | :orange_circle: | Forward sync to source |
+| pdf-sync-backward-search | :orange_circle: | Backward sync to PDF |
+| pdf-outline-follow-link | :orange_circle: | Follow outline link |
+| pdf-links-action-perform | :orange_circle: | Perform link action |
+| pdf-links-isearch-link | :orange_circle: | Isearch for link |
+| pdf-history-backward | :orange_circle: | Navigate backward in history |
+| pdf-history-forward | :orange_circle: | Navigate forward in history |
+| pdf-annot-attachment-dired | :orange_circle: | Open attachment in dired |
+| pdf-view-continuous-scroll-mode | :orange_circle: | Toggle continuous scroll mode |
+
 ### Round 213 — Forge (Magit GitHub/GitLab)
 
 | Command | Status | Description |

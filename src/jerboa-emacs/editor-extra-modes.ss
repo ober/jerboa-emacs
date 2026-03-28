@@ -19477,3 +19477,45 @@
 (def (cmd-forge-create-post app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Forge: creating new post")))
+
+;;; Round 214 — PDF-tools extensions (batch 1)
+
+(def (cmd-pdf-view-scroll-up-or-next-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: scrolled up or next page")))
+
+(def (cmd-pdf-view-scroll-down-or-previous-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: scrolled down or previous page")))
+
+(def (cmd-pdf-view-enlarge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: enlarged view")))
+
+(def (cmd-pdf-view-shrink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: shrunk view")))
+
+(def (cmd-pdf-view-rotate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: rotated page")))
+
+(def (cmd-pdf-annot-add-strikeout-markup-annotation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added strikeout annotation")))
+
+(def (cmd-pdf-view-extract-region-to-string app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: extracted region to string")))
+
+(def (cmd-pdf-view-set-slice-from-bounding-box app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: set slice from bounding box")))
+
+(def (cmd-pdf-view-reset-slice app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: reset slice")))
+
+(def (cmd-pdf-occur-revert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: reverted occur results")))

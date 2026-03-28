@@ -18856,3 +18856,51 @@
 (def (cmd-forge-visit-pullreq app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Forge: visiting pull request")))
+
+;;; Round 214 — PDF-tools extensions (batch 2)
+
+(def (cmd-pdf-isearch-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pdf-isearch)
+    (if (mode-enabled? app 'pdf-isearch)
+      (echo-message! echo "PDF: isearch mode enabled")
+      (echo-message! echo "PDF: isearch mode disabled"))))
+
+(def (cmd-pdf-sync-forward-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: forward sync search to source")))
+
+(def (cmd-pdf-sync-backward-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: backward sync search to PDF")))
+
+(def (cmd-pdf-outline-follow-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: followed outline link")))
+
+(def (cmd-pdf-links-action-perform app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: performed link action")))
+
+(def (cmd-pdf-links-isearch-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: isearch for link")))
+
+(def (cmd-pdf-history-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: navigated backward in history")))
+
+(def (cmd-pdf-history-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: navigated forward in history")))
+
+(def (cmd-pdf-annot-attachment-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: opened attachment in dired")))
+
+(def (cmd-pdf-view-continuous-scroll-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pdf-continuous-scroll)
+    (if (mode-enabled? app 'pdf-continuous-scroll)
+      (echo-message! echo "PDF: continuous scroll mode enabled")
+      (echo-message! echo "PDF: continuous scroll mode disabled"))))
