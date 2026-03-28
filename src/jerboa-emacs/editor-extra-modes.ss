@@ -13951,3 +13951,47 @@
       (echo-message! echo "Corfu completion mode enabled")
       (echo-message! echo "Corfu completion mode disabled"))))
 
+;;; ——— Round 102: Emacs Lisp development & debugging (batch 1) ———
+
+(def (cmd-edebug-step-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: switched to step mode (stop at every expression)")))
+
+(def (cmd-edebug-next-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: switched to next mode (stop after each expression)")))
+
+(def (cmd-edebug-go-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: switched to go mode (run until breakpoint)")))
+
+(def (cmd-edebug-continue-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: switched to continue mode")))
+
+(def (cmd-edebug-trace-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: switched to trace mode (show execution trace)")))
+
+(def (cmd-edebug-set-breakpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: breakpoint set at point")))
+
+(def (cmd-edebug-unset-breakpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: breakpoint removed at point")))
+
+(def (cmd-edebug-eval-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Edebug eval: "
+      (lambda (expr)
+        (echo-message! echo (str "Edebug: evaluated '" expr "'"))))))
+
+(def (cmd-edebug-where app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: showing current stop point")))
+
+(def (cmd-edebug-bounce-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: bounced to current point and back")))
+

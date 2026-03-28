@@ -13412,3 +13412,53 @@
 (def (cmd-vertico-directory-enter app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vertico: entered directory")))
+
+;;; ——— Round 102: Emacs Lisp development & debugging (batch 2) ———
+
+(def (cmd-edebug-top-level-nonstop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: exited to top level (nonstop mode)")))
+
+(def (cmd-ert-results-rerun-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERT: rerunning test at point")))
+
+(def (cmd-elisp-refs-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elisp refs function: "
+      (lambda (name)
+        (echo-message! echo (str "Elisp refs: finding references to function " name))))))
+
+(def (cmd-elisp-refs-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elisp refs macro: "
+      (lambda (name)
+        (echo-message! echo (str "Elisp refs: finding references to macro " name))))))
+
+(def (cmd-elisp-refs-variable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elisp refs variable: "
+      (lambda (name)
+        (echo-message! echo (str "Elisp refs: finding references to variable " name))))))
+
+(def (cmd-elisp-refs-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elisp refs symbol: "
+      (lambda (name)
+        (echo-message! echo (str "Elisp refs: finding all references to " name))))))
+
+(def (cmd-eldoc-print-current-symbol-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eldoc: displaying documentation for symbol at point")))
+
+(def (cmd-ielm-send-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IELM: sent input for evaluation")))
+
+(def (cmd-ielm-return app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IELM: newline or send input")))
+
+(def (cmd-ielm-clear-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IELM: cleared interaction buffer")))

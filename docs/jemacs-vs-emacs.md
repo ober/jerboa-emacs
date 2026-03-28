@@ -3514,6 +3514,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | vertico-directory-up | :orange_circle: | Move up one directory level |
 | vertico-directory-enter | :orange_circle: | Enter directory in completion |
 
+### Round 102 — Emacs Lisp Development & Debugging
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| edebug-step-mode | :orange_circle: | Edebug step mode (stop at every expression) |
+| edebug-next-mode | :orange_circle: | Edebug next mode (stop after each expression) |
+| edebug-go-mode | :orange_circle: | Edebug go mode (run until breakpoint) |
+| edebug-continue-mode | :orange_circle: | Edebug continue mode |
+| edebug-trace-mode | :orange_circle: | Edebug trace mode (show execution trace) |
+| edebug-set-breakpoint | :orange_circle: | Set breakpoint at point |
+| edebug-unset-breakpoint | :orange_circle: | Remove breakpoint at point |
+| edebug-eval-expression | :orange_circle: | Evaluate expression in edebug context |
+| edebug-where | :orange_circle: | Show current edebug stop point |
+| edebug-bounce-point | :orange_circle: | Bounce to current point and back |
+| edebug-top-level-nonstop | :orange_circle: | Exit to top level nonstop |
+| ert-results-rerun-test | :orange_circle: | Rerun ERT test at point |
+| elisp-refs-function | :orange_circle: | Find references to function |
+| elisp-refs-macro | :orange_circle: | Find references to macro |
+| elisp-refs-variable | :orange_circle: | Find references to variable |
+| elisp-refs-symbol | :orange_circle: | Find all references to symbol |
+| eldoc-print-current-symbol-info | :orange_circle: | Display eldoc for symbol at point |
+| ielm-send-input | :orange_circle: | Send IELM input for evaluation |
+| ielm-return | :orange_circle: | IELM newline or send |
+| ielm-clear-buffer | :orange_circle: | Clear IELM interaction buffer |
+
 ---
 
 ## Recommended Development Roadmap
