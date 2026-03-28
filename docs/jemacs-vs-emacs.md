@@ -4369,6 +4369,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 135 — PDF-tools, Elfeed, Mu4e
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| pdf-view-first-page | :orange_circle: | Jump to first PDF page |
+| pdf-view-last-page | :orange_circle: | Jump to last PDF page |
+| pdf-view-fit-page-to-window | :orange_circle: | Fit PDF page to window |
+| pdf-view-fit-width-to-window | :orange_circle: | Fit PDF width to window |
+| pdf-view-fit-height-to-window | :orange_circle: | Fit PDF height to window |
+| pdf-view-midnight-minor-mode | :orange_circle: | Toggle PDF midnight mode |
+| pdf-view-auto-slice-minor-mode | :orange_circle: | Toggle PDF auto-slice mode |
+| pdf-annot-add-highlight-markup-annotation | :orange_circle: | Add PDF highlight annotation |
+| pdf-annot-add-underline-markup-annotation | :orange_circle: | Add PDF underline annotation |
+| pdf-annot-add-text-annotation | :orange_circle: | Add PDF text annotation |
+| pdf-annot-delete | :orange_circle: | Delete PDF annotation |
+| elfeed-search-clear-filter | :orange_circle: | Clear Elfeed search filter |
+| elfeed-search-tag-all-unread | :orange_circle: | Tag all as unread |
+| elfeed-search-untag-all-unread | :orange_circle: | Untag all unread |
+| elfeed-show-tag | :orange_circle: | Add tag to entry |
+| elfeed-show-untag | :orange_circle: | Remove tag from entry |
+| mu4e-search | :orange_circle: | Search mail via Mu4e |
+| mu4e-headers-next | :orange_circle: | Next Mu4e header |
+| mu4e-headers-prev | :orange_circle: | Previous Mu4e header |
+| mu4e-view-action | :orange_circle: | Mu4e view action |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

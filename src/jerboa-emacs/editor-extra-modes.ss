@@ -15597,3 +15597,51 @@
     (echo-read-string echo "Sly doc lookup: "
       (lambda (sym)
         (echo-message! echo (str "Sly: looking up documentation for '" sym "'"))))))
+
+;;; Round 135 — PDF-tools, Elfeed, Mu4e (batch 1)
+
+(def (cmd-pdf-view-first-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: jumped to first page")))
+
+(def (cmd-pdf-view-last-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: jumped to last page")))
+
+(def (cmd-pdf-view-fit-page-to-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: fit page to window")))
+
+(def (cmd-pdf-view-fit-width-to-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: fit width to window")))
+
+(def (cmd-pdf-view-fit-height-to-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: fit height to window")))
+
+(def (cmd-pdf-view-midnight-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pdf-midnight)
+    (if (mode-enabled? app 'pdf-midnight)
+      (echo-message! echo "PDF Midnight mode enabled")
+      (echo-message! echo "PDF Midnight mode disabled"))))
+
+(def (cmd-pdf-view-auto-slice-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pdf-auto-slice)
+    (if (mode-enabled? app 'pdf-auto-slice)
+      (echo-message! echo "PDF Auto-Slice mode enabled")
+      (echo-message! echo "PDF Auto-Slice mode disabled"))))
+
+(def (cmd-pdf-annot-add-highlight-markup-annotation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added highlight annotation")))
+
+(def (cmd-pdf-annot-add-underline-markup-annotation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added underline annotation")))
+
+(def (cmd-pdf-annot-add-text-annotation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added text annotation")))

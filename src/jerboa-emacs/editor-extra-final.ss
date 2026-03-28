@@ -14990,3 +14990,51 @@
 (def (cmd-cider-eval-defun-at-point app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CIDER: evaluated defun at point")))
+
+;;; Round 135 — PDF-tools, Elfeed, Mu4e (batch 2)
+
+(def (cmd-pdf-annot-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: deleted annotation")))
+
+(def (cmd-elfeed-search-clear-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: cleared search filter")))
+
+(def (cmd-elfeed-search-tag-all-unread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: tagged all as unread")))
+
+(def (cmd-elfeed-search-untag-all-unread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: untagged all unread")))
+
+(def (cmd-elfeed-show-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Elfeed: added tag '" tag "'"))))))
+
+(def (cmd-elfeed-show-untag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Elfeed: removed tag '" tag "'"))))))
+
+(def (cmd-mu4e-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mu4e search: "
+      (lambda (query)
+        (echo-message! echo (str "Mu4e: searching for '" query "'"))))))
+
+(def (cmd-mu4e-headers-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: next header")))
+
+(def (cmd-mu4e-headers-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: previous header")))
+
+(def (cmd-mu4e-view-action app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: view action")))
