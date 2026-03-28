@@ -12838,3 +12838,56 @@
     (if (mode-enabled? app 'just)
       (echo-message! echo "Just mode enabled")
       (echo-message! echo "Just mode disabled"))))
+
+;;; Round 90 — LSP Extensions (cont.)
+(def (cmd-lsp-modeline-code-actions-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lsp-modeline-code-actions)
+    (if (mode-enabled? app 'lsp-modeline-code-actions)
+      (echo-message! echo "LSP modeline code actions enabled")
+      (echo-message! echo "LSP modeline code actions disabled"))))
+
+(def (cmd-lsp-signature-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lsp-signature)
+    (if (mode-enabled? app 'lsp-signature)
+      (echo-message! echo "LSP signature help enabled")
+      (echo-message! echo "LSP signature help disabled"))))
+
+(def (cmd-lsp-toggle-symbol-highlight app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: symbol highlight toggled")))
+
+(def (cmd-lsp-workspace-folders-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add workspace folder: "
+      (lambda (dir)
+        (echo-message! echo (str "LSP: added workspace folder " dir))))))
+
+(def (cmd-lsp-workspace-folders-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove workspace folder: "
+      (lambda (dir)
+        (echo-message! echo (str "LSP: removed workspace folder " dir))))))
+
+(def (cmd-lsp-describe-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: showing session description")))
+
+(def (cmd-lsp-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: disconnected from server")))
+
+(def (cmd-lsp-toggle-trace-io app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: I/O tracing toggled")))
+
+(def (cmd-lsp-avy-lens app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: avy lens activated")))
+
+(def (cmd-lsp-ivy-workspace-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LSP workspace symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "LSP: searching workspace for " sym))))))

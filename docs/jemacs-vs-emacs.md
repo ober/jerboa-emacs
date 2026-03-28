@@ -3199,6 +3199,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 90 — LSP Extensions
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| lsp-treemacs-references | :orange_circle: | Show references in treemacs |
+| lsp-treemacs-implementations | :orange_circle: | Show implementations in treemacs |
+| lsp-treemacs-call-hierarchy | :orange_circle: | Show call hierarchy in treemacs |
+| lsp-treemacs-type-hierarchy | :orange_circle: | Show type hierarchy in treemacs |
+| lsp-treemacs-errors-list | :orange_circle: | Show errors in treemacs |
+| lsp-ui-sideline-mode | :orange_circle: | Toggle LSP UI sideline |
+| lsp-ui-peek-find-implementation | :orange_circle: | Peek at implementation |
+| lsp-inlay-hints-mode | :orange_circle: | Toggle inlay hints |
+| lsp-semantic-tokens-mode | :orange_circle: | Toggle semantic tokens |
+| lsp-modeline-diagnostics-mode | :orange_circle: | Toggle modeline diagnostics |
+| lsp-modeline-code-actions-mode | :orange_circle: | Toggle modeline code actions |
+| lsp-signature-mode | :orange_circle: | Toggle signature help |
+| lsp-toggle-symbol-highlight | :orange_circle: | Toggle symbol highlight |
+| lsp-workspace-folders-add | :orange_circle: | Add workspace folder |
+| lsp-workspace-folders-remove | :orange_circle: | Remove workspace folder |
+| lsp-describe-session | :orange_circle: | Describe LSP session |
+| lsp-disconnect | :orange_circle: | Disconnect from LSP server |
+| lsp-toggle-trace-io | :orange_circle: | Toggle LSP I/O tracing |
+| lsp-avy-lens | :orange_circle: | Jump to LSP code lens via avy |
+| lsp-ivy-workspace-symbol | :orange_circle: | Search workspace symbols |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

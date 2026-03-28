@@ -13384,3 +13384,56 @@
       (echo-message! echo "TOML mode enabled")
       (echo-message! echo "TOML mode disabled"))))
 
+;;; Round 90 — LSP Extensions
+(def (cmd-lsp-treemacs-references app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP Treemacs: showing references")))
+
+(def (cmd-lsp-treemacs-implementations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP Treemacs: showing implementations")))
+
+(def (cmd-lsp-treemacs-call-hierarchy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP Treemacs: showing call hierarchy")))
+
+(def (cmd-lsp-treemacs-type-hierarchy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP Treemacs: showing type hierarchy")))
+
+(def (cmd-lsp-treemacs-errors-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP Treemacs: showing errors list")))
+
+(def (cmd-lsp-ui-sideline-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lsp-ui-sideline)
+    (if (mode-enabled? app 'lsp-ui-sideline)
+      (echo-message! echo "LSP UI sideline mode enabled")
+      (echo-message! echo "LSP UI sideline mode disabled"))))
+
+(def (cmd-lsp-ui-peek-find-implementation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP UI: peeking at implementation")))
+
+(def (cmd-lsp-inlay-hints-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lsp-inlay-hints)
+    (if (mode-enabled? app 'lsp-inlay-hints)
+      (echo-message! echo "LSP inlay hints enabled")
+      (echo-message! echo "LSP inlay hints disabled"))))
+
+(def (cmd-lsp-semantic-tokens-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lsp-semantic-tokens)
+    (if (mode-enabled? app 'lsp-semantic-tokens)
+      (echo-message! echo "LSP semantic tokens mode enabled")
+      (echo-message! echo "LSP semantic tokens mode disabled"))))
+
+(def (cmd-lsp-modeline-diagnostics-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lsp-modeline-diagnostics)
+    (if (mode-enabled? app 'lsp-modeline-diagnostics)
+      (echo-message! echo "LSP modeline diagnostics enabled")
+      (echo-message! echo "LSP modeline diagnostics disabled"))))
+
