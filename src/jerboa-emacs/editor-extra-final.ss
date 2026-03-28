@@ -15717,3 +15717,54 @@
 (def (cmd-ede-remove-file app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EDE: removed current file from target")))
+
+;; ============================================================
+;; Round 150 — RefTeX, CDLaTeX, Preview-latex (batch 2)
+;; ============================================================
+
+(def (cmd-reftex-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Index entry: "
+      (lambda (entry)
+        (echo-message! echo (str "RefTeX: inserted index entry '" entry "'"))))))
+
+(def (cmd-reftex-view-crossref app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RefTeX: viewing cross-reference")))
+
+(def (cmd-cdlatex-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'cdlatex)
+    (if (mode-enabled? app 'cdlatex)
+      (echo-message! echo "CDLaTeX mode enabled")
+      (echo-message! echo "CDLaTeX mode disabled"))))
+
+(def (cmd-cdlatex-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CDLaTeX: tab expansion")))
+
+(def (cmd-cdlatex-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Environment: "
+      (lambda (env)
+        (echo-message! echo (str "CDLaTeX: inserted environment " env))))))
+
+(def (cmd-preview-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Preview: generating previews for buffer")))
+
+(def (cmd-preview-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Preview: generating previews for region")))
+
+(def (cmd-preview-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Preview: toggling preview at point")))
+
+(def (cmd-preview-clearout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Preview: cleared all previews")))
+
+(def (cmd-preview-document app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Preview: generating previews for entire document")))

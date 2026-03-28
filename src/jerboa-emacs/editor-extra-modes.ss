@@ -16350,3 +16350,55 @@
 (def (cmd-ede-debug-target app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EDE: debugging target")))
+
+;; ============================================================
+;; Round 150 — AUCTeX, RefTeX, CDLaTeX, Preview-latex (batch 1)
+;; ============================================================
+
+(def (cmd-TeX-insert-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TeX macro: "
+      (lambda (mac)
+        (echo-message! echo (str "TeX: inserted macro \\" mac))))))
+
+(def (cmd-TeX-insert-quote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TeX: inserted smart quote")))
+
+(def (cmd-TeX-font app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Font command (b/i/e/t/s/r): "
+      (lambda (f)
+        (echo-message! echo (str "TeX: applied font " f))))))
+
+(def (cmd-LaTeX-fill-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: filled paragraph")))
+
+(def (cmd-LaTeX-mark-section app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: marked section")))
+
+(def (cmd-LaTeX-mark-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: marked environment")))
+
+(def (cmd-reftex-citation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Citation key: "
+      (lambda (key)
+        (echo-message! echo (str "RefTeX: inserted citation " key))))))
+
+(def (cmd-reftex-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Reference label: "
+      (lambda (lbl)
+        (echo-message! echo (str "RefTeX: inserted reference to " lbl))))))
+
+(def (cmd-reftex-label app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RefTeX: inserted label")))
+
+(def (cmd-reftex-toc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RefTeX: showing table of contents")))

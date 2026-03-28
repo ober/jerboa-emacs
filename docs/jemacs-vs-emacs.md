@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 150 — AUCTeX, RefTeX, CDLaTeX, Preview-latex
+
+| Feature | Status | Notes |
+|---|---|---|
+| `TeX-insert-macro` | :orange_circle: | Insert TeX macro |
+| `TeX-insert-quote` | :orange_circle: | Smart quote insertion |
+| `TeX-font` | :orange_circle: | Apply font command |
+| `LaTeX-fill-paragraph` | :orange_circle: | Fill LaTeX paragraph |
+| `LaTeX-mark-section` | :orange_circle: | Mark section |
+| `LaTeX-mark-environment` | :orange_circle: | Mark environment |
+| `reftex-citation` | :orange_circle: | Insert citation |
+| `reftex-reference` | :orange_circle: | Insert reference |
+| `reftex-label` | :orange_circle: | Insert label |
+| `reftex-toc` | :orange_circle: | Table of contents |
+| `reftex-index` | :orange_circle: | Insert index entry |
+| `reftex-view-crossref` | :orange_circle: | View cross-reference |
+| `cdlatex-mode` | :orange_circle: | CDLaTeX minor mode |
+| `cdlatex-tab` | :orange_circle: | CDLaTeX tab expansion |
+| `cdlatex-environment` | :orange_circle: | Insert environment |
+| `preview-buffer` | :orange_circle: | Preview buffer |
+| `preview-region` | :orange_circle: | Preview region |
+| `preview-at-point` | :orange_circle: | Preview at point |
+| `preview-clearout` | :orange_circle: | Clear previews |
+| `preview-document` | :orange_circle: | Preview entire document |
+
 ### Round 149 — Semantic, CEDET, EDE, Senator
 
 | Feature | Status | Notes |
