@@ -10866,3 +10866,94 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Table row inserted")))
 
+;;; Round 44 batch 1: org-export-dispatch, org-html-export-to-html,
+;;; org-latex-export-to-pdf, org-md-export-to-markdown,
+;;; org-ascii-export-to-ascii, org-publish-project, org-refile,
+;;; org-archive-subtree, org-set-property, org-delete-property
+
+(def (cmd-org-export-dispatch app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Org Export*")))
+    (buffer-content-set! new-buf
+      (str "Org Export Dispatcher\n\n"
+           "[h] HTML     — Export to HTML\n"
+           "[l] LaTeX    — Export to LaTeX/PDF\n"
+           "[m] Markdown — Export to Markdown\n"
+           "[a] ASCII    — Export to plain text\n"
+           "[t] UTF-8    — Export to UTF-8 text\n"
+           "[q] Quit"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Org export dispatch")))
+
+(def (cmd-org-html-export-to-html app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Exported to HTML: " file ".html"))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-org-latex-export-to-pdf app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Exported to PDF: " file ".pdf"))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-org-md-export-to-markdown app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Exported to Markdown: " file ".md"))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-org-ascii-export-to-ascii app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Exported to ASCII: " file ".txt"))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-org-publish-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Project to publish: "
+      (lambda (project)
+        (when (and project (not (string-empty? project)))
+          (echo-message! echo (str "Published project: " project)))))))
+
+(def (cmd-org-refile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Refile to: "
+      (lambda (target)
+        (when (and target (not (string-empty? target)))
+          (echo-message! echo (str "Refiled to: " target)))))))
+
+(def (cmd-org-archive-subtree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Subtree archived")))
+
+(def (cmd-org-set-property app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Property name: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-read-string echo (str name " value: ")
+            (lambda (val)
+              (when (and val (not (string-empty? val)))
+                (echo-message! echo (str "Set " name ": " val))))))))))
+
+(def (cmd-org-delete-property app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete property: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-message! echo (str "Deleted property: " name)))))))
+

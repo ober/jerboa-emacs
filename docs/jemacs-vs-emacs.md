@@ -2032,6 +2032,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Org agenda remove file | :orange_circle: | Remove file from agenda list |
 | Org capture finalize | :orange_circle: | Finalize capture template |
 
+### Round 44
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Org export dispatch | :orange_circle: | Export dispatcher menu |
+| Org HTML export | :orange_circle: | Export org to HTML |
+| Org LaTeX export to PDF | :orange_circle: | Export org to PDF via LaTeX |
+| Org Markdown export | :orange_circle: | Export org to Markdown |
+| Org ASCII export | :orange_circle: | Export org to plain text |
+| Org publish project | :orange_circle: | Publish org project |
+| Org refile | :orange_circle: | Refile heading to target |
+| Org archive subtree | :orange_circle: | Archive completed subtree |
+| Org set property | :orange_circle: | Set heading property |
+| Org delete property | :orange_circle: | Delete heading property |
+| Org columns | :orange_circle: | Column view of properties |
+| Org insert link | :orange_circle: | Insert org link |
+| Org store link | :orange_circle: | Store link to current location |
+| Org open at point | :orange_circle: | Open link at point |
+| Org toggle link display | :orange_circle: | Toggle link description display |
+| Org footnote new | :orange_circle: | Insert new footnote |
+| Org footnote action | :orange_circle: | Jump to footnote definition |
+| Org sort | :orange_circle: | Sort org entries |
+| Org sparse tree | :orange_circle: | Create sparse tree from search |
+| Org match sparse tree | :orange_circle: | Sparse tree from tag/property match |
+
 ---
 
 ## Recommended Development Roadmap

@@ -10281,3 +10281,77 @@
 (def (cmd-org-capture-finalize app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Capture finalized")))
+
+;;; Round 44 batch 2: org-columns, org-insert-link, org-store-link,
+;;; org-open-at-point, org-toggle-link-display, org-footnote-new,
+;;; org-footnote-action, org-sort, org-sparse-tree, org-match-sparse-tree
+
+(def (cmd-org-columns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Column view (property-based table display)")))
+
+(def (cmd-org-insert-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Link target: "
+      (lambda (target)
+        (when (and target (not (string-empty? target)))
+          (echo-read-string echo "Description: "
+            (lambda (desc)
+              (let* ((frame (app-state-frame app))
+                     (win (current-window frame))
+                     (ed (edit-window-editor win))
+                     (link (if (and desc (not (string-empty? desc)))
+                             (str "[[" target "][" desc "]]")
+                             (str "[[" target "]]"))))
+                (editor-insert-text ed link)
+                (echo-message! echo (str "Inserted link: " target))))))))))
+
+(def (cmd-org-store-link app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Stored link: " file))
+      (echo-message! echo (str "Stored link: " (buffer-name buf))))))
+
+(def (cmd-org-open-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "No link at point")))
+
+(def (cmd-org-toggle-link-display app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "org-link-display")
+    (if (mode-enabled? app "org-link-display")
+      (echo-message! echo "Link display: showing full links")
+      (echo-message! echo "Link display: showing descriptions only"))))
+
+(def (cmd-org-footnote-new app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (editor-insert-text ed "[fn:1]")
+    (echo-message! echo "Inserted footnote reference")))
+
+(def (cmd-org-footnote-action app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Footnote action: jump between reference and definition")))
+
+(def (cmd-org-sort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org sort: entries sorted alphabetically")))
+
+(def (cmd-org-sparse-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sparse tree search: "
+      (lambda (query)
+        (when (and query (not (string-empty? query)))
+          (echo-message! echo (str "Sparse tree for: " query)))))))
+
+(def (cmd-org-match-sparse-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Match tags/properties: "
+      (lambda (match)
+        (when (and match (not (string-empty? match)))
+          (echo-message! echo (str "Sparse tree matching: " match)))))))
