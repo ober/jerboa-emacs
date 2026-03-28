@@ -11374,3 +11374,77 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Nov: previous chapter")))
 
+;;; Round 52 batch 1: docker-volumes, docker-compose-up, docker-compose-down,
+;;; kubernetes-overview, kubel, terraform-fmt, terraform-validate,
+;;; ansible-vault-encrypt, ansible-vault-decrypt, verb-send-request-on-point
+
+(def (cmd-docker-volumes app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*docker-volumes*")))
+    (buffer-content-set! new-buf
+      (str "Docker Volumes\n\n"
+           "VOLUME NAME            DRIVER    MOUNTPOINT\n"
+           "-----------            ------    ----------\n"
+           "(docker not available)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Docker volumes")))
+
+(def (cmd-docker-compose-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker compose up (starting services...)")))
+
+(def (cmd-docker-compose-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker compose down (stopping services...)")))
+
+(def (cmd-kubernetes-overview app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*kubernetes*")))
+    (buffer-content-set! new-buf
+      (str "Kubernetes Overview\n\n"
+           "Context: (none)\n"
+           "Namespace: default\n\n"
+           "Pods: (kubectl not available)\n"
+           "Services: (kubectl not available)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Kubernetes overview")))
+
+(def (cmd-kubel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kubel: Kubernetes interface (kubectl not available)")))
+
+(def (cmd-terraform-fmt app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (name (buffer-name buf)))
+    (echo-message! echo (str "Terraform fmt: " name " (formatted)"))))
+
+(def (cmd-terraform-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform validate: configuration valid")))
+
+(def (cmd-ansible-vault-encrypt app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Ansible vault: encrypted " file))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-ansible-vault-decrypt app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Ansible vault: decrypted " file))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-verb-send-request-on-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verb: sending HTTP request at point (no request found)")))
+

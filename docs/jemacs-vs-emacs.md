@@ -2232,6 +2232,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | BBDB search | :orange_circle: | Search contacts |
 | EBDB | :orange_circle: | Enhanced contact database |
 
+### Round 52
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Docker volumes | :orange_circle: | List Docker volumes |
+| Docker compose up | :orange_circle: | Start Docker Compose services |
+| Docker compose down | :orange_circle: | Stop Docker Compose services |
+| Kubernetes overview | :orange_circle: | K8s cluster overview |
+| Kubel | :orange_circle: | Kubernetes interface |
+| Terraform fmt | :orange_circle: | Format Terraform files |
+| Terraform validate | :orange_circle: | Validate Terraform config |
+| Ansible vault encrypt | :orange_circle: | Encrypt with Ansible Vault |
+| Ansible vault decrypt | :orange_circle: | Decrypt with Ansible Vault |
+| Verb send request | :orange_circle: | Send HTTP request at point |
+| SQL SQLite | :orange_circle: | Connect to SQLite database |
+| SQL PostgreSQL | :orange_circle: | Connect to PostgreSQL |
+| SQL MySQL | :orange_circle: | Connect to MySQL |
+| Eshell command | :orange_circle: | Run eshell command |
+| Async shell command no window | :orange_circle: | Async command without buffer |
+| Direnv update environment | :orange_circle: | Update env from .envrc |
+| Nix mode | :orange_circle: | Nix expression editing |
+| Nix REPL | :orange_circle: | Interactive Nix REPL |
+| Guix mode | :orange_circle: | GNU Guix editing |
+| Vagrant up | :orange_circle: | Start Vagrant VM |
+
 ---
 
 ## Recommended Development Roadmap

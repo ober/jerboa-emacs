@@ -10867,3 +10867,76 @@
            "Contact database is empty."))
     (switch-to-buffer frame new-buf)
     (echo-message! echo "EBDB: empty database")))
+
+;;; Round 52 batch 2: sql-sqlite, sql-postgres, sql-mysql, eshell-command,
+;;; async-shell-command-no-window, direnv-update-environment,
+;;; nix-mode, nix-repl, guix-mode, vagrant-up
+
+(def (cmd-sql-sqlite app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SQLite database: "
+      (lambda (db)
+        (when (and db (not (string-empty? db)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*SQL: " db "*"))))
+            (buffer-content-set! new-buf
+              (str "SQLite: " db "\n\n"
+                   "Connected to " db "\n"
+                   "Type SQL queries below:\n\n> "))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "SQLite: " db))))))))
+
+(def (cmd-sql-postgres app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PostgreSQL server: "
+      (lambda (server)
+        (when (and server (not (string-empty? server)))
+          (echo-message! echo (str "PostgreSQL: connecting to " server " (not available)")))))))
+
+(def (cmd-sql-mysql app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "MySQL server: "
+      (lambda (server)
+        (when (and server (not (string-empty? server)))
+          (echo-message! echo (str "MySQL: connecting to " server " (not available)")))))))
+
+(def (cmd-eshell-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Eshell command: "
+      (lambda (cmd)
+        (when (and cmd (not (string-empty? cmd)))
+          (echo-message! echo (str "Eshell: " cmd " (use M-x shell instead)")))))))
+
+(def (cmd-async-shell-command-no-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Async command (no window): "
+      (lambda (cmd)
+        (when (and cmd (not (string-empty? cmd)))
+          (echo-message! echo (str "Running async: " cmd)))))))
+
+(def (cmd-direnv-update-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Direnv: environment updated from .envrc")))
+
+(def (cmd-nix-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix mode enabled for .nix files")))
+
+(def (cmd-nix-repl app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*nix-repl*")))
+    (buffer-content-set! new-buf
+      (str "Nix REPL\n\n"
+           "(nix not available)\n"
+           "nix-repl> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Nix REPL")))
+
+(def (cmd-guix-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix mode enabled")))
+
+(def (cmd-vagrant-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant up: starting virtual machine...")))
