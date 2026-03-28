@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 231 — Dirvish ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| dirvish-dwim | :orange_circle: | Dirvish DWIM action |
+| dirvish-history-go-backward | :orange_circle: | Go backward in history |
+| dirvish-narrow | :orange_circle: | Narrow file list |
+| dirvish-peek-mode | :orange_circle: | Toggle peek mode |
+| dirvish-quicksort | :orange_circle: | Quick sort files |
+| dirvish-quit | :orange_circle: | Quit Dirvish |
+| dirvish-ls-switches | :orange_circle: | Set ls switches |
+| dirvish-file-info-menu | :orange_circle: | File info menu |
+| dirvish-show-history | :orange_circle: | Show navigation history |
+| dirvish-mark-menu | :orange_circle: | Mark menu |
+| dirvish-copy-remote-path | :orange_circle: | Copy remote path |
+| dirvish-rename-file | :orange_circle: | Rename file |
+| dirvish-chxxx-menu | :orange_circle: | Chmod/chown menu |
+| dirvish-roam | :orange_circle: | Roam mode |
+| dirvish-extras | :orange_circle: | Extras menu |
+| dirvish-media-properties | :orange_circle: | Show media properties |
+| dirvish-total-file-size | :orange_circle: | Show total file size |
+| dirvish-vc-info-menu | :orange_circle: | VC info menu |
+| dirvish-collapse-mode | :orange_circle: | Toggle collapse mode |
+| dirvish-side-follow-mode | :orange_circle: | Toggle side follow mode |
+
 ### Round 230 — Activities ext, Bufler ext
 
 | Command | Status | Description |

@@ -19609,3 +19609,53 @@
     (if (mode-enabled? app 'bufler-workspace)
       (echo-message! echo "Bufler: workspace mode enabled")
       (echo-message! echo "Bufler: workspace mode disabled"))))
+
+;;; Round 231 — Dirvish ext (batch 2)
+
+(def (cmd-dirvish-copy-remote-path app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: copied remote path")))
+
+(def (cmd-dirvish-rename-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New name: "
+      (lambda (name)
+        (echo-message! echo (str "Dirvish: renamed to " name))))))
+
+(def (cmd-dirvish-chxxx-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: chmod/chown menu")))
+
+(def (cmd-dirvish-roam app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: roam mode")))
+
+(def (cmd-dirvish-extras app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: extras menu")))
+
+(def (cmd-dirvish-media-properties app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: showing media properties")))
+
+(def (cmd-dirvish-total-file-size app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: showing total file size")))
+
+(def (cmd-dirvish-vc-info-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: VC info menu")))
+
+(def (cmd-dirvish-collapse-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dirvish-collapse)
+    (if (mode-enabled? app 'dirvish-collapse)
+      (echo-message! echo "Dirvish: collapse mode enabled")
+      (echo-message! echo "Dirvish: collapse mode disabled"))))
+
+(def (cmd-dirvish-side-follow-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dirvish-side-follow)
+    (if (mode-enabled? app 'dirvish-side-follow)
+      (echo-message! echo "Dirvish: side follow mode enabled")
+      (echo-message! echo "Dirvish: side follow mode disabled"))))

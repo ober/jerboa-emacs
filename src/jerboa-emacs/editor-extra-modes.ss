@@ -20278,3 +20278,52 @@
 (def (cmd-activities-set app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Activities: set activity state")))
+
+;;; Round 231 — Dirvish ext (batch 1)
+
+(def (cmd-dirvish-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: DWIM action")))
+
+(def (cmd-dirvish-history-go-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: history backward")))
+
+(def (cmd-dirvish-narrow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter: "
+      (lambda (f)
+        (echo-message! echo (str "Dirvish: narrowed to " f))))))
+
+(def (cmd-dirvish-peek-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dirvish-peek)
+    (if (mode-enabled? app 'dirvish-peek)
+      (echo-message! echo "Dirvish: peek mode enabled")
+      (echo-message! echo "Dirvish: peek mode disabled"))))
+
+(def (cmd-dirvish-quicksort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: quick sort")))
+
+(def (cmd-dirvish-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: quit")))
+
+(def (cmd-dirvish-ls-switches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switches: "
+      (lambda (sw)
+        (echo-message! echo (str "Dirvish: set ls switches " sw))))))
+
+(def (cmd-dirvish-file-info-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: file info menu")))
+
+(def (cmd-dirvish-show-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: showing history")))
+
+(def (cmd-dirvish-mark-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dirvish: mark menu")))
