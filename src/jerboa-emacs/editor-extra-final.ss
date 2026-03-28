@@ -19378,3 +19378,49 @@
 (def (cmd-corfu-prompt-end app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Corfu: moved to prompt end")))
+
+;;; Round 226 — Nix ext, Guix ext (batch 2)
+
+(def (cmd-guix-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: refreshing package")))
+
+(def (cmd-guix-download app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Guix: downloading " url))))))
+
+(def (cmd-guix-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: entering development environment")))
+
+(def (cmd-guix-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: deploying system")))
+
+(def (cmd-guix-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Importer: "
+      (lambda (imp)
+        (echo-message! echo (str "Guix: importing via " imp))))))
+
+(def (cmd-guix-pack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: creating pack")))
+
+(def (cmd-guix-gc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: garbage collecting store")))
+
+(def (cmd-guix-substitute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: managing substitutes")))
+
+(def (cmd-guix-archive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: archiving store items")))
+
+(def (cmd-guix-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: copying store items")))

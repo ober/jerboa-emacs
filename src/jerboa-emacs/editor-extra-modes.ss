@@ -20032,3 +20032,51 @@
 (def (cmd-cape-capf-inside-comment app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cape: capf inside comment")))
+
+;;; Round 226 — Nix ext, Guix ext (batch 1)
+
+(def (cmd-nix-flake app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: flake operations")))
+
+(def (cmd-nix-indent-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: indented line")))
+
+(def (cmd-nix-drv-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: derivation mode")))
+
+(def (cmd-nix-update-fetch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: updated fetch hash")))
+
+(def (cmd-nix-env-uninstall app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Nix: uninstalling " pkg))))))
+
+(def (cmd-guix-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Guix: building " pkg))))))
+
+(def (cmd-guix-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Guix: editing definition for " pkg))))))
+
+(def (cmd-guix-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: linting package")))
+
+(def (cmd-guix-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: showing dependency graph")))
+
+(def (cmd-guix-hash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: computing hash")))

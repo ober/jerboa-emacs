@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 226 — Nix ext, Guix ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| nix-flake | :orange_circle: | Nix flake operations |
+| nix-indent-line | :orange_circle: | Indent Nix line |
+| nix-drv-mode | :orange_circle: | Nix derivation mode |
+| nix-update-fetch | :orange_circle: | Update fetch hash |
+| nix-env-uninstall | :orange_circle: | Uninstall Nix package |
+| guix-build | :orange_circle: | Build Guix package |
+| guix-edit | :orange_circle: | Edit Guix package definition |
+| guix-lint | :orange_circle: | Lint Guix package |
+| guix-graph | :orange_circle: | Show dependency graph |
+| guix-hash | :orange_circle: | Compute hash |
+| guix-refresh | :orange_circle: | Refresh package |
+| guix-download | :orange_circle: | Download URL |
+| guix-environment | :orange_circle: | Enter dev environment |
+| guix-deploy | :orange_circle: | Deploy system |
+| guix-import | :orange_circle: | Import package |
+| guix-pack | :orange_circle: | Create pack |
+| guix-gc | :orange_circle: | Garbage collect store |
+| guix-substitute | :orange_circle: | Manage substitutes |
+| guix-archive | :orange_circle: | Archive store items |
+| guix-copy | :orange_circle: | Copy store items |
+
 ### Round 225 — Transient ext, Cape ext, Tempel ext, Corfu ext
 
 | Command | Status | Description |
