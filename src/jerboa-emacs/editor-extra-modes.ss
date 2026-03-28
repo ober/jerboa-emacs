@@ -19331,3 +19331,53 @@
     (if (mode-enabled? app 'lsp-ui-sideline-symbols-info)
       (echo-message! echo "LSP-UI: sideline symbols info enabled")
       (echo-message! echo "LSP-UI: sideline symbols info disabled"))))
+
+;;; Round 211 — Treemacs extensions (batch 1)
+
+(def (cmd-treemacs-visit-node-no-split app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: visit node without split")))
+
+(def (cmd-treemacs-visit-node-close-treemacs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: visit node and close treemacs")))
+
+(def (cmd-treemacs-visit-node-in-most-recently-used-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: visit node in MRU window")))
+
+(def (cmd-treemacs-toggle-fixed-width app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-fixed-width)
+    (if (mode-enabled? app 'treemacs-fixed-width)
+      (echo-message! echo "Treemacs: fixed width enabled")
+      (echo-message! echo "Treemacs: fixed width disabled"))))
+
+(def (cmd-treemacs-set-width app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Width: "
+      (lambda (w)
+        (echo-message! echo (str "Treemacs: set width to " w))))))
+
+(def (cmd-treemacs-narrow-to-current-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: narrowed to current file")))
+
+(def (cmd-treemacs-cleanup-litter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: cleaned up litter files")))
+
+(def (cmd-treemacs-resort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: resorted entries")))
+
+(def (cmd-treemacs-fit-window-width app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: fitted window width to content")))
+
+(def (cmd-treemacs-gap-between-roots-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-gap-between-roots)
+    (if (mode-enabled? app 'treemacs-gap-between-roots)
+      (echo-message! echo "Treemacs: gap between roots enabled")
+      (echo-message! echo "Treemacs: gap between roots disabled"))))

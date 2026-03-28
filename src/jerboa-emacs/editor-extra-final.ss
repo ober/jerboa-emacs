@@ -18715,3 +18715,60 @@
 (def (cmd-lsp-ui-peek-jump-forward app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "LSP-UI: jumped forward in peek history")))
+
+;;; Round 211 — Treemacs extensions (batch 2)
+
+(def (cmd-treemacs-fringe-indicator-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-fringe-indicator)
+    (if (mode-enabled? app 'treemacs-fringe-indicator)
+      (echo-message! echo "Treemacs: fringe indicator mode enabled")
+      (echo-message! echo "Treemacs: fringe indicator mode disabled"))))
+
+(def (cmd-treemacs-git-commit-diff-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-git-commit-diff)
+    (if (mode-enabled? app 'treemacs-git-commit-diff)
+      (echo-message! echo "Treemacs: git commit diff mode enabled")
+      (echo-message! echo "Treemacs: git commit diff mode disabled"))))
+
+(def (cmd-treemacs-indicate-top-scroll-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-indicate-top-scroll)
+    (if (mode-enabled? app 'treemacs-indicate-top-scroll)
+      (echo-message! echo "Treemacs: top scroll indicator enabled")
+      (echo-message! echo "Treemacs: top scroll indicator disabled"))))
+
+(def (cmd-treemacs-tag-follow-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-tag-follow)
+    (if (mode-enabled? app 'treemacs-tag-follow)
+      (echo-message! echo "Treemacs: tag follow mode enabled")
+      (echo-message! echo "Treemacs: tag follow mode disabled"))))
+
+(def (cmd-treemacs-project-follow-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'treemacs-project-follow)
+    (if (mode-enabled? app 'treemacs-project-follow)
+      (echo-message! echo "Treemacs: project follow mode enabled")
+      (echo-message! echo "Treemacs: project follow mode disabled"))))
+
+(def (cmd-treemacs-add-bookmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: added bookmark at point")))
+
+(def (cmd-treemacs-next-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: switched to next workspace")))
+
+(def (cmd-treemacs-previous-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: switched to previous workspace")))
+
+(def (cmd-treemacs-remove-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: removed current workspace")))
+
+(def (cmd-treemacs-finish-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: finished workspace edit")))

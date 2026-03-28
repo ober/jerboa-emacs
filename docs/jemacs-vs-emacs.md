@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 211 — Treemacs ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| treemacs-visit-node-no-split | :orange_circle: | Visit node without splitting |
+| treemacs-visit-node-close-treemacs | :orange_circle: | Visit node and close treemacs |
+| treemacs-visit-node-in-most-recently-used-window | :orange_circle: | Visit node in MRU window |
+| treemacs-toggle-fixed-width | :orange_circle: | Toggle fixed width mode |
+| treemacs-set-width | :orange_circle: | Set treemacs window width |
+| treemacs-narrow-to-current-file | :orange_circle: | Narrow view to current file |
+| treemacs-cleanup-litter | :orange_circle: | Clean up litter files |
+| treemacs-resort | :orange_circle: | Resort tree entries |
+| treemacs-fit-window-width | :orange_circle: | Fit window width to content |
+| treemacs-gap-between-roots-toggle | :orange_circle: | Toggle gap between root nodes |
+| treemacs-fringe-indicator-mode | :orange_circle: | Toggle fringe indicator |
+| treemacs-git-commit-diff-mode | :orange_circle: | Toggle git commit diff display |
+| treemacs-indicate-top-scroll-mode | :orange_circle: | Toggle top scroll indicator |
+| treemacs-tag-follow-mode | :orange_circle: | Toggle tag follow mode |
+| treemacs-project-follow-mode | :orange_circle: | Toggle project follow mode |
+| treemacs-add-bookmark | :orange_circle: | Add bookmark at point |
+| treemacs-next-workspace | :orange_circle: | Switch to next workspace |
+| treemacs-previous-workspace | :orange_circle: | Switch to previous workspace |
+| treemacs-remove-workspace | :orange_circle: | Remove current workspace |
+| treemacs-finish-edit | :orange_circle: | Finish workspace edit |
+
 ### Round 210 — DAP-mode ext, LSP-UI ext
 
 | Command | Status | Description |
