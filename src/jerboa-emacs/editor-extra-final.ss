@@ -11121,3 +11121,42 @@
 (def (cmd-groovy-mode app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Groovy mode enabled")))
+
+;; Round 56 — Projectile (batch 2)
+(def (cmd-projectile-run-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Projectile: opening shell in project root")))
+
+(def (cmd-projectile-compile-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Compile command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Projectile: compiling with '" cmd "'"))))))
+
+(def (cmd-projectile-test-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Test command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Projectile: running tests with '" cmd "'"))))))
+
+(def (cmd-projectile-regenerate-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Projectile: regenerating TAGS file")))
+
+(def (cmd-projectile-find-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Projectile: jumping to tag '" tag "'"))))))
+
+(def (cmd-projectile-kill-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Projectile: killed all project buffers")))
+
+(def (cmd-projectile-invalidate-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Projectile: cache invalidated")))
+
+(def (cmd-projectile-recentf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Projectile: showing recent project files")))

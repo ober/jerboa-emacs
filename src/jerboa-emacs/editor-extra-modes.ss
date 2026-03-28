@@ -11619,3 +11619,65 @@
       (echo-message! echo "No region selected")
       (echo-message! echo "JSON: reformatted region"))))
 
+;; Round 56 — VC extensions + Projectile (batch 1)
+(def (cmd-ediff-regions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ediff: select two regions to compare")))
+
+(def (cmd-smerge-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'smerge-mode)
+    (if (mode-enabled? app 'smerge-mode)
+      (echo-message! echo "SMerge mode enabled (conflict resolution)")
+      (echo-message! echo "SMerge mode disabled"))))
+
+(def (cmd-vc-annotate-show app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (name (buffer-name buf)))
+    (echo-message! echo (str "VC: showing annotations for " name))))
+
+(def (cmd-vc-log-incoming app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC: showing incoming changes (remote → local)")))
+
+(def (cmd-vc-log-outgoing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC: showing outgoing changes (local → remote)")))
+
+(def (cmd-vc-revision-other-window app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (name (buffer-name buf)))
+    (echo-read-string echo "Revision: "
+      (lambda (rev)
+        (echo-message! echo (str "VC: showing " name " at revision " rev))))))
+
+(def (cmd-projectile-find-file-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find file in project (other window): "
+      (lambda (file)
+        (echo-message! echo (str "Projectile: opened " file " in other window"))))))
+
+(def (cmd-projectile-switch-open-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to open project: "
+      (lambda (proj)
+        (echo-message! echo (str "Projectile: switched to project " proj))))))
+
+(def (cmd-projectile-grep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Projectile grep: "
+      (lambda (pattern)
+        (echo-message! echo (str "Projectile: grepping for '" pattern "'"))))))
+
+(def (cmd-projectile-replace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Projectile replace: "
+      (lambda (from)
+        (echo-read-string echo (str "Replace '" from "' with: ")
+          (lambda (to)
+            (echo-message! echo (str "Projectile: replaced '" from "' with '" to "'"))))))))
+

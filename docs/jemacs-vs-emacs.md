@@ -2332,6 +2332,29 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Scala mode | :orange_circle: | Scala editing |
 | Groovy mode | :orange_circle: | Groovy editing |
 
+### Round 56 — VC Extensions & Projectile
+
+| Feature | Status | Notes |
+|---|---|---|
+| ediff-regions | :orange_circle: | Compare two selected regions |
+| smerge-mode | :orange_circle: | Merge conflict resolution mode |
+| vc-annotate-show | :orange_circle: | Show file annotations (blame) |
+| vc-log-incoming | :orange_circle: | Show incoming remote changes |
+| vc-log-outgoing | :orange_circle: | Show outgoing local changes |
+| vc-revision-other-window | :orange_circle: | View file at specific revision |
+| projectile-find-file-other-window | :orange_circle: | Open project file in other window |
+| projectile-switch-open-project | :orange_circle: | Switch between open projects |
+| projectile-grep | :orange_circle: | Grep across project files |
+| projectile-replace | :orange_circle: | Find and replace across project |
+| projectile-run-shell | :orange_circle: | Shell in project root |
+| projectile-compile-project | :orange_circle: | Compile project with command |
+| projectile-test-project | :orange_circle: | Run project tests |
+| projectile-regenerate-tags | :orange_circle: | Regenerate TAGS file |
+| projectile-find-tag | :orange_circle: | Jump to tag definition |
+| projectile-kill-buffers | :orange_circle: | Kill all project buffers |
+| projectile-invalidate-cache | :orange_circle: | Invalidate project cache |
+| projectile-recentf | :orange_circle: | Recent project files |
+
 ---
 
 ## Recommended Development Roadmap
