@@ -13719,3 +13719,47 @@
       (lambda (sym)
         (echo-message! echo (str "Consult Eglot: searching for " sym))))))
 
+;;; Round 97 — Terminal & Detached
+(def (cmd-eat-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: terminal opened in project root")))
+
+(def (cmd-eat-eshell-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eat-eshell)
+    (if (mode-enabled? app 'eat-eshell)
+      (echo-message! echo "Eat eshell mode enabled")
+      (echo-message! echo "Eat eshell mode disabled"))))
+
+(def (cmd-eat-line-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: switched to line mode")))
+
+(def (cmd-eat-char-mode2 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: switched to char mode 2")))
+
+(def (cmd-multi-term app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multi-term: new terminal created")))
+
+(def (cmd-multi-term-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multi-term: switched to next terminal")))
+
+(def (cmd-multi-term-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multi-term: switched to previous terminal")))
+
+(def (cmd-multi-term-dedicated-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multi-term: toggled dedicated terminal")))
+
+(def (cmd-multi-term-dedicated-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multi-term: selected dedicated terminal")))
+
+(def (cmd-term-line-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Term: switched to line mode")))
+

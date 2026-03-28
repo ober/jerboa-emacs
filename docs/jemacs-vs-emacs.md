@@ -3387,6 +3387,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 97 — Terminal & Detached Sessions
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| eat-project | :orange_circle: | Open eat terminal in project root |
+| eat-eshell-mode | :orange_circle: | Toggle eat eshell mode |
+| eat-line-mode | :orange_circle: | Switch eat to line mode |
+| eat-char-mode2 | :orange_circle: | Switch eat to char mode 2 |
+| multi-term | :orange_circle: | Create new multi-term terminal |
+| multi-term-next | :orange_circle: | Switch to next multi-term |
+| multi-term-prev | :orange_circle: | Switch to previous multi-term |
+| multi-term-dedicated-toggle | :orange_circle: | Toggle dedicated multi-term |
+| multi-term-dedicated-select | :orange_circle: | Select dedicated multi-term |
+| term-line-mode | :orange_circle: | Switch term to line mode |
+| term-char-mode | :orange_circle: | Switch term to char mode |
+| term-send-raw-string | :orange_circle: | Send raw string to term |
+| term-toggle-mode | :orange_circle: | Toggle term line/char mode |
+| comint-redirect-send-command | :orange_circle: | Redirect comint command output |
+| detached-compile | :orange_circle: | Compile in detached session |
+| detached-open-session | :orange_circle: | Open detached session |
+| detached-list-sessions | :orange_circle: | List detached sessions |
+| detached-view-session | :orange_circle: | View detached session output |
+| detached-attach | :orange_circle: | Attach to detached session |
+| detached-delete-session | :orange_circle: | Delete detached session |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

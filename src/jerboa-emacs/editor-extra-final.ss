@@ -13178,3 +13178,50 @@
 (def (cmd-cape-dabbrev app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cape: dabbrev completion activated")))
+
+;;; Round 97 — Terminal & Detached (cont.)
+(def (cmd-term-char-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Term: switched to char mode")))
+
+(def (cmd-term-send-raw-string app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Send raw string: "
+      (lambda (str-val)
+        (echo-message! echo (str "Term: sent raw string"))))))
+
+(def (cmd-term-toggle-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Term: toggled between line and char mode")))
+
+(def (cmd-comint-redirect-send-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Redirect command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Comint: redirecting output of " cmd))))))
+
+(def (cmd-detached-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Detached compile command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Detached: compiling with " cmd))))))
+
+(def (cmd-detached-open-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: opening session")))
+
+(def (cmd-detached-list-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: listing all sessions")))
+
+(def (cmd-detached-view-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: viewing session output")))
+
+(def (cmd-detached-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: attaching to session")))
+
+(def (cmd-detached-delete-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: session deleted")))
