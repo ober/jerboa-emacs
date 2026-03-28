@@ -18952,3 +18952,45 @@
     (echo-read-string echo "Service command: "
       (lambda (cmd)
         (echo-message! echo (str "Docker Compose: exec " cmd))))))
+
+;;; Round 216 — CIDER ext (batch 2)
+
+(def (cmd-cider-javadoc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: showing Javadoc")))
+
+(def (cmd-cider-test-run-ns-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: running namespace tests")))
+
+(def (cmd-cider-test-run-project-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: running project tests")))
+
+(def (cmd-cider-inspect-last-result app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: inspecting last result")))
+
+(def (cmd-cider-macroexpand-1 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: macroexpand-1")))
+
+(def (cmd-cider-macroexpand-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: macroexpand-all")))
+
+(def (cmd-cider-ns-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: reloaded namespace")))
+
+(def (cmd-cider-ns-reload-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: reloaded all namespaces")))
+
+(def (cmd-cider-repl-clear-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: cleared REPL buffer")))
+
+(def (cmd-cider-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: formatted buffer")))

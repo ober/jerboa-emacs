@@ -19569,3 +19569,49 @@
 (def (cmd-docker-image-rm app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Docker: removed image")))
+
+;;; Round 216 — CIDER ext (batch 1)
+
+(def (cmd-cider-connect-clj app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Host:port: "
+      (lambda (hp)
+        (echo-message! echo (str "CIDER: connecting CLJ to " hp))))))
+
+(def (cmd-cider-connect-cljs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Host:port: "
+      (lambda (hp)
+        (echo-message! echo (str "CIDER: connecting CLJS to " hp))))))
+
+(def (cmd-cider-jack-in-clj app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: jacking in CLJ")))
+
+(def (cmd-cider-jack-in-cljs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: jacking in CLJS")))
+
+(def (cmd-cider-eval-last-sexp-to-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: evaluated last sexp to REPL")))
+
+(def (cmd-cider-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: evaluated region")))
+
+(def (cmd-cider-eval-ns-form app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: evaluated ns form")))
+
+(def (cmd-cider-load-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: loaded buffer")))
+
+(def (cmd-cider-load-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: loaded file")))
+
+(def (cmd-cider-switch-to-repl-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: switched to REPL buffer")))

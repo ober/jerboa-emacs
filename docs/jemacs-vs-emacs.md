@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 216 — CIDER ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| cider-connect-clj | :orange_circle: | Connect to CLJ nREPL |
+| cider-connect-cljs | :orange_circle: | Connect to CLJS nREPL |
+| cider-jack-in-clj | :orange_circle: | Jack in CLJ REPL |
+| cider-jack-in-cljs | :orange_circle: | Jack in CLJS REPL |
+| cider-eval-last-sexp-to-repl | :orange_circle: | Eval last sexp to REPL |
+| cider-eval-region | :orange_circle: | Eval region |
+| cider-eval-ns-form | :orange_circle: | Eval namespace form |
+| cider-load-buffer | :orange_circle: | Load current buffer |
+| cider-load-file | :orange_circle: | Load file |
+| cider-switch-to-repl-buffer | :orange_circle: | Switch to REPL buffer |
+| cider-javadoc | :orange_circle: | Show Javadoc |
+| cider-test-run-ns-tests | :orange_circle: | Run namespace tests |
+| cider-test-run-project-tests | :orange_circle: | Run project tests |
+| cider-inspect-last-result | :orange_circle: | Inspect last result |
+| cider-macroexpand-1 | :orange_circle: | Macroexpand-1 |
+| cider-macroexpand-all | :orange_circle: | Macroexpand all |
+| cider-ns-reload | :orange_circle: | Reload namespace |
+| cider-ns-reload-all | :orange_circle: | Reload all namespaces |
+| cider-repl-clear-buffer | :orange_circle: | Clear REPL buffer |
+| cider-format-buffer | :orange_circle: | Format buffer |
+
 ### Round 215 — Docker ext
 
 | Command | Status | Description |
