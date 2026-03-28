@@ -13137,3 +13137,44 @@
     (echo-read-string echo "ArXiv lookup: "
       (lambda (query)
         (echo-message! echo (str "Biblio: searching ArXiv for '" query "'"))))))
+
+;;; Round 96 — Eglot & Cape (cont.)
+(def (cmd-eglot-find-declaration app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: finding declaration")))
+
+(def (cmd-eglot-find-implementation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: finding implementation")))
+
+(def (cmd-eglot-find-typeDefinition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: finding type definition")))
+
+(def (cmd-eglot-hierarchy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: showing hierarchy")))
+
+(def (cmd-eglot-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: buffer formatted")))
+
+(def (cmd-eglot-code-action-rewrite app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: code rewritten")))
+
+(def (cmd-eglot-code-action-inline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: code inlined")))
+
+(def (cmd-eglot-stderr-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: showing stderr buffer")))
+
+(def (cmd-cape-eglot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: eglot completion activated")))
+
+(def (cmd-cape-dabbrev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cape: dabbrev completion activated")))

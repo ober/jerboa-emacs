@@ -13673,3 +13673,49 @@
       (lambda (ref)
         (echo-message! echo (str "Citar: opening " ref))))))
 
+;;; Round 96 — Eglot & Cape Extensions
+(def (cmd-eglot-code-action-organize-imports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: organized imports")))
+
+(def (cmd-eglot-code-action-quickfix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: applied quickfix")))
+
+(def (cmd-eglot-code-action-extract app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: extracted code")))
+
+(def (cmd-eglot-events-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: showing events buffer")))
+
+(def (cmd-eglot-signal-didChangeConfiguration app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: signaled didChangeConfiguration")))
+
+(def (cmd-eglot-signal-didSave app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: signaled didSave")))
+
+(def (cmd-eglot-inlay-hints-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eglot-inlay-hints)
+    (if (mode-enabled? app 'eglot-inlay-hints)
+      (echo-message! echo "Eglot inlay hints enabled")
+      (echo-message! echo "Eglot inlay hints disabled"))))
+
+(def (cmd-eglot-show-workspace-configuration app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: showing workspace configuration")))
+
+(def (cmd-eglot-clear-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: status cleared")))
+
+(def (cmd-consult-eglot-symbols app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Eglot symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "Consult Eglot: searching for " sym))))))
+

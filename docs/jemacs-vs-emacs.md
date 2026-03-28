@@ -3360,6 +3360,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 96 — Eglot & Cape Extensions
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| eglot-code-action-organize-imports | :orange_circle: | Organize imports via eglot |
+| eglot-code-action-quickfix | :orange_circle: | Apply quickfix via eglot |
+| eglot-code-action-extract | :orange_circle: | Extract code via eglot |
+| eglot-events-buffer | :orange_circle: | Show eglot events buffer |
+| eglot-signal-didChangeConfiguration | :orange_circle: | Signal config change to eglot |
+| eglot-signal-didSave | :orange_circle: | Signal save to eglot |
+| eglot-inlay-hints-mode | :orange_circle: | Toggle eglot inlay hints |
+| eglot-show-workspace-configuration | :orange_circle: | Show eglot workspace config |
+| eglot-clear-status | :orange_circle: | Clear eglot status |
+| consult-eglot-symbols | :orange_circle: | Search eglot symbols |
+| eglot-find-declaration | :orange_circle: | Find declaration via eglot |
+| eglot-find-implementation | :orange_circle: | Find implementation via eglot |
+| eglot-find-typeDefinition | :orange_circle: | Find type definition via eglot |
+| eglot-hierarchy | :orange_circle: | Show eglot hierarchy |
+| eglot-format-buffer | :orange_circle: | Format buffer via eglot |
+| eglot-code-action-rewrite | :orange_circle: | Rewrite code via eglot |
+| eglot-code-action-inline | :orange_circle: | Inline code via eglot |
+| eglot-stderr-buffer | :orange_circle: | Show eglot stderr buffer |
+| cape-eglot | :orange_circle: | Cape eglot completion |
+| cape-dabbrev | :orange_circle: | Cape dabbrev completion |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
