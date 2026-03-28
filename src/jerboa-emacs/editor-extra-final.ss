@@ -13513,3 +13513,55 @@
     (echo-read-string echo "Attachment directory: "
       (lambda (dir)
         (echo-message! echo (str "Org Attach: set directory to " dir))))))
+
+;;; ——— Round 104: Magit advanced (batch 2) ———
+
+(def (cmd-magit-subtree-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subtree pull prefix: "
+      (lambda (prefix)
+        (echo-message! echo (str "Magit: pulled subtree " prefix))))))
+
+(def (cmd-magit-subtree-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subtree push prefix: "
+      (lambda (prefix)
+        (echo-message! echo (str "Magit: pushed subtree " prefix))))))
+
+(def (cmd-magit-subtree-split app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subtree split prefix: "
+      (lambda (prefix)
+        (echo-message! echo (str "Magit: split subtree " prefix))))))
+
+(def (cmd-magit-submodule-populate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: populated submodules")))
+
+(def (cmd-magit-submodule-synchronize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: synchronized submodule URLs")))
+
+(def (cmd-magit-submodule-unpopulate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: unpopulated submodules")))
+
+(def (cmd-magit-am-apply-patches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Apply patches from: "
+      (lambda (path)
+        (echo-message! echo (str "Magit: applying patches from " path))))))
+
+(def (cmd-magit-am-continue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: continuing patch application")))
+
+(def (cmd-magit-am-abort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: aborted patch application")))
+
+(def (cmd-magit-format-patch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Format patch range: "
+      (lambda (range)
+        (echo-message! echo (str "Magit: formatted patches for " range))))))

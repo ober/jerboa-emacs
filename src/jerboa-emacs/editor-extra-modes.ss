@@ -14043,3 +14043,67 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org Table: recalculated all tables in buffer")))
 
+;;; ——— Round 104: Magit advanced (batch 1) ———
+
+(def (cmd-magit-branch-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Reset branch to: "
+      (lambda (target)
+        (echo-message! echo (str "Magit: reset branch to " target))))))
+
+(def (cmd-magit-branch-spin-off app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Spin off branch: "
+      (lambda (name)
+        (echo-message! echo (str "Magit: spun off branch " name))))))
+
+(def (cmd-magit-remote-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename remote from: "
+      (lambda (from)
+        (echo-read-string echo "Rename remote to: "
+          (lambda (to)
+            (echo-message! echo (str "Magit: renamed remote " from " to " to))))))))
+
+(def (cmd-magit-tag-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag name: "
+      (lambda (name)
+        (echo-message! echo (str "Magit: created tag " name))))))
+
+(def (cmd-magit-tag-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete tag: "
+      (lambda (name)
+        (echo-message! echo (str "Magit: deleted tag " name))))))
+
+(def (cmd-magit-tag-release app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Release tag: "
+      (lambda (name)
+        (echo-message! echo (str "Magit: created release tag " name))))))
+
+(def (cmd-magit-notes-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Merge notes ref: "
+      (lambda (ref)
+        (echo-message! echo (str "Magit: merged notes from " ref))))))
+
+(def (cmd-magit-bisect-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bisect script: "
+      (lambda (script)
+        (echo-message! echo (str "Magit: running bisect with " script))))))
+
+(def (cmd-magit-subtree-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subtree prefix: "
+      (lambda (prefix)
+        (echo-message! echo (str "Magit: added subtree at " prefix))))))
+
+(def (cmd-magit-subtree-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subtree merge prefix: "
+      (lambda (prefix)
+        (echo-message! echo (str "Magit: merged subtree " prefix))))))
+

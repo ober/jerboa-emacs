@@ -3564,6 +3564,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | org-attach-delete-all | :orange_circle: | Delete all attachments |
 | org-attach-set-directory | :orange_circle: | Set attachment directory |
 
+### Round 104 — Magit Advanced (Subtrees, Submodules, Patches)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| magit-branch-reset | :orange_circle: | Reset branch to target |
+| magit-branch-spin-off | :orange_circle: | Spin off new branch from current |
+| magit-remote-rename | :orange_circle: | Rename a remote |
+| magit-tag-create | :orange_circle: | Create a git tag |
+| magit-tag-delete | :orange_circle: | Delete a git tag |
+| magit-tag-release | :orange_circle: | Create a release tag |
+| magit-notes-merge | :orange_circle: | Merge git notes refs |
+| magit-bisect-run | :orange_circle: | Run bisect with script |
+| magit-subtree-add | :orange_circle: | Add a subtree |
+| magit-subtree-merge | :orange_circle: | Merge a subtree |
+| magit-subtree-pull | :orange_circle: | Pull a subtree |
+| magit-subtree-push | :orange_circle: | Push a subtree |
+| magit-subtree-split | :orange_circle: | Split a subtree |
+| magit-submodule-populate | :orange_circle: | Populate submodules |
+| magit-submodule-synchronize | :orange_circle: | Synchronize submodule URLs |
+| magit-submodule-unpopulate | :orange_circle: | Unpopulate submodules |
+| magit-am-apply-patches | :orange_circle: | Apply patches via git am |
+| magit-am-continue | :orange_circle: | Continue patch application |
+| magit-am-abort | :orange_circle: | Abort patch application |
+| magit-format-patch | :orange_circle: | Format patches for range |
+
 ---
 
 ## Recommended Development Roadmap
