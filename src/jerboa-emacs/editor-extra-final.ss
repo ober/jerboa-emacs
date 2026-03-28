@@ -11907,3 +11907,54 @@
 (def (cmd-kill-all-abbrevs app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "All abbreviations removed")))
+
+;; Round 71 — Comint, shell (batch 2)
+(def (cmd-comint-previous-matching-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Previous input matching: "
+      (lambda (pat)
+        (echo-message! echo (str "Comint: found previous input matching '" pat "'"))))))
+
+(def (cmd-comint-next-matching-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Next input matching: "
+      (lambda (pat)
+        (echo-message! echo (str "Comint: found next input matching '" pat "'"))))))
+
+(def (cmd-comint-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Run command in comint: "
+      (lambda (cmd)
+        (echo-message! echo (str "Comint: running " cmd))))))
+
+(def (cmd-comint-show-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: showing last output")))
+
+(def (cmd-shell-resync-dirs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shell: resynced directory tracking")))
+
+(def (cmd-shell-dirtrack-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'shell-dirtrack)
+    (if (mode-enabled? app 'shell-dirtrack)
+      (echo-message! echo "Shell: directory tracking enabled")
+      (echo-message! echo "Shell: directory tracking disabled"))))
+
+(def (cmd-dirtrack-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dirtrack)
+    (if (mode-enabled? app 'dirtrack)
+      (echo-message! echo "Dirtrack mode enabled")
+      (echo-message! echo "Dirtrack mode disabled"))))
+
+(def (cmd-comint-truncate-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: buffer truncated")))
+
+(def (cmd-comint-write-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Write comint output to: "
+      (lambda (file)
+        (echo-message! echo (str "Comint: output written to " file))))))

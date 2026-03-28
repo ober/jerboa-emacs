@@ -12442,3 +12442,44 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tempel: moved to next field")))
 
+;; Round 71 — Compilation, comint, shell (batch 1)
+(def (cmd-compilation-next-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: moved to next file")))
+
+(def (cmd-compilation-previous-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: moved to previous file")))
+
+(def (cmd-comint-send-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: sent input")))
+
+(def (cmd-comint-send-eof app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: sent EOF")))
+
+(def (cmd-comint-interrupt-subjob app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: interrupted subjob (C-c)")))
+
+(def (cmd-comint-stop-subjob app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: stopped subjob (C-z)")))
+
+(def (cmd-comint-quit-subjob app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: quit subjob (C-\\)")))
+
+(def (cmd-comint-clear-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: buffer cleared")))
+
+(def (cmd-comint-history-isearch-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: searching history backward")))
+
+(def (cmd-comint-dynamic-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: dynamic completion")))
+

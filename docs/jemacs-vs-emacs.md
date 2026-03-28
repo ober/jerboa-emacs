@@ -2702,6 +2702,30 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | insert-abbrevs | :orange_circle: | Insert abbrev table into buffer |
 | kill-all-abbrevs | :orange_circle: | Remove all abbreviations |
 
+### Round 71 — Compilation, Comint & Shell
+
+| Feature | Status | Notes |
+|---|---|---|
+| compilation-next-file | :orange_circle: | Next file in compilation output |
+| compilation-previous-file | :orange_circle: | Previous file in compilation output |
+| comint-send-input | :orange_circle: | Send input to subprocess |
+| comint-send-eof | :orange_circle: | Send EOF to subprocess |
+| comint-interrupt-subjob | :orange_circle: | Interrupt subprocess (C-c) |
+| comint-stop-subjob | :orange_circle: | Stop subprocess (C-z) |
+| comint-quit-subjob | :orange_circle: | Quit subprocess (C-\) |
+| comint-clear-buffer | :orange_circle: | Clear comint buffer |
+| comint-history-isearch-backward | :orange_circle: | Search history backward |
+| comint-dynamic-complete | :orange_circle: | Dynamic completion |
+| comint-previous-matching-input | :orange_circle: | Previous matching input |
+| comint-next-matching-input | :orange_circle: | Next matching input |
+| comint-run | :orange_circle: | Run command in comint buffer |
+| comint-show-output | :orange_circle: | Show last output |
+| shell-resync-dirs | :orange_circle: | Resync directory tracking |
+| shell-dirtrack-mode | :orange_circle: | Shell directory tracking |
+| dirtrack-mode | :orange_circle: | Directory tracking mode |
+| comint-truncate-buffer | :orange_circle: | Truncate comint buffer |
+| comint-write-output | :orange_circle: | Write output to file |
+
 ---
 
 ## Recommended Development Roadmap
