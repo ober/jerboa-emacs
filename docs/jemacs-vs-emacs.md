@@ -3172,6 +3172,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 89 — Web, Config & Language Modes
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| typescript-mode | :orange_circle: | Toggle TypeScript mode |
+| tsx-mode | :orange_circle: | Toggle TSX mode |
+| emmet-wrap-with-markup | :orange_circle: | Wrap selection with emmet markup |
+| prettier-js | :orange_circle: | Format buffer with Prettier |
+| sass-mode | :orange_circle: | Toggle Sass mode |
+| css-eldoc-function | :orange_circle: | Show CSS property docs |
+| json-navigator | :orange_circle: | Navigate JSON tree |
+| json-mode-beautify | :orange_circle: | Beautify JSON buffer |
+| yaml-lint | :orange_circle: | Lint YAML buffer |
+| toml-mode | :orange_circle: | Toggle TOML mode |
+| docker-compose-mode | :orange_circle: | Toggle Docker Compose mode |
+| nginx-mode | :orange_circle: | Toggle Nginx config mode |
+| apache-mode | :orange_circle: | Toggle Apache config mode |
+| ini-mode | :orange_circle: | Toggle INI file mode |
+| csv-mode | :orange_circle: | Toggle CSV mode |
+| dotenv-mode | :orange_circle: | Toggle dotenv mode |
+| pkgbuild-mode | :orange_circle: | Toggle PKGBUILD mode |
+| lua-mode | :orange_circle: | Toggle Lua mode |
+| mermaid-mode | :orange_circle: | Toggle Mermaid diagram mode |
+| just-mode | :orange_circle: | Toggle Justfile mode |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
