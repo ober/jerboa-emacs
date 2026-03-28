@@ -2808,3 +2808,440 @@
           (echo-message! (app-state-echo app)
             (string-append "Appended " (number->string (- end start)) " chars to " path)))))))
 
+;;;============================================================================
+;;; Round 3 batch 1: Features 1-10
+;;;============================================================================
+
+;; --- Feature 1: Quick Calc (inline calculator) ---
+
+(def (cmd-quick-calc app)
+  "Evaluate a simple math expression and display/insert result."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (expr (echo-read-string echo "Quick calc: " row width)))
+    (when (and expr (not (string-empty? expr)))
+      (let ((result
+              (with-catch
+                (lambda (e) (string-append "Error: " (with-output-to-string (lambda () (display-condition e)))))
+                (lambda ()
+                  ;; Simple expression evaluator: support +, -, *, /, ^, sqrt, abs
+                  (let ((val (eval (read (open-input-string expr)))))
+                    (if (number? val)
+                      (number->string val)
+                      (with-output-to-string (lambda () (display val)))))))))
+        (echo-message! echo (string-append "Result: " result))))))
+
+(def (cmd-calc-insert app)
+  "Evaluate math expression and insert result at point."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (expr (echo-read-string echo "Calc (insert): " row width)))
+    (when (and expr (not (string-empty? expr)))
+      (let ((result
+              (with-catch
+                (lambda (e) #f)
+                (lambda ()
+                  (let ((val (eval (read (open-input-string expr)))))
+                    (if (number? val) (number->string val) #f))))))
+        (if result
+          (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+            (send-message ed SCI_REPLACESEL 0 (string->alien/nul result))
+            (echo-message! echo (string-append "Inserted: " result)))
+          (echo-error! echo "Invalid expression"))))))
+
+;; --- Feature 2: RE-Builder (interactive regex builder) ---
+
+(def *re-builder-active* #f)
+
+(def (cmd-re-builder app)
+  "Interactive regex builder — test regex against current buffer."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (regex (echo-read-string echo "RE-Builder regex: " row width)))
+    (when (and regex (not (string-empty? regex)))
+      ;; Use indicator 13 for regex matches
+      (send-message ed SCI_INDICSETSTYLE 13 7) ;; INDIC_ROUNDBOX
+      (send-message ed SCI_INDICSETFORE 13 #x00FFFF) ;; cyan
+      (send-message ed SCI_INDICSETALPHA 13 60)
+      (send-message ed SCI_SETINDICATORCURRENT 13 0)
+      ;; Clear previous highlights
+      (send-message ed SCI_INDICATORCLEARRANGE 0
+        (send-message ed SCI_GETLENGTH 0 0))
+      ;; Search for all matches
+      (let* ((text-len (send-message ed SCI_GETLENGTH 0 0))
+             (count 0))
+        (send-message ed SCI_SETTARGETSTART 0 0)
+        (send-message ed SCI_SETTARGETEND text-len 0)
+        (send-message ed SCI_SETSEARCHFLAGS #x00200000 0) ;; SCFIND_REGEXP
+        (let loop ()
+          (let ((found (send-message ed SCI_SEARCHINTARGET (string-length regex)
+                        (string->alien/nul regex))))
+            (when (>= found 0)
+              (let ((match-end (send-message ed SCI_GETTARGETEND 0 0)))
+                (when (> match-end found)
+                  (send-message ed SCI_INDICATORFILLRANGE found (- match-end found))
+                  (set! count (+ count 1))
+                  (send-message ed SCI_SETTARGETSTART match-end 0)
+                  (send-message ed SCI_SETTARGETEND text-len 0)
+                  (loop))))))
+        (echo-message! echo
+          (string-append "RE-Builder: " (number->string count) " matches for /" regex "/"))))))
+
+(def (cmd-re-builder-clear app)
+  "Clear RE-Builder highlights."
+  (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+    (send-message ed SCI_SETINDICATORCURRENT 13 0)
+    (send-message ed SCI_INDICATORCLEARRANGE 0
+      (send-message ed SCI_GETLENGTH 0 0))
+    (echo-message! (app-state-echo app) "RE-Builder cleared")))
+
+;; --- Feature 3: Compilation Mode ---
+;; Run make/compile command and parse error output
+
+(def *compilation-buffer-name* "*compilation*")
+(def *compilation-errors* '())
+
+(def (cmd-compile app)
+  "Run a compilation command (default: make) and show output."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (cmd (or (echo-read-string echo "Compile command: " row width) "make")))
+    (when (and cmd (not (string-empty? cmd)))
+      (echo-message! echo (string-append "Compiling: " cmd "..."))
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (buf (make-buffer *compilation-buffer-name*)))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports (string-append cmd " 2>&1") 'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()) (errors '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout)
+                  (close-port p-stderr)
+                  (let ((content (string-join (reverse lines) "\n")))
+                    (editor-set-text ed (string-append "Compilation: " cmd "\n"
+                                                       (make-string 50 #\-) "\n"
+                                                       content "\n"
+                                                       (make-string 50 #\-) "\n"
+                                                       "Compilation finished with "
+                                                       (number->string (length errors))
+                                                       " error(s)"))
+                    (editor-goto-pos ed 0)
+                    (set! *compilation-errors* (reverse errors))
+                    (echo-message! echo
+                      (string-append "Compilation done: " (number->string (length errors)) " error(s)"))))
+                ;; Parse error lines (file:line: pattern)
+                (let* ((is-error (and (string-contains line ":")
+                                      (or (string-contains line "error")
+                                          (string-contains line "warning"))))
+                       (new-errors (if is-error (cons line errors) errors)))
+                  (loop (cons line lines) new-errors))))))))))
+
+(def (cmd-next-error app)
+  "Jump to next compilation error."
+  (let ((echo (app-state-echo app)))
+    (if (null? *compilation-errors*)
+      (echo-message! echo "No compilation errors")
+      (let* ((err-line (car *compilation-errors*))
+             (colon1 (string-contains err-line ":"))
+             (file (if colon1 (substring err-line 0 colon1) #f)))
+        (set! *compilation-errors* (cdr *compilation-errors*))
+        (if file
+          (echo-message! echo (string-append "Error in: " err-line))
+          (echo-message! echo err-line))))))
+
+;; --- Feature 4: View Mode (read-only viewing) ---
+
+(def *view-mode-active* #f)
+
+(def (cmd-view-mode app)
+  "Toggle view-mode — make buffer read-only with navigation keys."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *view-mode-active* (not *view-mode-active*))
+    (send-message ed SCI_SETREADONLY (if *view-mode-active* 1 0) 0)
+    (echo-message! echo
+      (if *view-mode-active*
+        "View mode: on (read-only, q to quit)"
+        "View mode: off"))))
+
+(def (cmd-view-file app)
+  "Open a file in view-mode (read-only)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (path (echo-read-string echo "View file: " row width)))
+    (when (and path (not (string-empty? path)))
+      (if (not (file-exists? path))
+        (echo-error! echo (string-append "File not found: " path))
+        (let* ((fr (app-state-frame app))
+               (win (current-window fr))
+               (ed (edit-window-editor win))
+               (content (with-catch
+                          (lambda (e) "")
+                          (lambda () (read-file-string path))))
+               (buf (make-buffer (string-append "[view] " (path-strip-directory path)))))
+          (buffer-attach! ed buf)
+          (set! (edit-window-buffer win) buf)
+          (editor-set-text ed content)
+          (editor-goto-pos ed 0)
+          (send-message ed SCI_SETREADONLY 1 0)
+          (set! *view-mode-active* #t)
+          (echo-message! echo (string-append "Viewing: " path " (read-only)")))))))
+
+;; --- Feature 5: Keyfreq (command frequency tracking) ---
+
+(def *keyfreq-table* (make-hash-table))
+(def *keyfreq-enabled* #f)
+
+(def (keyfreq-record! cmd-name)
+  "Record a command invocation."
+  (when *keyfreq-enabled*
+    (let ((count (hash-ref *keyfreq-table* cmd-name 0)))
+      (hash-put! *keyfreq-table* cmd-name (+ count 1)))))
+
+(def (cmd-keyfreq-mode app)
+  "Toggle command frequency tracking."
+  (set! *keyfreq-enabled* (not *keyfreq-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *keyfreq-enabled* "Keyfreq mode: on" "Keyfreq mode: off")))
+
+(def (cmd-keyfreq-show app)
+  "Display command frequency report."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (pairs (hash->list *keyfreq-table*)))
+    (if (null? pairs)
+      (echo-message! echo "No command frequency data")
+      (let* ((sorted (sort (lambda (a b) (> (cdr a) (cdr b))) pairs))
+             (lines (map
+                      (lambda (p)
+                        (let* ((name (symbol->string (car p)))
+                               (count (number->string (cdr p)))
+                               (pad (make-string (max 0 (- 40 (string-length name))) #\space)))
+                          (string-append "  " name pad count)))
+                      (if (> (length sorted) 50) (list-head sorted 50) sorted)))
+             (content (string-append "Command Frequency Report\n"
+                        (make-string 50 #\=) "\n"
+                        (string-join lines "\n") "\n"
+                        (make-string 50 #\=) "\n"
+                        "Total unique commands: " (number->string (length pairs))))
+             (buf (make-buffer "*keyfreq*")))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)))))
+
+;; --- Feature 6: Pomidor (Pomodoro timer) ---
+
+(def *pomidor-work-minutes* 25)
+(def *pomidor-break-minutes* 5)
+(def *pomidor-start-time* #f)
+(def *pomidor-state* 'idle) ;; idle, work, break
+(def *pomidor-count* 0)
+
+(def (cmd-pomidor app)
+  "Start a pomodoro work session."
+  (let ((echo (app-state-echo app)))
+    (set! *pomidor-state* 'work)
+    (set! *pomidor-start-time* (time-second (current-time)))
+    (set! *pomidor-count* (+ *pomidor-count* 1))
+    (echo-message! echo
+      (string-append "Pomodoro #" (number->string *pomidor-count*)
+                    " started (" (number->string *pomidor-work-minutes*) " min work session)"))))
+
+(def (cmd-pomidor-break app)
+  "Start a pomodoro break."
+  (let ((echo (app-state-echo app)))
+    (set! *pomidor-state* 'break)
+    (set! *pomidor-start-time* (time-second (current-time)))
+    (echo-message! echo
+      (string-append "Break started (" (number->string *pomidor-break-minutes*) " min)"))))
+
+(def (cmd-pomidor-status app)
+  "Show current pomodoro timer status."
+  (let ((echo (app-state-echo app)))
+    (case *pomidor-state*
+      ((idle) (echo-message! echo "Pomidor: idle (no active timer)"))
+      ((work break)
+       (let* ((elapsed (- (time-second (current-time)) *pomidor-start-time*))
+              (total (if (eq? *pomidor-state* 'work)
+                       (* *pomidor-work-minutes* 60)
+                       (* *pomidor-break-minutes* 60)))
+              (remaining (max 0 (- total elapsed)))
+              (min-left (quotient remaining 60))
+              (sec-left (remainder remaining 60)))
+         (echo-message! echo
+           (string-append "Pomidor [" (symbol->string *pomidor-state*) "]: "
+                         (number->string min-left) ":"
+                         (if (< sec-left 10) "0" "") (number->string sec-left)
+                         " remaining (session #" (number->string *pomidor-count*) ")")))))))
+
+(def (cmd-pomidor-stop app)
+  "Stop the pomodoro timer."
+  (set! *pomidor-state* 'idle)
+  (set! *pomidor-start-time* #f)
+  (echo-message! (app-state-echo app) "Pomidor stopped"))
+
+;; --- Feature 7: Define Word (dictionary lookup via dict protocol) ---
+
+(def (cmd-define-word app)
+  "Look up word definition using /usr/bin/dict or online."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         ;; Try to get word at point first
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word-len (- word-end word-start))
+         (default-word
+           (if (> word-len 0)
+             (let* ((buf (make-bytevector (+ word-len 1) 0))
+                    (_ (send-message ed SCI_GETTEXTRANGE 0
+                         (cons->alien word-start (bytevector->alien buf)))))
+               (alien/nul->string (bytevector->alien buf)))
+             ""))
+         (word (echo-read-string echo
+                 (if (string-empty? default-word)
+                   "Define word: "
+                   (string-append "Define word [" default-word "]: "))
+                 row width)))
+    (let ((lookup-word (if (or (not word) (string-empty? word)) default-word word)))
+      (when (and lookup-word (not (string-empty? lookup-word)))
+        (let ((cmd (if (file-exists? "/usr/bin/dict")
+                     (string-append "/usr/bin/dict \"" lookup-word "\"")
+                     (string-append "/usr/bin/curl -s 'dict://dict.org/d:" lookup-word "'"))))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports (string-append cmd " 2>&1") 'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let* ((content (if (null? lines)
+                                      (string-append "No definition found for: " lookup-word)
+                                      (string-join (reverse lines) "\n")))
+                           (buf (make-buffer "*definition*")))
+                      (buffer-attach! ed buf)
+                      (set! (edit-window-buffer win) buf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo (string-append "Definition: " lookup-word))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 8: Chronos (countdown timer) ---
+
+(def *chronos-timers* '()) ;; list of (name . end-epoch)
+
+(def (cmd-chronos-add app)
+  "Add a countdown timer."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (name (echo-read-string echo "Timer name: " row width)))
+    (when (and name (not (string-empty? name)))
+      (let ((minutes-str (echo-read-string echo "Minutes: " row width)))
+        (when (and minutes-str (not (string-empty? minutes-str)))
+          (let ((minutes (string->number (string-trim minutes-str))))
+            (when (and minutes (> minutes 0))
+              (let ((end-time (+ (time-second (current-time)) (* minutes 60))))
+                (set! *chronos-timers*
+                  (cons (cons name end-time) *chronos-timers*))
+                (echo-message! echo
+                  (string-append "Timer '" name "' set for "
+                                (number->string minutes) " minutes"))))))))))
+
+(def (cmd-chronos-list app)
+  "Show all active countdown timers."
+  (let* ((echo (app-state-echo app))
+         (now (time-second (current-time))))
+    (if (null? *chronos-timers*)
+      (echo-message! echo "No active timers")
+      (let* ((lines
+               (map (lambda (timer)
+                      (let* ((name (car timer))
+                             (end (cdr timer))
+                             (remaining (max 0 (- end now)))
+                             (min (quotient remaining 60))
+                             (sec (remainder remaining 60)))
+                        (string-append name ": "
+                          (if (<= remaining 0)
+                            "DONE!"
+                            (string-append (number->string min) ":"
+                              (if (< sec 10) "0" "") (number->string sec))))))
+                    *chronos-timers*))
+             (content (string-join lines "\n")))
+        (echo-message! echo (string-append "Timers: " content))))))
+
+(def (cmd-chronos-clear app)
+  "Clear all timers."
+  (set! *chronos-timers* '())
+  (echo-message! (app-state-echo app) "All timers cleared"))
+
+;; --- Feature 9: MWIM (Move Where I Mean — smart beginning/end of line) ---
+
+(def (cmd-mwim-beginning app)
+  "Smart beginning-of-line: toggle between indentation and column 0."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+         (indent-pos (send-message ed SCI_GETLINEINDENTPOSITION line 0)))
+    ;; If at indentation, go to column 0; otherwise go to indentation
+    (if (= pos indent-pos)
+      (editor-goto-pos ed line-start)
+      (editor-goto-pos ed indent-pos))))
+
+(def (cmd-mwim-end app)
+  "Smart end-of-line: toggle between last non-whitespace and end."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (line-end (send-message ed SCI_GETLINEENDPOSITION line 0))
+         (text (editor-get-text ed))
+         (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+         (line-text (substring text line-start line-end))
+         (trimmed (string-trim-right line-text))
+         (last-nonws (+ line-start (string-length trimmed))))
+    ;; If at last non-whitespace, go to true end; otherwise go to last non-ws
+    (if (= pos last-nonws)
+      (editor-goto-pos ed line-end)
+      (editor-goto-pos ed last-nonws))))
+
+;; --- Feature 10: Electric Spacing (auto-space around operators) ---
+
+(def *electric-spacing-enabled* #f)
+(def *electric-spacing-operators* '("=" "+" "-" "*" "/" "<" ">" "!" "&" "|"))
+
+(def (cmd-electric-spacing-mode app)
+  "Toggle electric-spacing mode — auto-insert spaces around operators."
+  (set! *electric-spacing-enabled* (not *electric-spacing-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *electric-spacing-enabled*
+      "Electric spacing mode: on"
+      "Electric spacing mode: off")))
+
+(def (electric-spacing-maybe-apply! ed ch)
+  "If electric-spacing is on and ch is an operator, add spaces."
+  (when *electric-spacing-enabled*
+    (let ((op (string ch)))
+      (when (member op *electric-spacing-operators*)
+        ;; Check preceding char
+        (let* ((pos (send-message ed SCI_GETCURRENTPOS 0 0))
+               (prev-ch (if (> pos 0) (send-message ed SCI_GETCHARAT (- pos 1) 0) 0)))
+          ;; Don't double-space
+          (when (not (= prev-ch 32)) ;; not already a space
+            (send-message ed SCI_INSERTTEXT pos (string->alien/nul " "))))))))

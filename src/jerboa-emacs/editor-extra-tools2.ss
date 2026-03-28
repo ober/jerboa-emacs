@@ -2539,3 +2539,438 @@
   "Show network connections."
   (let ((cmd (if (file-exists? "/usr/bin/ss") "/usr/bin/ss" "/usr/bin/netstat")))
     (run-net-command app cmd '("-tuln") "*netstat*")))
+
+;;;============================================================================
+;;; Round 3 batch 2: Features 11-20
+;;;============================================================================
+
+;; --- Feature 11: Ace-link (jump to links in buffer) ---
+
+(def (cmd-ace-link app)
+  "Find and jump to URLs in the current buffer."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    ;; Simple URL finder: http://, https://, file://
+    (let loop ((i 0) (urls '()))
+      (if (>= i (- len 8))
+        (if (null? urls)
+          (echo-message! echo "No links found in buffer")
+          (let* ((entries (map (lambda (u)
+                                (let ((pos (car u)) (url (cdr u)))
+                                  (string-append (number->string pos) ": "
+                                    (if (> (string-length url) 60)
+                                      (string-append (substring url 0 60) "...")
+                                      url))))
+                              (reverse urls)))
+                 (row (tui-rows)) (width (tui-cols))
+                 (choice (echo-read-string-with-completion echo "Jump to link: " entries row width)))
+            (when (and choice (not (string-empty? choice)))
+              (let ((pos-str (let ((c (string-contains choice ":")))
+                               (if c (substring choice 0 c) choice))))
+                (let ((pos (string->number (string-trim pos-str))))
+                  (when pos (editor-goto-pos ed pos)))))))
+        (if (or (string-prefix? "http://" (substring text i (min len (+ i 7))))
+                (string-prefix? "https://" (substring text i (min len (+ i 8))))
+                (string-prefix? "file://" (substring text i (min len (+ i 7)))))
+          ;; Found a URL start, extract it
+          (let url-loop ((j i))
+            (if (or (>= j len)
+                    (memv (string-ref text j) '(#\space #\newline #\tab #\) #\] #\> #\")))
+              (loop (+ j 1) (cons (cons i (substring text i j)) urls))
+              (url-loop (+ j 1))))
+          (loop (+ i 1) urls))))))
+
+;; --- Feature 12: Copy As Format ---
+
+(def (cmd-copy-as-format app)
+  "Copy selected region as formatted text (with line numbers)."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-error! echo "No selection")
+      (let* ((text (editor-get-text ed))
+             (region (substring text sel-start sel-end))
+             (start-line (send-message ed SCI_LINEFROMPOSITION sel-start 0))
+             (lines (string-split region #\newline))
+             (numbered
+               (let loop ((ls lines) (n (+ start-line 1)) (acc '()))
+                 (if (null? ls)
+                   (reverse acc)
+                   (loop (cdr ls) (+ n 1)
+                     (cons (string-append
+                             (let ((s (number->string n)))
+                               (string-append (make-string (max 0 (- 4 (string-length s))) #\space) s))
+                             " | " (car ls))
+                           acc)))))
+             (formatted (string-join numbered "\n")))
+        ;; Put on kill ring
+        (set! (app-state-kill-ring app)
+          (cons formatted (app-state-kill-ring app)))
+        (echo-message! echo
+          (string-append "Copied " (number->string (length lines))
+                        " lines with line numbers to kill ring"))))))
+
+;; --- Feature 13: Dictionary Search ---
+
+(def (cmd-dictionary-search app)
+  "Search for a word in the system dictionary (/usr/share/dict/words)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (pattern (echo-read-string echo "Dictionary search: " row width)))
+    (when (and pattern (not (string-empty? pattern)))
+      (let* ((dict-file "/usr/share/dict/words")
+             (fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win)))
+        (if (not (file-exists? dict-file))
+          (echo-error! echo "Dictionary not found: /usr/share/dict/words")
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (string-append "/usr/bin/grep -i \"" pattern "\" " dict-file " | head -100")
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (if (null? lines)
+                      (echo-message! echo (string-append "No matches for: " pattern))
+                      (let* ((content (string-append "Dictionary matches for \"" pattern "\"\n"
+                                        (make-string 40 #\-) "\n"
+                                        (string-join (reverse lines) "\n")))
+                             (buf (make-buffer "*dictionary*")))
+                        (buffer-attach! ed buf)
+                        (set! (edit-window-buffer win) buf)
+                        (editor-set-text ed content)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo
+                          (string-append (number->string (length lines)) " matches found")))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 14: Man Page Viewer ---
+
+(def (cmd-man app)
+  "Display a Unix man page."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (topic (echo-read-string echo "Man page: " row width)))
+    (when (and topic (not (string-empty? topic)))
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win)))
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports
+                        (string-append "MANWIDTH=80 /usr/bin/man " topic " 2>&1 | col -bx")
+                        'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout)
+                  (close-port p-stderr)
+                  (if (null? lines)
+                    (echo-error! echo (string-append "No man page for: " topic))
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (buf (make-buffer (string-append "*man " topic "*"))))
+                      (buffer-attach! ed buf)
+                      (set! (edit-window-buffer win) buf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (send-message ed SCI_SETREADONLY 1 0)
+                      (echo-message! echo (string-append "Man: " topic)))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 15: Simple Profiler ---
+
+(def *profiler-data* (make-hash-table))
+(def *profiler-enabled* #f)
+
+(def (cmd-profiler-start app)
+  "Start command profiling."
+  (set! *profiler-enabled* #t)
+  (set! *profiler-data* (make-hash-table))
+  (echo-message! (app-state-echo app) "Profiler started"))
+
+(def (cmd-profiler-stop app)
+  "Stop profiling and show report."
+  (set! *profiler-enabled* #f)
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (pairs (hash->list *profiler-data*)))
+    (if (null? pairs)
+      (echo-message! echo "No profiling data")
+      (let* ((sorted (sort (lambda (a b) (> (cdr a) (cdr b))) pairs))
+             (lines (map
+                      (lambda (p)
+                        (let* ((name (symbol->string (car p)))
+                               (count (number->string (cdr p)))
+                               (pad (make-string (max 0 (- 40 (string-length name))) #\space)))
+                          (string-append "  " name pad count " calls")))
+                      (if (> (length sorted) 50) (list-head sorted 50) sorted)))
+             (content (string-append "Profiler Report\n"
+                        (make-string 50 #\=) "\n"
+                        (string-join lines "\n") "\n"))
+             (buf (make-buffer "*profiler*")))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)))))
+
+(def (profiler-record! cmd-name)
+  "Record command for profiling."
+  (when *profiler-enabled*
+    (let ((count (hash-ref *profiler-data* cmd-name 0)))
+      (hash-put! *profiler-data* cmd-name (+ count 1)))))
+
+;; --- Feature 16: CUA Rectangle ---
+
+(def *cua-rect-active* #f)
+
+(def (cmd-cua-rectangle-mark app)
+  "Toggle CUA rectangular selection mode."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *cua-rect-active* (not *cua-rect-active*))
+    (if *cua-rect-active*
+      (begin
+        (send-message ed SCI_SETSELECTIONMODE 1 0) ;; SC_SEL_RECTANGLE
+        (echo-message! echo "CUA rectangle mode: on"))
+      (begin
+        (send-message ed SCI_SETSELECTIONMODE 0 0) ;; SC_SEL_STREAM
+        (echo-message! echo "CUA rectangle mode: off")))))
+
+(def (cmd-cua-rectangle-insert app)
+  "Insert text into each line of a rectangular selection."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (row (tui-rows)) (width (tui-cols))
+         (text (echo-read-string echo "Insert text in rectangle: " row width)))
+    (when (and text (not (string-empty? text)))
+      (let* ((sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+             (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+             (start-line (send-message ed SCI_LINEFROMPOSITION sel-start 0))
+             (end-line (send-message ed SCI_LINEFROMPOSITION sel-end 0))
+             (col (send-message ed SCI_GETCOLUMN sel-start 0)))
+        (send-message ed SCI_BEGINUNDOACTION 0 0)
+        (let loop ((line end-line))
+          (when (>= line start-line)
+            (let ((pos (send-message ed SCI_FINDCOLUMN line col 0)))
+              (send-message ed SCI_INSERTTEXT pos (string->alien/nul text))
+              (loop (- line 1)))))
+        (send-message ed SCI_ENDUNDOACTION 0 0)
+        (echo-message! echo "Rectangle text inserted")))))
+
+;; --- Feature 17: Comment DWIM 2 ---
+
+(def (cmd-comment-dwim-2 app)
+  "Smart comment: toggle line comment, or comment region if active."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+         ;; Detect comment style from file extension
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf)))
+         (ext (if path (path-extension path) ""))
+         (comment-str
+           (cond
+             ((member ext '("ss" "scm" "el" "lisp" "clj")) ";; ")
+             ((member ext '("py" "rb" "sh" "bash" "yml" "yaml" "toml")) "# ")
+             ((member ext '("js" "ts" "jsx" "tsx" "java" "c" "cpp" "go" "rs" "swift" "kt")) "// ")
+             ((member ext '("html" "xml" "svg")) "<!-- ")
+             ((member ext '("css" "scss")) "/* ")
+             ((member ext '("sql")) "-- ")
+             ((member ext '("lua")) "-- ")
+             ((member ext '("hs")) "-- ")
+             (else ";; "))))
+    (if (= sel-start sel-end)
+      ;; No selection: toggle current line comment
+      (let* ((line (send-message ed SCI_LINEFROMPOSITION sel-start 0))
+             (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+             (line-end (send-message ed SCI_GETLINEENDPOSITION line 0))
+             (text (editor-get-text ed))
+             (line-text (substring text line-start line-end))
+             (trimmed (string-trim line-text)))
+        (send-message ed SCI_BEGINUNDOACTION 0 0)
+        (if (string-prefix? comment-str trimmed)
+          ;; Uncomment
+          (let* ((comment-pos (string-contains line-text comment-str))
+                 (abs-pos (+ line-start comment-pos)))
+            (send-message ed SCI_SETTARGETSTART abs-pos 0)
+            (send-message ed SCI_SETTARGETEND (+ abs-pos (string-length comment-str)) 0)
+            (send-message ed SCI_REPLACETARGET 0 (string->alien/nul "")))
+          ;; Comment
+          (let ((indent-pos (send-message ed SCI_GETLINEINDENTPOSITION line 0)))
+            (send-message ed SCI_INSERTTEXT indent-pos (string->alien/nul comment-str))))
+        (send-message ed SCI_ENDUNDOACTION 0 0))
+      ;; Selection: comment/uncomment each line in region
+      (let* ((start-line (send-message ed SCI_LINEFROMPOSITION sel-start 0))
+             (end-line (send-message ed SCI_LINEFROMPOSITION sel-end 0)))
+        (send-message ed SCI_BEGINUNDOACTION 0 0)
+        (let loop ((line start-line))
+          (when (<= line end-line)
+            (let* ((line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+                   (indent-pos (send-message ed SCI_GETLINEINDENTPOSITION line 0))
+                   (line-end (send-message ed SCI_GETLINEENDPOSITION line 0))
+                   (text (editor-get-text ed))
+                   (line-text (substring text line-start line-end))
+                   (trimmed (string-trim line-text)))
+              (if (string-prefix? comment-str trimmed)
+                ;; Uncomment
+                (let ((comment-pos (string-contains line-text comment-str)))
+                  (when comment-pos
+                    (let ((abs-pos (+ line-start comment-pos)))
+                      (send-message ed SCI_SETTARGETSTART abs-pos 0)
+                      (send-message ed SCI_SETTARGETEND (+ abs-pos (string-length comment-str)) 0)
+                      (send-message ed SCI_REPLACETARGET 0 (string->alien/nul "")))))
+                ;; Comment
+                (send-message ed SCI_INSERTTEXT indent-pos (string->alien/nul comment-str))))
+            (loop (+ line 1))))
+        (send-message ed SCI_ENDUNDOACTION 0 0)))
+    (echo-message! echo "Comment toggled")))
+
+;; --- Feature 18: Translate (text translation via external tool) ---
+
+(def (cmd-translate app)
+  "Translate selected text or prompted text using translate-shell."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (row (tui-rows)) (width (tui-cols))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (text-to-translate
+           (if (not (= sel-start sel-end))
+             (let* ((full (editor-get-text ed)))
+               (substring full sel-start sel-end))
+             (echo-read-string echo "Translate text: " row width)))
+         (target-lang (echo-read-string echo "Target language (e.g. es, fr, de, ja): " row width)))
+    (when (and text-to-translate (not (string-empty? text-to-translate))
+               target-lang (not (string-empty? target-lang)))
+      ;; Use translate-shell if available, otherwise show error
+      (let ((cmd (string-append "trans -brief :" target-lang " \""
+                   (let replace-quotes ((s text-to-translate) (i 0) (acc '()))
+                     (cond ((>= i (string-length s)) (list->string (reverse acc)))
+                           ((char=? (string-ref s i) #\")
+                            (replace-quotes s (+ i 1) (cons #\' acc)))
+                           ((char=? (string-ref s i) #\newline)
+                            (replace-quotes s (+ i 1) (cons #\space acc)))
+                           (else (replace-quotes s (+ i 1) (cons (string-ref s i) acc)))))
+                   "\"")))
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports (string-append cmd " 2>&1") 'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout)
+                  (close-port p-stderr)
+                  (let ((result (if (null? lines) "Translation failed"
+                                  (string-join (reverse lines) "\n"))))
+                    (echo-message! echo (string-append "Translation: " result))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 19: Flymake Mode (on-the-fly syntax checking) ---
+
+(def *flymake-enabled* #f)
+(def *flymake-errors* '())
+(def *flymake-timer* 0)
+(def *flymake-interval* 40) ;; ~2 seconds at 50ms tick
+
+(def (cmd-flymake-mode app)
+  "Toggle flymake — on-the-fly syntax checking."
+  (set! *flymake-enabled* (not *flymake-enabled*))
+  (when (not *flymake-enabled*)
+    (set! *flymake-errors* '()))
+  (echo-message! (app-state-echo app)
+    (if *flymake-enabled* "Flymake mode: on" "Flymake mode: off")))
+
+(def (cmd-flymake-show-diagnostics app)
+  "Show current flymake diagnostics."
+  (let ((echo (app-state-echo app)))
+    (if (null? *flymake-errors*)
+      (echo-message! echo "No flymake errors")
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (content (string-append "Flymake Diagnostics\n"
+                        (make-string 50 #\-) "\n"
+                        (string-join *flymake-errors* "\n")))
+             (buf (make-buffer "*flymake*")))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)))))
+
+(def (cmd-flymake-next-error app)
+  "Go to next flymake error."
+  (let ((echo (app-state-echo app)))
+    (if (null? *flymake-errors*)
+      (echo-message! echo "No flymake errors")
+      (echo-message! echo (string-append "Error: " (car *flymake-errors*))))))
+
+;; --- Feature 20: ERC-style IRC Display ---
+
+(def *erc-nick* "jemacs-user")
+(def *erc-channel* "#emacs")
+(def *erc-log* '())
+
+(def (cmd-erc app)
+  "Open an IRC-style chat display buffer."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer (string-append "*erc:" *erc-channel* "*")))
+         (header (string-append "ERC - " *erc-channel* " [" *erc-nick* "]\n"
+                   (make-string 50 #\-) "\n"
+                   "  (This is a display-only IRC buffer placeholder)\n"
+                   "  Use M-x erc-send to type messages\n"
+                   (make-string 50 #\-) "\n")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed header)
+    (editor-goto-pos ed (string-length header))
+    (echo-message! echo (string-append "ERC: " *erc-channel*))))
+
+(def (cmd-erc-send app)
+  "Send a message in the ERC buffer."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (msg (echo-read-string echo (string-append *erc-channel* "> ") row width)))
+    (when (and msg (not (string-empty? msg)))
+      (let* ((timestamp (let* ((now (current-time))
+                               (d (time-utc->date now 0))
+                               (h (date-hour d))
+                               (m (date-minute d)))
+                          (string-append
+                            (if (< h 10) "0" "") (number->string h) ":"
+                            (if (< m 10) "0" "") (number->string m))))
+             (line (string-append "[" timestamp "] <" *erc-nick* "> " msg))
+             (ed (edit-window-editor (current-window (app-state-frame app))))
+             (end-pos (send-message ed SCI_GETLENGTH 0 0)))
+        (set! *erc-log* (cons line *erc-log*))
+        (send-message ed SCI_APPENDTEXT (string-length (string-append "\n" line))
+          (string->alien/nul (string-append "\n" line)))
+        (editor-goto-pos ed (send-message ed SCI_GETLENGTH 0 0))
+        (echo-message! echo "Message sent")))))
+
+(def (cmd-erc-set-nick app)
+  "Set ERC nickname."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (nick (echo-read-string echo "Nickname: " row width)))
+    (when (and nick (not (string-empty? nick)))
+      (set! *erc-nick* nick)
+      (echo-message! echo (string-append "Nick set to: " nick)))))
