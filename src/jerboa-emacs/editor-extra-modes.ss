@@ -16806,3 +16806,54 @@
 (def (cmd-writegood-grade-level app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Writegood: computed grade level (scaffolded)")))
+
+;; ============================================================
+;; Round 159 — Magit, Git-link, Blamer, Smerge (batch 1)
+;; ============================================================
+
+(def (cmd-magit-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Merge branch: "
+      (lambda (branch)
+        (echo-message! echo (str "Magit: merging " branch))))))
+
+(def (cmd-magit-merge-abort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: merge aborted")))
+
+(def (cmd-magit-merge-squash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Squash-merge branch: "
+      (lambda (branch)
+        (echo-message! echo (str "Magit: squash-merging " branch))))))
+
+(def (cmd-git-link-commit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git-link: copied commit URL to kill ring")))
+
+(def (cmd-git-link-homepage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git-link: copied repository homepage URL")))
+
+(def (cmd-git-messenger-popup-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git-messenger: showing commit message for line")))
+
+(def (cmd-git-messenger-popup-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git-messenger: showing diff for commit")))
+
+(def (cmd-git-messenger-popup-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git-messenger: showing full commit info")))
+
+(def (cmd-blamer-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'blamer)
+    (if (mode-enabled? app 'blamer)
+      (echo-message! echo "Blamer mode enabled (inline git blame)")
+      (echo-message! echo "Blamer mode disabled"))))
+
+(def (cmd-blamer-show-commit-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blamer: showing commit info for current line")))

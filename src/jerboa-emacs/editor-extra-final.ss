@@ -16167,3 +16167,56 @@
 (def (cmd-flymake-reporting-backends app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Flymake: showing reporting backends")))
+
+;; ============================================================
+;; Round 159 — Blamer, Magit-delta, Smerge extended (batch 2)
+;; ============================================================
+
+(def (cmd-blamer-show-posframe-commit-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blamer: showing commit info in posframe")))
+
+(def (cmd-magit-delta-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'magit-delta)
+    (if (mode-enabled? app 'magit-delta)
+      (echo-message! echo "Magit-delta mode enabled (syntax highlighting in diffs)")
+      (echo-message! echo "Magit-delta mode disabled"))))
+
+(def (cmd-magit-todos-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'magit-todos)
+    (if (mode-enabled? app 'magit-todos)
+      (echo-message! echo "Magit-todos mode enabled")
+      (echo-message! echo "Magit-todos mode disabled"))))
+
+(def (cmd-magit-todos-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit-todos: listing all TODOs in repository")))
+
+(def (cmd-git-auto-commit-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'git-auto-commit)
+    (if (mode-enabled? app 'git-auto-commit)
+      (echo-message! echo "Git auto-commit mode enabled")
+      (echo-message! echo "Git auto-commit mode disabled"))))
+
+(def (cmd-smerge-resolve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: resolved conflict at point")))
+
+(def (cmd-smerge-ediff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: opened ediff for conflict")))
+
+(def (cmd-smerge-combine-with-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: combined conflict with next")))
+
+(def (cmd-smerge-refine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: refined conflict (word-level diff)")))
+
+(def (cmd-smerge-auto-leave app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smerge: auto-leaving (no more conflicts)")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 159 — Magit, Git-link, Blamer, Smerge Extended
+
+| Feature | Status | Notes |
+|---|---|---|
+| `magit-merge` | :orange_circle: | Merge branch |
+| `magit-merge-abort` | :orange_circle: | Abort merge |
+| `magit-merge-squash` | :orange_circle: | Squash merge |
+| `git-link-commit` | :orange_circle: | Copy commit URL |
+| `git-link-homepage` | :orange_circle: | Copy repo homepage URL |
+| `git-messenger-popup-message` | :orange_circle: | Show commit message for line |
+| `git-messenger-popup-diff` | :orange_circle: | Show diff for commit |
+| `git-messenger-popup-show` | :orange_circle: | Show full commit info |
+| `blamer-mode` | :orange_circle: | Inline git blame mode |
+| `blamer-show-commit-info` | :orange_circle: | Show commit info |
+| `blamer-show-posframe-commit-info` | :orange_circle: | Show in posframe |
+| `magit-delta-mode` | :orange_circle: | Syntax highlighting in diffs |
+| `magit-todos-mode` | :orange_circle: | Show TODOs in magit |
+| `magit-todos-list` | :orange_circle: | List all TODOs |
+| `git-auto-commit-mode` | :orange_circle: | Auto-commit on save |
+| `smerge-resolve` | :orange_circle: | Resolve conflict |
+| `smerge-ediff` | :orange_circle: | Ediff for conflict |
+| `smerge-combine-with-next` | :orange_circle: | Combine with next conflict |
+| `smerge-refine` | :orange_circle: | Word-level diff |
+| `smerge-auto-leave` | :orange_circle: | Auto-leave when resolved |
+
 ### Round 158 — Jinx, Flycheck, Flymake, Langtool, Writegood
 
 | Feature | Status | Notes |
