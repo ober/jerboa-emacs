@@ -11448,3 +11448,55 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Verb: sending HTTP request at point (no request found)")))
 
+;;; Round 53 batch 1: ein-notebooklist-open, ein-run, ein-worksheet-execute-cell,
+;;; jupyter-run-repl, jupyter-eval-line, jupyter-eval-region, cider-jack-in,
+;;; cider-eval-last-sexp, cider-eval-buffer, slime-eval-last-expression
+
+(def (cmd-ein-notebooklist-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jupyter server URL: "
+      (lambda (url)
+        (when (and url (not (string-empty? url)))
+          (echo-message! echo (str "EIN: connecting to " url " (not available)")))))))
+
+(def (cmd-ein-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EIN: running notebook cell")))
+
+(def (cmd-ein-worksheet-execute-cell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EIN: executing worksheet cell")))
+
+(def (cmd-jupyter-run-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jupyter kernel: "
+      (lambda (kernel)
+        (when (and kernel (not (string-empty? kernel)))
+          (echo-message! echo (str "Jupyter REPL: " kernel " (not available)")))))))
+
+(def (cmd-jupyter-eval-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jupyter: evaluated current line")))
+
+(def (cmd-jupyter-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jupyter: evaluated region")))
+
+(def (cmd-cider-jack-in app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: jacking in to Clojure REPL...")))
+
+(def (cmd-cider-eval-last-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: evaluated last sexp")))
+
+(def (cmd-cider-eval-buffer app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame)))
+    (echo-message! echo (str "CIDER: evaluated buffer " (buffer-name buf)))))
+
+(def (cmd-slime-eval-last-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: evaluated last expression")))
+

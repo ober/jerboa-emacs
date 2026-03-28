@@ -2257,6 +2257,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Guix mode | :orange_circle: | GNU Guix editing |
 | Vagrant up | :orange_circle: | Start Vagrant VM |
 
+### Round 53
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| EIN notebooklist open | :orange_circle: | Open Jupyter notebook list |
+| EIN run | :orange_circle: | Run notebook cell |
+| EIN worksheet execute cell | :orange_circle: | Execute worksheet cell |
+| Jupyter run REPL | :orange_circle: | Start Jupyter REPL |
+| Jupyter eval line | :orange_circle: | Evaluate current line |
+| Jupyter eval region | :orange_circle: | Evaluate selected region |
+| CIDER jack in | :orange_circle: | Connect to Clojure REPL |
+| CIDER eval last sexp | :orange_circle: | Evaluate last s-expression |
+| CIDER eval buffer | :orange_circle: | Evaluate entire buffer |
+| SLIME eval last expression | :orange_circle: | Evaluate last CL expression |
+| SLIME compile defun | :orange_circle: | Compile current defun |
+| SLY eval last expression | :orange_circle: | Evaluate last CL expression (SLY) |
+| SLY compile defun | :orange_circle: | Compile current defun (SLY) |
+| Geiser | :orange_circle: | Scheme interaction REPL |
+| Geiser eval last sexp | :orange_circle: | Evaluate last Scheme sexp |
+| Geiser eval buffer | :orange_circle: | Evaluate entire Scheme buffer |
+| Run Python | :orange_circle: | Start Python shell |
+| Python shell send region | :orange_circle: | Send region to Python |
+| Run Ruby | :orange_circle: | Start Ruby IRB |
+| Inf Ruby | :orange_circle: | Inferior Ruby process |
+
 ---
 
 ## Recommended Development Roadmap

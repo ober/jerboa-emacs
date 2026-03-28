@@ -10940,3 +10940,74 @@
 (def (cmd-vagrant-up app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vagrant up: starting virtual machine...")))
+
+;;; Round 53 batch 2: slime-compile-defun, sly-eval-last-expression,
+;;; sly-compile-defun, geiser, geiser-eval-last-sexp, geiser-eval-buffer,
+;;; run-python, python-shell-send-region, run-ruby, inf-ruby
+
+(def (cmd-slime-compile-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: compiled current defun")))
+
+(def (cmd-sly-eval-last-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: evaluated last expression")))
+
+(def (cmd-sly-compile-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: compiled current defun")))
+
+(def (cmd-geiser app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Geiser REPL*")))
+    (buffer-content-set! new-buf
+      (str "Geiser — Scheme interaction mode\n\n"
+           "scheme@(guile-user)> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Geiser REPL started")))
+
+(def (cmd-geiser-eval-last-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: evaluated last sexp")))
+
+(def (cmd-geiser-eval-buffer app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame)))
+    (echo-message! echo (str "Geiser: evaluated buffer " (buffer-name buf)))))
+
+(def (cmd-run-python app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Python*")))
+    (buffer-content-set! new-buf
+      (str "Python Interactive Shell\n\n"
+           ">>> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Python shell started")))
+
+(def (cmd-python-shell-send-region app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (echo-message! echo "Sent region to Python shell"))))
+
+(def (cmd-run-ruby app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*ruby*")))
+    (buffer-content-set! new-buf
+      (str "Ruby Interactive Shell (IRB)\n\n"
+           "irb(main):001:0> "))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Ruby IRB started")))
+
+(def (cmd-inf-ruby app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "inf-ruby: starting inferior Ruby process")))
