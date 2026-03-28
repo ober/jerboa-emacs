@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 224 — GPTel ext, Copilot ext, Ellama ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| gptel-send | :orange_circle: | Send prompt to LLM |
+| gptel-add | :orange_circle: | Add region to context |
+| gptel-add-file | :orange_circle: | Add file to context |
+| gptel-context-add | :orange_circle: | Add context item |
+| gptel-context-remove | :orange_circle: | Remove context item |
+| gptel-org-set-properties | :orange_circle: | Set Org properties for GPTel |
+| copilot-login | :orange_circle: | Log in to Copilot |
+| copilot-logout | :orange_circle: | Log out of Copilot |
+| ellama-improve-wording | :orange_circle: | Improve wording via LLM |
+| ellama-make-list | :orange_circle: | Convert text to list |
+| ellama-make-table | :orange_circle: | Convert text to table |
+| ellama-change-format | :orange_circle: | Change text format |
+| ellama-render | :orange_circle: | Render content |
+| ellama-ask-line | :orange_circle: | Ask about current line |
+| ellama-ask-selection | :orange_circle: | Ask about selection |
+| ellama-generate-commit-message | :orange_circle: | Generate commit message |
+| ellama-provider-select | :orange_circle: | Select LLM provider |
+| ellama-session-switch | :orange_circle: | Switch Ellama session |
+| ellama-session-remove | :orange_circle: | Remove Ellama session |
+| ellama-context-add-buffer | :orange_circle: | Add buffer to context |
+
 ### Round 223 — Eat ext, Vterm ext
 
 | Command | Status | Description |

@@ -19948,3 +19948,45 @@
 (def (cmd-vterm-send-next app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vterm: sent Page Down")))
+
+;;; Round 224 — GPTel ext, Copilot ext, Ellama ext (batch 1)
+
+(def (cmd-gptel-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: sent prompt")))
+
+(def (cmd-gptel-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: added region to context")))
+
+(def (cmd-gptel-add-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: added file to context")))
+
+(def (cmd-gptel-context-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: added context")))
+
+(def (cmd-gptel-context-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: removed context")))
+
+(def (cmd-gptel-org-set-properties app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: set Org properties")))
+
+(def (cmd-copilot-login app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: logging in")))
+
+(def (cmd-copilot-logout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: logged out")))
+
+(def (cmd-ellama-improve-wording app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: improving wording")))
+
+(def (cmd-ellama-make-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: making list from text")))

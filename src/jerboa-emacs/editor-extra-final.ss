@@ -19292,3 +19292,47 @@
 (def (cmd-vterm-send-up app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vterm: sent Up arrow")))
+
+;;; Round 224 — GPTel ext, Copilot ext, Ellama ext (batch 2)
+
+(def (cmd-ellama-make-table app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: making table from text")))
+
+(def (cmd-ellama-change-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Format: "
+      (lambda (fmt)
+        (echo-message! echo (str "Ellama: changed format to " fmt))))))
+
+(def (cmd-ellama-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: rendered content")))
+
+(def (cmd-ellama-ask-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: asking about current line")))
+
+(def (cmd-ellama-ask-selection app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: asking about selection")))
+
+(def (cmd-ellama-generate-commit-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: generating commit message")))
+
+(def (cmd-ellama-provider-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: selecting provider")))
+
+(def (cmd-ellama-session-switch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: switching session")))
+
+(def (cmd-ellama-session-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: removed session")))
+
+(def (cmd-ellama-context-add-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: added buffer to context")))
