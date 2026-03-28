@@ -1366,6 +1366,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | MD5 hash | :orange_circle: | Compute MD5 hash of text via md5sum |
 | Word frequency | :orange_circle: | Word frequency analysis with top-50 display |
 | Text statistics | :orange_circle: | Characters, words, lines, sentences, reading time |
+| String reverse | :orange_circle: | Reverse selected text or current line |
+| Sort words | :orange_circle: | Alphabetically sort words in selection |
+| Unique lines | :orange_circle: | Remove duplicate lines from buffer |
+| Encode HTML entities | :orange_circle: | Encode &<>"' as HTML entities |
+| Decode HTML entities | :orange_circle: | Decode HTML entities back to characters |
+| URL decode | :orange_circle: | Decode URL-encoded text via Python |
+| CamelCase to snake_case | :orange_circle: | Case conversion for identifiers |
+| snake_case to camelCase | :orange_circle: | Case conversion for identifiers |
+| kebab-case to camelCase | :orange_circle: | Case conversion for identifiers |
+| Wrap region | :orange_circle: | Wrap selection with user-specified chars |
+| Unwrap region | :orange_circle: | Remove outermost wrapping characters |
+| Quote region | :orange_circle: | Prefix each line with > |
+| Strip comments | :orange_circle: | Remove comment lines (#, //, ;) |
+| Insert file header | :orange_circle: | Auto-detect comment style, insert header template |
+| Insert license | :orange_circle: | MIT, Apache, GPL, BSD, Unlicense templates |
+| Insert shebang | :orange_circle: | Shebang lines for bash, python, ruby, node, etc. |
+| Open in external app | :orange_circle: | Open file with xdg-open |
+| Copy line number | :orange_circle: | Copy current line number to kill ring |
+| Rename file and buffer | :orange_circle: | Rename file on disk and update buffer |
+| Sudo edit | :orange_circle: | Re-open file with sudo privileges |
 
 ---
 

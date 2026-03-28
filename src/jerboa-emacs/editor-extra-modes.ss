@@ -5649,3 +5649,276 @@
              (ed (edit-window-editor win)))
         (send-message ed SCI_COPYTEXT (string-length name) name)
         (echo-message! echo (str "Copied: " name))))))
+
+;; ===== Round 13 Batch 1 =====
+
+;; --- Feature 1: String Reverse ---
+
+(def (cmd-string-reverse app)
+  "Reverse the selected text or current line."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      ;; Reverse current line
+      (let* ((line-num (send-message ed SCI_LINEFROMPOSITION
+                         (send-message ed SCI_GETCURRENTPOS 0 0) 0))
+             (start (send-message ed SCI_POSITIONFROMLINE line-num 0))
+             (end (send-message ed SCI_GETLINEENDPOSITION line-num 0))
+             (text (editor-get-text-range ed start (- end start)))
+             (reversed (list->string (reverse (string->list text)))))
+        (send-message ed SCI_SETTARGETSTART start 0)
+        (send-message ed SCI_SETTARGETEND end 0)
+        (send-message ed SCI_REPLACETARGET -1 reversed)
+        (echo-message! echo "Line reversed"))
+      ;; Reverse selection
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (reversed (list->string (reverse (string->list text)))))
+        (editor-replace-selection ed reversed)
+        (echo-message! echo "Selection reversed")))))
+
+;; --- Feature 2: Sort Words ---
+
+(def (cmd-sort-words app)
+  "Sort words in selection or current line alphabetically."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection — select text to sort words")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (words (filter (lambda (w) (> (string-length w) 0))
+                            (string-split text #\space)))
+             (sorted (sort string<? words))
+             (result (string-join sorted " ")))
+        (editor-replace-selection ed result)
+        (echo-message! echo (str "Sorted " (length sorted) " words"))))))
+
+;; --- Feature 3: Unique Lines ---
+
+(def (cmd-uniq-lines app)
+  "Remove duplicate lines from the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len))
+         (lines (string-split text #\newline))
+         (seen (make-hash-table))
+         (unique (filter (lambda (line)
+                           (if (hash-key? seen line) #f
+                             (begin (hash-put! seen line #t) #t)))
+                         lines))
+         (removed (- (length lines) (length unique))))
+    (editor-set-text ed (string-join unique "\n"))
+    (editor-goto-pos ed 0)
+    (echo-message! echo (str "Removed " removed " duplicate lines"))))
+
+;; --- Feature 4: Encode HTML Entities ---
+
+(def (cmd-encode-html-entities app)
+  "Encode special characters as HTML entities in selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (encoded (let loop ((chars (string->list text)) (acc '()))
+                        (if (null? chars)
+                          (list->string (reverse acc))
+                          (let ((c (car chars)))
+                            (cond
+                              ((char=? c #\&) (loop (cdr chars) (append (reverse (string->list "&amp;")) acc)))
+                              ((char=? c #\<) (loop (cdr chars) (append (reverse (string->list "&lt;")) acc)))
+                              ((char=? c #\>) (loop (cdr chars) (append (reverse (string->list "&gt;")) acc)))
+                              ((char=? c #\") (loop (cdr chars) (append (reverse (string->list "&quot;")) acc)))
+                              ((char=? c #\') (loop (cdr chars) (append (reverse (string->list "&#39;")) acc)))
+                              (else (loop (cdr chars) (cons c acc)))))))))
+        (editor-replace-selection ed encoded)
+        (echo-message! echo "HTML entities encoded")))))
+
+;; --- Feature 5: Decode HTML Entities ---
+
+(def (cmd-decode-html-entities app)
+  "Decode HTML entities back to characters in selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (decoded text))
+        ;; Simple entity replacements
+        (let* ((d1 (let loop ((s decoded))
+                     (let ((pos (string-contains s "&amp;")))
+                       (if (not pos) s
+                         (loop (string-append (substring s 0 pos) "&"
+                                 (substring s (+ pos 5) (string-length s))))))))
+               (d2 (let loop ((s d1))
+                     (let ((pos (string-contains s "&lt;")))
+                       (if (not pos) s
+                         (loop (string-append (substring s 0 pos) "<"
+                                 (substring s (+ pos 4) (string-length s))))))))
+               (d3 (let loop ((s d2))
+                     (let ((pos (string-contains s "&gt;")))
+                       (if (not pos) s
+                         (loop (string-append (substring s 0 pos) ">"
+                                 (substring s (+ pos 4) (string-length s))))))))
+               (d4 (let loop ((s d3))
+                     (let ((pos (string-contains s "&quot;")))
+                       (if (not pos) s
+                         (loop (string-append (substring s 0 pos) "\""
+                                 (substring s (+ pos 6) (string-length s)))))))))
+          (editor-replace-selection ed d4)
+          (echo-message! echo "HTML entities decoded"))))))
+
+;; --- Feature 6: URL Decode ---
+
+(def (cmd-url-decode app)
+  "Decode URL-encoded text in selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let ((text (editor-get-text-range ed sel-start (- sel-end sel-start))))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Decode error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "python3 -c 'import sys,urllib.parse;print(urllib.parse.unquote(sys.stdin.read()),end=\"\")' 2>/dev/null")
+                            'block (native-transcoder))))
+              (display text si)
+              (close-port si)
+              (let ((decoded (get-line so)))
+                (close-port so) (close-port se)
+                (when (not (eof-object? decoded))
+                  (editor-replace-selection ed decoded)
+                  (echo-message! echo "URL decoded"))))))))))
+
+;; --- Feature 7: CamelCase to snake_case ---
+
+(def (cmd-camelcase-to-snake app)
+  "Convert camelCase/PascalCase to snake_case in selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (result (let loop ((chars (string->list text)) (acc '()) (prev-lower #f))
+                       (if (null? chars)
+                         (list->string (reverse acc))
+                         (let ((c (car chars)))
+                           (if (and prev-lower (char-upper-case? c))
+                             (loop (cdr chars) (cons (char-downcase c) (cons #\_ acc)) #f)
+                             (loop (cdr chars) (cons (char-downcase c) acc) (char-lower-case? c))))))))
+        (editor-replace-selection ed result)
+        (echo-message! echo "Converted to snake_case")))))
+
+;; --- Feature 8: snake_case to camelCase ---
+
+(def (cmd-snake-to-camel app)
+  "Convert snake_case to camelCase in selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (parts (string-split text #\_))
+             (result (if (null? parts) ""
+                       (string-append
+                         (car parts)
+                         (apply string-append
+                           (map (lambda (p)
+                                  (if (> (string-length p) 0)
+                                    (string-append
+                                      (string (char-upcase (string-ref p 0)))
+                                      (substring p 1 (string-length p)))
+                                    ""))
+                                (cdr parts)))))))
+        (editor-replace-selection ed result)
+        (echo-message! echo "Converted to camelCase")))))
+
+;; --- Feature 9: kebab-case to camelCase ---
+
+(def (cmd-kebab-to-camel app)
+  "Convert kebab-case to camelCase in selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (parts (string-split text #\-))
+             (result (if (null? parts) ""
+                       (string-append
+                         (car parts)
+                         (apply string-append
+                           (map (lambda (p)
+                                  (if (> (string-length p) 0)
+                                    (string-append
+                                      (string (char-upcase (string-ref p 0)))
+                                      (substring p 1 (string-length p)))
+                                    ""))
+                                (cdr parts)))))))
+        (editor-replace-selection ed result)
+        (echo-message! echo "Converted to camelCase")))))
+
+;; --- Feature 10: Wrap Region ---
+
+(def (cmd-wrap-region app)
+  "Wrap the selection with user-specified characters."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((row (tui-rows)) (width (tui-cols))
+             (wrapper (echo-read-string echo "Wrap with (e.g. \" or ( or <tag>): " row width)))
+        (when (and wrapper (not (string-empty? wrapper)))
+          (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+                 (open-char (string-trim wrapper))
+                 (close-char (cond
+                               ((string=? open-char "(") ")")
+                               ((string=? open-char "[") "]")
+                               ((string=? open-char "{") "}")
+                               ((string=? open-char "<") ">")
+                               ((string=? open-char "\"") "\"")
+                               ((string=? open-char "'") "'")
+                               ((string=? open-char "`") "`")
+                               (else open-char)))
+                 (wrapped (str open-char text close-char)))
+            (editor-replace-selection ed wrapped)
+            (echo-message! echo "Region wrapped")))))))

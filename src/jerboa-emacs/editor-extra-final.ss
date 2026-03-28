@@ -5348,3 +5348,239 @@
         (editor-set-text ed content)
         (editor-goto-pos ed 0)
         (echo-message! echo (str words " words, " lines " lines"))))))
+
+;; ===== Round 13 Batch 2 =====
+
+;; --- Feature 11: Unwrap Region ---
+
+(def (cmd-unwrap-region app)
+  "Remove the outermost wrapping characters from selection."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (or (= sel-start sel-end) (< (- sel-end sel-start) 2))
+      (echo-message! echo "No selection or too short")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (unwrapped (substring text 1 (- (string-length text) 1))))
+        (editor-replace-selection ed unwrapped)
+        (echo-message! echo "Unwrapped")))))
+
+;; --- Feature 12: Quote Region ---
+
+(def (cmd-quote-region app)
+  "Quote each line in the selection with > prefix."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (lines (string-split text #\newline))
+             (quoted (map (lambda (l) (str "> " l)) lines))
+             (result (string-join quoted "\n")))
+        (editor-replace-selection ed result)
+        (echo-message! echo "Region quoted")))))
+
+;; --- Feature 13: Strip Comments ---
+
+(def (cmd-strip-comments app)
+  "Remove comment lines from the buffer (lines starting with # or //)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len))
+         (lines (string-split text #\newline))
+         (non-comments (filter (lambda (l)
+                                 (let ((trimmed (string-trim l)))
+                                   (and (> (string-length trimmed) 0)
+                                        (not (string-prefix? "#" trimmed))
+                                        (not (string-prefix? "//" trimmed))
+                                        (not (string-prefix? ";" trimmed)))))
+                               lines))
+         (removed (- (length lines) (length non-comments))))
+    (editor-set-text ed (string-join non-comments "\n"))
+    (editor-goto-pos ed 0)
+    (echo-message! echo (str "Stripped " removed " comment lines"))))
+
+;; --- Feature 14: Insert File Header ---
+
+(def (cmd-insert-file-header app)
+  "Insert a file header comment with filename, author, date."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf))
+         (name (if file
+                 (let loop ((i (- (string-length file) 1)))
+                   (cond ((< i 0) file)
+                         ((char=? (string-ref file i) #\/)
+                          (substring file (+ i 1) (string-length file)))
+                         (else (loop (- i 1)))))
+                 "untitled"))
+         (user (or (getenv "USER") "unknown"))
+         (date (number->string (time-second (current-time))))
+         (ext (if file (path-extension file) ""))
+         (comment-style (cond
+                          ((member ext '("ss" "scm" "el" "lisp" "clj")) ";;")
+                          ((member ext '("py" "rb" "sh" "bash" "zsh" "yaml" "yml")) "#")
+                          ((member ext '("c" "cpp" "h" "java" "js" "ts" "go" "rs")) "//")
+                          (else "//")))
+         (header (string-append
+                   comment-style " " name "\n"
+                   comment-style " Author: " user "\n"
+                   comment-style " Created: " date "\n"
+                   comment-style " Description: \n\n")))
+    (send-message ed SCI_GOTOPOS 0 0)
+    (editor-insert-text ed header)
+    (echo-message! echo "File header inserted")))
+
+;; --- Feature 15: Insert License ---
+
+(def *license-templates*
+  '(("MIT" . "MIT License\n\nCopyright (c) [year] [author]\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND.")
+    ("Apache-2.0" . "Licensed under the Apache License, Version 2.0")
+    ("GPL-3.0" . "This program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License.")
+    ("BSD-2" . "Redistribution and use in source and binary forms, with or without\nmodification, are permitted.")
+    ("Unlicense" . "This is free and unencumbered software released into the public domain.")))
+
+(def (cmd-insert-license app)
+  "Insert a license header into the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (names (map car *license-templates*))
+         (choice (echo-read-string-with-completion echo "License: " names row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((tmpl (assoc choice *license-templates*)))
+        (if tmpl
+          (begin
+            (editor-insert-text ed (cdr tmpl))
+            (echo-message! echo (str "Inserted " choice " license")))
+          (echo-message! echo "Unknown license"))))))
+
+;; --- Feature 16: Insert Shebang ---
+
+(def *shebang-templates*
+  '(("bash" . "#!/usr/bin/env bash")
+    ("sh" . "#!/bin/sh")
+    ("python" . "#!/usr/bin/env python3")
+    ("python2" . "#!/usr/bin/env python2")
+    ("ruby" . "#!/usr/bin/env ruby")
+    ("node" . "#!/usr/bin/env node")
+    ("perl" . "#!/usr/bin/env perl")
+    ("scheme" . "#!/usr/bin/env scheme --script")))
+
+(def (cmd-insert-shebang app)
+  "Insert a shebang line at the top of the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (names (map car *shebang-templates*))
+         (choice (echo-read-string-with-completion echo "Shebang: " names row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((tmpl (assoc choice *shebang-templates*)))
+        (when tmpl
+          (send-message ed SCI_GOTOPOS 0 0)
+          (editor-insert-text ed (str (cdr tmpl) "\n"))
+          (echo-message! echo (str "Shebang inserted: " (cdr tmpl))))))))
+
+;; --- Feature 17: Open in External App ---
+
+(def (cmd-open-in-external app)
+  "Open the current file with the system's default application."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "open error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "xdg-open " (shell-quote file) " 2>/dev/null &")
+                          'block (native-transcoder))))
+            (close-port si) (close-port so) (close-port se)
+            (echo-message! echo (str "Opened externally: " file))))))))
+
+;; --- Feature 18: Copy Line Number ---
+
+(def (cmd-copy-line-number app)
+  "Copy the current line number to the kill ring."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (line-num (+ 1 (send-message ed SCI_LINEFROMPOSITION
+                          (send-message ed SCI_GETCURRENTPOS 0 0) 0)))
+         (line-str (number->string line-num)))
+    (send-message ed SCI_COPYTEXT (string-length line-str) line-str)
+    (echo-message! echo (str "Copied line number: " line-num))))
+
+;; --- Feature 19: Rename File and Buffer ---
+
+(def (cmd-rename-file-and-buffer app)
+  "Rename the current file on disk and update the buffer name."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (let* ((row (tui-rows)) (width (tui-cols))
+             (new-name (echo-read-string echo (str "Rename to (from " file "): ") row width)))
+        (when (and new-name (not (string-empty? new-name)))
+          (let ((new-path (string-trim new-name)))
+            (with-catch
+              (lambda (e) (echo-message! echo (str "Rename error: " e)))
+              (lambda ()
+                (rename-file file new-path)
+                (buffer-file-set! buf new-path)
+                (echo-message! echo (str "Renamed to " new-path))))))))))
+
+;; --- Feature 20: Sudo Edit ---
+
+(def (cmd-sudo-edit app)
+  "Re-open the current file with sudo privileges."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "sudo error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports (str "sudo cat " (shell-quote file))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((content (string-join (reverse lines) "\n")))
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo (str "Opened with sudo: " file))))
+                  (loop (cons line lines)))))))))))
