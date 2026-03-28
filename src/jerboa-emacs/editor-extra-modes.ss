@@ -9503,3 +9503,87 @@
     (hash-put! (app-state-modes app) 'profiler-start-time (time-second (current-time)))
     (echo-message! echo "Profiler started")))
 
+;; Round 30 batch 1: set-variable, customize-variable, customize-group, customize-face,
+;; customize-themes, global-set-key, local-set-key, global-unset-key, local-unset-key, define-key
+
+;; cmd-set-variable: Set an editor variable
+(def (cmd-set-variable app)
+  (let* ((echo (app-state-echo app))
+         (var (echo-read-string echo "Set variable: ")))
+    (if (or (not var) (string=? var ""))
+      (echo-message! echo "No variable specified")
+      (let ((val (echo-read-string echo (str "Value for " var ": "))))
+        (if (or (not val) (string=? val ""))
+          (echo-message! echo "No value specified")
+          (begin
+            (hash-put! (app-state-modes app) (string->symbol var) val)
+            (echo-message! echo (str var " = " val))))))))
+
+;; cmd-customize-variable: Customize a variable (same as set-variable)
+(def (cmd-customize-variable app)
+  (cmd-set-variable app))
+
+;; cmd-customize-group: Show customization group
+(def (cmd-customize-group app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== Customize Group ===\n\n"
+                    "jemacs settings are managed via M-x set-variable.\n\n"
+                    "Available groups:\n"
+                    "  editing    - Editing behavior\n"
+                    "  display    - Display settings\n"
+                    "  files      - File handling\n"
+                    "  buffers    - Buffer management\n"
+                    "  windows    - Window layout\n"
+                    "  modes      - Major/minor modes\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Customize group")))
+
+;; cmd-customize-face: Customize a face/style
+(def (cmd-customize-face app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Face customization: use Scintilla style API directly")))
+
+;; cmd-customize-themes: Browse and select themes
+(def (cmd-customize-themes app)
+  (cmd-color-theme-select app))
+
+;; cmd-global-set-key: Bind a key globally
+(def (cmd-global-set-key app)
+  (let* ((echo (app-state-echo app))
+         (key (echo-read-string echo "Set key (e.g., C-c a): "))
+         (cmd (echo-read-string echo (str "Command for " key ": "))))
+    (if (or (not key) (string=? key "") (not cmd) (string=? cmd ""))
+      (echo-message! echo "Key binding cancelled")
+      (echo-message! echo (str "Would bind " key " to " cmd " (global keymaps not yet extensible)")))))
+
+;; cmd-local-set-key: Bind a key locally
+(def (cmd-local-set-key app)
+  (let* ((echo (app-state-echo app))
+         (key (echo-read-string echo "Set local key: "))
+         (cmd (echo-read-string echo (str "Command for " key ": "))))
+    (if (or (not key) (string=? key "") (not cmd) (string=? cmd ""))
+      (echo-message! echo "Key binding cancelled")
+      (echo-message! echo (str "Would bind " key " to " cmd " locally")))))
+
+;; cmd-global-unset-key: Unbind a global key
+(def (cmd-global-unset-key app)
+  (let* ((echo (app-state-echo app))
+         (key (echo-read-string echo "Unset global key: ")))
+    (if (or (not key) (string=? key ""))
+      (echo-message! echo "No key specified")
+      (echo-message! echo (str "Would unbind " key " globally")))))
+
+;; cmd-local-unset-key: Unbind a local key
+(def (cmd-local-unset-key app)
+  (let* ((echo (app-state-echo app))
+         (key (echo-read-string echo "Unset local key: ")))
+    (if (or (not key) (string=? key ""))
+      (echo-message! echo "No key specified")
+      (echo-message! echo (str "Would unbind " key " locally")))))
+
+;; cmd-define-key: Define a key binding
+(def (cmd-define-key app)
+  (cmd-global-set-key app))
+

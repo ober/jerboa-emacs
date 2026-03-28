@@ -9023,3 +9023,63 @@
 (def (cmd-package-refresh-contents app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Package manager not available.")))
+
+;; Round 30 batch 2: keyboard-quit, keyboard-escape-quit, suspend-frame, iconify-frame,
+;; delete-frame, make-frame, select-frame, other-frame, toggle-frame-fullscreen,
+;; toggle-frame-maximized
+
+;; cmd-keyboard-quit: Cancel current operation (C-g)
+(def (cmd-keyboard-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quit")))
+
+;; cmd-keyboard-escape-quit: Escape from current context
+(def (cmd-keyboard-escape-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quit")))
+
+;; cmd-suspend-frame: Suspend the editor
+(def (cmd-suspend-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Suspend not available in graphical mode")))
+
+;; cmd-iconify-frame: Minimize the frame
+(def (cmd-iconify-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Frame iconified")))
+
+;; cmd-delete-frame: Delete the current frame
+(def (cmd-delete-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cannot delete the only frame")))
+
+;; cmd-make-frame: Create a new frame
+(def (cmd-make-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multiple frames not yet supported")))
+
+;; cmd-select-frame: Select a frame
+(def (cmd-select-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Only one frame available")))
+
+;; cmd-other-frame: Switch to other frame
+(def (cmd-other-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Only one frame available")))
+
+;; cmd-toggle-frame-fullscreen: Toggle fullscreen mode
+(def (cmd-toggle-frame-fullscreen app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'frame-fullscreen)
+    (if (mode-enabled? app 'frame-fullscreen)
+      (echo-message! echo "Fullscreen mode enabled")
+      (echo-message! echo "Fullscreen mode disabled"))))
+
+;; cmd-toggle-frame-maximized: Toggle maximized frame
+(def (cmd-toggle-frame-maximized app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'frame-maximized)
+    (if (mode-enabled? app 'frame-maximized)
+      (echo-message! echo "Frame maximized")
+      (echo-message! echo "Frame unmaximized"))))

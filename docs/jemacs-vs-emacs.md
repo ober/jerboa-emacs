@@ -1706,6 +1706,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Package install | :orange_circle: | Install package (placeholder) |
 | Package delete | :orange_circle: | Delete package (placeholder) |
 | Package refresh contents | :orange_circle: | Refresh packages (placeholder) |
+| Set variable | :orange_circle: | Set an editor variable |
+| Customize variable | :orange_circle: | Customize a variable |
+| Customize group | :orange_circle: | Browse customization group |
+| Customize face | :orange_circle: | Customize a face/style |
+| Customize themes | :orange_circle: | Browse and select themes |
+| Global set key | :orange_circle: | Bind a key globally |
+| Local set key | :orange_circle: | Bind a key locally |
+| Global unset key | :orange_circle: | Unbind a global key |
+| Local unset key | :orange_circle: | Unbind a local key |
+| Define key | :orange_circle: | Define a key binding |
+| Keyboard quit | :orange_circle: | Cancel current operation (C-g) |
+| Keyboard escape quit | :orange_circle: | Escape from context |
+| Suspend frame | :orange_circle: | Suspend editor |
+| Iconify frame | :orange_circle: | Minimize frame |
+| Delete frame | :orange_circle: | Delete current frame |
+| Make frame | :orange_circle: | Create new frame |
+| Select frame | :orange_circle: | Select a frame |
+| Other frame | :orange_circle: | Switch to other frame |
+| Toggle frame fullscreen | :orange_circle: | Toggle fullscreen mode |
+| Toggle frame maximized | :orange_circle: | Toggle maximized frame |
 
 ---
 
