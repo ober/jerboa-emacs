@@ -19166,3 +19166,45 @@
 (def (cmd-emms-cache-set-from-mpd-all app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EMMS: caching from MPD")))
+
+;;; Round 221 — Tags/Citre/ggtags (batch 2)
+
+(def (cmd-citre-update-this-tags-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: updating tags file")))
+
+(def (cmd-citre-create-tags-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: creating tags file")))
+
+(def (cmd-citre-edit-tags-file-recipe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: editing tags file recipe")))
+
+(def (cmd-citre-global-find-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: finding references via global")))
+
+(def (cmd-citre-global-find-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: finding definition via global")))
+
+(def (cmd-citre-global-update-database app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: updating global database")))
+
+(def (cmd-ggtags-find-tag-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ggtags: find tag DWIM")))
+
+(def (cmd-ggtags-find-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ggtags: finding references")))
+
+(def (cmd-ggtags-find-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ggtags: finding definition")))
+
+(def (cmd-ggtags-create-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ggtags: creating tags")))

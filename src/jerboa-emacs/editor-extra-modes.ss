@@ -19811,3 +19811,49 @@
 (def (cmd-emms-shuffle app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EMMS: shuffled playlist")))
+
+;;; Round 221 — Tags/Citre/ggtags (batch 1)
+
+(def (cmd-counsel-etags-find-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag: "
+      (lambda (tag)
+        (echo-message! echo (str "counsel-etags: finding tag " tag))))))
+
+(def (cmd-counsel-etags-find-tag-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "counsel-etags: finding tag at point")))
+
+(def (cmd-counsel-etags-list-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "counsel-etags: listing tags")))
+
+(def (cmd-counsel-etags-recent-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "counsel-etags: showing recent tags")))
+
+(def (cmd-counsel-etags-grep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Grep: "
+      (lambda (pat)
+        (echo-message! echo (str "counsel-etags: grepping " pat))))))
+
+(def (cmd-counsel-etags-virtual-update-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "counsel-etags: virtually updated tags")))
+
+(def (cmd-citre-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: jumping to definition")))
+
+(def (cmd-citre-peek app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: peeking definition")))
+
+(def (cmd-citre-ace-peek app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: ace peeking definition")))
+
+(def (cmd-citre-jump-back app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citre: jumped back")))

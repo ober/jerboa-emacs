@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 221 — Tags/Citre/ggtags
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| counsel-etags-find-tag | :orange_circle: | Find tag via counsel |
+| counsel-etags-find-tag-at-point | :orange_circle: | Find tag at point |
+| counsel-etags-list-tag | :orange_circle: | List tags |
+| counsel-etags-recent-tag | :orange_circle: | Recent tags |
+| counsel-etags-grep | :orange_circle: | Grep via counsel-etags |
+| counsel-etags-virtual-update-tags | :orange_circle: | Virtually update tags |
+| citre-jump | :orange_circle: | Jump to definition |
+| citre-peek | :orange_circle: | Peek definition |
+| citre-ace-peek | :orange_circle: | Ace peek definition |
+| citre-jump-back | :orange_circle: | Jump back |
+| citre-update-this-tags-file | :orange_circle: | Update tags file |
+| citre-create-tags-file | :orange_circle: | Create tags file |
+| citre-edit-tags-file-recipe | :orange_circle: | Edit tags recipe |
+| citre-global-find-reference | :orange_circle: | Find references via global |
+| citre-global-find-definition | :orange_circle: | Find definition via global |
+| citre-global-update-database | :orange_circle: | Update global database |
+| ggtags-find-tag-dwim | :orange_circle: | Find tag DWIM |
+| ggtags-find-reference | :orange_circle: | Find references |
+| ggtags-find-definition | :orange_circle: | Find definition |
+| ggtags-create-tags | :orange_circle: | Create tags |
+
 ### Round 220 — EMMS ext
 
 | Command | Status | Description |
