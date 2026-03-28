@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 177 — SES, Forms-mode, Enriched-text
+
+| Feature | Status | Notes |
+|---|---|---|
+| ses-mode | :orange_circle: | Toggle SES spreadsheet mode |
+| ses-recalculate-all | :orange_circle: | Recalculate all SES cells |
+| ses-insert-row | :orange_circle: | Insert row in SES |
+| ses-insert-column | :orange_circle: | Insert column in SES |
+| ses-delete-row | :orange_circle: | Delete row in SES |
+| ses-delete-column | :orange_circle: | Delete column in SES |
+| ses-export-tsv | :orange_circle: | Export SES as TSV |
+| ses-import-tsv | :orange_circle: | Import TSV into SES |
+| ses-set-cell-formula | :orange_circle: | Set cell formula |
+| ses-jump-to-cell | :orange_circle: | Jump to named cell |
+| forms-mode | :orange_circle: | Toggle forms editing mode |
+| forms-next-record | :orange_circle: | Move to next record |
+| forms-prev-record | :orange_circle: | Move to previous record |
+| forms-first-record | :orange_circle: | Move to first record |
+| forms-last-record | :orange_circle: | Move to last record |
+| forms-search-forward | :orange_circle: | Search records forward |
+| forms-insert-record | :orange_circle: | Insert new record |
+| forms-delete-record | :orange_circle: | Delete record |
+| enriched-toggle-markup | :orange_circle: | Toggle enriched markup display |
+| enriched-set-face | :orange_circle: | Set face in enriched text |
+
 ### Round 176 — PDF-tools, DocView, Image-mode, Thumbs
 
 | Feature | Status | Notes |

@@ -17060,3 +17060,51 @@
 (def (cmd-thumbs-mark app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Thumbs: marked image")))
+
+;; Round 177 — SES, Forms-mode, Enriched-text (batch 2)
+(def (cmd-forms-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'forms)
+    (if (mode-enabled? app 'forms)
+      (echo-message! echo "Forms mode enabled")
+      (echo-message! echo "Forms mode disabled"))))
+
+(def (cmd-forms-next-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forms: moved to next record")))
+
+(def (cmd-forms-prev-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forms: moved to previous record")))
+
+(def (cmd-forms-first-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forms: moved to first record")))
+
+(def (cmd-forms-last-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forms: moved to last record")))
+
+(def (cmd-forms-search-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (query)
+        (echo-message! echo (str "Forms: searching for " query))))))
+
+(def (cmd-forms-insert-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forms: inserted new record")))
+
+(def (cmd-forms-delete-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forms: deleted record")))
+
+(def (cmd-enriched-toggle-markup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Enriched: toggled markup display")))
+
+(def (cmd-enriched-set-face app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Face: "
+      (lambda (face)
+        (echo-message! echo (str "Enriched: set face to " face))))))

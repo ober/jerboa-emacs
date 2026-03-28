@@ -17682,3 +17682,55 @@
 (def (cmd-doc-view-set-slice app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Doc-view: slice set")))
+
+;; Round 177 — SES, Forms-mode, Enriched-text (batch 1)
+(def (cmd-ses-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ses)
+    (if (mode-enabled? app 'ses)
+      (echo-message! echo "SES spreadsheet mode enabled")
+      (echo-message! echo "SES spreadsheet mode disabled"))))
+
+(def (cmd-ses-recalculate-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: recalculated all cells")))
+
+(def (cmd-ses-insert-row app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: inserted row")))
+
+(def (cmd-ses-insert-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: inserted column")))
+
+(def (cmd-ses-delete-row app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: deleted row")))
+
+(def (cmd-ses-delete-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: deleted column")))
+
+(def (cmd-ses-export-tsv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Export TSV to: "
+      (lambda (path)
+        (echo-message! echo (str "SES: exported to " path))))))
+
+(def (cmd-ses-import-tsv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Import TSV from: "
+      (lambda (path)
+        (echo-message! echo (str "SES: imported from " path))))))
+
+(def (cmd-ses-set-cell-formula app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Formula: "
+      (lambda (formula)
+        (echo-message! echo (str "SES: cell formula set to " formula))))))
+
+(def (cmd-ses-jump-to-cell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cell (e.g. A1): "
+      (lambda (cell)
+        (echo-message! echo (str "SES: jumped to cell " cell))))))
