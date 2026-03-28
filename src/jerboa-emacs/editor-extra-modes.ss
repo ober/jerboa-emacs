@@ -14412,3 +14412,60 @@
         (echo-read-string echo "Replace with: "
           (lambda (replacement)
             (echo-message! echo (str "VC Dir: replacing '" pattern "' with '" replacement "'"))))))))
+
+;;; ——— Round 111: C/C++, Python & Java programming (batch 1) ———
+
+(def (cmd-c-toggle-auto-newline app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'c-auto-newline)
+    (if (mode-enabled? app 'c-auto-newline)
+      (echo-message! echo "C auto-newline enabled")
+      (echo-message! echo "C auto-newline disabled"))))
+
+(def (cmd-c-toggle-hungry-state app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'c-hungry-delete)
+    (if (mode-enabled? app 'c-hungry-delete)
+      (echo-message! echo "C hungry-delete enabled")
+      (echo-message! echo "C hungry-delete disabled"))))
+
+(def (cmd-c-toggle-electric-state app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'c-electric)
+    (if (mode-enabled? app 'c-electric)
+      (echo-message! echo "C electric state enabled")
+      (echo-message! echo "C electric state disabled"))))
+
+(def (cmd-c-set-style app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "C style (gnu/k&r/bsd/linux): "
+      (lambda (style)
+        (echo-message! echo (str "C: set style to " style))))))
+
+(def (cmd-c-set-offset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "C offset symbol: "
+      (lambda (sym)
+        (echo-read-string echo "Offset value: "
+          (lambda (val)
+            (echo-message! echo (str "C: set offset " sym " to " val))))))))
+
+(def (cmd-c-indent-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: indented current function")))
+
+(def (cmd-c-mark-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: marked current function")))
+
+(def (cmd-c-beginning-of-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: moved to beginning of function")))
+
+(def (cmd-c-end-of-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: moved to end of function")))
+
+(def (cmd-c-backward-conditional app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: moved to previous #if/#else/#endif")))

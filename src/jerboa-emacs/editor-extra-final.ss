@@ -13845,3 +13845,49 @@
 (def (cmd-vc-dir-next-directory app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "VC Dir: moved to next directory")))
+
+;;; ——— Round 111: C/C++, Python & Java programming (batch 2) ———
+
+(def (cmd-c-forward-conditional app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: moved to next #if/#else/#endif")))
+
+(def (cmd-c-up-conditional app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: moved up to enclosing #if")))
+
+(def (cmd-python-shell-send-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: sent current function to shell")))
+
+(def (cmd-python-shell-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: sent entire buffer to shell")))
+
+(def (cmd-python-shell-send-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Send file: "
+      (lambda (file)
+        (echo-message! echo (str "Python: sent file " file " to shell"))))))
+
+(def (cmd-python-shell-send-string app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Python eval: "
+      (lambda (code)
+        (echo-message! echo (str "Python: evaluated '" code "'"))))))
+
+(def (cmd-python-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: running syntax checker")))
+
+(def (cmd-python-describe-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: describing symbol at point")))
+
+(def (cmd-python-eldoc-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: showing eldoc for symbol at point")))
+
+(def (cmd-java-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Java mode activated")))

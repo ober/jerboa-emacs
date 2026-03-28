@@ -3739,6 +3739,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | vc-dir-previous-directory | :orange_circle: | Move to previous directory |
 | vc-dir-next-directory | :orange_circle: | Move to next directory |
 
+### Round 111 — C/C++, Python & Java Programming
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| c-toggle-auto-newline | :orange_circle: | Toggle C auto-newline mode |
+| c-toggle-hungry-state | :orange_circle: | Toggle C hungry-delete mode |
+| c-toggle-electric-state | :orange_circle: | Toggle C electric state |
+| c-set-style | :orange_circle: | Set C indentation style |
+| c-set-offset | :orange_circle: | Set C offset for syntactic symbol |
+| c-indent-defun | :orange_circle: | Indent current C function |
+| c-mark-function | :orange_circle: | Mark current C function |
+| c-beginning-of-defun | :orange_circle: | Move to beginning of C function |
+| c-end-of-defun | :orange_circle: | Move to end of C function |
+| c-backward-conditional | :orange_circle: | Move to previous preprocessor conditional |
+| c-forward-conditional | :orange_circle: | Move to next preprocessor conditional |
+| c-up-conditional | :orange_circle: | Move up to enclosing #if |
+| python-shell-send-defun | :orange_circle: | Send function to Python shell |
+| python-shell-send-buffer | :orange_circle: | Send buffer to Python shell |
+| python-shell-send-file | :orange_circle: | Send file to Python shell |
+| python-shell-send-string | :orange_circle: | Evaluate string in Python shell |
+| python-check | :orange_circle: | Run Python syntax checker |
+| python-describe-at-point | :orange_circle: | Describe Python symbol at point |
+| python-eldoc-at-point | :orange_circle: | Show eldoc for Python symbol |
+| java-mode | :orange_circle: | Activate Java major mode |
+
 ---
 
 ## Recommended Development Roadmap
