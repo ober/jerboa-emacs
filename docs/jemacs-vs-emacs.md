@@ -3333,6 +3333,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 95 — Denote, Citar & BibTeX
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| denote-link | :orange_circle: | Insert denote link |
+| denote-backlinks | :orange_circle: | Show denote backlinks |
+| denote-rename-file | :orange_circle: | Rename denote file |
+| denote-keywords-add | :orange_circle: | Add denote keywords |
+| denote-keywords-remove | :orange_circle: | Remove denote keywords |
+| denote-open-or-create | :orange_circle: | Open or create denote note |
+| denote-link-find-file | :orange_circle: | Find linked denote file |
+| denote-link-find-backlink | :orange_circle: | Find backlinked denote file |
+| denote-subdirectory | :orange_circle: | Set denote subdirectory |
+| citar-open | :orange_circle: | Open citation reference |
+| citar-insert-citation | :orange_circle: | Insert citation |
+| citar-insert-reference | :orange_circle: | Insert reference |
+| citar-open-notes | :orange_circle: | Open notes for reference |
+| citar-open-files | :orange_circle: | Open files for reference |
+| bibtex-mode | :orange_circle: | Toggle BibTeX mode |
+| bibtex-clean-entry | :orange_circle: | Clean BibTeX entry |
+| bibtex-fill-entry | :orange_circle: | Fill BibTeX entry |
+| bibtex-reformat | :orange_circle: | Reformat BibTeX buffer |
+| biblio-lookup | :orange_circle: | Look up bibliography |
+| biblio-arxiv-lookup | :orange_circle: | Search ArXiv |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

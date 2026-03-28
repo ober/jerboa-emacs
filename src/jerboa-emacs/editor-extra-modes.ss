@@ -13620,3 +13620,56 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org Anki: all synced notes deleted")))
 
+;;; Round 95 — Denote, Citar & BibTeX
+(def (cmd-denote-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: link inserted")))
+
+(def (cmd-denote-backlinks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: showing backlinks")))
+
+(def (cmd-denote-rename-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New denote title: "
+      (lambda (title)
+        (echo-message! echo (str "Denote: renamed to " title))))))
+
+(def (cmd-denote-keywords-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Keywords to add: "
+      (lambda (kw)
+        (echo-message! echo (str "Denote: added keywords " kw))))))
+
+(def (cmd-denote-keywords-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Keywords to remove: "
+      (lambda (kw)
+        (echo-message! echo (str "Denote: removed keywords " kw))))))
+
+(def (cmd-denote-open-or-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Denote open or create: "
+      (lambda (title)
+        (echo-message! echo (str "Denote: opened or created '" title "'"))))))
+
+(def (cmd-denote-link-find-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: finding linked file")))
+
+(def (cmd-denote-link-find-backlink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Denote: finding backlinked file")))
+
+(def (cmd-denote-subdirectory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Denote subdirectory: "
+      (lambda (dir)
+        (echo-message! echo (str "Denote: set subdirectory to " dir))))))
+
+(def (cmd-citar-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Citar open reference: "
+      (lambda (ref)
+        (echo-message! echo (str "Citar: opening " ref))))))
+

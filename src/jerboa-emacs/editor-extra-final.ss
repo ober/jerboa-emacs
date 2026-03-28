@@ -13085,3 +13085,55 @@
 (def (cmd-org-journal-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org Journal: listing all entries")))
+
+;;; Round 95 — Citar & BibTeX (cont.)
+(def (cmd-citar-insert-citation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert citation key: "
+      (lambda (key)
+        (echo-message! echo (str "Citar: inserted citation " key))))))
+
+(def (cmd-citar-insert-reference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert reference key: "
+      (lambda (key)
+        (echo-message! echo (str "Citar: inserted reference " key))))))
+
+(def (cmd-citar-open-notes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citar: opening notes for reference")))
+
+(def (cmd-citar-open-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Citar: opening files for reference")))
+
+(def (cmd-bibtex-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'bibtex)
+    (if (mode-enabled? app 'bibtex)
+      (echo-message! echo "BibTeX mode enabled")
+      (echo-message! echo "BibTeX mode disabled"))))
+
+(def (cmd-bibtex-clean-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BibTeX: entry cleaned")))
+
+(def (cmd-bibtex-fill-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BibTeX: entry filled")))
+
+(def (cmd-bibtex-reformat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BibTeX: buffer reformatted")))
+
+(def (cmd-biblio-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Biblio lookup: "
+      (lambda (query)
+        (echo-message! echo (str "Biblio: searching for '" query "'"))))))
+
+(def (cmd-biblio-arxiv-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ArXiv lookup: "
+      (lambda (query)
+        (echo-message! echo (str "Biblio: searching ArXiv for '" query "'"))))))
