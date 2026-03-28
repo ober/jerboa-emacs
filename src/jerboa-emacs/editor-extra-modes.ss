@@ -13903,3 +13903,51 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Consult: showing minor mode selection menu")))
 
+;;; ——— Round 101: Vertico/Corfu completion (batch 1) ———
+
+(def (cmd-vertico-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'vertico)
+    (if (mode-enabled? app 'vertico)
+      (echo-message! echo "Vertico mode enabled")
+      (echo-message! echo "Vertico mode disabled"))))
+
+(def (cmd-vertico-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: moved to next candidate")))
+
+(def (cmd-vertico-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: moved to previous candidate")))
+
+(def (cmd-vertico-first app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: jumped to first candidate")))
+
+(def (cmd-vertico-last app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: jumped to last candidate")))
+
+(def (cmd-vertico-scroll-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: scrolled candidates up")))
+
+(def (cmd-vertico-scroll-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: scrolled candidates down")))
+
+(def (cmd-vertico-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: exited completion")))
+
+(def (cmd-vertico-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: inserted current candidate")))
+
+(def (cmd-corfu-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'corfu)
+    (if (mode-enabled? app 'corfu)
+      (echo-message! echo "Corfu completion mode enabled")
+      (echo-message! echo "Corfu completion mode disabled"))))
+

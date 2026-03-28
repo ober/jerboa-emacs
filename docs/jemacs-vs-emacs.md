@@ -3489,6 +3489,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | consult-widen | :orange_circle: | Widen consult to all sources |
 | consult-mark | :orange_circle: | Navigate mark ring |
 
+### Round 101 — Vertico/Corfu Completion Framework
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| vertico-mode | :orange_circle: | Toggle Vertico vertical completion |
+| vertico-next | :orange_circle: | Move to next Vertico candidate |
+| vertico-previous | :orange_circle: | Move to previous Vertico candidate |
+| vertico-first | :orange_circle: | Jump to first candidate |
+| vertico-last | :orange_circle: | Jump to last candidate |
+| vertico-scroll-up | :orange_circle: | Scroll candidates up |
+| vertico-scroll-down | :orange_circle: | Scroll candidates down |
+| vertico-exit | :orange_circle: | Exit Vertico completion |
+| vertico-insert | :orange_circle: | Insert current candidate |
+| corfu-mode | :orange_circle: | Toggle Corfu in-buffer completion |
+| corfu-next | :orange_circle: | Next Corfu completion candidate |
+| corfu-previous | :orange_circle: | Previous Corfu completion candidate |
+| corfu-insert | :orange_circle: | Insert Corfu completion |
+| corfu-show-documentation | :orange_circle: | Show candidate documentation |
+| corfu-show-location | :orange_circle: | Show candidate source location |
+| corfu-info-documentation | :orange_circle: | Open docs in separate buffer |
+| corfu-info-location | :orange_circle: | Open source in separate buffer |
+| corfu-popupinfo-toggle | :orange_circle: | Toggle popup info display |
+| vertico-directory-up | :orange_circle: | Move up one directory level |
+| vertico-directory-enter | :orange_circle: | Enter directory in completion |
+
 ---
 
 ## Recommended Development Roadmap

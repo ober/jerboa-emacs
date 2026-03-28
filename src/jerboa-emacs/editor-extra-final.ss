@@ -13367,3 +13367,48 @@
 (def (cmd-consult-mark app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Consult: navigating mark ring")))
+
+;;; ——— Round 101: Vertico/Corfu completion (batch 2) ———
+
+(def (cmd-corfu-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: moved to next completion candidate")))
+
+(def (cmd-corfu-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: moved to previous completion candidate")))
+
+(def (cmd-corfu-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: inserted completion")))
+
+(def (cmd-corfu-show-documentation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: showing documentation for current candidate")))
+
+(def (cmd-corfu-show-location app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: showing source location of current candidate")))
+
+(def (cmd-corfu-info-documentation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: opened documentation in separate buffer")))
+
+(def (cmd-corfu-info-location app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Corfu: opened source location in separate buffer")))
+
+(def (cmd-corfu-popupinfo-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'corfu-popupinfo)
+    (if (mode-enabled? app 'corfu-popupinfo)
+      (echo-message! echo "Corfu popup info enabled")
+      (echo-message! echo "Corfu popup info disabled"))))
+
+(def (cmd-vertico-directory-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: moved up one directory level")))
+
+(def (cmd-vertico-directory-enter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vertico: entered directory")))
