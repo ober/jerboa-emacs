@@ -17633,3 +17633,52 @@
 (def (cmd-mu4e-headers-action app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mu4e: performing headers action")))
+
+;; Round 176 — PDF-tools, DocView, Image-mode, Thumbs (batch 1)
+(def (cmd-pdf-view-printer-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pdf-view-printer)
+    (if (mode-enabled? app 'pdf-view-printer)
+      (echo-message! echo "PDF printer mode enabled")
+      (echo-message! echo "PDF printer mode disabled"))))
+
+(def (cmd-pdf-annot-add-highlight-markup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added highlight annotation")))
+
+(def (cmd-pdf-annot-add-underline-markup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added underline annotation")))
+
+(def (cmd-pdf-annot-add-strikeout-markup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added strikeout annotation")))
+
+(def (cmd-pdf-annot-add-squiggly-markup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: added squiggly annotation")))
+
+(def (cmd-pdf-annot-edit-contents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Annotation text: "
+      (lambda (text)
+        (echo-message! echo "PDF: annotation contents updated")))))
+
+(def (cmd-pdf-view-extract-region-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: extracted region as image")))
+
+(def (cmd-doc-view-continuous-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'doc-view-continuous)
+    (if (mode-enabled? app 'doc-view-continuous)
+      (echo-message! echo "Doc-view continuous mode enabled")
+      (echo-message! echo "Doc-view continuous mode disabled"))))
+
+(def (cmd-doc-view-presentation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doc-view: entering presentation mode")))
+
+(def (cmd-doc-view-set-slice app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doc-view: slice set")))

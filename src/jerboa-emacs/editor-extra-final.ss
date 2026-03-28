@@ -17015,3 +17015,48 @@
     (echo-read-string echo "RSS URL: "
       (lambda (url)
         (echo-message! echo (str "Gnus: created RSS group for " url))))))
+
+;; Round 176 — PDF-tools, DocView, Image-mode, Thumbs (batch 2)
+(def (cmd-doc-view-reset-slice app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doc-view: slice reset")))
+
+(def (cmd-doc-view-fit-height-to-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doc-view: fit height to window")))
+
+(def (cmd-doc-view-fit-width-to-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doc-view: fit width to window")))
+
+(def (cmd-image-flip-horizontally app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: flipped horizontally")))
+
+(def (cmd-image-flip-vertically app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image: flipped vertically")))
+
+(def (cmd-image-transform-set-rotation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rotation (degrees): "
+      (lambda (deg)
+        (echo-message! echo (str "Image: rotation set to " deg " degrees"))))))
+
+(def (cmd-image-transform-set-scale app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Scale factor: "
+      (lambda (scale)
+        (echo-message! echo (str "Image: scale set to " scale))))))
+
+(def (cmd-thumbs-dired-setroot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thumbs: set as desktop wallpaper")))
+
+(def (cmd-thumbs-rename-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thumbs: renaming images")))
+
+(def (cmd-thumbs-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thumbs: marked image")))

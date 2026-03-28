@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 176 — PDF-tools, DocView, Image-mode, Thumbs
+
+| Feature | Status | Notes |
+|---|---|---|
+| pdf-view-printer-minor-mode | :orange_circle: | Toggle PDF printer mode |
+| pdf-annot-add-highlight-markup | :orange_circle: | Add highlight annotation |
+| pdf-annot-add-underline-markup | :orange_circle: | Add underline annotation |
+| pdf-annot-add-strikeout-markup | :orange_circle: | Add strikeout annotation |
+| pdf-annot-add-squiggly-markup | :orange_circle: | Add squiggly annotation |
+| pdf-annot-edit-contents | :orange_circle: | Edit annotation contents |
+| pdf-view-extract-region-image | :orange_circle: | Extract region as image |
+| doc-view-continuous-mode | :orange_circle: | Toggle continuous scrolling |
+| doc-view-presentation | :orange_circle: | Enter presentation mode |
+| doc-view-set-slice | :orange_circle: | Set document view slice |
+| doc-view-reset-slice | :orange_circle: | Reset document view slice |
+| doc-view-fit-height-to-window | :orange_circle: | Fit doc height to window |
+| doc-view-fit-width-to-window | :orange_circle: | Fit doc width to window |
+| image-flip-horizontally | :orange_circle: | Flip image horizontally |
+| image-flip-vertically | :orange_circle: | Flip image vertically |
+| image-transform-set-rotation | :orange_circle: | Set image rotation angle |
+| image-transform-set-scale | :orange_circle: | Set image scale factor |
+| thumbs-dired-setroot | :orange_circle: | Set image as wallpaper |
+| thumbs-rename-images | :orange_circle: | Batch rename images |
+| thumbs-mark | :orange_circle: | Mark image in thumbs |
+
 ### Round 175 — Notmuch, Mu4e-ext, Wanderlust, Gnus-ext
 
 | Feature | Status | Notes |
