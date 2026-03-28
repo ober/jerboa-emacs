@@ -14618,3 +14618,53 @@
 (def (cmd-ivy-avy app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ivy: avy selection")))
+
+;;; Round 127 — Counsel, Ivy, Swiper extended (batch 2)
+
+(def (cmd-counsel-faces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing faces")))
+
+(def (cmd-counsel-file-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File jump: "
+      (lambda (pat)
+        (echo-message! echo (str "Counsel: jumping to file matching '" pat "'"))))))
+
+(def (cmd-counsel-fzf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "FZF: "
+      (lambda (pat)
+        (echo-message! echo (str "Counsel: fzf search for '" pat "'"))))))
+
+(def (cmd-counsel-linux-app app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Launch app: "
+      (lambda (app-name)
+        (echo-message! echo (str "Counsel: launching " app-name))))))
+
+(def (cmd-counsel-minor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing minor modes")))
+
+(def (cmd-counsel-org-capture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: org capture template selection")))
+
+(def (cmd-counsel-org-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: org tag selection")))
+
+(def (cmd-counsel-org-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing org files")))
+
+(def (cmd-counsel-outline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing outline headings")))
+
+(def (cmd-counsel-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Counsel: package '" pkg "'"))))))

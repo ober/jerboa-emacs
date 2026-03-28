@@ -4153,6 +4153,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 127 — Counsel, Ivy, Swiper Extended
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| ivy-call | :orange_circle: | Call action without exiting Ivy |
+| ivy-immediate-done | :orange_circle: | Use exact input in Ivy |
+| ivy-partial-or-done | :orange_circle: | Partial completion or done |
+| ivy-alt-done | :orange_circle: | Alternate done action |
+| ivy-occur | :orange_circle: | Open Ivy occur buffer |
+| ivy-occur-read-action | :orange_circle: | Read action from occur |
+| counsel-colors-emacs | :orange_circle: | Browse Emacs colors |
+| counsel-colors-web | :orange_circle: | Browse web colors |
+| counsel-command-history | :orange_circle: | Browse command history |
+| counsel-evil-registers | :orange_circle: | Browse evil registers |
+| counsel-faces | :orange_circle: | Browse faces |
+| counsel-file-jump | :orange_circle: | Jump to file |
+| counsel-fzf | :orange_circle: | FZF file search |
+| counsel-linux-app | :orange_circle: | Launch Linux application |
+| counsel-minor | :orange_circle: | Browse minor modes |
+| counsel-org-capture | :orange_circle: | Org capture template selection |
+| counsel-org-tag | :orange_circle: | Org tag selection |
+| counsel-org-file | :orange_circle: | Browse org files |
+| counsel-outline | :orange_circle: | Browse outline headings |
+| counsel-package | :orange_circle: | Browse packages |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

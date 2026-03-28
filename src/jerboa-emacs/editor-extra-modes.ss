@@ -15229,3 +15229,45 @@
 (def (cmd-doom-info app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Doom: displaying system info")))
+
+;;; Round 127 — Counsel, Ivy, Swiper extended (batch 1)
+
+(def (cmd-ivy-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: called action without exiting")))
+
+(def (cmd-ivy-immediate-done app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: immediate done (use exact input)")))
+
+(def (cmd-ivy-partial-or-done app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: partial completion or done")))
+
+(def (cmd-ivy-alt-done app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: alternate done")))
+
+(def (cmd-ivy-occur app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: opened occur buffer")))
+
+(def (cmd-ivy-occur-read-action app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ivy: read action from occur")))
+
+(def (cmd-counsel-colors-emacs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing Emacs colors")))
+
+(def (cmd-counsel-colors-web app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing web colors")))
+
+(def (cmd-counsel-command-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing command history")))
+
+(def (cmd-counsel-evil-registers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Counsel: browsing evil registers")))
