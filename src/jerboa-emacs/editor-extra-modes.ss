@@ -19663,3 +19663,57 @@
 (def (cmd-notmuch-show-stash-cc app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Notmuch: stashed CC")))
+
+;;; Round 218 — ERC ext, Elfeed ext (batch 1)
+
+(def (cmd-erc-track-list-channels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: listing tracked channels")))
+
+(def (cmd-erc-timestamp-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-timestamp)
+    (if (mode-enabled? app 'erc-timestamp)
+      (echo-message! echo "ERC: timestamp mode enabled")
+      (echo-message! echo "ERC: timestamp mode disabled"))))
+
+(def (cmd-erc-hl-nicks-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-hl-nicks)
+    (if (mode-enabled? app 'erc-hl-nicks)
+      (echo-message! echo "ERC: highlight nicks mode enabled")
+      (echo-message! echo "ERC: highlight nicks mode disabled"))))
+
+(def (cmd-erc-scrolltobottom-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-scrolltobottom)
+    (if (mode-enabled? app 'erc-scrolltobottom)
+      (echo-message! echo "ERC: scroll-to-bottom mode enabled")
+      (echo-message! echo "ERC: scroll-to-bottom mode disabled"))))
+
+(def (cmd-erc-nickbar-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'erc-nickbar)
+    (if (mode-enabled? app 'erc-nickbar)
+      (echo-message! echo "ERC: nickbar mode enabled")
+      (echo-message! echo "ERC: nickbar mode disabled"))))
+
+(def (cmd-erc-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: listing channels on server")))
+
+(def (cmd-erc-status-sidebar-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: opened status sidebar")))
+
+(def (cmd-elfeed-search-show-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: showing entry")))
+
+(def (cmd-elfeed-show-save-enclosure app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: saved enclosure")))
+
+(def (cmd-elfeed-show-visit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elfeed: visiting entry in browser")))

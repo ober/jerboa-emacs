@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 218 — ERC ext, Elfeed ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| erc-track-list-channels | :orange_circle: | List tracked ERC channels |
+| erc-timestamp-mode | :orange_circle: | Toggle ERC timestamp mode |
+| erc-hl-nicks-mode | :orange_circle: | Toggle ERC highlight nicks |
+| erc-scrolltobottom-mode | :orange_circle: | Toggle ERC scroll-to-bottom |
+| erc-nickbar-mode | :orange_circle: | Toggle ERC nickbar |
+| erc-list | :orange_circle: | List channels on server |
+| erc-status-sidebar-open | :orange_circle: | Open ERC status sidebar |
+| elfeed-search-show-entry | :orange_circle: | Show entry from search |
+| elfeed-show-save-enclosure | :orange_circle: | Save enclosure |
+| elfeed-show-visit | :orange_circle: | Visit entry in browser |
+| elfeed-show-next | :orange_circle: | Show next entry |
+| elfeed-show-prev | :orange_circle: | Show previous entry |
+| elfeed-show-new-live-search | :orange_circle: | New live search from show |
+| elfeed-search-first-entry | :orange_circle: | Jump to first entry |
+| elfeed-search-last-entry | :orange_circle: | Jump to last entry |
+| elfeed-goodies-toggle-header | :orange_circle: | Toggle goodies header |
+| elfeed-tube-fetch | :orange_circle: | Fetch tube content |
+| elfeed-tube-show | :orange_circle: | Show tube content |
+| elfeed-score-enable | :orange_circle: | Enable entry scoring |
+| elfeed-score-print-entry-score | :orange_circle: | Print entry score |
+
 ### Round 217 — Notmuch ext
 
 | Command | Status | Description |
