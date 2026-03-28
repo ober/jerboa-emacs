@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 157 — Org-babel, Org-present, Org-tree-slide, Org-reveal, Org-download
+
+| Feature | Status | Notes |
+|---|---|---|
+| `org-babel-insert-header-arg` | :orange_circle: | Insert header argument |
+| `org-babel-view-src-block-info` | :orange_circle: | View source block info |
+| `org-babel-demarcate-block` | :orange_circle: | Demarcate/split block |
+| `org-babel-goto-named-src-block` | :orange_circle: | Go to named block |
+| `org-babel-goto-named-result` | :orange_circle: | Go to named result |
+| `org-present-beginning` | :orange_circle: | First slide |
+| `org-present-end` | :orange_circle: | Last slide |
+| `org-present-big` | :orange_circle: | Increase text size |
+| `org-present-small` | :orange_circle: | Decrease text size |
+| `org-tree-slide-mode` | :orange_circle: | Tree-slide presentation mode |
+| `org-tree-slide-move-next-tree` | :orange_circle: | Next tree/slide |
+| `org-tree-slide-move-previous-tree` | :orange_circle: | Previous tree/slide |
+| `org-tree-slide-content` | :orange_circle: | Content overview |
+| `org-tree-slide-play-with-timer` | :orange_circle: | Auto-play with timer |
+| `org-reveal-export-to-html` | :orange_circle: | Export to reveal.js |
+| `org-download-delete` | :orange_circle: | Delete downloaded file |
+| `org-download-rename-at-point` | :orange_circle: | Rename downloaded file |
+| `org-download-edit` | :orange_circle: | Edit image at point |
+| `org-download-enable` | :orange_circle: | Enable drag-and-drop |
+| `org-download-image` | :orange_circle: | Download image from URL |
+
 ### Round 156 — Popper, Shackle, Hydra, Transient Extended
 
 | Feature | Status | Notes |

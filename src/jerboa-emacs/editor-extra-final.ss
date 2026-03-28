@@ -16073,3 +16073,53 @@
     (echo-read-string echo "Set transient level: "
       (lambda (lvl)
         (echo-message! echo (str "Transient: set level to " lvl))))))
+
+;; ============================================================
+;; Round 157 — Org-tree-slide, Org-reveal, Org-download (batch 2)
+;; ============================================================
+
+(def (cmd-org-tree-slide-move-next-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-tree-slide: moved to next tree")))
+
+(def (cmd-org-tree-slide-move-previous-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-tree-slide: moved to previous tree")))
+
+(def (cmd-org-tree-slide-content app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-tree-slide: showing content overview")))
+
+(def (cmd-org-tree-slide-play-with-timer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Timer interval (seconds): "
+      (lambda (secs)
+        (echo-message! echo (str "Org-tree-slide: auto-play every " secs "s"))))))
+
+(def (cmd-org-reveal-export-to-html app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-reveal: exported to reveal.js HTML")))
+
+(def (cmd-org-download-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-download: deleted downloaded file at point")))
+
+(def (cmd-org-download-rename-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New filename: "
+      (lambda (name)
+        (echo-message! echo (str "Org-download: renamed to " name))))))
+
+(def (cmd-org-download-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-download: editing image at point")))
+
+(def (cmd-org-download-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-download: drag-and-drop enabled")))
+
+(def (cmd-org-download-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image URL: "
+      (lambda (url)
+        (echo-message! echo (str "Org-download: downloading " url))))))

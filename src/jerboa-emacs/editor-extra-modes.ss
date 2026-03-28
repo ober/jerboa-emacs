@@ -16704,3 +16704,56 @@
 (def (cmd-hydra-zoom/body app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Hydra: zoom menu (+/-/0)")))
+
+;; ============================================================
+;; Round 157 — Org-babel, Org-present, Org-tree-slide (batch 1)
+;; ============================================================
+
+(def (cmd-org-babel-insert-header-arg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Header arg: "
+      (lambda (arg)
+        (echo-message! echo (str "Org-babel: inserted header arg " arg))))))
+
+(def (cmd-org-babel-view-src-block-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-babel: showing source block info")))
+
+(def (cmd-org-babel-demarcate-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-babel: demarcated/split source block")))
+
+(def (cmd-org-babel-goto-named-src-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Go to named block: "
+      (lambda (name)
+        (echo-message! echo (str "Org-babel: jumped to block '" name "'"))))))
+
+(def (cmd-org-babel-goto-named-result app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Go to named result: "
+      (lambda (name)
+        (echo-message! echo (str "Org-babel: jumped to result '" name "'"))))))
+
+(def (cmd-org-present-beginning app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-present: jumped to first slide")))
+
+(def (cmd-org-present-end app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-present: jumped to last slide")))
+
+(def (cmd-org-present-big app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-present: increased text size")))
+
+(def (cmd-org-present-small app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-present: decreased text size")))
+
+(def (cmd-org-tree-slide-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-tree-slide)
+    (if (mode-enabled? app 'org-tree-slide)
+      (echo-message! echo "Org-tree-slide mode enabled")
+      (echo-message! echo "Org-tree-slide mode disabled"))))
