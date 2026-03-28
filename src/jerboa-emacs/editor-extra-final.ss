@@ -4453,3 +4453,322 @@
                               'block (native-transcoder))))
                 (close-port si) (close-port so) (close-port se)
                 (echo-message! echo (str "Sent to " room))))))))))
+
+;; ===== Round 10 Batch 2 =====
+
+;; --- Feature 11: HTTP Stat ---
+
+(def (cmd-httpstat app)
+  "Show HTTP request timing statistics for a URL."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (url (echo-read-string echo "URL: " row width)))
+    (when (and url (not (string-empty? url)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "httpstat error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "curl -sL -o /dev/null -w '"
+                               "DNS: %{time_namelookup}s\\n"
+                               "Connect: %{time_connect}s\\n"
+                               "TLS: %{time_appconnect}s\\n"
+                               "TTFB: %{time_starttransfer}s\\n"
+                               "Total: %{time_total}s\\n"
+                               "Status: %{http_code}\\n"
+                               "Size: %{size_download} bytes\\n"
+                               "' " (shell-quote (string-trim url)))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((content (string-append "HTTP Stats: " (string-trim url) "\n"
+                                      (make-string 50 #\=) "\n\n"
+                                      (string-join (reverse lines) "\n")))
+                           (hbuf (make-buffer "*httpstat*")))
+                      (buffer-attach! ed hbuf)
+                      (set! (edit-window-buffer win) hbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "HTTP stats loaded")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 12: JWT Decode ---
+
+(def (cmd-jwt-decode app)
+  "Decode a JWT token and display its payload."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (token (echo-read-string echo "JWT token: " row width)))
+    (when (and token (not (string-empty? token)))
+      (let* ((parts (string-split (string-trim token) #\.)))
+        (if (< (length parts) 2)
+          (echo-message! echo "Invalid JWT: expected 3 parts separated by .")
+          (with-catch
+            (lambda (e) (echo-message! echo (str "JWT decode error: " e)))
+            (lambda ()
+              ;; Decode base64 header and payload
+              (let* ((decode-part (lambda (part)
+                       (let-values (((si so se pid)
+                                     (open-process-ports
+                                       (str "echo " (shell-quote part) " | base64 -d 2>/dev/null")
+                                       'block (native-transcoder))))
+                         (close-port si)
+                         (let loop ((lines '()))
+                           (let ((line (get-line so)))
+                             (if (eof-object? line)
+                               (begin (close-port so) (close-port se)
+                                      (string-join (reverse lines) "\n"))
+                               (loop (cons line lines))))))))
+                     (header (decode-part (car parts)))
+                     (payload (decode-part (cadr parts)))
+                     (content (string-append "JWT Decode\n"
+                                (make-string 50 #\=) "\n\n"
+                                "Header:\n" header "\n\n"
+                                "Payload:\n" payload "\n"))
+                     (jbuf (make-buffer "*jwt*")))
+                (buffer-attach! ed jbuf)
+                (set! (edit-window-buffer win) jbuf)
+                (editor-set-text ed content)
+                (editor-goto-pos ed 0)
+                (echo-message! echo "JWT decoded")))))))))
+
+;; --- Feature 13: XML Format ---
+
+(def (cmd-xml-format app)
+  "Format/pretty-print XML in the current buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "XML format error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          "xmllint --format - 2>/dev/null || python3 -c 'import sys,xml.dom.minidom;print(xml.dom.minidom.parseString(sys.stdin.read()).toprettyxml())'"
+                          'block (native-transcoder))))
+            (display text p-stdin)
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let ((formatted (string-join (reverse lines) "\n")))
+                      (when (> (string-length formatted) 0)
+                        (editor-set-text ed formatted)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo "XML formatted"))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 14: CSV Sort ---
+
+(def (cmd-csv-sort app)
+  "Sort CSV data by a specified column."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (col-str (echo-read-string echo "Sort by column (1-based): " row width)))
+    (when (and col-str (not (string-empty? col-str)))
+      (let ((col (string->number (string-trim col-str))))
+        (when (and col (> col 0))
+          (let* ((len (send-message ed SCI_GETLENGTH 0 0))
+                 (text (editor-get-text ed len))
+                 (lines (string-split text #\newline))
+                 (header (car lines))
+                 (data (cdr lines))
+                 (get-col (lambda (line)
+                            (let ((fields (string-split line #\,)))
+                              (if (>= (length fields) col)
+                                (list-ref fields (- col 1))
+                                ""))))
+                 (sorted (sort (lambda (a b) (string<? (get-col a) (get-col b))) data))
+                 (result (string-join (cons header sorted) "\n")))
+            (editor-set-text ed result)
+            (editor-goto-pos ed 0)
+            (echo-message! echo (str "Sorted by column " col))))))))
+
+;; --- Feature 15: Markdown TOC ---
+
+(def (cmd-markdown-toc app)
+  "Generate a table of contents from markdown headings."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len))
+         (lines (string-split text #\newline))
+         (headings (filter (lambda (l) (and (> (string-length l) 0)
+                                            (char=? (string-ref l 0) #\#)))
+                           lines))
+         (toc-entries
+           (map (lambda (h)
+                  (let* ((level (let loop ((i 0))
+                                  (if (and (< i (string-length h)) (char=? (string-ref h i) #\#))
+                                    (loop (+ i 1)) i)))
+                         (title (string-trim (substring h level (string-length h))))
+                         (anchor (string-downcase
+                                   (let loop ((chars (string->list title)) (acc '()))
+                                     (cond
+                                       ((null? chars) (list->string (reverse acc)))
+                                       ((char-alphabetic? (car chars))
+                                        (loop (cdr chars) (cons (char-downcase (car chars)) acc)))
+                                       ((char-numeric? (car chars))
+                                        (loop (cdr chars) (cons (car chars) acc)))
+                                       ((char=? (car chars) #\space)
+                                        (loop (cdr chars) (cons #\- acc)))
+                                       (else (loop (cdr chars) acc))))))
+                         (indent (make-string (* (- level 1) 2) #\space)))
+                    (str indent "- [" title "](#" anchor ")")))
+                headings))
+         (toc (string-append "## Table of Contents\n\n"
+                (string-join toc-entries "\n") "\n")))
+    ;; Insert at beginning
+    (send-message ed SCI_GOTOPOS 0 0)
+    (editor-insert-text ed (str toc "\n"))
+    (echo-message! echo (str "TOC generated with " (length headings) " headings"))))
+
+;; --- Feature 16: Focus Mode ---
+
+(def *focus-mode-enabled* #f)
+
+(def (cmd-focus-mode app)
+  "Toggle focus/zen mode — minimize distractions."
+  (set! *focus-mode-enabled* (not *focus-mode-enabled*))
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (if *focus-mode-enabled*
+      (begin
+        ;; Hide margins, disable wrapping distractions
+        (send-message ed SCI_SETMARGINWIDTHN 0 0)  ;; hide line numbers
+        (send-message ed SCI_SETMARGINWIDTHN 1 0)
+        (send-message ed SCI_SETMARGINWIDTHN 2 0)
+        (echo-message! echo "Focus mode: on (minimal UI)"))
+      (begin
+        ;; Restore margins
+        (send-message ed SCI_SETMARGINWIDTHN 0 50)  ;; restore line numbers
+        (echo-message! echo "Focus mode: off")))))
+
+;; --- Feature 17: Typewriter Mode ---
+
+(def *typewriter-mode* #f)
+
+(def (cmd-typewriter-mode app)
+  "Toggle typewriter mode — keep cursor centered vertically."
+  (set! *typewriter-mode* (not *typewriter-mode*))
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (when *typewriter-mode*
+      ;; Center current line
+      (let* ((pos (send-message ed SCI_GETCURRENTPOS 0 0))
+             (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+             (first-visible (send-message ed SCI_GETFIRSTVISIBLELINE 0 0))
+             (lines-on-screen (send-message ed SCI_LINESONSCREEN 0 0))
+             (target (max 0 (- line (quotient lines-on-screen 2)))))
+        (send-message ed SCI_SETFIRSTVISIBLELINE target 0)))
+    (echo-message! echo (if *typewriter-mode* "Typewriter mode: on" "Typewriter mode: off"))))
+
+;; --- Feature 18: Matrix Rain ---
+
+(def (cmd-rain app)
+  "Display Matrix-style digital rain animation in buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (width 60) (height 20)
+         (chars "abcdefghijklmnopqrstuvwxyz0123456789@#$%&")
+         (char-len (string-length chars))
+         (lines '()))
+    (do ((r 0 (+ r 1))) ((= r height))
+      (let ((row-str ""))
+        (do ((c 0 (+ c 1))) ((= c width))
+          (set! row-str
+            (string-append row-str
+              (if (< (random 10) 3)
+                (str (string-ref chars (random char-len)))
+                " "))))
+        (set! lines (cons row-str lines))))
+    (let* ((content (string-append "The Matrix\n"
+                      (make-string width #\=) "\n\n"
+                      (string-join (reverse lines) "\n")))
+           (rbuf (make-buffer "*matrix-rain*")))
+      (buffer-attach! ed rbuf)
+      (set! (edit-window-buffer win) rbuf)
+      (editor-set-text ed content)
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Matrix rain"))))
+
+;; --- Feature 19: WiFi Status ---
+
+(def (cmd-wifi app)
+  "Show WiFi connection status and available networks."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "wifi error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "nmcli dev wifi list 2>/dev/null || iwconfig 2>/dev/null || echo 'WiFi tools not found'"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-append "WiFi Networks\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    (string-join (reverse lines) "\n")))
+                         (wbuf (make-buffer "*wifi*")))
+                    (buffer-attach! ed wbuf)
+                    (set! (edit-window-buffer win) wbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo "WiFi networks listed")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 20: Screenshot ---
+
+(def (cmd-screenshot app)
+  "Take a screenshot and save it to a file."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (file (echo-read-string echo "Save screenshot to: " row width)))
+    (when (and file (not (string-empty? file)))
+      (let ((path (string-trim file)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Screenshot error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "import " (shell-quote path) " 2>/dev/null || "
+                                 "scrot " (shell-quote path) " 2>/dev/null || "
+                                 "gnome-screenshot -f " (shell-quote path) " 2>/dev/null || "
+                                 "echo 'No screenshot tool found'")
+                            'block (native-transcoder))))
+              (close-port si) (close-port so) (close-port se)
+              (echo-message! echo (str "Screenshot saved to " path)))))))))

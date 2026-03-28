@@ -4649,3 +4649,348 @@
                       (editor-goto-pos ed 0)
                       (echo-message! echo "Ellama response ready")))
                   (loop (cons line lines)))))))))))
+
+;; ===== Round 10 Batch 1 =====
+
+;; --- Feature 1: Journalctl Viewer ---
+
+(def (cmd-journalctl app)
+  "View recent systemd journal entries."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (unit (echo-read-string echo "Unit (empty for all): " row width))
+         (cmd (if (or (not unit) (string-empty? (string-trim unit)))
+                "journalctl --no-pager -n 100"
+                (str "journalctl --no-pager -n 100 -u " (shell-quote (string-trim unit))))))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "journalctl error: " e)))
+      (lambda ()
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports cmd 'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout) (close-port p-stderr)
+                  (let* ((content (string-join (reverse lines) "\n"))
+                         (jbuf (make-buffer "*journalctl*")))
+                    (buffer-attach! ed jbuf)
+                    (set! (edit-window-buffer win) jbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo (str (length lines) " journal entries"))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 2: Bluetooth Control ---
+
+(def (cmd-bluetooth app)
+  "Show bluetooth device status and manage connections."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "bluetooth error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "bluetoothctl devices 2>/dev/null || echo 'bluetoothctl not available'"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-append "Bluetooth Devices\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    (string-join (reverse lines) "\n")))
+                         (bbuf (make-buffer "*bluetooth*")))
+                    (buffer-attach! ed bbuf)
+                    (set! (edit-window-buffer win) bbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo "Bluetooth devices listed")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 3: Volume Control ---
+
+(def (cmd-volume app)
+  "Show and adjust system volume."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "volume error: " e)))
+      (lambda ()
+        ;; Get current volume
+        (let-values (((si so se pid)
+                      (open-process-ports "pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null || amixer get Master 2>/dev/null | grep -o '[0-9]*%' | head -1"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let ((current (get-line so)))
+            (close-port so) (close-port se)
+            (let ((vol-str (if (eof-object? current) "unknown" current)))
+              (let ((input (echo-read-string echo
+                             (str "Volume [" vol-str "] (0-100 or +/-): ") row width)))
+                (when (and input (not (string-empty? input)))
+                  (let ((v (string-trim input)))
+                    (with-catch
+                      (lambda (e) (echo-message! echo (str "Set error: " e)))
+                      (lambda ()
+                        (let-values (((si2 so2 se2 pid2)
+                                      (open-process-ports
+                                        (str "pactl set-sink-volume @DEFAULT_SINK@ " v "% 2>/dev/null || amixer set Master " v "% 2>/dev/null")
+                                        'block (native-transcoder))))
+                          (close-port si2) (close-port so2) (close-port se2)
+                          (echo-message! echo (str "Volume set to " v "%")))))))))))))))
+
+;; --- Feature 4: ASCII Table ---
+
+(def (cmd-ascii-table app)
+  "Display an ASCII character table."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (lines (list "ASCII Table" (make-string 60 #\=) ""
+                      "Dec  Hex  Oct  Char  | Dec  Hex  Oct  Char"
+                      (make-string 60 #\-))))
+    (do ((i 32 (+ i 1))) ((= i 127))
+      (let ((ch (if (= i 127) "DEL" (str (integer->char i)))))
+        (set! lines (cons (format "~3d  ~2,'0x  ~3,'0o  ~4a" i i i ch)
+                          lines))))
+    (let* ((content (string-join (reverse lines) "\n"))
+           (abuf (make-buffer "*ascii-table*")))
+      (buffer-attach! ed abuf)
+      (set! (edit-window-buffer win) abuf)
+      (editor-set-text ed content)
+      (editor-goto-pos ed 0)
+      (echo-message! echo "ASCII table displayed"))))
+
+;; --- Feature 5: Unicode Search ---
+
+(def *unicode-common*
+  '(("arrow right" . "→") ("arrow left" . "←") ("arrow up" . "↑") ("arrow down" . "↓")
+    ("check mark" . "✓") ("cross mark" . "✗") ("bullet" . "•") ("degree" . "°")
+    ("copyright" . "©") ("registered" . "®") ("trademark" . "™") ("section" . "§")
+    ("paragraph" . "¶") ("micro" . "µ") ("plus minus" . "±") ("multiply" . "×")
+    ("divide" . "÷") ("not equal" . "≠") ("less equal" . "≤") ("greater equal" . "≥")
+    ("infinity" . "∞") ("square root" . "√") ("sum" . "∑") ("integral" . "∫")
+    ("alpha" . "α") ("beta" . "β") ("gamma" . "γ") ("delta" . "δ")
+    ("epsilon" . "ε") ("pi" . "π") ("sigma" . "σ") ("omega" . "ω")
+    ("lambda" . "λ") ("theta" . "θ") ("phi" . "φ") ("psi" . "ψ")
+    ("heart" . "♥") ("star" . "★") ("diamond" . "◆") ("spade" . "♠")
+    ("club" . "♣") ("music note" . "♪") ("sun" . "☀") ("snowflake" . "❄")
+    ("skull" . "☠") ("peace" . "☮") ("yin yang" . "☯") ("smile" . "☺")
+    ("ellipsis" . "…") ("en dash" . "–") ("em dash" . "—") ("left quote" . "\x201C;")
+    ("right quote" . "\x201D;") ("euro" . "€") ("pound" . "£") ("yen" . "¥")))
+
+(def (cmd-unicode-search app)
+  "Search and insert a Unicode character by name."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (names (map car *unicode-common*))
+         (query (echo-read-string-with-completion echo "Unicode: " names row width)))
+    (when (and query (not (string-empty? query)))
+      (let ((match (assoc query *unicode-common*)))
+        (if match
+          (begin
+            (editor-insert-text ed (cdr match))
+            (echo-message! echo (str "Inserted: " (cdr match) " (" (car match) ")")))
+          ;; Try substring match
+          (let ((matches (filter (lambda (e) (string-contains (car e) (string-downcase query)))
+                                 *unicode-common*)))
+            (if (null? matches)
+              (echo-message! echo "No matching character found")
+              (begin
+                (editor-insert-text ed (cdar matches))
+                (echo-message! echo (str "Inserted: " (cdar matches)
+                                         " (" (caar matches) ")"))))))))))
+
+;; --- Feature 6: Emoji Insert ---
+
+(def *emoji-list*
+  '(("smile" . "😊") ("laugh" . "😂") ("heart" . "❤️") ("thumbs up" . "👍")
+    ("fire" . "🔥") ("rocket" . "🚀") ("star" . "⭐") ("check" . "✅")
+    ("warning" . "⚠️") ("bug" . "🐛") ("bulb" . "💡") ("wrench" . "🔧")
+    ("book" . "📖") ("memo" . "📝") ("pin" . "📌") ("link" . "🔗")
+    ("clock" . "🕐") ("coffee" . "☕") ("pizza" . "🍕") ("beer" . "🍺")
+    ("tada" . "🎉") ("sparkles" . "✨") ("muscle" . "💪") ("brain" . "🧠")
+    ("eyes" . "👀") ("wave" . "👋") ("clap" . "👏") ("pray" . "🙏")
+    ("thinking" . "🤔") ("shrug" . "🤷") ("facepalm" . "🤦") ("100" . "💯")
+    ("poop" . "💩") ("ghost" . "👻") ("skull" . "💀") ("robot" . "🤖")
+    ("cat" . "🐱") ("dog" . "🐶") ("tree" . "🌲") ("sun" . "☀️")
+    ("moon" . "🌙") ("cloud" . "☁️") ("rain" . "🌧️") ("snow" . "❄️")))
+
+(def (cmd-emoji-insert app)
+  "Insert an emoji by name."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (names (map car *emoji-list*))
+         (choice (echo-read-string-with-completion echo "Emoji: " names row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((match (assoc choice *emoji-list*)))
+        (if match
+          (begin
+            (editor-insert-text ed (cdr match))
+            (echo-message! echo (str "Inserted " (cdr match))))
+          (echo-message! echo "Unknown emoji"))))))
+
+;; --- Feature 7: Kaomoji ---
+
+(def *kaomoji-list*
+  '(("happy" . "(╹◡╹)") ("sad" . "(╥﹏╥)") ("angry" . "(╬ ಠ益ಠ)")
+    ("shrug" . "¯\\_(ツ)_/¯") ("flip" . "(╯°□°)╯︵ ┻━┻")
+    ("unflip" . "┬─┬ノ( º _ ºノ)") ("bear" . "ʕ•ᴥ•ʔ")
+    ("sparkle" . "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧") ("love" . "(♥ω♥*)")
+    ("cool" . "(⌐■_■)") ("dance" . "♪┏(・o・)┛♪")
+    ("cat" . "(=^・ω・^=)") ("dog" . "∪・ω・∪")
+    ("cry" . "(;´༎ຶД༎ຶ`)") ("wink" . "(^_~)")
+    ("surprise" . "Σ(°△°|||)") ("sleep" . "(−_−) zzZ")
+    ("fight" . "(ง •̀_•́)ง") ("run" . "ε=ε=ε=┌(;*´Д`)ノ")))
+
+(def (cmd-kaomoji app)
+  "Insert a kaomoji (Japanese emoticon)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (names (map car *kaomoji-list*))
+         (choice (echo-read-string-with-completion echo "Kaomoji: " names row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((match (assoc choice *kaomoji-list*)))
+        (if match
+          (begin
+            (editor-insert-text ed (cdr match))
+            (echo-message! echo (str "Inserted: " (cdr match))))
+          (echo-message! echo "Unknown kaomoji"))))))
+
+;; --- Feature 8: XKCD ---
+
+(def (cmd-xkcd app)
+  "Fetch and display the latest XKCD comic info."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "XKCD error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "curl -sL https://xkcd.com/info.0.json"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((json (string-join (reverse lines) ""))
+                         ;; Extract title and alt from JSON
+                         (get-field (lambda (field)
+                                      (let ((start (string-contains json (str "\"" field "\":"))))
+                                        (if (not start) "?"
+                                          (let* ((rest (substring json (+ start (string-length field) 3) (string-length json)))
+                                                 (qstart (string-contains rest "\""))
+                                                 (rest2 (if qstart (substring rest (+ qstart 1) (string-length rest)) ""))
+                                                 (qend (string-contains rest2 "\"")))
+                                            (if (and qstart qend)
+                                              (substring rest2 0 qend) "?"))))))
+                         (title (get-field "safe_title"))
+                         (alt (get-field "alt"))
+                         (num (get-field "num"))
+                         (content (string-append "XKCD #" num "\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    "Title: " title "\n\n"
+                                    "Alt: " alt "\n"))
+                         (xbuf (make-buffer "*xkcd*")))
+                    (buffer-attach! ed xbuf)
+                    (set! (edit-window-buffer win) xbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo (str "XKCD #" num ": " title))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 9: Cheat.sh ---
+
+(def (cmd-cheat-sh app)
+  "Look up a cheat sheet from cheat.sh."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (query (echo-read-string echo "cheat.sh query: " row width)))
+    (when (and query (not (string-empty? query)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "cheat.sh error: " e)))
+        (lambda ()
+          (let* ((encoded (let loop ((chars (string->list (string-trim query))) (acc '()))
+                            (if (null? chars) (list->string (reverse acc))
+                              (let ((c (car chars)))
+                                (if (char=? c #\space)
+                                  (loop (cdr chars) (cons #\+ acc))
+                                  (loop (cdr chars) (cons c acc))))))))
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "curl -sL 'https://cheat.sh/" encoded "?T'")
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (let* ((content (string-join (reverse lines) "\n"))
+                             (cbuf (make-buffer "*cheat.sh*")))
+                        (buffer-attach! ed cbuf)
+                        (set! (edit-window-buffer win) cbuf)
+                        (editor-set-text ed content)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo (str "cheat.sh: " query))))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 10: TLDR ---
+
+(def (cmd-tldr app)
+  "Look up TLDR page for a command."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (cmd (echo-read-string echo "TLDR command: " row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "tldr error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "tldr " (shell-quote (string-trim cmd)) " 2>/dev/null || "
+                               "curl -sL 'https://raw.githubusercontent.com/tldr-pages/tldr/main/pages/common/"
+                               (string-trim cmd) ".md' 2>/dev/null || echo 'Page not found'")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (tbuf (make-buffer "*tldr*")))
+                      (buffer-attach! ed tbuf)
+                      (set! (edit-window-buffer win) tbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo (str "TLDR: " cmd))))
+                  (loop (cons line lines)))))))))))
