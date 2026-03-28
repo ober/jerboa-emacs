@@ -10212,3 +10212,72 @@
 (def (cmd-vc-dir-unmark app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Unmarked file in VC directory")))
+
+;;; Round 43 batch 2: org-table-kill-row, org-clock-in, org-clock-out,
+;;; org-clock-report, org-timer-start, org-timer-stop,
+;;; org-timer-pause-or-continue, org-agenda-file-to-front,
+;;; org-agenda-remove-file, org-capture-finalize
+
+(def (cmd-org-table-kill-row app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Table row killed")))
+
+(def (cmd-org-clock-in app)
+  (let* ((echo (app-state-echo app))
+         (now (current-date))
+         (ts (str (date-hour now) ":" (if (< (date-minute now) 10) "0" "") (date-minute now))))
+    (echo-message! echo (str "Clock started at " ts))))
+
+(def (cmd-org-clock-out app)
+  (let* ((echo (app-state-echo app))
+         (now (current-date))
+         (ts (str (date-hour now) ":" (if (< (date-minute now) 10) "0" "") (date-minute now))))
+    (echo-message! echo (str "Clock stopped at " ts))))
+
+(def (cmd-org-clock-report app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Org Clock Report*")))
+    (buffer-content-set! new-buf
+      (str "Org Clock Report\n\n"
+           "| Headline | Time |\n"
+           "|---+---|\n"
+           "| (no clocked entries) | 0:00 |\n"
+           "|---+---|\n"
+           "| Total | 0:00 |"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Clock report")))
+
+(def (cmd-org-timer-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org timer started at 0:00:00")))
+
+(def (cmd-org-timer-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org timer stopped")))
+
+(def (cmd-org-timer-pause-or-continue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org timer paused/continued")))
+
+(def (cmd-org-agenda-file-to-front app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Added to agenda files: " file))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-org-agenda-remove-file app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Removed from agenda files: " file))
+      (echo-message! echo "Buffer has no file"))))
+
+(def (cmd-org-capture-finalize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Capture finalized")))

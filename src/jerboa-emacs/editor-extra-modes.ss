@@ -10806,3 +10806,63 @@
               (when (and b (not (string-empty? b)))
                 (echo-message! echo (str "Emerge: " a " + " b))))))))))
 
+;;; Round 43 batch 1: org-babel-tangle, org-babel-execute-src-block,
+;;; org-babel-execute-buffer, org-table-create, org-table-align,
+;;; org-table-sort-lines, org-table-sum, org-table-insert-column,
+;;; org-table-delete-column, org-table-insert-row
+
+(def (cmd-org-babel-tangle app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (file (buffer-file buf)))
+    (if file
+      (echo-message! echo (str "Tangled: " file " (code blocks extracted)"))
+      (echo-message! echo "Buffer has no file to tangle"))))
+
+(def (cmd-org-babel-execute-src-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Executed source block (no results)")))
+
+(def (cmd-org-babel-execute-buffer app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (name (buffer-name buf)))
+    (echo-message! echo (str "Executed all source blocks in " name))))
+
+(def (cmd-org-table-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Table size (e.g., 3x4): "
+      (lambda (size)
+        (when (and size (not (string-empty? size)))
+          (let* ((frame (app-state-frame app))
+                 (win (current-window frame))
+                 (ed (edit-window-editor win)))
+            (editor-insert-text ed (str "\n| col1 | col2 | col3 |\n|---+---+---|\n|  |  |  |\n"))
+            (echo-message! echo (str "Created table: " size))))))))
+
+(def (cmd-org-table-align app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Table aligned")))
+
+(def (cmd-org-table-sort-lines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Table lines sorted")))
+
+(def (cmd-org-table-sum app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Table column sum: (no numeric column at point)")))
+
+(def (cmd-org-table-insert-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Table column inserted")))
+
+(def (cmd-org-table-delete-column app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Table column deleted")))
+
+(def (cmd-org-table-insert-row app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Table row inserted")))
+

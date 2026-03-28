@@ -2007,6 +2007,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | VC dir mark | :orange_circle: | Mark file in VC directory |
 | VC dir unmark | :orange_circle: | Unmark file in VC directory |
 
+### Round 43
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Org babel tangle | :orange_circle: | Extract code blocks to files |
+| Org babel execute src block | :orange_circle: | Execute source block at point |
+| Org babel execute buffer | :orange_circle: | Execute all source blocks |
+| Org table create | :orange_circle: | Create new org table |
+| Org table align | :orange_circle: | Align org table columns |
+| Org table sort lines | :orange_circle: | Sort table rows |
+| Org table sum | :orange_circle: | Sum numeric table column |
+| Org table insert column | :orange_circle: | Insert table column |
+| Org table delete column | :orange_circle: | Delete table column |
+| Org table insert row | :orange_circle: | Insert table row |
+| Org table kill row | :orange_circle: | Delete table row |
+| Org clock in | :orange_circle: | Start time tracking |
+| Org clock out | :orange_circle: | Stop time tracking |
+| Org clock report | :orange_circle: | Generate clock report |
+| Org timer start | :orange_circle: | Start countdown timer |
+| Org timer stop | :orange_circle: | Stop timer |
+| Org timer pause or continue | :orange_circle: | Pause/resume timer |
+| Org agenda file to front | :orange_circle: | Add file to agenda list |
+| Org agenda remove file | :orange_circle: | Remove file from agenda list |
+| Org capture finalize | :orange_circle: | Finalize capture template |
+
 ---
 
 ## Recommended Development Roadmap
