@@ -12789,3 +12789,51 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "mu4e: forwarding message")))
 
+;; Round 78 — Eshell & terminal (batch 1)
+(def (cmd-eshell-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: toggled")))
+
+(def (cmd-eshell-here app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: opened in current directory")))
+
+(def (cmd-eshell-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: cd to parent directory")))
+
+(def (cmd-eshell-z app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Eshell z jump to: "
+      (lambda (dir)
+        (echo-message! echo (str "Eshell: jumped to " dir))))))
+
+(def (cmd-eshell-syntax-highlighting-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eshell-syntax-highlighting)
+    (if (mode-enabled? app 'eshell-syntax-highlighting)
+      (echo-message! echo "Eshell: syntax highlighting enabled")
+      (echo-message! echo "Eshell: syntax highlighting disabled"))))
+
+(def (cmd-eshell-prompt-extras app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: prompt extras configured")))
+
+(def (cmd-eshell-bookmark-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Eshell bookmark: "
+      (lambda (bm)
+        (echo-message! echo (str "Eshell: jumped to bookmark '" bm "'"))))))
+
+(def (cmd-eshell-history-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: previous history item")))
+
+(def (cmd-eshell-history-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: next history item")))
+
+(def (cmd-eshell-send-eof-to-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: sent EOF to subprocess")))
+

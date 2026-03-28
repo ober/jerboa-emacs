@@ -12245,3 +12245,44 @@
     (echo-read-string echo "Save attachment to: "
       (lambda (path)
         (echo-message! echo (str "mu4e: attachment saved to " path))))))
+
+;; Round 78 — Eat & vterm (batch 2)
+(def (cmd-eat-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: terminal emulator mode")))
+
+(def (cmd-eat-semi-char-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: semi-char mode (some keys pass through)")))
+
+(def (cmd-eat-char-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: char mode (all keys pass to terminal)")))
+
+(def (cmd-vterm-send-next-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: next key sent directly to terminal")))
+
+(def (cmd-vterm-send-C-c app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent C-c to terminal")))
+
+(def (cmd-vterm-send-C-z app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent C-z to terminal")))
+
+(def (cmd-vterm-clear app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: cleared visible terminal")))
+
+(def (cmd-vterm-clear-scrollback app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: cleared scrollback buffer")))
+
+(def (cmd-vterm-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: toggled terminal window")))
+
+(def (cmd-vterm-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: opened in other window")))

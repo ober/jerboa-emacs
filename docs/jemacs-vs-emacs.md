@@ -2876,6 +2876,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 78 — Eshell & Terminal (vterm/eat)
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| eshell-toggle | :orange_circle: | Toggle eshell buffer |
+| eshell-here | :orange_circle: | Open eshell in current directory |
+| eshell-up | :orange_circle: | Navigate to parent directory in eshell |
+| eshell-z | :orange_circle: | Jump to frecent directory in eshell |
+| eshell-syntax-highlighting-mode | :orange_circle: | Toggle syntax highlighting in eshell |
+| eshell-prompt-extras | :orange_circle: | Enhanced eshell prompt display |
+| eshell-bookmark-jump | :orange_circle: | Jump to eshell bookmark |
+| eshell-history-previous | :orange_circle: | Previous eshell history entry |
+| eshell-history-next | :orange_circle: | Next eshell history entry |
+| eshell-send-eof-to-process | :orange_circle: | Send EOF to eshell subprocess |
+| eat-mode | :orange_circle: | Toggle Emulate A Terminal mode |
+| eat-semi-char-mode | :orange_circle: | Toggle eat semi-char mode |
+| eat-char-mode | :orange_circle: | Toggle eat char mode |
+| vterm-send-next-key | :orange_circle: | Send next key directly to vterm |
+| vterm-send-C-c | :orange_circle: | Send C-c to vterm process |
+| vterm-send-C-z | :orange_circle: | Send C-z to vterm process |
+| vterm-clear | :orange_circle: | Clear vterm screen |
+| vterm-clear-scrollback | :orange_circle: | Clear vterm scrollback buffer |
+| vterm-toggle | :orange_circle: | Toggle vterm buffer |
+| vterm-other-window | :orange_circle: | Open vterm in other window |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
