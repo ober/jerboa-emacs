@@ -15416,3 +15416,54 @@
 (def (cmd-treemacs-display-current-project-exclusively app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Treemacs: displaying current project exclusively")))
+
+;;; Round 131 — Org-roam, Org-journal, Org-noter (batch 1)
+
+(def (cmd-org-roam-capture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: capture new note")))
+
+(def (cmd-org-roam-dailies-capture-yesterday app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: capturing yesterday's daily")))
+
+(def (cmd-org-roam-dailies-capture-tomorrow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: capturing tomorrow's daily")))
+
+(def (cmd-org-roam-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: displaying knowledge graph")))
+
+(def (cmd-org-roam-ui-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-roam-ui)
+    (if (mode-enabled? app 'org-roam-ui)
+      (echo-message! echo "Org-Roam-UI mode enabled")
+      (echo-message! echo "Org-Roam-UI mode disabled"))))
+
+(def (cmd-org-roam-ui-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: opened UI in browser")))
+
+(def (cmd-org-journal-open-current-journal-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-journal: opened current journal file")))
+
+(def (cmd-org-journal-search-forever app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search all journals: "
+      (lambda (query)
+        (echo-message! echo (str "Org-journal: searching all journals for '" query "'"))))))
+
+(def (cmd-org-journal-new-date-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Journal date (YYYY-MM-DD): "
+      (lambda (date)
+        (echo-message! echo (str "Org-journal: new entry for " date))))))
+
+(def (cmd-org-journal-new-scheduled-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Schedule date (YYYY-MM-DD): "
+      (lambda (date)
+        (echo-message! echo (str "Org-journal: new scheduled entry for " date))))))

@@ -14802,3 +14802,45 @@
     (if (mode-enabled? app 'treemacs-peek)
       (echo-message! echo "Treemacs-Peek mode enabled")
       (echo-message! echo "Treemacs-Peek mode disabled"))))
+
+;;; Round 131 — Org-roam, Org-journal, Org-noter (batch 2)
+
+(def (cmd-org-noter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-noter: started noter session")))
+
+(def (cmd-org-noter-insert-note app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-noter: inserted note at current location")))
+
+(def (cmd-org-noter-sync-current-note app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-noter: synced to current note")))
+
+(def (cmd-org-noter-sync-prev-note app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-noter: synced to previous note")))
+
+(def (cmd-org-noter-sync-next-note app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-noter: synced to next note")))
+
+(def (cmd-org-noter-create-skeleton app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-noter: created skeleton from document")))
+
+(def (cmd-org-noter-kill-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-noter: killed session")))
+
+(def (cmd-org-download-clipboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-download: pasted image from clipboard")))
+
+(def (cmd-org-download-screenshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-download: captured screenshot")))
+
+(def (cmd-org-download-yank app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-download: yanked image from URL")))

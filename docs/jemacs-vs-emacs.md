@@ -4261,6 +4261,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 131 — Org-roam, Org-journal, Org-noter
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| org-roam-capture | :orange_circle: | Capture new org-roam note |
+| org-roam-dailies-capture-yesterday | :orange_circle: | Capture yesterday's daily |
+| org-roam-dailies-capture-tomorrow | :orange_circle: | Capture tomorrow's daily |
+| org-roam-graph | :orange_circle: | Display knowledge graph |
+| org-roam-ui-mode | :orange_circle: | Toggle org-roam UI mode |
+| org-roam-ui-open | :orange_circle: | Open org-roam UI in browser |
+| org-journal-open-current-journal-file | :orange_circle: | Open current journal file |
+| org-journal-search-forever | :orange_circle: | Search all journal entries |
+| org-journal-new-date-entry | :orange_circle: | New journal entry for date |
+| org-journal-new-scheduled-entry | :orange_circle: | New scheduled journal entry |
+| org-noter | :orange_circle: | Start org-noter session |
+| org-noter-insert-note | :orange_circle: | Insert note at location |
+| org-noter-sync-current-note | :orange_circle: | Sync to current note |
+| org-noter-sync-prev-note | :orange_circle: | Sync to previous note |
+| org-noter-sync-next-note | :orange_circle: | Sync to next note |
+| org-noter-create-skeleton | :orange_circle: | Create skeleton from document |
+| org-noter-kill-session | :orange_circle: | Kill noter session |
+| org-download-clipboard | :orange_circle: | Paste image from clipboard |
+| org-download-screenshot | :orange_circle: | Capture screenshot |
+| org-download-yank | :orange_circle: | Yank image from URL |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
