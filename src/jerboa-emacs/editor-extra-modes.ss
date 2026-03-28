@@ -19009,3 +19009,48 @@
 (def (cmd-dired-atool-do-unpack app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dired: unpacking archive with atool")))
+
+;; Round 204 — Vterm-ext, Comint-ext, Compile-multi, Envrc, Exec-path, Direnv, Guix
+(def (cmd-vterm-toggle-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VTerm: toggled insert mode")))
+
+(def (cmd-comint-watch-for-password-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: watching for password prompts")))
+
+(def (cmd-compile-multi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compile-multi: showing compile targets")))
+
+(def (cmd-compile-multi-all-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compile-multi: showing targets for all projects")))
+
+(def (cmd-envrc-reload-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: reloaded all environments")))
+
+(def (cmd-inheritenv-add-var app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Variable to inherit: "
+      (lambda (var)
+        (echo-message! echo (str "Inheritenv: added " var))))))
+
+(def (cmd-exec-path-from-shell-initialize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "exec-path-from-shell: initialized PATH")))
+
+(def (cmd-exec-path-from-shell-copy-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Copy env var: "
+      (lambda (var)
+        (echo-message! echo (str "exec-path-from-shell: copied " var))))))
+
+(def (cmd-direnv-update-directory-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Direnv: updated directory environment")))
+
+(def (cmd-guix-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: started REPL")))

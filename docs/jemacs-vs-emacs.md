@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 204 — Vterm-ext, Compile-multi, Envrc, Exec-path, Guix, Apheleia, Format-all, Olivetti
+
+| Feature | Status | Notes |
+|---|---|---|
+| vterm-toggle-insert | :orange_circle: | Toggle VTerm insert mode |
+| comint-watch-for-password-prompt | :orange_circle: | Watch for password prompts |
+| compile-multi | :orange_circle: | Show compile targets |
+| compile-multi-all-projects | :orange_circle: | Show all project targets |
+| envrc-reload-all | :orange_circle: | Reload all envrc environments |
+| inheritenv-add-var | :orange_circle: | Add variable to inherit |
+| exec-path-from-shell-initialize | :orange_circle: | Initialize PATH from shell |
+| exec-path-from-shell-copy-env | :orange_circle: | Copy env var from shell |
+| direnv-update-directory-environment | :orange_circle: | Update direnv environment |
+| guix-repl | :orange_circle: | Start Guix REPL |
+| guix-packages-by-name | :orange_circle: | Search Guix packages |
+| apheleia-format-buffer | :orange_circle: | Format buffer with Apheleia |
+| apheleia-mode | :orange_circle: | Toggle format on save |
+| format-all-mode | :orange_circle: | Toggle format-all mode |
+| format-all-region | :orange_circle: | Format region |
+| reformatter-define | :orange_circle: | Define new formatter |
+| indent-guide-mode | :orange_circle: | Toggle indent guide mode |
+| truncate-lines-mode | :orange_circle: | Toggle line truncation |
+| visual-line-fill-column-mode | :orange_circle: | Toggle visual line fill column |
+| olivetti-set-width | :orange_circle: | Set Olivetti body width |
+
 ### Round 203 — Dirvish-ext, Dired-hacks, Diredfl, OpenWith, Dired-launch
 
 | Feature | Status | Notes |

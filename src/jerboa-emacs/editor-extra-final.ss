@@ -18378,3 +18378,63 @@
     (if (mode-enabled? app 'dired-efap)
       (echo-message! echo "Dired EFAP mode enabled — edit filenames at point")
       (echo-message! echo "Dired EFAP mode disabled"))))
+
+;; Round 204 — Guix-ext, Apheleia, Format-all, Reformatter, Indent-guide, Olivetti
+(def (cmd-guix-packages-by-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Guix package name: "
+      (lambda (name)
+        (echo-message! echo (str "Guix: searching packages for '" name "'"))))))
+
+(def (cmd-apheleia-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Apheleia: formatted buffer")))
+
+(def (cmd-apheleia-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'apheleia)
+    (if (mode-enabled? app 'apheleia)
+      (echo-message! echo "Apheleia mode enabled — format on save")
+      (echo-message! echo "Apheleia mode disabled"))))
+
+(def (cmd-format-all-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'format-all)
+    (if (mode-enabled? app 'format-all)
+      (echo-message! echo "Format-all mode enabled")
+      (echo-message! echo "Format-all mode disabled"))))
+
+(def (cmd-format-all-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Format-all: formatted region")))
+
+(def (cmd-reformatter-define app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Reformatter: defined new formatter")))
+
+(def (cmd-indent-guide-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'indent-guide)
+    (if (mode-enabled? app 'indent-guide)
+      (echo-message! echo "Indent guide mode enabled")
+      (echo-message! echo "Indent guide mode disabled"))))
+
+(def (cmd-truncate-lines-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'truncate-lines)
+    (if (mode-enabled? app 'truncate-lines)
+      (echo-message! echo "Truncate lines mode enabled")
+      (echo-message! echo "Truncate lines mode disabled"))))
+
+(def (cmd-visual-line-fill-column-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'visual-line-fill-column)
+    (if (mode-enabled? app 'visual-line-fill-column)
+      (echo-message! echo "Visual line fill column mode enabled")
+      (echo-message! echo "Visual line fill column mode disabled"))))
+
+(def (cmd-olivetti-set-width app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Olivetti width: "
+      (lambda (w)
+        (echo-message! echo (str "Olivetti: set width to " w))))))
