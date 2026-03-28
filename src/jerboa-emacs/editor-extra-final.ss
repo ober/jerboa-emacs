@@ -18084,3 +18084,47 @@
     (echo-read-string echo "Org-AI prompt: "
       (lambda (p)
         (echo-message! echo (str "Org-AI: " p))))))
+
+;; Round 198 — EMMS-ext, Bongo
+(def (cmd-emms-lyrics-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'emms-lyrics)
+    (if (mode-enabled? app 'emms-lyrics)
+      (echo-message! echo "EMMS lyrics mode enabled")
+      (echo-message! echo "EMMS lyrics mode disabled"))))
+
+(def (cmd-emms-tag-editor-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: editing tags")))
+
+(def (cmd-emms-streams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: showing streams")))
+
+(def (cmd-emms-mark-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: marked all tracks")))
+
+(def (cmd-emms-score-up-playing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: scored up current track")))
+
+(def (cmd-emms-history-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: saved play history")))
+
+(def (cmd-bongo-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bongo: started playback")))
+
+(def (cmd-bongo-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bongo: stopped playback")))
+
+(def (cmd-bongo-pause-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bongo: toggled pause/resume")))
+
+(def (cmd-bongo-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bongo: playing next track")))

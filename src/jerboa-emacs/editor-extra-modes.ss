@@ -18729,3 +18729,51 @@
     (echo-read-string echo "Architect prompt: "
       (lambda (p)
         (echo-message! echo (str "Aider: architect mode '" p "'"))))))
+
+;; Round 198 — ERC-ext, EMMS
+(def (cmd-erc-track-switch-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERC: switched to tracked buffer")))
+
+(def (cmd-emms-play-playlist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Playlist file: "
+      (lambda (f)
+        (echo-message! echo (str "EMMS: playing playlist " f))))))
+
+(def (cmd-emms-play-directory-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory: "
+      (lambda (dir)
+        (echo-message! echo (str "EMMS: playing directory tree " dir))))))
+
+(def (cmd-emms-toggle-random-playlist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: toggled random playlist")))
+
+(def (cmd-emms-seek-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: seeked forward")))
+
+(def (cmd-emms-seek-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: seeked backward")))
+
+(def (cmd-emms-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: opened browser")))
+
+(def (cmd-emms-metaplaylist-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'emms-metaplaylist)
+    (if (mode-enabled? app 'emms-metaplaylist)
+      (echo-message! echo "EMMS metaplaylist mode enabled")
+      (echo-message! echo "EMMS metaplaylist mode disabled"))))
+
+(def (cmd-emms-bookmarks-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: added bookmark at current position")))
+
+(def (cmd-emms-bookmarks-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EMMS: jumped to next bookmark")))

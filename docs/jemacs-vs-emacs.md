@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 198 — ERC-ext, EMMS, Bongo
+
+| Feature | Status | Notes |
+|---|---|---|
+| erc-track-switch-buffer | :orange_circle: | Switch to tracked ERC buffer |
+| emms-play-playlist | :orange_circle: | Play EMMS playlist |
+| emms-play-directory-tree | :orange_circle: | Play directory tree |
+| emms-toggle-random-playlist | :orange_circle: | Toggle random playlist |
+| emms-seek-forward | :orange_circle: | Seek forward in track |
+| emms-seek-backward | :orange_circle: | Seek backward in track |
+| emms-browser | :orange_circle: | Open EMMS browser |
+| emms-metaplaylist-mode | :orange_circle: | Toggle metaplaylist mode |
+| emms-bookmarks-add | :orange_circle: | Add EMMS bookmark |
+| emms-bookmarks-next | :orange_circle: | Jump to next EMMS bookmark |
+| emms-lyrics-mode | :orange_circle: | Toggle EMMS lyrics mode |
+| emms-tag-editor-edit | :orange_circle: | Edit track tags |
+| emms-streams | :orange_circle: | Show EMMS streams |
+| emms-mark-all | :orange_circle: | Mark all tracks |
+| emms-score-up-playing | :orange_circle: | Score up current track |
+| emms-history-save | :orange_circle: | Save EMMS play history |
+| bongo-start | :orange_circle: | Start Bongo playback |
+| bongo-stop | :orange_circle: | Stop Bongo playback |
+| bongo-pause-resume | :orange_circle: | Toggle Bongo pause/resume |
+| bongo-next | :orange_circle: | Play next Bongo track |
+
 ### Round 197 — Copilot-ext, GPTel-ext, LLM, Aider, Codeium, Sourcegraph, ChatGPT, Whisper
 
 | Feature | Status | Notes |
