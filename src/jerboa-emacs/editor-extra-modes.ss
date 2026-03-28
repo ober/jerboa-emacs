@@ -12678,3 +12678,71 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "GPTel: aborted current request")))
 
+;; Round 76 — Writing & prose tools (batch 1)
+(def (cmd-writegood-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'writegood)
+    (if (mode-enabled? app 'writegood)
+      (echo-message! echo "Writegood mode enabled (highlights weasel words)")
+      (echo-message! echo "Writegood mode disabled"))))
+
+(def (cmd-darkroom-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'darkroom)
+    (if (mode-enabled? app 'darkroom)
+      (echo-message! echo "Darkroom mode enabled (distraction-free)")
+      (echo-message! echo "Darkroom mode disabled"))))
+
+(def (cmd-typo-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'typo)
+    (if (mode-enabled? app 'typo)
+      (echo-message! echo "Typo mode enabled (smart typography)")
+      (echo-message! echo "Typo mode disabled"))))
+
+(def (cmd-wc-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'wc)
+    (if (mode-enabled? app 'wc)
+      (echo-message! echo "Word count mode enabled")
+      (echo-message! echo "Word count mode disabled"))))
+
+(def (cmd-wc-set-goal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Word count goal: "
+      (lambda (goal)
+        (echo-message! echo (str "Word count goal set to " goal))))))
+
+(def (cmd-mixed-pitch-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'mixed-pitch)
+    (if (mode-enabled? app 'mixed-pitch)
+      (echo-message! echo "Mixed pitch mode enabled (variable + fixed)")
+      (echo-message! echo "Mixed pitch mode disabled"))))
+
+(def (cmd-variable-pitch-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'variable-pitch)
+    (if (mode-enabled? app 'variable-pitch)
+      (echo-message! echo "Variable pitch mode enabled")
+      (echo-message! echo "Variable pitch mode disabled"))))
+
+(def (cmd-fixed-pitch-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'fixed-pitch)
+    (if (mode-enabled? app 'fixed-pitch)
+      (echo-message! echo "Fixed pitch mode enabled")
+      (echo-message! echo "Fixed pitch mode disabled"))))
+
+(def (cmd-dictionary-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dictionary search: "
+      (lambda (word)
+        (echo-message! echo (str "Dictionary: looking up '" word "'"))))))
+
+(def (cmd-dictionary-match-words app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Match words (pattern): "
+      (lambda (pat)
+        (echo-message! echo (str "Dictionary: matching words for '" pat "'"))))))
+

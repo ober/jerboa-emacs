@@ -2826,6 +2826,30 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ellama-improve-grammar | :orange_circle: | Improve grammar |
 | ellama-define-word | :orange_circle: | Define a word |
 
+### Round 76 — Writing & Prose Tools
+
+| Feature | Status | Notes |
+|---|---|---|
+| writegood-mode | :orange_circle: | Highlight weasel words and passive voice |
+| darkroom-mode | :orange_circle: | Distraction-free writing |
+| typo-mode | :orange_circle: | Smart typography (quotes, dashes) |
+| wc-mode | :orange_circle: | Word count in modeline |
+| wc-set-goal | :orange_circle: | Set word count goal |
+| mixed-pitch-mode | :orange_circle: | Mix variable and fixed pitch |
+| variable-pitch-mode | :orange_circle: | Variable pitch font |
+| fixed-pitch-mode | :orange_circle: | Fixed pitch font |
+| dictionary-search | :orange_circle: | Search dictionary |
+| dictionary-match-words | :orange_circle: | Match words by pattern |
+| powerthesaurus-lookup-word | :orange_circle: | Thesaurus lookup |
+| synosaurus-lookup | :orange_circle: | Synonym lookup |
+| langtool-check | :orange_circle: | LanguageTool grammar check |
+| langtool-correct-buffer | :orange_circle: | Apply LanguageTool corrections |
+| langtool-check-done | :orange_circle: | Clear LanguageTool results |
+| vale-mode | :orange_circle: | Vale prose linting |
+| jinx-languages | :orange_circle: | Set Jinx spell-check languages |
+| titlecase-dwim | :orange_circle: | Smart title case |
+| logos-focus-mode | :orange_circle: | Page-based focused reading |
+
 ---
 
 ## Recommended Development Roadmap

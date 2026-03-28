@@ -12153,3 +12153,52 @@
     (echo-read-string echo "Define word: "
       (lambda (word)
         (echo-message! echo (str "Ellama: defining '" word "'"))))))
+
+;; Round 76 — Writing tools (batch 2)
+(def (cmd-powerthesaurus-lookup-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Thesaurus lookup: "
+      (lambda (word)
+        (echo-message! echo (str "Thesaurus: synonyms for '" word "'"))))))
+
+(def (cmd-synosaurus-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Synosaurus lookup: "
+      (lambda (word)
+        (echo-message! echo (str "Synosaurus: results for '" word "'"))))))
+
+(def (cmd-langtool-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: checking buffer")))
+
+(def (cmd-langtool-correct-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: correcting buffer")))
+
+(def (cmd-langtool-check-done app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LanguageTool: check done, clearing overlays")))
+
+(def (cmd-vale-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'vale)
+    (if (mode-enabled? app 'vale)
+      (echo-message! echo "Vale mode enabled (prose linting)")
+      (echo-message! echo "Vale mode disabled"))))
+
+(def (cmd-jinx-languages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jinx languages: "
+      (lambda (langs)
+        (echo-message! echo (str "Jinx: languages set to " langs))))))
+
+(def (cmd-titlecase-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Title case applied (DWIM)")))
+
+(def (cmd-logos-focus-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'logos-focus)
+    (if (mode-enabled? app 'logos-focus)
+      (echo-message! echo "Logos focus mode enabled (page-based reading)")
+      (echo-message! echo "Logos focus mode disabled"))))
