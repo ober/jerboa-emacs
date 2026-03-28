@@ -19717,3 +19717,49 @@
 (def (cmd-elfeed-show-visit app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Elfeed: visiting entry in browser")))
+
+;;; Round 219 — SLY ext (batch 1)
+
+(def (cmd-sly-mrepl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: opened MREPL")))
+
+(def (cmd-sly-compile-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: compiled region")))
+
+(def (cmd-sly-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: evaluated region")))
+
+(def (cmd-sly-describe-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: describing function")))
+
+(def (cmd-sly-apropos app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Apropos: "
+      (lambda (pat)
+        (echo-message! echo (str "SLY: apropos " pat))))))
+
+(def (cmd-sly-hyperspec-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "SLY: HyperSpec lookup " sym))))))
+
+(def (cmd-sly-who-macroexpands app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: who macroexpands")))
+
+(def (cmd-sly-stickers-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: stickers DWIM")))
+
+(def (cmd-sly-stickers-replay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: replaying stickers")))
+
+(def (cmd-sly-stickers-fetch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: fetching stickers")))

@@ -19080,3 +19080,45 @@
 (def (cmd-elfeed-score-print-entry-score app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Elfeed: printing entry score")))
+
+;;; Round 219 — SLY ext (batch 2)
+
+(def (cmd-sly-stickers-clear-defun-stickers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: cleared defun stickers")))
+
+(def (cmd-sly-stickers-clear-buffer-stickers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: cleared buffer stickers")))
+
+(def (cmd-sly-trace-dialog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: opened trace dialog")))
+
+(def (cmd-sly-trace-dialog-toggle-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: toggled trace")))
+
+(def (cmd-sly-mrepl-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: synced MREPL package")))
+
+(def (cmd-sly-mrepl-clear-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: cleared MREPL")))
+
+(def (cmd-sly-mrepl-indent-and-complete-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: indented and completed symbol")))
+
+(def (cmd-sly-db-continue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: debugger continue")))
+
+(def (cmd-sly-db-restarts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: showing debugger restarts")))
+
+(def (cmd-sly-db-step app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLY: debugger step")))

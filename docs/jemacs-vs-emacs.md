@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 219 — SLY ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| sly-mrepl | :orange_circle: | Open SLY MREPL |
+| sly-compile-region | :orange_circle: | Compile region |
+| sly-eval-region | :orange_circle: | Evaluate region |
+| sly-describe-function | :orange_circle: | Describe function |
+| sly-apropos | :orange_circle: | Apropos search |
+| sly-hyperspec-lookup | :orange_circle: | HyperSpec lookup |
+| sly-who-macroexpands | :orange_circle: | Who macroexpands |
+| sly-stickers-dwim | :orange_circle: | Stickers DWIM |
+| sly-stickers-replay | :orange_circle: | Replay stickers |
+| sly-stickers-fetch | :orange_circle: | Fetch stickers |
+| sly-stickers-clear-defun-stickers | :orange_circle: | Clear defun stickers |
+| sly-stickers-clear-buffer-stickers | :orange_circle: | Clear buffer stickers |
+| sly-trace-dialog | :orange_circle: | Open trace dialog |
+| sly-trace-dialog-toggle-trace | :orange_circle: | Toggle trace |
+| sly-mrepl-sync | :orange_circle: | Sync MREPL package |
+| sly-mrepl-clear-repl | :orange_circle: | Clear MREPL |
+| sly-mrepl-indent-and-complete-symbol | :orange_circle: | Indent and complete symbol |
+| sly-db-continue | :orange_circle: | Debugger continue |
+| sly-db-restarts | :orange_circle: | Show debugger restarts |
+| sly-db-step | :orange_circle: | Debugger step |
+
 ### Round 218 — ERC ext, Elfeed ext
 
 | Command | Status | Description |
