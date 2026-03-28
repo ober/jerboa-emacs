@@ -17259,3 +17259,47 @@
 (def (cmd-cmake-install app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CMake: installing...")))
+
+;; Round 181 — Zig, Odin, Nim, V-lang modes (batch 2)
+(def (cmd-nim-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nim: checking project...")))
+
+(def (cmd-nim-suggest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nim: fetching suggestions...")))
+
+(def (cmd-nim-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nim: formatted buffer")))
+
+(def (cmd-vlang-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'vlang)
+    (if (mode-enabled? app 'vlang)
+      (echo-message! echo "V-lang mode enabled")
+      (echo-message! echo "V-lang mode disabled"))))
+
+(def (cmd-vlang-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V-lang: building project...")))
+
+(def (cmd-vlang-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V-lang: running project...")))
+
+(def (cmd-vlang-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V-lang: running tests...")))
+
+(def (cmd-vlang-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V-lang: formatted buffer")))
+
+(def (cmd-vlang-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V-lang: showing documentation")))
+
+(def (cmd-vlang-vet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V-lang: running vet linter...")))

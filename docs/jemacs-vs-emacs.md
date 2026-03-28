@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 181 — Zig, Odin, Nim, V-lang modes
+
+| Feature | Status | Notes |
+|---|---|---|
+| zig-build | :orange_circle: | Build Zig project |
+| zig-test | :orange_circle: | Run Zig tests |
+| zig-doc-at-point | :orange_circle: | Show Zig docs at point |
+| odin-mode | :orange_circle: | Toggle Odin mode |
+| odin-build | :orange_circle: | Build Odin project |
+| odin-run | :orange_circle: | Run Odin project |
+| odin-test | :orange_circle: | Run Odin tests |
+| odin-format-buffer | :orange_circle: | Format Odin buffer |
+| odin-doc-at-point | :orange_circle: | Show Odin docs at point |
+| nim-mode | :orange_circle: | Toggle Nim mode |
+| nim-check | :orange_circle: | Check Nim project |
+| nim-suggest | :orange_circle: | Nim code suggestions |
+| nim-format-buffer | :orange_circle: | Format Nim buffer |
+| vlang-mode | :orange_circle: | Toggle V-lang mode |
+| vlang-build | :orange_circle: | Build V-lang project |
+| vlang-run | :orange_circle: | Run V-lang project |
+| vlang-test | :orange_circle: | Run V-lang tests |
+| vlang-format-buffer | :orange_circle: | Format V-lang buffer |
+| vlang-doc | :orange_circle: | Show V-lang documentation |
+| vlang-vet | :orange_circle: | Run V-lang vet linter |
+
 ### Round 180 — Nix, Guix, Bazel, CMake
 
 | Feature | Status | Notes |

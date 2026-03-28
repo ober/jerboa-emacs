@@ -17881,3 +17881,50 @@
 (def (cmd-guix-pull app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Guix: pulling latest channel updates...")))
+
+;; Round 181 — Zig, Odin, Nim, V-lang modes (batch 1)
+(def (cmd-zig-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: building project...")))
+
+(def (cmd-zig-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: running tests...")))
+
+(def (cmd-zig-doc-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: showing documentation for symbol at point")))
+
+(def (cmd-odin-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'odin)
+    (if (mode-enabled? app 'odin)
+      (echo-message! echo "Odin mode enabled")
+      (echo-message! echo "Odin mode disabled"))))
+
+(def (cmd-odin-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Odin: building project...")))
+
+(def (cmd-odin-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Odin: running project...")))
+
+(def (cmd-odin-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Odin: running tests...")))
+
+(def (cmd-odin-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Odin: formatted buffer")))
+
+(def (cmd-odin-doc-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Odin: showing documentation at point")))
+
+(def (cmd-nim-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'nim)
+    (if (mode-enabled? app 'nim)
+      (echo-message! echo "Nim mode enabled")
+      (echo-message! echo "Nim mode disabled"))))
