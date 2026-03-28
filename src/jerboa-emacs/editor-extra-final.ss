@@ -19424,3 +19424,51 @@
 (def (cmd-guix-copy app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Guix: copying store items")))
+
+;;; Round 227 — Ement (Matrix client) (batch 2)
+
+(def (cmd-ement-room-set-topic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Ement: set room topic to " topic))))))
+
+(def (cmd-ement-room-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: showing room list")))
+
+(def (cmd-ement-view-room app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: viewing room")))
+
+(def (cmd-ement-describe-room app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: describing room")))
+
+(def (cmd-ement-room-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Ement: tagged room " tag))))))
+
+(def (cmd-ement-notifications app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: showing notifications")))
+
+(def (cmd-ement-direct-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "User: "
+      (lambda (user)
+        (echo-message! echo (str "Ement: direct message to " user))))))
+
+(def (cmd-ement-ignore-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: ignored user")))
+
+(def (cmd-ement-unignore-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: unignored user")))
+
+(def (cmd-ement-room-toggle-space app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: toggled space for room")))

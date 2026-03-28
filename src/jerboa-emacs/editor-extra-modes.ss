@@ -20080,3 +20080,57 @@
 (def (cmd-guix-hash app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Guix: computing hash")))
+
+;;; Round 227 — Ement (Matrix client) (batch 1)
+
+(def (cmd-ement-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Server: "
+      (lambda (srv)
+        (echo-message! echo (str "Ement: connecting to " srv))))))
+
+(def (cmd-ement-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: disconnected")))
+
+(def (cmd-ement-list-rooms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: listing rooms")))
+
+(def (cmd-ement-create-room app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Room name: "
+      (lambda (name)
+        (echo-message! echo (str "Ement: creating room " name))))))
+
+(def (cmd-ement-join-room app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Room: "
+      (lambda (room)
+        (echo-message! echo (str "Ement: joining room " room))))))
+
+(def (cmd-ement-leave-room app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: left room")))
+
+(def (cmd-ement-invite-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "User: "
+      (lambda (user)
+        (echo-message! echo (str "Ement: invited " user))))))
+
+(def (cmd-ement-send-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Message: "
+      (lambda (msg)
+        (echo-message! echo (str "Ement: sent message"))))))
+
+(def (cmd-ement-send-emote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Emote: "
+      (lambda (emote)
+        (echo-message! echo (str "Ement: sent emote"))))))
+
+(def (cmd-ement-send-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ement: sent file")))

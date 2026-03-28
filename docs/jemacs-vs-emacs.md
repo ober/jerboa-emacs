@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 227 — Ement (Matrix client)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| ement-connect | :orange_circle: | Connect to Matrix server |
+| ement-disconnect | :orange_circle: | Disconnect from server |
+| ement-list-rooms | :orange_circle: | List rooms |
+| ement-create-room | :orange_circle: | Create room |
+| ement-join-room | :orange_circle: | Join room |
+| ement-leave-room | :orange_circle: | Leave room |
+| ement-invite-user | :orange_circle: | Invite user to room |
+| ement-send-message | :orange_circle: | Send message |
+| ement-send-emote | :orange_circle: | Send emote |
+| ement-send-file | :orange_circle: | Send file |
+| ement-room-set-topic | :orange_circle: | Set room topic |
+| ement-room-list | :orange_circle: | Show room list |
+| ement-view-room | :orange_circle: | View room |
+| ement-describe-room | :orange_circle: | Describe room |
+| ement-room-tag | :orange_circle: | Tag room |
+| ement-notifications | :orange_circle: | Show notifications |
+| ement-direct-message | :orange_circle: | Send direct message |
+| ement-ignore-user | :orange_circle: | Ignore user |
+| ement-unignore-user | :orange_circle: | Unignore user |
+| ement-room-toggle-space | :orange_circle: | Toggle space for room |
+
 ### Round 226 — Nix ext, Guix ext
 
 | Command | Status | Description |
