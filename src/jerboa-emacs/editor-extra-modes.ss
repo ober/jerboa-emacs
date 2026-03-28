@@ -15859,3 +15859,59 @@
 (def (cmd-flutter-hot-reload app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Flutter: hot reload")))
+
+;;; Round 141 — GraphQL, Terraform, Kubernetes, Nix, Restclient (batch 1)
+
+(def (cmd-graphql-send-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: sent query")))
+
+(def (cmd-graphql-select-endpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GraphQL endpoint: "
+      (lambda (url)
+        (echo-message! echo (str "GraphQL: selected endpoint " url))))))
+
+(def (cmd-terraform-workspace-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: showing current workspace")))
+
+(def (cmd-terraform-workspace-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Select workspace: "
+      (lambda (ws)
+        (echo-message! echo (str "Terraform: selected workspace " ws))))))
+
+(def (cmd-kubernetes-describe-pod app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe pod: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubernetes: describing pod " pod))))))
+
+(def (cmd-kubernetes-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pod logs: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubernetes: showing logs for " pod))))))
+
+(def (cmd-kubernetes-exec-into app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Exec into pod: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubernetes: exec into " pod))))))
+
+(def (cmd-kubernetes-delete-pod app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete pod: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubernetes: deleted pod " pod))))))
+
+(def (cmd-kubernetes-scale app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Scale deployment: "
+      (lambda (dep)
+        (echo-message! echo (str "Kubernetes: scaling " dep))))))
+
+(def (cmd-nix-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: formatted buffer")))

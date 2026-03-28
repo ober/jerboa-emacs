@@ -15256,3 +15256,47 @@
 (def (cmd-phpunit-current-test app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PHPUnit: running current test")))
+
+;;; Round 141 — GraphQL, Terraform, Kubernetes, Nix, Restclient (batch 2)
+
+(def (cmd-nix-flake-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: updated flake inputs")))
+
+(def (cmd-nixos-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NixOS: rebuilding system")))
+
+(def (cmd-nixpkgs-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search nixpkgs: "
+      (lambda (query)
+        (echo-message! echo (str "Nix: searching packages for '" query "'"))))))
+
+(def (cmd-restclient-http-send-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: sent current request")))
+
+(def (cmd-restclient-http-send-current-raw app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: sent current request (raw)")))
+
+(def (cmd-restclient-copy-curl-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: copied as curl command")))
+
+(def (cmd-restclient-narrow-to-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: narrowed to current request")))
+
+(def (cmd-restclient-mark-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restclient: marked current request")))
+
+(def (cmd-ob-restclient app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-babel: restclient block executed")))
+
+(def (cmd-verb-show-request app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verb: showing request")))

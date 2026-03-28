@@ -4531,6 +4531,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 141 — GraphQL, Terraform, Kubernetes, Nix, Restclient
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| graphql-send-query | :orange_circle: | Send GraphQL query |
+| graphql-select-endpoint | :orange_circle: | Select GraphQL endpoint |
+| terraform-workspace-show | :orange_circle: | Show Terraform workspace |
+| terraform-workspace-select | :orange_circle: | Select Terraform workspace |
+| kubernetes-describe-pod | :orange_circle: | Describe Kubernetes pod |
+| kubernetes-logs | :orange_circle: | Show pod logs |
+| kubernetes-exec-into | :orange_circle: | Exec into pod |
+| kubernetes-delete-pod | :orange_circle: | Delete pod |
+| kubernetes-scale | :orange_circle: | Scale deployment |
+| nix-format-buffer | :orange_circle: | Format Nix buffer |
+| nix-flake-update | :orange_circle: | Update Nix flake inputs |
+| nixos-rebuild | :orange_circle: | Rebuild NixOS system |
+| nixpkgs-search | :orange_circle: | Search Nix packages |
+| restclient-http-send-current | :orange_circle: | Send current HTTP request |
+| restclient-http-send-current-raw | :orange_circle: | Send current request (raw) |
+| restclient-copy-curl-command | :orange_circle: | Copy as curl command |
+| restclient-narrow-to-current | :orange_circle: | Narrow to current request |
+| restclient-mark-current | :orange_circle: | Mark current request |
+| ob-restclient | :orange_circle: | Execute restclient org block |
+| verb-show-request | :orange_circle: | Show Verb HTTP request |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
