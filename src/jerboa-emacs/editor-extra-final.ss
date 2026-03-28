@@ -5095,3 +5095,256 @@
                         (editor-goto-pos ed 0)
                         (echo-message! echo (str "pip " cmd " complete"))))
                     (loop (cons line lines))))))))))))
+
+;; ===== Round 12 Batch 2 =====
+
+;; --- Feature 11: Copy Filepath ---
+
+(def (cmd-copy-filepath app)
+  "Copy the current buffer's full file path to kill ring."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (let ((ed (edit-window-editor win)))
+        (send-message ed SCI_COPYTEXT (string-length file) file)
+        (echo-message! echo (str "Copied: " file))))))
+
+;; --- Feature 12: Hex to Decimal ---
+
+(def (cmd-hex-to-dec app)
+  "Convert a hexadecimal number to decimal."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Hex value: " row width)))
+    (when (and input (not (string-empty? input)))
+      (let* ((hex (string-trim input))
+             (clean (if (string-prefix? "0x" hex) (substring hex 2 (string-length hex)) hex))
+             (val (string->number clean 16)))
+        (if val
+          (echo-message! echo (str "0x" clean " = " val))
+          (echo-message! echo "Invalid hex value"))))))
+
+;; --- Feature 13: Decimal to Hex ---
+
+(def (cmd-dec-to-hex app)
+  "Convert a decimal number to hexadecimal."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Decimal value: " row width)))
+    (when (and input (not (string-empty? input)))
+      (let ((val (string->number (string-trim input))))
+        (if val
+          (echo-message! echo (str val " = 0x" (number->string val 16)))
+          (echo-message! echo "Invalid decimal value"))))))
+
+;; --- Feature 14: Binary to Decimal ---
+
+(def (cmd-binary-to-dec app)
+  "Convert a binary number to decimal."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Binary value: " row width)))
+    (when (and input (not (string-empty? input)))
+      (let* ((bin (string-trim input))
+             (clean (if (string-prefix? "0b" bin) (substring bin 2 (string-length bin)) bin))
+             (val (string->number clean 2)))
+        (if val
+          (echo-message! echo (str "0b" clean " = " val " (0x" (number->string val 16) ")"))
+          (echo-message! echo "Invalid binary value"))))))
+
+;; --- Feature 15: String to Hex ---
+
+(def (cmd-string-to-hex app)
+  "Convert selected text to hexadecimal representation."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      ;; No selection, prompt for input
+      (let* ((row (tui-rows)) (width (tui-cols))
+             (input (echo-read-string echo "String: " row width)))
+        (when (and input (not (string-empty? input)))
+          (let ((hex-str (apply string-append
+                           (map (lambda (c) (format "~2,'0x " (char->integer c)))
+                                (string->list input)))))
+            (echo-message! echo (str "Hex: " hex-str)))))
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (hex-str (apply string-append
+                        (map (lambda (c) (format "~2,'0x " (char->integer c)))
+                             (string->list text)))))
+        (echo-message! echo (str "Hex: " hex-str))))))
+
+;; --- Feature 16: ROT47 ---
+
+(def (cmd-rot47 app)
+  "Apply ROT47 encoding to selected text or buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (has-selection (not (= sel-start sel-end)))
+         (text (if has-selection
+                 (editor-get-text-range ed sel-start (- sel-end sel-start))
+                 (let ((len (send-message ed SCI_GETLENGTH 0 0)))
+                   (editor-get-text ed len))))
+         (rot47 (list->string
+                  (map (lambda (c)
+                         (let ((n (char->integer c)))
+                           (if (and (>= n 33) (<= n 126))
+                             (integer->char (+ 33 (modulo (+ (- n 33) 47) 94)))
+                             c)))
+                       (string->list text)))))
+    (if has-selection
+      (editor-replace-selection ed rot47)
+      (begin (editor-set-text ed rot47) (editor-goto-pos ed 0)))
+    (echo-message! echo "ROT47 applied")))
+
+;; --- Feature 17: SHA256 Hash ---
+
+(def (cmd-sha256-hash app)
+  "Compute SHA256 hash of selected text or buffer content."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (text (if (= sel-start sel-end)
+                 (let ((len (send-message ed SCI_GETLENGTH 0 0)))
+                   (editor-get-text ed len))
+                 (editor-get-text-range ed sel-start (- sel-end sel-start)))))
+    (when text
+      (with-catch
+        (lambda (e) (echo-message! echo (str "hash error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports "sha256sum" 'block (native-transcoder))))
+            (display text p-stdin)
+            (close-port p-stdin)
+            (let ((hash (get-line p-stdout)))
+              (close-port p-stdout) (close-port p-stderr)
+              (if (eof-object? hash)
+                (echo-message! echo "Hash failed")
+                (let ((h (car (string-split hash #\space))))
+                  (echo-message! echo (str "SHA256: " h)))))))))))
+
+;; --- Feature 18: MD5 Hash ---
+
+(def (cmd-md5-hash app)
+  "Compute MD5 hash of selected text or buffer content."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (text (if (= sel-start sel-end)
+                 (let ((len (send-message ed SCI_GETLENGTH 0 0)))
+                   (editor-get-text ed len))
+                 (editor-get-text-range ed sel-start (- sel-end sel-start)))))
+    (when text
+      (with-catch
+        (lambda (e) (echo-message! echo (str "hash error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports "md5sum" 'block (native-transcoder))))
+            (display text p-stdin)
+            (close-port p-stdin)
+            (let ((hash (get-line p-stdout)))
+              (close-port p-stdout) (close-port p-stderr)
+              (if (eof-object? hash)
+                (echo-message! echo "Hash failed")
+                (let ((h (car (string-split hash #\space))))
+                  (echo-message! echo (str "MD5: " h)))))))))))
+
+;; --- Feature 19: Word Frequency ---
+
+(def (cmd-word-frequency app)
+  "Show word frequency analysis of the current buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      (let* ((words (map string-downcase
+                         (filter (lambda (w) (> (string-length w) 0))
+                                 (string-split text #\space))))
+             (freq (make-hash-table))
+             (dummy (for-each (lambda (w)
+                                (hash-put! freq w (+ 1 (hash-ref freq w 0))))
+                              words))
+             (pairs (hash->list freq))
+             (sorted (sort (lambda (a b) (> (cdr a) (cdr b))) pairs))
+             (top (if (> (length sorted) 50) (take sorted 50) sorted))
+             (content (string-append "Word Frequency Analysis\n"
+                        (make-string 50 #\=) "\n"
+                        (str "Total words: " (length words) "\n")
+                        (str "Unique words: " (length pairs) "\n\n")
+                        (string-join
+                          (map (lambda (p) (format "~5d  ~a" (cdr p) (car p)))
+                               top)
+                          "\n")))
+             (fbuf (make-buffer "*word-frequency*")))
+        (buffer-attach! ed fbuf)
+        (set! (edit-window-buffer win) fbuf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)
+        (echo-message! echo (str (length words) " words, " (length pairs) " unique"))))))
+
+;; --- Feature 20: Text Statistics ---
+
+(def (cmd-text-statistics app)
+  "Show detailed text statistics for the current buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      (let* ((chars (string-length text))
+             (chars-no-space (length (filter (lambda (c) (not (char-whitespace? c)))
+                                            (string->list text))))
+             (lines (+ 1 (length (filter (lambda (c) (char=? c #\newline))
+                                         (string->list text)))))
+             (words (length (filter (lambda (w) (> (string-length w) 0))
+                                   (string-split text #\space))))
+             (sentences (length (filter (lambda (c) (or (char=? c #\.) (char=? c #\!) (char=? c #\?)))
+                                       (string->list text))))
+             (paragraphs (let loop ((chars (string->list text)) (count 1) (prev-nl #f))
+                           (cond
+                             ((null? chars) count)
+                             ((char=? (car chars) #\newline)
+                              (if prev-nl (loop (cdr chars) (+ count 1) #t)
+                                (loop (cdr chars) count #t)))
+                             (else (loop (cdr chars) count #f)))))
+             (avg-word-len (if (> words 0)
+                             (exact (round (/ chars-no-space words)))
+                             0))
+             (content (string-append "Text Statistics\n"
+                        (make-string 50 #\=) "\n\n"
+                        (str "Characters: " chars "\n")
+                        (str "Characters (no spaces): " chars-no-space "\n")
+                        (str "Words: " words "\n")
+                        (str "Lines: " lines "\n")
+                        (str "Sentences: " sentences "\n")
+                        (str "Paragraphs: " paragraphs "\n")
+                        (str "Avg word length: " avg-word-len "\n")
+                        (str "\nReading time: ~" (max 1 (quotient words 200)) " min")))
+             (sbuf (make-buffer "*text-stats*")))
+        (buffer-attach! ed sbuf)
+        (set! (edit-window-buffer win) sbuf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)
+        (echo-message! echo (str words " words, " lines " lines"))))))

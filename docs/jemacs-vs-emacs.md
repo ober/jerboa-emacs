@@ -1346,6 +1346,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Sort lines by field | :orange_circle: | Sort buffer lines by whitespace-delimited field |
 | Vagrant | :orange_circle: | Run vagrant commands with completion |
 | Pip (Python) | :orange_circle: | Run pip commands with package completion |
+| Docker PS | :orange_circle: | List running Docker containers with formatted output |
+| Docker logs | :orange_circle: | View container logs by name/ID |
+| Git log graph | :orange_circle: | Graphical git log with branch visualization |
+| Git bisect | :orange_circle: | Interactive git bisect (start/good/bad/reset) |
+| Git reflog | :orange_circle: | View git reflog with timestamps |
+| Git tag | :orange_circle: | List/create/delete git tags |
+| Randomize lines | :orange_circle: | Fisher-Yates shuffle of buffer lines |
+| Titlecase region | :orange_circle: | Convert selection to Title Case |
+| Goto percent | :orange_circle: | Jump to percentage position in buffer |
+| Copy filename | :orange_circle: | Copy current buffer's filename to kill ring |
+| Copy filepath | :orange_circle: | Copy current buffer's full path to kill ring |
+| Hex to decimal | :orange_circle: | Convert hex values to decimal |
+| Decimal to hex | :orange_circle: | Convert decimal values to hex |
+| Binary to decimal | :orange_circle: | Convert binary values to decimal/hex |
+| String to hex | :orange_circle: | Show hex representation of text |
+| ROT47 | :orange_circle: | ROT47 encoding/decoding of text |
+| SHA256 hash | :orange_circle: | Compute SHA256 hash of text via sha256sum |
+| MD5 hash | :orange_circle: | Compute MD5 hash of text via md5sum |
+| Word frequency | :orange_circle: | Word frequency analysis with top-50 display |
+| Text statistics | :orange_circle: | Characters, words, lines, sentences, reading time |
 
 ---
 

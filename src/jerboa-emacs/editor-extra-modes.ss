@@ -5348,3 +5348,304 @@
                     (editor-goto-pos ed 0)
                     (echo-message! echo (str (length lines) " connections"))))
                 (loop (cons line lines))))))))))
+
+;; ===== Round 12 Batch 1 =====
+
+;; --- Feature 1: Docker PS ---
+
+(def (cmd-docker-ps app)
+  "List running Docker containers."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "docker error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}' 2>&1"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-append "Docker Containers\n"
+                                    (make-string 60 #\=) "\n\n"
+                                    (string-join (reverse lines) "\n")))
+                         (dbuf (make-buffer "*docker-ps*")))
+                    (buffer-attach! ed dbuf)
+                    (set! (edit-window-buffer win) dbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo (str (max 0 (- (length lines) 1)) " containers"))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 2: Docker Logs ---
+
+(def (cmd-docker-logs app)
+  "View logs for a Docker container."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (container (echo-read-string echo "Container name/ID: " row width)))
+    (when (and container (not (string-empty? container)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "docker error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "docker logs --tail 100 " (shell-quote (string-trim container)) " 2>&1")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (lbuf (make-buffer (str "*docker-" container "*"))))
+                      (buffer-attach! ed lbuf)
+                      (set! (edit-window-buffer win) lbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo (str "Logs for " container))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 3: Git Log Graph ---
+
+(def (cmd-git-log-graph app)
+  "Show a graphical git log."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "git error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "git log --graph --oneline --decorate --all -50"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-join (reverse lines) "\n"))
+                         (gbuf (make-buffer "*git-graph*")))
+                    (buffer-attach! ed gbuf)
+                    (set! (edit-window-buffer win) gbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo "Git log graph")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 4: Git Bisect ---
+
+(def (cmd-git-bisect app)
+  "Start or control a git bisect session."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (actions '("start" "good" "bad" "reset" "log"))
+         (action (echo-read-string-with-completion echo "git bisect: " actions row width)))
+    (when (and action (not (string-empty? action)))
+      (let ((extra (if (string=? action "start")
+                     (let ((bad (echo-read-string echo "Bad commit (HEAD): " row width))
+                           (good (echo-read-string echo "Good commit: " row width)))
+                       (str (if (or (not bad) (string-empty? bad)) "HEAD" bad) " "
+                            (if (or (not good) (string-empty? good)) "" good)))
+                     "")))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "bisect error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "git bisect " action " " extra " 2>&1")
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (echo-message! echo (string-join (reverse lines) " ")))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 5: Git Reflog ---
+
+(def (cmd-git-reflog app)
+  "Show git reflog."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "git error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "git reflog -50 --format='%h %gd: %gs (%cr)'"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-append "Git Reflog\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    (string-join (reverse lines) "\n")))
+                         (rbuf (make-buffer "*git-reflog*")))
+                    (buffer-attach! ed rbuf)
+                    (set! (edit-window-buffer win) rbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo (str (length lines) " reflog entries"))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 6: Git Tag ---
+
+(def (cmd-git-tag app)
+  "List or create git tags."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (actions '("list" "create" "delete"))
+         (action (echo-read-string-with-completion echo "Tag action: " actions row width)))
+    (when (and action (not (string-empty? action)))
+      (cond
+        ((string=? action "list")
+         (let* ((frame (app-state-frame app))
+                (win (current-window frame))
+                (ed (edit-window-editor win)))
+           (with-catch
+             (lambda (e) (echo-message! echo (str "git error: " e)))
+             (lambda ()
+               (let-values (((si so se pid)
+                             (open-process-ports "git tag -l --sort=-creatordate" 'block (native-transcoder))))
+                 (close-port si)
+                 (let loop ((lines '()))
+                   (let ((line (get-line so)))
+                     (if (eof-object? line)
+                       (begin
+                         (close-port so) (close-port se)
+                         (let* ((content (string-join (reverse lines) "\n"))
+                                (tbuf (make-buffer "*git-tags*")))
+                           (buffer-attach! ed tbuf)
+                           (set! (edit-window-buffer win) tbuf)
+                           (editor-set-text ed content)
+                           (editor-goto-pos ed 0)))
+                       (loop (cons line lines))))))))))
+        ((string=? action "create")
+         (let ((name (echo-read-string echo "Tag name: " row width)))
+           (when (and name (not (string-empty? name)))
+             (let ((msg (echo-read-string echo "Message (empty for lightweight): " row width)))
+               (with-catch
+                 (lambda (e) (echo-message! echo (str "tag error: " e)))
+                 (lambda ()
+                   (let* ((cmd (if (and msg (not (string-empty? msg)))
+                                 (str "git tag -a " (shell-quote name) " -m " (shell-quote msg))
+                                 (str "git tag " (shell-quote name)))))
+                     (let-values (((si so se pid)
+                                   (open-process-ports (str cmd " 2>&1") 'block (native-transcoder))))
+                       (close-port si) (close-port so) (close-port se)
+                       (echo-message! echo (str "Created tag: " name))))))))))
+        ((string=? action "delete")
+         (let ((name (echo-read-string echo "Delete tag: " row width)))
+           (when (and name (not (string-empty? name)))
+             (with-catch
+               (lambda (e) (echo-message! echo (str "tag error: " e)))
+               (lambda ()
+                 (let-values (((si so se pid)
+                               (open-process-ports (str "git tag -d " (shell-quote name) " 2>&1") 'block (native-transcoder))))
+                   (close-port si) (close-port so) (close-port se)
+                   (echo-message! echo (str "Deleted tag: " name))))))))))))
+
+;; --- Feature 7: Randomize Lines ---
+
+(def (cmd-randomize-lines app)
+  "Shuffle the lines in the current buffer randomly."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len))
+         (lines (string-split text #\newline))
+         (n (length lines))
+         (vec (list->vector lines)))
+    ;; Fisher-Yates shuffle
+    (do ((i (- n 1) (- i 1))) ((< i 1))
+      (let* ((j (random (+ i 1)))
+             (tmp (vector-ref vec i)))
+        (vector-set! vec i (vector-ref vec j))
+        (vector-set! vec j tmp)))
+    (editor-set-text ed (string-join (vector->list vec) "\n"))
+    (editor-goto-pos ed 0)
+    (echo-message! echo (str "Shuffled " n " lines"))))
+
+;; --- Feature 8: Titlecase Region ---
+
+(def (cmd-titlecase-region app)
+  "Convert selected text to Title Case."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (words (string-split text #\space))
+             (titled (map (lambda (w)
+                            (if (> (string-length w) 0)
+                              (string-append
+                                (string (char-upcase (string-ref w 0)))
+                                (string-downcase (substring w 1 (string-length w))))
+                              w))
+                          words))
+             (result (string-join titled " ")))
+        (editor-replace-selection ed result)
+        (echo-message! echo "Title case applied")))))
+
+;; --- Feature 9: Goto Percent ---
+
+(def (cmd-goto-percent app)
+  "Go to a percentage position in the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Goto %: " row width)))
+    (when (and input (not (string-empty? input)))
+      (let ((pct (string->number (string-trim input))))
+        (when (and pct (>= pct 0) (<= pct 100))
+          (let* ((len (send-message ed SCI_GETLENGTH 0 0))
+                 (pos (exact (round (* len (/ pct 100.0))))))
+            (send-message ed SCI_GOTOPOS pos 0)
+            (echo-message! echo (str "At " pct "%"))))))))
+
+;; --- Feature 10: Copy Filename ---
+
+(def (cmd-copy-filename app)
+  "Copy the current buffer's filename (without path) to kill ring."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (let* ((name (let loop ((i (- (string-length file) 1)))
+                     (cond
+                       ((< i 0) file)
+                       ((char=? (string-ref file i) #\/) (substring file (+ i 1) (string-length file)))
+                       (else (loop (- i 1))))))
+             (ed (edit-window-editor win)))
+        (send-message ed SCI_COPYTEXT (string-length name) name)
+        (echo-message! echo (str "Copied: " name))))))
