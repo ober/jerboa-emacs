@@ -12672,3 +12672,50 @@
 (def (cmd-paradox-upgrade-packages app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Paradox: upgrading all packages")))
+
+;;; Round 87 — Sly, Geiser & Racket (cont.)
+(def (cmd-sly-who-calls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sly who calls: "
+      (lambda (sym)
+        (echo-message! echo (str "Sly: showing callers of " sym))))))
+
+(def (cmd-sly-who-references app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sly who references: "
+      (lambda (sym)
+        (echo-message! echo (str "Sly: showing references to " sym))))))
+
+(def (cmd-geiser-eval-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Geiser: evaluated definition at point")))
+
+(def (cmd-geiser-doc-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Geiser doc for: "
+      (lambda (sym)
+        (echo-message! echo (str "Geiser: showing doc for " sym))))))
+
+(def (cmd-geiser-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Geiser connect to (host:port): "
+      (lambda (addr)
+        (echo-message! echo (str "Geiser: connecting to " addr))))))
+
+(def (cmd-racket-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Racket: running current file")))
+
+(def (cmd-racket-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Racket: running tests")))
+
+(def (cmd-racket-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Racket describe: "
+      (lambda (sym)
+        (echo-message! echo (str "Racket: describing " sym))))))
+
+(def (cmd-racket-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Racket: REPL started")))

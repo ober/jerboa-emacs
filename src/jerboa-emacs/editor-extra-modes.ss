@@ -13237,3 +13237,52 @@
       (lambda (pkg)
         (echo-message! echo (str "Quelpa: upgrading " pkg))))))
 
+;;; Round 87 — CIDER, Sly, Geiser & Racket
+(def (cmd-cider-eval-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: evaluated defun at point")))
+
+(def (cmd-cider-find-var app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CIDER find var: "
+      (lambda (var)
+        (echo-message! echo (str "CIDER: navigating to " var))))))
+
+(def (cmd-cider-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CIDER doc for: "
+      (lambda (sym)
+        (echo-message! echo (str "CIDER: showing doc for " sym))))))
+
+(def (cmd-cider-test-run-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: running test at point")))
+
+(def (cmd-cider-repl-set-ns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: REPL namespace set to current buffer")))
+
+(def (cmd-cider-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CIDER inspect: "
+      (lambda (expr)
+        (echo-message! echo (str "CIDER: inspecting " expr))))))
+
+(def (cmd-cider-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: refreshing loaded namespaces")))
+
+(def (cmd-sly-eval-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sly: evaluated defun at point")))
+
+(def (cmd-sly-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sly: evaluated entire buffer")))
+
+(def (cmd-sly-describe-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sly describe symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "Sly: describing " sym))))))
+

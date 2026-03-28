@@ -3119,6 +3119,32 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 87 — CIDER, Sly, Geiser & Racket
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| cider-eval-defun | :orange_circle: | Evaluate defun at point (CIDER) |
+| cider-find-var | :orange_circle: | Find var definition (CIDER) |
+| cider-doc | :orange_circle: | Show documentation (CIDER) |
+| cider-test-run-test | :orange_circle: | Run test at point (CIDER) |
+| cider-repl-set-ns | :orange_circle: | Set REPL namespace (CIDER) |
+| cider-inspect | :orange_circle: | Inspect expression (CIDER) |
+| cider-refresh | :orange_circle: | Refresh loaded namespaces (CIDER) |
+| sly-eval-defun | :orange_circle: | Evaluate defun at point (Sly) |
+| sly-eval-buffer | :orange_circle: | Evaluate buffer (Sly) |
+| sly-describe-symbol | :orange_circle: | Describe symbol (Sly) |
+| sly-who-calls | :orange_circle: | Show callers (Sly) |
+| sly-who-references | :orange_circle: | Show references (Sly) |
+| geiser-eval-definition | :orange_circle: | Evaluate definition (Geiser) |
+| geiser-doc-symbol | :orange_circle: | Show doc for symbol (Geiser) |
+| geiser-connect | :orange_circle: | Connect to Scheme REPL (Geiser) |
+| racket-run | :orange_circle: | Run current Racket file |
+| racket-test | :orange_circle: | Run Racket tests |
+| racket-describe | :orange_circle: | Describe Racket symbol |
+| racket-repl | :orange_circle: | Start Racket REPL |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
