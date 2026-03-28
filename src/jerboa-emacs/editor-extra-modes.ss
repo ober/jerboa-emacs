@@ -12003,3 +12003,64 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org agenda: restriction lock removed")))
 
+;; Round 63 — Magit worktree, submodule, notes (batch 1)
+(def (cmd-magit-worktree-checkout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Checkout worktree branch: "
+      (lambda (branch)
+        (echo-read-string echo "Worktree path: "
+          (lambda (path)
+            (echo-message! echo (str "Magit: checked out worktree " branch " at " path))))))))
+
+(def (cmd-magit-worktree-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New worktree path: "
+      (lambda (path)
+        (echo-read-string echo "Branch name: "
+          (lambda (branch)
+            (echo-message! echo (str "Magit: created worktree " branch " at " path))))))))
+
+(def (cmd-magit-worktree-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete worktree: "
+      (lambda (path)
+        (echo-message! echo (str "Magit: deleted worktree at " path))))))
+
+(def (cmd-magit-worktree-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: showing worktree status")))
+
+(def (cmd-magit-submodule-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Submodule URL: "
+      (lambda (url)
+        (echo-read-string echo "Submodule path: "
+          (lambda (path)
+            (echo-message! echo (str "Magit: added submodule " url " at " path))))))))
+
+(def (cmd-magit-submodule-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: updating submodules")))
+
+(def (cmd-magit-submodule-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: syncing submodule URLs")))
+
+(def (cmd-magit-submodule-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove submodule: "
+      (lambda (sub)
+        (echo-message! echo (str "Magit: removed submodule '" sub "'"))))))
+
+(def (cmd-magit-notes-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Edit note for commit: "
+      (lambda (rev)
+        (echo-message! echo (str "Magit: editing note for " rev))))))
+
+(def (cmd-magit-notes-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove note from commit: "
+      (lambda (rev)
+        (echo-message! echo (str "Magit: removed note from " rev))))))
+

@@ -2505,6 +2505,30 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | org-agenda-follow-mode | :orange_circle: | Toggle follow mode |
 | org-agenda-columns | :orange_circle: | Toggle column view |
 
+### Round 63 — Magit: Worktrees, Submodules, Notes & Patches
+
+| Feature | Status | Notes |
+|---|---|---|
+| magit-worktree-checkout | :orange_circle: | Checkout branch in worktree |
+| magit-worktree-create | :orange_circle: | Create new worktree |
+| magit-worktree-delete | :orange_circle: | Delete worktree |
+| magit-worktree-status | :orange_circle: | Show worktree status |
+| magit-submodule-add | :orange_circle: | Add git submodule |
+| magit-submodule-update | :orange_circle: | Update submodules |
+| magit-submodule-sync | :orange_circle: | Sync submodule URLs |
+| magit-submodule-remove | :orange_circle: | Remove submodule |
+| magit-notes-edit | :orange_circle: | Edit git note on commit |
+| magit-notes-remove | :orange_circle: | Remove git note |
+| magit-cherry | :orange_circle: | Show cherry commits |
+| magit-cherry-apply | :orange_circle: | Apply cherry commit |
+| magit-reflog | :orange_circle: | Show reflog for ref |
+| magit-reflog-head | :orange_circle: | Show HEAD reflog |
+| magit-reflog-other | :orange_circle: | Show reflog for other ref |
+| magit-patch-create | :orange_circle: | Create patch from range |
+| magit-patch-apply | :orange_circle: | Apply patch file |
+| magit-bundle-create | :orange_circle: | Create git bundle |
+| magit-remote-prune | :orange_circle: | Prune stale remote branches |
+
 ---
 
 ## Recommended Development Roadmap

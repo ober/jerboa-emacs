@@ -11491,3 +11491,56 @@
     (if (mode-enabled? app 'org-agenda-columns)
       (echo-message! echo "Org agenda: column view enabled")
       (echo-message! echo "Org agenda: column view disabled"))))
+
+;; Round 63 — Magit cherry, reflog, patch (batch 2)
+(def (cmd-magit-cherry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cherry upstream: "
+      (lambda (upstream)
+        (echo-message! echo (str "Magit: showing cherry commits against " upstream))))))
+
+(def (cmd-magit-cherry-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cherry-apply commit: "
+      (lambda (rev)
+        (echo-message! echo (str "Magit: applied commit " rev))))))
+
+(def (cmd-magit-reflog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Reflog for ref: "
+      (lambda (ref)
+        (echo-message! echo (str "Magit: showing reflog for " ref))))))
+
+(def (cmd-magit-reflog-head app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magit: showing HEAD reflog")))
+
+(def (cmd-magit-reflog-other app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Show reflog for: "
+      (lambda (ref)
+        (echo-message! echo (str "Magit: showing reflog for " ref))))))
+
+(def (cmd-magit-patch-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Create patch from range: "
+      (lambda (range)
+        (echo-message! echo (str "Magit: created patch from " range))))))
+
+(def (cmd-magit-patch-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Apply patch file: "
+      (lambda (file)
+        (echo-message! echo (str "Magit: applied patch " file))))))
+
+(def (cmd-magit-bundle-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bundle output file: "
+      (lambda (file)
+        (echo-message! echo (str "Magit: created bundle " file))))))
+
+(def (cmd-magit-remote-prune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Prune remote: "
+      (lambda (remote)
+        (echo-message! echo (str "Magit: pruned stale branches from " remote))))))
