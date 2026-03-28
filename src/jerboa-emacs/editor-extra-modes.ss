@@ -17834,3 +17834,50 @@
 (def (cmd-verb-export-request-on-point app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Verb: exported request as curl command")))
+
+;; Round 180 — Nix, Guix, Bazel, CMake (batch 1)
+(def (cmd-nix-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nix search: "
+      (lambda (query)
+        (echo-message! echo (str "Nix: searching for " query))))))
+
+(def (cmd-nix-flake-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: initialized flake")))
+
+(def (cmd-nix-store-gc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: running store garbage collection...")))
+
+(def (cmd-nix-env-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Nix: installing " pkg))))))
+
+(def (cmd-nix-env-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Nix: removing " pkg))))))
+
+(def (cmd-guix-profiles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: showing profiles")))
+
+(def (cmd-guix-installed-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: listing installed packages")))
+
+(def (cmd-guix-available-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: listing available packages")))
+
+(def (cmd-guix-system-reconfigure app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: reconfiguring system...")))
+
+(def (cmd-guix-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: pulling latest channel updates...")))

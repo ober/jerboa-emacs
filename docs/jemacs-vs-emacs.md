@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 180 — Nix, Guix, Bazel, CMake
+
+| Feature | Status | Notes |
+|---|---|---|
+| nix-search | :orange_circle: | Search Nix packages |
+| nix-flake-init | :orange_circle: | Initialize Nix flake |
+| nix-store-gc | :orange_circle: | Nix store garbage collection |
+| nix-env-install | :orange_circle: | Install Nix package |
+| nix-env-remove | :orange_circle: | Remove Nix package |
+| guix-profiles | :orange_circle: | Show Guix profiles |
+| guix-installed-packages | :orange_circle: | List Guix installed packages |
+| guix-available-packages | :orange_circle: | List Guix available packages |
+| guix-system-reconfigure | :orange_circle: | Reconfigure Guix system |
+| guix-pull | :orange_circle: | Pull Guix channel updates |
+| bazel-build | :orange_circle: | Build Bazel target |
+| bazel-test | :orange_circle: | Test Bazel target |
+| bazel-run | :orange_circle: | Run Bazel target |
+| bazel-query | :orange_circle: | Query Bazel workspace |
+| bazel-clean | :orange_circle: | Clean Bazel artifacts |
+| bazel-info | :orange_circle: | Show Bazel workspace info |
+| cmake-configure | :orange_circle: | Configure CMake project |
+| cmake-build | :orange_circle: | Build CMake project |
+| cmake-build-current | :orange_circle: | Build current CMake target |
+| cmake-install | :orange_circle: | Install CMake project |
+
 ### Round 179 — Restclient, Verb, Plz, Request
 
 | Feature | Status | Notes |

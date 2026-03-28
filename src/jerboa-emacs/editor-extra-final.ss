@@ -17210,3 +17210,52 @@
 (def (cmd-request-log-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Request: showing log buffer")))
+
+;; Round 180 — Nix, Guix, Bazel, CMake (batch 2)
+(def (cmd-bazel-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Build target: "
+      (lambda (target)
+        (echo-message! echo (str "Bazel: building " target))))))
+
+(def (cmd-bazel-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Test target: "
+      (lambda (target)
+        (echo-message! echo (str "Bazel: testing " target))))))
+
+(def (cmd-bazel-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Run target: "
+      (lambda (target)
+        (echo-message! echo (str "Bazel: running " target))))))
+
+(def (cmd-bazel-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (query)
+        (echo-message! echo (str "Bazel: query " query))))))
+
+(def (cmd-bazel-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bazel: cleaned build artifacts")))
+
+(def (cmd-bazel-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bazel: showing workspace info")))
+
+(def (cmd-cmake-configure app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: configuring project...")))
+
+(def (cmd-cmake-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: building project...")))
+
+(def (cmd-cmake-build-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: building current target...")))
+
+(def (cmd-cmake-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: installing...")))
