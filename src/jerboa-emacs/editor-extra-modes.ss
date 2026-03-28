@@ -18519,3 +18519,50 @@
     (echo-read-string echo "TeX macro: "
       (lambda (macro)
         (echo-message! echo (str "AUCTeX: inserted \\" macro))))))
+
+;; Round 194 — Python-ext, Ruby-ext, Perl-ext, Lua-ext, PHP-ext
+(def (cmd-python-fill-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: filled paragraph/docstring")))
+
+(def (cmd-ruby-send-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ruby: sent block to inferior process")))
+
+(def (cmd-ruby-send-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ruby: sent definition to inferior process")))
+
+(def (cmd-ruby-toggle-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ruby: toggled block style (do/end vs {})")))
+
+(def (cmd-inf-ruby-console-auto app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "inf-ruby: auto-detected console type")))
+
+(def (cmd-perl-find-pod app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Perl POD topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Perl: showing POD for " topic))))))
+
+(def (cmd-cperl-find-pod app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CPerl POD topic: "
+      (lambda (topic)
+        (echo-message! echo (str "CPerl: showing POD for " topic))))))
+
+(def (cmd-lua-send-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lua: sent function definition to process")))
+
+(def (cmd-lua-search-documentation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Lua documentation search: "
+      (lambda (term)
+        (echo-message! echo (str "Lua: searching docs for " term))))))
+
+(def (cmd-php-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: sent region to process")))

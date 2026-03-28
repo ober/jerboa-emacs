@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 194 — Python-ext, Ruby-ext, Perl-ext, Lua-ext, PHP-ext, Haskell-ext, Kotlin-ext, Swift-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| python-fill-paragraph | :orange_circle: | Fill Python paragraph/docstring |
+| ruby-send-block | :orange_circle: | Send Ruby block to process |
+| ruby-send-definition | :orange_circle: | Send Ruby definition to process |
+| ruby-toggle-block | :orange_circle: | Toggle block style (do/end vs {}) |
+| inf-ruby-console-auto | :orange_circle: | Auto-detect Ruby console type |
+| perl-find-pod | :orange_circle: | Find Perl POD documentation |
+| cperl-find-pod | :orange_circle: | Find CPerl POD documentation |
+| lua-send-defun | :orange_circle: | Send Lua function to process |
+| lua-search-documentation | :orange_circle: | Search Lua documentation |
+| php-send-region | :orange_circle: | Send PHP region to process |
+| php-search-documentation | :orange_circle: | Search PHP documentation |
+| php-current-class | :orange_circle: | Show current PHP class |
+| php-current-namespace | :orange_circle: | Show current PHP namespace |
+| haskell-interactive-mode-return | :orange_circle: | Evaluate in Haskell REPL |
+| haskell-mode-jump-to-def | :orange_circle: | Jump to Haskell definition |
+| haskell-mode-show-type-at | :orange_circle: | Show Haskell type at point |
+| scala-run-main-class | :orange_circle: | Run Scala main class |
+| kotlin-send-region | :orange_circle: | Send Kotlin region to REPL |
+| kotlin-send-line | :orange_circle: | Send Kotlin line to REPL |
+| swift-mode-beginning-of-defun | :orange_circle: | Move to Swift function beginning |
+
 ### Round 193 — Org-babel-ext, Markdown-ext, AUCTeX, TeX-ext
 
 | Feature | Status | Notes |

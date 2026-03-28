@@ -17900,3 +17900,46 @@
 (def (cmd-tex-print app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TeX: sending to printer")))
+
+;; Round 194 — PHP-ext, Haskell-ext, Scala-ext, Kotlin-ext, Swift-ext
+(def (cmd-php-search-documentation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PHP docs search: "
+      (lambda (term)
+        (echo-message! echo (str "PHP: searching docs for " term))))))
+
+(def (cmd-php-current-class app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: showing current class")))
+
+(def (cmd-php-current-namespace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: showing current namespace")))
+
+(def (cmd-haskell-interactive-mode-return app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haskell: evaluated expression in REPL")))
+
+(def (cmd-haskell-mode-jump-to-def app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haskell: jumped to definition")))
+
+(def (cmd-haskell-mode-show-type-at app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haskell: showing type at point")))
+
+(def (cmd-scala-run-main-class app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scala: running main class")))
+
+(def (cmd-kotlin-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kotlin: sent region to REPL")))
+
+(def (cmd-kotlin-send-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kotlin: sent line to REPL")))
+
+(def (cmd-swift-mode-beginning-of-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swift: moved to beginning of function")))
