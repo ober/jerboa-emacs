@@ -12630,3 +12630,51 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Paredit: joined adjacent sexps")))
 
+;; Round 75 — AI integration (batch 1)
+(def (cmd-copilot-accept-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: accepted completion")))
+
+(def (cmd-copilot-next-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: showing next completion")))
+
+(def (cmd-copilot-previous-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: showing previous completion")))
+
+(def (cmd-copilot-dismiss app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: dismissed completion")))
+
+(def (cmd-copilot-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'copilot)
+    (if (mode-enabled? app 'copilot)
+      (echo-message! echo "Copilot mode enabled")
+      (echo-message! echo "Copilot mode disabled"))))
+
+(def (cmd-copilot-diagnose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: running diagnostics")))
+
+(def (cmd-gptel-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: showing menu")))
+
+(def (cmd-gptel-set-model app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GPTel model: "
+      (lambda (model)
+        (echo-message! echo (str "GPTel: model set to " model))))))
+
+(def (cmd-gptel-set-topic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GPTel topic: "
+      (lambda (topic)
+        (echo-message! echo (str "GPTel: topic set to '" topic "'"))))))
+
+(def (cmd-gptel-abort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: aborted current request")))
+

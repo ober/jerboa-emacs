@@ -2801,6 +2801,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | sp-select-next-thing | :orange_circle: | Select next thing |
 | sp-select-previous-thing | :orange_circle: | Select previous thing |
 
+### Round 75 — AI Integration (Copilot, GPTel, Ellama)
+
+| Feature | Status | Notes |
+|---|---|---|
+| copilot-accept-completion | :orange_circle: | Accept AI completion |
+| copilot-next-completion | :orange_circle: | Show next completion |
+| copilot-previous-completion | :orange_circle: | Show previous completion |
+| copilot-dismiss | :orange_circle: | Dismiss completion |
+| copilot-mode | :orange_circle: | Toggle Copilot mode |
+| copilot-diagnose | :orange_circle: | Run Copilot diagnostics |
+| gptel-menu | :orange_circle: | GPTel options menu |
+| gptel-set-model | :orange_circle: | Set GPTel model |
+| gptel-set-topic | :orange_circle: | Set conversation topic |
+| gptel-abort | :orange_circle: | Abort GPTel request |
+| chatgpt-shell | :orange_circle: | Open ChatGPT shell |
+| chatgpt-shell-send-region | :orange_circle: | Send region to ChatGPT |
+| ellama-chat | :orange_circle: | Chat with local LLM |
+| ellama-summarize | :orange_circle: | Summarize text |
+| ellama-translate | :orange_circle: | Translate text |
+| ellama-code-review | :orange_circle: | AI code review |
+| ellama-code-complete | :orange_circle: | AI code completion |
+| ellama-ask-about | :orange_circle: | Ask about topic |
+| ellama-improve-grammar | :orange_circle: | Improve grammar |
+| ellama-define-word | :orange_circle: | Define a word |
+
 ---
 
 ## Recommended Development Roadmap

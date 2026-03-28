@@ -12104,3 +12104,52 @@
 (def (cmd-sp-select-previous-thing app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Smartparens: selected previous thing")))
+
+;; Round 75 — AI integration (batch 2)
+(def (cmd-chatgpt-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ChatGPT Shell: opening conversation")))
+
+(def (cmd-chatgpt-shell-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ChatGPT Shell: sent region to AI")))
+
+(def (cmd-ellama-chat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ellama chat: "
+      (lambda (msg)
+        (echo-message! echo (str "Ellama: sent '" msg "'"))))))
+
+(def (cmd-ellama-summarize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: summarizing buffer/region")))
+
+(def (cmd-ellama-translate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Translate to language: "
+      (lambda (lang)
+        (echo-message! echo (str "Ellama: translating to " lang))))))
+
+(def (cmd-ellama-code-review app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: reviewing code")))
+
+(def (cmd-ellama-code-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: completing code")))
+
+(def (cmd-ellama-ask-about app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ask about: "
+      (lambda (q)
+        (echo-message! echo (str "Ellama: asking about '" q "'"))))))
+
+(def (cmd-ellama-improve-grammar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ellama: improving grammar")))
+
+(def (cmd-ellama-define-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Define word: "
+      (lambda (word)
+        (echo-message! echo (str "Ellama: defining '" word "'"))))))
