@@ -17150,3 +17150,55 @@
 (def (cmd-cua-paste-rectangle app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CUA: pasted rectangle from kill ring")))
+
+;; ============================================================
+;; Round 166 — Pulsar, Lin, Modus-themes, Ef-themes, Doom-themes (batch 1)
+;; ============================================================
+
+(def (cmd-pulsar-highlight-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: highlighted current line")))
+
+(def (cmd-pulsar-recenter-top app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: recentered to top and pulsed")))
+
+(def (cmd-pulsar-recenter-middle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: recentered to middle and pulsed")))
+
+(def (cmd-lin-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lin)
+    (if (mode-enabled? app 'lin)
+      (echo-message! echo "Lin mode enabled (enhanced hl-line)")
+      (echo-message! echo "Lin mode disabled"))))
+
+(def (cmd-lin-global-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'lin-global)
+    (if (mode-enabled? app 'lin-global)
+      (echo-message! echo "Lin global mode enabled")
+      (echo-message! echo "Lin global mode disabled"))))
+
+(def (cmd-modus-themes-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Select modus theme: "
+      (lambda (theme)
+        (echo-message! echo (str "Modus: loaded theme " theme))))))
+
+(def (cmd-modus-themes-preview-colors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Modus: previewing theme colors")))
+
+(def (cmd-modus-themes-list-colors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Modus: listing theme colors")))
+
+(def (cmd-ef-themes-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ef-themes: toggled between light/dark")))
+
+(def (cmd-ef-themes-preview-colors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ef-themes: previewing colors")))

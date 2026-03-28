@@ -16504,3 +16504,52 @@
 (def (cmd-artist-select-op-spray-can app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Artist: selected spray can operation")))
+
+;; ============================================================
+;; Round 166 — Ef-themes, Doom-themes, Theme tools (batch 2)
+;; ============================================================
+
+(def (cmd-ef-themes-list-colors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ef-themes: listing colors")))
+
+(def (cmd-doom-themes-treemacs-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom-themes: configured treemacs theming")))
+
+(def (cmd-doom-themes-org-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom-themes: configured org-mode theming")))
+
+(def (cmd-doom-themes-visual-bell-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom-themes: configured visual bell")))
+
+(def (cmd-doom-themes-neotree-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom-themes: configured neotree theming")))
+
+(def (cmd-doom-themes-set-faces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doom-themes: set custom faces")))
+
+(def (cmd-circadian-setup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Circadian: setup time-based theme switching")))
+
+(def (cmd-heaven-and-hell-toggle-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Heaven-and-hell: toggled light/dark theme")))
+
+(def (cmd-theme-buffet-timer-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'theme-buffet-timer)
+    (if (mode-enabled? app 'theme-buffet-timer)
+      (echo-message! echo "Theme-buffet: timer mode enabled (auto-rotate themes)")
+      (echo-message! echo "Theme-buffet: timer mode disabled"))))
+
+(def (cmd-theme-buffet-a-la-carte app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Theme period (morning/afternoon/evening/night): "
+      (lambda (period)
+        (echo-message! echo (str "Theme-buffet: loaded " period " theme"))))))

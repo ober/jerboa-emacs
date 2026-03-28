@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 166 — Pulsar, Lin, Modus/Ef/Doom Themes
+
+| Feature | Status | Notes |
+|---|---|---|
+| `pulsar-highlight-line` | :orange_circle: | Highlight current line |
+| `pulsar-recenter-top` | :orange_circle: | Recenter top + pulse |
+| `pulsar-recenter-middle` | :orange_circle: | Recenter middle + pulse |
+| `lin-mode` | :orange_circle: | Enhanced hl-line mode |
+| `lin-global-mode` | :orange_circle: | Global lin mode |
+| `modus-themes-select` | :orange_circle: | Select modus theme |
+| `modus-themes-preview-colors` | :orange_circle: | Preview colors |
+| `modus-themes-list-colors` | :orange_circle: | List colors |
+| `ef-themes-toggle` | :orange_circle: | Toggle light/dark |
+| `ef-themes-preview-colors` | :orange_circle: | Preview colors |
+| `ef-themes-list-colors` | :orange_circle: | List colors |
+| `doom-themes-treemacs-config` | :orange_circle: | Treemacs theming |
+| `doom-themes-org-config` | :orange_circle: | Org-mode theming |
+| `doom-themes-visual-bell-config` | :orange_circle: | Visual bell config |
+| `doom-themes-neotree-config` | :orange_circle: | Neotree theming |
+| `doom-themes-set-faces` | :orange_circle: | Set custom faces |
+| `circadian-setup` | :orange_circle: | Time-based theme switching |
+| `heaven-and-hell-toggle-theme` | :orange_circle: | Toggle light/dark |
+| `theme-buffet-timer-mode` | :orange_circle: | Auto-rotate themes |
+| `theme-buffet-a-la-carte` | :orange_circle: | Select theme by period |
+
 ### Round 165 — CUA Rectangles, Picture Mode, Artist Mode
 
 | Feature | Status | Notes |
