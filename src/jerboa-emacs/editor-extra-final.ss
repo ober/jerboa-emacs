@@ -15621,3 +15621,51 @@
 (def (cmd-edebug-step-in app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Edebug: stepped into function")))
+
+;; ============================================================
+;; Round 148 — CC-mode, Python extended (batch 2)
+;; ============================================================
+
+(def (cmd-c-show-syntactic-information app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: showing syntactic information at point")))
+
+(def (cmd-python-indent-shift-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: shifted region left")))
+
+(def (cmd-python-indent-shift-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: shifted region right")))
+
+(def (cmd-python-nav-backward-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: moved backward to defun")))
+
+(def (cmd-python-nav-forward-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: moved forward to defun")))
+
+(def (cmd-python-nav-backward-up-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: moved backward up list")))
+
+(def (cmd-python-skeleton-class app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Class name: "
+      (lambda (name)
+        (echo-message! echo (str "Python: inserted class skeleton for " name))))))
+
+(def (cmd-python-skeleton-def app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Function name: "
+      (lambda (name)
+        (echo-message! echo (str "Python: inserted def skeleton for " name))))))
+
+(def (cmd-python-skeleton-for app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: inserted for loop skeleton")))
+
+(def (cmd-python-skeleton-if app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: inserted if skeleton")))

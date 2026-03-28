@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 148 — CC-mode, Python, SQL Extended
+
+| Feature | Status | Notes |
+|---|---|---|
+| `c-toggle-syntactic-indentation` | :orange_circle: | Toggle syntactic indentation |
+| `c-indent-line-or-region` | :orange_circle: | Indent line or region |
+| `c-fill-paragraph` | :orange_circle: | Fill paragraph/comment |
+| `c-context-line-break` | :orange_circle: | Context-aware line break |
+| `c-macro-expand` | :orange_circle: | Expand macro at point |
+| `c-backslash-region` | :orange_circle: | Align backslashes |
+| `c-down-conditional` | :orange_circle: | Move to nested conditional |
+| `c-indent-exp` | :orange_circle: | Indent balanced expression |
+| `c-show-syntactic-information` | :orange_circle: | Show syntactic info |
+| `python-shell-switch-to-shell` | :orange_circle: | Switch to Python shell |
+| `python-shell-completion-native-turn-on` | :orange_circle: | Enable native completion |
+| `python-indent-shift-left` | :orange_circle: | Shift region left |
+| `python-indent-shift-right` | :orange_circle: | Shift region right |
+| `python-nav-backward-defun` | :orange_circle: | Navigate backward defun |
+| `python-nav-forward-defun` | :orange_circle: | Navigate forward defun |
+| `python-nav-backward-up-list` | :orange_circle: | Navigate backward up list |
+| `python-skeleton-class` | :orange_circle: | Insert class skeleton |
+| `python-skeleton-def` | :orange_circle: | Insert def skeleton |
+| `python-skeleton-for` | :orange_circle: | Insert for skeleton |
+| `python-skeleton-if` | :orange_circle: | Insert if skeleton |
+
 ### Round 147 — ELP, Trace, Debugger, Edebug, ERT, Testcover
 
 | Feature | Status | Notes |

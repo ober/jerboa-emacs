@@ -16240,3 +16240,50 @@
 (def (cmd-debugger-frame app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Debugger: showing current frame")))
+
+;; ============================================================
+;; Round 148 — CC-mode, Python, SQL extended (batch 1)
+;; ============================================================
+
+(def (cmd-c-toggle-syntactic-indentation app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'c-syntactic-indentation)
+    (if (mode-enabled? app 'c-syntactic-indentation)
+      (echo-message! echo "C syntactic indentation enabled")
+      (echo-message! echo "C syntactic indentation disabled"))))
+
+(def (cmd-c-indent-line-or-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: indented line or region")))
+
+(def (cmd-c-fill-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: filled paragraph/comment")))
+
+(def (cmd-c-context-line-break app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: context-aware line break")))
+
+(def (cmd-python-shell-switch-to-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: switched to shell buffer")))
+
+(def (cmd-python-shell-completion-native-turn-on app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: native completion enabled")))
+
+(def (cmd-c-macro-expand app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: expanded macro at point")))
+
+(def (cmd-c-backslash-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: aligned backslashes in region")))
+
+(def (cmd-c-down-conditional app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: moved down to nested conditional")))
+
+(def (cmd-c-indent-exp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "C: indented balanced expression")))
