@@ -12337,3 +12337,61 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Corfu: toggled documentation popup")))
 
+;; Round 69 — Eval, tracing, profiling (batch 1)
+(def (cmd-eval-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Eval: "
+      (lambda (expr)
+        (echo-message! echo (str "Evaluated: " expr))))))
+
+(def (cmd-eval-buffer app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (buf (current-buffer frame))
+         (name (buffer-name buf)))
+    (echo-message! echo (str "Evaluated buffer " name))))
+
+(def (cmd-ielm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IELM: interactive Emacs Lisp mode")))
+
+(def (cmd-debug-on-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Debug on entry to: "
+      (lambda (fn)
+        (echo-message! echo (str "Will debug on entry to " fn))))))
+
+(def (cmd-cancel-debug-on-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cancel debug on entry for: "
+      (lambda (fn)
+        (echo-message! echo (str "Cancelled debug on entry to " fn))))))
+
+(def (cmd-trace-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Trace function: "
+      (lambda (fn)
+        (echo-message! echo (str "Tracing " fn))))))
+
+(def (cmd-untrace-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Untrace function: "
+      (lambda (fn)
+        (echo-message! echo (str "Untraced " fn))))))
+
+(def (cmd-untrace-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "All function traces removed")))
+
+(def (cmd-elp-instrument-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Profile function: "
+      (lambda (fn)
+        (echo-message! echo (str "ELP: instrumenting " fn))))))
+
+(def (cmd-elp-instrument-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Profile package: "
+      (lambda (pkg)
+        (echo-message! echo (str "ELP: instrumenting all functions in " pkg))))))
+

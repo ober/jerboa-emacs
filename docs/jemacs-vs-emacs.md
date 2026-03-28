@@ -2652,6 +2652,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | consult-keep-lines | :orange_circle: | Keep matching lines |
 | consult-focus-lines | :orange_circle: | Focus on matching lines |
 
+### Round 69 — Eval, Tracing, Profiling & Dev Tools
+
+| Feature | Status | Notes |
+|---|---|---|
+| eval-expression | :orange_circle: | Evaluate expression interactively |
+| eval-buffer | :orange_circle: | Evaluate entire buffer |
+| ielm | :orange_circle: | Interactive Emacs Lisp mode |
+| debug-on-entry | :orange_circle: | Break on function entry |
+| cancel-debug-on-entry | :orange_circle: | Cancel debug on entry |
+| trace-function | :orange_circle: | Trace function calls |
+| untrace-function | :orange_circle: | Stop tracing function |
+| untrace-all | :orange_circle: | Remove all traces |
+| elp-instrument-function | :orange_circle: | Profile a function |
+| elp-instrument-package | :orange_circle: | Profile a package |
+| elp-reset-all | :orange_circle: | Reset profiling data |
+| benchmark-run-compiled | :orange_circle: | Benchmark compiled expression |
+| macrostep-expand | :orange_circle: | Step through macro expansion |
+| highlight-defined-mode | :orange_circle: | Highlight defined symbols |
+| nameless-mode | :orange_circle: | Hide package prefix in code |
+| suggest | :orange_circle: | Suggest functions for transformation |
+| aggressive-completion-mode | :orange_circle: | Auto-complete aggressively |
+| pp-eval-expression | :orange_circle: | Pretty-print eval result |
+| pp-eval-last-sexp | :orange_circle: | Pretty-print last sexp |
+| pp-macroexpand-last-sexp | :orange_circle: | Pretty-print macro expansion |
+
 ---
 
 ## Recommended Development Roadmap

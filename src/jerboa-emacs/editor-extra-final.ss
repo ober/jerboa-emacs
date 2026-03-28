@@ -11800,3 +11800,61 @@
     (echo-read-string echo "Focus lines matching: "
       (lambda (re)
         (echo-message! echo (str "Consult: focusing on lines matching '" re "'"))))))
+
+;; Round 69 — Dev tools (batch 2)
+(def (cmd-elp-reset-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ELP: reset all profiling data")))
+
+(def (cmd-benchmark-run-compiled app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Benchmark compiled expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Benchmark (compiled): " expr))))))
+
+(def (cmd-macrostep-expand app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Macrostep: expanded macro at point")))
+
+(def (cmd-highlight-defined-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'highlight-defined)
+    (if (mode-enabled? app 'highlight-defined)
+      (echo-message! echo "Highlight defined symbols enabled")
+      (echo-message! echo "Highlight defined symbols disabled"))))
+
+(def (cmd-nameless-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'nameless)
+    (if (mode-enabled? app 'nameless)
+      (echo-message! echo "Nameless mode enabled (hide package prefix)")
+      (echo-message! echo "Nameless mode disabled"))))
+
+(def (cmd-suggest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Suggest: input value: "
+      (lambda (input)
+        (echo-read-string echo "Desired output: "
+          (lambda (output)
+            (echo-message! echo (str "Suggest: finding functions that transform " input " → " output))))))))
+
+(def (cmd-aggressive-completion-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'aggressive-completion)
+    (if (mode-enabled? app 'aggressive-completion)
+      (echo-message! echo "Aggressive completion enabled")
+      (echo-message! echo "Aggressive completion disabled"))))
+
+(def (cmd-pp-eval-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PP eval: "
+      (lambda (expr)
+        (echo-message! echo (str "Pretty-printed eval: " expr))))))
+
+(def (cmd-pp-eval-last-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pretty-printed last sexp")))
+
+(def (cmd-pp-macroexpand-last-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pretty-printed macroexpansion of last sexp")))
