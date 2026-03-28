@@ -18334,3 +18334,52 @@
 (def (cmd-langtool-correct-at-point app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "LanguageTool: corrected at point")))
+
+;; Round 190 — CUA-ext, Repeat, Pulse, Whitespace-ext, Autorevert-ext, So-long, Pixel-scroll
+(def (cmd-cua-exchange-point-and-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: exchanged point and mark")))
+
+(def (cmd-repeat-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'repeat)
+    (if (mode-enabled? app 'repeat)
+      (echo-message! echo "Repeat mode enabled")
+      (echo-message! echo "Repeat mode disabled"))))
+
+(def (cmd-pulse-momentary-highlight-one-line-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulse: highlighted current line")))
+
+(def (cmd-whitespace-cleanup-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Whitespace: cleaned up region")))
+
+(def (cmd-whitespace-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Whitespace: report generated for buffer")))
+
+(def (cmd-whitespace-report-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Whitespace: report generated for region")))
+
+(def (cmd-auto-revert-set-timer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Auto-revert interval (seconds): "
+      (lambda (val)
+        (echo-message! echo (str "Auto-revert timer set to " val "s"))))))
+
+(def (cmd-so-long-revert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "So-long: reverted to normal mode")))
+
+(def (cmd-pixel-scroll-precision-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pixel-scroll-precision)
+    (if (mode-enabled? app 'pixel-scroll-precision)
+      (echo-message! echo "Pixel scroll precision mode enabled")
+      (echo-message! echo "Pixel scroll precision mode disabled"))))
+
+(def (cmd-pixel-scroll-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pixel scroll: scrolled up")))

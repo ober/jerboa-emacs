@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 190 — CUA-ext, Repeat, Pulse, Whitespace-ext, Pixel-scroll, Context-menu, Describe-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| cua-exchange-point-and-mark | :orange_circle: | Exchange point and mark in CUA mode |
+| repeat-mode | :orange_circle: | Toggle repeat mode |
+| pulse-momentary-highlight-one-line-at-point | :orange_circle: | Pulse highlight current line |
+| whitespace-cleanup-region | :orange_circle: | Clean up whitespace in region |
+| whitespace-report | :orange_circle: | Generate whitespace report for buffer |
+| whitespace-report-region | :orange_circle: | Generate whitespace report for region |
+| auto-revert-set-timer | :orange_circle: | Set auto-revert timer interval |
+| so-long-revert | :orange_circle: | Revert so-long mode optimizations |
+| pixel-scroll-precision-mode | :orange_circle: | Toggle pixel scroll precision mode |
+| pixel-scroll-up | :orange_circle: | Pixel-precise scroll up |
+| pixel-scroll-down | :orange_circle: | Pixel-precise scroll down |
+| context-menu-mode | :orange_circle: | Toggle context menu mode |
+| tab-bar-rename-tab-by-name | :orange_circle: | Rename tab by name |
+| file-name-shadow-mode | :orange_circle: | Toggle file name shadow mode |
+| read-only-mode-toggle-readonly | :orange_circle: | Toggle read-only state |
+| describe-keymap | :orange_circle: | Describe a keymap |
+| list-threads | :orange_circle: | List active threads |
+| emoji-recent | :orange_circle: | Show recent emojis |
+| elisp-eval-region-and-replace | :orange_circle: | Eval region and replace with result |
+| checkdoc-minor-mode | :orange_circle: | Toggle checkdoc minor mode |
+
 ### Round 189 — Jinx-ext, Flyspell-ext, Langtool-ext, Wcheck
 
 | Feature | Status | Notes |

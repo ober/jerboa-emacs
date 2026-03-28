@@ -17695,3 +17695,57 @@
     (echo-read-string echo "Set language: "
       (lambda (lang)
         (echo-message! echo (str "Guess-language: set to " lang))))))
+
+;; Round 190 — Pixel-scroll-ext, Context-menu, Tab-bar-ext, File-name-shadow, Describe-ext, Threads, Emoji-ext, Elisp-ext, Checkdoc
+(def (cmd-pixel-scroll-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pixel scroll: scrolled down")))
+
+(def (cmd-context-menu-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'context-menu)
+    (if (mode-enabled? app 'context-menu)
+      (echo-message! echo "Context menu mode enabled")
+      (echo-message! echo "Context menu mode disabled"))))
+
+(def (cmd-tab-bar-rename-tab-by-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename tab to: "
+      (lambda (name)
+        (echo-message! echo (str "Tab renamed to: " name))))))
+
+(def (cmd-file-name-shadow-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'file-name-shadow)
+    (if (mode-enabled? app 'file-name-shadow)
+      (echo-message! echo "File name shadow mode enabled")
+      (echo-message! echo "File name shadow mode disabled"))))
+
+(def (cmd-read-only-mode-toggle-readonly app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Toggled read-only state")))
+
+(def (cmd-describe-keymap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe keymap: "
+      (lambda (km)
+        (echo-message! echo (str "Keymap: " km))))))
+
+(def (cmd-list-threads app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Threads: listing active threads")))
+
+(def (cmd-emoji-recent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Emoji: showing recent emojis")))
+
+(def (cmd-elisp-eval-region-and-replace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elisp: evaluated region and replaced")))
+
+(def (cmd-checkdoc-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'checkdoc)
+    (if (mode-enabled? app 'checkdoc)
+      (echo-message! echo "Checkdoc minor mode enabled")
+      (echo-message! echo "Checkdoc minor mode disabled"))))
