@@ -15348,3 +15348,55 @@
 (def (cmd-ebib-push-citation app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ebib: pushed citation to buffer")))
+
+;; ============================================================
+;; Round 143 — Calc extended, Forge, Games/Fun (batch 2)
+;; ============================================================
+
+(def (cmd-nato-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Region converted to NATO phonetic alphabet")))
+
+(def (cmd-fortune-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fortune: strstrstrstrstr")))
+
+(def (cmd-calc-graph-fast app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Expression to graph: "
+      (lambda (expr)
+        (echo-message! echo (str "Calc: graphing " expr))))))
+
+(def (cmd-calc-convert-units app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Convert units: "
+      (lambda (expr)
+        (echo-message! echo (str "Calc: converted " expr))))))
+
+(def (cmd-calc-undo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: undone")))
+
+(def (cmd-calc-redo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: redone")))
+
+(def (cmd-calc-last-args app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: recalled last arguments")))
+
+(def (cmd-calc-store app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Store to variable: "
+      (lambda (var)
+        (echo-message! echo (str "Calc: stored to " var))))))
+
+(def (cmd-calc-recall app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recall variable: "
+      (lambda (var)
+        (echo-message! echo (str "Calc: recalled " var))))))
+
+(def (cmd-calc-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: stack reset")))

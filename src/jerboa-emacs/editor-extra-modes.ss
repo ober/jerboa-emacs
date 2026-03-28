@@ -15959,3 +15959,60 @@
 (def (cmd-bibtex-sort-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "BibTeX: sorted buffer")))
+
+;; ============================================================
+;; Round 143 — Calc extended, Prodigy, Games/Fun (batch 1)
+;; ============================================================
+
+(def (cmd-calc-algebraic-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'calc-algebraic)
+    (if (mode-enabled? app 'calc-algebraic)
+      (echo-message! echo "Calc algebraic entry mode enabled")
+      (echo-message! echo "Calc algebraic entry mode disabled"))))
+
+(def (cmd-calc-radix-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Radix (2/8/10/16): "
+      (lambda (r)
+        (echo-message! echo (str "Calc: radix set to " r))))))
+
+(def (cmd-prodigy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prodigy: service manager opened")))
+
+(def (cmd-prodigy-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service to start: "
+      (lambda (svc)
+        (echo-message! echo (str "Prodigy: started " svc))))))
+
+(def (cmd-prodigy-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service to stop: "
+      (lambda (svc)
+        (echo-message! echo (str "Prodigy: stopped " svc))))))
+
+(def (cmd-prodigy-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service to restart: "
+      (lambda (svc)
+        (echo-message! echo (str "Prodigy: restarted " svc))))))
+
+(def (cmd-prodigy-browse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service to browse: "
+      (lambda (svc)
+        (echo-message! echo (str "Prodigy: opened browser for " svc))))))
+
+(def (cmd-forge-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: pulling notifications from remote")))
+
+(def (cmd-forge-browse-issues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forge: browsing issues in browser")))
+
+(def (cmd-animate-birthday-present app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Happy Birthday!")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 143 — Calc Extended, Prodigy, Forge, Games/Fun
+
+| Feature | Status | Notes |
+|---|---|---|
+| `calc-algebraic-mode` | :orange_circle: | Toggle algebraic entry mode in Calc |
+| `calc-radix-mode` | :orange_circle: | Set display radix (2/8/10/16) |
+| `calc-graph-fast` | :orange_circle: | Quick graph of expression |
+| `calc-convert-units` | :orange_circle: | Unit conversion in Calc |
+| `calc-undo` | :orange_circle: | Undo last Calc operation |
+| `calc-redo` | :orange_circle: | Redo last Calc operation |
+| `calc-last-args` | :orange_circle: | Recall last arguments |
+| `calc-store` | :orange_circle: | Store to variable |
+| `calc-recall` | :orange_circle: | Recall from variable |
+| `calc-reset` | :orange_circle: | Reset Calc stack |
+| `prodigy` | :orange_circle: | Prodigy service manager |
+| `prodigy-start` | :orange_circle: | Start a service |
+| `prodigy-stop` | :orange_circle: | Stop a service |
+| `prodigy-restart` | :orange_circle: | Restart a service |
+| `prodigy-browse` | :orange_circle: | Browse service in browser |
+| `forge-pull` | :orange_circle: | Pull forge notifications |
+| `forge-browse-issues` | :orange_circle: | Browse issues in browser |
+| `animate-birthday-present` | :orange_circle: | Birthday animation |
+| `nato-region` | :orange_circle: | NATO phonetic alphabet |
+| `fortune-message` | :orange_circle: | Display a fortune |
+
 ---
 
 ## Recommended Development Roadmap
