@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 173 — Treemacs, Neotree, Dired-sidebar
+
+| Feature | Status | Notes |
+|---|---|---|
+| treemacs-find-file | :orange_circle: | Find current file in treemacs |
+| treemacs-find-tag | :orange_circle: | Find current tag in treemacs |
+| treemacs-show-changelog | :orange_circle: | Show treemacs changelog |
+| treemacs-bookmark | :orange_circle: | Bookmark treemacs node |
+| treemacs-rename-file | :orange_circle: | Rename file in treemacs |
+| treemacs-delete-file | :orange_circle: | Delete file in treemacs |
+| treemacs-move-file | :orange_circle: | Move file in treemacs |
+| treemacs-copy-file | :orange_circle: | Copy file in treemacs |
+| treemacs-copy-path | :orange_circle: | Copy path to clipboard |
+| treemacs-copy-project-path | :orange_circle: | Copy project path to clipboard |
+| treemacs-collapse-all-projects | :orange_circle: | Collapse all treemacs projects |
+| neotree-stretch-toggle | :orange_circle: | Toggle neotree window width |
+| neotree-create-node | :orange_circle: | Create node in neotree |
+| neotree-delete-node | :orange_circle: | Delete node in neotree |
+| neotree-rename-node | :orange_circle: | Rename node in neotree |
+| neotree-copy-node | :orange_circle: | Copy node in neotree |
+| neotree-enter | :orange_circle: | Enter node in neotree |
+| dired-sidebar-show-sidebar | :orange_circle: | Show dired sidebar |
+| dired-sidebar-follow-file | :orange_circle: | Follow current file in sidebar |
+| dired-sidebar-jump | :orange_circle: | Jump to current dir in sidebar |
+
 ### Round 172 — Helpful, Elisp-refs, Macrostep, Inspector
 
 | Feature | Status | Notes |

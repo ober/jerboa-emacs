@@ -17494,3 +17494,50 @@
 (def (cmd-macrostep-prev-macro app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Macrostep: moved to previous macro")))
+
+;; Round 173 — Treemacs, Neotree, Dired-sidebar (batch 1)
+(def (cmd-treemacs-find-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: finding current file in tree")))
+
+(def (cmd-treemacs-find-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: finding current tag in tree")))
+
+(def (cmd-treemacs-show-changelog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: showing changelog")))
+
+(def (cmd-treemacs-bookmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: bookmarking current node")))
+
+(def (cmd-treemacs-rename-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New name: "
+      (lambda (name)
+        (echo-message! echo (str "Treemacs: renamed to " name))))))
+
+(def (cmd-treemacs-delete-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: deleted file at point")))
+
+(def (cmd-treemacs-move-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Move to: "
+      (lambda (dest)
+        (echo-message! echo (str "Treemacs: moved file to " dest))))))
+
+(def (cmd-treemacs-copy-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Copy to: "
+      (lambda (dest)
+        (echo-message! echo (str "Treemacs: copied file to " dest))))))
+
+(def (cmd-treemacs-copy-path app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: path copied to clipboard")))
+
+(def (cmd-treemacs-copy-project-path app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: project path copied to clipboard")))

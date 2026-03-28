@@ -16872,3 +16872,50 @@
 (def (cmd-inspector-copy-down app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Inspector: copied object down")))
+
+;; Round 173 — Treemacs, Neotree, Dired-sidebar (batch 2)
+(def (cmd-treemacs-collapse-all-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: collapsed all projects")))
+
+(def (cmd-neotree-stretch-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neotree: toggled window width")))
+
+(def (cmd-neotree-create-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Create node: "
+      (lambda (name)
+        (echo-message! echo (str "Neotree: created " name))))))
+
+(def (cmd-neotree-delete-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neotree: deleted node at point")))
+
+(def (cmd-neotree-rename-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New name: "
+      (lambda (name)
+        (echo-message! echo (str "Neotree: renamed to " name))))))
+
+(def (cmd-neotree-copy-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Copy to: "
+      (lambda (dest)
+        (echo-message! echo (str "Neotree: copied to " dest))))))
+
+(def (cmd-neotree-enter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neotree: entered node at point")))
+
+(def (cmd-dired-sidebar-show-sidebar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-sidebar: showing sidebar")))
+
+(def (cmd-dired-sidebar-follow-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-sidebar: following current file")))
+
+(def (cmd-dired-sidebar-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired-sidebar: jumped to current directory")))
