@@ -2480,6 +2480,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | tab-bar-detach-tab | :orange_circle: | Detach tab to new frame |
 | tab-bar-move-tab-to-frame | :orange_circle: | Move tab to another frame |
 
+### Round 62 — Org Agenda
+
+| Feature | Status | Notes |
+|---|---|---|
+| org-agenda-day-view | :orange_circle: | Single day agenda view |
+| org-agenda-week-view | :orange_circle: | Week agenda view |
+| org-agenda-month-view | :orange_circle: | Month agenda view |
+| org-agenda-year-view | :orange_circle: | Year agenda view |
+| org-agenda-fortnight-view | :orange_circle: | Two-week agenda view |
+| org-agenda-list | :orange_circle: | Show agenda list |
+| org-agenda-todo-list | :orange_circle: | Global TODO list |
+| org-agenda-tags-view | :orange_circle: | Filter by tags |
+| org-agenda-set-restriction-lock | :orange_circle: | Restrict agenda to subtree |
+| org-agenda-remove-restriction-lock | :orange_circle: | Remove restriction lock |
+| org-agenda-redo | :orange_circle: | Refresh agenda |
+| org-agenda-filter-by-tag | :orange_circle: | Filter by tag |
+| org-agenda-filter-by-category | :orange_circle: | Filter by category |
+| org-agenda-filter-by-effort | :orange_circle: | Filter by effort estimate |
+| org-agenda-filter-by-regexp | :orange_circle: | Filter by regexp |
+| org-agenda-clockreport-mode | :orange_circle: | Toggle clock report |
+| org-agenda-log-mode | :orange_circle: | Toggle log mode |
+| org-agenda-entry-text-mode | :orange_circle: | Toggle entry text display |
+| org-agenda-follow-mode | :orange_circle: | Toggle follow mode |
+| org-agenda-columns | :orange_circle: | Toggle column view |
+
 ---
 
 ## Recommended Development Roadmap

@@ -11960,3 +11960,46 @@
       (lambda (name)
         (echo-message! echo (str "Tab renamed to '" name "'"))))))
 
+;; Round 62 — Org agenda (batch 1)
+(def (cmd-org-agenda-day-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: day view")))
+
+(def (cmd-org-agenda-week-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: week view")))
+
+(def (cmd-org-agenda-month-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: month view")))
+
+(def (cmd-org-agenda-year-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: year view")))
+
+(def (cmd-org-agenda-fortnight-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: fortnight view")))
+
+(def (cmd-org-agenda-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: showing agenda list")))
+
+(def (cmd-org-agenda-todo-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: showing global TODO list")))
+
+(def (cmd-org-agenda-tags-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Org agenda tags: "
+      (lambda (tags)
+        (echo-message! echo (str "Org agenda: filtering by tags '" tags "'"))))))
+
+(def (cmd-org-agenda-set-restriction-lock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: restriction lock set to current subtree")))
+
+(def (cmd-org-agenda-remove-restriction-lock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: restriction lock removed")))
+

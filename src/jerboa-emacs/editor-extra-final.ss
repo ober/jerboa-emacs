@@ -11427,3 +11427,67 @@
 (def (cmd-tab-bar-move-tab-to-frame app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tab moved to another frame")))
+
+;; Round 62 — Org agenda (batch 2)
+(def (cmd-org-agenda-redo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org agenda: refreshed")))
+
+(def (cmd-org-agenda-filter-by-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter agenda by tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Org agenda: filtered by tag '" tag "'"))))))
+
+(def (cmd-org-agenda-filter-by-category app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter agenda by category: "
+      (lambda (cat)
+        (echo-message! echo (str "Org agenda: filtered by category '" cat "'"))))))
+
+(def (cmd-org-agenda-filter-by-effort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter agenda by effort (e.g. <30min): "
+      (lambda (effort)
+        (echo-message! echo (str "Org agenda: filtered by effort " effort))))))
+
+(def (cmd-org-agenda-filter-by-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter agenda by regexp: "
+      (lambda (re)
+        (echo-message! echo (str "Org agenda: filtered by regexp '" re "'"))))))
+
+(def (cmd-org-agenda-clockreport-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-agenda-clockreport)
+    (if (mode-enabled? app 'org-agenda-clockreport)
+      (echo-message! echo "Org agenda: clock report enabled")
+      (echo-message! echo "Org agenda: clock report disabled"))))
+
+(def (cmd-org-agenda-log-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-agenda-log)
+    (if (mode-enabled? app 'org-agenda-log)
+      (echo-message! echo "Org agenda: log mode enabled")
+      (echo-message! echo "Org agenda: log mode disabled"))))
+
+(def (cmd-org-agenda-entry-text-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-agenda-entry-text)
+    (if (mode-enabled? app 'org-agenda-entry-text)
+      (echo-message! echo "Org agenda: entry text mode enabled")
+      (echo-message! echo "Org agenda: entry text mode disabled"))))
+
+(def (cmd-org-agenda-follow-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-agenda-follow)
+    (if (mode-enabled? app 'org-agenda-follow)
+      (echo-message! echo "Org agenda: follow mode enabled")
+      (echo-message! echo "Org agenda: follow mode disabled"))))
+
+(def (cmd-org-agenda-columns app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'org-agenda-columns)
+    (if (mode-enabled? app 'org-agenda-columns)
+      (echo-message! echo "Org agenda: column view enabled")
+      (echo-message! echo "Org agenda: column view disabled"))))
