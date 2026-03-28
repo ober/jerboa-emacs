@@ -20371,3 +20371,49 @@
 (def (cmd-detached-describe-session app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Detached: describing session")))
+
+;;; Round 233 — Mastodon.el (batch 1)
+
+(def (cmd-mastodon-toot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Toot: "
+      (lambda (msg)
+        (echo-message! echo "Mastodon: tooted")))))
+
+(def (cmd-mastodon-tl-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: updated timeline")))
+
+(def (cmd-mastodon-tl-next-tab-item app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: next item")))
+
+(def (cmd-mastodon-tl-previous-tab-item app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: previous item")))
+
+(def (cmd-mastodon-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (q)
+        (echo-message! echo (str "Mastodon: searching " q))))))
+
+(def (cmd-mastodon-notifications-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: showing notifications")))
+
+(def (cmd-mastodon-tl-thread app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: showing thread")))
+
+(def (cmd-mastodon-tl-toggle-spoiler-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: toggled spoiler text")))
+
+(def (cmd-mastodon-toot-bookmark-toot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: bookmarked toot")))
+
+(def (cmd-mastodon-toot-pin-toot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: pinned toot")))

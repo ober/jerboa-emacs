@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 233 — Mastodon.el
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| mastodon-toot | :orange_circle: | Compose a new Mastodon toot |
+| mastodon-tl-update | :orange_circle: | Update current Mastodon timeline |
+| mastodon-tl-next-tab-item | :orange_circle: | Move to next tab item in timeline |
+| mastodon-tl-previous-tab-item | :orange_circle: | Move to previous tab item in timeline |
+| mastodon-search | :orange_circle: | Search Mastodon for users/tags/statuses |
+| mastodon-notifications-get | :orange_circle: | Show Mastodon notifications |
+| mastodon-tl-thread | :orange_circle: | Show thread for current toot |
+| mastodon-tl-toggle-spoiler-text | :orange_circle: | Toggle content warning visibility |
+| mastodon-toot-bookmark-toot | :orange_circle: | Bookmark current toot |
+| mastodon-toot-pin-toot | :orange_circle: | Pin current toot to profile |
+| mastodon-tl-follow-user | :orange_circle: | Follow a Mastodon user |
+| mastodon-tl-unfollow-user | :orange_circle: | Unfollow a Mastodon user |
+| mastodon-tl-mute-user | :orange_circle: | Mute a Mastodon user |
+| mastodon-tl-unmute-user | :orange_circle: | Unmute a Mastodon user |
+| mastodon-tl-block-user | :orange_circle: | Block a Mastodon user |
+| mastodon-tl-unblock-user | :orange_circle: | Unblock a Mastodon user |
+| mastodon-tl-follow-tag | :orange_circle: | Follow a Mastodon hashtag |
+| mastodon-tl-home | :orange_circle: | Show home timeline |
+| mastodon-tl-local | :orange_circle: | Show local timeline |
+| mastodon-tl-federated | :orange_circle: | Show federated timeline |
+
 ### Round 232 — Detached ext, Envrc ext
 
 | Command | Status | Description |

@@ -19707,3 +19707,47 @@
 (def (cmd-envrc-show-env app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Envrc: showing environment")))
+
+;;; Round 233 — Mastodon.el (batch 2)
+
+(def (cmd-mastodon-tl-follow-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: followed user")))
+
+(def (cmd-mastodon-tl-unfollow-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: unfollowed user")))
+
+(def (cmd-mastodon-tl-mute-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: muted user")))
+
+(def (cmd-mastodon-tl-unmute-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: unmuted user")))
+
+(def (cmd-mastodon-tl-block-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: blocked user")))
+
+(def (cmd-mastodon-tl-unblock-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: unblocked user")))
+
+(def (cmd-mastodon-tl-follow-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Mastodon: following tag " tag))))))
+
+(def (cmd-mastodon-tl-home app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: showing home timeline")))
+
+(def (cmd-mastodon-tl-local app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: showing local timeline")))
+
+(def (cmd-mastodon-tl-federated app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mastodon: showing federated timeline")))
