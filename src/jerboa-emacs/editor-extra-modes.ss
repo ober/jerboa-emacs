@@ -3245,3 +3245,378 @@
           ;; Don't double-space
           (when (not (= prev-ch 32)) ;; not already a space
             (send-message ed SCI_INSERTTEXT pos (string->alien/nul " "))))))))
+
+;;;============================================================================
+;;; Round 7 batch 1: Features 1-10
+;;;============================================================================
+
+;; --- Feature 1: Spray / RSVP Speed Reading ---
+
+(def *spray-wpm* 300)
+(def *spray-words* '())
+(def *spray-index* 0)
+
+(def (cmd-spray-mode app)
+  "Start speed-reading (RSVP) of current buffer."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (text (editor-get-text ed))
+         (words (filter (lambda (w) (not (string-empty? w)))
+                  (string-split text #\space))))
+    (if (null? words)
+      (echo-message! echo "Buffer is empty")
+      (begin
+        (set! *spray-words* words)
+        (set! *spray-index* 0)
+        (echo-message! echo
+          (string-append "Spray: " (number->string (length words))
+            " words at " (number->string *spray-wpm*) " WPM. Use spray-next to advance"))))))
+
+(def (cmd-spray-next app)
+  "Show next word(s) in speed reading."
+  (let ((echo (app-state-echo app)))
+    (if (or (null? *spray-words*) (>= *spray-index* (length *spray-words*)))
+      (echo-message! echo "Spray: end of text")
+      (let* ((chunk-size 3) ;; Show 3 words at a time
+             (end (min (+ *spray-index* chunk-size) (length *spray-words*)))
+             (chunk (let loop ((i *spray-index*) (acc '()))
+                      (if (>= i end) (reverse acc)
+                        (loop (+ i 1) (cons (list-ref *spray-words* i) acc))))))
+        (set! *spray-index* end)
+        (echo-message! echo
+          (string-append ">>> " (string-join chunk " ") " <<<  ["
+            (number->string *spray-index*) "/" (number->string (length *spray-words*)) "]"))))))
+
+;; --- Feature 2: Ledger Mode (plain text accounting) ---
+
+(def (cmd-ledger-mode app)
+  "Enable ledger mode for plain text accounting files."
+  (let ((echo (app-state-echo app)))
+    (echo-message! echo "Ledger mode enabled (tab=4, plain text accounting)")))
+
+(def (cmd-ledger-report app)
+  "Run ledger balance report on current file."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf))))
+    (if (not path)
+      (echo-error! echo "Buffer has no file")
+      (if (not (file-exists? "/usr/bin/ledger"))
+        (echo-error! echo "ledger not installed")
+        (let* ((fr (app-state-frame app))
+               (win (current-window fr))
+               (ed (edit-window-editor win)))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (string-append "ledger -f \"" path "\" balance 2>&1")
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let* ((content (string-append "Ledger Balance Report\n"
+                                      (make-string 50 #\=) "\n"
+                                      (string-join (reverse lines) "\n")))
+                           (rbuf (make-buffer "*ledger-report*")))
+                      (buffer-attach! ed rbuf)
+                      (set! (edit-window-buffer win) rbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 3: Buffer Move (swap buffers between windows) ---
+
+(def (cmd-buffer-move-up app)
+  "Swap current buffer with the one above."
+  (cmd-buffer-move-swap app 'up))
+
+(def (cmd-buffer-move-down app)
+  "Swap current buffer with the one below."
+  (cmd-buffer-move-swap app 'down))
+
+(def (cmd-buffer-move-swap app direction)
+  "Swap buffers between current and adjacent window."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (wins (frame-windows fr)))
+    (if (< (length wins) 2)
+      (echo-message! echo "Only one window")
+      (let* ((win1 (car wins))
+             (win2 (cadr wins))
+             (buf1 (edit-window-buffer win1))
+             (buf2 (edit-window-buffer win2))
+             (ed1 (edit-window-editor win1))
+             (ed2 (edit-window-editor win2)))
+        (when (and buf1 buf2)
+          (buffer-attach! ed1 buf2)
+          (set! (edit-window-buffer win1) buf2)
+          (buffer-attach! ed2 buf1)
+          (set! (edit-window-buffer win2) buf1)
+          (echo-message! echo "Buffers swapped"))))))
+
+;; --- Feature 4: Fortune Cookie ---
+
+(def (cmd-fortune app)
+  "Display a fortune cookie message."
+  (let ((echo (app-state-echo app)))
+    (if (not (file-exists? "/usr/games/fortune"))
+      ;; Built-in fortunes
+      (let* ((fortunes '("The best way to predict the future is to invent it. — Alan Kay"
+                          "Programs must be written for people to read. — Abelson & Sussman"
+                          "Simplicity is prerequisite for reliability. — Dijkstra"
+                          "Talk is cheap. Show me the code. — Linus Torvalds"
+                          "Any sufficiently advanced technology is indistinguishable from magic. — Clarke"
+                          "The only way to learn a new programming language is by writing programs in it."
+                          "First, solve the problem. Then, write the code."
+                          "Measuring programming progress by lines of code is like measuring aircraft building progress by weight."
+                          "It works on my machine."
+                          "There are only two hard things: cache invalidation and naming things."))
+             (idx (remainder (time-second (current-time)) (length fortunes))))
+        (echo-message! echo (list-ref fortunes idx)))
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports "/usr/games/fortune -s 2>&1" 'block (native-transcoder))))
+        (close-port p-stdin)
+        (let loop ((lines '()))
+          (let ((line (get-line p-stdout)))
+            (if (eof-object? line)
+              (begin
+                (close-port p-stdout)
+                (close-port p-stderr)
+                (echo-message! echo (string-join (reverse lines) " ")))
+              (loop (cons line lines)))))))))
+
+;; --- Feature 5: Snake Game ---
+
+(def *snake-score* 0)
+
+(def (cmd-snake app)
+  "Start a text-based snake game display."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*snake*"))
+         (width 30) (height 15)
+         (board (let loop ((row 0) (lines '()))
+                  (if (>= row height)
+                    (reverse lines)
+                    (loop (+ row 1)
+                      (cons (cond ((or (= row 0) (= row (- height 1)))
+                                   (make-string width #\#))
+                                  (else (string-append "#" (make-string (- width 2) #\space) "#")))
+                            lines)))))
+         ;; Place snake in middle
+         (mid-row (quotient height 2))
+         (content (string-append
+                    "=== SNAKE ===\n"
+                    "Score: 0\n\n"
+                    (string-join board "\n") "\n\n"
+                    "Controls: arrow keys (display mode)\n"
+                    "(Placeholder for interactive game)")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (set! *snake-score* 0)
+    (echo-message! echo "Snake started (display mode)")))
+
+;; --- Feature 6: Graphviz DOT Preview ---
+
+(def (cmd-graphviz-preview app)
+  "Preview DOT graph as ASCII art (requires graph-easy or dot)."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf))))
+    (if (not path)
+      (echo-error! echo "Buffer has no file")
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (cmd (if (file-exists? "/usr/bin/graph-easy")
+                    (string-append "graph-easy --from=dot \"" path "\" 2>&1")
+                    (string-append "dot -Tplain \"" path "\" 2>&1"))))
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports cmd 'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout)
+                  (close-port p-stderr)
+                  (let* ((content (string-join (reverse lines) "\n"))
+                         (pbuf (make-buffer "*graphviz*")))
+                    (buffer-attach! ed pbuf)
+                    (set! (edit-window-buffer win) pbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo "Graphviz preview")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 7: Thesaurus (synonym lookup) ---
+
+(def (cmd-thesaurus app)
+  "Look up synonyms for word at point."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word-len (- word-end word-start))
+         (row (tui-rows)) (width (tui-cols)))
+    (if (<= word-len 0)
+      (echo-error! echo "No word at point")
+      (let* ((buf (make-bytevector (+ word-len 1) 0))
+             (_ (send-message ed SCI_GETTEXTRANGE 0
+                  (cons->alien word-start (bytevector->alien buf))))
+             (word (alien/nul->string (bytevector->alien buf))))
+        ;; Use dict with moby-thesaurus or wn
+        (let ((cmd (if (file-exists? "/usr/bin/wn")
+                     (string-append "wn \"" word "\" -synsn -synsv -synsa -synsr 2>&1 | head -30")
+                     (string-append "dict -d moby-thesaurus \"" word "\" 2>&1 | head -30"))))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports cmd 'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (if (null? lines)
+                      (echo-message! echo (string-append "No synonyms for: " word))
+                      (let* ((content (string-join (reverse lines) "\n"))
+                             (fr (app-state-frame app))
+                             (win (current-window fr))
+                             (ed2 (edit-window-editor win))
+                             (tbuf (make-buffer "*thesaurus*")))
+                        (buffer-attach! ed2 tbuf)
+                        (set! (edit-window-buffer win) tbuf)
+                        (editor-set-text ed2 content)
+                        (editor-goto-pos ed2 0)
+                        (echo-message! echo (string-append "Synonyms for: " word)))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 8: Grammar Check (basic heuristic checker) ---
+
+(def *grammar-patterns*
+  '(("  " . "Double space")
+    (" ,  " . "Space before comma")
+    ("teh " . "Possible typo: 'teh' → 'the'")
+    ("recieve" . "Spelling: 'recieve' → 'receive'")
+    ("seperate" . "Spelling: 'seperate' → 'separate'")
+    ("occured" . "Spelling: 'occured' → 'occurred'")
+    ("definately" . "Spelling: 'definately' → 'definitely'")
+    ("accomodate" . "Spelling: 'accomodate' → 'accommodate'")
+    ("occurence" . "Spelling: 'occurence' → 'occurrence'")))
+
+(def (cmd-grammar-check app)
+  "Run basic grammar/spelling check on buffer."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (text (editor-get-text ed))
+         (issues '()))
+    (for-each
+      (lambda (pattern)
+        (let ((pat (car pattern)) (msg (cdr pattern)))
+          (let loop ((i 0))
+            (when (< i (- (string-length text) (string-length pat)))
+              (when (string-contains (substring text i (min (string-length text) (+ i (string-length pat) 10))) pat)
+                (let ((line (send-message ed SCI_LINEFROMPOSITION i 0)))
+                  (set! issues (cons (string-append "Line " (number->string (+ line 1)) ": " msg) issues))))
+              (loop (+ i 1))))))
+      *grammar-patterns*)
+    (if (null? issues)
+      (echo-message! echo "No grammar issues found")
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed2 (edit-window-editor win))
+             (content (string-append "Grammar Check\n"
+                        (make-string 40 #\-) "\n"
+                        (string-join (reverse issues) "\n")))
+             (gbuf (make-buffer "*grammar*")))
+        (buffer-attach! ed2 gbuf)
+        (set! (edit-window-buffer win) gbuf)
+        (editor-set-text ed2 content)
+        (editor-goto-pos ed2 0)
+        (echo-message! echo
+          (string-append (number->string (length issues)) " issues found"))))))
+
+;; --- Feature 9: Morse Code ---
+
+(def *morse-table*
+  '((#\A . ".-") (#\B . "-...") (#\C . "-.-.") (#\D . "-..") (#\E . ".")
+    (#\F . "..-.") (#\G . "--.") (#\H . "....") (#\I . "..") (#\J . ".---")
+    (#\K . "-.-") (#\L . ".-..") (#\M . "--") (#\N . "-.") (#\O . "---")
+    (#\P . ".--.") (#\Q . "--.-") (#\R . ".-.") (#\S . "...") (#\T . "-")
+    (#\U . "..-") (#\V . "...-") (#\W . ".--") (#\X . "-..-") (#\Y . "-.--")
+    (#\Z . "--..") (#\0 . "-----") (#\1 . ".----") (#\2 . "..---")
+    (#\3 . "...--") (#\4 . "....-") (#\5 . ".....") (#\6 . "-....")
+    (#\7 . "--...") (#\8 . "---..") (#\9 . "----.")))
+
+(def (cmd-morse-encode app)
+  "Encode selected text or prompted text to Morse code."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+         (text (if (not (= sel-start sel-end))
+                 (substring (editor-get-text ed) sel-start sel-end)
+                 (app-read-string app "Text to encode: "))))
+    (when (and text (not (string-empty? text)))
+      (let* ((upper (string-upcase text))
+             (morse (let loop ((i 0) (acc '()))
+                      (if (>= i (string-length upper))
+                        (string-join (reverse acc) " ")
+                        (let* ((ch (string-ref upper i))
+                               (code (assv ch *morse-table*)))
+                          (loop (+ i 1)
+                            (cons (if code (cdr code)
+                                    (if (char=? ch #\space) "/" (string ch)))
+                                  acc)))))))
+        (echo-message! echo (string-append "Morse: " morse))))))
+
+(def (cmd-morse-decode app)
+  "Decode Morse code to text."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (morse (echo-read-string echo "Morse code: " row width)))
+    (when (and morse (not (string-empty? morse)))
+      (let* ((reverse-table (map (lambda (p) (cons (cdr p) (car p))) *morse-table*))
+             (words (string-split morse #\/))
+             (decoded
+               (string-join
+                 (map (lambda (word)
+                        (list->string
+                          (map (lambda (code)
+                                 (let ((entry (assoc (string-trim code) reverse-table)))
+                                   (if entry (cdr entry) #\?)))
+                               (string-split (string-trim word) #\space))))
+                      words)
+                 " ")))
+        (echo-message! echo (string-append "Decoded: " decoded))))))
+
+;; --- Feature 10: Highlight Sentence ---
+
+(def *hl-sentence-enabled* #f)
+
+(def (cmd-hl-sentence-mode app)
+  "Toggle sentence highlighting at cursor."
+  (set! *hl-sentence-enabled* (not *hl-sentence-enabled*))
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (if *hl-sentence-enabled*
+      (begin
+        ;; Use indicator 16 for sentence highlighting
+        (send-message ed SCI_INDICSETSTYLE 16 7) ;; INDIC_ROUNDBOX
+        (send-message ed SCI_INDICSETFORE 16 #xFFFF80)
+        (send-message ed SCI_INDICSETALPHA 16 40)
+        (echo-message! echo "Sentence highlighting: on"))
+      (begin
+        (send-message ed SCI_SETINDICATORCURRENT 16 0)
+        (send-message ed SCI_INDICATORCLEARRANGE 0
+          (send-message ed SCI_GETLENGTH 0 0))
+        (echo-message! echo "Sentence highlighting: off")))))

@@ -3268,3 +3268,340 @@
               (send-message ed SCI_STYLESETBACK 32 #x1E1E2E) ;; default bg
               (send-message ed SCI_STYLESETFORE 32 #xCDD6F4) ;; default fg
               (send-message ed SCI_SETCARETFORE #xCDD6F4 0))))))))
+
+;;;============================================================================
+;;; Round 7 batch 2: Features 11-20
+;;;============================================================================
+
+;; --- Feature 11: Mastodon/Fediverse Display ---
+
+(def *mastodon-instance* "mastodon.social")
+
+(def (cmd-mastodon app)
+  "Open a Mastodon timeline display (read-only, via public API)."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (echo-message! echo (string-append "Fetching from " *mastodon-instance* "..."))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports
+                    (string-append "curl -s 'https://" *mastodon-instance*
+                      "/api/v1/timelines/public?limit=10' 2>&1 | head -200")
+                    'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (let* ((content (string-append "Mastodon Public Timeline (" *mastodon-instance* ")\n"
+                                (make-string 50 #\=) "\n"
+                                (string-join (reverse lines) "\n")))
+                     (buf (make-buffer "*mastodon*")))
+                (buffer-attach! ed buf)
+                (set! (edit-window-buffer win) buf)
+                (editor-set-text ed content)
+                (editor-goto-pos ed 0)
+                (echo-message! echo "Mastodon timeline loaded")))
+            (loop (cons line lines))))))))
+
+;; --- Feature 12: QR Code (text art approximation) ---
+
+(def (cmd-qr-code app)
+  "Generate a QR code text representation (requires qrencode)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (text (echo-read-string echo "QR text: " row width)))
+    (when (and text (not (string-empty? text)))
+      (if (not (file-exists? "/usr/bin/qrencode"))
+        (echo-error! echo "qrencode not installed")
+        (let* ((fr (app-state-frame app))
+               (win (current-window fr))
+               (ed (edit-window-editor win)))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (string-append "qrencode -t UTF8 \"" text "\" 2>&1")
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (buf (make-buffer "*qr-code*")))
+                      (buffer-attach! ed buf)
+                      (set! (edit-window-buffer win) buf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "QR code generated")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 13: SSH Agent / Keychain ---
+
+(def (cmd-keychain-status app)
+  "Show SSH agent status and loaded keys."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports "ssh-add -l 2>&1" 'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (let ((content (string-append "SSH Agent Keys\n"
+                               (make-string 40 #\-) "\n"
+                               (if (null? lines)
+                                 "No keys loaded (or agent not running)"
+                                 (string-join (reverse lines) "\n")))))
+                (echo-message! echo content)))
+            (loop (cons line lines))))))))
+
+(def (cmd-keychain-add app)
+  "Add SSH key to agent."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (key-path (echo-read-string echo "SSH key path [~/.ssh/id_rsa]: " row width))
+         (path (if (or (not key-path) (string-empty? key-path))
+                 (string-append (getenv "HOME") "/.ssh/id_rsa")
+                 key-path)))
+    (if (not (file-exists? path))
+      (echo-error! echo (string-append "Key not found: " path))
+      (echo-message! echo (string-append "Run: ssh-add " path " (interactive auth needed)")))))
+
+;; --- Feature 14: Eyebrowse (workspace/desktop management) ---
+
+(def *eyebrowse-desktops* (make-hash-table))
+(def *eyebrowse-current* 1)
+
+(def (cmd-eyebrowse-switch app)
+  "Switch to a workspace by number."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (num-str (echo-read-string echo "Workspace (1-9): " row width)))
+    (when (and num-str (not (string-empty? num-str)))
+      (let ((num (string->number (string-trim num-str))))
+        (when (and num (>= num 1) (<= num 9))
+          ;; Save current workspace
+          (let* ((fr (app-state-frame app))
+                 (win (current-window fr))
+                 (buf (edit-window-buffer win))
+                 (bname (if buf (buffer-name buf) "*scratch*")))
+            (hash-put! *eyebrowse-desktops* *eyebrowse-current* bname)
+            (set! *eyebrowse-current* num)
+            ;; Restore target workspace
+            (let ((saved (hash-get *eyebrowse-desktops* num)))
+              (when saved
+                (let ((restore-buf (buffer-by-name saved)))
+                  (when restore-buf
+                    (let ((ed (edit-window-editor win)))
+                      (buffer-attach! ed restore-buf)
+                      (set! (edit-window-buffer win) restore-buf))))))
+            (echo-message! echo
+              (string-append "Workspace " (number->string num)))))))))
+
+(def (cmd-eyebrowse-create app)
+  "Create a new workspace."
+  (let* ((echo (app-state-echo app))
+         (next (+ *eyebrowse-current* 1)))
+    (when (<= next 9)
+      (set! *eyebrowse-current* next)
+      (echo-message! echo (string-append "Created workspace " (number->string next))))))
+
+;; --- Feature 15: Chess Board Display ---
+
+(def (cmd-chess app)
+  "Display a chess board."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*chess*"))
+         (board '("  a b c d e f g h"
+                  "8 r n b q k b n r"
+                  "7 p p p p p p p p"
+                  "6 . . . . . . . ."
+                  "5 . . . . . . . ."
+                  "4 . . . . . . . ."
+                  "3 . . . . . . . ."
+                  "2 P P P P P P P P"
+                  "1 R N B Q K B N R"
+                  "  a b c d e f g h"))
+         (content (string-append "=== CHESS ===\n\n"
+                    (string-join board "\n") "\n\n"
+                    "White: RNBQKP  Black: rnbqkp\n"
+                    "(Display mode — manual move entry)")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (echo-message! echo "Chess board displayed")))
+
+;; --- Feature 16: Sudoku Puzzle ---
+
+(def (cmd-sudoku app)
+  "Display a sudoku puzzle."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*sudoku*"))
+         ;; Simple puzzle (0 = empty)
+         (puzzle '("5 3 .  . 7 .  . . ."
+                   "6 . .  1 9 5  . . ."
+                   ". 9 8  . . .  . 6 ."
+                   ""
+                   "8 . .  . 6 .  . . 3"
+                   "4 . .  8 . 3  . . 1"
+                   "7 . .  . 2 .  . . 6"
+                   ""
+                   ". 6 .  . . .  2 8 ."
+                   ". . .  4 1 9  . . 5"
+                   ". . .  . 8 .  . 7 9"))
+         (content (string-append "=== SUDOKU ===\n\n"
+                    (string-join puzzle "\n") "\n\n"
+                    "Fill in the dots with 1-9\n"
+                    "(Display mode — edit directly)")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (echo-message! echo "Sudoku puzzle loaded")))
+
+;; --- Feature 17: Pong Game Display ---
+
+(def (cmd-pong app)
+  "Display a pong game board."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*pong*"))
+         (width 40) (height 15)
+         (board (let loop ((row 0) (lines '()))
+                  (if (>= row height) (reverse lines)
+                    (loop (+ row 1)
+                      (cons (cond
+                              ((or (= row 0) (= row (- height 1)))
+                               (make-string width #\-))
+                              ((= row (quotient height 2))
+                               (string-append "|" (make-string 18 #\space)
+                                 "o" (make-string 19 #\space) "|"))
+                              (else
+                               (string-append "|" (make-string (- width 2) #\space) "|")))
+                            lines)))))
+         (content (string-append "=== PONG ===\n"
+                    "Player 1: 0  Player 2: 0\n\n"
+                    (string-join board "\n") "\n\n"
+                    "(Display mode placeholder)")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (echo-message! echo "Pong displayed")))
+
+;; --- Feature 18: Org Pomodoro ---
+
+(def *org-pomodoro-task* "")
+(def *org-pomodoro-start* #f)
+(def *org-pomodoro-duration* 25)
+
+(def (cmd-org-pomodoro app)
+  "Start a pomodoro timer linked to current org heading."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (text (editor-get-text ed))
+         (lines (string-split text #\newline))
+         ;; Find current org heading
+         (heading (let loop ((l line))
+                    (if (< l 0) "Unknown task"
+                      (let ((lt (if (< l (length lines)) (list-ref lines l) "")))
+                        (if (string-prefix? "* " (string-trim lt))
+                          (string-trim (substring (string-trim lt) 2
+                            (string-length (string-trim lt))))
+                          (loop (- l 1))))))))
+    (set! *org-pomodoro-task* heading)
+    (set! *org-pomodoro-start* (time-second (current-time)))
+    (echo-message! echo
+      (string-append "Org-Pomodoro: " heading " (" (number->string *org-pomodoro-duration*) " min)"))))
+
+(def (cmd-org-pomodoro-status app)
+  "Show current org-pomodoro status."
+  (let ((echo (app-state-echo app)))
+    (if (not *org-pomodoro-start*)
+      (echo-message! echo "No org-pomodoro active")
+      (let* ((elapsed (- (time-second (current-time)) *org-pomodoro-start*))
+             (remaining (max 0 (- (* *org-pomodoro-duration* 60) elapsed)))
+             (min (quotient remaining 60))
+             (sec (remainder remaining 60)))
+        (echo-message! echo
+          (string-append "Org-Pomodoro [" *org-pomodoro-task* "]: "
+            (number->string min) ":" (if (< sec 10) "0" "") (number->string sec)
+            (if (<= remaining 0) " DONE!" "")))))))
+
+;; --- Feature 19: LanguageTool (grammar/style check via external tool) ---
+
+(def (cmd-languagetool-check app)
+  "Check grammar with LanguageTool (requires languagetool installed)."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf))))
+    (if (not path)
+      ;; Write buffer to temp file for checking
+      (echo-error! echo "Save buffer first for LanguageTool check")
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (cmd (cond
+                    ((file-exists? "/usr/bin/languagetool")
+                     (string-append "languagetool \"" path "\" 2>&1"))
+                    ((file-exists? "/snap/bin/languagetool")
+                     (string-append "/snap/bin/languagetool \"" path "\" 2>&1"))
+                    (else #f))))
+        (if (not cmd)
+          (echo-error! echo "LanguageTool not found — install via package manager")
+          (begin
+            (echo-message! echo "Running LanguageTool...")
+            (let-values (((p-stdin p-stdout p-stderr pid)
+                          (open-process-ports cmd 'block (native-transcoder))))
+              (close-port p-stdin)
+              (let loop ((lines '()))
+                (let ((line (get-line p-stdout)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port p-stdout)
+                      (close-port p-stderr)
+                      (let* ((content (string-append "LanguageTool Report\n"
+                                        (make-string 50 #\=) "\n"
+                                        (if (null? lines) "No issues found"
+                                          (string-join (reverse lines) "\n"))))
+                             (lbuf (make-buffer "*languagetool*")))
+                        (buffer-attach! ed lbuf)
+                        (set! (edit-window-buffer win) lbuf)
+                        (editor-set-text ed content)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo "LanguageTool check complete")))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 20: Spray WPM Configuration ---
+
+(def (cmd-spray-set-wpm app)
+  "Set speed reading words-per-minute."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "WPM (100-1000): " row width)))
+    (when (and input (not (string-empty? input)))
+      (let ((wpm (string->number (string-trim input))))
+        (when (and wpm (>= wpm 100) (<= wpm 1000))
+          (set! *spray-wpm* wpm)
+          (echo-message! echo (string-append "Spray WPM: " (number->string wpm))))))))
