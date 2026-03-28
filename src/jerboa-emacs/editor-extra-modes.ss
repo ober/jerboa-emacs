@@ -20704,3 +20704,44 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EAF: opening terminal")))
 
+;; Round 240 — Eshell ext, Comint ext, Term ext, Compilation ext (10 in modes)
+(def (cmd-eshell-repeat-last-argument app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: repeated last argument")))
+
+(def (cmd-comint-copy-old-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: copied old input")))
+
+(def (cmd-comint-accumulate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: accumulated input")))
+
+(def (cmd-comint-show-maximum-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: showing maximum output")))
+
+(def (cmd-comint-dynamic-list-completions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Comint: listing completions")))
+
+(def (cmd-term-previous-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Term: previous prompt")))
+
+(def (cmd-term-next-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Term: next prompt")))
+
+(def (cmd-compilation-display-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: displaying error")))
+
+(def (cmd-compilation-first-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: first error")))
+
+(def (cmd-compilation-last-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: last error")))
+

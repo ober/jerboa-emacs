@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 240 — Eshell ext, Comint ext, Compilation ext, Debugger ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| eshell-repeat-last-argument | :orange_circle: | Repeat last Eshell argument |
+| comint-copy-old-input | :orange_circle: | Copy old input in Comint |
+| comint-accumulate | :orange_circle: | Accumulate input in Comint |
+| comint-show-maximum-output | :orange_circle: | Show maximum Comint output |
+| comint-dynamic-list-completions | :orange_circle: | List dynamic completions |
+| term-previous-prompt | :orange_circle: | Move to previous prompt |
+| term-next-prompt | :orange_circle: | Move to next prompt |
+| compilation-display-error | :orange_circle: | Display compilation error |
+| compilation-first-error | :orange_circle: | Jump to first error |
+| compilation-last-error | :orange_circle: | Jump to last error |
+| debugger-toggle-locals | :orange_circle: | Toggle locals display |
+| debugger-eval-expression | :orange_circle: | Evaluate expression in debugger |
+| debugger-record-expression | :orange_circle: | Record expression in debugger |
+| debugger-frame-clear | :orange_circle: | Clear debugger frame |
+| debugger-list-functions | :orange_circle: | List functions in debugger |
+| compilation-shell-minor-mode | :orange_circle: | Toggle compilation shell minor mode |
+| compilation-toggle-ansi-color | :orange_circle: | Toggle ANSI color in compilation |
+| compilation-start | :orange_circle: | Start compilation |
+| compilation-filter-hook | :orange_circle: | Configure compilation filter hook |
+| compilation-auto-jump-to-first-error | :orange_circle: | Toggle auto-jump to first error |
+
 ### Round 239 — w3m, EAF, EXWM
 
 | Command | Status | Description |

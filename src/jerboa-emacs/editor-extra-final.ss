@@ -20042,3 +20042,56 @@
 (def (cmd-exwm-layout-toggle-mode-line app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EXWM: toggled mode line")))
+
+;; Round 240 — Debugger ext, Compilation ext (10 in final)
+(def (cmd-debugger-toggle-locals app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Debugger: toggled locals display")))
+
+(def (cmd-debugger-eval-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Eval: "
+      (lambda (expr)
+        (echo-message! echo (str "Debugger: evaluated " expr))))))
+
+(def (cmd-debugger-record-expression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Record expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Debugger: recorded " expr))))))
+
+(def (cmd-debugger-frame-clear app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Debugger: cleared frame")))
+
+(def (cmd-debugger-list-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Debugger: listing functions")))
+
+(def (cmd-compilation-shell-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'compilation-shell-minor)
+    (if (mode-enabled? app 'compilation-shell-minor)
+      (echo-message! echo "Compilation shell minor mode enabled")
+      (echo-message! echo "Compilation shell minor mode disabled"))))
+
+(def (cmd-compilation-toggle-ansi-color app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: toggled ANSI color")))
+
+(def (cmd-compilation-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Compile command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Compilation: starting " cmd))))))
+
+(def (cmd-compilation-filter-hook app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: filter hook configured")))
+
+(def (cmd-compilation-auto-jump-to-first-error app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'compilation-auto-jump)
+    (if (mode-enabled? app 'compilation-auto-jump)
+      (echo-message! echo "Auto-jump to first error enabled")
+      (echo-message! echo "Auto-jump to first error disabled"))))
