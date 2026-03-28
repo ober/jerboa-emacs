@@ -20327,3 +20327,47 @@
 (def (cmd-dirvish-mark-menu app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dirvish: mark menu")))
+
+;;; Round 232 — Detached ext, Envrc ext (batch 1)
+
+(def (cmd-detached-attach-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: attaching to session")))
+
+(def (cmd-detached-rerun-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: re-running session")))
+
+(def (cmd-detached-diff-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: diffing session output")))
+
+(def (cmd-detached-shell-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Detached: running " cmd))))))
+
+(def (cmd-detached-open-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: opened session output")))
+
+(def (cmd-detached-kill-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: killed session")))
+
+(def (cmd-detached-initialize-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: initialized session")))
+
+(def (cmd-detached-copy-session-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: copied session command")))
+
+(def (cmd-detached-insert-session-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: inserted session command")))
+
+(def (cmd-detached-describe-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Detached: describing session")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 232 — Detached ext, Envrc ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| detached-attach-session | :orange_circle: | Attach to detached session |
+| detached-rerun-session | :orange_circle: | Re-run session |
+| detached-diff-session | :orange_circle: | Diff session output |
+| detached-shell-command | :orange_circle: | Run shell command detached |
+| detached-open-output | :orange_circle: | Open session output |
+| detached-kill-session | :orange_circle: | Kill session |
+| detached-initialize-session | :orange_circle: | Initialize session |
+| detached-copy-session-command | :orange_circle: | Copy session command |
+| detached-insert-session-command | :orange_circle: | Insert session command |
+| detached-describe-session | :orange_circle: | Describe session |
+| detached-session-exit-code-mode | :orange_circle: | Toggle exit code mode |
+| envrc-show-log | :orange_circle: | Show envrc log |
+| envrc-allow-file | :orange_circle: | Allow .envrc file |
+| envrc-deny-file | :orange_circle: | Deny .envrc file |
+| envrc-copy | :orange_circle: | Copy environment |
+| envrc-block-list-add | :orange_circle: | Add to block list |
+| envrc-block-list-remove | :orange_circle: | Remove from block list |
+| envrc-global-mode | :orange_circle: | Toggle envrc global mode |
+| envrc-override-mode | :orange_circle: | Override mode |
+| envrc-show-env | :orange_circle: | Show environment |
+
 ### Round 231 — Dirvish ext
 
 | Command | Status | Description |

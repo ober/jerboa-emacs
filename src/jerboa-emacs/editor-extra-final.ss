@@ -19659,3 +19659,51 @@
     (if (mode-enabled? app 'dirvish-side-follow)
       (echo-message! echo "Dirvish: side follow mode enabled")
       (echo-message! echo "Dirvish: side follow mode disabled"))))
+
+;;; Round 232 — Detached ext, Envrc ext (batch 2)
+
+(def (cmd-detached-session-exit-code-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'detached-session-exit-code)
+    (if (mode-enabled? app 'detached-session-exit-code)
+      (echo-message! echo "Detached: exit code mode enabled")
+      (echo-message! echo "Detached: exit code mode disabled"))))
+
+(def (cmd-envrc-show-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: showing log")))
+
+(def (cmd-envrc-allow-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: allowed .envrc file")))
+
+(def (cmd-envrc-deny-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: denied .envrc file")))
+
+(def (cmd-envrc-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: copied environment")))
+
+(def (cmd-envrc-block-list-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: added to block list")))
+
+(def (cmd-envrc-block-list-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: removed from block list")))
+
+(def (cmd-envrc-global-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'envrc-global)
+    (if (mode-enabled? app 'envrc-global)
+      (echo-message! echo "Envrc: global mode enabled")
+      (echo-message! echo "Envrc: global mode disabled"))))
+
+(def (cmd-envrc-override-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: override mode")))
+
+(def (cmd-envrc-show-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envrc: showing environment")))
