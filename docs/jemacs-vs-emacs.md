@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 241 — Ido ext, Smex, Ibuffer ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| ido-switch-buffer-other-window | :orange_circle: | Switch buffer in other window via Ido |
+| ido-switch-buffer-other-frame | :orange_circle: | Switch buffer in other frame via Ido |
+| ido-find-file-other-window | :orange_circle: | Find file in other window via Ido |
+| ido-find-file-other-frame | :orange_circle: | Find file in other frame via Ido |
+| ido-insert-file | :orange_circle: | Insert file contents via Ido |
+| ido-write-file | :orange_circle: | Write file via Ido |
+| ido-dired | :orange_circle: | Open dired via Ido |
+| ido-kill-buffer | :orange_circle: | Kill buffer via Ido |
+| ido-fallback-command | :orange_circle: | Fall back to default completion |
+| ido-toggle-case | :orange_circle: | Toggle case sensitivity in Ido |
+| smex-major-mode-commands | :orange_circle: | Show major mode commands via Smex |
+| smex-show-unbound-commands | :orange_circle: | Show unbound commands via Smex |
+| ibuffer-mark-by-mode | :orange_circle: | Mark buffers by mode |
+| ibuffer-mark-by-file-name-regexp | :orange_circle: | Mark buffers by filename regexp |
+| ibuffer-mark-read-only-buffers | :orange_circle: | Mark read-only buffers |
+| ibuffer-mark-special-buffers | :orange_circle: | Mark special buffers |
+| ibuffer-mark-dired-buffers | :orange_circle: | Mark dired buffers |
+| ibuffer-unmark-all-marks | :orange_circle: | Unmark all ibuffer marks |
+| ibuffer-mark-compressed-file-buffers | :orange_circle: | Mark compressed file buffers |
+| ibuffer-mark-help-buffers | :orange_circle: | Mark help buffers |
+
 ### Round 240 — Eshell ext, Comint ext, Compilation ext, Debugger ext
 
 | Command | Status | Description |

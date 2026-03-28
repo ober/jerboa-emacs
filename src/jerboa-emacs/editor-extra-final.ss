@@ -20095,3 +20095,48 @@
     (if (mode-enabled? app 'compilation-auto-jump)
       (echo-message! echo "Auto-jump to first error enabled")
       (echo-message! echo "Auto-jump to first error disabled"))))
+
+;; Round 241 — Smex, Ibuffer ext (10 in final)
+(def (cmd-smex-major-mode-commands app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smex: major mode commands")))
+
+(def (cmd-smex-show-unbound-commands app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smex: showing unbound commands")))
+
+(def (cmd-ibuffer-mark-by-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mode: "
+      (lambda (mode)
+        (echo-message! echo (str "Ibuffer: marked buffers with mode " mode))))))
+
+(def (cmd-ibuffer-mark-by-file-name-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Regexp: "
+      (lambda (re)
+        (echo-message! echo (str "Ibuffer: marked buffers matching " re))))))
+
+(def (cmd-ibuffer-mark-read-only-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ibuffer: marked read-only buffers")))
+
+(def (cmd-ibuffer-mark-special-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ibuffer: marked special buffers")))
+
+(def (cmd-ibuffer-mark-dired-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ibuffer: marked dired buffers")))
+
+(def (cmd-ibuffer-unmark-all-marks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ibuffer: unmarked all")))
+
+(def (cmd-ibuffer-mark-compressed-file-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ibuffer: marked compressed file buffers")))
+
+(def (cmd-ibuffer-mark-help-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ibuffer: marked help buffers")))

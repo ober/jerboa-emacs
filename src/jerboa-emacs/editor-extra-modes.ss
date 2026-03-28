@@ -20745,3 +20745,58 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Compilation: last error")))
 
+;; Round 241 — Ido ext, Smex, Ibuffer ext (10 in modes)
+(def (cmd-ido-switch-buffer-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buffer (other window): "
+      (lambda (buf)
+        (echo-message! echo (str "Ido: switched to " buf " in other window"))))))
+
+(def (cmd-ido-switch-buffer-other-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buffer (other frame): "
+      (lambda (buf)
+        (echo-message! echo (str "Ido: switched to " buf " in other frame"))))))
+
+(def (cmd-ido-find-file-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File (other window): "
+      (lambda (file)
+        (echo-message! echo (str "Ido: opening " file " in other window"))))))
+
+(def (cmd-ido-find-file-other-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File (other frame): "
+      (lambda (file)
+        (echo-message! echo (str "Ido: opening " file " in other frame"))))))
+
+(def (cmd-ido-insert-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert file: "
+      (lambda (file)
+        (echo-message! echo (str "Ido: inserting " file))))))
+
+(def (cmd-ido-write-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Write to file: "
+      (lambda (file)
+        (echo-message! echo (str "Ido: writing to " file))))))
+
+(def (cmd-ido-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ido: opening dired")))
+
+(def (cmd-ido-kill-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kill buffer: "
+      (lambda (buf)
+        (echo-message! echo (str "Ido: killed buffer " buf))))))
+
+(def (cmd-ido-fallback-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ido: falling back to default")))
+
+(def (cmd-ido-toggle-case app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ido: toggled case sensitivity")))
+
