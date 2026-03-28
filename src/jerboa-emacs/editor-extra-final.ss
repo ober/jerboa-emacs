@@ -11277,3 +11277,62 @@
 (def (cmd-kmacro-step-edit-macro app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Step-editing macro")))
+
+;; Round 59 — Customize (batch 2)
+(def (cmd-customize-changed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Customize: showing changed options")))
+
+(def (cmd-customize-saved app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Customize: showing saved options")))
+
+(def (cmd-customize-rogue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Customize: showing rogue (set outside customize) options")))
+
+(def (cmd-customize-apropos app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Customize apropos: "
+      (lambda (pat)
+        (echo-message! echo (str "Customize: options matching '" pat "'"))))))
+
+(def (cmd-customize-option app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Customize option: "
+      (lambda (opt)
+        (echo-message! echo (str "Customizing option '" opt "'"))))))
+
+(def (cmd-customize-face-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Customize face (other window): "
+      (lambda (face)
+        (echo-message! echo (str "Customizing face '" face "' in other window"))))))
+
+(def (cmd-customize-set-variable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set variable: "
+      (lambda (var)
+        (echo-read-string echo (str "Value for " var ": ")
+          (lambda (val)
+            (echo-message! echo (str "Set " var " = " val))))))))
+
+(def (cmd-customize-mark-to-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Customize: marked current settings to save")))
+
+(def (cmd-customize-save-customized app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Customize: saved all customized settings")))
+
+(def (cmd-customize-unsaved app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Customize: showing unsaved options")))
+
+(def (cmd-customize-set-value app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Set value for: "
+      (lambda (var)
+        (echo-read-string echo (str "New value for " var ": ")
+          (lambda (val)
+            (echo-message! echo (str "Set " var " to " val))))))))

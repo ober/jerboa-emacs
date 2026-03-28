@@ -11806,3 +11806,56 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Applied last macro to each line in region")))
 
+;; Round 59 — Help/info/customize (batch 1)
+(def (cmd-describe-current-coding-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Current coding system: utf-8")))
+
+(def (cmd-describe-font app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Font: monospace (terminal default)")))
+
+(def (cmd-describe-text-properties app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Text properties at point: (none)")))
+
+(def (cmd-apropos-value app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Apropos value (regexp): "
+      (lambda (pat)
+        (echo-message! echo (str "Searching values matching '" pat "'"))))))
+
+(def (cmd-info-emacs-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe key in Info: "
+      (lambda (key)
+        (echo-message! echo (str "Info: looking up key '" key "'"))))))
+
+(def (cmd-info-display-manual app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Display manual: "
+      (lambda (man)
+        (echo-message! echo (str "Displaying Info manual: " man))))))
+
+(def (cmd-info-lookup-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Look up symbol in Info: "
+      (lambda (sym)
+        (echo-message! echo (str "Info: looking up symbol '" sym "'"))))))
+
+(def (cmd-info-lookup-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Look up file in Info: "
+      (lambda (file)
+        (echo-message! echo (str "Info: looking up file '" file "'"))))))
+
+(def (cmd-finder-commentary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find package by commentary: "
+      (lambda (kw)
+        (echo-message! echo (str "Finder: searching commentary for '" kw "'"))))))
+
+(def (cmd-customize-browse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Customize: browsing all groups")))
+

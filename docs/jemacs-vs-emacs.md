@@ -2407,6 +2407,32 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | kmacro-edit-lossage | :orange_circle: | Edit recent keystrokes as macro |
 | kmacro-step-edit-macro | :orange_circle: | Step through macro interactively |
 
+### Round 59 — Help, Info & Customize System
+
+| Feature | Status | Notes |
+|---|---|---|
+| describe-current-coding-system | :orange_circle: | Show current coding system |
+| describe-font | :orange_circle: | Describe current font |
+| describe-text-properties | :orange_circle: | Show text properties at point |
+| apropos-value | :orange_circle: | Search by variable values |
+| info-emacs-key | :orange_circle: | Look up key in Info manual |
+| info-display-manual | :orange_circle: | Display a specific Info manual |
+| info-lookup-symbol | :orange_circle: | Look up symbol in Info |
+| info-lookup-file | :orange_circle: | Look up file in Info |
+| finder-commentary | :orange_circle: | Search packages by commentary |
+| customize-browse | :orange_circle: | Browse all customization groups |
+| customize-changed | :orange_circle: | Show changed options |
+| customize-saved | :orange_circle: | Show saved options |
+| customize-rogue | :orange_circle: | Show options set outside customize |
+| customize-apropos | :orange_circle: | Search customization options |
+| customize-option | :orange_circle: | Customize a specific option |
+| customize-face-other-window | :orange_circle: | Customize face in other window |
+| customize-set-variable | :orange_circle: | Set variable value |
+| customize-mark-to-save | :orange_circle: | Mark settings for saving |
+| customize-save-customized | :orange_circle: | Save all customized settings |
+| customize-unsaved | :orange_circle: | Show unsaved options |
+| customize-set-value | :orange_circle: | Set option value directly |
+
 ---
 
 ## Recommended Development Roadmap
