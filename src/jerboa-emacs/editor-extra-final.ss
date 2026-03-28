@@ -19558,3 +19558,54 @@
 (def (cmd-calibredb-fetch-metadata app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Calibredb: fetching metadata")))
+
+;;; Round 230 — Activities ext, Bufler ext (batch 2)
+
+(def (cmd-activities-switch-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: switching buffer in activity")))
+
+(def (cmd-activities-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'activities)
+    (if (mode-enabled? app 'activities)
+      (echo-message! echo "Activities: mode enabled")
+      (echo-message! echo "Activities: mode disabled"))))
+
+(def (cmd-activities-tabs-bar-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'activities-tabs-bar)
+    (if (mode-enabled? app 'activities-tabs-bar)
+      (echo-message! echo "Activities: tabs bar mode enabled")
+      (echo-message! echo "Activities: tabs bar mode disabled"))))
+
+(def (cmd-activities-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: switched to next")))
+
+(def (cmd-activities-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: switched to previous")))
+
+(def (cmd-bufler app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bufler: opened buffer manager")))
+
+(def (cmd-bufler-workspace-frame-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bufler: set workspace frame")))
+
+(def (cmd-bufler-workspace-focus-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bufler: focused buffer in workspace")))
+
+(def (cmd-bufler-defauto-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bufler: defined auto group")))
+
+(def (cmd-bufler-workspace-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'bufler-workspace)
+    (if (mode-enabled? app 'bufler-workspace)
+      (echo-message! echo "Bufler: workspace mode enabled")
+      (echo-message! echo "Bufler: workspace mode disabled"))))

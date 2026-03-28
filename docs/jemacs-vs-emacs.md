@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 230 — Activities ext, Bufler ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| activities-list | :orange_circle: | List activities |
+| activities-rename | :orange_circle: | Rename activity |
+| activities-revert | :orange_circle: | Revert activity |
+| activities-discard | :orange_circle: | Discard activity |
+| activities-save-all | :orange_circle: | Save all activities |
+| activities-tabs-mode | :orange_circle: | Toggle activities tabs mode |
+| activities-bookmark-set | :orange_circle: | Set activity bookmark |
+| activities-bookmark-jump | :orange_circle: | Jump to activity bookmark |
+| activities-define | :orange_circle: | Define new activity |
+| activities-set | :orange_circle: | Set activity state |
+| activities-switch-buffer | :orange_circle: | Switch buffer in activity |
+| activities-mode | :orange_circle: | Toggle activities mode |
+| activities-tabs-bar-mode | :orange_circle: | Toggle tabs bar mode |
+| activities-next | :orange_circle: | Switch to next activity |
+| activities-previous | :orange_circle: | Switch to previous activity |
+| bufler | :orange_circle: | Open Bufler buffer manager |
+| bufler-workspace-frame-set | :orange_circle: | Set workspace frame |
+| bufler-workspace-focus-buffer | :orange_circle: | Focus buffer in workspace |
+| bufler-defauto-group | :orange_circle: | Define auto group |
+| bufler-workspace-mode | :orange_circle: | Toggle Bufler workspace mode |
+
 ### Round 229 — Nov ext, Djvu ext, Calibredb
 
 | Command | Status | Description |

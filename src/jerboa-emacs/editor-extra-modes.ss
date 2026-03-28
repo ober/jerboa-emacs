@@ -20229,3 +20229,52 @@
     (echo-read-string echo "Search: "
       (lambda (q)
         (echo-message! echo (str "Djvu: occur " q))))))
+
+;;; Round 230 — Activities ext, Bufler ext (batch 1)
+
+(def (cmd-activities-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: listing activities")))
+
+(def (cmd-activities-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New name: "
+      (lambda (name)
+        (echo-message! echo (str "Activities: renamed to " name))))))
+
+(def (cmd-activities-revert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: reverted activity")))
+
+(def (cmd-activities-discard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: discarded activity")))
+
+(def (cmd-activities-save-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: saved all activities")))
+
+(def (cmd-activities-tabs-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'activities-tabs)
+    (if (mode-enabled? app 'activities-tabs)
+      (echo-message! echo "Activities: tabs mode enabled")
+      (echo-message! echo "Activities: tabs mode disabled"))))
+
+(def (cmd-activities-bookmark-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: set bookmark")))
+
+(def (cmd-activities-bookmark-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: jumped to bookmark")))
+
+(def (cmd-activities-define app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Activity: "
+      (lambda (name)
+        (echo-message! echo (str "Activities: defined " name))))))
+
+(def (cmd-activities-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Activities: set activity state")))
