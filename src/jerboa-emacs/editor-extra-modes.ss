@@ -4994,3 +4994,357 @@
                       (editor-goto-pos ed 0)
                       (echo-message! echo (str "TLDR: " cmd))))
                   (loop (cons line lines)))))))))))
+
+;; ===== Round 11 Batch 1 =====
+
+;; --- Feature 1: NPM Scripts Runner ---
+
+(def (cmd-npm app)
+  "Run an npm script from package.json."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols)))
+    (if (not (file-exists? "package.json"))
+      (echo-message! echo "No package.json found")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "npm error: " e)))
+        (lambda ()
+          ;; Extract scripts from package.json
+          (let-values (((si so se pid)
+                        (open-process-ports "node -e \"Object.keys(require('./package.json').scripts||{}).forEach(s=>console.log(s))\" 2>/dev/null || echo ''"
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((scripts '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((script (echo-read-string-with-completion
+                                    echo "npm run: " (reverse scripts) row width)))
+                      (when (and script (not (string-empty? script)))
+                        (let-values (((si2 so2 se2 pid2)
+                                      (open-process-ports (str "npm run " (shell-quote script) " 2>&1")
+                                        'block (native-transcoder))))
+                          (close-port si2)
+                          (let loop2 ((lines '()))
+                            (let ((line (get-line so2)))
+                              (if (eof-object? line)
+                                (begin
+                                  (close-port so2) (close-port se2)
+                                  (let* ((output (string-join (reverse lines) "\n"))
+                                         (nbuf (make-buffer "*npm*")))
+                                    (buffer-attach! ed nbuf)
+                                    (set! (edit-window-buffer win) nbuf)
+                                    (editor-set-text ed output)
+                                    (editor-goto-pos ed 0)
+                                    (echo-message! echo (str "npm run " script " done"))))
+                                (loop2 (cons line lines)))))))))
+                  (loop (cons line scripts)))))))))))
+
+;; --- Feature 2: Cargo (Rust) ---
+
+(def (cmd-cargo app)
+  "Run a Rust cargo command."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (commands '("build" "run" "test" "check" "clippy" "fmt" "doc" "clean" "bench" "update"))
+         (cmd (echo-read-string-with-completion echo "cargo: " commands row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (echo-message! echo (str "Running cargo " cmd "..."))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "cargo error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports (str "cargo " cmd " 2>&1")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((output (string-join (reverse lines) "\n"))
+                           (cbuf (make-buffer "*cargo*")))
+                      (buffer-attach! ed cbuf)
+                      (set! (edit-window-buffer win) cbuf)
+                      (editor-set-text ed output)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo (str "cargo " cmd " complete"))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 3: Brew (Homebrew) ---
+
+(def (cmd-brew app)
+  "Run a homebrew command."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (commands '("list" "search" "info" "install" "uninstall" "update" "upgrade" "outdated" "doctor" "cleanup"))
+         (cmd (echo-read-string-with-completion echo "brew: " commands row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (let ((arg (if (member cmd '("search" "info" "install" "uninstall"))
+                   (echo-read-string echo "Package: " row width)
+                   #f)))
+        (let ((full-cmd (if (and arg (not (string-empty? arg)))
+                          (str "brew " cmd " " (shell-quote arg) " 2>&1")
+                          (str "brew " cmd " 2>&1"))))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "brew error: " e)))
+            (lambda ()
+              (let-values (((si so se pid)
+                            (open-process-ports full-cmd 'block (native-transcoder))))
+                (close-port si)
+                (let loop ((lines '()))
+                  (let ((line (get-line so)))
+                    (if (eof-object? line)
+                      (begin
+                        (close-port so) (close-port se)
+                        (let* ((output (string-join (reverse lines) "\n"))
+                               (bbuf (make-buffer "*brew*")))
+                          (buffer-attach! ed bbuf)
+                          (set! (edit-window-buffer win) bbuf)
+                          (editor-set-text ed output)
+                          (editor-goto-pos ed 0)
+                          (echo-message! echo (str "brew " cmd " complete"))))
+                      (loop (cons line lines)))))))))))))
+
+;; --- Feature 4: Git Stash List ---
+
+(def (cmd-git-stash-list app)
+  "List git stashes with details."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "git error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "git stash list --format='%gd: %s (%cr)'" 'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-append "Git Stashes\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    (if (null? lines) "No stashes"
+                                      (string-join (reverse lines) "\n"))))
+                         (sbuf (make-buffer "*git-stash*")))
+                    (buffer-attach! ed sbuf)
+                    (set! (edit-window-buffer win) sbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo (str (length lines) " stashes"))))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 5: Git Cherry-pick ---
+
+(def (cmd-git-cherry-pick app)
+  "Cherry-pick a commit by hash."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (hash (echo-read-string echo "Cherry-pick commit: " row width)))
+    (when (and hash (not (string-empty? hash)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "cherry-pick error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "git cherry-pick " (shell-quote (string-trim hash)) " 2>&1")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (echo-message! echo (str "Cherry-picked: "
+                                             (string-join (reverse lines) " "))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 6: Git Worktree ---
+
+(def (cmd-git-worktree app)
+  "List or add git worktrees."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (actions '("list" "add" "remove"))
+         (action (echo-read-string-with-completion echo "Worktree action: " actions row width)))
+    (when (and action (not (string-empty? action)))
+      (cond
+        ((string=? action "list")
+         (with-catch
+           (lambda (e) (echo-message! echo (str "worktree error: " e)))
+           (lambda ()
+             (let-values (((si so se pid)
+                           (open-process-ports "git worktree list" 'block (native-transcoder))))
+               (close-port si)
+               (let loop ((lines '()))
+                 (let ((line (get-line so)))
+                   (if (eof-object? line)
+                     (begin
+                       (close-port so) (close-port se)
+                       (let* ((content (string-join (reverse lines) "\n"))
+                              (wbuf (make-buffer "*worktree*")))
+                         (buffer-attach! ed wbuf)
+                         (set! (edit-window-buffer win) wbuf)
+                         (editor-set-text ed content)
+                         (editor-goto-pos ed 0)))
+                     (loop (cons line lines)))))))))
+        ((string=? action "add")
+         (let ((path (echo-read-string echo "Path: " row width)))
+           (when (and path (not (string-empty? path)))
+             (let ((branch (echo-read-string echo "Branch: " row width)))
+               (with-catch
+                 (lambda (e) (echo-message! echo (str "worktree error: " e)))
+                 (lambda ()
+                   (let-values (((si so se pid)
+                                 (open-process-ports
+                                   (str "git worktree add " (shell-quote path) " "
+                                        (if (and branch (not (string-empty? branch)))
+                                          (shell-quote branch) "")
+                                        " 2>&1")
+                                   'block (native-transcoder))))
+                     (close-port si) (close-port so) (close-port se)
+                     (echo-message! echo (str "Worktree added: " path)))))))))
+        (else (echo-message! echo "Unknown action"))))))
+
+;; --- Feature 7: IP Info ---
+
+(def (cmd-ip-info app)
+  "Show public IP address information."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "IP error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "curl -sL ipinfo.io 2>/dev/null || curl -sL ifconfig.me 2>/dev/null"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-append "IP Information\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    (string-join (reverse lines) "\n")))
+                         (ibuf (make-buffer "*ip-info*")))
+                    (buffer-attach! ed ibuf)
+                    (set! (edit-window-buffer win) ibuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo "IP info loaded")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 8: Whois ---
+
+(def (cmd-whois app)
+  "Perform a whois lookup."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (domain (echo-read-string echo "Whois domain: " row width)))
+    (when (and domain (not (string-empty? domain)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "whois error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports (str "whois " (shell-quote (string-trim domain)))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (wbuf (make-buffer "*whois*")))
+                      (buffer-attach! ed wbuf)
+                      (set! (edit-window-buffer win) wbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo (str "Whois: " domain))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 9: Traceroute ---
+
+(def (cmd-traceroute app)
+  "Run traceroute to a host."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (host (echo-read-string echo "Traceroute host: " row width)))
+    (when (and host (not (string-empty? host)))
+      (echo-message! echo (str "Tracing " host "..."))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "traceroute error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "traceroute -m 15 " (shell-quote (string-trim host)) " 2>&1")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (tbuf (make-buffer "*traceroute*")))
+                      (buffer-attach! ed tbuf)
+                      (set! (edit-window-buffer win) tbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "Traceroute complete")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 10: Netstat ---
+
+(def (cmd-netstat app)
+  "Show active network connections."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "netstat error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports "ss -tuln 2>/dev/null || netstat -tuln 2>/dev/null"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((content (string-append "Network Connections\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    (string-join (reverse lines) "\n")))
+                         (nbuf (make-buffer "*netstat*")))
+                    (buffer-attach! ed nbuf)
+                    (set! (edit-window-buffer win) nbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo (str (length lines) " connections"))))
+                (loop (cons line lines))))))))))
