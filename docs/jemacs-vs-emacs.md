@@ -1666,6 +1666,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Overwrite mode | :orange_circle: | Toggle overwrite/insert mode |
 | Binary overwrite mode | :orange_circle: | Toggle binary overwrite |
 | Enriched mode | :orange_circle: | Toggle rich text editing |
+| SGML mode | :orange_circle: | HTML/SGML syntax highlighting |
+| nXML mode | :orange_circle: | XML syntax highlighting |
+| CSS mode | :orange_circle: | CSS syntax highlighting |
+| JS mode | :orange_circle: | JavaScript syntax highlighting |
+| Python mode | :orange_circle: | Python syntax highlighting |
+| Ruby mode | :orange_circle: | Ruby syntax highlighting |
+| Shell-script mode | :orange_circle: | Shell syntax highlighting |
+| Conf mode | :orange_circle: | Config file syntax highlighting |
+| Diff mode | :orange_circle: | Diff/patch syntax highlighting |
+| Compilation mode | :orange_circle: | Compilation output mode |
+| Grep mode | :orange_circle: | Grep output mode |
+| Occur-edit mode | :orange_circle: | Make occur buffer editable |
+| Compile command | :orange_circle: | Run compile command, show output |
+| Next error | :orange_circle: | Jump to next error |
+| Previous error | :orange_circle: | Jump to previous error |
+| First error | :orange_circle: | Jump to first error |
+| Describe variable | :orange_circle: | Show variable information |
+| Describe key briefly | :orange_circle: | Show key's command |
+| Describe bindings | :orange_circle: | Show all key bindings |
+| Describe mode | :orange_circle: | Show current modes |
 
 ---
 

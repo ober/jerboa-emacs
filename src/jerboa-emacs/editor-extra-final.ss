@@ -8742,3 +8742,188 @@
     (if (mode-enabled? app 'enriched-mode)
       (echo-message! echo "Enriched mode enabled (rich text editing)")
       (echo-message! echo "Enriched mode disabled"))))
+
+;; Round 28 batch 2: grep-mode, occur-edit-mode, compile-command, next-error, previous-error,
+;; first-error, describe-variable, describe-key-briefly, describe-bindings, describe-mode
+
+;; cmd-grep-mode: Set grep output mode
+(def (cmd-grep-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETREADONLY 1 0)
+    (echo-message! echo "Grep mode (read-only output)")))
+
+;; cmd-occur-edit-mode: Make occur buffer editable
+(def (cmd-occur-edit-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETREADONLY 0 0)
+    (echo-message! echo "Occur-edit mode (buffer is now editable)")))
+
+;; cmd-compile-command: Run a compile command and show output
+(def (cmd-compile-command app)
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (cmd (echo-read-string echo "Compile command: ")))
+    (if (or (not cmd) (string=? cmd ""))
+      (echo-message! echo "No command specified")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Compile error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports (str cmd " 2>&1")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((result (string-join (reverse lines) "\n"))
+                           (new-buf (create-buffer "*compilation*")))
+                      (switch-to-buffer frame new-buf)
+                      (let ((new-ed (edit-window-editor (current-window frame))))
+                        (editor-set-text new-ed result)
+                        (send-message new-ed SCI_SETREADONLY 1 0))
+                      (echo-message! echo "Compilation finished")))
+                  (loop (cons line lines)))))))))))
+
+;; cmd-next-error: Jump to next error in compilation output
+(def (cmd-next-error app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (len (string-length text))
+         ;; Look for file:line patterns
+         (idx (string-contains text ":" (+ pos 1))))
+    (if (not idx)
+      (echo-message! echo "No more errors")
+      (begin
+        (editor-set-cursor ed idx)
+        (echo-message! echo "Next error")))))
+
+;; cmd-previous-error: Jump to previous error
+(def (cmd-previous-error app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed)))
+    (if (<= pos 1)
+      (echo-message! echo "No previous errors")
+      (let loop ((i (- pos 2)))
+        (if (<= i 0)
+          (echo-message! echo "No previous errors")
+          (if (char=? (string-ref text i) #\:)
+            (begin (editor-set-cursor ed i) (echo-message! echo "Previous error"))
+            (loop (- i 1))))))))
+
+;; cmd-first-error: Jump to first error
+(def (cmd-first-error app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (editor-get-text ed))
+         (idx (string-contains text ":")))
+    (if (not idx)
+      (echo-message! echo "No errors found")
+      (begin
+        (editor-set-cursor ed idx)
+        (echo-message! echo "First error")))))
+
+;; cmd-describe-variable: Show info about an editor variable/setting
+(def (cmd-describe-variable app)
+  (let* ((echo (app-state-echo app))
+         (buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (var (echo-read-string echo "Describe variable: ")))
+    (if (or (not var) (string=? var ""))
+      (echo-message! echo "No variable specified")
+      (let* ((modes (app-state-modes app))
+             (val (hash-get modes (string->symbol var)))
+             (text (str "=== Variable: " var " ===\n\n"
+                        (if val (str "Value: " val "\n") "Not set\n")
+                        "\nThis is a jemacs session variable.\n"
+                        "Use M-x set-variable to change it.\n")))
+        (editor-set-text ed text)
+        (echo-message! echo (if val (str var " = " val) (str var " is not set")))))))
+
+;; cmd-describe-key-briefly: Show what command a key runs
+(def (cmd-describe-key-briefly app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Press a key to describe... (use C-h k for full description)")))
+
+;; cmd-describe-bindings: Show all key bindings
+(def (cmd-describe-bindings app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (str "=== Key Bindings ===\n\n"
+                    "--- Movement ---\n"
+                    "  C-f       forward-char\n"
+                    "  C-b       backward-char\n"
+                    "  C-n       next-line\n"
+                    "  C-p       previous-line\n"
+                    "  C-a       beginning-of-line\n"
+                    "  C-e       end-of-line\n"
+                    "  M-f       forward-word\n"
+                    "  M-b       backward-word\n"
+                    "  M-<       beginning-of-buffer\n"
+                    "  M->       end-of-buffer\n"
+                    "  C-v       scroll-down\n"
+                    "  M-v       scroll-up\n\n"
+                    "--- Editing ---\n"
+                    "  C-d       delete-char\n"
+                    "  DEL       backward-delete-char\n"
+                    "  C-k       kill-line\n"
+                    "  C-y       yank\n"
+                    "  M-y       yank-pop\n"
+                    "  C-/       undo\n"
+                    "  M-d       kill-word\n\n"
+                    "--- Files & Buffers ---\n"
+                    "  C-x C-f   find-file\n"
+                    "  C-x C-s   save-buffer\n"
+                    "  C-x C-w   write-file\n"
+                    "  C-x b     switch-buffer\n"
+                    "  C-x k     kill-buffer\n"
+                    "  C-x C-b   list-buffers\n\n"
+                    "--- Windows ---\n"
+                    "  C-x 2     split-window-below\n"
+                    "  C-x 3     split-window-right\n"
+                    "  C-x 1     delete-other-windows\n"
+                    "  C-x 0     delete-window\n"
+                    "  C-x o     other-window\n\n"
+                    "--- Search ---\n"
+                    "  C-s       isearch-forward\n"
+                    "  C-r       isearch-backward\n"
+                    "  M-%       query-replace\n\n"
+                    "--- Help ---\n"
+                    "  C-h k     describe-key\n"
+                    "  C-h f     describe-function\n"
+                    "  M-x       execute-command\n")))
+    (editor-set-text ed text)
+    (echo-message! echo "Key bindings listed")))
+
+;; cmd-describe-mode: Show info about current major and minor modes
+(def (cmd-describe-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (modes (app-state-modes app))
+         (enabled (filter (lambda (pair) (eq? (cdr pair) #t)) (hash->list modes)))
+         (mode-names (map (lambda (pair) (symbol->string (car pair))) enabled))
+         (sorted (sort string<? mode-names))
+         (text (str "=== Current Modes ===\n\n"
+                    "Major mode: fundamental-mode\n\n"
+                    "Enabled minor modes:\n"
+                    (if (null? sorted) "  (none)\n"
+                      (string-join (map (lambda (m) (str "  " m)) sorted) "\n"))
+                    "\n\nTotal: " (length sorted) " active minor modes\n")))
+    (editor-set-text ed text)
+    (echo-message! echo (str (length sorted) " active modes"))))

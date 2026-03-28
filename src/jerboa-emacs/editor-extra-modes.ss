@@ -9272,3 +9272,87 @@
       (echo-message! echo "Electric-pair mode enabled (auto-close brackets)")
       (echo-message! echo "Electric-pair mode disabled"))))
 
+;; Round 28 batch 1: sgml-mode, nxml-mode, css-mode, js-mode, python-mode,
+;; ruby-mode, sh-mode, conf-mode, diff-mode, compilation-mode
+
+;; cmd-sgml-mode: Set SGML/HTML major mode
+(def (cmd-sgml-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 4 0)  ;; SCLEX_HTML
+    (echo-message! echo "SGML mode")))
+
+;; cmd-nxml-mode: Set nXML major mode
+(def (cmd-nxml-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 5 0)  ;; SCLEX_XML
+    (echo-message! echo "nXML mode")))
+
+;; cmd-css-mode: Set CSS major mode
+(def (cmd-css-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 38 0)  ;; SCLEX_CSS
+    (echo-message! echo "CSS mode")))
+
+;; cmd-js-mode: Set JavaScript major mode
+(def (cmd-js-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 3 0)  ;; SCLEX_CPP (used for JS too)
+    (echo-message! echo "JavaScript mode")))
+
+;; cmd-python-mode: Set Python major mode
+(def (cmd-python-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 2 0)  ;; SCLEX_PYTHON
+    (echo-message! echo "Python mode")))
+
+;; cmd-ruby-mode: Set Ruby major mode
+(def (cmd-ruby-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 22 0)  ;; SCLEX_RUBY
+    (echo-message! echo "Ruby mode")))
+
+;; cmd-sh-mode: Set Shell script major mode
+(def (cmd-sh-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 62 0)  ;; SCLEX_BASH
+    (echo-message! echo "Shell-script mode")))
+
+;; cmd-conf-mode: Set configuration file mode
+(def (cmd-conf-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 66 0)  ;; SCLEX_PROPERTIES
+    (echo-message! echo "Conf mode")))
+
+;; cmd-diff-mode: Set diff/patch major mode
+(def (cmd-diff-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 16 0)  ;; SCLEX_DIFF
+    (echo-message! echo "Diff mode")))
+
+;; cmd-compilation-mode: Set compilation output mode
+(def (cmd-compilation-mode app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app)))
+    (send-message ed SCI_SETLEXER 62 0)  ;; Use bash lexer for compilation output
+    (send-message ed SCI_SETREADONLY 1 0)
+    (echo-message! echo "Compilation mode")))
+
