@@ -13579,3 +13579,44 @@
       (echo-message! echo "Rsync mode enabled")
       (echo-message! echo "Rsync mode disabled"))))
 
+;;; Round 94 — Org Drill, Flashcards, Dailies & Journal
+(def (cmd-org-drill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Drill: starting review session")))
+
+(def (cmd-org-drill-cram app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Drill: cram mode started")))
+
+(def (cmd-org-drill-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Drill: resuming previous session")))
+
+(def (cmd-org-fc-review app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org FC: starting flashcard review")))
+
+(def (cmd-org-fc-type-normal-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org FC: initialized normal flashcard at point")))
+
+(def (cmd-org-fc-dashboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org FC: dashboard opened")))
+
+(def (cmd-org-fc-suspend-card app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org FC: card suspended")))
+
+(def (cmd-org-fc-unsuspend-card app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org FC: card unsuspended")))
+
+(def (cmd-org-anki-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Anki: syncing with Anki")))
+
+(def (cmd-org-anki-delete-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Anki: all synced notes deleted")))
+

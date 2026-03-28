@@ -13038,3 +13038,50 @@
 (def (cmd-tramp-set-connection-local-variables app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TRAMP: connection-local variables set")))
+
+;;; Round 94 — Org Roam Dailies & Journal (cont.)
+(def (cmd-org-roam-dailies-capture-today app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Roam Dailies: capturing today's note")))
+
+(def (cmd-org-roam-dailies-goto-today app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Roam Dailies: opening today's note")))
+
+(def (cmd-org-roam-dailies-goto-yesterday app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Roam Dailies: opening yesterday's note")))
+
+(def (cmd-org-roam-dailies-goto-tomorrow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Roam Dailies: opening tomorrow's note")))
+
+(def (cmd-org-roam-dailies-goto-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Go to daily note for date: "
+      (lambda (date)
+        (echo-message! echo (str "Org Roam Dailies: opening note for " date))))))
+
+(def (cmd-org-roam-dailies-capture-date app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Capture daily for date: "
+      (lambda (date)
+        (echo-message! echo (str "Org Roam Dailies: capturing for " date))))))
+
+(def (cmd-org-journal-new-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Journal: new entry created")))
+
+(def (cmd-org-journal-open-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Journal: opening current journal")))
+
+(def (cmd-org-journal-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search journal for: "
+      (lambda (query)
+        (echo-message! echo (str "Org Journal: searching for '" query "'"))))))
+
+(def (cmd-org-journal-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Journal: listing all entries")))

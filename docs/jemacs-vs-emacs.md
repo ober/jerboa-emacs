@@ -3306,6 +3306,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 94 — Org Drill, Flashcards, Dailies & Journal
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| org-drill | :orange_circle: | Start org drill review session |
+| org-drill-cram | :orange_circle: | Org drill cram mode |
+| org-drill-resume | :orange_circle: | Resume org drill session |
+| org-fc-review | :orange_circle: | Start flashcard review |
+| org-fc-type-normal-init | :orange_circle: | Initialize normal flashcard |
+| org-fc-dashboard | :orange_circle: | Open flashcard dashboard |
+| org-fc-suspend-card | :orange_circle: | Suspend flashcard |
+| org-fc-unsuspend-card | :orange_circle: | Unsuspend flashcard |
+| org-anki-sync | :orange_circle: | Sync with Anki |
+| org-anki-delete-all | :orange_circle: | Delete all synced Anki notes |
+| org-roam-dailies-capture-today | :orange_circle: | Capture today's daily note |
+| org-roam-dailies-goto-today | :orange_circle: | Go to today's daily note |
+| org-roam-dailies-goto-yesterday | :orange_circle: | Go to yesterday's daily note |
+| org-roam-dailies-goto-tomorrow | :orange_circle: | Go to tomorrow's daily note |
+| org-roam-dailies-goto-date | :orange_circle: | Go to daily note by date |
+| org-roam-dailies-capture-date | :orange_circle: | Capture daily note for date |
+| org-journal-new-entry | :orange_circle: | Create new journal entry |
+| org-journal-open-current | :orange_circle: | Open current journal |
+| org-journal-search | :orange_circle: | Search journal entries |
+| org-journal-list | :orange_circle: | List all journal entries |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
