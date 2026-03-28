@@ -1,9 +1,9 @@
 # Jemacs vs GNU Emacs — Feature Comparison
 
-> **Last updated:** 2026-03-10
-> **Jemacs version:** master (262cd55)
+> **Last updated:** 2026-03-27
+> **Jemacs version:** features (87a8177)
 > **Compared against:** GNU Emacs 29.x / 30.x feature set
-> **Command parity:** 2168+ commands registered in both TUI and Qt layers (zero gap)
+> **Command parity:** 2268+ commands registered in both TUI and Qt layers (zero gap)
 
 ## Status Legend
 
@@ -1240,6 +1240,112 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Perspectives (persp-mode) | :white_check_mark: | Real buffer group management, switch/add/remove perspectives |
 | Org-roam | :white_check_mark: | Real grep-based note search in ~/notes/, node find/insert with backlinks |
 | Sort-columns / sort-regexp-fields | :white_check_mark: | Real column-range and regex-based line sorting |
+
+---
+
+## Recently Added Features (2026-03-27, Rounds 7–11)
+
+| Package / Feature | Status | Notes |
+|---------|--------|-------|
+| Spray (RSVP speed reading) | :orange_circle: | Speed reading mode with configurable WPM |
+| Ledger-mode | :orange_circle: | Ledger file report via external `ledger` command |
+| Buffer-move | :orange_circle: | Swap buffer positions (up/down) |
+| Fortune | :orange_circle: | Display fortune cookie from `fortune` command |
+| Snake game | :orange_circle: | Text-based snake game in buffer |
+| Graphviz preview | :orange_circle: | Render DOT files via `dot` command |
+| Thesaurus | :orange_circle: | Word synonym lookup via API |
+| Grammar-check | :orange_circle: | Grammar checking via `languagetool` CLI |
+| Morse code encode/decode | :orange_circle: | Convert text to/from Morse code |
+| Highlight-sentence | :orange_circle: | Highlight current sentence with indicator overlay |
+| Mastodon client | :orange_circle: | Post to Mastodon via `toot` CLI |
+| QR code generator | :orange_circle: | Generate QR codes via `qrencode` |
+| Keychain status | :orange_circle: | SSH/GPG keychain status and add keys |
+| Eyebrowse (workspace switch) | :orange_circle: | Named workspace switching with save/restore |
+| Chess | :orange_circle: | Chess game in buffer with text board |
+| Sudoku | :orange_circle: | Sudoku puzzle generator and solver |
+| Pong | :orange_circle: | Classic pong game in buffer |
+| Org-pomodoro | :orange_circle: | Pomodoro timer with org-mode integration |
+| LanguageTool check | :orange_circle: | Grammar/style checking via LanguageTool CLI |
+| Newsticker (RSS) | :orange_circle: | RSS feed reader with configurable feeds, title extraction |
+| Auth-source | :orange_circle: | In-memory credential store (save/search) |
+| Gomoku | :orange_circle: | Five-in-a-row game with win detection |
+| Dissociated Press | :orange_circle: | Scramble buffer text by random word mixing |
+| MPUZ | :orange_circle: | Multiplication puzzle game |
+| Blackbox | :orange_circle: | Logic puzzle game with guess/reveal |
+| Literate-calc | :orange_circle: | Evaluate arithmetic expressions inline |
+| Htmlize | :orange_circle: | Export buffer content as styled HTML file |
+| Keycast mode | :orange_circle: | Show last key press and command name |
+| Command-log | :orange_circle: | Log executed commands to a reviewable buffer |
+| Macrostep | :orange_circle: | Expand Scheme macro at point and display |
+| Eat (terminal toggle) | :orange_circle: | Toggle dedicated terminal buffer |
+| Envrc (direnv) | :orange_circle: | Load `.envrc` environment via direnv |
+| Org-present | :orange_circle: | Slide-based presentation from org headings |
+| Denote (simple notes) | :orange_circle: | Timestamp-based note creation and search in ~/notes/ |
+| Detached processes | :orange_circle: | Run background processes, list sessions |
+| Inheritenv | :orange_circle: | Refresh process environment from login shell |
+| Calc-grab-region | :orange_circle: | Evaluate selected text as numeric expression |
+| Coterm | :orange_circle: | Run shell commands with output in buffer, history |
+| Atomic-chrome | :orange_circle: | Browser text editing setup (GhostText compatible) |
+| Wordle | :orange_circle: | 5-letter word guessing game with color feedback |
+| Minesweeper | :orange_circle: | Minesweeper game with reveal and flag |
+| Sokoban | :orange_circle: | Box-pushing puzzle game |
+| 2048 game | :orange_circle: | Tile sliding number game |
+| Git-link | :orange_circle: | Copy GitHub/GitLab URL for current file+line |
+| Browse-at-remote | :orange_circle: | Open current file in remote forge browser |
+| Code-review | :orange_circle: | Interactive git diff review in buffer |
+| Conventional-commit | :orange_circle: | Guided conventional commit (feat/fix/docs/etc) |
+| Clippy | :orange_circle: | Random helpful editor tips |
+| Ellama (LLM) | :orange_circle: | Query local LLM via `ollama` |
+| Hacker News client | :orange_circle: | Fetch top HN stories via Firebase API |
+| Biblio (bibliography) | :orange_circle: | Academic paper search via CrossRef API |
+| EPA encrypt/decrypt | :orange_circle: | GPG symmetric encryption/decryption of files |
+| Typit (typing test) | :orange_circle: | Typing accuracy and speed test |
+| Diff-at-point | :orange_circle: | Show git diff for current file |
+| Magit-delta | :orange_circle: | Pretty diff via `delta` or colored git diff |
+| Figlet | :orange_circle: | Convert text to ASCII art via `figlet` |
+| Cowsay | :orange_circle: | Insert cowsay ASCII art |
+| Habit tracker | :orange_circle: | Track daily habit completions with report |
+| Ement (Matrix chat) | :orange_circle: | Matrix chat via `matrix-commander` |
+| Journalctl viewer | :orange_circle: | View systemd journal entries by unit |
+| Bluetooth control | :orange_circle: | List bluetooth devices via `bluetoothctl` |
+| Volume control | :orange_circle: | Show/adjust system volume via PulseAudio/ALSA |
+| ASCII table | :orange_circle: | Display full ASCII character reference table |
+| Unicode search | :orange_circle: | Search and insert Unicode characters by name (50+ symbols) |
+| Emoji insert | :orange_circle: | Insert emoji by name with completion (44 emoji) |
+| Kaomoji | :orange_circle: | Insert Japanese emoticons by mood (19 kaomoji) |
+| XKCD viewer | :orange_circle: | Fetch and display latest XKCD comic info |
+| Cheat.sh | :orange_circle: | Look up cheat sheets from cheat.sh |
+| TLDR pages | :orange_circle: | TLDR command reference lookup |
+| HTTP stat | :orange_circle: | HTTP request timing statistics via curl |
+| JWT decode | :orange_circle: | Decode JWT tokens (header + payload) |
+| XML format | :orange_circle: | Pretty-print XML via xmllint/python |
+| CSV sort | :orange_circle: | Sort CSV data by column |
+| Markdown TOC | :orange_circle: | Generate table of contents from markdown headings |
+| Focus mode | :orange_circle: | Minimal UI mode (hide margins/line numbers) |
+| Typewriter mode | :orange_circle: | Keep cursor centered vertically |
+| Matrix rain | :orange_circle: | Matrix-style digital rain animation |
+| WiFi status | :orange_circle: | Show WiFi networks via nmcli/iwconfig |
+| Screenshot | :orange_circle: | Take screenshot via import/scrot/gnome-screenshot |
+| NPM scripts | :orange_circle: | Run npm scripts from package.json with completion |
+| Cargo (Rust) | :orange_circle: | Run cargo commands with completion |
+| Brew (Homebrew) | :orange_circle: | Run homebrew commands with package completion |
+| Git stash list | :orange_circle: | List git stashes with details |
+| Git cherry-pick | :orange_circle: | Cherry-pick commits by hash |
+| Git worktree | :orange_circle: | List/add/remove git worktrees |
+| IP info | :orange_circle: | Show public IP information via ipinfo.io |
+| Whois lookup | :orange_circle: | Whois domain lookup |
+| Traceroute | :orange_circle: | Network route tracing |
+| Netstat | :orange_circle: | Show active network connections via ss/netstat |
+| Crontab editor | :orange_circle: | View user crontab in buffer |
+| Htop (process list) | :orange_circle: | Top processes by memory usage |
+| Disk usage summary | :orange_circle: | Directory disk usage sorted by size |
+| File permissions | :orange_circle: | Show file permissions and ownership |
+| Compress | :orange_circle: | Compress files (tar.gz/bz2/xz/zip) |
+| Extract | :orange_circle: | Extract archives (tar/zip/gz/bz2/xz) |
+| Diff buffers | :orange_circle: | Diff two named buffers |
+| Sort lines by field | :orange_circle: | Sort buffer lines by whitespace-delimited field |
+| Vagrant | :orange_circle: | Run vagrant commands with completion |
+| Pip (Python) | :orange_circle: | Run pip commands with package completion |
 
 ---
 
