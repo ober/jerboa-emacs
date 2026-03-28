@@ -82,9 +82,7 @@
    (jerboa-emacs qt commands) (jerboa-emacs qt lsp-client)
    (jerboa-emacs qt commands-lsp) (jerboa-emacs qt menubar)
    (jerboa-emacs ipc) (jerboa-emacs vtscreen)
-   (only
-     (jerboa-emacs editor-extra-web)
-     *aggressive-indent-mode*)
+   (only (jerboa-emacs editor-core) *aggressive-indent-mode*)
    (only
      (jerboa-emacs debug-repl)
      start-debug-repl!

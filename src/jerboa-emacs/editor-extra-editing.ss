@@ -1170,6 +1170,41 @@
                 (echo-message! (app-state-echo app)
                   (string-append (number->string (length lines)) " matches"))))))))))
 
+(def (cmd-rgrep app)
+  "Recursive grep using grep -rn. Works without ripgrep installed."
+  (let* ((buf (current-buffer-from-app app))
+         (fp (buffer-file-path buf))
+         (root (or (project-current app) (current-directory)))
+         (pattern (app-read-string app
+                    (string-append "rgrep in " (path-strip-directory root) ": ")))
+         (glob (and pattern (not (string-empty? pattern))
+                    (app-read-string app "File pattern (e.g. *.ss, default *): "))))
+    (when (and pattern (not (string-empty? pattern)))
+      (echo-message! (app-state-echo app) "Searching...")
+      (with-catch
+        (lambda (e)
+          (echo-error! (app-state-echo app) "grep failed"))
+        (lambda ()
+          (let* ((file-pat (if (and glob (not (string-empty? glob)))
+                             glob "*"))
+                 (cmd (string-append
+                        "grep -rn --include='" file-pat "' "
+                        "-- '" pattern "' " root " 2>/dev/null | head -500")))
+            (let-values (((s o e p) (open-process-ports cmd 'block (native-transcoder))))
+              (close-port s)
+              (let ((output (get-string-all o)))
+                (close-port o)
+                (close-port e)
+                (if (or (eof-object? output) (string-empty? output))
+                  (echo-message! (app-state-echo app) "No matches found")
+                  (let ((lines (string-split output #\newline)))
+                    (open-output-buffer app "*Grep*"
+                      (string-append "-*- grep -*-\ngrep -rn " pattern " " root "\n\n"
+                        (number->string (length lines)) " matches\n\n"
+                        output "\n"))
+                    (echo-message! (app-state-echo app)
+                      (string-append (number->string (length lines)) " matches"))))))))))))
+
 ;;;============================================================================
 ;;; goto-address-mode — highlight URLs in buffer
 ;;;============================================================================

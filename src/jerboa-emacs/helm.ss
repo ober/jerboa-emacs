@@ -45,7 +45,9 @@
 
   ;; Configuration
   *helm-candidate-limit*
-  *helm-follow-delay*)
+  *helm-follow-delay*
+  *orderless-mode*
+  initials-match?)
 
 (import :std/sugar
         :std/sort
@@ -59,6 +61,7 @@
 ;; *helm-mode* is defined in core.ss
 (def *helm-candidate-limit* 100)
 (def *helm-follow-delay* 0.1)  ;; seconds
+(def *orderless-mode* #f)  ;; when #t, all completion uses orderless+initials
 
 ;; Dynamic parameter: set to current pattern during helm-filter-source.
 ;; Volatile sources (e.g. grep) can read this to use the pattern as a search query.
@@ -132,6 +135,28 @@
               (make-match-token word #f #f))))
          words)))
 
+(def (initials-match? pattern candidate)
+  "Check if PATTERN matches the initials of words in CANDIDATE.
+   E.g. 'fb' matches 'find-buffer' or 'forward-backward'."
+  (let* ((pat-lower (string-downcase pattern))
+         (cand-lower (string-downcase candidate))
+         (plen (string-length pat-lower)))
+    (and (> plen 0)
+         (let loop ((pi 0) (ci 0) (at-boundary? #t))
+           (cond
+             ((>= pi plen) #t)  ; all pattern chars matched
+             ((>= ci (string-length cand-lower)) #f)  ; ran out of candidate
+             ((and at-boundary?
+                   (char=? (string-ref pat-lower pi)
+                           (string-ref cand-lower ci)))
+              (loop (+ pi 1) (+ ci 1) #f))
+             (else
+              (let ((c (string-ref cand-lower ci)))
+                (loop pi (+ ci 1)
+                      (or (char=? c #\-) (char=? c #\_)
+                          (char=? c #\/) (char=? c #\space)
+                          (char=? c #\.))))))))))
+
 (def (token-matches? token candidate-str use-fuzzy?)
   "Check if a single match-token matches a candidate string."
   (let* ((text (match-token-text token))
@@ -141,8 +166,11 @@
            (cond
              ((match-token-prefix? token)
               (string-prefix? text-lower target-lower))
-             (use-fuzzy?
-              (fuzzy-match? text candidate-str))
+             ((or use-fuzzy? *orderless-mode*)
+              ;; With orderless: try substring, then fuzzy, then initials
+              (or (string-contains target-lower text-lower)
+                  (fuzzy-match? text candidate-str)
+                  (initials-match? text candidate-str)))
              (else
               (string-contains target-lower text-lower)))))
     (if (match-token-negate? token)

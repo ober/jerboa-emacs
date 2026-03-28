@@ -2422,3 +2422,61 @@
              (set! (frame-current-idx fr) (- num 1))
              (echo-message! (app-state-echo app)
                (string-append "Window " (number->string num))))))))))
+
+;;;============================================================================
+;;; Net-utils — network diagnostic commands
+;;;============================================================================
+
+(def (run-net-command app cmd args buf-name)
+  "Run a network command with ARGS, display output in BUF-NAME."
+  (let ((output (with-catch
+                  (lambda (e)
+                    (string-append "Error: " (with-output-to-string
+                                               (lambda () (display-exception e)))))
+                  (lambda ()
+                    (let-values (((p-stdin p-stdout p-stderr pid)
+                                  (open-process-ports
+                                    (string-append cmd " "
+                                      (apply string-append
+                                        (map (lambda (a) (string-append a " ")) args)))
+                                    'block (native-transcoder))))
+                      (close-port p-stdin)
+                      (let ((result (get-string-all p-stdout)))
+                        (close-port p-stdout)
+                        (close-port p-stderr)
+                        (if (eof-object? result) "(no output)" result)))))))
+    (open-output-buffer app buf-name output)
+    (echo-message! (app-state-echo app) buf-name)))
+
+(def (cmd-net-ping app)
+  "Ping a host — send ICMP echo requests."
+  (let ((host (app-read-string app "Ping host: ")))
+    (when (and host (not (string-empty? host)))
+      (run-net-command app "/usr/bin/ping" (list "-c" "4" host) "*ping*"))))
+
+(def (cmd-net-traceroute app)
+  "Traceroute to a host — show network path."
+  (let ((host (app-read-string app "Traceroute host: ")))
+    (when (and host (not (string-empty? host)))
+      (run-net-command app "/usr/bin/traceroute" (list host) "*traceroute*"))))
+
+(def (cmd-net-ifconfig app)
+  "Show network interface configuration."
+  (let ((cmd (cond ((file-exists? "/usr/bin/ip") "/usr/bin/ip")
+                   ((file-exists? "/sbin/ifconfig") "/sbin/ifconfig")
+                   (else "/usr/bin/ip"))))
+    (if (string-contains cmd "ip")
+      (run-net-command app cmd '("addr" "show") "*ifconfig*")
+      (run-net-command app cmd '() "*ifconfig*"))))
+
+(def (cmd-net-nslookup app)
+  "Look up DNS records for a host."
+  (let ((host (app-read-string app "Nslookup host: ")))
+    (when (and host (not (string-empty? host)))
+      (let ((cmd (if (file-exists? "/usr/bin/dig") "/usr/bin/dig" "/usr/bin/nslookup")))
+        (run-net-command app cmd (list host) "*nslookup*")))))
+
+(def (cmd-net-netstat app)
+  "Show network connections."
+  (let ((cmd (if (file-exists? "/usr/bin/ss") "/usr/bin/ss" "/usr/bin/netstat")))
+    (run-net-command app cmd '("-tuln") "*netstat*")))

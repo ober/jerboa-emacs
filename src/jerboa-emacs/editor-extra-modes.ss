@@ -1814,15 +1814,63 @@
 
 ;; Vundo — visual undo tree
 (def (cmd-vundo app)
-  "Visual undo tree — shows undo/redo state."
+  "Visual undo tree — displays undo/redo history with state markers.
+   Shows a visual timeline of undo steps and current position.
+   Navigate with u (undo) and r (redo) from the undo buffer."
   (let* ((fr (app-state-frame app))
          (win (current-window fr))
          (ed (edit-window-editor win))
-         (can-undo (send-message ed SCI_CANUNDO 0 0))
-         (can-redo (send-message ed SCI_CANREDO 0 0)))
+         (buf (current-buffer-from-app app))
+         (buf-name (if buf (buffer-name buf) "*scratch*"))
+         ;; Count undo/redo steps by walking the stack
+         (undo-count (let loop ((n 0))
+                       (if (> (send-message ed SCI_CANUNDO 0 0) 0)
+                         (begin (send-message ed SCI_UNDO 0 0)
+                                (loop (+ n 1)))
+                         n)))
+         ;; Now we're at the beginning — count forward (redo)
+         (total (let loop ((n 0))
+                  (if (> (send-message ed SCI_CANREDO 0 0) 0)
+                    (begin (send-message ed SCI_REDO 0 0)
+                           (loop (+ n 1)))
+                    n)))
+         ;; Redo back to our original position (redo total - undo-count times)
+         (_ (let loop ((n (- total undo-count)))
+              (when (> n 0)
+                (send-message ed SCI_UNDO 0 0)
+                (loop (- n 1)))))
+         (current-pos undo-count)
+         ;; Build visual representation
+         (lines (list
+                  (string-append "Undo history for: " buf-name)
+                  (string-append "Total steps: " (number->string total))
+                  (string-append "Current position: " (number->string current-pos)
+                                 "/" (number->string total))
+                  ""
+                  ;; Timeline: o---o---@---o---o
+                  ;;           0   1   2   3   4
+                  (let ((timeline
+                          (let loop ((i 0) (acc '()))
+                            (if (> i total)
+                              (apply string-append (reverse acc))
+                              (loop (+ i 1)
+                                    (cons (string-append
+                                            (if (= i current-pos) "@" "o")
+                                            (if (< i total) "---" ""))
+                                          acc))))))
+                    (if (> (string-length timeline) 78)
+                      (string-append (substring timeline 0 75) "...")
+                      timeline))
+                  ""
+                  "  @ = current state"
+                  "  o = saved undo point"
+                  ""
+                  "Use M-x undo / M-x redo to navigate.")))
+    (open-output-buffer app "*Vundo*"
+      (apply string-append (map (lambda (l) (string-append l "\n")) lines)))
     (echo-message! (app-state-echo app)
-      (string-append "Undo: " (if (> can-undo 0) "available" "empty")
-                     " | Redo: " (if (> can-redo 0) "available" "empty")))))
+      (string-append "Undo: " (number->string current-pos)
+                     " of " (number->string total) " steps"))))
 
 ;; Dash (at point) — documentation lookup
 (def (cmd-dash-at-point app)

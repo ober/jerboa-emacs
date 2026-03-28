@@ -22,7 +22,8 @@
         :jerboa-emacs/echo
         :jerboa-emacs/editor-extra-helpers
         (only-in :jerboa-emacs/editor-extra-editing2
-                 *dired-marks* cmd-dired-refresh))
+                 *dired-marks* cmd-dired-refresh)
+        (only-in :jerboa-emacs/helm *orderless-mode*))
 
 (def (cmd-describe-current-coding-system app)
   "Describe current coding system."
@@ -715,7 +716,6 @@
 
 ;; ── batch 44: modern Emacs package toggles ──────────────────────────
 (def *consult-mode* #f)
-(def *orderless-mode* #f)
 (def *embark-mode* #f)
 (def *undo-fu-session* #f)
 (def *auto-package-mode* #f)

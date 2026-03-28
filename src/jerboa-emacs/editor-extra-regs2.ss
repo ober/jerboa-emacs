@@ -1376,4 +1376,13 @@
   (register-command! 'project-query-replace-regexp cmd-project-query-replace)
   (register-command! 'insert-uuid cmd-insert-uuid)
   (register-command! 'uuidgen cmd-insert-uuid)
+  ;; Rgrep
+  (register-command! 'rgrep cmd-rgrep)
+  (register-command! 'grep-find cmd-rgrep)
+  ;; Net-utils
+  (register-command! 'ping cmd-net-ping)
+  (register-command! 'traceroute cmd-net-traceroute)
+  (register-command! 'ifconfig cmd-net-ifconfig)
+  (register-command! 'nslookup cmd-net-nslookup)
+  (register-command! 'netstat cmd-net-netstat)
 )

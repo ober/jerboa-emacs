@@ -1664,12 +1664,49 @@
   (echo-message! (app-state-echo app)
     (if (repeat-mode?) "Repeat mode enabled" "Repeat mode disabled")))
 
+(def (tab-line-string app width)
+  "Generate a tab-line string showing open buffer names.
+   The current buffer is marked with [brackets], others with spaces.
+   Fits within WIDTH characters."
+  (let* ((current-buf (current-buffer-from-app app))
+         (current-name (if current-buf (buffer-name current-buf) ""))
+         ;; Get unique buffer names, skip internal buffers
+         (bufs (filter (lambda (b)
+                         (let ((n (buffer-name b)))
+                           (and n (> (string-length n) 0)
+                                (not (char=? (string-ref n 0) #\space)))))
+                       *buffer-list*))
+         (tabs (map (lambda (b)
+                      (let* ((name (buffer-name b))
+                             (mod? (and (buffer-doc b)
+                                       (let ((ed (create-scintilla-editor 1 1)))
+                                         ;; Quick check - can't easily check mod
+                                         #f)))
+                             (is-current (string=? name current-name)))
+                        (if is-current
+                          (string-append "[" name "]")
+                          (string-append " " name " "))))
+                    bufs))
+         (joined (apply string-append
+                   (let loop ((tabs tabs) (acc '()) (first? #t))
+                     (if (null? tabs)
+                       (reverse acc)
+                       (loop (cdr tabs)
+                             (cons (if first? (car tabs)
+                                     (string-append "|" (car tabs)))
+                                   acc)
+                             #f))))))
+    (if (<= (string-length joined) width)
+      (string-append joined (make-string (- width (string-length joined)) #\space))
+      (substring joined 0 width))))
+
 (def (cmd-toggle-tab-line-mode app)
-  "Toggle tab-line-mode (per-window tab display)."
+  "Toggle tab-line-mode (show buffer tabs at top)."
   (let ((echo (app-state-echo app)))
     (set! *tab-line-mode* (not *tab-line-mode*))
     (echo-message! echo (if *tab-line-mode*
-                          "Tab-line mode ON" "Tab-line mode OFF"))))
+                          "Tab-line mode ON — buffer tabs shown in modeline"
+                          "Tab-line mode OFF"))))
 
 (def (cmd-toggle-scroll-bar-mode app)
   "Toggle scroll-bar-mode."
