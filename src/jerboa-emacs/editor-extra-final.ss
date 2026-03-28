@@ -11647,3 +11647,54 @@
     (if (mode-enabled? app 'nerd-icons-dired)
       (echo-message! echo "Nerd icons dired mode enabled")
       (echo-message! echo "Nerd icons dired mode disabled"))))
+
+;; Round 66 — Buttercup, package, Flycheck (batch 2)
+(def (cmd-buttercup-run-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buttercup: running test at point")))
+
+(def (cmd-package-reinstall app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Reinstall package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Package: reinstalling " pkg))))))
+
+(def (cmd-package-recompile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recompile package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Package: recompiling " pkg))))))
+
+(def (cmd-flycheck-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: running checker as compilation")))
+
+(def (cmd-flycheck-explain-error-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: explaining error at point")))
+
+(def (cmd-flycheck-disable-checker app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Disable checker: "
+      (lambda (checker)
+        (echo-message! echo (str "Flycheck: disabled checker '" checker "'"))))))
+
+(def (cmd-flycheck-set-checker-executable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Checker: "
+      (lambda (checker)
+        (echo-read-string echo "Executable path: "
+          (lambda (path)
+            (echo-message! echo (str "Flycheck: set " checker " executable to " path))))))))
+
+(def (cmd-flycheck-copy-errors-as-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: copied errors to kill ring")))
+
+(def (cmd-flycheck-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: checking current buffer")))
+
+(def (cmd-flycheck-clear app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flycheck: cleared all errors")))

@@ -2578,6 +2578,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | all-the-icons-ibuffer-mode | :orange_circle: | Icons in ibuffer |
 | nerd-icons-dired-mode | :orange_circle: | Nerd font icons in dired |
 
+### Round 66 — Edebug, ERT, Flycheck & Package Tools
+
+| Feature | Status | Notes |
+|---|---|---|
+| edebug-defun | :orange_circle: | Instrument defun for debugging |
+| edebug-all-defs | :orange_circle: | Instrument all defs on eval |
+| edebug-all-forms | :orange_circle: | Instrument all forms on eval |
+| edebug-eval-top-level-form | :orange_circle: | Eval top-level form with edebug |
+| edebug-on-entry | :orange_circle: | Break on function entry |
+| edebug-cancel-on-entry | :orange_circle: | Cancel break on entry |
+| ert-run-tests-interactively | :orange_circle: | Run ERT tests interactively |
+| ert-describe-test | :orange_circle: | Describe ERT test |
+| ert-results-pop-to-timings | :orange_circle: | Show test timings |
+| ert-delete-all-tests | :orange_circle: | Delete all test definitions |
+| buttercup-run-at-point | :orange_circle: | Run Buttercup test at point |
+| package-reinstall | :orange_circle: | Reinstall a package |
+| package-recompile | :orange_circle: | Recompile a package |
+| flycheck-compile | :orange_circle: | Run checker as compilation |
+| flycheck-explain-error-at-point | :orange_circle: | Explain error at point |
+| flycheck-disable-checker | :orange_circle: | Disable a checker |
+| flycheck-set-checker-executable | :orange_circle: | Set checker executable path |
+| flycheck-copy-errors-as-kill | :orange_circle: | Copy errors to kill ring |
+| flycheck-buffer | :orange_circle: | Check current buffer |
+| flycheck-clear | :orange_circle: | Clear all errors |
+
 ---
 
 ## Recommended Development Roadmap

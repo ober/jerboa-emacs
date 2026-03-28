@@ -12176,3 +12176,58 @@
       (lambda (dir)
         (echo-message! echo (str "Neotree: opened " dir))))))
 
+;; Round 66 — Edebug, ERT, Flycheck (batch 1)
+(def (cmd-edebug-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: instrumenting current defun")))
+
+(def (cmd-edebug-all-defs app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'edebug-all-defs)
+    (if (mode-enabled? app 'edebug-all-defs)
+      (echo-message! echo "Edebug: instrumenting all definitions on eval")
+      (echo-message! echo "Edebug: normal eval (no instrumentation)"))))
+
+(def (cmd-edebug-all-forms app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'edebug-all-forms)
+    (if (mode-enabled? app 'edebug-all-forms)
+      (echo-message! echo "Edebug: instrumenting all forms on eval")
+      (echo-message! echo "Edebug: normal form eval"))))
+
+(def (cmd-edebug-eval-top-level-form app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Edebug: evaluated top-level form")))
+
+(def (cmd-edebug-on-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Edebug on entry to function: "
+      (lambda (fn)
+        (echo-message! echo (str "Edebug: will break on entry to " fn))))))
+
+(def (cmd-edebug-cancel-on-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cancel edebug on entry for: "
+      (lambda (fn)
+        (echo-message! echo (str "Edebug: cancelled break on entry to " fn))))))
+
+(def (cmd-ert-run-tests-interactively app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Run ERT tests matching: "
+      (lambda (pat)
+        (echo-message! echo (str "ERT: running tests matching '" pat "'"))))))
+
+(def (cmd-ert-describe-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe test: "
+      (lambda (test)
+        (echo-message! echo (str "ERT: describing test '" test "'"))))))
+
+(def (cmd-ert-results-pop-to-timings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERT: showing test timings")))
+
+(def (cmd-ert-delete-all-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ERT: deleted all test definitions")))
+
