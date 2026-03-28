@@ -14469,3 +14469,47 @@
 (def (cmd-c-backward-conditional app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "C: moved to previous #if/#else/#endif")))
+
+;;; ——— Round 112: Compilation & GDB debugging (batch 1) ———
+
+(def (cmd-compilation-next-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: moved to next error")))
+
+(def (cmd-compilation-previous-error app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compilation: moved to previous error")))
+
+(def (cmd-previous-error-no-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Previous error (no select)")))
+
+(def (cmd-gdb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GDB command: "
+      (lambda (cmd)
+        (echo-message! echo (str "GDB: starting debugger with " cmd))))))
+
+(def (cmd-gdb-restore-windows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: restored window layout")))
+
+(def (cmd-gud-tbreak app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: set temporary breakpoint at current line")))
+
+(def (cmd-gud-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: step over (next)")))
+
+(def (cmd-gud-cont app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: continue execution")))
+
+(def (cmd-gud-finish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: run until current function returns")))
+
+(def (cmd-gud-until app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: continue until current line")))

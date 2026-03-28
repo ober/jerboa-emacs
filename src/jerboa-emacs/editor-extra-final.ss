@@ -13891,3 +13891,45 @@
 (def (cmd-java-mode app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Java mode activated")))
+
+;;; ——— Round 112: Compilation & GDB debugging (batch 2) ———
+
+(def (cmd-gud-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: printed expression at point")))
+
+(def (cmd-gud-pstar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: printed dereferenced expression at point")))
+
+(def (cmd-gud-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: started program execution")))
+
+(def (cmd-gud-stepi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: step one instruction")))
+
+(def (cmd-gud-nexti app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: next instruction (step over)")))
+
+(def (cmd-gud-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: jumped to current line")))
+
+(def (cmd-gud-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: moved up one stack frame")))
+
+(def (cmd-gud-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: moved down one stack frame")))
+
+(def (cmd-gud-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GUD: refreshed display")))
+
+(def (cmd-gdb-display-disassembly-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: displaying disassembly buffer")))

@@ -3764,6 +3764,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | python-eldoc-at-point | :orange_circle: | Show eldoc for Python symbol |
 | java-mode | :orange_circle: | Activate Java major mode |
 
+### Round 112 — Compilation & GDB Debugging
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| compilation-next-error | :orange_circle: | Move to next compilation error |
+| compilation-previous-error | :orange_circle: | Move to previous compilation error |
+| previous-error-no-select | :orange_circle: | Previous error without selecting |
+| gdb | :orange_circle: | Start GDB debugger |
+| gdb-restore-windows | :orange_circle: | Restore GDB window layout |
+| gud-tbreak | :orange_circle: | Set temporary breakpoint |
+| gud-next | :orange_circle: | Step over (next line) |
+| gud-cont | :orange_circle: | Continue execution |
+| gud-finish | :orange_circle: | Run until function returns |
+| gud-until | :orange_circle: | Continue until current line |
+| gud-print | :orange_circle: | Print expression at point |
+| gud-pstar | :orange_circle: | Print dereferenced expression |
+| gud-run | :orange_circle: | Start program execution |
+| gud-stepi | :orange_circle: | Step one instruction |
+| gud-nexti | :orange_circle: | Next instruction (step over) |
+| gud-jump | :orange_circle: | Jump to current line |
+| gud-up | :orange_circle: | Move up one stack frame |
+| gud-down | :orange_circle: | Move down one stack frame |
+| gud-refresh | :orange_circle: | Refresh GUD display |
+| gdb-display-disassembly-buffer | :orange_circle: | Display disassembly buffer |
+
 ---
 
 ## Recommended Development Roadmap
