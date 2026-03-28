@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 236 — BBDB ext, Gnus ext, SLIME ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| bbdb-display-all | :orange_circle: | Display all BBDB records |
+| bbdb-delete-record | :orange_circle: | Delete current BBDB record |
+| bbdb-edit-field | :orange_circle: | Edit field in BBDB record |
+| bbdb-save | :orange_circle: | Save BBDB database |
+| gnus-summary-prev-unread-article | :orange_circle: | Previous unread article |
+| gnus-summary-move-article | :orange_circle: | Move article to group |
+| gnus-article-toggle-headers | :orange_circle: | Toggle article headers |
+| slime-who-binds | :orange_circle: | Find who binds a variable |
+| slime-who-sets | :orange_circle: | Find who sets a variable |
+| slime-list-threads | :orange_circle: | List Lisp threads |
+| slime-interrupt | :orange_circle: | Interrupt current evaluation |
+| slime-restart-inferior-lisp | :orange_circle: | Restart inferior Lisp |
+| slime-toggle-trace-fdefinition | :orange_circle: | Toggle trace on function |
+| slime-undefine-function | :orange_circle: | Undefine a function |
+| slime-export-symbol | :orange_circle: | Export symbol from package |
+| slime-unexport-symbol | :orange_circle: | Unexport symbol from package |
+| slime-sync-package-and-default-directory | :orange_circle: | Sync package and directory |
+| slime-toggle-fancy-trace | :orange_circle: | Toggle fancy trace output |
+| slime-profile-package | :orange_circle: | Profile a package |
+| slime-profiled-functions | :orange_circle: | List profiled functions |
+
 ### Round 235 — Wanderlust, mu4e ext
 
 | Command | Status | Description |

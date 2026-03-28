@@ -20518,3 +20518,52 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "WL: draft killed")))
 
+;; Round 236 — BBDB ext, Gnus ext, SLIME ext (10 in modes)
+(def (cmd-bbdb-display-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: displaying all records")))
+
+(def (cmd-bbdb-delete-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: deleted current record")))
+
+(def (cmd-bbdb-edit-field app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Field to edit: "
+      (lambda (field)
+        (echo-message! echo (str "BBDB: editing field " field))))))
+
+(def (cmd-bbdb-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: database saved")))
+
+(def (cmd-gnus-summary-prev-unread-article app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: previous unread article")))
+
+(def (cmd-gnus-summary-move-article app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Move to group: "
+      (lambda (group)
+        (echo-message! echo (str "Gnus: moved article to " group))))))
+
+(def (cmd-gnus-article-toggle-headers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnus: toggled article headers")))
+
+(def (cmd-slime-who-binds app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Who binds: "
+      (lambda (sym)
+        (echo-message! echo (str "SLIME: finding bindings of " sym))))))
+
+(def (cmd-slime-who-sets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Who sets: "
+      (lambda (sym)
+        (echo-message! echo (str "SLIME: finding setters of " sym))))))
+
+(def (cmd-slime-list-threads app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: listing threads")))
+

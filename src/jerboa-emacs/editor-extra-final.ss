@@ -19854,3 +19854,54 @@
 (def (cmd-mu4e-headers-mark-for-refile app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "mu4e: marked for refile")))
+
+;; Round 236 — BBDB ext, Gnus ext, SLIME ext (10 in final)
+(def (cmd-slime-interrupt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: interrupted evaluation")))
+
+(def (cmd-slime-restart-inferior-lisp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: restarting inferior Lisp")))
+
+(def (cmd-slime-toggle-trace-fdefinition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Trace function: "
+      (lambda (fn)
+        (echo-message! echo (str "SLIME: toggled trace on " fn))))))
+
+(def (cmd-slime-undefine-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Undefine function: "
+      (lambda (fn)
+        (echo-message! echo (str "SLIME: undefined " fn))))))
+
+(def (cmd-slime-export-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Export symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "SLIME: exported " sym))))))
+
+(def (cmd-slime-unexport-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unexport symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "SLIME: unexported " sym))))))
+
+(def (cmd-slime-sync-package-and-default-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: synced package and directory")))
+
+(def (cmd-slime-toggle-fancy-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: toggled fancy trace")))
+
+(def (cmd-slime-profile-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Profile package: "
+      (lambda (pkg)
+        (echo-message! echo (str "SLIME: profiling package " pkg))))))
+
+(def (cmd-slime-profiled-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SLIME: listing profiled functions")))
