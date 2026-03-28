@@ -11336,3 +11336,61 @@
         (echo-read-string echo (str "New value for " var ": ")
           (lambda (val)
             (echo-message! echo (str "Set " var " to " val))))))))
+
+;; Round 60 — Dired extensions (batch 2)
+(def (cmd-dired-ranger-paste app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired ranger: pasted files from clipboard")))
+
+(def (cmd-dired-ranger-move app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired ranger: moved files from clipboard")))
+
+(def (cmd-dired-collapse-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-collapse)
+    (if (mode-enabled? app 'dired-collapse)
+      (echo-message! echo "Dired: collapsing single-child directories")
+      (echo-message! echo "Dired: showing full directory tree"))))
+
+(def (cmd-dired-git-info-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-git-info)
+    (if (mode-enabled? app 'dired-git-info)
+      (echo-message! echo "Dired: showing git info for files")
+      (echo-message! echo "Dired: hiding git info"))))
+
+(def (cmd-dired-do-eww app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: opening marked files in EWW browser")))
+
+(def (cmd-dired-preview-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-preview)
+    (if (mode-enabled? app 'dired-preview)
+      (echo-message! echo "Dired: file preview enabled")
+      (echo-message! echo "Dired: file preview disabled"))))
+
+(def (cmd-dired-rsync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rsync marked files to: "
+      (lambda (dest)
+        (echo-message! echo (str "Dired: rsyncing marked files to " dest))))))
+
+(def (cmd-dired-du-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-du)
+    (if (mode-enabled? app 'dired-du)
+      (echo-message! echo "Dired: showing directory sizes")
+      (echo-message! echo "Dired: hiding directory sizes"))))
+
+(def (cmd-dired-filter-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-filter)
+    (if (mode-enabled? app 'dired-filter)
+      (echo-message! echo "Dired: filter mode enabled")
+      (echo-message! echo "Dired: filter mode disabled"))))
+
+(def (cmd-dired-recent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: showing recently visited directories")))

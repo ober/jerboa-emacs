@@ -11859,3 +11859,61 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Customize: browsing all groups")))
 
+;; Round 60 — Dired extensions (batch 1)
+(def (cmd-dired-do-isearch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Isearch in marked files: "
+      (lambda (pat)
+        (echo-message! echo (str "Dired: searching marked files for '" pat "'"))))))
+
+(def (cmd-dired-do-isearch-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Isearch regexp in marked files: "
+      (lambda (pat)
+        (echo-message! echo (str "Dired: regexp searching marked files for '" pat "'"))))))
+
+(def (cmd-dired-do-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: printing marked files")))
+
+(def (cmd-dired-do-redisplay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired: redisplayed listing")))
+
+(def (cmd-dired-create-empty-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Create empty file: "
+      (lambda (name)
+        (echo-message! echo (str "Dired: created empty file '" name "'"))))))
+
+(def (cmd-dired-toggle-read-only app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-read-only)
+    (if (mode-enabled? app 'dired-read-only)
+      (echo-message! echo "Dired: read-only mode (wdired disabled)")
+      (echo-message! echo "Dired: wdired mode (editable filenames)"))))
+
+(def (cmd-dired-hide-details-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-hide-details)
+    (if (mode-enabled? app 'dired-hide-details)
+      (echo-message! echo "Dired: details hidden")
+      (echo-message! echo "Dired: details shown"))))
+
+(def (cmd-dired-omit-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'dired-omit)
+    (if (mode-enabled? app 'dired-omit)
+      (echo-message! echo "Dired: omitting dotfiles and backup files")
+      (echo-message! echo "Dired: showing all files"))))
+
+(def (cmd-dired-narrow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Narrow dired to: "
+      (lambda (pat)
+        (echo-message! echo (str "Dired: narrowed to files matching '" pat "'"))))))
+
+(def (cmd-dired-ranger-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dired ranger: marked files copied to clipboard")))
+

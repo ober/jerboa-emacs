@@ -2433,6 +2433,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | customize-unsaved | :orange_circle: | Show unsaved options |
 | customize-set-value | :orange_circle: | Set option value directly |
 
+### Round 60 — Dired Extensions
+
+| Feature | Status | Notes |
+|---|---|---|
+| dired-do-isearch | :orange_circle: | Isearch in marked files |
+| dired-do-isearch-regexp | :orange_circle: | Regexp isearch in marked files |
+| dired-do-print | :orange_circle: | Print marked files |
+| dired-do-redisplay | :orange_circle: | Refresh dired listing |
+| dired-create-empty-file | :orange_circle: | Create new empty file |
+| dired-toggle-read-only | :orange_circle: | Toggle wdired editable mode |
+| dired-hide-details-mode | :orange_circle: | Toggle file detail visibility |
+| dired-omit-mode | :orange_circle: | Hide dotfiles and backups |
+| dired-narrow | :orange_circle: | Filter dired by pattern |
+| dired-ranger-copy | :orange_circle: | Ranger-style copy to clipboard |
+| dired-ranger-paste | :orange_circle: | Ranger-style paste from clipboard |
+| dired-ranger-move | :orange_circle: | Ranger-style move from clipboard |
+| dired-collapse-mode | :orange_circle: | Collapse single-child directories |
+| dired-git-info-mode | :orange_circle: | Show git info in dired listing |
+| dired-do-eww | :orange_circle: | Open marked files in EWW browser |
+| dired-preview-mode | :orange_circle: | Preview files on cursor movement |
+| dired-rsync | :orange_circle: | Rsync marked files to destination |
+| dired-du-mode | :orange_circle: | Show directory sizes |
+| dired-filter-mode | :orange_circle: | Interactive file filtering |
+| dired-recent | :orange_circle: | Show recently visited directories |
+
 ---
 
 ## Recommended Development Roadmap
