@@ -8275,3 +8275,189 @@
         (begin
           (editor-replace-range ed ws-start ws-end " ")
           (echo-message! echo "Reduced to one space"))))))
+
+;; Round 24 batch 2: narrow-to-page, widen, goto-char, goto-line-relative,
+;; set-goal-column, what-line, what-page, what-cursor-position, count-words-region,
+;; count-lines-region
+
+;; cmd-narrow-to-page: Narrow buffer to current page (between form feeds)
+(def (cmd-narrow-to-page app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (text (editor-get-text ed))
+         (pos (editor-cursor-position ed))
+         (len (string-length text))
+         (page-start (let loop ((i (- pos 1)))
+                       (if (<= i 0) 0
+                         (if (char=? (string-ref text i) #\x0C) (+ i 1)
+                           (loop (- i 1))))))
+         (page-end (let loop ((i pos))
+                     (if (>= i len) len
+                       (if (char=? (string-ref text i) #\x0C) i
+                         (loop (+ i 1))))))
+         (page-text (substring text page-start page-end)))
+    ;; Store original text for widen
+    (hash-put! (app-state-modes app) 'narrow-original text)
+    (hash-put! (app-state-modes app) 'narrow-start page-start)
+    (editor-set-text ed page-text)
+    (echo-message! echo "Narrowed to page")))
+
+;; cmd-widen: Restore buffer from narrowing
+(def (cmd-widen app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (original (hash-get (app-state-modes app) 'narrow-original)))
+    (if (not original)
+      (echo-message! echo "Buffer is not narrowed")
+      (begin
+        (editor-set-text ed original)
+        (hash-remove! (app-state-modes app) 'narrow-original)
+        (hash-remove! (app-state-modes app) 'narrow-start)
+        (echo-message! echo "Buffer widened")))))
+
+;; cmd-goto-char: Go to a specific character position
+(def (cmd-goto-char app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos-str (echo-read-string echo "Goto char position: ")))
+    (if (or (not pos-str) (string=? pos-str ""))
+      (echo-message! echo "No position specified")
+      (let ((pos (string->number pos-str)))
+        (if (not pos)
+          (echo-message! echo "Invalid position")
+          (let ((len (editor-get-length ed)))
+            (if (or (< pos 0) (> pos len))
+              (echo-message! echo (str "Position out of range (0-" len ")"))
+              (begin
+                (editor-set-cursor ed pos)
+                (echo-message! echo (str "Moved to position " pos))))))))))
+
+;; cmd-goto-line-relative: Go to a line relative to current
+(def (cmd-goto-line-relative app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (offset-str (echo-read-string echo "Goto line relative (+N or -N): ")))
+    (if (or (not offset-str) (string=? offset-str ""))
+      (echo-message! echo "No offset specified")
+      (let ((offset (string->number offset-str)))
+        (if (not offset)
+          (echo-message! echo "Invalid number")
+          (let* ((cur-line (editor-current-line ed))
+                 (target (+ cur-line offset))
+                 (total (editor-line-count ed))
+                 (clamped (max 0 (min target (- total 1)))))
+            (editor-set-cursor ed (editor-line-start ed clamped))
+            (echo-message! echo (str "Line " (+ clamped 1)))))))))
+
+;; cmd-set-goal-column: Set or clear the goal column for vertical movement
+(def (cmd-set-goal-column app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (cur-line (editor-current-line ed))
+         (line-start (editor-line-start ed cur-line))
+         (col (- pos line-start)))
+    (if (hash-get (app-state-modes app) 'goal-column)
+      (begin
+        (hash-remove! (app-state-modes app) 'goal-column)
+        (echo-message! echo "Goal column cleared"))
+      (begin
+        (hash-put! (app-state-modes app) 'goal-column col)
+        (echo-message! echo (str "Goal column set to " col))))))
+
+;; cmd-what-line: Show current line number
+(def (cmd-what-line app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (cur-line (editor-current-line ed))
+         (total (editor-line-count ed)))
+    (echo-message! echo (str "Line " (+ cur-line 1) " of " total))))
+
+;; cmd-what-page: Show current page number (pages separated by form feeds)
+(def (cmd-what-page app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (page (let loop ((i 0) (p 1))
+                 (if (>= i pos) p
+                   (if (char=? (string-ref text i) #\x0C)
+                     (loop (+ i 1) (+ p 1))
+                     (loop (+ i 1) p))))))
+    (echo-message! echo (str "Page " page))))
+
+;; cmd-what-cursor-position: Show detailed info about cursor position (C-x =)
+(def (cmd-what-cursor-position app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (pos (editor-cursor-position ed))
+         (text (editor-get-text ed))
+         (len (string-length text))
+         (cur-line (editor-current-line ed))
+         (line-start (editor-line-start ed cur-line))
+         (col (- pos line-start)))
+    (if (>= pos len)
+      (echo-message! echo (str "point=" pos " of " len " (EOB) line=" (+ cur-line 1) " col=" col))
+      (let* ((c (string-ref text pos))
+             (code (char->integer c)))
+        (echo-message! echo (str "Char: " (if (char=? c #\space) "SPC" (string c))
+                                 " (#x" (number->string code 16)
+                                 ", " code ")"
+                                 " point=" pos " of " len
+                                 " (" (if (= len 0) 0 (quotient (* pos 100) len)) "%)"
+                                 " line=" (+ cur-line 1)
+                                 " col=" col))))))
+
+;; cmd-count-words-region: Count words in the selected region
+(def (cmd-count-words-region app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      ;; No selection — count whole buffer
+      (let* ((text (editor-get-text ed))
+             (len (string-length text))
+             (words (let loop ((i 0) (in-word #f) (count 0))
+                      (if (>= i len) (if in-word (+ count 1) count)
+                        (if (char-whitespace? (string-ref text i))
+                          (loop (+ i 1) #f (if in-word (+ count 1) count))
+                          (loop (+ i 1) #t count)))))
+             (lines (+ 1 (let loop ((i 0) (n 0))
+                           (if (>= i len) n
+                             (loop (+ i 1) (if (char=? (string-ref text i) #\newline) (+ n 1) n)))))))
+        (echo-message! echo (str "Buffer has " lines " lines, " words " words, " len " characters")))
+      (let* ((text (editor-get-text-range ed sel-start sel-end))
+             (len (string-length text))
+             (words (let loop ((i 0) (in-word #f) (count 0))
+                      (if (>= i len) (if in-word (+ count 1) count)
+                        (if (char-whitespace? (string-ref text i))
+                          (loop (+ i 1) #f (if in-word (+ count 1) count))
+                          (loop (+ i 1) #t count))))))
+        (echo-message! echo (str "Region: " words " words, " len " characters"))))))
+
+;; cmd-count-lines-region: Count lines in the selected region
+(def (cmd-count-lines-region app)
+  (let* ((buf (app-state-current-buffer app))
+         (ed (buffer-editor buf))
+         (echo (app-state-echo app))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (let* ((total (editor-line-count ed)))
+        (echo-message! echo (str "Buffer has " total " lines")))
+      (let* ((text (editor-get-text-range ed sel-start sel-end))
+             (len (string-length text))
+             (lines (+ 1 (let loop ((i 0) (n 0))
+                           (if (>= i len) n
+                             (loop (+ i 1) (if (char=? (string-ref text i) #\newline) (+ n 1) n)))))))
+        (echo-message! echo (str "Region has " lines " lines, " len " characters"))))))

@@ -1586,6 +1586,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Delete indentation | :orange_circle: | Join line with previous |
 | Fixup whitespace | :orange_circle: | Collapse whitespace around point |
 | Just one space | :orange_circle: | Replace whitespace with single space |
+| Delete horizontal space | :orange_circle: | Delete spaces/tabs around point |
+| Cycle spacing | :orange_circle: | Cycle between one/no/original spacing |
+| Zap to char | :orange_circle: | Delete to next char occurrence (inclusive) |
+| Zap up to char | :orange_circle: | Delete up to next char occurrence |
+| Delete pair | :orange_circle: | Delete matching pair characters |
+| Mark word | :orange_circle: | Select word at point |
+| Mark sexp | :orange_circle: | Select S-expression at point |
+| Mark paragraph | :orange_circle: | Select current paragraph |
+| Mark page | :orange_circle: | Select current page |
+| Mark whole buffer | :orange_circle: | Select entire buffer |
+| Narrow to page | :orange_circle: | Narrow buffer to current page |
+| Widen | :orange_circle: | Restore buffer from narrowing |
+| Goto char | :orange_circle: | Go to character position |
+| Goto line relative | :orange_circle: | Go to line relative to current |
+| Set goal column | :orange_circle: | Set/clear goal column for movement |
+| What line | :orange_circle: | Show current line number |
+| What page | :orange_circle: | Show current page number |
+| What cursor position | :orange_circle: | Show detailed cursor position info |
+| Count words region | :orange_circle: | Count words in region or buffer |
+| Count lines region | :orange_circle: | Count lines in region or buffer |
 
 ---
 
