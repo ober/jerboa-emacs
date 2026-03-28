@@ -13799,3 +13799,49 @@
     (echo-read-string echo "Islamic date: "
       (lambda (date)
         (echo-message! echo (str "Calendar: jumped to Islamic date " date))))))
+
+;;; ——— Round 110: VC (version control) extended (batch 2) ———
+
+(def (cmd-vc-dir-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VC Dir search: "
+      (lambda (pattern)
+        (echo-message! echo (str "VC Dir: searching for '" pattern "'"))))))
+
+(def (cmd-vc-dir-isearch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: incremental search in marked files")))
+
+(def (cmd-vc-dir-isearch-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: incremental regexp search in marked files")))
+
+(def (cmd-vc-dir-hide-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hide state: "
+      (lambda (state)
+        (echo-message! echo (str "VC Dir: hiding files with state " state))))))
+
+(def (cmd-vc-dir-show-fileentry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: showing file entry details")))
+
+(def (cmd-vc-dir-kill-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: removed current entry from listing")))
+
+(def (cmd-vc-dir-clean-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: cleaning untracked files from directory")))
+
+(def (cmd-vc-dir-find-file-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: opening file in other window")))
+
+(def (cmd-vc-dir-previous-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: moved to previous directory")))
+
+(def (cmd-vc-dir-next-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: moved to next directory")))

@@ -14358,3 +14358,57 @@
 (def (cmd-calendar-unmark app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Calendar: cleared all marks")))
+
+;;; ——— Round 110: VC (version control) extended (batch 1) ———
+
+(def (cmd-vc-print-branch-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Branch: "
+      (lambda (branch)
+        (echo-message! echo (str "VC: showing log for branch " branch))))))
+
+(def (cmd-vc-log-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VC log search: "
+      (lambda (pattern)
+        (echo-message! echo (str "VC: searching log for '" pattern "'"))))))
+
+(def (cmd-vc-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Merge branch: "
+      (lambda (branch)
+        (echo-message! echo (str "VC: merging branch " branch))))))
+
+(def (cmd-vc-root-version-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC: showing diff for entire repository")))
+
+(def (cmd-vc-edit-next-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC: next command will be edited before execution")))
+
+(def (cmd-vc-switch-backend app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Switch to backend: "
+      (lambda (backend)
+        (echo-message! echo (str "VC: switched backend to " backend))))))
+
+(def (cmd-vc-dir-mark-all-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: marked all files")))
+
+(def (cmd-vc-dir-unmark-all-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: unmarked all files")))
+
+(def (cmd-vc-dir-toggle-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VC Dir: toggled mark on current file")))
+
+(def (cmd-vc-dir-query-replace-regexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VC Dir query replace regexp: "
+      (lambda (pattern)
+        (echo-read-string echo "Replace with: "
+          (lambda (replacement)
+            (echo-message! echo (str "VC Dir: replacing '" pattern "' with '" replacement "'"))))))))

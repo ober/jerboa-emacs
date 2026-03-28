@@ -3714,6 +3714,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | calendar-goto-hebrew-date | :orange_circle: | Jump to Hebrew date |
 | calendar-goto-islamic-date | :orange_circle: | Jump to Islamic date |
 
+### Round 110 — VC (Version Control) Extended
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| vc-print-branch-log | :orange_circle: | Show log for specific branch |
+| vc-log-search | :orange_circle: | Search version control log |
+| vc-merge | :orange_circle: | Merge a branch |
+| vc-root-version-diff | :orange_circle: | Diff entire repository |
+| vc-edit-next-command | :orange_circle: | Edit next VC command before run |
+| vc-switch-backend | :orange_circle: | Switch VC backend |
+| vc-dir-mark-all-files | :orange_circle: | Mark all files in VC dir |
+| vc-dir-unmark-all-files | :orange_circle: | Unmark all files in VC dir |
+| vc-dir-toggle-mark | :orange_circle: | Toggle mark on current file |
+| vc-dir-query-replace-regexp | :orange_circle: | Query replace in marked files |
+| vc-dir-search | :orange_circle: | Search in marked files |
+| vc-dir-isearch | :orange_circle: | Incremental search in marked files |
+| vc-dir-isearch-regexp | :orange_circle: | Regexp isearch in marked files |
+| vc-dir-hide-state | :orange_circle: | Hide files by state |
+| vc-dir-show-fileentry | :orange_circle: | Show file entry details |
+| vc-dir-kill-line | :orange_circle: | Remove entry from listing |
+| vc-dir-clean-directory | :orange_circle: | Clean untracked files |
+| vc-dir-find-file-other-window | :orange_circle: | Open file in other window |
+| vc-dir-previous-directory | :orange_circle: | Move to previous directory |
+| vc-dir-next-directory | :orange_circle: | Move to next directory |
+
 ---
 
 ## Recommended Development Roadmap
