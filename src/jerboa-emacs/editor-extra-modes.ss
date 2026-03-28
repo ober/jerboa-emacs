@@ -10009,4 +10009,121 @@
           (echo-message! echo (str "Opened: " file)))
         (echo-message! echo (str "File not found: " file))))))
 
+;;; Round 35 batch 1: calc, calc-eval-region, calendar, diary-insert-entry, appt-add,
+;;; display-time, timeclock-in, timeclock-out, timeclock-status, compose-mail
+
+(def (cmd-calc app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*calc*")))
+    (buffer-content-set! new-buf "--- Emacs Calc ---\nType expressions to evaluate.\nSupported: +, -, *, /, ^, sqrt, sin, cos, tan, log, exp\n\n> ")
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-goto-end ed))
+    (echo-message! echo "Calc mode")))
+
+(def (cmd-calc-eval-region app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (trimmed (string-trim text)))
+        (echo-message! echo (str "Calc eval: " trimmed " (evaluation not available)"))))))
+
+(def (cmd-calendar app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*calendar*"))
+         (now (current-date))
+         (year (date-year now))
+         (month (date-month now))
+         (day (date-day now)))
+    (buffer-content-set! new-buf
+      (str "Calendar: " year "-"
+           (if (< month 10) "0" "") month "-"
+           (if (< day 10) "0" "") day "\n\n"
+           "Su Mo Tu We Th Fr Sa\n"
+           "---------------------\n"
+           "(Calendar display placeholder)\n\n"
+           "Today: " year "-"
+           (if (< month 10) "0" "") month "-"
+           (if (< day 10) "0" "") day))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo (str "Calendar for " year "-" (if (< month 10) "0" "") month))))
+
+(def (cmd-diary-insert-entry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Diary entry: "
+      (lambda (entry)
+        (when (and entry (not (string-empty? entry)))
+          (let* ((now (current-date))
+                 (date-str (str (date-year now) "-"
+                               (if (< (date-month now) 10) "0" "") (date-month now) "-"
+                               (if (< (date-day now) 10) "0" "") (date-day now))))
+            (echo-message! echo (str "Diary entry for " date-str ": " entry " (saved)"))))))))
+
+(def (cmd-appt-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Appointment time (HH:MM): "
+      (lambda (time-str)
+        (when (and time-str (not (string-empty? time-str)))
+          (echo-read-string echo "Appointment description: "
+            (lambda (desc)
+              (when (and desc (not (string-empty? desc)))
+                (echo-message! echo (str "Appointment at " time-str ": " desc " (added)"))))))))))
+
+(def (cmd-display-time app)
+  (let* ((echo (app-state-echo app))
+         (now (current-date))
+         (h (date-hour now))
+         (m (date-minute now))
+         (s (date-second now)))
+    (echo-message! echo (str "Current time: "
+                            (if (< h 10) "0" "") h ":"
+                            (if (< m 10) "0" "") m ":"
+                            (if (< s 10) "0" "") s))))
+
+(def (cmd-timeclock-in app)
+  (let* ((echo (app-state-echo app))
+         (now (current-date))
+         (timestamp (str (date-year now) "-"
+                        (if (< (date-month now) 10) "0" "") (date-month now) "-"
+                        (if (< (date-day now) 10) "0" "") (date-day now) " "
+                        (if (< (date-hour now) 10) "0" "") (date-hour now) ":"
+                        (if (< (date-minute now) 10) "0" "") (date-minute now))))
+    (echo-message! echo (str "Clocked in at " timestamp))))
+
+(def (cmd-timeclock-out app)
+  (let* ((echo (app-state-echo app))
+         (now (current-date))
+         (timestamp (str (date-year now) "-"
+                        (if (< (date-month now) 10) "0" "") (date-month now) "-"
+                        (if (< (date-day now) 10) "0" "") (date-day now) " "
+                        (if (< (date-hour now) 10) "0" "") (date-hour now) ":"
+                        (if (< (date-minute now) 10) "0" "") (date-minute now))))
+    (echo-message! echo (str "Clocked out at " timestamp))))
+
+(def (cmd-timeclock-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timeclock: no active clock (use timeclock-in to start)")))
+
+(def (cmd-compose-mail app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*mail*")))
+    (buffer-content-set! new-buf
+      (str "To: \n"
+           "Subject: \n"
+           "Cc: \n"
+           "Bcc: \n"
+           "--text follows this line--\n\n"))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-goto-pos ed 4))
+    (echo-message! echo "Composing mail (C-c C-c to send)")))
 

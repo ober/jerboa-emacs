@@ -1807,6 +1807,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Tags search | :orange_circle: | Search TAGS (placeholder) |
 | Tags query replace | :orange_circle: | Replace in TAGS (placeholder) |
 
+### Round 35
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Calc | :orange_circle: | Calculator buffer with expression input |
+| Calc eval region | :orange_circle: | Evaluate selected region as calc expression |
+| Calendar | :orange_circle: | Display calendar with current date |
+| Diary insert entry | :orange_circle: | Add diary entry for today |
+| Appt add | :orange_circle: | Add appointment with time and description |
+| Display time | :orange_circle: | Show current time in echo area |
+| Timeclock in | :orange_circle: | Clock in with timestamp |
+| Timeclock out | :orange_circle: | Clock out with timestamp |
+| Timeclock status | :orange_circle: | Show timeclock status |
+| Compose mail | :orange_circle: | Open mail composition buffer |
+| Rmail | :orange_circle: | Read mail client |
+| Gnus | :orange_circle: | Usenet/mail reader |
+| EWW | :orange_circle: | Emacs Web Wowser browser (placeholder) |
+| EWW browse URL | :orange_circle: | Browse URL at point |
+| SX search | :orange_circle: | StackExchange search |
+| List processes | :orange_circle: | Display running processes |
+| Serial term | :orange_circle: | Serial port terminal (placeholder) |
+| Doc view mode | :orange_circle: | Document viewing mode (placeholder) |
+| Dunnet | :orange_circle: | Text adventure game |
+| Snake mode | :orange_circle: | Snake game |
+
 ---
 
 ## Recommended Development Roadmap

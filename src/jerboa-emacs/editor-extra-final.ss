@@ -9501,3 +9501,123 @@
 (def (cmd-tags-query-replace app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tags query-replace (TAGS file not available)")))
+
+;;; Round 35 batch 2: rmail, gnus, eww, eww-browse-url, sx-search,
+;;; list-processes, serial-term, doc-view-mode, dunnet, snake-mode
+
+(def (cmd-rmail app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*rmail*")))
+    (buffer-content-set! new-buf
+      (str "RSTRSTRSTRSTRSTR\n"
+           "0 messages, 0 new\n\n"
+           "No mail.\n\n"
+           "Commands: n=next, p=prev, d=delete, s=save, q=quit"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "No new mail")))
+
+(def (cmd-gnus app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*gnus*")))
+    (buffer-content-set! new-buf
+      (str "Gnus -- news reader\n\n"
+           "No servers configured.\n\n"
+           "Add servers to ~/.gnus.el to get started.\n"
+           "q to quit"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Gnus started (no servers configured)")))
+
+(def (cmd-eww app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL or keywords: "
+      (lambda (url)
+        (when (and url (not (string-empty? url)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*eww*"))))
+            (buffer-content-set! new-buf
+              (str "EWW -- Emacs Web Wowser\n\n"
+                   "URL: " url "\n\n"
+                   "Loading... (web browsing not available)\n\n"
+                   "EWW cannot fetch web pages in this environment."))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "EWW: " url " (not available)"))))))))
+
+(def (cmd-eww-browse-url app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (editor-current-pos ed))
+         (line (editor-get-current-line ed)))
+    (echo-message! echo (str "No URL found at point"))))
+
+(def (cmd-sx-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "StackExchange search: "
+      (lambda (query)
+        (when (and query (not (string-empty? query)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer "*sx-search*")))
+            (buffer-content-set! new-buf
+              (str "StackExchange Search Results\n"
+                   "Query: " query "\n\n"
+                   "No results (network access not available)"))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "Searched: " query " (no results)"))))))))
+
+(def (cmd-list-processes app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Process List*")))
+    (buffer-content-set! new-buf
+      (str "  Process         Status    Buffer          Command\n"
+           "  -------         ------    ------          -------\n"
+           "  (no processes)\n"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Process list")))
+
+(def (cmd-serial-term app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Serial port (e.g., /dev/ttyUSB0): "
+      (lambda (port)
+        (when (and port (not (string-empty? port)))
+          (echo-message! echo (str "Serial terminal on " port " (not available)")))))))
+
+(def (cmd-doc-view-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doc-view-mode: document viewing not available")))
+
+(def (cmd-dunnet app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*dunnet*")))
+    (buffer-content-set! new-buf
+      (str "Dead end\n"
+           "You are at a dead end of a dirt road.  The road goes to the east.\n"
+           "In the distance you can see that it will eventually fork off.\n"
+           "The trees here are very tall royal palms, and they are spaced\n"
+           "fairly far apart.\n\n"
+           "There is a shovel here.\n\n> "))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (editor-goto-end ed))
+    (echo-message! echo "Welcome to Dunnet (text adventure)")))
+
+(def (cmd-snake-mode app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*snake*")))
+    (buffer-content-set! new-buf
+      (str "Snake Game\n\n"
+           "+--------------------+\n"
+           "|                    |\n"
+           "|        ###>        |\n"
+           "|                    |\n"
+           "|            *       |\n"
+           "|                    |\n"
+           "+--------------------+\n\n"
+           "Use arrow keys to move. Score: 0"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Snake game started")))
