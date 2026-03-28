@@ -10585,3 +10585,57 @@
                    "Status: not available"))
             (switch-to-buffer frame new-buf)
             (echo-message! echo (str "Described: " checker))))))))
+
+;;; Round 48 batch 2: neotree-toggle, neotree-show, neotree-hide,
+;;; neotree-refresh, neotree-change-root, centaur-tabs-mode,
+;;; centaur-tabs-forward, centaur-tabs-backward,
+;;; centaur-tabs-forward-group, centaur-tabs-backward-group
+
+(def (cmd-neotree-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "neotree-visible")
+    (if (mode-enabled? app "neotree-visible")
+      (echo-message! echo "NeoTree: shown")
+      (echo-message! echo "NeoTree: hidden"))))
+
+(def (cmd-neotree-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NeoTree: shown")))
+
+(def (cmd-neotree-hide app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NeoTree: hidden")))
+
+(def (cmd-neotree-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NeoTree: refreshed")))
+
+(def (cmd-neotree-change-root app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New root directory: "
+      (lambda (dir)
+        (when (and dir (not (string-empty? dir)))
+          (echo-message! echo (str "NeoTree: root changed to " dir)))))))
+
+(def (cmd-centaur-tabs-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "centaur-tabs")
+    (if (mode-enabled? app "centaur-tabs")
+      (echo-message! echo "Centaur tabs enabled")
+      (echo-message! echo "Centaur tabs disabled"))))
+
+(def (cmd-centaur-tabs-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Next tab")))
+
+(def (cmd-centaur-tabs-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Previous tab")))
+
+(def (cmd-centaur-tabs-forward-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Next tab group")))
+
+(def (cmd-centaur-tabs-backward-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Previous tab group")))

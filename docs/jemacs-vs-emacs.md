@@ -2132,6 +2132,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Flycheck select checker | :orange_circle: | Select syntax checker |
 | Flycheck describe checker | :orange_circle: | Describe checker details |
 
+### Round 48
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Treemacs select window | :orange_circle: | Select treemacs window |
+| Treemacs toggle | :orange_circle: | Toggle tree view |
+| Treemacs add project | :orange_circle: | Add project to workspace |
+| Treemacs remove project | :orange_circle: | Remove project from workspace |
+| Treemacs rename project | :orange_circle: | Rename project |
+| Treemacs collapse all | :orange_circle: | Collapse all tree nodes |
+| Treemacs refresh | :orange_circle: | Refresh tree view |
+| Treemacs create dir | :orange_circle: | Create directory |
+| Treemacs create file | :orange_circle: | Create file |
+| Treemacs delete | :orange_circle: | Delete item at point |
+| NeoTree toggle | :orange_circle: | Toggle NeoTree |
+| NeoTree show | :orange_circle: | Show NeoTree |
+| NeoTree hide | :orange_circle: | Hide NeoTree |
+| NeoTree refresh | :orange_circle: | Refresh NeoTree |
+| NeoTree change root | :orange_circle: | Change NeoTree root |
+| Centaur tabs mode | :orange_circle: | Toggle centaur tabs |
+| Centaur tabs forward | :orange_circle: | Next tab |
+| Centaur tabs backward | :orange_circle: | Previous tab |
+| Centaur tabs forward group | :orange_circle: | Next tab group |
+| Centaur tabs backward group | :orange_circle: | Previous tab group |
+
 ---
 
 ## Recommended Development Roadmap

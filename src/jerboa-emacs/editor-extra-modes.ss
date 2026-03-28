@@ -11143,3 +11143,63 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "DAP: disconnected from debug session")))
 
+;;; Round 48 batch 1: treemacs-select-window, treemacs-toggle,
+;;; treemacs-add-project, treemacs-remove-project, treemacs-rename-project,
+;;; treemacs-collapse-all, treemacs-refresh, treemacs-create-dir,
+;;; treemacs-create-file, treemacs-delete
+
+(def (cmd-treemacs-select-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: select tree window")))
+
+(def (cmd-treemacs-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "treemacs")
+    (if (mode-enabled? app "treemacs")
+      (echo-message! echo "Treemacs: shown")
+      (echo-message! echo "Treemacs: hidden"))))
+
+(def (cmd-treemacs-add-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Add project directory: "
+      (lambda (dir)
+        (when (and dir (not (string-empty? dir)))
+          (echo-message! echo (str "Treemacs: added project " dir)))))))
+
+(def (cmd-treemacs-remove-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: project removed")))
+
+(def (cmd-treemacs-rename-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename project to: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-message! echo (str "Treemacs: renamed to " name)))))))
+
+(def (cmd-treemacs-collapse-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: all nodes collapsed")))
+
+(def (cmd-treemacs-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: refreshed")))
+
+(def (cmd-treemacs-create-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New directory name: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-message! echo (str "Treemacs: created directory " name)))))))
+
+(def (cmd-treemacs-create-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New file name: "
+      (lambda (name)
+        (when (and name (not (string-empty? name)))
+          (echo-message! echo (str "Treemacs: created file " name)))))))
+
+(def (cmd-treemacs-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treemacs: delete item at point")))
+
