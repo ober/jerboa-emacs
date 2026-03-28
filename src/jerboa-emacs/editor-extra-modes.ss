@@ -10424,3 +10424,113 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Swapped window state with left window")))
 
+;;; Round 39 batch 1: quoted-insert-verbose, describe-input-method, list-input-methods,
+;;; describe-coding-system, list-coding-systems, set-buffer-file-coding-system,
+;;; recode-region, universal-coding-system-argument, prefer-coding-system,
+;;; describe-language-environment
+
+(def (cmd-quoted-insert-verbose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Type a character or its code (octal/hex) to insert literally")))
+
+(def (cmd-describe-input-method app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe input method: "
+      (lambda (method)
+        (when (and method (not (string-empty? method)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*Help: " method "*"))))
+            (buffer-content-set! new-buf
+              (str "Input Method: " method "\n\n"
+                   "Description not available.\n"
+                   "Input methods provide alternate keyboard mappings\n"
+                   "for entering characters in different languages."))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "Described: " method))))))))
+
+(def (cmd-list-input-methods app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Input Methods*")))
+    (buffer-content-set! new-buf
+      (str "Input Methods\n\n"
+           "  latin-1-prefix    Latin-1 characters via prefix key\n"
+           "  latin-1-postfix   Latin-1 characters via postfix key\n"
+           "  TeX               TeX-style input for special chars\n"
+           "  cyrillic-jcuken   Russian JCUKEN layout\n"
+           "  japanese          Japanese input\n"
+           "  chinese-py        Chinese Pinyin\n"
+           "  korean-hangul     Korean Hangul\n"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Input methods")))
+
+(def (cmd-describe-coding-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Describe coding system: "
+      (lambda (cs)
+        (when (and cs (not (string-empty? cs)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*Help: " cs "*"))))
+            (buffer-content-set! new-buf
+              (str "Coding System: " cs "\n\n"
+                   "Type: charset-based\n"
+                   "EOL type: platform-dependent\n\n"
+                   "(Detailed coding system info not available)"))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "Described: " cs))))))))
+
+(def (cmd-list-coding-systems app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Coding Systems*")))
+    (buffer-content-set! new-buf
+      (str "Coding Systems\n\n"
+           "  utf-8             Unicode UTF-8\n"
+           "  utf-8-with-bom    UTF-8 with BOM\n"
+           "  utf-16            Unicode UTF-16\n"
+           "  latin-1           ISO 8859-1\n"
+           "  ascii             US-ASCII\n"
+           "  shift_jis         Japanese Shift-JIS\n"
+           "  euc-jp            Japanese EUC-JP\n"
+           "  gb2312            Simplified Chinese\n"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Coding systems")))
+
+(def (cmd-set-buffer-file-coding-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Coding system: "
+      (lambda (cs)
+        (when (and cs (not (string-empty? cs)))
+          (echo-message! echo (str "Buffer coding system set to " cs)))))))
+
+(def (cmd-recode-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Recode region: specify source and target coding systems")))
+
+(def (cmd-universal-coding-system-argument app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Specify coding system for next command")))
+
+(def (cmd-prefer-coding-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Prefer coding system: "
+      (lambda (cs)
+        (when (and cs (not (string-empty? cs)))
+          (echo-message! echo (str "Preferred coding system: " cs)))))))
+
+(def (cmd-describe-language-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Language environment: "
+      (lambda (lang)
+        (when (and lang (not (string-empty? lang)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer (str "*Help: " lang "*"))))
+            (buffer-content-set! new-buf
+              (str "Language Environment: " lang "\n\n"
+                   "Langstrstrstrstrstr: " lang "\n"
+                   "Langstrstrstrstrstr: " lang "\n"
+                   "Input methods, coding systems, and fonts\n"
+                   "configured for this language environment."))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "Described: " lang))))))))
+

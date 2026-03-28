@@ -1907,6 +1907,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Insert char by name | :orange_circle: | Insert Unicode character by name |
 | Set input method | :orange_circle: | Set keyboard input method |
 
+### Round 39
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Quoted insert verbose | :orange_circle: | Insert literal character by code |
+| Describe input method | :orange_circle: | Describe an input method |
+| List input methods | :orange_circle: | List available input methods |
+| Describe coding system | :orange_circle: | Describe a coding system |
+| List coding systems | :orange_circle: | List available coding systems |
+| Set buffer file coding system | :orange_circle: | Set coding for current buffer |
+| Recode region | :orange_circle: | Recode region between coding systems |
+| Universal coding system argument | :orange_circle: | Specify coding for next command |
+| Prefer coding system | :orange_circle: | Set preferred coding system |
+| Describe language environment | :orange_circle: | Describe language environment |
+| What cursor position verbose | :orange_circle: | Detailed character info at point |
+| Display local help | :orange_circle: | Show help for thing at point |
+| Info apropos | :orange_circle: | Search info documentation |
+| Woman | :orange_circle: | Man page viewer (pure Lisp) |
+| Shortdoc display group | :orange_circle: | Quick function reference by group |
+| Find library | :orange_circle: | Find library file |
+| List packages no fetch | :orange_circle: | List cached packages |
+| Package autoremove | :orange_circle: | Remove unused packages |
+| Package refresh no confirm | :orange_circle: | Refresh package archives |
+| Report emacs bug | :orange_circle: | Compose bug report |
+
 ---
 
 ## Recommended Development Roadmap
