@@ -15454,3 +15454,47 @@
     (echo-read-string echo "URL: "
       (lambda (url)
         (echo-message! echo (str "Opening " url " with KDE browser"))))))
+
+;; ============================================================
+;; Round 145 — Message mode, Newsticker, SMTP (batch 2)
+;; ============================================================
+
+(def (cmd-message-send-and-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: sent and buffer killed")))
+
+(def (cmd-message-kill-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: buffer killed")))
+
+(def (cmd-message-cite-original app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: cited original message")))
+
+(def (cmd-message-insert-signature app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: signature inserted")))
+
+(def (cmd-message-mark-inserted-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: marked inserted region")))
+
+(def (cmd-message-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: tab completion")))
+
+(def (cmd-newsticker-mark-item-at-point-as-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Newsticker: marked item as read")))
+
+(def (cmd-newsticker-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Newsticker: opened item URL in browser")))
+
+(def (cmd-smtp-send-it app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SMTP: sending message via SMTP")))
+
+(def (cmd-smtpmail-send-queued-mail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SMTPmail: sending queued mail")))

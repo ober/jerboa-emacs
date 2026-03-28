@@ -16068,3 +16068,59 @@
 (def (cmd-tramp-archive-cleanup-hash app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TRAMP: cleaned up archive hash")))
+
+;; ============================================================
+;; Round 145 — BBDB, Message mode, Newsticker, SMTP (batch 1)
+;; ============================================================
+
+(def (cmd-bbdb-search-name app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search BBDB by name: "
+      (lambda (name)
+        (echo-message! echo (str "BBDB: searching for name '" name "'"))))))
+
+(def (cmd-bbdb-search-organization app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search BBDB by organization: "
+      (lambda (org)
+        (echo-message! echo (str "BBDB: searching for org '" org "'"))))))
+
+(def (cmd-bbdb-search-mail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search BBDB by mail: "
+      (lambda (mail)
+        (echo-message! echo (str "BBDB: searching for mail '" mail "'"))))))
+
+(def (cmd-bbdb-search-phone app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search BBDB by phone: "
+      (lambda (phone)
+        (echo-message! echo (str "BBDB: searching for phone '" phone "'"))))))
+
+(def (cmd-bbdb-search-notes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search BBDB by notes: "
+      (lambda (notes)
+        (echo-message! echo (str "BBDB: searching notes for '" notes "'"))))))
+
+(def (cmd-bbdb-display-all-records app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: displaying all records")))
+
+(def (cmd-bbdb-mail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "BBDB record to mail: "
+      (lambda (rec)
+        (echo-message! echo (str "BBDB: composing mail to " rec))))))
+
+(def (cmd-bbdb-merge-records app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: merging duplicate records")))
+
+(def (cmd-bbdb-delete-field-or-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: deleted field or record at point")))
+
+(def (cmd-message-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: sending...")))

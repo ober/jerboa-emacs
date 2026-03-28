@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 145 — BBDB, Message Mode, Newsticker, SMTP
+
+| Feature | Status | Notes |
+|---|---|---|
+| `bbdb-search-name` | :orange_circle: | Search BBDB by name |
+| `bbdb-search-organization` | :orange_circle: | Search BBDB by organization |
+| `bbdb-search-mail` | :orange_circle: | Search BBDB by email |
+| `bbdb-search-phone` | :orange_circle: | Search BBDB by phone |
+| `bbdb-search-notes` | :orange_circle: | Search BBDB by notes |
+| `bbdb-display-all-records` | :orange_circle: | Display all BBDB records |
+| `bbdb-mail` | :orange_circle: | Compose mail to BBDB record |
+| `bbdb-merge-records` | :orange_circle: | Merge duplicate records |
+| `bbdb-delete-field-or-record` | :orange_circle: | Delete field or record |
+| `message-send` | :orange_circle: | Send message |
+| `message-send-and-exit` | :orange_circle: | Send and kill buffer |
+| `message-kill-buffer` | :orange_circle: | Kill message buffer |
+| `message-cite-original` | :orange_circle: | Cite original message |
+| `message-insert-signature` | :orange_circle: | Insert signature |
+| `message-mark-inserted-region` | :orange_circle: | Mark inserted region |
+| `message-tab` | :orange_circle: | Tab completion in message |
+| `newsticker-mark-item-at-point-as-read` | :orange_circle: | Mark news item as read |
+| `newsticker-browse-url` | :orange_circle: | Browse news item URL |
+| `smtp-send-it` | :orange_circle: | Send via SMTP |
+| `smtpmail-send-queued-mail` | :orange_circle: | Send queued mail |
+
 ### Round 144 — EWW, SHR, Browse-url, Tramp, Net-utils
 
 | Feature | Status | Notes |
