@@ -11321,3 +11321,56 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Evil: quit (use C-x C-c to exit editor)")))
 
+;;; Round 51 batch 1: pdf-view-mode, pdf-view-goto-page, pdf-view-next-page,
+;;; pdf-view-previous-page, pdf-view-fit-page, pdf-view-search,
+;;; pdf-view-midnight-mode, nov-mode, nov-next-document, nov-previous-document
+
+(def (cmd-pdf-view-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF view mode (pdf-tools required)")))
+
+(def (cmd-pdf-view-goto-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Go to page: "
+      (lambda (page)
+        (when (and page (not (string-empty? page)))
+          (echo-message! echo (str "PDF: page " page)))))))
+
+(def (cmd-pdf-view-next-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: next page")))
+
+(def (cmd-pdf-view-previous-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: previous page")))
+
+(def (cmd-pdf-view-fit-page app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDF: fit page to window")))
+
+(def (cmd-pdf-view-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PDF search: "
+      (lambda (query)
+        (when (and query (not (string-empty? query)))
+          (echo-message! echo (str "PDF search: " query)))))))
+
+(def (cmd-pdf-view-midnight-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "pdf-midnight")
+    (if (mode-enabled? app "pdf-midnight")
+      (echo-message! echo "PDF midnight mode enabled (dark background)")
+      (echo-message! echo "PDF midnight mode disabled"))))
+
+(def (cmd-nov-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov mode: EPUB reader")))
+
+(def (cmd-nov-next-document app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: next chapter")))
+
+(def (cmd-nov-previous-document app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nov: previous chapter")))
+

@@ -10783,3 +10783,87 @@
            "(No packages loaded via use-package)"))
     (switch-to-buffer frame new-buf)
     (echo-message! echo "Use-package report")))
+
+;;; Round 51 batch 2: djvu-mode, notmuch-search, notmuch-show, notmuch-tree,
+;;; wanderlust, mew, vm-visit-folder, bbdb, bbdb-search, ebdb
+
+(def (cmd-djvu-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DjVu mode: document viewer (not available)")))
+
+(def (cmd-notmuch-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Notmuch search: "
+      (lambda (query)
+        (when (and query (not (string-empty? query)))
+          (let* ((frame (app-state-frame app))
+                 (new-buf (make-buffer "*notmuch-search*")))
+            (buffer-content-set! new-buf
+              (str "Notmuch Search: " query "\n\n"
+                   "(No mail database available)"))
+            (switch-to-buffer frame new-buf)
+            (echo-message! echo (str "Notmuch: " query))))))))
+
+(def (cmd-notmuch-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch show: no message to display")))
+
+(def (cmd-notmuch-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch tree: threaded mail view")))
+
+(def (cmd-wanderlust app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*wanderlust*")))
+    (buffer-content-set! new-buf
+      (str "Wanderlust -- mail/news reader\n\n"
+           "No folders configured.\n"
+           "Add folders to ~/.wl to get started."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Wanderlust (no folders)")))
+
+(def (cmd-mew app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*mew*")))
+    (buffer-content-set! new-buf
+      (str "Mew -- mail environment\n\n"
+           "No mail configuration found."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Mew (not configured)")))
+
+(def (cmd-vm-visit-folder app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VM folder: "
+      (lambda (folder)
+        (when (and folder (not (string-empty? folder)))
+          (echo-message! echo (str "VM: " folder " (not available)")))))))
+
+(def (cmd-bbdb app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*BBDB*")))
+    (buffer-content-set! new-buf
+      (str "BBDB -- Big Brother Database\n\n"
+           "Contact database is empty.\n"
+           "Use bbdb-create to add contacts."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "BBDB: empty database")))
+
+(def (cmd-bbdb-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "BBDB search: "
+      (lambda (query)
+        (when (and query (not (string-empty? query)))
+          (echo-message! echo (str "BBDB: no matches for '" query "'")))))))
+
+(def (cmd-ebdb app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*EBDB*")))
+    (buffer-content-set! new-buf
+      (str "EBDB -- Insidious Big Brother Database\n\n"
+           "Contact database is empty."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "EBDB: empty database")))

@@ -2207,6 +2207,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | General define key | :orange_circle: | Define key with general.el |
 | Use package report | :orange_circle: | Report loaded packages |
 
+### Round 51
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| PDF view mode | :orange_circle: | PDF document viewer |
+| PDF view goto page | :orange_circle: | Jump to specific page |
+| PDF view next page | :orange_circle: | Next PDF page |
+| PDF view previous page | :orange_circle: | Previous PDF page |
+| PDF view fit page | :orange_circle: | Fit page to window |
+| PDF view search | :orange_circle: | Search within PDF |
+| PDF view midnight mode | :orange_circle: | Dark mode for PDF viewing |
+| Nov mode | :orange_circle: | EPUB reader |
+| Nov next document | :orange_circle: | Next EPUB chapter |
+| Nov previous document | :orange_circle: | Previous EPUB chapter |
+| DjVu mode | :orange_circle: | DjVu document viewer |
+| Notmuch search | :orange_circle: | Search notmuch mail |
+| Notmuch show | :orange_circle: | Show notmuch message |
+| Notmuch tree | :orange_circle: | Threaded mail view |
+| Wanderlust | :orange_circle: | Mail/news reader |
+| Mew | :orange_circle: | Mail environment |
+| VM visit folder | :orange_circle: | Visit VM mail folder |
+| BBDB | :orange_circle: | Contact database |
+| BBDB search | :orange_circle: | Search contacts |
+| EBDB | :orange_circle: | Enhanced contact database |
+
 ---
 
 ## Recommended Development Roadmap
