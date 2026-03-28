@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 197 — Copilot-ext, GPTel-ext, LLM, Aider, Codeium, Sourcegraph, ChatGPT, Whisper
+
+| Feature | Status | Notes |
+|---|---|---|
+| copilot-accept-completion-by-paragraph | :orange_circle: | Accept completion by paragraph |
+| copilot-panel-complete | :orange_circle: | Show Copilot panel completions |
+| gptel-send-region | :orange_circle: | Send region to LLM |
+| gptel-rewrite | :orange_circle: | Rewrite region with LLM |
+| llm-chat-streaming | :orange_circle: | Streaming LLM chat |
+| llm-embedding | :orange_circle: | Compute LLM embedding |
+| llm-summarize-region | :orange_circle: | Summarize region with LLM |
+| aider-add-file | :orange_circle: | Add file to Aider context |
+| aider-ask | :orange_circle: | Ask Aider a question |
+| aider-architect | :orange_circle: | Aider architect mode |
+| codeium-accept-completion | :orange_circle: | Accept Codeium completion |
+| codeium-next-completion | :orange_circle: | Next Codeium completion |
+| codeium-previous-completion | :orange_circle: | Previous Codeium completion |
+| tabnine-restart-server | :orange_circle: | Restart TabNine server |
+| sourcegraph-search | :orange_circle: | Search Sourcegraph |
+| sourcegraph-open-in-browser | :orange_circle: | Open in Sourcegraph browser |
+| chatgpt-shell-prompt | :orange_circle: | ChatGPT shell prompt |
+| dall-e-shell-prompt | :orange_circle: | DALL-E image generation prompt |
+| whisper-transcribe | :orange_circle: | Transcribe audio with Whisper |
+| org-ai-prompt | :orange_circle: | Org-AI prompt |
+
 ### Round 196 — MQTT, Redis, MongoDB, Elasticsearch, Prometheus, Grafana, AWS, Azure, GCP
 
 | Feature | Status | Notes |

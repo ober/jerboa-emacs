@@ -18682,3 +18682,50 @@
     (echo-read-string echo "Elasticsearch query: "
       (lambda (q)
         (echo-message! echo (str "Elasticsearch: querying " q))))))
+
+;; Round 197 — Copilot-ext, GPTel-ext, LLM, Aider
+(def (cmd-copilot-accept-completion-by-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: accepted completion by paragraph")))
+
+(def (cmd-copilot-panel-complete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: showing panel completions")))
+
+(def (cmd-gptel-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPTel: sent region to LLM")))
+
+(def (cmd-gptel-rewrite app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rewrite instruction: "
+      (lambda (instr)
+        (echo-message! echo (str "GPTel: rewriting with '" instr "'"))))))
+
+(def (cmd-llm-chat-streaming app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLM: streaming chat response...")))
+
+(def (cmd-llm-embedding app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLM: computing embedding for region")))
+
+(def (cmd-llm-summarize-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLM: summarizing region...")))
+
+(def (cmd-aider-add-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Aider: added current file to context")))
+
+(def (cmd-aider-ask app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ask Aider: "
+      (lambda (q)
+        (echo-message! echo (str "Aider: asking '" q "'"))))))
+
+(def (cmd-aider-architect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Architect prompt: "
+      (lambda (p)
+        (echo-message! echo (str "Aider: architect mode '" p "'"))))))

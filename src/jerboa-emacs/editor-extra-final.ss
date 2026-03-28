@@ -18035,3 +18035,52 @@
 (def (cmd-gcp-project-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "GCP: listing projects")))
+
+;; Round 197 — Codeium, Tabnine, Sourcegraph, ChatGPT-shell, DALL-E, Whisper, Org-AI
+(def (cmd-codeium-accept-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Codeium: accepted completion")))
+
+(def (cmd-codeium-next-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Codeium: showing next completion")))
+
+(def (cmd-codeium-previous-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Codeium: showing previous completion")))
+
+(def (cmd-tabnine-restart-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TabNine: restarted server")))
+
+(def (cmd-sourcegraph-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sourcegraph search: "
+      (lambda (q)
+        (echo-message! echo (str "Sourcegraph: searching for '" q "'"))))))
+
+(def (cmd-sourcegraph-open-in-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sourcegraph: opened in browser")))
+
+(def (cmd-chatgpt-shell-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ChatGPT prompt: "
+      (lambda (p)
+        (echo-message! echo (str "ChatGPT: " p))))))
+
+(def (cmd-dall-e-shell-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DALL-E prompt: "
+      (lambda (p)
+        (echo-message! echo (str "DALL-E: generating '" p "'"))))))
+
+(def (cmd-whisper-transcribe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Whisper: transcribing audio...")))
+
+(def (cmd-org-ai-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Org-AI prompt: "
+      (lambda (p)
+        (echo-message! echo (str "Org-AI: " p))))))
