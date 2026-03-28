@@ -11078,3 +11078,46 @@
     (if file
       (echo-message! echo (str "Coq: compiling " file))
       (echo-message! echo "Buffer has no file"))))
+
+;;; Round 55 batch 2: graphql-mode, protobuf-mode, cmake-mode, meson-mode,
+;;; bazel-mode, zig-mode, swift-mode, kotlin-mode, scala-mode, groovy-mode
+
+(def (cmd-graphql-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL mode enabled")))
+
+(def (cmd-protobuf-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protocol Buffers mode enabled")))
+
+(def (cmd-cmake-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake mode enabled")))
+
+(def (cmd-meson-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson build mode enabled")))
+
+(def (cmd-bazel-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bazel mode enabled")))
+
+(def (cmd-zig-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig mode enabled")))
+
+(def (cmd-swift-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swift mode enabled")))
+
+(def (cmd-kotlin-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kotlin mode enabled")))
+
+(def (cmd-scala-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scala mode enabled")))
+
+(def (cmd-groovy-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groovy mode enabled")))

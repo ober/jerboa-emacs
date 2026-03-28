@@ -2307,6 +2307,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Proof General | :orange_circle: | Theorem prover interface |
 | Coq compile | :orange_circle: | Compile Coq file |
 
+### Round 55
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Tide jump to definition | :orange_circle: | TypeScript definition jump |
+| Tide references | :orange_circle: | TypeScript references |
+| Web mode | :orange_circle: | HTML/CSS/JS mixed editing |
+| Emmet expand line | :orange_circle: | Expand Emmet abbreviation |
+| Emmet preview | :orange_circle: | Preview Emmet expansion |
+| SCSS mode | :orange_circle: | SCSS editing |
+| LESS CSS mode | :orange_circle: | LESS CSS editing |
+| JSON mode | :orange_circle: | JSON editing |
+| JSON pretty print buffer | :orange_circle: | Pretty-print JSON buffer |
+| JSON reformat region | :orange_circle: | Reformat JSON region |
+| GraphQL mode | :orange_circle: | GraphQL editing |
+| Protobuf mode | :orange_circle: | Protocol Buffers editing |
+| CMake mode | :orange_circle: | CMake editing |
+| Meson mode | :orange_circle: | Meson build editing |
+| Bazel mode | :orange_circle: | Bazel build editing |
+| Zig mode | :orange_circle: | Zig language editing |
+| Swift mode | :orange_circle: | Swift editing |
+| Kotlin mode | :orange_circle: | Kotlin editing |
+| Scala mode | :orange_circle: | Scala editing |
+| Groovy mode | :orange_circle: | Groovy editing |
+
 ---
 
 ## Recommended Development Roadmap
