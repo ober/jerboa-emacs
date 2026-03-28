@@ -4477,6 +4477,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 139 — Zig, Nim, Julia, R/ESS, Ruby Modes
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| zig-test-buffer | :orange_circle: | Test Zig buffer |
+| zig-run | :orange_circle: | Run Zig project |
+| zig-format-buffer | :orange_circle: | Format Zig buffer |
+| nim-compile | :orange_circle: | Compile Nim project |
+| nim-run | :orange_circle: | Run Nim project |
+| nim-suggest-at-point | :orange_circle: | Nim suggestion at point |
+| julia-repl | :orange_circle: | Start Julia REPL |
+| julia-repl-send-region-or-line | :orange_circle: | Send region/line to Julia REPL |
+| ess-eval-region | :orange_circle: | Evaluate R region |
+| ess-eval-buffer | :orange_circle: | Evaluate R buffer |
+| ess-eval-function | :orange_circle: | Evaluate R function |
+| ess-help | :orange_circle: | Show R help |
+| ess-describe-object-at-point | :orange_circle: | Describe R object at point |
+| ess-rdired | :orange_circle: | Open R object browser |
+| ess-load-file | :orange_circle: | Load file into R |
+| ruby-send-region | :orange_circle: | Send Ruby region to IRB |
+| ruby-send-buffer | :orange_circle: | Send Ruby buffer to IRB |
+| ruby-switch-to-inf | :orange_circle: | Switch to Ruby inferior process |
+| robe-start | :orange_circle: | Start Robe server |
+| robe-jump | :orange_circle: | Jump to Ruby definition |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

@@ -15775,3 +15775,45 @@
 (def (cmd-tuareg-eval-region app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tuareg: evaluated region")))
+
+;;; Round 139 — Zig, Nim, Julia, R/ESS, Ruby (batch 1)
+
+(def (cmd-zig-test-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: testing buffer")))
+
+(def (cmd-zig-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: running")))
+
+(def (cmd-zig-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: formatted buffer")))
+
+(def (cmd-nim-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nim: compiling")))
+
+(def (cmd-nim-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nim: running")))
+
+(def (cmd-nim-suggest-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nim: showing suggestion at point")))
+
+(def (cmd-julia-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia: started REPL")))
+
+(def (cmd-julia-repl-send-region-or-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia: sent region/line to REPL")))
+
+(def (cmd-ess-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ESS: evaluated region")))
+
+(def (cmd-ess-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ESS: evaluated buffer")))

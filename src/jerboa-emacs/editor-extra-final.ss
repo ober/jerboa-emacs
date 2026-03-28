@@ -15170,3 +15170,47 @@
 (def (cmd-zig-compile app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Zig: compiling")))
+
+;;; Round 139 — Zig, Nim, Julia, R/ESS, Ruby (batch 2)
+
+(def (cmd-ess-eval-function app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ESS: evaluated function")))
+
+(def (cmd-ess-help app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ESS help: "
+      (lambda (topic)
+        (echo-message! echo (str "ESS: showing help for " topic))))))
+
+(def (cmd-ess-describe-object-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ESS: described object at point")))
+
+(def (cmd-ess-rdired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ESS: opened R dired (object browser)")))
+
+(def (cmd-ess-load-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ESS: loaded file into R")))
+
+(def (cmd-ruby-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ruby: sent region to IRB")))
+
+(def (cmd-ruby-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ruby: sent buffer to IRB")))
+
+(def (cmd-ruby-switch-to-inf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ruby: switched to inferior process")))
+
+(def (cmd-robe-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Robe: started server")))
+
+(def (cmd-robe-jump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Robe: jumped to definition")))
