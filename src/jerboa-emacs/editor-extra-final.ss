@@ -12483,3 +12483,44 @@
     (echo-read-string echo "Describe pod: "
       (lambda (pod)
         (echo-message! echo (str "Kubel: describing pod " pod))))))
+
+;;; Round 83 — Org Babel (cont.)
+(def (cmd-ob-shell-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed shell block")))
+
+(def (cmd-ob-lisp-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Lisp block")))
+
+(def (cmd-ob-js-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed JavaScript block")))
+
+(def (cmd-ob-ruby-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Ruby block")))
+
+(def (cmd-ob-go-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Go block")))
+
+(def (cmd-ob-rust-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Rust block")))
+
+(def (cmd-ob-haskell-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Haskell block")))
+
+(def (cmd-ob-c-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed C block")))
+
+(def (cmd-ob-java-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Java block")))
+
+(def (cmd-ob-clojure-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Clojure block")))

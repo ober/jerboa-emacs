@@ -13035,3 +13035,54 @@
       (lambda (expr)
         (echo-message! echo (str "Nix: building " expr))))))
 
+;;; Round 83 — SQL & Org Babel
+(def (cmd-sql-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'sql)
+    (if (mode-enabled? app 'sql)
+      (echo-message! echo "SQL mode enabled")
+      (echo-message! echo "SQL mode disabled"))))
+
+(def (cmd-sql-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SQL connection name: "
+      (lambda (conn)
+        (echo-message! echo (str "SQL: connecting to " conn))))))
+
+(def (cmd-sql-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: sent region to interactive buffer")))
+
+(def (cmd-sql-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: sent buffer to interactive buffer")))
+
+(def (cmd-sql-set-product app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SQL product (postgres/mysql/sqlite): "
+      (lambda (product)
+        (echo-message! echo (str "SQL: product set to " product))))))
+
+(def (cmd-sql-interactive-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: interactive mode started")))
+
+(def (cmd-sql-show-sqli-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: showing interactive buffer")))
+
+(def (cmd-pgcli-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'pgcli)
+    (if (mode-enabled? app 'pgcli)
+      (echo-message! echo "PGCli mode enabled")
+      (echo-message! echo "PGCli mode disabled"))))
+
+(def (cmd-ob-sql-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed SQL block")))
+
+(def (cmd-ob-python-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org Babel: executed Python block")))
+

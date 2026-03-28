@@ -3011,6 +3011,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 83 — SQL & Org Babel Execution
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| sql-mode | :orange_circle: | Toggle SQL editing mode |
+| sql-connect | :orange_circle: | Connect to SQL database |
+| sql-send-region | :orange_circle: | Send region to SQL process |
+| sql-send-buffer | :orange_circle: | Send buffer to SQL process |
+| sql-set-product | :orange_circle: | Set SQL product type |
+| sql-interactive-mode | :orange_circle: | Start SQL interactive session |
+| sql-show-sqli-buffer | :orange_circle: | Show SQL interactive buffer |
+| pgcli-mode | :orange_circle: | Toggle PGCli mode |
+| ob-sql-execute | :orange_circle: | Execute org babel SQL block |
+| ob-python-execute | :orange_circle: | Execute org babel Python block |
+| ob-shell-execute | :orange_circle: | Execute org babel shell block |
+| ob-lisp-execute | :orange_circle: | Execute org babel Lisp block |
+| ob-js-execute | :orange_circle: | Execute org babel JavaScript block |
+| ob-ruby-execute | :orange_circle: | Execute org babel Ruby block |
+| ob-go-execute | :orange_circle: | Execute org babel Go block |
+| ob-rust-execute | :orange_circle: | Execute org babel Rust block |
+| ob-haskell-execute | :orange_circle: | Execute org babel Haskell block |
+| ob-c-execute | :orange_circle: | Execute org babel C block |
+| ob-java-execute | :orange_circle: | Execute org babel Java block |
+| ob-clojure-execute | :orange_circle: | Execute org babel Clojure block |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
