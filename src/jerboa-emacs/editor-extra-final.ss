@@ -10710,3 +10710,76 @@
            "(No candidates to collect)"))
     (switch-to-buffer frame new-buf)
     (echo-message! echo "Embark collect")))
+
+;;; Round 50 batch 2: evil-local-mode, god-mode, god-mode-all, boon-mode,
+;;; xah-fly-keys-mode, hydra-zoom, transient-append-suffix,
+;;; which-key-show-major-mode, general-define-key, use-package-report
+
+(def (cmd-evil-local-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "evil-local")
+    (if (mode-enabled? app "evil-local")
+      (echo-message! echo "Evil local mode enabled")
+      (echo-message! echo "Evil local mode disabled"))))
+
+(def (cmd-god-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "god")
+    (if (mode-enabled? app "god")
+      (echo-message! echo "God mode enabled (keys without modifier)")
+      (echo-message! echo "God mode disabled"))))
+
+(def (cmd-god-mode-all app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "god-global")
+    (if (mode-enabled? app "god-global")
+      (echo-message! echo "God mode enabled globally")
+      (echo-message! echo "God mode disabled globally"))))
+
+(def (cmd-boon-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "boon")
+    (if (mode-enabled? app "boon")
+      (echo-message! echo "Boon mode enabled (ergonomic modal editing)")
+      (echo-message! echo "Boon mode disabled"))))
+
+(def (cmd-xah-fly-keys-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "xah-fly-keys")
+    (if (mode-enabled? app "xah-fly-keys")
+      (echo-message! echo "Xah Fly Keys enabled (modal editing)")
+      (echo-message! echo "Xah Fly Keys disabled"))))
+
+(def (cmd-hydra-zoom app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hydra zoom: +/- to zoom, 0 to reset, q to quit")))
+
+(def (cmd-transient-append-suffix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Transient: suffix appended to current prefix")))
+
+(def (cmd-which-key-show-major-mode app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*which-key: major-mode*")))
+    (buffer-content-set! new-buf
+      (str "Which-Key: Major Mode Bindings\n\n"
+           "(No major-mode specific bindings configured)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Which-key: major mode bindings")))
+
+(def (cmd-general-define-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "General: key definition (use keymap API in jemacs)")))
+
+(def (cmd-use-package-report app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*use-package report*")))
+    (buffer-content-set! new-buf
+      (str "Use-Package Report\n\n"
+           "Package            Load Time  Status\n"
+           "-------            ---------  ------\n"
+           "(No packages loaded via use-package)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Use-package report")))

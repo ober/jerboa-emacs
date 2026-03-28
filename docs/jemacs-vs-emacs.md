@@ -2182,6 +2182,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Consult info | :orange_circle: | Browse info nodes |
 | Embark collect | :orange_circle: | Collect candidates into buffer |
 
+### Round 50
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Evil mode | :orange_circle: | Vim emulation layer |
+| Evil normal state | :orange_circle: | Enter normal state |
+| Evil insert state | :orange_circle: | Enter insert state |
+| Evil visual state | :orange_circle: | Enter visual state |
+| Evil ex | :orange_circle: | Ex command line |
+| Evil search forward | :orange_circle: | Vim-style forward search |
+| Evil search backward | :orange_circle: | Vim-style backward search |
+| Evil window split | :orange_circle: | Horizontal window split |
+| Evil window vsplit | :orange_circle: | Vertical window split |
+| Evil quit | :orange_circle: | Vim-style quit |
+| Evil local mode | :orange_circle: | Buffer-local evil mode |
+| God mode | :orange_circle: | Modal editing without modifiers |
+| God mode all | :orange_circle: | Global god mode |
+| Boon mode | :orange_circle: | Ergonomic modal editing |
+| Xah Fly Keys mode | :orange_circle: | Xah Fly Keys modal editing |
+| Hydra zoom | :orange_circle: | Hydra-based zoom control |
+| Transient append suffix | :orange_circle: | Add command to transient prefix |
+| Which key show major mode | :orange_circle: | Show major mode bindings |
+| General define key | :orange_circle: | Define key with general.el |
+| Use package report | :orange_circle: | Report loaded packages |
+
 ---
 
 ## Recommended Development Roadmap

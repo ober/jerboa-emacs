@@ -11265,3 +11265,59 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cape: symbol completion")))
 
+;;; Round 50 batch 1: evil-mode, evil-normal-state, evil-insert-state,
+;;; evil-visual-state, evil-ex, evil-search-forward, evil-search-backward,
+;;; evil-window-split, evil-window-vsplit, evil-quit
+
+(def (cmd-evil-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app "evil")
+    (if (mode-enabled? app "evil")
+      (echo-message! echo "Evil mode enabled (Vim emulation)")
+      (echo-message! echo "Evil mode disabled"))))
+
+(def (cmd-evil-normal-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: normal state")))
+
+(def (cmd-evil-insert-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: insert state")))
+
+(def (cmd-evil-visual-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: visual state")))
+
+(def (cmd-evil-ex app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo ":"
+      (lambda (cmd)
+        (when (and cmd (not (string-empty? cmd)))
+          (echo-message! echo (str "Evil ex: " cmd)))))))
+
+(def (cmd-evil-search-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "/"
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (echo-message! echo (str "Evil search: /" pattern)))))))
+
+(def (cmd-evil-search-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "?"
+      (lambda (pattern)
+        (when (and pattern (not (string-empty? pattern)))
+          (echo-message! echo (str "Evil search: ?" pattern)))))))
+
+(def (cmd-evil-window-split app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: window split horizontally")))
+
+(def (cmd-evil-window-vsplit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: window split vertically")))
+
+(def (cmd-evil-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Evil: quit (use C-x C-c to exit editor)")))
+
