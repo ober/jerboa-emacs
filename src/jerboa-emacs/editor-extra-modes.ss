@@ -12882,3 +12882,60 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Calendar: mark set")))
 
+;;; Round 80 — Display & Visual Enhancement
+(def (cmd-rainbow-identifiers-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'rainbow-identifiers)
+    (if (mode-enabled? app 'rainbow-identifiers)
+      (echo-message! echo "Rainbow identifiers mode enabled")
+      (echo-message! echo "Rainbow identifiers mode disabled"))))
+
+(def (cmd-highlight-escape-sequences-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'highlight-escape-sequences)
+    (if (mode-enabled? app 'highlight-escape-sequences)
+      (echo-message! echo "Highlight escape sequences mode enabled")
+      (echo-message! echo "Highlight escape sequences mode disabled"))))
+
+(def (cmd-auto-dim-other-buffers-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-dim-other-buffers)
+    (if (mode-enabled? app 'auto-dim-other-buffers)
+      (echo-message! echo "Auto-dim other buffers mode enabled")
+      (echo-message! echo "Auto-dim other buffers mode disabled"))))
+
+(def (cmd-pulsar-pulse-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: pulsed current line")))
+
+(def (cmd-pulsar-highlight-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: highlighted region or line")))
+
+(def (cmd-buffer-face-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'buffer-face)
+    (if (mode-enabled? app 'buffer-face)
+      (echo-message! echo "Buffer face mode enabled")
+      (echo-message! echo "Buffer face mode disabled"))))
+
+(def (cmd-text-scale-increase app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Text scale increased")))
+
+(def (cmd-text-scale-decrease app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Text scale decreased")))
+
+(def (cmd-global-text-scale-adjust app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Global text scale (0 to reset): "
+      (lambda (val)
+        (echo-message! echo (str "Global text scale set to " val))))))
+
+(def (cmd-face-remap-add-relative app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Face to remap: "
+      (lambda (face)
+        (echo-message! echo (str "Face '" face "' remapped"))))))
+

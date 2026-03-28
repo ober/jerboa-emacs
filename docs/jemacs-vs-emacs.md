@@ -2930,6 +2930,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 80 — Display & Visual Enhancement
+
+| Emacs Command | Status | Description |
+|---|---|---|
+| rainbow-identifiers-mode | :orange_circle: | Color each identifier uniquely |
+| highlight-escape-sequences-mode | :orange_circle: | Highlight escape sequences in strings |
+| auto-dim-other-buffers-mode | :orange_circle: | Dim non-focused buffers |
+| pulsar-pulse-line | :orange_circle: | Pulse current line |
+| pulsar-highlight-dwim | :orange_circle: | Highlight region or line |
+| buffer-face-mode | :orange_circle: | Toggle buffer-local face |
+| text-scale-increase | :orange_circle: | Increase text scale |
+| text-scale-decrease | :orange_circle: | Decrease text scale |
+| global-text-scale-adjust | :orange_circle: | Adjust global text scale |
+| face-remap-add-relative | :orange_circle: | Add relative face remapping |
+| face-remap-remove-relative | :orange_circle: | Remove face remapping |
+| visual-fill-column-mode | :orange_circle: | Soft-wrap at fill column |
+| writeroom-mode | :orange_circle: | Distraction-free writing mode |
+| olivetti-mode | :orange_circle: | Center text in buffer |
+| solaire-mode | :orange_circle: | Distinct background for file buffers |
+| page-break-lines-mode | :orange_circle: | Display page breaks as lines |
+| form-feed-mode | :orange_circle: | Render form-feed characters |
+| display-fill-column-indicator-mode | :orange_circle: | Show fill column indicator |
+| nano-theme-toggle | :orange_circle: | Toggle nano theme |
+| minions-mode | :orange_circle: | Show minor modes in menu |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
