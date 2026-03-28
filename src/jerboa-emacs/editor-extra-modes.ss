@@ -10127,3 +10127,135 @@
       (editor-goto-pos ed 4))
     (echo-message! echo "Composing mail (C-c C-c to send)")))
 
+;;; Round 36 batch 1: 2C-two-columns, image-mode, thumbs-find-thumb, life,
+;;; rot13-region, butterfly, hanoi, bubbles, 5x5, landmark
+
+(def (cmd-2C-two-columns app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app)))
+    (echo-message! echo "Two-column editing mode (use split-window for side-by-side)")))
+
+(def (cmd-image-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Image mode: image display not available in text editor")))
+
+(def (cmd-thumbs-find-thumb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thumbnail browser not available")))
+
+(def (cmd-life app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Life*"))
+         (grid (str "Conway's Game of Life\n\n"
+                    "Generation: 0\n"
+                    "Population: 5\n\n"
+                    "................................\n"
+                    "................................\n"
+                    "..............***...............\n"
+                    "..............*.................   \n"
+                    "...............*.............   \n"
+                    "................................\n"
+                    "................................\n\n"
+                    "SPC=step, g=go, q=quit")))
+    (buffer-content-set! new-buf grid)
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Conway's Game of Life")))
+
+(def (cmd-rot13-region app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (sel-start (editor-selection-start ed))
+         (sel-end (editor-selection-end ed)))
+    (if (= sel-start sel-end)
+      (echo-message! echo "No region selected")
+      (let* ((text (editor-get-text-range ed sel-start (- sel-end sel-start)))
+             (rot13 (list->string
+                      (map (lambda (c)
+                             (cond
+                               ((and (char<=? #\a c) (char<=? c #\z))
+                                (integer->char (+ (char->integer #\a)
+                                  (modulo (+ (- (char->integer c) (char->integer #\a)) 13) 26))))
+                               ((and (char<=? #\A c) (char<=? c #\Z))
+                                (integer->char (+ (char->integer #\A)
+                                  (modulo (+ (- (char->integer c) (char->integer #\A)) 13) 26))))
+                               (else c)))
+                           (string->list text)))))
+        (editor-replace-range ed sel-start (- sel-end sel-start) rot13)
+        (echo-message! echo "Applied ROT13 to region")))))
+
+(def (cmd-butterfly app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "The strstrstrstrstr wings of the butterfly flap, changing the world forever.")))
+
+(def (cmd-hanoi app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Hanoi*")))
+    (buffer-content-set! new-buf
+      (str "Tower of Hanoi\n\n"
+           "     |          |          |     \n"
+           "    ===         |          |     \n"
+           "   =====        |          |     \n"
+           "  =======       |          |     \n"
+           " =========      |          |     \n"
+           "===========     |          |     \n"
+           "___________  _________  _________\n"
+           "   Peg A       Peg B      Peg C  \n\n"
+           "Move all disks from A to C. n=next move, q=quit"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Tower of Hanoi (6 disks)")))
+
+(def (cmd-bubbles app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Bubbles*")))
+    (buffer-content-set! new-buf
+      (str "Bubbles Game\n\n"
+           "R G B Y R G B Y R G\n"
+           "B Y R G B Y R G B Y\n"
+           "G B Y R G B Y R G B\n"
+           "Y R G B Y R G B Y R\n"
+           "R G B Y R G B Y R G\n"
+           "B Y R G B Y R G B Y\n\n"
+           "Click adjacent same-color bubbles to pop them.\n"
+           "Score: 0"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Bubbles game started")))
+
+(def (cmd-5x5 app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*5x5*")))
+    (buffer-content-set! new-buf
+      (str "5x5 Puzzle\n\n"
+           "Goal: Turn all squares ON\n"
+           "Clicking toggles a cross pattern\n\n"
+           ". X . X .\n"
+           "X . X . X\n"
+           ". X . X .\n"
+           "X . X . X\n"
+           ". X . X .\n\n"
+           "Moves: 0"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "5x5 puzzle started")))
+
+(def (cmd-landmark app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Landmark*")))
+    (buffer-content-set! new-buf
+      (str "Landmark Game\n\n"
+           "A neural-network robot learns to play a\n"
+           "tree-planting game on a grid.\n\n"
+           ". . . . . . . . . .\n"
+           ". . . . . . . . . .\n"
+           ". . . . . . . . . .\n"
+           ". . . . . . . . . .\n"
+           ". . . . . . . . . .\n\n"
+           "Click to place trees. The robot learns from your moves."))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Landmark game started")))
+

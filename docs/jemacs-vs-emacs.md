@@ -1832,6 +1832,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Dunnet | :orange_circle: | Text adventure game |
 | Snake mode | :orange_circle: | Snake game |
 
+### Round 36
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| 2C-two-columns | :orange_circle: | Two-column editing mode |
+| Image mode | :orange_circle: | Image display (placeholder) |
+| Thumbs find thumb | :orange_circle: | Thumbnail browser (placeholder) |
+| Life | :orange_circle: | Conway's Game of Life |
+| ROT13 region | :orange_circle: | Apply ROT13 cipher to region |
+| Butterfly | :orange_circle: | Butterfly command (easter egg) |
+| Hanoi | :orange_circle: | Tower of Hanoi game |
+| Bubbles | :orange_circle: | Bubbles puzzle game |
+| 5x5 | :orange_circle: | 5x5 toggle puzzle |
+| Landmark | :orange_circle: | Neural-net tree-planting game |
+| Solitaire | :orange_circle: | Peg solitaire game |
+| Cookie | :orange_circle: | Fortune cookie messages |
+| Yow | :orange_circle: | Random Zippy quotes |
+| Spook | :orange_circle: | Random surveillance keywords |
+| Decipher | :orange_circle: | Substitution cipher analysis |
+| Phases of moon | :orange_circle: | Current lunar phase |
+| Sunrise sunset | :orange_circle: | Sunrise/sunset times |
+| Lunar phases | :orange_circle: | Lunar phase cycle display |
+| Facemenu set bold | :orange_circle: | Apply bold face |
+| Facemenu set italic | :orange_circle: | Apply italic face |
+
 ---
 
 ## Recommended Development Roadmap

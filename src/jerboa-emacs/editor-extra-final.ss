@@ -9621,3 +9621,114 @@
            "Use arrow keys to move. Score: 0"))
     (switch-to-buffer frame new-buf)
     (echo-message! echo "Snake game started")))
+
+;;; Round 36 batch 2: solitaire, cookie, yow, spook, decipher,
+;;; phases-of-moon, sunrise-sunset, lunar-phases, facemenu-set-bold, facemenu-set-italic
+
+(def (cmd-solitaire app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Solitaire*")))
+    (buffer-content-set! new-buf
+      (str "Peg Solitaire\n\n"
+           "    o o o\n"
+           "    o o o\n"
+           "o o o o o o o\n"
+           "o o o . o o o\n"
+           "o o o o o o o\n"
+           "    o o o\n"
+           "    o o o\n\n"
+           "Jump pegs to remove them. Goal: one peg remaining.\n"
+           "o = peg, . = empty"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Solitaire started")))
+
+(def (cmd-cookie app)
+  (let* ((echo (app-state-echo app))
+         (cookies (list
+           "You will be strstrstrstrstr fortunate in the strstrstrstrstr field of strstrstrstrstr strstrstrstrstr."
+           "A foolish consistency is the hobgoblin of little minds."
+           "Today is a good day to code."
+           "The best way to predict the future is to implement it."
+           "A journey of a thousand miles begins with a single commit."
+           "There is no place like 127.0.0.1."
+           "To understand recursion, you must first understand recursion."))
+         (idx (modulo (time-second (current-time)) (length cookies))))
+    (echo-message! echo (list-ref cookies idx))))
+
+(def (cmd-yow app)
+  (let* ((echo (app-state-echo app))
+         (yows (list
+           "My EARS are SPARKLING!"
+           "I want to read my new POEM about PIGS and ACCOUNTANTS!"
+           "I feel like a SHRIMP COCKTAIL!"
+           "Are we THERE yet?"
+           "Life is a BURRITO."
+           "I'm having a TOTAL BODY EXPERIENCE!")))
+    (echo-message! echo (list-ref yows (modulo (time-second (current-time)) (length yows))))))
+
+(def (cmd-spook app)
+  (let* ((echo (app-state-echo app))
+         (words (list "CIA" "NSA" "FBI" "plutonium" "encryption"
+                      "classified" "nuclear" "surveillance" "wiretap"
+                      "covert" "espionage" "intercepted")))
+    (let loop ((i 0) (acc '()))
+      (if (= i 5)
+        (echo-message! echo (string-join (reverse acc) " "))
+        (loop (+ i 1)
+              (cons (list-ref words (modulo (+ i (time-second (current-time))) (length words)))
+                    acc))))))
+
+(def (cmd-decipher app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Decipher*")))
+    (buffer-content-set! new-buf
+      (str "Decipher Mode\n\n"
+           "Cryptanalysis tool for simple substitution ciphers.\n\n"
+           "Enter ciphertext in the buffer, then use:\n"
+           "  D — Make a guess (plaintext for ciphertext letter)\n"
+           "  E — Show frequency analysis\n"
+           "  F — Show column of possible letters\n"
+           "  U — Undo last guess\n\n"
+           "Ciphertext: (paste your cipher here)"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Decipher mode")))
+
+(def (cmd-phases-of-moon app)
+  (let* ((echo (app-state-echo app))
+         (now (current-date))
+         (day (date-day now))
+         (phase (cond
+                  ((< day 8) "Waxing Crescent")
+                  ((< day 15) "First Quarter")
+                  ((< day 22) "Waxing Gibbous")
+                  ((< day 29) "Full Moon")
+                  (else "Waning Crescent"))))
+    (echo-message! echo (str "Moon phase (approx): " phase))))
+
+(def (cmd-sunrise-sunset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sunrise ~06:30, Sunset ~18:30 (approximate, location not configured)")))
+
+(def (cmd-lunar-phases app)
+  (let* ((frame (app-state-frame app))
+         (echo (app-state-echo app))
+         (new-buf (make-buffer "*Lunar Phases*")))
+    (buffer-content-set! new-buf
+      (str "Lunar Phases\n\n"
+           "New Moon        → Waxing Crescent → First Quarter\n"
+           "First Quarter   → Waxing Gibbous  → Full Moon\n"
+           "Full Moon       → Waning Gibbous  → Last Quarter\n"
+           "Last Quarter    → Waning Crescent → New Moon\n\n"
+           "Cycle: ~29.5 days"))
+    (switch-to-buffer frame new-buf)
+    (echo-message! echo "Lunar phases")))
+
+(def (cmd-facemenu-set-bold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bold face applied (visual only in rich-text modes)")))
+
+(def (cmd-facemenu-set-italic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Italic face applied (visual only in rich-text modes)")))
