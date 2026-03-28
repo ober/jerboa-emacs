@@ -6146,3 +6146,411 @@
                         (editor-goto-pos ed 0)
                         (echo-message! echo "Converted to CSV"))))
                   (loop (cons line lines)))))))))))
+
+;; ===== Round 15 Batch 1 =====
+
+;; --- Feature 1: String Inflection Cycle ---
+
+(def (cmd-string-inflection-cycle app)
+  "Cycle through camelCase, snake_case, SCREAMING_SNAKE, kebab-case for the word at point."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1)))
+    ;; Extend to include hyphens and underscores
+    (let extend-back ((s word-start))
+      (if (and (> s 0)
+               (let ((c (send-message ed SCI_GETCHARAT (- s 1) 0)))
+                 (or (= c 45) (= c 95)  ;; - or _
+                     (and (>= c 65) (<= c 90))
+                     (and (>= c 97) (<= c 122))
+                     (and (>= c 48) (<= c 57)))))
+        (extend-back (- s 1))
+        (let extend-fwd ((e word-end))
+          (let ((len (send-message ed SCI_GETLENGTH 0 0)))
+            (if (and (< e len)
+                     (let ((c (send-message ed SCI_GETCHARAT e 0)))
+                       (or (= c 45) (= c 95)
+                           (and (>= c 65) (<= c 90))
+                           (and (>= c 97) (<= c 122))
+                           (and (>= c 48) (<= c 57)))))
+              (extend-fwd (+ e 1))
+              (let* ((text (editor-get-text-range ed s e))
+                     ;; Determine current style
+                     (has-underscore (string-contains text "_"))
+                     (has-hyphen (string-contains text "-"))
+                     (all-upper (let check ((i 0))
+                                  (if (>= i (string-length text)) #t
+                                    (let ((c (string-ref text i)))
+                                      (if (char-alphabetic? c)
+                                        (if (char-upper-case? c) (check (+ i 1)) #f)
+                                        (check (+ i 1)))))))
+                     ;; Split into words
+                     (words
+                       (cond
+                         (has-underscore (map string-downcase (filter (lambda (s) (not (string-empty? s))) (string-split text #\_))))
+                         (has-hyphen (map string-downcase (filter (lambda (s) (not (string-empty? s))) (string-split text #\-))))
+                         (else ;; camelCase split
+                           (let split-camel ((chars (string->list text)) (cur '()) (result '()))
+                             (if (null? chars)
+                               (reverse (if (null? cur) result (cons (list->string (reverse cur)) result)))
+                               (let ((c (car chars)))
+                                 (if (and (char-upper-case? c) (not (null? cur)))
+                                   (split-camel (cdr chars) (list (char-downcase c))
+                                     (cons (list->string (reverse cur)) result))
+                                   (split-camel (cdr chars) (cons (char-downcase c) cur) result))))))))
+                     ;; Cycle: snake -> SCREAMING -> kebab -> camel -> snake
+                     (new-text
+                       (cond
+                         ((and has-underscore (not all-upper))
+                          (string-join (map string-upcase words) "_"))  ;; snake -> SCREAMING
+                         ((and has-underscore all-upper)
+                          (string-join words "-"))  ;; SCREAMING -> kebab
+                         (has-hyphen
+                          ;; kebab -> camelCase
+                          (let ((first (car words))
+                                (rest (map (lambda (w)
+                                            (if (> (string-length w) 0)
+                                              (string-append (string (char-upcase (string-ref w 0)))
+                                                             (substring w 1 (string-length w)))
+                                              w))
+                                           (cdr words))))
+                            (apply string-append first rest)))
+                         (else (string-join words "_")))))  ;; camel -> snake
+                (send-message ed SCI_DELETERANGE s (- e s))
+                (send-message ed SCI_INSERTTEXT s new-text)
+                (echo-message! echo (str "Inflected: " new-text))))))))))
+
+;; --- Feature 2: Crux Kill Whole Line ---
+
+(def (cmd-crux-kill-whole-line app)
+  "Kill the entire current line, regardless of cursor position."
+  (let* ((frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (line (send-message ed SCI_LINEFROMPOSITION
+                 (send-message ed SCI_GETCURRENTPOS 0 0) 0))
+         (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+         (line-end (send-message ed SCI_GETLINEENDPOSITION line 0))
+         ;; Include the newline character
+         (next-line-start (send-message ed SCI_POSITIONFROMLINE (+ line 1) 0))
+         (del-end (if (> next-line-start line-end) next-line-start line-end)))
+    (let ((text (editor-get-text-range ed line-start del-end)))
+      (send-message ed SCI_COPYTEXT (string-length text) text)
+      (send-message ed SCI_DELETERANGE line-start (- del-end line-start))
+      (echo-message! (app-state-echo app) "Killed whole line"))))
+
+;; --- Feature 3: Crux Transpose Windows ---
+
+(def (cmd-crux-transpose-windows app)
+  "Swap the buffers of the current window and the next window."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (wins (frame-windows frame)))
+    (if (< (length wins) 2)
+      (echo-message! echo "Only one window — nothing to transpose")
+      (let* ((cur-win (current-window frame))
+             (cur-buf (edit-window-buffer cur-win))
+             ;; Find next window
+             (cur-idx (let find ((ws wins) (i 0))
+                        (if (null? ws) 0
+                          (if (eq? (car ws) cur-win) i (find (cdr ws) (+ i 1))))))
+             (next-idx (modulo (+ cur-idx 1) (length wins)))
+             (next-win (list-ref wins next-idx))
+             (next-buf (edit-window-buffer next-win)))
+        (set-window-buffer! cur-win next-buf)
+        (set-window-buffer! next-win cur-buf)
+        (echo-message! echo "Transposed windows")))))
+
+;; --- Feature 4: Crux Delete File and Buffer ---
+
+(def (cmd-crux-delete-file-and-buffer app)
+  "Delete the current file from disk and kill its buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (let* ((row (tui-rows)) (width (tui-cols))
+             (confirm (echo-read-string echo (str "Delete " file "? (yes/no): ") row width)))
+        (when (and confirm (string=? (string-trim confirm) "yes"))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "Delete error: " e)))
+            (lambda ()
+              (delete-file file)
+              (kill-buffer frame buf)
+              (echo-message! echo (str "Deleted: " file)))))))))
+
+;; --- Feature 5: Smartscan Symbol Forward ---
+
+(def (cmd-smartscan-symbol-go-forward app)
+  "Jump forward to the next occurrence of the symbol at point."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word (editor-get-text-range ed word-start word-end)))
+    (if (or (not word) (string-empty? word))
+      (echo-message! echo "No symbol at point")
+      (begin
+        (send-message ed SCI_SETTARGETSTART word-end 0)
+        (send-message ed SCI_SETTARGETEND (send-message ed SCI_GETLENGTH 0 0) 0)
+        (send-message ed SCI_SETSEARCHFLAGS 4 0)  ;; SCFIND_WHOLEWORD
+        (let ((found (send-message ed SCI_SEARCHINTARGET (string-length word) word)))
+          (if (>= found 0)
+            (begin
+              (editor-goto-pos ed found)
+              (send-message ed SCI_SETSEL found (+ found (string-length word)))
+              (echo-message! echo (str "Found: " word)))
+            ;; Wrap around
+            (begin
+              (send-message ed SCI_SETTARGETSTART 0 0)
+              (send-message ed SCI_SETTARGETEND word-start 0)
+              (let ((found2 (send-message ed SCI_SEARCHINTARGET (string-length word) word)))
+                (if (>= found2 0)
+                  (begin
+                    (editor-goto-pos ed found2)
+                    (send-message ed SCI_SETSEL found2 (+ found2 (string-length word)))
+                    (echo-message! echo (str "Wrapped: " word)))
+                  (echo-message! echo (str "Only occurrence: " word)))))))))))
+
+;; --- Feature 6: Smartscan Symbol Backward ---
+
+(def (cmd-smartscan-symbol-go-backward app)
+  "Jump backward to the previous occurrence of the symbol at point."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word (editor-get-text-range ed word-start word-end)))
+    (if (or (not word) (string-empty? word))
+      (echo-message! echo "No symbol at point")
+      (begin
+        ;; Search backward: set target from 0 to word-start, use SCI_SEARCHINTARGET
+        ;; Scintilla searches forward in target, so we search 0..word-start and find last
+        (send-message ed SCI_SETTARGETSTART 0 0)
+        (send-message ed SCI_SETTARGETEND word-start 0)
+        (send-message ed SCI_SETSEARCHFLAGS 4 0)  ;; SCFIND_WHOLEWORD
+        (let find-last ((last-pos -1) (search-from 0))
+          (send-message ed SCI_SETTARGETSTART search-from 0)
+          (send-message ed SCI_SETTARGETEND word-start 0)
+          (let ((found (send-message ed SCI_SEARCHINTARGET (string-length word) word)))
+            (if (>= found 0)
+              (find-last found (+ found (string-length word)))
+              (if (>= last-pos 0)
+                (begin
+                  (editor-goto-pos ed last-pos)
+                  (send-message ed SCI_SETSEL last-pos (+ last-pos (string-length word)))
+                  (echo-message! echo (str "Found: " word)))
+                ;; Wrap around
+                (begin
+                  (send-message ed SCI_SETTARGETSTART word-end 0)
+                  (send-message ed SCI_SETTARGETEND (send-message ed SCI_GETLENGTH 0 0) 0)
+                  (let find-last2 ((lp -1) (sf word-end))
+                    (send-message ed SCI_SETTARGETSTART sf 0)
+                    (send-message ed SCI_SETTARGETEND (send-message ed SCI_GETLENGTH 0 0) 0)
+                    (let ((f2 (send-message ed SCI_SEARCHINTARGET (string-length word) word)))
+                      (if (>= f2 0)
+                        (find-last2 f2 (+ f2 (string-length word)))
+                        (if (>= lp 0)
+                          (begin
+                            (editor-goto-pos ed lp)
+                            (send-message ed SCI_SETSEL lp (+ lp (string-length word)))
+                            (echo-message! echo (str "Wrapped: " word)))
+                          (echo-message! echo (str "Only occurrence: " word)))))))))))))))
+
+;; --- Feature 7: Toggle Quotes ---
+
+(def (cmd-toggle-quotes app)
+  "Toggle between single and double quotes around the string at point."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (char-at (send-message ed SCI_GETCHARAT pos 0)))
+    ;; Find the enclosing quote
+    (let* ((quote-char
+             (cond
+               ((or (= char-at 34) (= char-at 39)) char-at)  ;; " or '
+               (else
+                 ;; Search backward for a quote
+                 (let search-back ((p (- pos 1)))
+                   (if (< p 0) #f
+                     (let ((c (send-message ed SCI_GETCHARAT p 0)))
+                       (if (or (= c 34) (= c 39)) c
+                         (search-back (- p 1)))))))))
+           (target-char (if (and quote-char (= quote-char 34)) 39 34)))
+      (if (not quote-char)
+        (echo-message! echo "No quotes found near point")
+        ;; Find opening quote
+        (let find-open ((p pos))
+          (if (< p 0)
+            (echo-message! echo "Could not find opening quote")
+            (let ((c (send-message ed SCI_GETCHARAT p 0)))
+              (if (= c quote-char)
+                ;; Found opening, find closing
+                (let find-close ((q (+ p 1)))
+                  (let ((len (send-message ed SCI_GETLENGTH 0 0)))
+                    (if (>= q len)
+                      (echo-message! echo "Could not find closing quote")
+                      (let ((c2 (send-message ed SCI_GETCHARAT q 0)))
+                        (if (= c2 quote-char)
+                          ;; Replace both quotes
+                          (let ((new-char (string (integer->char target-char))))
+                            (send-message ed SCI_SETTARGETSTART q 0)
+                            (send-message ed SCI_SETTARGETEND (+ q 1) 0)
+                            (send-message ed SCI_REPLACETARGET -1 new-char)
+                            (send-message ed SCI_SETTARGETSTART p 0)
+                            (send-message ed SCI_SETTARGETEND (+ p 1) 0)
+                            (send-message ed SCI_REPLACETARGET -1 new-char)
+                            (echo-message! echo (str "Toggled to "
+                              (if (= target-char 34) "double" "single") " quotes")))
+                          (find-close (+ q 1)))))))
+                (find-open (- p 1))))))))))
+
+;; --- Feature 8: Browse URL at Point ---
+
+(def (cmd-browse-url-at-point app)
+  "Open the URL under the cursor in the default web browser."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+         (line-end (send-message ed SCI_GETLINEENDPOSITION line 0))
+         (line-text (editor-get-text-range ed line-start line-end)))
+    ;; Find URL in line text
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        (str "echo " (shell-quote line-text)
+                             " | grep -oP 'https?://[^ \\t\\n\\r\"'\\''><]+' | head -1")
+                        'block (native-transcoder))))
+          (close-port si)
+          (let ((url (get-line so)))
+            (close-port so) (close-port se)
+            (if (eof-object? url)
+              (echo-message! echo "No URL found on current line")
+              (let ((trimmed (string-trim url)))
+                (let-values (((si2 so2 se2 pid2)
+                              (open-process-ports
+                                (str "xdg-open " (shell-quote trimmed) " 2>/dev/null &")
+                                'block (native-transcoder))))
+                  (close-port si2) (close-port so2) (close-port se2)
+                  (echo-message! echo (str "Opening: " trimmed)))))))))))
+
+;; --- Feature 9: Dumb Jump ---
+
+(def (cmd-dumb-jump app)
+  "Jump to definition of symbol at point using grep/rg."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (symbol (editor-get-text-range ed word-start word-end)))
+    (if (or (not symbol) (string-empty? symbol))
+      (echo-message! echo "No symbol at point")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "dumb-jump error: " e)))
+        (lambda ()
+          ;; Try rg first, fall back to grep
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "rg -n --no-heading '(def|defn|defun|define|class|function|func|fn|let|const|var|type|struct)\\s+"
+                               symbol "\\b' . 2>/dev/null || grep -rn 'def.*"
+                               symbol "' --include='*.ss' --include='*.scm' --include='*.py' --include='*.js' --include='*.go' --include='*.rs' . 2>/dev/null")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((results (reverse lines)))
+                      (if (null? results)
+                        (echo-message! echo (str "No definition found for: " symbol))
+                        (if (= (length results) 1)
+                          ;; Single result: jump directly
+                          (let* ((result (car results))
+                                 (parts (string-split result #\:)))
+                            (when (>= (length parts) 2)
+                              (let ((file (car parts))
+                                    (line-num (string->number (cadr parts))))
+                                (when (and file line-num)
+                                  (cmd-find-file-at app file line-num)))))
+                          ;; Multiple results: show in buffer
+                          (let* ((new-buf (create-buffer "*dumb-jump*"))
+                                 (result-text (string-join results "\n")))
+                            (switch-to-buffer frame new-buf)
+                            (let ((new-ed (edit-window-editor (current-window frame))))
+                              (editor-set-text new-ed (str "=== Definitions of " symbol " ===\n\n" result-text "\n")))
+                            (echo-message! echo (str (length results) " definitions found")))))))
+                  (loop (cons line lines)))))))))))
+
+(def (cmd-find-file-at app file line-num)
+  "Helper: open file and go to line number."
+  (let* ((frame (app-state-frame app))
+         (buf (find-or-create-file-buffer file)))
+    (switch-to-buffer frame buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (when line-num
+        (let ((pos (send-message ed SCI_POSITIONFROMLINE (- line-num 1) 0)))
+          (editor-goto-pos ed pos))))))
+
+;; --- Feature 10: Diff Buffer with File ---
+
+(def (cmd-diff-buffer-with-file app)
+  "Show the diff between the current buffer contents and the file on disk."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "diff error: " e)))
+        (lambda ()
+          (let* ((text (editor-get-text ed))
+                 (tmp-file (str "/tmp/jemacs-diff-" (time-second (current-time)) ".tmp")))
+            (write-file-string tmp-file text)
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "diff -u " (shell-quote file) " " (shell-quote tmp-file)
+                                 " 2>/dev/null; rm -f " (shell-quote tmp-file))
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (let ((diff-text (string-join (reverse lines) "\n")))
+                        (if (string-empty? diff-text)
+                          (echo-message! echo "Buffer matches file on disk")
+                          (let* ((new-buf (create-buffer "*diff*")))
+                            (switch-to-buffer frame new-buf)
+                            (let ((new-ed (edit-window-editor (current-window frame))))
+                              (editor-set-text new-ed diff-text))
+                            (echo-message! echo "Diff loaded")))))
+                    (loop (cons line lines))))))))))))

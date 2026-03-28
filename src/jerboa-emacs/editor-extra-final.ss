@@ -5930,3 +5930,306 @@
                             (send-message ed SCI_INSERTTEXT start result)
                             (echo-message! echo (str "Replaced with: " result))))))
                     (loop (cons line lines))))))))))))
+
+;; ===== Round 15 Batch 2 =====
+
+;; --- Feature 11: Copy as Format ---
+
+(def (cmd-copy-as-format app)
+  "Copy selection formatted as markdown, org, html, or other formats."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection to copy")
+      (let* ((text (editor-get-text-range ed start end))
+             (buf (edit-window-buffer win))
+             (file (buffer-file buf))
+             (ext (if file (path-extension file) "txt"))
+             (row (tui-rows)) (width (tui-cols))
+             (fmt (echo-read-string echo "Format [markdown/org/html/slack/jira]: " row width)))
+        (when (and fmt (not (string-empty? fmt)))
+          (let* ((format-name (string-trim fmt))
+                 (formatted
+                   (cond
+                     ((string=? format-name "markdown")
+                      (str "```" ext "\n" text "\n```"))
+                     ((string=? format-name "org")
+                      (str "#+BEGIN_SRC " ext "\n" text "\n#+END_SRC"))
+                     ((string=? format-name "html")
+                      (str "<pre><code class=\"language-" ext "\">" text "</code></pre>"))
+                     ((string=? format-name "slack")
+                      (str "```\n" text "\n```"))
+                     ((string=? format-name "jira")
+                      (str "{code:" ext "}\n" text "\n{code}"))
+                     (else text))))
+            (send-message ed SCI_COPYTEXT (string-length formatted) formatted)
+            (echo-message! echo (str "Copied as " format-name " (" (string-length formatted) " chars)"))))))))
+
+;; --- Feature 12: Edit Indirect ---
+
+(def (cmd-edit-indirect app)
+  "Edit the selected region in a separate buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection — select a region to edit indirectly")
+      (let* ((text (editor-get-text-range ed start end))
+             (new-buf (create-buffer "*edit-indirect*")))
+        (switch-to-buffer frame new-buf)
+        (let ((new-ed (edit-window-editor (current-window frame))))
+          (editor-set-text new-ed text)
+          (editor-goto-pos new-ed 0)
+          (echo-message! echo "Editing region indirectly. Use copy-all to get results back."))))))
+
+;; --- Feature 13: Crux Indent Defun ---
+
+(def (cmd-crux-indent-defun app)
+  "Re-indent the current function/defun."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0)))
+    ;; Find start of defun (line starting at column 0 with opening paren or keyword)
+    (let find-start ((l line))
+      (if (< l 0)
+        (echo-message! echo "Could not find defun start")
+        (let* ((lpos (send-message ed SCI_POSITIONFROMLINE l 0))
+               (indent (send-message ed SCI_GETLINEINDENTATION l 0))
+               (ch (send-message ed SCI_GETCHARAT lpos 0)))
+          (if (and (= indent 0) (or (= ch 40) (= ch 100) (= ch 102)))  ;; ( d f
+            ;; Found start, find matching end
+            (let* ((match-pos (send-message ed SCI_BRACEMATCH lpos 0))
+                   (end-pos (if (>= match-pos 0)
+                              (+ match-pos 1)
+                              (send-message ed SCI_GETLINEENDPOSITION l 0))))
+              ;; Select and auto-indent the range
+              (send-message ed SCI_SETSEL lpos end-pos)
+              (send-message ed SCI_TAB 0 0)
+              (send-message ed SCI_SETSEL lpos end-pos)
+              (echo-message! echo "Indented defun"))
+            (find-start (- l 1))))))))
+
+;; --- Feature 14: Crux Cleanup Buffer ---
+
+(def (cmd-crux-cleanup-buffer app)
+  "Cleanup buffer: remove trailing whitespace, untabify, re-indent."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len))
+         (lines (string-split text #\newline))
+         ;; Remove trailing whitespace from each line
+         (cleaned (map string-trim-right lines))
+         ;; Remove trailing blank lines
+         (trimmed (let trim-end ((ls (reverse cleaned)))
+                    (if (and (not (null? ls)) (string-empty? (car ls)))
+                      (trim-end (cdr ls))
+                      (reverse ls))))
+         (result (string-join trimmed "\n")))
+    ;; Ensure final newline
+    (let ((final (if (and (> (string-length result) 0)
+                          (not (char=? (string-ref result (- (string-length result) 1)) #\newline)))
+                   (string-append result "\n")
+                   result)))
+      (editor-set-text ed final)
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Buffer cleaned up"))))
+
+;; --- Feature 15: Recover File ---
+
+(def (cmd-recover-file app)
+  "Recover a file from auto-save backup."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (let ((auto-save (str file "~")))
+        (if (not (file-exists? auto-save))
+          ;; Try .#file pattern
+          (let ((alt-save (str (path-directory file) "/.#" (path-last file))))
+            (if (not (file-exists? alt-save))
+              (echo-message! echo "No auto-save file found")
+              (begin
+                (let ((content (read-file-string alt-save)))
+                  (let ((ed (edit-window-editor win)))
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo (str "Recovered from: " alt-save)))))))
+          (begin
+            (let ((content (read-file-string auto-save)))
+              (let ((ed (edit-window-editor win)))
+                (editor-set-text ed content)
+                (editor-goto-pos ed 0)
+                (echo-message! echo (str "Recovered from: " auto-save))))))))))
+
+;; --- Feature 16: Hexl Mode ---
+
+(def (cmd-hexl-mode app)
+  "View/edit the current buffer contents in hexadecimal."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (text (editor-get-text ed)))
+    (when (and text (> (string-length text) 0))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "hexl error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports "xxd"
+                          'block (native-transcoder))))
+            (put-string si text)
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((hex-text (string-join (reverse lines) "\n"))
+                           (new-buf (create-buffer "*hexl*")))
+                      (switch-to-buffer frame new-buf)
+                      (let ((new-ed (edit-window-editor (current-window frame))))
+                        (editor-set-text new-ed hex-text))
+                      (echo-message! echo "Hexl mode")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 17: Zone (screensaver) ---
+
+(def (cmd-zone app)
+  "Run zone mode: a screensaver-like text animation effect."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (len (send-message ed SCI_GETLENGTH 0 0))
+         (text (editor-get-text ed len)))
+    (when (and text (> (string-length text) 0))
+      ;; Melt effect: randomly shift characters down
+      (let* ((chars (string->list text))
+             (vec (list->vector chars))
+             (n (vector-length vec)))
+        (let melt ((steps 0))
+          (when (< steps (min 200 (* n 2)))
+            (let ((i (random n)))
+              (when (and (< i (- n 1))
+                         (not (char=? (vector-ref vec i) #\newline)))
+                (let ((tmp (vector-ref vec i)))
+                  (vector-set! vec i (vector-ref vec (+ i 1)))
+                  (vector-set! vec (+ i 1) tmp))))
+            (melt (+ steps 1))))
+        (let ((melted (list->string (vector->list vec))))
+          (editor-set-text ed melted)
+          (echo-message! echo "Zone! Press undo to restore"))))))
+
+;; --- Feature 18: Doctor (Eliza) ---
+
+(def (cmd-doctor app)
+  "Start an Eliza-like psychotherapist session."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*doctor*"))
+         (responses '("Tell me more about that."
+                      "How does that make you feel?"
+                      "Why do you say that?"
+                      "Can you elaborate on that?"
+                      "That's very interesting. Please continue."
+                      "I see. And what does that suggest to you?"
+                      "How long have you felt this way?"
+                      "What comes to mind when you say that?"
+                      "Do you really think so?"
+                      "Let's explore that further."
+                      "Why is that important to you?"
+                      "What do you think is behind that feeling?"
+                      "And how do you feel about that now?"
+                      "Please go on."
+                      "That's significant. Tell me more.")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed
+        (str "=== DOCTOR ===\n\n"
+             "I am the psychotherapist. Please, describe your problems.\n"
+             "Each time you are finished talking, type RET twice.\n\n"))
+      (editor-goto-pos new-ed (send-message new-ed SCI_GETLENGTH 0 0))
+      ;; Simple interactive session
+      (let* ((row (tui-rows)) (width (tui-cols))
+             (input (echo-read-string echo "You: " row width)))
+        (when (and input (not (string-empty? input)))
+          (let ((response (list-ref responses (random (length responses)))))
+            (let ((pos (send-message new-ed SCI_GETLENGTH 0 0)))
+              (send-message new-ed SCI_INSERTTEXT pos
+                (str "\nYou: " input "\n\nDoctor: " response "\n"))
+              (editor-goto-pos new-ed (send-message new-ed SCI_GETLENGTH 0 0))
+              (echo-message! echo "Type M-x doctor to continue the session"))))))))
+
+;; --- Feature 19: Animate String ---
+
+(def (cmd-animate-string app)
+  "Animate a string dropping in from the top of the buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (text (echo-read-string echo "Text to animate: " row width)))
+    (when (and text (not (string-empty? text)))
+      (let* ((msg (string-trim text))
+             ;; Create animation frames
+             (height 20)
+             (pad-width (max 0 (quotient (- 80 (string-length msg)) 2))))
+        (let animate ((step 0))
+          (when (< step height)
+            (let* ((lines (let build ((i 0) (acc '()))
+                           (if (>= i height) (reverse acc)
+                             (if (= i step)
+                               (build (+ i 1) (cons (str (make-string pad-width #\space) msg) acc))
+                               (build (+ i 1) (cons "" acc))))))
+                   (frame-text (string-join lines "\n")))
+              (editor-set-text ed frame-text)
+              (animate (+ step 1)))))
+        ;; Final position
+        (let* ((final-lines (let build ((i 0) (acc '()))
+                              (if (>= i height) (reverse acc)
+                                (if (= i (- height 1))
+                                  (build (+ i 1) (cons (str (make-string pad-width #\space) msg) acc))
+                                  (build (+ i 1) (cons "" acc))))))
+               (final-text (string-join final-lines "\n")))
+          (editor-set-text ed final-text)
+          (echo-message! echo "Animation complete!"))))))
+
+;; --- Feature 20: Tetris ---
+
+(def (cmd-tetris app)
+  "Play a simple Tetris game in the editor buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*tetris*")))
+    (switch-to-buffer frame new-buf)
+    (let ((ed (edit-window-editor (current-window frame))))
+      (let* ((width 10) (height 20)
+             ;; Draw empty board
+             (top-border (str "+" (make-string (* width 2) #\-) "+"))
+             (empty-row (str "|" (make-string (* width 2) #\space) "|"))
+             (board-lines
+               (let build ((i 0) (acc (list top-border)))
+                 (if (>= i height)
+                   (reverse (cons top-border acc))
+                   (build (+ i 1) (cons empty-row acc)))))
+             (board-text (string-join board-lines "\n"))
+             (instructions "\n\nTETRIS - jemacs edition\n\nControls (via M-x):\n  tetris-left    - Move left\n  tetris-right   - Move right\n  tetris-rotate  - Rotate piece\n  tetris-drop    - Drop piece\n\nScore: 0\n"))
+        (editor-set-text ed (str board-text instructions))
+        (echo-message! echo "Tetris! Use M-x tetris-* commands to play")))))

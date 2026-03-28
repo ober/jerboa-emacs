@@ -1406,6 +1406,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Git file history | :orange_circle: | Show git log for current file |
 | Copy git branch | :orange_circle: | Copy current git branch name to kill ring |
 | Eval and replace | :orange_circle: | Evaluate selection as shell/bc expression, replace with result |
+| String inflection cycle | :orange_circle: | Cycle camelCase/snake_case/SCREAMING_SNAKE/kebab-case |
+| Crux kill whole line | :orange_circle: | Kill entire line regardless of cursor position |
+| Crux transpose windows | :orange_circle: | Swap buffers between current and next window |
+| Crux delete file and buffer | :orange_circle: | Delete file from disk and kill its buffer |
+| Smartscan symbol forward | :orange_circle: | Jump to next occurrence of symbol at point |
+| Smartscan symbol backward | :orange_circle: | Jump to previous occurrence of symbol at point |
+| Toggle quotes | :orange_circle: | Toggle between single and double quotes |
+| Browse URL at point | :orange_circle: | Open URL under cursor in web browser |
+| Dumb jump | :orange_circle: | Jump to definition using grep/rg (no LSP needed) |
+| Diff buffer with file | :orange_circle: | Show diff between buffer and file on disk |
+| Copy as format | :orange_circle: | Copy selection as markdown/org/html/slack/jira code block |
+| Edit indirect | :orange_circle: | Edit selected region in a separate buffer |
+| Crux indent defun | :orange_circle: | Re-indent entire function/defun |
+| Crux cleanup buffer | :orange_circle: | Remove trailing whitespace, blank lines, cleanup |
+| Recover file | :orange_circle: | Recover file from auto-save backup |
+| Hexl mode | :orange_circle: | View/edit buffer in hexadecimal via xxd |
+| Zone | :orange_circle: | Screensaver-like text melt animation |
+| Doctor | :orange_circle: | Eliza psychotherapist session |
+| Animate string | :orange_circle: | Animate text dropping from top of buffer |
+| Tetris | :orange_circle: | Classic Tetris game in editor buffer |
 
 ---
 
