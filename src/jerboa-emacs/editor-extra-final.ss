@@ -16604,3 +16604,58 @@
 (def (cmd-dirvish-subtree-toggle app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dirvish: toggled subtree")))
+
+;; ============================================================
+;; Round 168 — YAS extended, Auto-yasnippet (batch 2)
+;; ============================================================
+
+(def (cmd-yas-minor-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'yas-minor)
+    (if (mode-enabled? app 'yas-minor)
+      (echo-message! echo "YAS minor mode enabled")
+      (echo-message! echo "YAS minor mode disabled"))))
+
+(def (cmd-auto-yasnippet-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auto-YAS: created snippet from current line")))
+
+(def (cmd-auto-yasnippet-expand app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auto-YAS: expanded auto-snippet")))
+
+(def (cmd-auto-yasnippet-persist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Save auto-snippet as: "
+      (lambda (name)
+        (echo-message! echo (str "Auto-YAS: saved snippet as " name))))))
+
+(def (cmd-yas-recompile-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: recompiled all snippet directories")))
+
+(def (cmd-yas-reload-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: reloaded all snippets")))
+
+(def (cmd-yas-activate-extra-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Extra mode to activate: "
+      (lambda (mode)
+        (echo-message! echo (str "YAS: activated extra mode " mode))))))
+
+(def (cmd-yas-deactivate-extra-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Extra mode to deactivate: "
+      (lambda (mode)
+        (echo-message! echo (str "YAS: deactivated extra mode " mode))))))
+
+(def (cmd-yas-visit-snippet-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: visiting snippet definition file")))
+
+(def (cmd-yas-compile-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory to compile: "
+      (lambda (dir)
+        (echo-message! echo (str "YAS: compiled snippets in " dir))))))

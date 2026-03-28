@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 168 — Tempel, Yasnippet Extended, Auto-yasnippet
+
+| Feature | Status | Notes |
+|---|---|---|
+| `tempel-abort` | :orange_circle: | Abort template |
+| `tempel-done` | :orange_circle: | Done with template |
+| `yas-tryout-snippet` | :orange_circle: | Try snippet in scratch |
+| `yas-describe-tables` | :orange_circle: | Describe snippet tables |
+| `yas-load-snippet-buffer` | :orange_circle: | Load from buffer |
+| `yas-load-snippet-buffer-and-close` | :orange_circle: | Load and close |
+| `yas-skip-and-clear-field` | :orange_circle: | Skip and clear field |
+| `yas-clear-field` | :orange_circle: | Clear current field |
+| `yas-exit-all-snippets` | :orange_circle: | Exit all snippets |
+| `yas-abort-snippet` | :orange_circle: | Abort snippet |
+| `yas-minor-mode` | :orange_circle: | YAS minor mode |
+| `auto-yasnippet-create` | :orange_circle: | Create auto-snippet |
+| `auto-yasnippet-expand` | :orange_circle: | Expand auto-snippet |
+| `auto-yasnippet-persist` | :orange_circle: | Persist auto-snippet |
+| `yas-recompile-all` | :orange_circle: | Recompile all |
+| `yas-reload-all` | :orange_circle: | Reload all snippets |
+| `yas-activate-extra-mode` | :orange_circle: | Activate extra mode |
+| `yas-deactivate-extra-mode` | :orange_circle: | Deactivate extra mode |
+| `yas-visit-snippet-file` | :orange_circle: | Visit snippet file |
+| `yas-compile-directory` | :orange_circle: | Compile directory |
+
 ### Round 167 — Dirvish, Peep-dired, Fd-dired, Wdired
 
 | Feature | Status | Notes |

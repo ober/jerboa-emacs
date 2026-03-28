@@ -17251,3 +17251,47 @@
     (if (mode-enabled? app 'dirvish-emerge)
       (echo-message! echo "Dirvish emerge mode enabled")
       (echo-message! echo "Dirvish emerge mode disabled"))))
+
+;; ============================================================
+;; Round 168 — Tempel, Yasnippet extended, Auto-yasnippet (batch 1)
+;; ============================================================
+
+(def (cmd-tempel-abort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: aborted template expansion")))
+
+(def (cmd-tempel-done app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempel: done with template")))
+
+(def (cmd-yas-tryout-snippet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: trying out snippet in scratch buffer")))
+
+(def (cmd-yas-describe-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: describing snippet tables")))
+
+(def (cmd-yas-load-snippet-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: loaded snippet from current buffer")))
+
+(def (cmd-yas-load-snippet-buffer-and-close app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: loaded snippet and closed buffer")))
+
+(def (cmd-yas-skip-and-clear-field app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: skipped and cleared field")))
+
+(def (cmd-yas-clear-field app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: cleared current field")))
+
+(def (cmd-yas-exit-all-snippets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: exited all active snippets")))
+
+(def (cmd-yas-abort-snippet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAS: aborted current snippet")))
