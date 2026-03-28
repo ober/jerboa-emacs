@@ -3814,6 +3814,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | calc-keypad | :orange_circle: | Open calculator keypad |
 | calc-embedded | :orange_circle: | Toggle calc embedded mode |
 
+### Round 114 — Byte Compilation, Checkdoc & Misc
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| byte-compile-file | :orange_circle: | Byte compile a file |
+| byte-recompile-directory | :orange_circle: | Recompile all files in directory |
+| batch-byte-compile | :orange_circle: | Batch byte compilation |
+| disassemble | :orange_circle: | Disassemble a function |
+| emacs-lisp-byte-compile | :orange_circle: | Byte compile current buffer |
+| emacs-lisp-byte-compile-and-load | :orange_circle: | Byte compile and load buffer |
+| native-compile | :orange_circle: | Native compile a file |
+| native-compile-async | :orange_circle: | Async native compilation |
+| checkdoc-current-buffer | :orange_circle: | Check docstrings in buffer |
+| checkdoc-defun | :orange_circle: | Check docstring of current defun |
+| checkdoc-ispell | :orange_circle: | Spell-check docstrings |
+| package-quickstart-refresh | :orange_circle: | Refresh package quickstart |
+| package-vc-install-from-checkout | :orange_circle: | Install package from checkout |
+| package-vc-rebuild | :orange_circle: | Rebuild VC-installed package |
+| package-report-bug | :orange_circle: | Report bug for package |
+| finder-list-keywords | :orange_circle: | List all finder keywords |
+| load-theme-buffer-local | :orange_circle: | Load theme for current buffer |
+| cua-set-rectangle-mark | :orange_circle: | Set CUA rectangle mark |
+| cua-toggle-global-mark | :orange_circle: | Toggle CUA global mark |
+| speedbar-toggle-show-all-files | :orange_circle: | Toggle speedbar all files |
+
 ---
 
 ## Recommended Development Roadmap

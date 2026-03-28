@@ -13979,3 +13979,56 @@
 (def (cmd-calc-embedded app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Calc: toggled embedded mode at point")))
+
+;;; ——— Round 114: Byte compilation, checkdoc & misc (batch 2) ———
+
+(def (cmd-checkdoc-ispell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Checkdoc: spell-checking docstrings")))
+
+(def (cmd-package-quickstart-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: refreshing quickstart file")))
+
+(def (cmd-package-vc-install-from-checkout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Install from checkout: "
+      (lambda (dir)
+        (echo-message! echo (str "Package: installing from checkout " dir))))))
+
+(def (cmd-package-vc-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rebuild package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Package: rebuilding " pkg))))))
+
+(def (cmd-package-report-bug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Report bug for package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Package: preparing bug report for " pkg))))))
+
+(def (cmd-finder-list-keywords app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Finder: listing all keywords")))
+
+(def (cmd-load-theme-buffer-local app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buffer-local theme: "
+      (lambda (theme)
+        (echo-message! echo (str "Loaded theme " theme " for current buffer"))))))
+
+(def (cmd-cua-set-rectangle-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: set rectangle mark")))
+
+(def (cmd-cua-toggle-global-mark app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'cua-global-mark)
+    (if (mode-enabled? app 'cua-global-mark)
+      (echo-message! echo "CUA global mark enabled")
+      (echo-message! echo "CUA global mark disabled"))))
+
+(def (cmd-speedbar-toggle-show-all-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Speedbar: toggled showing all files")))

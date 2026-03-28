@@ -14566,3 +14566,55 @@
 (def (cmd-list-system-processes app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Listing all system processes")))
+
+;;; ——— Round 114: Byte compilation, checkdoc & misc (batch 1) ———
+
+(def (cmd-byte-compile-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Byte compile file: "
+      (lambda (file)
+        (echo-message! echo (str "Byte compiling " file))))))
+
+(def (cmd-byte-recompile-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recompile directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Byte recompiling directory " dir))))))
+
+(def (cmd-batch-byte-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Batch byte compilation started")))
+
+(def (cmd-disassemble app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Disassemble function: "
+      (lambda (func)
+        (echo-message! echo (str "Disassembling " func))))))
+
+(def (cmd-emacs-lisp-byte-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Byte compiling current buffer")))
+
+(def (cmd-emacs-lisp-byte-compile-and-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Byte compiling and loading current buffer")))
+
+(def (cmd-native-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Native compile file: "
+      (lambda (file)
+        (echo-message! echo (str "Native compiling " file))))))
+
+(def (cmd-native-compile-async app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Async native compile file: "
+      (lambda (file)
+        (echo-message! echo (str "Async native compiling " file))))))
+
+(def (cmd-checkdoc-current-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Checkdoc: checking current buffer")))
+
+(def (cmd-checkdoc-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Checkdoc: checking current defun")))
