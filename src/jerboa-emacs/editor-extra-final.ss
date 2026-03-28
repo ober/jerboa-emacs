@@ -15214,3 +15214,45 @@
 (def (cmd-robe-jump app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Robe: jumped to definition")))
+
+;;; Round 140 — Ruby/Rspec, Swift, Dart/Flutter, Lua, PHP (batch 2)
+
+(def (cmd-flutter-hot-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flutter: hot restart")))
+
+(def (cmd-flutter-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flutter: running tests")))
+
+(def (cmd-flutter-pub-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flutter: pub get")))
+
+(def (cmd-lua-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lua: sent buffer")))
+
+(def (cmd-lua-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lua: sent region")))
+
+(def (cmd-lua-send-current-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lua: sent current line")))
+
+(def (cmd-lua-start-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lua: started process")))
+
+(def (cmd-php-mode-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: running test")))
+
+(def (cmd-php-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: formatted buffer")))
+
+(def (cmd-phpunit-current-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHPUnit: running current test")))

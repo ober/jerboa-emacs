@@ -4504,6 +4504,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 140 — Ruby/Rspec, Swift, Dart/Flutter, Lua, PHP
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| robe-doc | :orange_circle: | Show Ruby documentation |
+| rspec-verify | :orange_circle: | Verify current RSpec file |
+| rspec-verify-all | :orange_circle: | Verify all RSpec specs |
+| rspec-verify-single | :orange_circle: | Verify single RSpec spec |
+| swift-mode-run | :orange_circle: | Run Swift project |
+| swift-mode-send-region | :orange_circle: | Send Swift region to REPL |
+| swift-mode-repl | :orange_circle: | Start Swift REPL |
+| dart-format | :orange_circle: | Format Dart buffer |
+| flutter-run | :orange_circle: | Run Flutter app |
+| flutter-hot-reload | :orange_circle: | Flutter hot reload |
+| flutter-hot-restart | :orange_circle: | Flutter hot restart |
+| flutter-test | :orange_circle: | Run Flutter tests |
+| flutter-pub-get | :orange_circle: | Flutter pub get |
+| lua-send-buffer | :orange_circle: | Send Lua buffer |
+| lua-send-region | :orange_circle: | Send Lua region |
+| lua-send-current-line | :orange_circle: | Send current Lua line |
+| lua-start-process | :orange_circle: | Start Lua process |
+| php-mode-test | :orange_circle: | Run PHP test |
+| php-format-buffer | :orange_circle: | Format PHP buffer |
+| phpunit-current-test | :orange_circle: | Run current PHPUnit test |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

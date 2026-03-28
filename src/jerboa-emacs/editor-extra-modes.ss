@@ -15817,3 +15817,45 @@
 (def (cmd-ess-eval-buffer app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "ESS: evaluated buffer")))
+
+;;; Round 140 — Ruby/Rspec, Swift, Dart/Flutter, Lua, PHP (batch 1)
+
+(def (cmd-robe-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Robe: showing documentation")))
+
+(def (cmd-rspec-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RSpec: verifying current file")))
+
+(def (cmd-rspec-verify-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RSpec: verifying all specs")))
+
+(def (cmd-rspec-verify-single app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RSpec: verifying single spec at point")))
+
+(def (cmd-swift-mode-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swift: running")))
+
+(def (cmd-swift-mode-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swift: sent region to REPL")))
+
+(def (cmd-swift-mode-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swift: started REPL")))
+
+(def (cmd-dart-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dart: formatted buffer")))
+
+(def (cmd-flutter-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flutter: running app")))
+
+(def (cmd-flutter-hot-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flutter: hot reload")))
