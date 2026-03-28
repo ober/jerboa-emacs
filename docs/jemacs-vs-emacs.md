@@ -4288,6 +4288,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 132 — LSP Extended, DAP, AI Tools
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| lsp-find-declaration | :orange_circle: | Find declaration via LSP |
+| lsp-find-type-definition | :orange_circle: | Find type definition via LSP |
+| lsp-signature-activate | :orange_circle: | Activate signature help |
+| lsp-signature-toggle-full-docs | :orange_circle: | Toggle full signature docs |
+| lsp-ui-doc-hide | :orange_circle: | Hide LSP UI doc popup |
+| lsp-ui-doc-focus-frame | :orange_circle: | Focus LSP UI doc frame |
+| lsp-ui-imenu | :orange_circle: | LSP UI imenu |
+| dap-ui-show-many-windows | :orange_circle: | Show DAP debug windows |
+| copilot-accept-completion-by-word | :orange_circle: | Accept Copilot completion by word |
+| copilot-accept-completion-by-line | :orange_circle: | Accept Copilot completion by line |
+| copilot-clear-overlay | :orange_circle: | Clear Copilot overlay |
+| dall-e-shell | :orange_circle: | Open DALL-E shell |
+| codeium-completion-at-point | :orange_circle: | Codeium completion at point |
+| codeium-mode | :orange_circle: | Toggle Codeium mode |
+| tabnine-accept-completion | :orange_circle: | Accept TabNine completion |
+| tabnine-mode | :orange_circle: | Toggle TabNine mode |
+| ellama-ask | :orange_circle: | Ask Ellama AI |
+| ellama-code-add | :orange_circle: | Generate code with Ellama |
+| ellama-code-edit | :orange_circle: | Edit code with Ellama |
+| minions-minor-modes-menu | :orange_circle: | Show minions minor modes menu |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

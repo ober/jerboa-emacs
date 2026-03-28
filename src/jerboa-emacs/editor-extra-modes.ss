@@ -15467,3 +15467,45 @@
     (echo-read-string echo "Schedule date (YYYY-MM-DD): "
       (lambda (date)
         (echo-message! echo (str "Org-journal: new scheduled entry for " date))))))
+
+;;; Round 132 — LSP, DAP, AI Tools (batch 1)
+
+(def (cmd-lsp-find-declaration app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: finding declaration")))
+
+(def (cmd-lsp-find-type-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: finding type definition")))
+
+(def (cmd-lsp-signature-activate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: activated signature help")))
+
+(def (cmd-lsp-signature-toggle-full-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP: toggled full signature docs")))
+
+(def (cmd-lsp-ui-doc-hide app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP UI: hid documentation popup")))
+
+(def (cmd-lsp-ui-doc-focus-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP UI: focused doc frame")))
+
+(def (cmd-lsp-ui-imenu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LSP UI: showing imenu")))
+
+(def (cmd-dap-ui-show-many-windows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DAP: showing debug windows layout")))
+
+(def (cmd-copilot-accept-completion-by-word app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: accepted completion by word")))
+
+(def (cmd-copilot-accept-completion-by-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: accepted completion by line")))

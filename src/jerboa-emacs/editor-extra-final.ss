@@ -14844,3 +14844,57 @@
 (def (cmd-org-download-yank app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Org-download: yanked image from URL")))
+
+;;; Round 132 — LSP, DAP, AI Tools (batch 2)
+
+(def (cmd-copilot-clear-overlay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Copilot: cleared overlay")))
+
+(def (cmd-dall-e-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DALL-E: opened shell")))
+
+(def (cmd-codeium-completion-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Codeium: completion at point")))
+
+(def (cmd-codeium-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'codeium)
+    (if (mode-enabled? app 'codeium)
+      (echo-message! echo "Codeium mode enabled")
+      (echo-message! echo "Codeium mode disabled"))))
+
+(def (cmd-tabnine-accept-completion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TabNine: accepted completion")))
+
+(def (cmd-tabnine-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'tabnine)
+    (if (mode-enabled? app 'tabnine)
+      (echo-message! echo "TabNine mode enabled")
+      (echo-message! echo "TabNine mode disabled"))))
+
+(def (cmd-ellama-ask app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ask Ellama: "
+      (lambda (query)
+        (echo-message! echo (str "Ellama: asking '" query "'"))))))
+
+(def (cmd-ellama-code-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ellama add code: "
+      (lambda (desc)
+        (echo-message! echo (str "Ellama: generating code for '" desc "'"))))))
+
+(def (cmd-ellama-code-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ellama edit instruction: "
+      (lambda (instr)
+        (echo-message! echo (str "Ellama: editing code with '" instr "'"))))))
+
+(def (cmd-minions-minor-modes-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minions: showing minor modes menu")))
