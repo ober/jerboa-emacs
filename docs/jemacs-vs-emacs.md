@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 195 — Docker-ext, Docker-compose-ext, Kubernetes-ext, Vagrant-ext, Puppet-ext, Chef-ext, Saltstack-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| docker-container-logs | :orange_circle: | Show container logs |
+| docker-container-inspect | :orange_circle: | Inspect container |
+| docker-container-diff | :orange_circle: | Show container filesystem diff |
+| docker-image-inspect | :orange_circle: | Inspect Docker image |
+| docker-image-tag | :orange_circle: | Tag Docker image |
+| docker-network-inspect | :orange_circle: | Inspect Docker network |
+| docker-volume-inspect | :orange_circle: | Inspect Docker volume |
+| docker-compose-logs | :orange_circle: | Show Compose logs |
+| docker-compose-build | :orange_circle: | Build Compose services |
+| docker-compose-pull | :orange_circle: | Pull Compose images |
+| kubernetes-logs-follow | :orange_circle: | Follow pod logs |
+| kubernetes-apply-buffer | :orange_circle: | Apply buffer manifest |
+| kubernetes-delete-resource | :orange_circle: | Delete Kubernetes resource |
+| vagrant-halt | :orange_circle: | Halt Vagrant VM |
+| vagrant-destroy | :orange_circle: | Destroy Vagrant VM |
+| vagrant-ssh | :orange_circle: | SSH into Vagrant VM |
+| puppet-validate | :orange_circle: | Validate Puppet manifest |
+| puppet-lint | :orange_circle: | Lint Puppet manifest |
+| chef-resource-lookup | :orange_circle: | Look up Chef resource |
+| saltstack-apply | :orange_circle: | Apply Saltstack state |
+
 ### Round 194 — Python-ext, Ruby-ext, Perl-ext, Lua-ext, PHP-ext, Haskell-ext, Kotlin-ext, Swift-ext
 
 | Feature | Status | Notes |

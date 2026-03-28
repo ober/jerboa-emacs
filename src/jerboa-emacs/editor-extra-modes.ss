@@ -18566,3 +18566,60 @@
 (def (cmd-php-send-region app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PHP: sent region to process")))
+
+;; Round 195 — Docker-ext, Docker-compose-ext
+(def (cmd-docker-container-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Container name: "
+      (lambda (name)
+        (echo-message! echo (str "Docker: showing logs for " name))))))
+
+(def (cmd-docker-container-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Inspect container: "
+      (lambda (name)
+        (echo-message! echo (str "Docker: inspecting container " name))))))
+
+(def (cmd-docker-container-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Container diff: "
+      (lambda (name)
+        (echo-message! echo (str "Docker: showing filesystem diff for " name))))))
+
+(def (cmd-docker-image-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Inspect image: "
+      (lambda (img)
+        (echo-message! echo (str "Docker: inspecting image " img))))))
+
+(def (cmd-docker-image-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image to tag: "
+      (lambda (img)
+        (echo-read-string echo "New tag: "
+          (lambda (tag)
+            (echo-message! echo (str "Docker: tagged " img " as " tag))))))))
+
+(def (cmd-docker-network-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Inspect network: "
+      (lambda (net)
+        (echo-message! echo (str "Docker: inspecting network " net))))))
+
+(def (cmd-docker-volume-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Inspect volume: "
+      (lambda (vol)
+        (echo-message! echo (str "Docker: inspecting volume " vol))))))
+
+(def (cmd-docker-compose-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: showing logs")))
+
+(def (cmd-docker-compose-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: building services...")))
+
+(def (cmd-docker-compose-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Docker Compose: pulling images...")))

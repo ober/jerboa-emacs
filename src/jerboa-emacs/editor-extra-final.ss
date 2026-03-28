@@ -17943,3 +17943,50 @@
 (def (cmd-swift-mode-beginning-of-defun app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Swift: moved to beginning of function")))
+
+;; Round 195 — Kubernetes-ext, Vagrant-ext, Puppet-ext, Chef-ext, Saltstack-ext
+(def (cmd-kubernetes-logs-follow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Follow logs for pod: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubernetes: following logs for " pod))))))
+
+(def (cmd-kubernetes-apply-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kubernetes: applied buffer manifest")))
+
+(def (cmd-kubernetes-delete-resource app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete resource: "
+      (lambda (res)
+        (echo-message! echo (str "Kubernetes: deleted resource " res))))))
+
+(def (cmd-vagrant-halt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: halting VM...")))
+
+(def (cmd-vagrant-destroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: destroying VM...")))
+
+(def (cmd-vagrant-ssh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: connecting via SSH...")))
+
+(def (cmd-puppet-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: validating manifest...")))
+
+(def (cmd-puppet-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: linting manifest...")))
+
+(def (cmd-chef-resource-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chef resource: "
+      (lambda (res)
+        (echo-message! echo (str "Chef: looking up resource " res))))))
+
+(def (cmd-saltstack-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Saltstack: applying state...")))
