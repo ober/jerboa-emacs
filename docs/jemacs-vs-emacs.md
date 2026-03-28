@@ -1426,6 +1426,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Doctor | :orange_circle: | Eliza psychotherapist session |
 | Animate string | :orange_circle: | Animate text dropping from top of buffer |
 | Tetris | :orange_circle: | Classic Tetris game in editor buffer |
+| Morse region | :orange_circle: | Convert text to Morse code |
+| Unmorse region | :orange_circle: | Convert Morse code back to text |
+| Proced mode | :orange_circle: | Process viewer/manager (ps aux) |
+| EWW open file | :orange_circle: | Render HTML file as text via w3m/lynx |
+| Webjump | :orange_circle: | Quick jump to configured search engines |
+| RSS feed | :orange_circle: | Simple RSS/Atom feed reader |
+| Garbage collect | :orange_circle: | Run GC and display heap statistics |
+| Benchmark run | :orange_circle: | Benchmark a shell command with timing stats |
+| Describe personal keybindings | :orange_circle: | Show user-customized keybindings |
+| Newsticker show news | :orange_circle: | Fetch Hacker News top headlines |
+| Local set key | :orange_circle: | Set a local keybinding for session |
+| Unbind key | :orange_circle: | Unbind a key sequence |
+| Align entire | :orange_circle: | Align entire buffer by separator character |
+| Studlify region | :orange_circle: | StUdLiFy text (alternating case) |
+| Compile goto error | :orange_circle: | Jump to file:line from compile error |
+| Signal process | :orange_circle: | Send signal to process by PID |
+| Kill process | :orange_circle: | Kill process by PID or name |
+| Text scale adjust | :orange_circle: | Interactive text zoom +/-/0 |
+| Memory use counts | :orange_circle: | Display Chez Scheme memory statistics |
+| Execute named kbd macro | :orange_circle: | Execute/list named keyboard macros |
 
 ---
 

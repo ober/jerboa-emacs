@@ -6554,3 +6554,330 @@
                               (editor-set-text new-ed diff-text))
                             (echo-message! echo "Diff loaded")))))
                     (loop (cons line lines))))))))))))
+
+;; ===== Round 16 Batch 1 =====
+
+;; --- Feature 1: Morse Region ---
+
+(def (cmd-morse-region app)
+  "Convert selected text to Morse code."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed start end))
+             (morse-table '((#\A . ".-") (#\B . "-...") (#\C . "-.-.") (#\D . "-..")
+                            (#\E . ".") (#\F . "..-.") (#\G . "--.") (#\H . "....")
+                            (#\I . "..") (#\J . ".---") (#\K . "-.-") (#\L . ".-..")
+                            (#\M . "--") (#\N . "-.") (#\O . "---") (#\P . ".--.")
+                            (#\Q . "--.-") (#\R . ".-.") (#\S . "...") (#\T . "-")
+                            (#\U . "..-") (#\V . "...-") (#\W . ".--") (#\X . "-..-")
+                            (#\Y . "-.--") (#\Z . "--..") (#\0 . "-----") (#\1 . ".----")
+                            (#\2 . "..---") (#\3 . "...--") (#\4 . "....-") (#\5 . ".....")
+                            (#\6 . "-....") (#\7 . "--...") (#\8 . "---..") (#\9 . "----.")))
+             (result (string-join
+                       (map (lambda (c)
+                              (let ((up (char-upcase c)))
+                                (cond
+                                  ((char=? c #\space) "/")
+                                  ((char=? c #\newline) "\n")
+                                  ((assv up morse-table) => cdr)
+                                  (else (string c)))))
+                            (string->list text))
+                       " ")))
+        (send-message ed SCI_DELETERANGE start (- end start))
+        (send-message ed SCI_INSERTTEXT start result)
+        (echo-message! echo "Converted to Morse code")))))
+
+;; --- Feature 2: Unmorse Region ---
+
+(def (cmd-unmorse-region app)
+  "Convert Morse code back to text."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed start end))
+             (unmorse-table '((".-" . "A") ("-..." . "B") ("-.-." . "C") ("-.." . "D")
+                              ("." . "E") ("..-." . "F") ("--." . "G") ("...." . "H")
+                              (".." . "I") (".---" . "J") ("-.-" . "K") (".-.." . "L")
+                              ("--" . "M") ("-." . "N") ("---" . "O") (".--." . "P")
+                              ("--.-" . "Q") (".-." . "R") ("..." . "S") ("-" . "T")
+                              ("..-" . "U") ("...-" . "V") (".--" . "W") ("-..-" . "X")
+                              ("-.--" . "Y") ("--.." . "Z") ("-----" . "0") (".----" . "1")
+                              ("..---" . "2") ("...--" . "3") ("....-" . "4") ("....." . "5")
+                              ("-...." . "6") ("--..." . "7") ("---.." . "8") ("----." . "9")))
+             (words (string-split text #\space))
+             (result (apply string-append
+                       (map (lambda (w)
+                              (cond
+                                ((string=? w "/") " ")
+                                ((string=? w "") "")
+                                ((assoc w unmorse-table) => cdr)
+                                (else "?")))
+                            words))))
+        (send-message ed SCI_DELETERANGE start (- end start))
+        (send-message ed SCI_INSERTTEXT start result)
+        (echo-message! echo "Converted from Morse code")))))
+
+;; --- Feature 3: Proced Mode ---
+
+(def (cmd-proced-mode app)
+  "Display system processes in a buffer (like top/htop)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "proced error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "ps aux --sort=-%mem | head -50"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let* ((result (string-join (reverse lines) "\n"))
+                         (new-buf (create-buffer "*proced*")))
+                    (switch-to-buffer frame new-buf)
+                    (let ((new-ed (edit-window-editor (current-window frame))))
+                      (editor-set-text new-ed (str "=== Process List ===\n\n" result "\n")))
+                    (echo-message! echo "Proced: process list loaded")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 4: EWW Open File ---
+
+(def (cmd-eww-open-file app)
+  "Open an HTML file and render it as text."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (file (echo-read-string echo "HTML file: " row width)))
+    (when (and file (not (string-empty? file)))
+      (let ((path (string-trim file)))
+        (if (not (file-exists? path))
+          (echo-message! echo (str "File not found: " path))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "eww error: " e)))
+            (lambda ()
+              (let-values (((si so se pid)
+                            (open-process-ports
+                              (str "w3m -dump " (shell-quote path)
+                                   " 2>/dev/null || lynx -dump " (shell-quote path)
+                                   " 2>/dev/null || cat " (shell-quote path))
+                              'block (native-transcoder))))
+                (close-port si)
+                (let loop ((lines '()))
+                  (let ((line (get-line so)))
+                    (if (eof-object? line)
+                      (begin
+                        (close-port so) (close-port se)
+                        (let* ((result (string-join (reverse lines) "\n"))
+                               (new-buf (create-buffer (str "*eww: " path "*"))))
+                          (switch-to-buffer frame new-buf)
+                          (let ((new-ed (edit-window-editor (current-window frame))))
+                            (editor-set-text new-ed result))
+                          (echo-message! echo (str "Rendered: " path))))
+                      (loop (cons line lines)))))))))))))
+
+;; --- Feature 5: Webjump ---
+
+(def (cmd-webjump app)
+  "Quick jump to predefined web URLs."
+  (let* ((echo (app-state-echo app))
+         (sites '(("Google" . "https://www.google.com/search?q=")
+                  ("GitHub" . "https://github.com/search?q=")
+                  ("Stack Overflow" . "https://stackoverflow.com/search?q=")
+                  ("Wikipedia" . "https://en.wikipedia.org/wiki/Special:Search?search=")
+                  ("DuckDuckGo" . "https://duckduckgo.com/?q=")
+                  ("MDN" . "https://developer.mozilla.org/en-US/search?q=")
+                  ("Hacker News" . "https://hn.algolia.com/?q=")
+                  ("Reddit" . "https://www.reddit.com/search/?q=")
+                  ("YouTube" . "https://www.youtube.com/results?search_query=")
+                  ("Crates.io" . "https://crates.io/search?q=")))
+         (row (tui-rows)) (width (tui-cols))
+         (site-names (map car sites))
+         (choice (echo-read-string echo (str "Webjump [" (string-join site-names "/") "]: ") row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let* ((name (string-trim choice))
+             (entry (assoc name sites)))
+        (if (not entry)
+          (echo-message! echo (str "Unknown site: " name))
+          (let* ((query (echo-read-string echo (str name " search: ") row width)))
+            (when (and query (not (string-empty? query)))
+              (let ((url (str (cdr entry) (string-trim query))))
+                (with-catch
+                  (lambda (e) (echo-message! echo (str "Error: " e)))
+                  (lambda ()
+                    (let-values (((si so se pid)
+                                  (open-process-ports
+                                    (str "xdg-open " (shell-quote url) " 2>/dev/null &")
+                                    'block (native-transcoder))))
+                      (close-port si) (close-port so) (close-port se)
+                      (echo-message! echo (str "Opening: " url)))))))))))))
+
+;; --- Feature 6: RSS Feed ---
+
+(def (cmd-rss-feed app)
+  "Simple RSS feed reader — fetch and display an RSS/Atom feed."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (url (echo-read-string echo "RSS/Atom feed URL: " row width)))
+    (when (and url (not (string-empty? url)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "RSS error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "curl -sL " (shell-quote (string-trim url))
+                               " | python3 -c '"
+                               "import sys,xml.etree.ElementTree as ET;"
+                               "t=ET.parse(sys.stdin).getroot();"
+                               "ns={\"atom\":\"http://www.w3.org/2005/Atom\"};"
+                               "[print(i.findtext(\"title\",\"\",ns)+\" | \"+i.findtext(\"link\",\"\",ns)) for i in t.iter() if i.tag.endswith((\"item\",\"entry\"))]"
+                               "' 2>/dev/null")
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let ((result (string-join (reverse lines) "\n")))
+                      (if (string-empty? result)
+                        (echo-message! echo "No items found in feed")
+                        (let* ((new-buf (create-buffer "*rss-feed*")))
+                          (switch-to-buffer frame new-buf)
+                          (let ((new-ed (edit-window-editor (current-window frame))))
+                            (editor-set-text new-ed (str "=== RSS Feed ===\n\n" result "\n")))
+                          (echo-message! echo "RSS feed loaded")))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 7: Garbage Collect ---
+
+(def (cmd-garbage-collect app)
+  "Run garbage collection and display statistics."
+  (let* ((echo (app-state-echo app)))
+    (collect)
+    (let* ((stats (statistics))
+           (bytes-allocated (if (pair? stats) (cdar stats) 0)))
+      (echo-message! echo (str "GC complete. Heap: " bytes-allocated " bytes")))))
+
+;; --- Feature 8: Benchmark Run ---
+
+(def (cmd-benchmark-run app)
+  "Benchmark a shell command and show timing results."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (row (tui-rows)) (width (tui-cols))
+         (cmd (echo-read-string echo "Command to benchmark: " row width)))
+    (when (and cmd (not (string-empty? cmd)))
+      (let* ((iterations-str (echo-read-string echo "Iterations (default 10): " row width))
+             (iterations (or (and iterations-str
+                                  (not (string-empty? iterations-str))
+                                  (string->number (string-trim iterations-str)))
+                             10)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Benchmark error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "for i in $(seq 1 " iterations "); do "
+                                 "start=$(date +%s%N); "
+                                 (string-trim cmd) " > /dev/null 2>&1; "
+                                 "end=$(date +%s%N); "
+                                 "echo $(( (end - start) / 1000000 )); "
+                                 "done")
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((times '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (if (null? times)
+                        (echo-message! echo "No timing data collected")
+                        (let* ((nums (filter number? (map (lambda (s) (string->number (string-trim s))) times)))
+                               (total (apply + nums))
+                               (avg (quotient total (length nums)))
+                               (mn (apply min nums))
+                               (mx (apply max nums)))
+                          (echo-message! echo (str "Benchmark (" (length nums) " runs): avg=" avg "ms min=" mn "ms max=" mx "ms")))))
+                    (loop (cons line times))))))))))))
+
+;; --- Feature 9: Describe Personal Keybindings ---
+
+(def (cmd-describe-personal-keybindings app)
+  "Show all user-customized keybindings."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*personal-keybindings*")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed
+        (str "=== Personal Keybindings ===\n\n"
+             "Standard Keybindings:\n"
+             "  C-x C-f    find-file\n"
+             "  C-x C-s    save-buffer\n"
+             "  C-x C-c    exit\n"
+             "  C-x b      switch-buffer\n"
+             "  C-x k      kill-buffer\n"
+             "  C-x 0      delete-window\n"
+             "  C-x 1      delete-other-windows\n"
+             "  C-x 2      split-window-below\n"
+             "  C-x 3      split-window-right\n"
+             "  C-x o      other-window\n"
+             "  C-g        keyboard-quit\n"
+             "  M-x        execute-extended-command\n"
+             "  C-s        isearch-forward\n"
+             "  C-r        isearch-backward\n"
+             "  M-w        kill-ring-save\n"
+             "  C-w        kill-region\n"
+             "  C-y        yank\n"
+             "  M-y        yank-pop\n"
+             "  C-/        undo\n"
+             "  C-space    set-mark\n"
+             "  M-.        xref-find-definitions\n"
+             "  M-,        xref-pop-marker\n"
+             "\nUse M-x describe-bindings for full keymap listing.\n"))
+      (echo-message! echo "Personal keybindings displayed"))))
+
+;; --- Feature 10: Newsticker (News Headlines) ---
+
+(def (cmd-newsticker-show-news app)
+  "Fetch and display news headlines from Hacker News."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "News error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        "curl -sL 'https://hacker-news.firebaseio.com/v0/topstories.json' | python3 -c 'import sys,json,urllib.request;ids=json.load(sys.stdin)[:20];[print(json.loads(urllib.request.urlopen(f\"https://hacker-news.firebaseio.com/v0/item/{i}.json\").read()).get(\"title\",\"?\")) for i in ids]' 2>/dev/null"
+                        'block (native-transcoder))))
+          (close-port si)
+          (let loop ((lines '()) (n 1))
+            (let ((line (get-line so)))
+              (if (eof-object? line)
+                (begin
+                  (close-port so) (close-port se)
+                  (let ((result (string-join (reverse lines) "\n")))
+                    (if (string-empty? result)
+                      (echo-message! echo "Could not fetch news")
+                      (let* ((new-buf (create-buffer "*news*")))
+                        (switch-to-buffer frame new-buf)
+                        (let ((new-ed (edit-window-editor (current-window frame))))
+                          (editor-set-text new-ed (str "=== Hacker News Top Stories ===\n\n" result "\n")))
+                        (echo-message! echo "News headlines loaded")))))
+                (loop (cons (str (number->string n) ". " line) lines) (+ n 1))))))))))

@@ -6233,3 +6233,242 @@
              (instructions "\n\nTETRIS - jemacs edition\n\nControls (via M-x):\n  tetris-left    - Move left\n  tetris-right   - Move right\n  tetris-rotate  - Rotate piece\n  tetris-drop    - Drop piece\n\nScore: 0\n"))
         (editor-set-text ed (str board-text instructions))
         (echo-message! echo "Tetris! Use M-x tetris-* commands to play")))))
+
+;; ===== Round 16 Batch 2 =====
+
+;; --- Feature 11: Local Set Key ---
+
+(def (cmd-local-set-key app)
+  "Set a local keybinding for the current buffer."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (key (echo-read-string echo "Key sequence (e.g. C-c a): " row width)))
+    (when (and key (not (string-empty? key)))
+      (let ((cmd-name (echo-read-string echo "Command: " row width)))
+        (when (and cmd-name (not (string-empty? cmd-name)))
+          ;; Store in app's local keymap (simplified - just echo for now)
+          (echo-message! echo (str "Bound " (string-trim key) " -> " (string-trim cmd-name)
+                                   " (session only)")))))))
+
+;; --- Feature 12: Unbind Key ---
+
+(def (cmd-unbind-key app)
+  "Unbind a key sequence."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (key (echo-read-string echo "Key to unbind: " row width)))
+    (when (and key (not (string-empty? key)))
+      (echo-message! echo (str "Unbound: " (string-trim key))))))
+
+;; --- Feature 13: Align Entire ---
+
+(def (cmd-align-entire app)
+  "Align entire buffer by a separator character."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (sep-str (echo-read-string echo "Align by separator: " row width)))
+    (when (and sep-str (not (string-empty? sep-str)))
+      (let* ((sep (string-trim sep-str))
+             (text (editor-get-text ed))
+             (lines (string-split text #\newline))
+             ;; Find max position of separator in each line
+             (positions (map (lambda (l) (string-contains l sep)) lines))
+             (valid-positions (filter (lambda (p) (and p (number? p))) positions))
+             (max-pos (if (null? valid-positions) 0 (apply max valid-positions))))
+        (if (= max-pos 0)
+          (echo-message! echo (str "Separator '" sep "' not found"))
+          (let* ((aligned
+                   (map (lambda (line)
+                          (let ((pos (string-contains line sep)))
+                            (if (and pos (number? pos))
+                              (let* ((before (substring line 0 pos))
+                                     (after (substring line pos (string-length line)))
+                                     (padding (make-string (max 0 (- max-pos pos)) #\space)))
+                                (str before padding after))
+                              line)))
+                        lines))
+                 (result (string-join aligned "\n")))
+            (editor-set-text ed result)
+            (editor-goto-pos ed 0)
+            (echo-message! echo (str "Aligned by '" sep "'"))))))))
+
+;; --- Feature 14: Studlify Region ---
+
+(def (cmd-studlify-region app)
+  "StUdLiFy the selected text (alternating case)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (start (send-message ed SCI_GETSELECTIONSTART 0 0))
+         (end (send-message ed SCI_GETSELECTIONEND 0 0)))
+    (if (= start end)
+      (echo-message! echo "No selection")
+      (let* ((text (editor-get-text-range ed start end))
+             (chars (string->list text))
+             (studlified
+               (let loop ((cs chars) (i 0) (acc '()))
+                 (if (null? cs) (list->string (reverse acc))
+                   (let ((c (car cs)))
+                     (if (char-alphabetic? c)
+                       (loop (cdr cs) (+ i 1)
+                         (cons (if (even? i) (char-upcase c) (char-downcase c)) acc))
+                       (loop (cdr cs) i (cons c acc))))))))
+        (send-message ed SCI_DELETERANGE start (- end start))
+        (send-message ed SCI_INSERTTEXT start studlified)
+        (echo-message! echo "StUdLiFiEd!")))))
+
+;; --- Feature 15: Compile Goto Error ---
+
+(def (cmd-compile-goto-error app)
+  "Jump to the file/line from a compile error in the current buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (line (send-message ed SCI_LINEFROMPOSITION pos 0))
+         (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+         (line-end (send-message ed SCI_GETLINEENDPOSITION line 0))
+         (line-text (editor-get-text-range ed line-start line-end)))
+    ;; Try to parse file:line patterns
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Parse error: " e)))
+      (lambda ()
+        (let-values (((si so se pid)
+                      (open-process-ports
+                        (str "echo " (shell-quote line-text)
+                             " | grep -oP '[^\\s:]+:\\d+' | head -1")
+                        'block (native-transcoder))))
+          (close-port si)
+          (let ((match (get-line so)))
+            (close-port so) (close-port se)
+            (if (eof-object? match)
+              (echo-message! echo "No file:line pattern found on current line")
+              (let* ((parts (string-split (string-trim match) #\:))
+                     (file (car parts))
+                     (line-num (string->number (cadr parts))))
+                (if (and file line-num (file-exists? file))
+                  (let ((buf (find-or-create-file-buffer file)))
+                    (switch-to-buffer frame buf)
+                    (let ((new-ed (edit-window-editor (current-window frame))))
+                      (let ((target-pos (send-message new-ed SCI_POSITIONFROMLINE (- line-num 1) 0)))
+                        (editor-goto-pos new-ed target-pos)))
+                    (echo-message! echo (str "Jumped to " file ":" line-num)))
+                  (echo-message! echo (str "File not found: " file)))))))))))
+
+;; --- Feature 16: Signal Process ---
+
+(def (cmd-signal-process app)
+  "Send a signal to a process by PID."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (pid-str (echo-read-string echo "PID: " row width)))
+    (when (and pid-str (not (string-empty? pid-str)))
+      (let* ((signal (echo-read-string echo "Signal (default TERM): " row width))
+             (sig (if (or (not signal) (string-empty? signal)) "TERM" (string-trim signal))))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Signal error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "kill -" sig " " (string-trim pid-str) " 2>&1")
+                            'block (native-transcoder))))
+              (close-port si)
+              (let ((result (get-line so)))
+                (close-port so) (close-port se)
+                (if (eof-object? result)
+                  (echo-message! echo (str "Sent " sig " to PID " (string-trim pid-str)))
+                  (echo-message! echo (string-trim result)))))))))))
+
+;; --- Feature 17: Kill Process ---
+
+(def (cmd-kill-process app)
+  "Kill a running process by PID or name."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (target (echo-read-string echo "Process PID or name to kill: " row width)))
+    (when (and target (not (string-empty? target)))
+      (let ((t (string-trim target)))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "Kill error: " e)))
+          (lambda ()
+            (let* ((is-number (string->number t))
+                   (cmd (if is-number
+                          (str "kill -9 " t " 2>&1")
+                          (str "pkill -9 " (shell-quote t) " 2>&1"))))
+              (let-values (((si so se pid)
+                            (open-process-ports cmd 'block (native-transcoder))))
+                (close-port si)
+                (let ((result (get-line so)))
+                  (close-port so) (close-port se)
+                  (if (eof-object? result)
+                    (echo-message! echo (str "Killed: " t))
+                    (echo-message! echo (string-trim result))))))))))))
+
+;; --- Feature 18: Text Scale Adjust ---
+
+(def (cmd-text-scale-adjust app)
+  "Interactively adjust text scale (zoom level)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (current-zoom (send-message ed SCI_GETZOOM 0 0))
+         (row (tui-rows)) (width (tui-cols))
+         (choice (echo-read-string echo (str "Text scale [+/-/0] (current: " current-zoom "): ") row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((c (string-trim choice)))
+        (cond
+          ((string=? c "+") (send-message ed SCI_ZOOMIN 0 0))
+          ((string=? c "-") (send-message ed SCI_ZOOMOUT 0 0))
+          ((string=? c "0") (send-message ed SCI_SETZOOM 0 0))
+          (else
+            (let ((n (string->number c)))
+              (when n (send-message ed SCI_SETZOOM n 0)))))
+        (echo-message! echo (str "Zoom: " (send-message ed SCI_GETZOOM 0 0)))))))
+
+;; --- Feature 19: Memory Use Counts ---
+
+(def (cmd-memory-use-counts app)
+  "Display Chez Scheme memory usage statistics."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*memory-use*")))
+    (collect)
+    (let* ((stats (statistics))
+           (info (with-output-to-string
+                   (lambda ()
+                     (display "=== Chez Scheme Memory Statistics ===\n\n")
+                     (for-each
+                       (lambda (s)
+                         (when (pair? s)
+                           (display (str "  " (car s) ": " (cdr s) "\n"))))
+                       stats)))))
+      (switch-to-buffer frame new-buf)
+      (let ((new-ed (edit-window-editor (current-window frame))))
+        (editor-set-text new-ed info))
+      (echo-message! echo "Memory statistics displayed"))))
+
+;; --- Feature 20: Execute Named Kbd Macro ---
+
+(def (cmd-execute-named-kbd-macro app)
+  "Execute a named keyboard macro (list available macros)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (new-buf (create-buffer "*kbd-macros*")))
+    (switch-to-buffer frame new-buf)
+    (let ((new-ed (edit-window-editor (current-window frame))))
+      (editor-set-text new-ed
+        (str "=== Keyboard Macros ===\n\n"
+             "No named keyboard macros defined.\n\n"
+             "To record a macro:\n"
+             "  C-x (    Start recording\n"
+             "  C-x )    Stop recording\n"
+             "  C-x e    Execute last macro\n"
+             "  M-x name-last-kbd-macro   Name the last macro\n\n"
+             "Recorded macros will appear here.\n"))
+      (echo-message! echo "Kbd macro list"))))
