@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 182 — Proof-general, Coq, Lean, Agda
+
+| Feature | Status | Notes |
+|---|---|---|
+| proof-general-mode | :orange_circle: | Toggle Proof General mode |
+| proof-assert-next-command | :orange_circle: | Assert next proof command |
+| proof-undo-last-successful-command | :orange_circle: | Undo last successful proof step |
+| proof-goto-point | :orange_circle: | Process proof to point |
+| proof-process-buffer | :orange_circle: | Process entire proof buffer |
+| proof-retract-buffer | :orange_circle: | Retract proof buffer |
+| coq-about | :orange_circle: | Coq About query |
+| coq-check | :orange_circle: | Coq Check query |
+| coq-print | :orange_circle: | Coq Print query |
+| coq-search | :orange_circle: | Coq Search query |
+| lean4-mode | :orange_circle: | Toggle Lean4 mode |
+| lean4-execute | :orange_circle: | Execute Lean4 file |
+| lean4-toggle-info | :orange_circle: | Toggle Lean4 info view |
+| lean4-refresh-file-dependencies | :orange_circle: | Refresh Lean4 file deps |
+| lean4-lake-build | :orange_circle: | Build with Lake |
+| agda-mode | :orange_circle: | Toggle Agda mode |
+| agda-load | :orange_circle: | Load Agda file |
+| agda-give | :orange_circle: | Give solution for Agda hole |
+| agda-refine | :orange_circle: | Refine Agda hole |
+| agda-auto | :orange_circle: | Auto-solve Agda hole |
+
 ### Round 181 — Zig, Odin, Nim, V-lang modes
 
 | Feature | Status | Notes |

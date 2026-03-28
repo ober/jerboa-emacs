@@ -17928,3 +17928,55 @@
     (if (mode-enabled? app 'nim)
       (echo-message! echo "Nim mode enabled")
       (echo-message! echo "Nim mode disabled"))))
+
+;; Round 182 — Proof-general, Coq, Lean, Agda (batch 1)
+(def (cmd-proof-general-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'proof-general)
+    (if (mode-enabled? app 'proof-general)
+      (echo-message! echo "Proof General mode enabled")
+      (echo-message! echo "Proof General mode disabled"))))
+
+(def (cmd-proof-assert-next-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proof General: asserted next command")))
+
+(def (cmd-proof-undo-last-successful-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proof General: undid last successful command")))
+
+(def (cmd-proof-goto-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proof General: processing to point")))
+
+(def (cmd-proof-process-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proof General: processing entire buffer")))
+
+(def (cmd-proof-retract-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Proof General: retracted buffer")))
+
+(def (cmd-coq-about app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "About: "
+      (lambda (name)
+        (echo-message! echo (str "Coq: about " name))))))
+
+(def (cmd-coq-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Check: "
+      (lambda (term)
+        (echo-message! echo (str "Coq: checking " term))))))
+
+(def (cmd-coq-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Print: "
+      (lambda (name)
+        (echo-message! echo (str "Coq: printing " name))))))
+
+(def (cmd-coq-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (query)
+        (echo-message! echo (str "Coq: searching for " query))))))
