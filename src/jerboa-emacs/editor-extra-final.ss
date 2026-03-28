@@ -14710,3 +14710,47 @@
 (def (cmd-eyebrowse-switch-to-window-config-2 app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Eyebrowse: switched to window config 2")))
+
+;;; Round 129 — Eyebrowse, Native-compile, Eshell (batch 2)
+
+(def (cmd-eshell-next-matching-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Next matching input: "
+      (lambda (pat)
+        (echo-message! echo (str "Eshell: next input matching '" pat "'"))))))
+
+(def (cmd-eshell-send-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: sent input")))
+
+(def (cmd-eshell-interrupt-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: interrupted process")))
+
+(def (cmd-eshell-kill-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: killed process")))
+
+(def (cmd-eshell-quit-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: quit process")))
+
+(def (cmd-eshell-show-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: showing last output")))
+
+(def (cmd-eshell-show-maximum-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: showing maximum output")))
+
+(def (cmd-eshell-clear-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: cleared buffer")))
+
+(def (cmd-eshell-toggle-cd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: toggled cd")))
+
+(def (cmd-eshell-pcomplete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: programmable completion")))

@@ -4207,6 +4207,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 129 — Eyebrowse, Native-compile, Eshell
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| eyebrowse-create-window-config | :orange_circle: | Create eyebrowse window config |
+| eyebrowse-close-window-config | :orange_circle: | Close eyebrowse window config |
+| eyebrowse-rename-window-config | :orange_circle: | Rename eyebrowse window config |
+| consult-buffer-other-frame | :orange_circle: | Open buffer in other frame via Consult |
+| native-comp-speed | :orange_circle: | Set native compilation speed |
+| emacs-lisp-native-compile-and-load | :orange_circle: | Native compile and load |
+| macroexpand-1 | :orange_circle: | Expand macro one level |
+| eshell-previous-input | :orange_circle: | Previous eshell input |
+| eshell-next-input | :orange_circle: | Next eshell input |
+| eshell-previous-matching-input | :orange_circle: | Previous matching eshell input |
+| eshell-next-matching-input | :orange_circle: | Next matching eshell input |
+| eshell-send-input | :orange_circle: | Send eshell input |
+| eshell-interrupt-process | :orange_circle: | Interrupt eshell process |
+| eshell-kill-process | :orange_circle: | Kill eshell process |
+| eshell-quit-process | :orange_circle: | Quit eshell process |
+| eshell-show-output | :orange_circle: | Show last eshell output |
+| eshell-show-maximum-output | :orange_circle: | Show maximum eshell output |
+| eshell-clear-buffer | :orange_circle: | Clear eshell buffer |
+| eshell-toggle-cd | :orange_circle: | Toggle eshell cd |
+| eshell-pcomplete | :orange_circle: | Eshell programmable completion |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

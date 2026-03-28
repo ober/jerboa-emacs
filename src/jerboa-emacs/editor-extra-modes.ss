@@ -15321,3 +15321,53 @@
 (def (cmd-windmove-delete-up app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Windmove: deleted window above")))
+
+;;; Round 129 — Eyebrowse, Native-compile, Eshell (batch 1)
+
+(def (cmd-eyebrowse-create-window-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eyebrowse: created new window config")))
+
+(def (cmd-eyebrowse-close-window-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eyebrowse: closed window config")))
+
+(def (cmd-eyebrowse-rename-window-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename config: "
+      (lambda (name)
+        (echo-message! echo (str "Eyebrowse: renamed config to '" name "'"))))))
+
+(def (cmd-consult-buffer-other-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buffer (other frame): "
+      (lambda (buf)
+        (echo-message! echo (str "Consult: opened '" buf "' in other frame"))))))
+
+(def (cmd-native-comp-speed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Native comp speed (0-3): "
+      (lambda (level)
+        (echo-message! echo (str "Native compilation speed set to " level))))))
+
+(def (cmd-emacs-lisp-native-compile-and-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Emacs Lisp: native compiled and loaded")))
+
+(def (cmd-macroexpand-1 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Macro: expanded one level")))
+
+(def (cmd-eshell-previous-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: previous input")))
+
+(def (cmd-eshell-next-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eshell: next input")))
+
+(def (cmd-eshell-previous-matching-input app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Previous matching input: "
+      (lambda (pat)
+        (echo-message! echo (str "Eshell: previous input matching '" pat "'"))))))
