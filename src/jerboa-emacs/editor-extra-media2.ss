@@ -2419,3 +2419,366 @@
           (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
             (send-message ed SCI_SETCARETWIDTH w 0)
             (echo-message! echo (string-append "Cursor width: " (number->string w)))))))))
+
+;;;============================================================================
+;;; Round 5 batch 2: Features 11-20
+;;;============================================================================
+
+;; --- Feature 11: Indent Bars (visual indent column lines) ---
+
+(def *indent-bars-enabled* #f)
+(def *indent-bars-char* #\|)
+
+(def (cmd-indent-bars-mode app)
+  "Toggle indent-bars — show visual indent guides as column lines."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *indent-bars-enabled* (not *indent-bars-enabled*))
+    (if *indent-bars-enabled*
+      (begin
+        ;; Use Scintilla indent guides
+        (send-message ed SCI_SETINDENTATIONGUIDES 3 0) ;; SC_IV_LOOKBOTH
+        (echo-message! echo "Indent bars: on"))
+      (begin
+        (send-message ed SCI_SETINDENTATIONGUIDES 0 0) ;; SC_IV_NONE
+        (echo-message! echo "Indent bars: off")))))
+
+;; --- Feature 12: VLF (View Large Files) ---
+
+(def *vlf-chunk-size* 10000) ;; lines per chunk
+
+(def (cmd-vlf-mode app)
+  "Open a large file in chunked viewing mode."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (path (echo-read-string echo "VLF file: " row width)))
+    (when (and path (not (string-empty? path)))
+      (if (not (file-exists? path))
+        (echo-error! echo (string-append "File not found: " path))
+        (let* ((fr (app-state-frame app))
+               (win (current-window fr))
+               (ed (edit-window-editor win)))
+          ;; Read only first chunk
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (string-append "head -" (number->string *vlf-chunk-size*) " \"" path "\"")
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (buf (make-buffer (string-append "[vlf] " (path-strip-directory path)))))
+                      (buffer-attach! ed buf)
+                      (set! (edit-window-buffer win) buf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (send-message ed SCI_SETREADONLY 1 0)
+                      (echo-message! echo
+                        (string-append "VLF: showing first " (number->string (length lines))
+                          " lines of " path))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 13: Eldoc (show documentation at point) ---
+
+(def *eldoc-enabled* #f)
+(def *eldoc-docs* (make-hash-table))
+
+;; Pre-populate some Scheme/Jerboa documentation
+(def (eldoc-init!)
+  (for-each
+    (lambda (entry)
+      (hash-put! *eldoc-docs* (car entry) (cdr entry)))
+    '((define . "define name expr — bind name to value")
+      (lambda . "lambda (args ...) body ... — create procedure")
+      (let . "let ((var val) ...) body — local bindings")
+      (let* . "let* ((var val) ...) body — sequential bindings")
+      (if . "if test then else — conditional")
+      (cond . "cond (test expr ...) ... (else expr ...) — multi-branch conditional")
+      (match . "match val (pattern body) ... — pattern matching")
+      (def . "def (name args ...) body — define function")
+      (defstruct . "defstruct name (fields ...) — define structure type")
+      (for/collect . "for/collect ((var iter)) body — collect loop results")
+      (for/fold . "for/fold ((acc init)) ((var iter)) body — fold over iterator")
+      (hash-put! . "hash-put! ht key val — set hash table entry")
+      (hash-ref . "hash-ref ht key [default] — get hash table entry")
+      (string-split . "string-split str delimiter-char — split string")
+      (string-join . "string-join strs sep — join strings")
+      (map . "map proc lst ... — apply proc to each element")
+      (filter . "filter pred lst — keep elements matching predicate")
+      (sort . "sort predicate lst — sort list by predicate")
+      (try . "try expr (catch (e) handler) (finally cleanup)")
+      (with-catch . "with-catch handler thunk — catch exceptions"))))
+
+(eldoc-init!)
+
+(def (cmd-eldoc-mode app)
+  "Toggle eldoc — show function documentation at point."
+  (set! *eldoc-enabled* (not *eldoc-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *eldoc-enabled* "Eldoc mode: on" "Eldoc mode: off")))
+
+(def (cmd-eldoc-show app)
+  "Show documentation for symbol at point."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word-len (- word-end word-start)))
+    (if (<= word-len 0)
+      (echo-message! echo "")
+      (let* ((buf (make-bytevector (+ word-len 1) 0))
+             (_ (send-message ed SCI_GETTEXTRANGE 0
+                  (cons->alien word-start (bytevector->alien buf))))
+             (word (alien/nul->string (bytevector->alien buf)))
+             (sym (string->symbol word))
+             (doc (hash-get *eldoc-docs* sym)))
+        (if doc
+          (echo-message! echo doc)
+          (echo-message! echo (string-append word " — no documentation")))))))
+
+;; --- Feature 14: Project Find File ---
+
+(def (cmd-project-find-file app)
+  "Find file in current project (git repo root)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols)))
+    ;; Get git root
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports "git rev-parse --show-toplevel 2>/dev/null"
+                    'block (native-transcoder))))
+      (close-port p-stdin)
+      (let ((root (let ((l (get-line p-stdout)))
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (if (eof-object? l) #f (string-trim l)))))
+        (if (not root)
+          (echo-error! echo "Not in a git project")
+          ;; List tracked files
+          (let-values (((p2-stdin p2-stdout p2-stderr p2-pid)
+                        (open-process-ports
+                          (string-append "git -C \"" root "\" ls-files 2>/dev/null | head -500")
+                          'block (native-transcoder))))
+            (close-port p2-stdin)
+            (let loop ((files '()))
+              (let ((line (get-line p2-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p2-stdout)
+                    (close-port p2-stderr)
+                    (if (null? files)
+                      (echo-message! echo "No files found in project")
+                      (let ((choice (echo-read-string-with-completion echo
+                                      "Find file in project: " (reverse files) row width)))
+                        (when (and choice (not (string-empty? choice)))
+                          (let ((full-path (string-append root "/" choice)))
+                            (execute-command! app 'find-file))))))
+                  (loop (cons (string-trim line) files)))))))))))
+
+;; --- Feature 15: Makefile Executor ---
+
+(def (cmd-makefile-executor app)
+  "List and execute Makefile targets."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols)))
+    (if (not (file-exists? "Makefile"))
+      (echo-error! echo "No Makefile in current directory")
+      ;; Extract targets from Makefile
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports
+                      "grep -E '^[a-zA-Z0-9_-]+:' Makefile | sed 's/:.*//' | head -50"
+                      'block (native-transcoder))))
+        (close-port p-stdin)
+        (let loop ((targets '()))
+          (let ((line (get-line p-stdout)))
+            (if (eof-object? line)
+              (begin
+                (close-port p-stdout)
+                (close-port p-stderr)
+                (if (null? targets)
+                  (echo-message! echo "No targets found")
+                  (let ((choice (echo-read-string-with-completion echo
+                                  "Make target: " (reverse targets) row width)))
+                    (when (and choice (not (string-empty? choice)))
+                      ;; Run the target using compile command infrastructure
+                      (echo-message! echo (string-append "Running: make " choice "..."))
+                      (let* ((fr (app-state-frame app))
+                             (win (current-window fr))
+                             (ed (edit-window-editor win)))
+                        (let-values (((p2-stdin p2-stdout p2-stderr p2-pid)
+                                      (open-process-ports
+                                        (string-append "make " choice " 2>&1")
+                                        'block (native-transcoder))))
+                          (close-port p2-stdin)
+                          (let lp ((lines '()))
+                            (let ((l (get-line p2-stdout)))
+                              (if (eof-object? l)
+                                (begin
+                                  (close-port p2-stdout)
+                                  (close-port p2-stderr)
+                                  (let* ((content (string-join (reverse lines) "\n"))
+                                         (buf (make-buffer "*make*")))
+                                    (buffer-attach! ed buf)
+                                    (set! (edit-window-buffer win) buf)
+                                    (editor-set-text ed content)
+                                    (editor-goto-pos ed 0)
+                                    (echo-message! echo (string-append "make " choice " — done"))))
+                                (lp (cons l lines)))))))))))
+              (loop (cons (string-trim line) targets)))))))))
+
+;; --- Feature 16: Diff-HL Margin (show diff marks in gutter) ---
+
+(def *diff-hl-margin-enabled* #f)
+
+(def (cmd-diff-hl-margin-mode app)
+  "Toggle diff-hl margin markers — show git changes in gutter."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *diff-hl-margin-enabled* (not *diff-hl-margin-enabled*))
+    (if *diff-hl-margin-enabled*
+      (begin
+        ;; Set up margin 4 for diff marks
+        (send-message ed SCI_SETMARGINWIDTHN 4 4)
+        (send-message ed SCI_SETMARGINTYPEN 4 0) ;; SC_MARGIN_SYMBOL
+        (send-message ed SCI_SETMARGINSENSITIVEN 4 0)
+        ;; Define markers: 3=added (green), 4=changed (yellow), 5=deleted (red)
+        (send-message ed SCI_MARKERDEFINE 3 0) ;; SC_MARK_CIRCLE for added
+        (send-message ed SCI_MARKERSETFORE 3 #x00CC00)
+        (send-message ed SCI_MARKERSETBACK 3 #x00CC00)
+        (send-message ed SCI_MARKERDEFINE 4 0)
+        (send-message ed SCI_MARKERSETFORE 4 #xCCCC00)
+        (send-message ed SCI_MARKERSETBACK 4 #xCCCC00)
+        (send-message ed SCI_MARKERDEFINE 5 0)
+        (send-message ed SCI_MARKERSETFORE 5 #xCC0000)
+        (send-message ed SCI_MARKERSETBACK 5 #xCC0000)
+        (echo-message! echo "Diff-HL margin: on"))
+      (begin
+        (send-message ed SCI_SETMARGINWIDTHN 4 0)
+        (echo-message! echo "Diff-HL margin: off")))))
+
+;; --- Feature 17: Meow (modal editing — basic vi-like normal mode) ---
+
+(def *meow-state* 'insert) ;; insert or normal
+(def *meow-enabled* #f)
+
+(def (cmd-meow-mode app)
+  "Toggle meow modal editing mode."
+  (set! *meow-enabled* (not *meow-enabled*))
+  (when (not *meow-enabled*)
+    (set! *meow-state* 'insert))
+  (echo-message! (app-state-echo app)
+    (if *meow-enabled*
+      "Meow mode: on (ESC=normal, i=insert)"
+      "Meow mode: off")))
+
+(def (cmd-meow-normal app)
+  "Enter meow normal state."
+  (when *meow-enabled*
+    (set! *meow-state* 'normal)
+    (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+      (send-message ed SCI_SETCARETSTYLE 2 0)) ;; block cursor
+    (echo-message! (app-state-echo app) "-- NORMAL --")))
+
+(def (cmd-meow-insert app)
+  "Enter meow insert state."
+  (when *meow-enabled*
+    (set! *meow-state* 'insert)
+    (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+      (send-message ed SCI_SETCARETSTYLE 1 0)) ;; bar cursor
+    (echo-message! (app-state-echo app) "-- INSERT --")))
+
+(def (meow-normal-state?) (and *meow-enabled* (eq? *meow-state* 'normal)))
+
+;; --- Feature 18: Nix Mode ---
+
+(def (cmd-nix-mode app)
+  "Enable Nix expression mode hints."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (send-message ed SCI_SETTABWIDTH 2 0)
+    (send-message ed SCI_SETUSETABS 0 0)
+    (echo-message! echo "Nix mode: tab=2, spaces")))
+
+;; --- Feature 19: PlantUML Mode ---
+
+(def (cmd-plantuml-mode app)
+  "Enable PlantUML mode hints."
+  (echo-message! (app-state-echo app) "PlantUML mode enabled"))
+
+(def (cmd-plantuml-preview app)
+  "Preview PlantUML diagram (requires plantuml installed)."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf))))
+    (if (not path)
+      (echo-error! echo "Buffer has no file — save first")
+      (if (not (file-exists? "/usr/bin/plantuml"))
+        (echo-error! echo "plantuml not installed")
+        (let ((cmd (string-append "plantuml -ttxt \"" path "\" -o /tmp 2>&1")))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports cmd 'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    ;; Try to read the text output
+                    (let ((txt-path (string-append "/tmp/"
+                                     (path-strip-extension (path-strip-directory path)) ".atxt")))
+                      (if (file-exists? txt-path)
+                        (let* ((content (read-file-string txt-path))
+                               (fr (app-state-frame app))
+                               (win (current-window fr))
+                               (ed (edit-window-editor win))
+                               (pbuf (make-buffer "*plantuml-preview*")))
+                          (buffer-attach! ed pbuf)
+                          (set! (edit-window-buffer win) pbuf)
+                          (editor-set-text ed content)
+                          (editor-goto-pos ed 0)
+                          (echo-message! echo "PlantUML preview rendered"))
+                        (echo-message! echo "PlantUML output not found"))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 20: Auto-Compile (auto-compile scheme files on save) ---
+
+(def *auto-compile-enabled* #f)
+
+(def (cmd-auto-compile-mode app)
+  "Toggle auto-compile — compile .ss files on save."
+  (set! *auto-compile-enabled* (not *auto-compile-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *auto-compile-enabled*
+      "Auto-compile mode: on (will compile .ss on save)"
+      "Auto-compile mode: off")))
+
+(def (auto-compile-check! app)
+  "After save, compile if auto-compile is on and file is .ss."
+  (when *auto-compile-enabled*
+    (let* ((buf (current-buffer-from-app app))
+           (path (and buf (buffer-file-path buf))))
+      (when (and path (string-suffix? ".ss" path))
+        (let ((echo (app-state-echo app)))
+          (echo-message! echo (string-append "Compiling " (path-strip-directory path) "..."))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (string-append "make build 2>&1 | tail -5")
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let ((output (string-join (reverse lines) " ")))
+                      (echo-message! echo
+                        (if (string-contains output "0 errors")
+                          "Compiled successfully"
+                          (string-append "Compile: " output)))))
+                  (loop (cons line lines)))))))))))
