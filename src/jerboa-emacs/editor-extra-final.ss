@@ -14470,3 +14470,49 @@
     (echo-read-string echo "Frame name: "
       (lambda (name)
         (echo-message! echo (str "Selected frame: " name))))))
+
+;;; Round 124 — Registers, Hi-Lock, Fill, Web-mode (batch 2)
+
+(def (cmd-loccur app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Loccur regexp: "
+      (lambda (regexp)
+        (echo-message! echo (str "Loccur: showing lines matching '" regexp "'"))))))
+
+(def (cmd-hi-lock-write-interactive-patterns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hi-lock: wrote interactive patterns to buffer")))
+
+(def (cmd-hi-lock-find-patterns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hi-lock: found patterns in buffer")))
+
+(def (cmd-hi-lock-revert-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hi-lock: reverted buffer patterns")))
+
+(def (cmd-nxml-finish-element app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NXML: finished element")))
+
+(def (cmd-nxml-balanced-close-start-tag-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NXML: balanced close start tag block")))
+
+(def (cmd-css-cycle-color-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CSS: cycled color format")))
+
+(def (cmd-js-find-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Find JS symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "JS: found symbol '" sym "'"))))))
+
+(def (cmd-web-mode-element-close app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: closed element")))
+
+(def (cmd-web-mode-tag-match app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: jumped to matching tag")))

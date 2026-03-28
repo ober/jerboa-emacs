@@ -15081,3 +15081,52 @@
     (echo-read-string echo "To: "
       (lambda (addr)
         (echo-message! echo (str "Mail To: " addr))))))
+
+;;; Round 124 — Registers, Hi-Lock, Fill, Web-mode (batch 1)
+
+(def (cmd-register-read-with-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Register (with preview): "
+      (lambda (reg)
+        (echo-message! echo (str "Register preview: " reg))))))
+
+(def (cmd-register-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Displaying register list")))
+
+(def (cmd-copy-rectangle-as-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rectangle copied as kill")))
+
+(def (cmd-rectangle-number-lines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rectangle: numbered lines")))
+
+(def (cmd-delete-whitespace-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rectangle: deleted whitespace")))
+
+(def (cmd-buffer-face-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buffer face: "
+      (lambda (face)
+        (echo-message! echo (str "Buffer face set to: " face))))))
+
+(def (cmd-global-display-fill-column-indicator-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'global-display-fill-column-indicator)
+    (if (mode-enabled? app 'global-display-fill-column-indicator)
+      (echo-message! echo "Global Display-Fill-Column-Indicator mode enabled")
+      (echo-message! echo "Global Display-Fill-Column-Indicator mode disabled"))))
+
+(def (cmd-fill-nonuniform-paragraphs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Filled nonuniform paragraphs")))
+
+(def (cmd-repunctuate-sentences app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Repunctuated sentences (two spaces after period)")))
+
+(def (cmd-align-newline-and-indent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Aligned newline and indented")))

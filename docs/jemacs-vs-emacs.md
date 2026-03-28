@@ -4072,6 +4072,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 124 — Registers, Hi-Lock, Fill, Web-mode
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| register-read-with-preview | :orange_circle: | Read register with preview |
+| register-list | :orange_circle: | Display register list |
+| copy-rectangle-as-kill | :orange_circle: | Copy rectangle as kill |
+| rectangle-number-lines | :orange_circle: | Number lines in rectangle |
+| delete-whitespace-rectangle | :orange_circle: | Delete whitespace in rectangle |
+| buffer-face-set | :orange_circle: | Set buffer face |
+| global-display-fill-column-indicator-mode | :orange_circle: | Toggle global fill column indicator |
+| fill-nonuniform-paragraphs | :orange_circle: | Fill nonuniform paragraphs |
+| repunctuate-sentences | :orange_circle: | Repunctuate sentences |
+| align-newline-and-indent | :orange_circle: | Align newline and indent |
+| loccur | :orange_circle: | Show lines matching regexp |
+| hi-lock-write-interactive-patterns | :orange_circle: | Write hi-lock patterns to buffer |
+| hi-lock-find-patterns | :orange_circle: | Find hi-lock patterns in buffer |
+| hi-lock-revert-buffer | :orange_circle: | Revert hi-lock buffer patterns |
+| nxml-finish-element | :orange_circle: | Finish NXML element |
+| nxml-balanced-close-start-tag-block | :orange_circle: | Balanced close start tag block |
+| css-cycle-color-format | :orange_circle: | Cycle CSS color format |
+| js-find-symbol | :orange_circle: | Find JavaScript symbol |
+| web-mode-element-close | :orange_circle: | Close web-mode element |
+| web-mode-tag-match | :orange_circle: | Jump to matching tag |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*
