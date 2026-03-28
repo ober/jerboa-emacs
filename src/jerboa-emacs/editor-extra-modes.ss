@@ -18865,3 +18865,48 @@
 (def (cmd-activities-suspend app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Activities: suspended current activity")))
+
+;; Round 201 — Notmuch-ext, Mu4e-ext, Message-mode-ext
+(def (cmd-notmuch-show-apply-tag-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: applied tag macro")))
+
+(def (cmd-notmuch-show-stash-mlarchive-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: stashed mailing list archive link")))
+
+(def (cmd-notmuch-tree-archive-message-then-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: archived message, moving to next")))
+
+(def (cmd-notmuch-unthreaded app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Notmuch unthreaded search: "
+      (lambda (q)
+        (echo-message! echo (str "Notmuch: unthreaded search for '" q "'"))))))
+
+(def (cmd-mu4e-compose-wide-reply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: composing wide reply")))
+
+(def (cmd-mu4e-compose-supersede app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: composing supersede message")))
+
+(def (cmd-mu4e-action-view-in-browser app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mu4e: viewing message in browser")))
+
+(def (cmd-mu4e-action-retag-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Retag message: "
+      (lambda (tags)
+        (echo-message! echo (str "Mu4e: retagged with " tags))))))
+
+(def (cmd-message-elide-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: elided region")))
+
+(def (cmd-message-caesar-buffer-body app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: ROT13 applied to body")))

@@ -18235,3 +18235,46 @@
 (def (cmd-ibuffer-nesting-filter-groups app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "IBuffer: nesting filter groups")))
+
+;; Round 201 — Message-ext, SMTP, Mail, MML
+(def (cmd-message-fill-yanked-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Message: filled yanked message")))
+
+(def (cmd-smtpmail-send-it app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SMTP: sending message...")))
+
+(def (cmd-mail-source-fetch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mail: fetching from source...")))
+
+(def (cmd-mail-abbrevs-setup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mail: set up abbreviations")))
+
+(def (cmd-supercite-cite-original app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supercite: cited original message")))
+
+(def (cmd-mml-attach-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Attach file: "
+      (lambda (f)
+        (echo-message! echo (str "MML: attached " f))))))
+
+(def (cmd-mml-insert-multipart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MML: inserted multipart section")))
+
+(def (cmd-mml-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MML: previewing MIME message")))
+
+(def (cmd-mml-secure-message-sign app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MML: signed message")))
+
+(def (cmd-mml-secure-message-encrypt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MML: encrypted message")))

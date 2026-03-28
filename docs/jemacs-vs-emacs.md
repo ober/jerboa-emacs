@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 201 — Notmuch-ext, Mu4e-ext, Message-ext, SMTP, MML
+
+| Feature | Status | Notes |
+|---|---|---|
+| notmuch-show-apply-tag-macro | :orange_circle: | Apply tag macro |
+| notmuch-show-stash-mlarchive-link | :orange_circle: | Stash mailing list archive link |
+| notmuch-tree-archive-message-then-next | :orange_circle: | Archive and move to next |
+| notmuch-unthreaded | :orange_circle: | Unthreaded search |
+| mu4e-compose-wide-reply | :orange_circle: | Compose wide reply |
+| mu4e-compose-supersede | :orange_circle: | Compose supersede message |
+| mu4e-action-view-in-browser | :orange_circle: | View message in browser |
+| mu4e-action-retag-message | :orange_circle: | Retag message |
+| message-elide-region | :orange_circle: | Elide region in message |
+| message-caesar-buffer-body | :orange_circle: | ROT13 message body |
+| message-fill-yanked-message | :orange_circle: | Fill yanked message |
+| smtpmail-send-it | :orange_circle: | Send via SMTP |
+| mail-source-fetch | :orange_circle: | Fetch from mail source |
+| mail-abbrevs-setup | :orange_circle: | Set up mail abbreviations |
+| supercite-cite-original | :orange_circle: | Cite original with Supercite |
+| mml-attach-file | :orange_circle: | Attach file to message |
+| mml-insert-multipart | :orange_circle: | Insert multipart section |
+| mml-preview | :orange_circle: | Preview MIME message |
+| mml-secure-message-sign | :orange_circle: | Sign message |
+| mml-secure-message-encrypt | :orange_circle: | Encrypt message |
+
 ### Round 200 — Pomodoro, Focus, Activities, Burly, Bufler, IBuffer-ext
 
 | Feature | Status | Notes |
