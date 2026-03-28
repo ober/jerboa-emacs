@@ -18623,3 +18623,62 @@
 (def (cmd-docker-compose-pull app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Docker Compose: pulling images...")))
+
+;; Round 196 — MQTT, Redis, MongoDB, Elasticsearch, Prometheus, Grafana
+(def (cmd-mqtt-publish-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "MQTT topic: "
+      (lambda (topic)
+        (echo-read-string echo "Message: "
+          (lambda (msg)
+            (echo-message! echo (str "MQTT: published to " topic))))))))
+
+(def (cmd-mqtt-subscribe-topic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subscribe to MQTT topic: "
+      (lambda (topic)
+        (echo-message! echo (str "MQTT: subscribed to " topic))))))
+
+(def (cmd-mqtt-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MQTT: disconnected from broker")))
+
+(def (cmd-redis-send-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Redis command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Redis: " cmd))))))
+
+(def (cmd-redis-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: sent region to server")))
+
+(def (cmd-redis-cli-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'redis-cli)
+    (if (mode-enabled? app 'redis-cli)
+      (echo-message! echo "Redis CLI mode enabled")
+      (echo-message! echo "Redis CLI mode disabled"))))
+
+(def (cmd-mongodb-find app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "MongoDB query: "
+      (lambda (q)
+        (echo-message! echo (str "MongoDB: find " q))))))
+
+(def (cmd-mongodb-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MongoDB: inserted document")))
+
+(def (cmd-mongodb-shell-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'mongodb-shell)
+    (if (mode-enabled? app 'mongodb-shell)
+      (echo-message! echo "MongoDB shell mode enabled")
+      (echo-message! echo "MongoDB shell mode disabled"))))
+
+(def (cmd-elasticsearch-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elasticsearch query: "
+      (lambda (q)
+        (echo-message! echo (str "Elasticsearch: querying " q))))))

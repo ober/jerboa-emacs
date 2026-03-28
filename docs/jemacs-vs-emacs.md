@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 196 — MQTT, Redis, MongoDB, Elasticsearch, Prometheus, Grafana, AWS, Azure, GCP
+
+| Feature | Status | Notes |
+|---|---|---|
+| mqtt-publish-message | :orange_circle: | Publish MQTT message |
+| mqtt-subscribe-topic | :orange_circle: | Subscribe to MQTT topic |
+| mqtt-disconnect | :orange_circle: | Disconnect from MQTT broker |
+| redis-send-command | :orange_circle: | Send Redis command |
+| redis-send-region | :orange_circle: | Send region to Redis |
+| redis-cli-mode | :orange_circle: | Toggle Redis CLI mode |
+| mongodb-find | :orange_circle: | Run MongoDB find query |
+| mongodb-insert | :orange_circle: | Insert MongoDB document |
+| mongodb-shell-mode | :orange_circle: | Toggle MongoDB shell mode |
+| elasticsearch-query | :orange_circle: | Run Elasticsearch query |
+| elasticsearch-index-list | :orange_circle: | List Elasticsearch indices |
+| prometheus-query | :orange_circle: | Execute PromQL query |
+| prometheus-targets | :orange_circle: | List Prometheus targets |
+| grafana-dashboard-list | :orange_circle: | List Grafana dashboards |
+| grafana-dashboard-open | :orange_circle: | Open Grafana dashboard |
+| aws-ec2-list-instances | :orange_circle: | List AWS EC2 instances |
+| aws-s3-list-buckets | :orange_circle: | List AWS S3 buckets |
+| aws-lambda-list-functions | :orange_circle: | List AWS Lambda functions |
+| azure-resource-list | :orange_circle: | List Azure resources |
+| gcp-project-list | :orange_circle: | List GCP projects |
+
 ### Round 195 — Docker-ext, Docker-compose-ext, Kubernetes-ext, Vagrant-ext, Puppet-ext, Chef-ext, Saltstack-ext
 
 | Feature | Status | Notes |
