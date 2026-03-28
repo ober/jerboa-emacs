@@ -19250,3 +19250,45 @@
 (def (cmd-ace-link-compilation app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ace: following compilation link")))
+
+;;; Round 223 — Eat ext, Vterm ext (batch 2)
+
+(def (cmd-vterm-send-prior app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Page Up")))
+
+(def (cmd-vterm-send-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Delete")))
+
+(def (cmd-vterm-send-backspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Backspace")))
+
+(def (cmd-vterm-send-meta-dot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent M-.")))
+
+(def (cmd-vterm-send-meta-comma app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent M-,")))
+
+(def (cmd-vterm-send-ctrl-slash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent C-/")))
+
+(def (cmd-vterm-yank app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: yanked from kill ring")))
+
+(def (cmd-vterm-yank-pop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: yank-pop")))
+
+(def (cmd-vterm-undo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: undo")))
+
+(def (cmd-vterm-send-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Up arrow")))

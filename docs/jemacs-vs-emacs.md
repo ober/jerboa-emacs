@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 223 — Eat ext, Vterm ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| eat-reload | :orange_circle: | Reload Eat terminal |
+| eat-kill-process | :orange_circle: | Kill Eat process |
+| eat-toggle-char-mode | :orange_circle: | Toggle Eat char mode |
+| eat-input-char | :orange_circle: | Input character to Eat |
+| vterm-send-C-a | :orange_circle: | Send C-a to vterm |
+| vterm-send-C-d | :orange_circle: | Send C-d to vterm |
+| vterm-send-escape | :orange_circle: | Send Escape to vterm |
+| vterm-send-return | :orange_circle: | Send Return to vterm |
+| vterm-send-tab | :orange_circle: | Send Tab to vterm |
+| vterm-send-next | :orange_circle: | Send Page Down to vterm |
+| vterm-send-prior | :orange_circle: | Send Page Up to vterm |
+| vterm-send-delete | :orange_circle: | Send Delete to vterm |
+| vterm-send-backspace | :orange_circle: | Send Backspace to vterm |
+| vterm-send-meta-dot | :orange_circle: | Send M-. to vterm |
+| vterm-send-meta-comma | :orange_circle: | Send M-, to vterm |
+| vterm-send-ctrl-slash | :orange_circle: | Send C-/ to vterm |
+| vterm-yank | :orange_circle: | Yank from kill ring to vterm |
+| vterm-yank-pop | :orange_circle: | Yank-pop in vterm |
+| vterm-undo | :orange_circle: | Undo in vterm |
+| vterm-send-up | :orange_circle: | Send Up arrow to vterm |
+
 ### Round 222 — Denote ext, Avy ext, Ace ext
 
 | Command | Status | Description |

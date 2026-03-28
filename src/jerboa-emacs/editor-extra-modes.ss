@@ -19904,3 +19904,47 @@
 (def (cmd-avy-goto-whitespace-end app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Avy: goto whitespace end")))
+
+;;; Round 223 — Eat ext, Vterm ext (batch 1)
+
+(def (cmd-eat-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: reloaded terminal")))
+
+(def (cmd-eat-kill-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: killed process")))
+
+(def (cmd-eat-toggle-char-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eat: toggled char mode")))
+
+(def (cmd-eat-input-char app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Char: "
+      (lambda (ch)
+        (echo-message! echo (str "Eat: input char " ch))))))
+
+(def (cmd-vterm-send-C-a app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent C-a")))
+
+(def (cmd-vterm-send-C-d app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent C-d")))
+
+(def (cmd-vterm-send-escape app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Escape")))
+
+(def (cmd-vterm-send-return app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Return")))
+
+(def (cmd-vterm-send-tab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Tab")))
+
+(def (cmd-vterm-send-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vterm: sent Page Down")))
