@@ -1526,6 +1526,26 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | Geiser mode | :orange_circle: | Geiser Scheme interaction reference |
 | SLY mode | :orange_circle: | SLY Common Lisp IDE reference |
 | SLIME mode | :orange_circle: | SLIME Common Lisp IDE reference |
+| Auto-fill mode | :orange_circle: | Toggle auto line wrapping at fill column |
+| Display line numbers mode | :orange_circle: | Toggle line number margin |
+| Visual line mode | :orange_circle: | Toggle word wrap display |
+| Whitespace cleanup | :orange_circle: | Remove trailing whitespace |
+| Indent rigidly | :orange_circle: | Indent/dedent region by N spaces |
+| Align regexp | :orange_circle: | Align region on a pattern |
+| Comment DWIM | :orange_circle: | Smart comment/uncomment line or region |
+| Uncomment region | :orange_circle: | Remove comment markers from region |
+| Toggle comment | :orange_circle: | Toggle comment on line/region |
+| Fill paragraph | :orange_circle: | Wrap paragraph to fill column |
+| Fill region | :orange_circle: | Wrap all paragraphs in region |
+| Justify paragraph | :orange_circle: | Right-justify paragraph text |
+| Center line | :orange_circle: | Center current line in fill column |
+| Set fill column | :orange_circle: | Set the fill column width |
+| Auto-revert mode | :orange_circle: | Toggle auto-refresh from disk |
+| Revert buffer quick | :orange_circle: | Reload buffer from disk without confirm |
+| Rename visited file | :orange_circle: | Rename file and update buffer |
+| Make directory | :orange_circle: | Create a new directory |
+| Delete directory | :orange_circle: | Delete a directory recursively |
+| Copy directory | :orange_circle: | Copy a directory recursively |
 
 ---
 
