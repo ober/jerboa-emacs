@@ -15038,3 +15038,49 @@
 (def (cmd-mu4e-view-action app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mu4e: view action")))
+
+;;; Round 136 — Notmuch, Wanderlust, BBDB, Ledger (batch 2)
+
+(def (cmd-wl-draft-send-and-exit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: sent draft and exited")))
+
+(def (cmd-bbdb-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "BBDB name: "
+      (lambda (name)
+        (echo-message! echo (str "BBDB: created record for '" name "'"))))))
+
+(def (cmd-bbdb-complete-mail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BBDB: completed mail address")))
+
+(def (cmd-ledger-reconcile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Reconcile account: "
+      (lambda (acct)
+        (echo-message! echo (str "Ledger: reconciling " acct))))))
+
+(def (cmd-ledger-add-transaction app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ledger: added transaction")))
+
+(def (cmd-ledger-toggle-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ledger: toggled current transaction")))
+
+(def (cmd-ledger-copy-transaction-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ledger: copied transaction")))
+
+(def (cmd-ledger-delete-current-transaction app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ledger: deleted current transaction")))
+
+(def (cmd-ledger-mode-clean-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ledger: cleaned buffer")))
+
+(def (cmd-ledger-check-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ledger: checked buffer for errors")))

@@ -4396,6 +4396,33 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 
 ---
 
+### Round 136 — Notmuch, Wanderlust, BBDB, Ledger
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| notmuch-mua-reply | :orange_circle: | Reply to Notmuch message |
+| notmuch-mua-forward-message | :orange_circle: | Forward Notmuch message |
+| notmuch-tag | :orange_circle: | Apply tag changes |
+| notmuch-refresh-this-buffer | :orange_circle: | Refresh Notmuch buffer |
+| notmuch-show-archive-message-then-next | :orange_circle: | Archive and next message |
+| wl | :orange_circle: | Start Wanderlust |
+| wl-summary-next | :orange_circle: | Next Wanderlust message |
+| wl-summary-prev | :orange_circle: | Previous Wanderlust message |
+| wl-summary-reply | :orange_circle: | Reply in Wanderlust |
+| wl-summary-forward | :orange_circle: | Forward in Wanderlust |
+| wl-draft-send-and-exit | :orange_circle: | Send draft and exit |
+| bbdb-create | :orange_circle: | Create BBDB record |
+| bbdb-complete-mail | :orange_circle: | Complete mail address via BBDB |
+| ledger-reconcile | :orange_circle: | Reconcile Ledger account |
+| ledger-add-transaction | :orange_circle: | Add Ledger transaction |
+| ledger-toggle-current | :orange_circle: | Toggle current transaction |
+| ledger-copy-transaction-at-point | :orange_circle: | Copy transaction |
+| ledger-delete-current-transaction | :orange_circle: | Delete current transaction |
+| ledger-mode-clean-buffer | :orange_circle: | Clean Ledger buffer |
+| ledger-check-buffer | :orange_circle: | Check Ledger buffer for errors |
+
+---
+
 ## Recommended Development Roadmap
 
 > *Reprioritized based on the user's actual Emacs workflow*

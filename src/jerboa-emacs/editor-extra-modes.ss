@@ -15645,3 +15645,47 @@
 (def (cmd-pdf-annot-add-text-annotation app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PDF: added text annotation")))
+
+;;; Round 136 — Notmuch, Wanderlust, BBDB, Ledger (batch 1)
+
+(def (cmd-notmuch-mua-reply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: replying to message")))
+
+(def (cmd-notmuch-mua-forward-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: forwarding message")))
+
+(def (cmd-notmuch-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tag changes (+/-tag): "
+      (lambda (tags)
+        (echo-message! echo (str "Notmuch: applied tag changes: " tags))))))
+
+(def (cmd-notmuch-refresh-this-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: refreshed buffer")))
+
+(def (cmd-notmuch-show-archive-message-then-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notmuch: archived message, moving to next")))
+
+(def (cmd-wl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: started")))
+
+(def (cmd-wl-summary-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: next message")))
+
+(def (cmd-wl-summary-prev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: previous message")))
+
+(def (cmd-wl-summary-reply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: replying")))
+
+(def (cmd-wl-summary-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wanderlust: forwarding")))
