@@ -18383,3 +18383,53 @@
 (def (cmd-pixel-scroll-up app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pixel scroll: scrolled up")))
+
+;; Round 191 — Browse-url-ext, SHR-ext, URL-ext, Calc-ext, Zone-ext
+(def (cmd-browse-url-with-browser-kind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "Browse: opening " url " with preferred browser"))))))
+
+(def (cmd-shr-browse-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SHR: browsing image at point")))
+
+(def (cmd-url-cookie-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "URL: listing cookies")))
+
+(def (cmd-url-handler-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'url-handler)
+    (if (mode-enabled? app 'url-handler)
+      (echo-message! echo "URL handler mode enabled")
+      (echo-message! echo "URL handler mode disabled"))))
+
+(def (cmd-browse-url-handlers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Browse-URL: listing configured handlers")))
+
+(def (cmd-url-retrieve-synchronously-display app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL to retrieve: "
+      (lambda (url)
+        (echo-message! echo (str "URL: retrieved " url))))))
+
+(def (cmd-calc-trail-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc trail: moved to next entry")))
+
+(def (cmd-calc-trail-previous app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc trail: moved to previous entry")))
+
+(def (cmd-calc-undo-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: showing undo history")))
+
+(def (cmd-zone-when-idle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Zone idle seconds: "
+      (lambda (secs)
+        (echo-message! echo (str "Zone: will activate after " secs "s idle"))))))

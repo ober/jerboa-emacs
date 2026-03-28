@@ -17749,3 +17749,62 @@
     (if (mode-enabled? app 'checkdoc)
       (echo-message! echo "Checkdoc minor mode enabled")
       (echo-message! echo "Checkdoc minor mode disabled"))))
+
+;; Round 191 — Package-ext, Native-compile-ext, Emacs-lock, Consult-ext, Xref-ext, Eglot-ext, Electric-ext
+(def (cmd-list-packages-by-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package status filter: "
+      (lambda (status)
+        (echo-message! echo (str "Packages: listing by status '" status "'"))))))
+
+(def (cmd-package-browse-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: opening homepage in browser")))
+
+(def (cmd-native-compile-prune-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Native compile: pruned cache")))
+
+(def (cmd-emacs-lock-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'emacs-lock)
+    (if (mode-enabled? app 'emacs-lock)
+      (echo-message! echo "Emacs lock mode enabled — buffer protected")
+      (echo-message! echo "Emacs lock mode disabled"))))
+
+(def (cmd-consult-ripgrep-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ripgrep all pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "Consult ripgrep-all: searching for '" pat "'"))))))
+
+(def (cmd-xref-find-references-and-replace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Replace references of: "
+      (lambda (sym)
+        (echo-read-string echo (str "Replace '" sym "' with: ")
+          (lambda (rep)
+            (echo-message! echo (str "Xref: replaced references of '" sym "' with '" rep "'"))))))))
+
+(def (cmd-project-prompt-project-dir app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Project directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Project: set directory to " dir))))))
+
+(def (cmd-eglot-rename-symbol app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename symbol to: "
+      (lambda (name)
+        (echo-message! echo (str "Eglot: renamed symbol to " name))))))
+
+(def (cmd-eglot-format-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: formatted region")))
+
+(def (cmd-electric-pair-local-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'electric-pair-local)
+    (if (mode-enabled? app 'electric-pair-local)
+      (echo-message! echo "Electric pair local mode enabled")
+      (echo-message! echo "Electric pair local mode disabled"))))

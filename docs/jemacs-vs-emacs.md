@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 191 — Browse-url-ext, SHR-ext, URL-ext, Calc-ext, Eglot-ext, Electric-ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| browse-url-with-browser-kind | :orange_circle: | Open URL with preferred browser |
+| shr-browse-image | :orange_circle: | Browse image at point in SHR |
+| url-cookie-list | :orange_circle: | List URL cookies |
+| url-handler-mode | :orange_circle: | Toggle URL handler mode |
+| browse-url-handlers | :orange_circle: | List configured URL handlers |
+| url-retrieve-synchronously-display | :orange_circle: | Retrieve and display URL |
+| calc-trail-next | :orange_circle: | Move to next calc trail entry |
+| calc-trail-previous | :orange_circle: | Move to previous calc trail entry |
+| calc-undo-history | :orange_circle: | Show calc undo history |
+| zone-when-idle | :orange_circle: | Activate zone after idle time |
+| list-packages-by-status | :orange_circle: | List packages filtered by status |
+| package-browse-url | :orange_circle: | Open package homepage |
+| native-compile-prune-cache | :orange_circle: | Prune native compilation cache |
+| emacs-lock-mode | :orange_circle: | Toggle buffer lock protection |
+| consult-ripgrep-all | :orange_circle: | Ripgrep across all file types |
+| xref-find-references-and-replace | :orange_circle: | Find references and replace |
+| project-prompt-project-dir | :orange_circle: | Prompt for project directory |
+| eglot-rename-symbol | :orange_circle: | Rename symbol via LSP |
+| eglot-format-region | :orange_circle: | Format region via LSP |
+| electric-pair-local-mode | :orange_circle: | Toggle electric pair local mode |
+
 ### Round 190 — CUA-ext, Repeat, Pulse, Whitespace-ext, Pixel-scroll, Context-menu, Describe-ext
 
 | Feature | Status | Notes |
