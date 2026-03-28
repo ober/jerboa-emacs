@@ -4023,3 +4023,433 @@
       (editor-set-text ed content)
       (editor-goto-pos ed (string-length content))
       (echo-message! echo (str "Atomic Chrome ready on port " *atomic-chrome-port*)))))
+
+;; ===== Round 9 Batch 2 =====
+
+;; --- Feature 11: Hackernews Client ---
+
+(def (cmd-hackernews app)
+  "Fetch and display top Hacker News stories."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (echo-message! echo "Fetching HN top stories...")
+    (with-catch
+      (lambda (e) (echo-message! echo (str "HN error: " e)))
+      (lambda ()
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports
+                        "curl -sL 'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty' | head -30"
+                        'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout) (close-port p-stderr)
+                  (let* ((content (string-append "Hacker News - Top Stories\n"
+                                    (make-string 50 #\=) "\n\n"
+                                    "Story IDs (use hackernews-view to read):\n"
+                                    (string-join (reverse lines) "\n")))
+                         (hbuf (make-buffer "*hackernews*")))
+                    (buffer-attach! ed hbuf)
+                    (set! (edit-window-buffer win) hbuf)
+                    (editor-set-text ed content)
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo "Hacker News loaded")))
+                (loop (cons line lines))))))))))
+
+;; --- Feature 12: Biblio (Bibliography Search) ---
+
+(def (cmd-biblio app)
+  "Search for academic papers via crossref API."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (query (echo-read-string echo "Biblio search: " row width)))
+    (when (and query (not (string-empty? query)))
+      (echo-message! echo "Searching...")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Biblio error: " e)))
+        (lambda ()
+          (let* ((encoded (let loop ((chars (string->list query)) (acc '()))
+                            (if (null? chars)
+                              (list->string (reverse acc))
+                              (let ((c (car chars)))
+                                (if (char=? c #\space)
+                                  (loop (cdr chars) (cons #\+ acc))
+                                  (loop (cdr chars) (cons c acc)))))))
+                 (url (str "https://api.crossref.org/works?query=" encoded "&rows=10")))
+            (let-values (((p-stdin p-stdout p-stderr pid)
+                          (open-process-ports
+                            (str "curl -sL --max-time 15 " (shell-quote url))
+                            'block (native-transcoder))))
+              (close-port p-stdin)
+              (let loop ((lines '()))
+                (let ((line (get-line p-stdout)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port p-stdout) (close-port p-stderr)
+                      (let* ((raw (string-join (reverse lines) "\n"))
+                             ;; Extract titles from JSON (simple approach)
+                             (titles (let extract ((s raw) (acc '()))
+                                       (let ((start (string-contains s "\"title\":")))
+                                         (if (not start)
+                                           (reverse acc)
+                                           (let* ((rest (substring s (+ start 9) (string-length s)))
+                                                  (qstart (string-contains rest "\""))
+                                                  (rest2 (if qstart (substring rest (+ qstart 1) (string-length rest)) ""))
+                                                  (qend (string-contains rest2 "\"")))
+                                             (if (and qstart qend)
+                                               (extract (substring rest2 (+ qend 1) (string-length rest2))
+                                                        (cons (substring rest2 0 qend) acc))
+                                               (reverse acc)))))))
+                             (content (string-append "Biblio: " query "\n"
+                                        (make-string 50 #\=) "\n\n"
+                                        (if (null? titles)
+                                          "No results found"
+                                          (string-join
+                                            (map (lambda (t) (str "  * " t)) titles)
+                                            "\n"))))
+                             (bbuf (make-buffer "*biblio*")))
+                        (buffer-attach! ed bbuf)
+                        (set! (edit-window-buffer win) bbuf)
+                        (editor-set-text ed content)
+                        (editor-goto-pos ed 0)
+                        (echo-message! echo (str "Found " (length titles) " results"))))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 13: EPA-file (GPG Encryption) ---
+
+(def (cmd-epa-encrypt-file app)
+  "Encrypt the current buffer using GPG."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "GPG error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "gpg --symmetric --cipher-algo AES256 " (shell-quote file))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin (close-port so) (close-port se)
+                         (echo-message! echo (str "Encrypted: " file ".gpg")))
+                  (loop (cons line lines)))))))))))
+
+(def (cmd-epa-decrypt-file app)
+  "Decrypt a GPG-encrypted file and open in buffer."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (file (echo-read-string echo "Decrypt file: " row width)))
+    (when (and file (not (string-empty? file)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Decrypt error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "gpg --decrypt " (shell-quote (string-trim file)))
+                          'block (native-transcoder))))
+            (close-port si)
+            (let loop ((lines '()))
+              (let ((line (get-line so)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port so) (close-port se)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (dbuf (make-buffer (str "*decrypted:" file "*"))))
+                      (buffer-attach! ed dbuf)
+                      (set! (edit-window-buffer win) dbuf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "File decrypted")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 14: Typit (Typing Test) ---
+
+(def *typit-texts*
+  '("The quick brown fox jumps over the lazy dog"
+    "Pack my box with five dozen liquor jugs"
+    "How vexingly quick daft zebras jump"
+    "Sphinx of black quartz judge my vow"
+    "Two driven jocks help fax my big quiz"))
+
+(def *typit-start-time* #f)
+(def *typit-target* #f)
+
+(def (cmd-typit app)
+  "Start a typing accuracy test."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (set! *typit-target* (list-ref *typit-texts* (random (length *typit-texts*))))
+    (set! *typit-start-time* (time-second (current-time)))
+    (let ((tbuf (make-buffer "*typit*")))
+      (buffer-attach! ed tbuf)
+      (set! (edit-window-buffer win) tbuf)
+      (editor-set-text ed (string-append
+                            "Typing Test\n"
+                            (make-string 50 #\=) "\n\n"
+                            "Type the following text:\n\n"
+                            "  " *typit-target* "\n\n"
+                            "When done, use typit-check to see results."))
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Start typing! Use typit-check when done."))))
+
+(def (cmd-typit-check app)
+  "Check typing test results."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Your text: " row width)))
+    (when (and input *typit-target* *typit-start-time*)
+      (let* ((elapsed (- (time-second (current-time)) *typit-start-time*))
+             (words (length (string-split *typit-target* #\space)))
+             (wpm (if (> elapsed 0) (round (/ (* words 60.0) elapsed)) 0))
+             ;; Calculate accuracy
+             (target-chars (string->list *typit-target*))
+             (input-chars (string->list input))
+             (correct (let loop ((t target-chars) (i input-chars) (n 0))
+                        (if (or (null? t) (null? i)) n
+                          (loop (cdr t) (cdr i)
+                                (if (char=? (car t) (car i)) (+ n 1) n)))))
+             (accuracy (if (> (length target-chars) 0)
+                         (round (* 100.0 (/ correct (length target-chars))))
+                         0)))
+        (echo-message! echo (str "WPM: " wpm " Accuracy: " accuracy
+                                 "% Time: " elapsed "s"))))))
+
+;; --- Feature 15: Diff-at-point ---
+
+(def (cmd-diff-at-point app)
+  "Show the git diff for the current line."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (let* ((line-num (+ 1 (send-message ed SCI_LINEFROMPOSITION
+                               (send-message ed SCI_GETCURRENTPOS 0 0) 0))))
+        (with-catch
+          (lambda (e) (echo-message! echo (str "diff error: " e)))
+          (lambda ()
+            (let-values (((si so se pid)
+                          (open-process-ports
+                            (str "git diff -U3 " (shell-quote file))
+                            'block (native-transcoder))))
+              (close-port si)
+              (let loop ((lines '()))
+                (let ((line (get-line so)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port so) (close-port se)
+                      (let ((diff (string-join (reverse lines) "\n")))
+                        (if (string-empty? (string-trim diff))
+                          (echo-message! echo "No changes at this point")
+                          (let ((dbuf (make-buffer "*diff-at-point*")))
+                            (let ((ed2 (edit-window-editor (current-window frame))))
+                              (buffer-attach! ed2 dbuf)
+                              (set! (edit-window-buffer win) dbuf)
+                              (editor-set-text ed2 diff)
+                              (editor-goto-pos ed2 0)
+                              (echo-message! echo "Diff loaded"))))))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 16: Magit-delta ---
+
+(def (cmd-magit-delta app)
+  "Show git diff using delta for pretty formatting."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "delta error: " e)))
+      (lambda ()
+        ;; Try delta first, fall back to diff
+        (let* ((cmd (if (file-exists? "/usr/bin/delta")
+                      "git diff | delta --no-gitconfig --dark"
+                      "git diff --color=always"))
+               (dummy 0))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports cmd 'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let* ((diff (string-join (reverse lines) "\n"))
+                           (dbuf (make-buffer "*magit-delta*")))
+                      (buffer-attach! ed dbuf)
+                      (set! (edit-window-buffer win) dbuf)
+                      (editor-set-text ed diff)
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "Delta diff loaded")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 17: Figlet (ASCII Art Text) ---
+
+(def (cmd-figlet app)
+  "Convert text to ASCII art using figlet."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (text (echo-read-string echo "Figlet text: " row width)))
+    (when (and text (not (string-empty? text)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "figlet error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (str "figlet " (shell-quote text))
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let ((art (string-join (reverse lines) "\n")))
+                      (editor-insert-text ed art)
+                      (echo-message! echo "Figlet inserted")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 18: Cowsay ---
+
+(def (cmd-cowsay app)
+  "Insert cowsay ASCII art with given text."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (text (echo-read-string echo "Cowsay: " row width)))
+    (when (and text (not (string-empty? text)))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "cowsay error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (str "cowsay " (shell-quote text))
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let ((art (string-join (reverse lines) "\n")))
+                      (editor-insert-text ed art)
+                      (echo-message! echo "Cowsay inserted")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 19: Habit Tracker ---
+
+(def *habit-tracker* (make-hash-table))
+
+(def (cmd-habit-track app)
+  "Track a daily habit completion."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (habits (hash-keys *habit-tracker*))
+         (habit (echo-read-string-with-completion echo "Habit: " habits row width)))
+    (when (and habit (not (string-empty? habit)))
+      (let* ((today (number->string (time-second (current-time))))
+             (existing (hash-ref *habit-tracker* habit '()))
+             (updated (cons today existing)))
+        (hash-put! *habit-tracker* habit updated)
+        (echo-message! echo (str "Tracked: " habit " (" (length updated) " total)"))))))
+
+(def (cmd-habit-report app)
+  "Show habit tracking report."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (entries (hash->list *habit-tracker*))
+         (content (string-append "Habit Tracker Report\n"
+                    (make-string 50 #\=) "\n\n"
+                    (if (null? entries) "No habits tracked yet"
+                      (string-join
+                        (map (lambda (e)
+                               (str "  " (car e) ": " (length (cdr e)) " completions"))
+                             entries)
+                        "\n"))))
+         (hbuf (make-buffer "*habit-report*")))
+    (buffer-attach! ed hbuf)
+    (set! (edit-window-buffer win) hbuf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (echo-message! echo (str (length entries) " habits tracked"))))
+
+;; --- Feature 20: Ement (Matrix Chat Stub) ---
+
+(def (cmd-ement app)
+  "Matrix chat client interface (requires matrix-commander)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (with-catch
+      (lambda (e) (echo-message! echo (str "Matrix error: " e)))
+      (lambda ()
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports
+                        "matrix-commander --listen once --listen-self 2>/dev/null || echo 'Install matrix-commander for Matrix chat'"
+                        'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()))
+            (let ((line (get-line p-stdout)))
+              (if (eof-object? line)
+                (begin
+                  (close-port p-stdout) (close-port p-stderr)
+                  (let* ((messages (string-join (reverse lines) "\n"))
+                         (mbuf (make-buffer "*matrix*")))
+                    (buffer-attach! ed mbuf)
+                    (set! (edit-window-buffer win) mbuf)
+                    (editor-set-text ed (string-append
+                                          "Matrix Chat (ement)\n"
+                                          (make-string 50 #\=) "\n\n"
+                                          messages))
+                    (editor-goto-pos ed 0)
+                    (echo-message! echo "Matrix messages loaded")))
+                (loop (cons line lines))))))))))
+
+(def (cmd-ement-send app)
+  "Send a message to a Matrix room."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (room (echo-read-string echo "Room: " row width)))
+    (when (and room (not (string-empty? room)))
+      (let ((msg (echo-read-string echo "Message: " row width)))
+        (when (and msg (not (string-empty? msg)))
+          (with-catch
+            (lambda (e) (echo-message! echo (str "Send error: " e)))
+            (lambda ()
+              (let-values (((si so se pid)
+                            (open-process-ports
+                              (str "matrix-commander --room " (shell-quote room)
+                                   " --message " (shell-quote msg))
+                              'block (native-transcoder))))
+                (close-port si) (close-port so) (close-port se)
+                (echo-message! echo (str "Sent to " room))))))))))

@@ -4105,3 +4105,547 @@
     (editor-set-text ed content)
     (editor-goto-pos ed 0)
     (echo-message! echo (str (length *command-log-entries*) " commands logged"))))
+
+;; ===== Round 9 Batch 1 =====
+
+;; --- Feature 1: Wordle ---
+
+(def *wordle-words*
+  '("crane" "slate" "adieu" "stare" "trace" "crate" "raise" "arise"
+    "audio" "learn" "heart" "earth" "stain" "train" "brain" "grain"
+    "house" "mouse" "about" "shout" "doubt" "mount" "count" "found"
+    "round" "sound" "bound" "wound" "could" "would" "world" "early"))
+
+(def *wordle-target* #f)
+(def *wordle-guesses* '())
+(def *wordle-max-guesses* 6)
+
+(def (wordle-init!)
+  (set! *wordle-target* (list-ref *wordle-words* (random (length *wordle-words*))))
+  (set! *wordle-guesses* '()))
+
+(def (wordle-check guess target)
+  "Return a list of (char status) where status is 'green, 'yellow, or 'gray."
+  (let* ((g-chars (string->list guess))
+         (t-chars (string->list target))
+         (result (make-vector 5 'gray)))
+    ;; First pass: mark greens
+    (do ((i 0 (+ i 1))) ((= i 5))
+      (when (char=? (list-ref g-chars i) (list-ref t-chars i))
+        (vector-set! result i 'green)))
+    ;; Second pass: mark yellows
+    (let ((remaining (let loop ((i 0) (acc '()))
+                       (if (= i 5) (reverse acc)
+                         (if (eq? (vector-ref result i) 'green)
+                           (loop (+ i 1) acc)
+                           (loop (+ i 1) (cons (list-ref t-chars i) acc)))))))
+      (do ((i 0 (+ i 1))) ((= i 5))
+        (when (and (not (eq? (vector-ref result i) 'green))
+                   (memv (list-ref g-chars i) remaining))
+          (vector-set! result i 'yellow))))
+    (let loop ((i 0) (acc '()))
+      (if (= i 5) (reverse acc)
+        (loop (+ i 1) (cons (list (list-ref g-chars i) (vector-ref result i)) acc))))))
+
+(def (wordle-render)
+  (string-append "WORDLE\n"
+    (make-string 30 #\=) "\n\n"
+    (if (null? *wordle-guesses*) "Make your first guess (5-letter word)\n"
+      (string-join
+        (map (lambda (guess)
+               (let ((checks (wordle-check guess *wordle-target*)))
+                 (string-join
+                   (map (lambda (c)
+                          (let ((ch (car c)) (st (cadr c)))
+                            (case st
+                              ((green) (str "[" ch "]"))
+                              ((yellow) (str "(" ch ")"))
+                              (else (str " " ch " ")))))
+                        checks)
+                   "")))
+             (reverse *wordle-guesses*))
+        "\n"))
+    "\n\nGuesses: " (number->string (length *wordle-guesses*))
+    "/" (number->string *wordle-max-guesses*)))
+
+(def (cmd-wordle app)
+  "Start a new Wordle game."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (wordle-init!)
+    (let ((wbuf (make-buffer "*wordle*")))
+      (buffer-attach! ed wbuf)
+      (set! (edit-window-buffer win) wbuf)
+      (editor-set-text ed (wordle-render))
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Wordle: Guess a 5-letter word"))))
+
+(def (cmd-wordle-guess app)
+  "Make a guess in Wordle."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols)))
+    (when *wordle-target*
+      (if (>= (length *wordle-guesses*) *wordle-max-guesses*)
+        (echo-message! echo (str "Game over! Word was: " *wordle-target*))
+        (let ((guess (echo-read-string echo "Guess: " row width)))
+          (when (and guess (= (string-length (string-trim guess)) 5))
+            (let ((g (string-downcase (string-trim guess))))
+              (set! *wordle-guesses* (cons g *wordle-guesses*))
+              (editor-set-text ed (wordle-render))
+              (editor-goto-pos ed 0)
+              (if (string=? g *wordle-target*)
+                (echo-message! echo (str "You won in " (length *wordle-guesses*) " guesses!"))
+                (when (>= (length *wordle-guesses*) *wordle-max-guesses*)
+                  (echo-message! echo (str "Game over! Word was: " *wordle-target*)))))))))))
+
+;; --- Feature 2: Minesweeper ---
+
+(def *mines-board* #f)
+(def *mines-revealed* #f)
+(def *mines-flags* #f)
+(def *mines-rows* 10)
+(def *mines-cols* 10)
+(def *mines-count* 15)
+
+(def (mines-init!)
+  (set! *mines-board* (make-vector (* *mines-rows* *mines-cols*) 0))
+  (set! *mines-revealed* (make-vector (* *mines-rows* *mines-cols*) #f))
+  (set! *mines-flags* (make-vector (* *mines-rows* *mines-cols*) #f))
+  ;; Place mines
+  (let loop ((placed 0))
+    (when (< placed *mines-count*)
+      (let ((pos (random (* *mines-rows* *mines-cols*))))
+        (if (= (vector-ref *mines-board* pos) -1)
+          (loop placed)
+          (begin
+            (vector-set! *mines-board* pos -1)
+            ;; Update neighbor counts
+            (let* ((r (quotient pos *mines-cols*))
+                   (c (remainder pos *mines-cols*)))
+              (for-each (lambda (dr)
+                          (for-each (lambda (dc)
+                                      (let ((nr (+ r dr)) (nc (+ c dc)))
+                                        (when (and (>= nr 0) (< nr *mines-rows*)
+                                                   (>= nc 0) (< nc *mines-cols*))
+                                          (let ((np (+ (* nr *mines-cols*) nc)))
+                                            (when (not (= (vector-ref *mines-board* np) -1))
+                                              (vector-set! *mines-board* np
+                                                (+ (vector-ref *mines-board* np) 1)))))))
+                                    '(-1 0 1)))
+                        '(-1 0 1)))
+            (loop (+ placed 1))))))))
+
+(def (mines-render game-over?)
+  (let ((lines (list "Minesweeper" (make-string 30 #\=) ""
+                     (string-append "   "
+                       (apply string-append
+                         (map (lambda (c) (format "~2d" c)) (iota *mines-cols*)))))))
+    (do ((r 0 (+ r 1))) ((= r *mines-rows*))
+      (let ((row-str (format "~2d " r)))
+        (do ((c 0 (+ c 1))) ((= c *mines-cols*))
+          (let* ((pos (+ (* r *mines-cols*) c))
+                 (val (vector-ref *mines-board* pos))
+                 (rev (vector-ref *mines-revealed* pos))
+                 (flag (vector-ref *mines-flags* pos)))
+            (set! row-str
+              (string-append row-str
+                (cond
+                  (flag " F")
+                  ((and (not rev) (not game-over?)) " .")
+                  ((= val -1) " *")
+                  ((= val 0) "  ")
+                  (else (str " " val)))))))
+        (set! lines (cons row-str lines))))
+    (string-join (reverse lines) "\n")))
+
+(def (cmd-minesweeper app)
+  "Start a Minesweeper game."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (mines-init!)
+    (let ((mbuf (make-buffer "*minesweeper*")))
+      (buffer-attach! ed mbuf)
+      (set! (edit-window-buffer win) mbuf)
+      (editor-set-text ed (mines-render #f))
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Minesweeper: 'row col' to reveal, 'f row col' to flag"))))
+
+(def (cmd-minesweeper-reveal app)
+  "Reveal a cell in Minesweeper."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (input (echo-read-string echo "Reveal (row col): " row width)))
+    (when (and input (not (string-empty? input)) *mines-board*)
+      (let* ((parts (string-split (string-trim input) #\space))
+             (r (and (>= (length parts) 2) (string->number (car parts))))
+             (c (and (>= (length parts) 2) (string->number (cadr parts)))))
+        (when (and r c (>= r 0) (< r *mines-rows*) (>= c 0) (< c *mines-cols*))
+          (let ((pos (+ (* r *mines-cols*) c)))
+            (vector-set! *mines-revealed* pos #t)
+            (if (= (vector-ref *mines-board* pos) -1)
+              (begin
+                (editor-set-text ed (mines-render #t))
+                (echo-message! echo "BOOM! Game over."))
+              (begin
+                (editor-set-text ed (mines-render #f))
+                (editor-goto-pos ed 0)))))))))
+
+;; --- Feature 3: Sokoban ---
+
+(def *sokoban-levels*
+  '("    #####\n    #   #\n    #$  #\n  ###  $##\n  #  $ $ #\n### # ## #   ######\n#   # ## #####  ..#\n# $  $          ..#\n##### ### #@##  ..#\n    #     #########\n    #######"))
+
+(def *sokoban-board* #f)
+(def *sokoban-player* '(0 . 0))
+
+(def (sokoban-init! level)
+  (let* ((lines (string-split level #\newline))
+         (height (length lines))
+         (width (apply max (map string-length lines)))
+         (board (make-vector (* height width) #\space)))
+    (do ((r 0 (+ r 1)))
+        ((= r height))
+      (let ((line (list-ref lines r)))
+        (do ((c 0 (+ c 1)))
+            ((= c (string-length line)))
+          (let ((ch (string-ref line c)))
+            (when (char=? ch #\@)
+              (set! *sokoban-player* (cons r c)))
+            (vector-set! board (+ (* r width) c) ch)))))
+    (set! *sokoban-board* (list board height width))))
+
+(def (cmd-sokoban app)
+  "Start a Sokoban puzzle game."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (sokoban-init! (car *sokoban-levels*))
+    (let ((sbuf (make-buffer "*sokoban*")))
+      (buffer-attach! ed sbuf)
+      (set! (edit-window-buffer win) sbuf)
+      (editor-set-text ed (string-append "Sokoban\n" (make-string 30 #\=) "\n\n"
+                            (car *sokoban-levels*)
+                            "\n\nPush $ onto . positions\nUse arrow keys or wasd"))
+      (editor-goto-pos ed 0)
+      (echo-message! echo "Sokoban: Push boxes ($) to goals (.)"))))
+
+;; --- Feature 4: 2048 Game ---
+
+(def *game-2048-board* #f)
+(def *game-2048-score* 0)
+
+(def (game-2048-init!)
+  (set! *game-2048-board* (make-vector 16 0))
+  (set! *game-2048-score* 0)
+  (game-2048-add-random!)
+  (game-2048-add-random!))
+
+(def (game-2048-add-random!)
+  (let ((empties '()))
+    (do ((i 0 (+ i 1))) ((= i 16))
+      (when (= (vector-ref *game-2048-board* i) 0)
+        (set! empties (cons i empties))))
+    (when (not (null? empties))
+      (let ((pos (list-ref empties (random (length empties)))))
+        (vector-set! *game-2048-board* pos (if (< (random 10) 9) 2 4))))))
+
+(def (game-2048-render)
+  (let ((lines (list "2048" (make-string 30 #\=) (str "Score: " *game-2048-score*) "")))
+    (do ((r 0 (+ r 1))) ((= r 4))
+      (let ((row-str ""))
+        (do ((c 0 (+ c 1))) ((= c 4))
+          (let ((v (vector-ref *game-2048-board* (+ (* r 4) c))))
+            (set! row-str (string-append row-str
+              (if (= v 0) "   ." (format "~4d" v))))))
+        (set! lines (cons row-str lines))))
+    (string-join (reverse lines) "\n")))
+
+(def (game-2048-slide-row! row-indices)
+  "Slide and merge tiles in one direction for given indices."
+  (let* ((vals (map (lambda (i) (vector-ref *game-2048-board* i)) row-indices))
+         (non-zero (filter (lambda (v) (not (= v 0))) vals))
+         (merged (let loop ((lst non-zero) (acc '()))
+                   (cond
+                     ((null? lst) (reverse acc))
+                     ((and (not (null? (cdr lst))) (= (car lst) (cadr lst)))
+                      (let ((new-val (* 2 (car lst))))
+                        (set! *game-2048-score* (+ *game-2048-score* new-val))
+                        (loop (cddr lst) (cons new-val acc))))
+                     (else (loop (cdr lst) (cons (car lst) acc))))))
+         (padded (append merged (make-list (- 4 (length merged)) 0))))
+    (do ((i 0 (+ i 1))) ((= i 4))
+      (vector-set! *game-2048-board* (list-ref row-indices i) (list-ref padded i)))))
+
+(def (cmd-2048-game app)
+  "Start a 2048 game."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win)))
+    (game-2048-init!)
+    (let ((gbuf (make-buffer "*2048*")))
+      (buffer-attach! ed gbuf)
+      (set! (edit-window-buffer win) gbuf)
+      (editor-set-text ed (game-2048-render))
+      (editor-goto-pos ed 0)
+      (echo-message! echo "2048: Use left/right/up/down commands to slide tiles"))))
+
+(def (cmd-2048-left app)
+  "Slide tiles left in 2048."
+  (when *game-2048-board*
+    (do ((r 0 (+ r 1))) ((= r 4))
+      (game-2048-slide-row! (list (* r 4) (+ (* r 4) 1) (+ (* r 4) 2) (+ (* r 4) 3))))
+    (game-2048-add-random!)
+    (let* ((frame (app-state-frame app))
+           (ed (edit-window-editor (current-window frame))))
+      (editor-set-text ed (game-2048-render))
+      (editor-goto-pos ed 0))))
+
+;; --- Feature 5: Git-link ---
+
+(def (cmd-git-link app)
+  "Copy a GitHub/GitLab URL for the current file and line to the kill ring."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "git-link error: " e)))
+        (lambda ()
+          (let* ((line-num (+ 1 (send-message ed SCI_LINEFROMPOSITION
+                                  (send-message ed SCI_GETCURRENTPOS 0 0) 0)))
+                 ;; Get remote URL
+                 (remote-out (let-values (((si so se pid)
+                               (open-process-ports "git remote get-url origin" 'block (native-transcoder))))
+                               (close-port si)
+                               (let ((r (get-line so)))
+                                 (close-port so) (close-port se)
+                                 (if (eof-object? r) "" r))))
+                 ;; Get relative path
+                 (root-out (let-values (((si so se pid)
+                              (open-process-ports "git rev-parse --show-toplevel" 'block (native-transcoder))))
+                              (close-port si)
+                              (let ((r (get-line so)))
+                                (close-port so) (close-port se)
+                                (if (eof-object? r) "" r))))
+                 ;; Get current branch
+                 (branch-out (let-values (((si so se pid)
+                               (open-process-ports "git rev-parse --abbrev-ref HEAD" 'block (native-transcoder))))
+                               (close-port si)
+                               (let ((r (get-line so)))
+                                 (close-port so) (close-port se)
+                                 (if (eof-object? r) "main" r))))
+                 (rel-path (if (and (> (string-length file) (string-length root-out))
+                                    (string-prefix? root-out file))
+                             (substring file (+ (string-length root-out) 1) (string-length file))
+                             file))
+                 ;; Convert git@ URL to https
+                 (base-url (if (string-prefix? "git@" remote-out)
+                             (let* ((s (substring remote-out 4 (string-length remote-out)))
+                                    (s (let ((i (string-contains s ":")))
+                                         (if i (string-append (substring s 0 i) "/" (substring s (+ i 1) (string-length s))) s)))
+                                    (s (if (string-suffix? ".git" s)
+                                         (substring s 0 (- (string-length s) 4)) s)))
+                               (str "https://" s))
+                             (if (string-suffix? ".git" remote-out)
+                               (substring remote-out 0 (- (string-length remote-out) 4))
+                               remote-out)))
+                 (url (str base-url "/blob/" branch-out "/" rel-path "#L" line-num)))
+            (send-message ed SCI_COPYTEXT (string-length url) url)
+            (echo-message! echo (str "Copied: " url))))))))
+
+;; --- Feature 6: Browse-at-remote ---
+
+(def (cmd-browse-at-remote app)
+  "Open the current file in the remote git forge (GitHub/GitLab)."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (buf (edit-window-buffer win))
+         (file (buffer-file buf)))
+    (if (not file)
+      (echo-message! echo "No file associated with buffer")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "browse-at-remote error: " e)))
+        (lambda ()
+          (let-values (((si so se pid)
+                        (open-process-ports
+                          (str "git remote get-url origin") 'block (native-transcoder))))
+            (close-port si)
+            (let ((remote (get-line so)))
+              (close-port so) (close-port se)
+              (when (and (not (eof-object? remote)) (not (string-empty? remote)))
+                ;; Convert to HTTPS URL
+                (let* ((base (cond
+                               ((string-prefix? "git@" remote)
+                                (let* ((s (substring remote 4 (string-length remote)))
+                                       (s (let ((i (string-contains s ":")))
+                                            (if i (string-append (substring s 0 i) "/"
+                                                    (substring s (+ i 1) (string-length s))) s)))
+                                       (s (if (string-suffix? ".git" s)
+                                            (substring s 0 (- (string-length s) 4)) s)))
+                                  (str "https://" s)))
+                               (else (if (string-suffix? ".git" remote)
+                                       (substring remote 0 (- (string-length remote) 4))
+                                       remote)))))
+                  (let-values (((si2 so2 se2 pid2)
+                                (open-process-ports (str "xdg-open " (shell-quote base))
+                                  'block (native-transcoder))))
+                    (close-port si2) (close-port so2) (close-port se2))
+                  (echo-message! echo (str "Opened: " base)))))))))))
+
+;; --- Feature 7: Code-review ---
+
+(def (cmd-code-review app)
+  "Review a git diff interactively with inline comments."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (ref (echo-read-string echo "Diff against (default HEAD~1): " row width)))
+    (let ((base (if (or (not ref) (string-empty? (string-trim ref))) "HEAD~1"
+                  (string-trim ref))))
+      (with-catch
+        (lambda (e) (echo-message! echo (str "code-review error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports (str "git diff " base)
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let* ((diff-text (string-join (reverse lines) "\n"))
+                           (rbuf (make-buffer "*code-review*")))
+                      (buffer-attach! ed rbuf)
+                      (set! (edit-window-buffer win) rbuf)
+                      (editor-set-text ed (string-append
+                                            "Code Review: " base "\n"
+                                            (make-string 50 #\=) "\n\n"
+                                            diff-text))
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "Code review loaded")))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 8: Conventional-commit ---
+
+(def *conventional-commit-types*
+  '("feat" "fix" "docs" "style" "refactor" "perf" "test" "build"
+    "ci" "chore" "revert"))
+
+(def (cmd-conventional-commit app)
+  "Create a conventional commit message (feat/fix/docs/etc)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (type (echo-read-string-with-completion
+                 echo "Commit type: " *conventional-commit-types* row width)))
+    (when (and type (not (string-empty? type)))
+      (let ((scope (echo-read-string echo "Scope (optional): " row width)))
+        (let ((desc (echo-read-string echo "Description: " row width)))
+          (when (and desc (not (string-empty? desc)))
+            (let* ((scope-str (if (and scope (not (string-empty? (string-trim scope))))
+                               (str "(" (string-trim scope) ")") ""))
+                   (msg (str type scope-str ": " desc)))
+              (with-catch
+                (lambda (e) (echo-message! echo (str "Commit error: " e)))
+                (lambda ()
+                  (let-values (((si so se pid)
+                                (open-process-ports
+                                  (str "git commit -m " (shell-quote msg))
+                                  'block (native-transcoder))))
+                    (close-port si)
+                    (let loop ((lines '()))
+                      (let ((line (get-line so)))
+                        (if (eof-object? line)
+                          (begin
+                            (close-port so) (close-port se)
+                            (echo-message! echo (str "Committed: " msg)))
+                          (loop (cons line lines)))))))))))))))
+
+;; --- Feature 9: Clippy ---
+
+(def *clippy-tips*
+  '("Use C-x C-s to save the current buffer"
+    "Use M-x to run any command by name"
+    "Use C-s for incremental search"
+    "Use C-x b to switch buffers"
+    "Use C-x 2 to split the window horizontally"
+    "Use C-x 3 to split the window vertically"
+    "Use C-x o to switch between windows"
+    "Use C-g to cancel any operation"
+    "Use M-% for search and replace"
+    "Use C-x k to kill the current buffer"
+    "Use C-x u to undo the last change"
+    "Use C-space to start marking a region"
+    "Use M-w to copy and C-y to paste"
+    "Use C-k to kill to end of line"
+    "Use C-/ for undo"
+    "Use M-g g to go to a specific line number"
+    "Use C-x f to find and open a file"
+    "Use C-h k to describe a key binding"
+    "Use C-x r s to save region to register"))
+
+(def (cmd-clippy app)
+  "Show a helpful tip from Clippy."
+  (let* ((echo (app-state-echo app))
+         (tip (list-ref *clippy-tips* (random (length *clippy-tips*)))))
+    (echo-message! echo (str "Clippy says: " tip))))
+
+;; --- Feature 10: Ellama (LLM Interface) ---
+
+(def *ellama-model* "llama3")
+
+(def (cmd-ellama app)
+  "Send a prompt to a local LLM via ollama."
+  (let* ((echo (app-state-echo app))
+         (frame (app-state-frame app))
+         (win (current-window frame))
+         (ed (edit-window-editor win))
+         (row (tui-rows)) (width (tui-cols))
+         (prompt (echo-read-string echo "Ellama prompt: " row width)))
+    (when (and prompt (not (string-empty? prompt)))
+      (echo-message! echo "Thinking...")
+      (with-catch
+        (lambda (e) (echo-message! echo (str "Ellama error: " e)))
+        (lambda ()
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (str "ollama run " *ellama-model* " " (shell-quote prompt))
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout) (close-port p-stderr)
+                    (let* ((response (string-join (reverse lines) "\n"))
+                           (lbuf (make-buffer "*ellama*")))
+                      (buffer-attach! ed lbuf)
+                      (set! (edit-window-buffer win) lbuf)
+                      (editor-set-text ed (string-append
+                                            "Ellama (" *ellama-model* ")\n"
+                                            (make-string 50 #\=) "\n\n"
+                                            "Prompt: " prompt "\n\n"
+                                            "Response:\n" response))
+                      (editor-goto-pos ed 0)
+                      (echo-message! echo "Ellama response ready")))
+                  (loop (cons line lines)))))))))))
