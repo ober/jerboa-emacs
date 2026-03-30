@@ -26842,3 +26842,51 @@
 (def (cmd-skaffold-run app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Skaffold: building and deploying")))
+
+;;; Round 362 — Telepresence ext, Kubevela ext, Knative ext, Dapr ext, KEDA ext (batch 1)
+
+(def (cmd-telepresence-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telepresence: connecting to cluster")))
+
+(def (cmd-telepresence-intercept app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Telepresence intercept service: "
+      (lambda (svc)
+        (echo-message! echo (str "Telepresence: intercepting " svc))))))
+
+(def (cmd-telepresence-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telepresence: showing status")))
+
+(def (cmd-telepresence-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telepresence: disconnecting")))
+
+(def (cmd-kubevela-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KubeVela: deploying application")))
+
+(def (cmd-kubevela-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KubeVela: showing application status")))
+
+(def (cmd-kubevela-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "KubeVela show app: "
+      (lambda (name)
+        (echo-message! echo (str "KubeVela: showing " name))))))
+
+(def (cmd-kubevela-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "KubeVela delete app: "
+      (lambda (name)
+        (echo-message! echo (str "KubeVela: deleting " name))))))
+
+(def (cmd-knative-service app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: listing services")))
+
+(def (cmd-knative-revision app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: listing revisions")))

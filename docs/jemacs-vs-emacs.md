@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 362 — Telepresence ext, Kubevela ext, Knative ext, Dapr ext, KEDA ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| telepresence-connect | :orange_circle: | Telepresence: connect to cluster |
+| telepresence-intercept | :orange_circle: | Telepresence: intercept service |
+| telepresence-status | :orange_circle: | Telepresence: show status |
+| telepresence-quit | :orange_circle: | Telepresence: disconnect |
+| kubevela-up | :orange_circle: | KubeVela: deploy application |
+| kubevela-status | :orange_circle: | KubeVela: application status |
+| kubevela-show | :orange_circle: | KubeVela: show application |
+| kubevela-delete | :orange_circle: | KubeVela: delete application |
+| knative-service | :orange_circle: | Knative: list services |
+| knative-revision | :orange_circle: | Knative: list revisions |
+| knative-route | :orange_circle: | Knative: list routes |
+| knative-domain | :orange_circle: | Knative: list domain mappings |
+| dapr-run | :orange_circle: | Dapr: run application |
+| dapr-stop | :orange_circle: | Dapr: stop application |
+| dapr-list | :orange_circle: | Dapr: list running apps |
+| dapr-invoke | :orange_circle: | Dapr: invoke method |
+| keda-scalers | :orange_circle: | KEDA: list scalers |
+| keda-status | :orange_circle: | KEDA: show status |
+| keda-triggers | :orange_circle: | KEDA: list triggers |
+| keda-version | :orange_circle: | KEDA: show version |
+
 ### Round 361 — Tilt ext, DevSpace ext, Skaffold ext, Garden ext, Okteto ext
 
 | Feature | Status | Notes |

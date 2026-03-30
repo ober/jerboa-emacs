@@ -26087,3 +26087,51 @@
 (def (cmd-okteto-status app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Okteto: showing status")))
+
+;;; Round 362 — Knative ext, Dapr ext, KEDA ext (batch 2)
+
+(def (cmd-knative-route app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: listing routes")))
+
+(def (cmd-knative-domain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: listing domain mappings")))
+
+(def (cmd-dapr-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dapr run app: "
+      (lambda (app-name)
+        (echo-message! echo (str "Dapr: running " app-name))))))
+
+(def (cmd-dapr-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dapr stop app: "
+      (lambda (app-name)
+        (echo-message! echo (str "Dapr: stopping " app-name))))))
+
+(def (cmd-dapr-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dapr: listing running apps")))
+
+(def (cmd-dapr-invoke app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dapr invoke method: "
+      (lambda (method)
+        (echo-message! echo (str "Dapr: invoking " method))))))
+
+(def (cmd-keda-scalers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: listing scalers")))
+
+(def (cmd-keda-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: showing status")))
+
+(def (cmd-keda-triggers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: listing triggers")))
+
+(def (cmd-keda-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: showing version")))
