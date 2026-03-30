@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 290 — Dmesg ext, Kernel Log ext, Modprobe ext, Sysctl ext, Procfs ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| dmesg-filter | :orange_circle: | Filter dmesg output |
+| dmesg-follow | :orange_circle: | Follow dmesg live |
+| dmesg-clear | :orange_circle: | Clear dmesg buffer |
+| dmesg-level | :orange_circle: | Filter by log level |
+| kern-log-view | :orange_circle: | View kernel log |
+| kern-log-search | :orange_circle: | Search kernel log |
+| kern-log-tail | :orange_circle: | Tail kernel log |
+| kern-log-level | :orange_circle: | Set kernel log level |
+| modprobe-load | :orange_circle: | Load kernel module |
+| modprobe-remove | :orange_circle: | Remove kernel module |
+| modprobe-list | :orange_circle: | List loaded modules |
+| modprobe-info | :orange_circle: | Show module info |
+| lsmod-list | :orange_circle: | List kernel modules |
+| depmod-rebuild | :orange_circle: | Rebuild module deps |
+| sysctl-list | :orange_circle: | List sysctl parameters |
+| sysctl-get | :orange_circle: | Get sysctl value |
+| sysctl-set | :orange_circle: | Set sysctl value |
+| sysctl-reload | :orange_circle: | Reload sysctl config |
+| procfs-read | :orange_circle: | Read /proc entry |
+| procfs-write | :orange_circle: | Write /proc entry |
+
 ### Round 289 — User mgmt ext, Group mgmt ext, Login ext, Faillock ext, Getent ext
 
 | Command | Status | Description |

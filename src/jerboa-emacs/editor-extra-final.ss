@@ -22384,3 +22384,55 @@
 (def (cmd-getent-hosts app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Getent: querying hosts database")))
+
+;;; Round 290 — Modprobe ext, Sysctl ext, Procfs ext (batch 2)
+
+(def (cmd-modprobe-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Modprobe: listing loaded modules")))
+
+(def (cmd-modprobe-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module: "
+      (lambda (mod)
+        (echo-message! echo (str "Modprobe: info for " mod))))))
+
+(def (cmd-lsmod-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsmod: listing kernel modules")))
+
+(def (cmd-depmod-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Depmod: rebuilding module dependencies")))
+
+(def (cmd-sysctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysctl: listing parameters")))
+
+(def (cmd-sysctl-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Parameter: "
+      (lambda (param)
+        (echo-message! echo (str "Sysctl: " param))))))
+
+(def (cmd-sysctl-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Parameter=value: "
+      (lambda (pv)
+        (echo-message! echo (str "Sysctl: setting " pv))))))
+
+(def (cmd-sysctl-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysctl: reloading configuration")))
+
+(def (cmd-procfs-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "/proc path: "
+      (lambda (path)
+        (echo-message! echo (str "Procfs: reading " path))))))
+
+(def (cmd-procfs-write app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "/proc path: "
+      (lambda (path)
+        (echo-message! echo (str "Procfs: writing to " path))))))

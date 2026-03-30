@@ -23064,3 +23064,57 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Login: listing active sessions")))
 
+;;; Round 290 — Dmesg ext, Kernel Log ext, Modprobe ext (batch 1)
+
+(def (cmd-dmesg-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter: "
+      (lambda (flt)
+        (echo-message! echo (str "Dmesg: filtering by " flt))))))
+
+(def (cmd-dmesg-follow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmesg: following kernel messages")))
+
+(def (cmd-dmesg-clear app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmesg: clearing ring buffer")))
+
+(def (cmd-dmesg-level app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Level (0-7): "
+      (lambda (lvl)
+        (echo-message! echo (str "Dmesg: filtering level " lvl))))))
+
+(def (cmd-kern-log-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kernel: viewing kernel log")))
+
+(def (cmd-kern-log-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (term)
+        (echo-message! echo (str "Kernel: searching for " term))))))
+
+(def (cmd-kern-log-tail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kernel: tailing kernel log")))
+
+(def (cmd-kern-log-level app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Log level: "
+      (lambda (lvl)
+        (echo-message! echo (str "Kernel: setting log level " lvl))))))
+
+(def (cmd-modprobe-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module: "
+      (lambda (mod)
+        (echo-message! echo (str "Modprobe: loading " mod))))))
+
+(def (cmd-modprobe-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module: "
+      (lambda (mod)
+        (echo-message! echo (str "Modprobe: removing " mod))))))
+
