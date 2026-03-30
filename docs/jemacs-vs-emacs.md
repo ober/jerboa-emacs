@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 353 — Cosign ext, Sigstore ext, Notary ext, OPA ext, Kyverno ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| cosign-sign | :orange_circle: | Cosign: sign container image |
+| cosign-verify | :orange_circle: | Cosign: verify image signature |
+| cosign-attach | :orange_circle: | Cosign: attach attestation |
+| cosign-tree | :orange_circle: | Cosign: supply chain tree |
+| sigstore-sign | :orange_circle: | Sigstore: sign artifact |
+| sigstore-verify | :orange_circle: | Sigstore: verify artifact |
+| sigstore-inspect | :orange_circle: | Sigstore: inspect bundle |
+| sigstore-bundle | :orange_circle: | Sigstore: show bundle info |
+| notary-sign | :orange_circle: | Notary: sign artifact |
+| notary-verify | :orange_circle: | Notary: verify artifact |
+| notary-list | :orange_circle: | Notary: list signatures |
+| notary-inspect | :orange_circle: | Notary: inspect artifact |
+| opa-eval | :orange_circle: | OPA: evaluate query |
+| opa-test | :orange_circle: | OPA: run tests |
+| opa-check | :orange_circle: | OPA: check policy |
+| opa-build | :orange_circle: | OPA: build policy bundle |
+| kyverno-apply | :orange_circle: | Kyverno: apply policy |
+| kyverno-test | :orange_circle: | Kyverno: run policy tests |
+| kyverno-validate | :orange_circle: | Kyverno: validate resource |
+| kyverno-policies | :orange_circle: | Kyverno: list policies |
+
 ### Round 352 — Sonarqube ext, Snyk ext, Trivy ext, Grype ext, Syft ext
 
 | Feature | Status | Notes |

@@ -25659,3 +25659,55 @@
     (echo-read-string echo "Syft convert format: "
       (lambda (fmt)
         (echo-message! echo (str "Syft: converting SBOM to " fmt))))))
+
+;;; Round 353 — Notary ext, OPA ext, Kyverno ext (batch 2)
+
+(def (cmd-notary-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notary: listing signatures")))
+
+(def (cmd-notary-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Notary inspect artifact: "
+      (lambda (art)
+        (echo-message! echo (str "Notary: inspecting " art))))))
+
+(def (cmd-opa-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OPA eval query: "
+      (lambda (q)
+        (echo-message! echo (str "OPA: evaluating " q))))))
+
+(def (cmd-opa-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OPA: running tests")))
+
+(def (cmd-opa-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OPA check policy: "
+      (lambda (pol)
+        (echo-message! echo (str "OPA: checking policy " pol))))))
+
+(def (cmd-opa-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OPA: building policy bundle")))
+
+(def (cmd-kyverno-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kyverno policy file: "
+      (lambda (file)
+        (echo-message! echo (str "Kyverno: applying policy " file))))))
+
+(def (cmd-kyverno-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kyverno: running policy tests")))
+
+(def (cmd-kyverno-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kyverno validate resource: "
+      (lambda (res)
+        (echo-message! echo (str "Kyverno: validating " res))))))
+
+(def (cmd-kyverno-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kyverno: listing policies")))

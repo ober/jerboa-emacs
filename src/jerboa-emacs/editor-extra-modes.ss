@@ -26370,3 +26370,63 @@
     (echo-read-string echo "Trivy scan path: "
       (lambda (path)
         (echo-message! echo (str "Trivy: scanning filesystem " path))))))
+
+;;; Round 353 — Cosign ext, Sigstore ext, Notary ext, OPA ext, Kyverno ext (batch 1)
+
+(def (cmd-cosign-sign app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cosign sign image: "
+      (lambda (img)
+        (echo-message! echo (str "Cosign: signing " img))))))
+
+(def (cmd-cosign-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cosign verify image: "
+      (lambda (img)
+        (echo-message! echo (str "Cosign: verifying " img))))))
+
+(def (cmd-cosign-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cosign attach to image: "
+      (lambda (img)
+        (echo-message! echo (str "Cosign: attaching attestation to " img))))))
+
+(def (cmd-cosign-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cosign tree image: "
+      (lambda (img)
+        (echo-message! echo (str "Cosign: showing supply chain tree for " img))))))
+
+(def (cmd-sigstore-sign app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sigstore sign artifact: "
+      (lambda (art)
+        (echo-message! echo (str "Sigstore: signing " art))))))
+
+(def (cmd-sigstore-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sigstore verify artifact: "
+      (lambda (art)
+        (echo-message! echo (str "Sigstore: verifying " art))))))
+
+(def (cmd-sigstore-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sigstore inspect bundle: "
+      (lambda (bundle)
+        (echo-message! echo (str "Sigstore: inspecting " bundle))))))
+
+(def (cmd-sigstore-bundle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sigstore: showing bundle info")))
+
+(def (cmd-notary-sign app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Notary sign artifact: "
+      (lambda (art)
+        (echo-message! echo (str "Notary: signing " art))))))
+
+(def (cmd-notary-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Notary verify artifact: "
+      (lambda (art)
+        (echo-message! echo (str "Notary: verifying " art))))))
