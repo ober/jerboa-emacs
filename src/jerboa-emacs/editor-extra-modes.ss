@@ -28040,3 +28040,46 @@
 (def (cmd-zeplin-screens app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Zeplin: listing screens")))
+
+;; Round 389 batch 1 — Notion ext, Airtable ext
+(def (cmd-notion-pages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notion: listing pages")))
+
+(def (cmd-notion-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notion: listing databases")))
+
+(def (cmd-notion-blocks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Notion: listing blocks")))
+
+(def (cmd-notion-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search query: "
+      (lambda (query)
+        (echo-message! echo (str "Notion: searching: " query))))))
+
+(def (cmd-airtable-bases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airtable: listing bases")))
+
+(def (cmd-airtable-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airtable: listing tables")))
+
+(def (cmd-airtable-records app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airtable: listing records")))
+
+(def (cmd-airtable-views app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airtable: listing views")))
+
+(def (cmd-coda-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coda: listing documents")))
+
+(def (cmd-coda-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coda: listing tables")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 389 — Notion ext, Airtable ext, Coda ext, Baserow/NocoDB ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Notion pages | — | `notion-pages` | :orange_circle: Scaffolded |
+| Notion databases | — | `notion-databases` | :orange_circle: Scaffolded |
+| Notion blocks | — | `notion-blocks` | :orange_circle: Scaffolded |
+| Notion search | — | `notion-search` | :orange_circle: Scaffolded |
+| Airtable bases | — | `airtable-bases` | :orange_circle: Scaffolded |
+| Airtable tables | — | `airtable-tables` | :orange_circle: Scaffolded |
+| Airtable records | — | `airtable-records` | :orange_circle: Scaffolded |
+| Airtable views | — | `airtable-views` | :orange_circle: Scaffolded |
+| Coda documents | — | `coda-docs` | :orange_circle: Scaffolded |
+| Coda tables | — | `coda-tables` | :orange_circle: Scaffolded |
+| Coda formulas | — | `coda-formulas` | :orange_circle: Scaffolded |
+| Coda automations | — | `coda-automations` | :orange_circle: Scaffolded |
+| Baserow tables | — | `baserow-tables` | :orange_circle: Scaffolded |
+| Baserow rows | — | `baserow-rows` | :orange_circle: Scaffolded |
+| Baserow fields | — | `baserow-fields` | :orange_circle: Scaffolded |
+| Baserow views | — | `baserow-views` | :orange_circle: Scaffolded |
+| NocoDB tables | — | `nocodb-tables` | :orange_circle: Scaffolded |
+| NocoDB rows | — | `nocodb-rows` | :orange_circle: Scaffolded |
+| NocoDB views | — | `nocodb-views` | :orange_circle: Scaffolded |
+| NocoDB formulas | — | `nocodb-formulas` | :orange_circle: Scaffolded |
+
 ### Round 388 — Figma ext, Sketch ext, Zeplin ext, Storybook/Chromatic ext
 
 | Feature | Emacs | jemacs | Status |

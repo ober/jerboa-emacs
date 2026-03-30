@@ -27257,3 +27257,44 @@
 (def (cmd-chromatic-baselines app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Chromatic: managing baselines")))
+
+;; Round 389 batch 2 — Coda ext, Baserow/NocoDB ext
+(def (cmd-coda-formulas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coda: listing formulas")))
+
+(def (cmd-coda-automations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coda: listing automations")))
+
+(def (cmd-baserow-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Baserow: listing tables")))
+
+(def (cmd-baserow-rows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Baserow: listing rows")))
+
+(def (cmd-baserow-fields app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Baserow: listing fields")))
+
+(def (cmd-baserow-views app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Baserow: listing views")))
+
+(def (cmd-nocodb-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NocoDB: listing tables")))
+
+(def (cmd-nocodb-rows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NocoDB: listing rows")))
+
+(def (cmd-nocodb-views app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NocoDB: listing views")))
+
+(def (cmd-nocodb-formulas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NocoDB: listing formulas")))
