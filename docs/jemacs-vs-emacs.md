@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 354 — Crossplane ext, Kustomize ext, Jsonnet ext, CUE ext, Dhall ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| crossplane-xrd | :orange_circle: | Crossplane: list XRDs |
+| crossplane-composition | :orange_circle: | Crossplane: list compositions |
+| crossplane-claim | :orange_circle: | Crossplane: list claims |
+| crossplane-provider | :orange_circle: | Crossplane: list providers |
+| kustomize-build | :orange_circle: | Kustomize: build overlay |
+| kustomize-edit | :orange_circle: | Kustomize: edit kustomization |
+| kustomize-create | :orange_circle: | Kustomize: create kustomization |
+| kustomize-cfg | :orange_circle: | Kustomize: run cfg function |
+| jsonnet-eval | :orange_circle: | Jsonnet: evaluate file |
+| jsonnet-fmt | :orange_circle: | Jsonnet: format file |
+| jsonnet-lint | :orange_circle: | Jsonnet: lint file |
+| jsonnet-deps | :orange_circle: | Jsonnet: show dependencies |
+| cue-eval | :orange_circle: | CUE: evaluate expression |
+| cue-fmt | :orange_circle: | CUE: format files |
+| cue-vet | :orange_circle: | CUE: validate data |
+| cue-export | :orange_circle: | CUE: export to JSON/YAML |
+| dhall-format | :orange_circle: | Dhall: format files |
+| dhall-lint | :orange_circle: | Dhall: lint files |
+| dhall-type | :orange_circle: | Dhall: show type |
+| dhall-freeze | :orange_circle: | Dhall: freeze imports |
+
 ### Round 353 — Cosign ext, Sigstore ext, Notary ext, OPA ext, Kyverno ext
 
 | Feature | Status | Notes |

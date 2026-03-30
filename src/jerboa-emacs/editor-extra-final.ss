@@ -25711,3 +25711,51 @@
 (def (cmd-kyverno-policies app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Kyverno: listing policies")))
+
+;;; Round 354 — Jsonnet ext, CUE ext, Dhall ext (batch 2)
+
+(def (cmd-jsonnet-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jsonnet lint file: "
+      (lambda (file)
+        (echo-message! echo (str "Jsonnet: linting " file))))))
+
+(def (cmd-jsonnet-deps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jsonnet: showing dependencies")))
+
+(def (cmd-cue-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CUE expression: "
+      (lambda (expr)
+        (echo-message! echo (str "CUE: evaluating"))))))
+
+(def (cmd-cue-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUE: formatting files")))
+
+(def (cmd-cue-vet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUE: validating data")))
+
+(def (cmd-cue-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CUE export format (json/yaml): "
+      (lambda (fmt)
+        (echo-message! echo (str "CUE: exporting as " fmt))))))
+
+(def (cmd-dhall-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dhall: formatting files")))
+
+(def (cmd-dhall-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dhall: linting files")))
+
+(def (cmd-dhall-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dhall: showing type")))
+
+(def (cmd-dhall-freeze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dhall: freezing imports")))

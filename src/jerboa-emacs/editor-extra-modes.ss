@@ -26430,3 +26430,51 @@
     (echo-read-string echo "Notary verify artifact: "
       (lambda (art)
         (echo-message! echo (str "Notary: verifying " art))))))
+
+;;; Round 354 — Crossplane ext, Kustomize ext, Jsonnet ext, CUE ext, Dhall ext (batch 1)
+
+(def (cmd-crossplane-xrd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing XRDs")))
+
+(def (cmd-crossplane-composition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing compositions")))
+
+(def (cmd-crossplane-claim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing claims")))
+
+(def (cmd-crossplane-provider app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing providers")))
+
+(def (cmd-kustomize-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kustomize build directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Kustomize: building " dir))))))
+
+(def (cmd-kustomize-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kustomize: editing kustomization")))
+
+(def (cmd-kustomize-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kustomize: creating kustomization")))
+
+(def (cmd-kustomize-cfg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kustomize: running cfg function")))
+
+(def (cmd-jsonnet-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jsonnet file: "
+      (lambda (file)
+        (echo-message! echo (str "Jsonnet: evaluating " file))))))
+
+(def (cmd-jsonnet-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jsonnet format file: "
+      (lambda (file)
+        (echo-message! echo (str "Jsonnet: formatting " file))))))
