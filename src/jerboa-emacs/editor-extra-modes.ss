@@ -23004,3 +23004,63 @@
       (lambda (name)
         (echo-message! echo (str "Systemd: creating timer " name))))))
 
+;;; Round 289 — User mgmt ext, Group mgmt ext, Login ext (batch 1)
+
+(def (cmd-useradd-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Useradd: creating " user))))))
+
+(def (cmd-userdel-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Userdel: removing " user))))))
+
+(def (cmd-usermod-modify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Usermod: modifying " user))))))
+
+(def (cmd-passwd-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Passwd: changing for " user))))))
+
+(def (cmd-groupadd-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Group name: "
+      (lambda (grp)
+        (echo-message! echo (str "Groupadd: creating " grp))))))
+
+(def (cmd-groupdel-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Group name: "
+      (lambda (grp)
+        (echo-message! echo (str "Groupdel: removing " grp))))))
+
+(def (cmd-groupmod-modify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Group name: "
+      (lambda (grp)
+        (echo-message! echo (str "Groupmod: modifying " grp))))))
+
+(def (cmd-chage-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Chage: info for " user))))))
+
+(def (cmd-chage-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Chage: setting expiry for " user))))))
+
+(def (cmd-login-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Login: listing active sessions")))
+

@@ -22338,3 +22338,49 @@
 (def (cmd-incron-status app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Incron: showing status")))
+
+;;; Round 289 — Login ext, Faillock ext, Getent ext (batch 2)
+
+(def (cmd-login-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Login: showing history")))
+
+(def (cmd-who-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Who: listing logged-in users")))
+
+(def (cmd-w-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "W: showing user activity")))
+
+(def (cmd-last-logins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Last: showing recent logins")))
+
+(def (cmd-lastb-failures app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lastb: showing failed logins")))
+
+(def (cmd-faillock-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Faillock: status for " user))))))
+
+(def (cmd-faillock-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Faillock: resetting " user))))))
+
+(def (cmd-getent-passwd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Getent: querying passwd database")))
+
+(def (cmd-getent-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Getent: querying group database")))
+
+(def (cmd-getent-hosts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Getent: querying hosts database")))

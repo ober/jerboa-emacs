@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 289 — User mgmt ext, Group mgmt ext, Login ext, Faillock ext, Getent ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| useradd-create | :orange_circle: | Create user account |
+| userdel-remove | :orange_circle: | Remove user account |
+| usermod-modify | :orange_circle: | Modify user account |
+| passwd-change | :orange_circle: | Change user password |
+| groupadd-create | :orange_circle: | Create group |
+| groupdel-remove | :orange_circle: | Remove group |
+| groupmod-modify | :orange_circle: | Modify group |
+| chage-info | :orange_circle: | Show password aging info |
+| chage-set | :orange_circle: | Set password expiry |
+| login-list | :orange_circle: | List active sessions |
+| login-history | :orange_circle: | Show login history |
+| who-list | :orange_circle: | List logged-in users |
+| w-list | :orange_circle: | Show user activity |
+| last-logins | :orange_circle: | Show recent logins |
+| lastb-failures | :orange_circle: | Show failed logins |
+| faillock-status | :orange_circle: | Show faillock status |
+| faillock-reset | :orange_circle: | Reset faillock |
+| getent-passwd | :orange_circle: | Query passwd database |
+| getent-group | :orange_circle: | Query group database |
+| getent-hosts | :orange_circle: | Query hosts database |
+
 ### Round 288 — Cron ext, At ext, Systemd Timer ext, Anacron ext, Incron ext
 
 | Command | Status | Description |
