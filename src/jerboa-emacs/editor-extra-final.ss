@@ -30000,3 +30000,293 @@
 (def (cmd-flatpak-override app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Flatpak: override permissions")))
+
+;; ── Round 451 — Skopeo ext, Kaniko ext ──
+
+(def (cmd-skopeo-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skopeo: copy image")))
+
+(def (cmd-skopeo-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skopeo: inspect image")))
+
+(def (cmd-skopeo-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skopeo: list tags")))
+
+(def (cmd-skopeo-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skopeo: sync images")))
+
+(def (cmd-skopeo-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skopeo: delete image")))
+
+(def (cmd-kaniko-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kaniko: build image")))
+
+(def (cmd-kaniko-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kaniko: cache management")))
+
+(def (cmd-kaniko-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kaniko: debug mode")))
+
+(def (cmd-kaniko-warmer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kaniko: cache warmer")))
+
+(def (cmd-kaniko-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kaniko: configuration")))
+
+;; ── Round 452 — runc ext, crun ext ──
+
+(def (cmd-runc-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "runc: create container")))
+
+(def (cmd-runc-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "runc: start container")))
+
+(def (cmd-runc-exec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "runc: exec in container")))
+
+(def (cmd-runc-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "runc: list containers")))
+
+(def (cmd-runc-spec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "runc: generate spec")))
+
+(def (cmd-crun-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crun: create container")))
+
+(def (cmd-crun-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crun: start container")))
+
+(def (cmd-crun-exec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crun: exec in container")))
+
+(def (cmd-crun-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crun: list containers")))
+
+(def (cmd-crun-spec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crun: generate spec")))
+
+;; ── Round 453 — Finch ext, Rancher Desktop ext ──
+
+(def (cmd-finch-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Finch: build image")))
+
+(def (cmd-finch-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Finch: run container")))
+
+(def (cmd-finch-compose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Finch: compose")))
+
+(def (cmd-finch-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Finch: push image")))
+
+(def (cmd-finch-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Finch: pull image")))
+
+(def (cmd-rancher-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rancher: cluster management")))
+
+(def (cmd-rancher-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rancher: node management")))
+
+(def (cmd-rancher-workload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rancher: workload")))
+
+(def (cmd-rancher-namespace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rancher: namespace")))
+
+(def (cmd-rancher-catalog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rancher: catalog")))
+
+;; ── Round 454 — k3s ext, k3d ext, Kind ext2, minikube ext2 ──
+
+(def (cmd-k3s-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3s: server")))
+
+(def (cmd-k3s-agent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3s: agent")))
+
+(def (cmd-k3s-kubectl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3s: kubectl")))
+
+(def (cmd-k3s-crictl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3s: crictl")))
+
+(def (cmd-k3s-etcd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3s: etcd snapshot")))
+
+(def (cmd-k3d-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3d: cluster management")))
+
+(def (cmd-k3d-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3d: node management")))
+
+(def (cmd-k3d-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3d: registry")))
+
+(def (cmd-k3d-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3d: import image")))
+
+(def (cmd-k3d-kubeconfig app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k3d: kubeconfig")))
+
+(def (cmd-kind-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kind: cluster management")))
+
+(def (cmd-kind-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kind: export logs")))
+
+(def (cmd-kind-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kind: load image")))
+
+(def (cmd-kind-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kind: list nodes")))
+
+(def (cmd-kind-kubeconfig app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kind: kubeconfig")))
+
+(def (cmd-minikube-addons app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: addons")))
+
+(def (cmd-minikube-dashboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: dashboard")))
+
+(def (cmd-minikube-tunnel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: tunnel")))
+
+(def (cmd-minikube-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: mount")))
+
+(def (cmd-minikube-service app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: service")))
+
+;; ── Round 455 — Cilium ext2, Calico ext2, Flannel ext, Weave ext ──
+
+(def (cmd-cilium-connectivity app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: connectivity test")))
+
+(def (cmd-cilium-hubble-ui app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: Hubble UI")))
+
+(def (cmd-cilium-encrypt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: encryption")))
+
+(def (cmd-cilium-clustermesh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: cluster mesh")))
+
+(def (cmd-cilium-bgp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: BGP peering")))
+
+(def (cmd-calico-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: node status")))
+
+(def (cmd-calico-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: node management")))
+
+(def (cmd-calico-diags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: diagnostics")))
+
+(def (cmd-calico-ipam app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: IPAM")))
+
+(def (cmd-calico-patch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: patch node")))
+
+(def (cmd-flannel-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: status")))
+
+(def (cmd-flannel-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: configuration")))
+
+(def (cmd-flannel-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: logs")))
+
+(def (cmd-flannel-subnet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: subnet info")))
+
+(def (cmd-flannel-backend app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: backend type")))
+
+(def (cmd-weave-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weave: status")))
+
+(def (cmd-weave-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weave: connections")))
+
+(def (cmd-weave-expose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weave: expose network")))
+
+(def (cmd-weave-forget app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weave: forget peer")))
+
+(def (cmd-weave-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weave: reset")))

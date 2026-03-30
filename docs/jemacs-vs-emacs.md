@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 455 — Cilium ext2, Calico ext2, Flannel ext, Weave ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Cilium connectivity test | — | `cilium-connectivity` | :orange_circle: Scaffolded |
+| Cilium Hubble UI | — | `cilium-hubble-ui` | :orange_circle: Scaffolded |
+| Cilium encryption | — | `cilium-encrypt` | :orange_circle: Scaffolded |
+| Cilium cluster mesh | — | `cilium-clustermesh` | :orange_circle: Scaffolded |
+| Cilium BGP peering | — | `cilium-bgp` | :orange_circle: Scaffolded |
+| Calico node status | — | `calico-status` | :orange_circle: Scaffolded |
+| Calico node management | — | `calico-node` | :orange_circle: Scaffolded |
+| Calico diagnostics | — | `calico-diags` | :orange_circle: Scaffolded |
+| Calico IPAM | — | `calico-ipam` | :orange_circle: Scaffolded |
+| Calico patch node | — | `calico-patch` | :orange_circle: Scaffolded |
+| Flannel status | — | `flannel-status` | :orange_circle: Scaffolded |
+| Flannel configuration | — | `flannel-config` | :orange_circle: Scaffolded |
+| Flannel logs | — | `flannel-logs` | :orange_circle: Scaffolded |
+| Flannel subnet info | — | `flannel-subnet` | :orange_circle: Scaffolded |
+| Flannel backend | — | `flannel-backend` | :orange_circle: Scaffolded |
+| Weave status | — | `weave-status` | :orange_circle: Scaffolded |
+| Weave connections | — | `weave-connections` | :orange_circle: Scaffolded |
+| Weave expose | — | `weave-expose` | :orange_circle: Scaffolded |
+| Weave forget | — | `weave-forget` | :orange_circle: Scaffolded |
+| Weave reset | — | `weave-reset` | :orange_circle: Scaffolded |
+
+### Round 454 — k3s ext, k3d ext, Kind ext2, minikube ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| k3s server | — | `k3s-server` | :orange_circle: Scaffolded |
+| k3s agent | — | `k3s-agent` | :orange_circle: Scaffolded |
+| k3s kubectl | — | `k3s-kubectl` | :orange_circle: Scaffolded |
+| k3s crictl | — | `k3s-crictl` | :orange_circle: Scaffolded |
+| k3s etcd snapshot | — | `k3s-etcd` | :orange_circle: Scaffolded |
+| k3d cluster | — | `k3d-cluster` | :orange_circle: Scaffolded |
+| k3d node | — | `k3d-node` | :orange_circle: Scaffolded |
+| k3d registry | — | `k3d-registry` | :orange_circle: Scaffolded |
+| k3d import image | — | `k3d-image` | :orange_circle: Scaffolded |
+| k3d kubeconfig | — | `k3d-kubeconfig` | :orange_circle: Scaffolded |
+| Kind cluster | — | `kind-cluster` | :orange_circle: Scaffolded |
+| Kind export logs | — | `kind-export` | :orange_circle: Scaffolded |
+| Kind load image | — | `kind-load` | :orange_circle: Scaffolded |
+| Kind list nodes | — | `kind-nodes` | :orange_circle: Scaffolded |
+| Kind kubeconfig | — | `kind-kubeconfig` | :orange_circle: Scaffolded |
+| Minikube addons | — | `minikube-addons` | :orange_circle: Scaffolded |
+| Minikube dashboard | — | `minikube-dashboard` | :orange_circle: Scaffolded |
+| Minikube tunnel | — | `minikube-tunnel` | :orange_circle: Scaffolded |
+| Minikube mount | — | `minikube-mount` | :orange_circle: Scaffolded |
+| Minikube service | — | `minikube-service` | :orange_circle: Scaffolded |
+
+### Round 453 — Lima ext, Colima ext, Finch ext, Rancher Desktop ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Lima start | — | `lima-start` | :orange_circle: Scaffolded |
+| Lima stop | — | `lima-stop` | :orange_circle: Scaffolded |
+| Lima shell | — | `lima-shell` | :orange_circle: Scaffolded |
+| Lima list | — | `lima-list` | :orange_circle: Scaffolded |
+| Lima copy | — | `lima-copy` | :orange_circle: Scaffolded |
+| Colima start | — | `colima-start` | :orange_circle: Scaffolded |
+| Colima stop | — | `colima-stop` | :orange_circle: Scaffolded |
+| Colima status | — | `colima-status` | :orange_circle: Scaffolded |
+| Colima list | — | `colima-list` | :orange_circle: Scaffolded |
+| Colima SSH | — | `colima-ssh` | :orange_circle: Scaffolded |
+| Finch build | — | `finch-build` | :orange_circle: Scaffolded |
+| Finch run | — | `finch-run` | :orange_circle: Scaffolded |
+| Finch compose | — | `finch-compose` | :orange_circle: Scaffolded |
+| Finch push | — | `finch-push` | :orange_circle: Scaffolded |
+| Finch pull | — | `finch-pull` | :orange_circle: Scaffolded |
+| Rancher cluster | — | `rancher-cluster` | :orange_circle: Scaffolded |
+| Rancher node | — | `rancher-node` | :orange_circle: Scaffolded |
+| Rancher workload | — | `rancher-workload` | :orange_circle: Scaffolded |
+| Rancher namespace | — | `rancher-namespace` | :orange_circle: Scaffolded |
+| Rancher catalog | — | `rancher-catalog` | :orange_circle: Scaffolded |
+
+### Round 452 — Containerd ext, CRI-O ext, runc ext, crun ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Containerd images | — | `containerd-images` | :orange_circle: Scaffolded |
+| Containerd containers | — | `containerd-containers` | :orange_circle: Scaffolded |
+| Containerd snapshots | — | `containerd-snapshots` | :orange_circle: Scaffolded |
+| Containerd content | — | `containerd-content` | :orange_circle: Scaffolded |
+| Containerd namespaces | — | `containerd-namespaces` | :orange_circle: Scaffolded |
+| CRI-O config | — | `crio-config` | :orange_circle: Scaffolded |
+| CRI-O status | — | `crio-status` | :orange_circle: Scaffolded |
+| CRI-O wipe | — | `crio-wipe` | :orange_circle: Scaffolded |
+| CRI-O inspect | — | `crio-inspect` | :orange_circle: Scaffolded |
+| CRI-O logs | — | `crio-logs` | :orange_circle: Scaffolded |
+| runc create | — | `runc-create` | :orange_circle: Scaffolded |
+| runc start | — | `runc-start` | :orange_circle: Scaffolded |
+| runc exec | — | `runc-exec` | :orange_circle: Scaffolded |
+| runc list | — | `runc-list` | :orange_circle: Scaffolded |
+| runc spec | — | `runc-spec` | :orange_circle: Scaffolded |
+| crun create | — | `crun-create` | :orange_circle: Scaffolded |
+| crun start | — | `crun-start` | :orange_circle: Scaffolded |
+| crun exec | — | `crun-exec` | :orange_circle: Scaffolded |
+| crun list | — | `crun-list` | :orange_circle: Scaffolded |
+| crun spec | — | `crun-spec` | :orange_circle: Scaffolded |
+
+### Round 451 — Podman ext, Buildah ext, Skopeo ext, Kaniko ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Podman build | — | `podman-build` | :orange_circle: Scaffolded |
+| Podman compose | — | `podman-compose` | :orange_circle: Scaffolded |
+| Podman machine | — | `podman-machine` | :orange_circle: Scaffolded |
+| Podman pod | — | `podman-pod` | :orange_circle: Scaffolded |
+| Podman volume | — | `podman-volume` | :orange_circle: Scaffolded |
+| Buildah from | — | `buildah-from` | :orange_circle: Scaffolded |
+| Buildah run | — | `buildah-run` | :orange_circle: Scaffolded |
+| Buildah commit | — | `buildah-commit` | :orange_circle: Scaffolded |
+| Buildah push | — | `buildah-push` | :orange_circle: Scaffolded |
+| Buildah config | — | `buildah-config` | :orange_circle: Scaffolded |
+| Skopeo copy | — | `skopeo-copy` | :orange_circle: Scaffolded |
+| Skopeo inspect | — | `skopeo-inspect` | :orange_circle: Scaffolded |
+| Skopeo list tags | — | `skopeo-list` | :orange_circle: Scaffolded |
+| Skopeo sync | — | `skopeo-sync` | :orange_circle: Scaffolded |
+| Skopeo delete | — | `skopeo-delete` | :orange_circle: Scaffolded |
+| Kaniko build | — | `kaniko-build` | :orange_circle: Scaffolded |
+| Kaniko cache | — | `kaniko-cache` | :orange_circle: Scaffolded |
+| Kaniko debug | — | `kaniko-debug` | :orange_circle: Scaffolded |
+| Kaniko warmer | — | `kaniko-warmer` | :orange_circle: Scaffolded |
+| Kaniko config | — | `kaniko-config` | :orange_circle: Scaffolded |
+
 ### Round 450 — Chocolatey ext, WinGet ext, Snap ext, Flatpak ext
 
 | Feature | Emacs | jemacs | Status |

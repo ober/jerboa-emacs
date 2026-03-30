@@ -30526,3 +30526,129 @@
 (def (cmd-wasmedge-version app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "WasmEdge: version info")))
+
+;; ── Round 451 — Podman ext, Buildah ext, Skopeo ext, Kaniko ext ──
+
+(def (cmd-podman-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Podman: build image")))
+
+(def (cmd-podman-compose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Podman: compose")))
+
+(def (cmd-podman-machine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Podman: machine management")))
+
+(def (cmd-podman-pod app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Podman: pod management")))
+
+(def (cmd-podman-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Podman: volume management")))
+
+(def (cmd-buildah-from app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buildah: create container")))
+
+(def (cmd-buildah-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buildah: run command")))
+
+(def (cmd-buildah-commit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buildah: commit image")))
+
+(def (cmd-buildah-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buildah: push image")))
+
+(def (cmd-buildah-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buildah: configure container")))
+
+;; ── Round 452 — Containerd ext, CRI-O ext, runc ext, crun ext ──
+
+(def (cmd-containerd-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Containerd: list images")))
+
+(def (cmd-containerd-containers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Containerd: list containers")))
+
+(def (cmd-containerd-snapshots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Containerd: snapshots")))
+
+(def (cmd-containerd-content app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Containerd: content store")))
+
+(def (cmd-containerd-namespaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Containerd: namespaces")))
+
+(def (cmd-crio-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CRI-O: configuration")))
+
+(def (cmd-crio-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CRI-O: status")))
+
+(def (cmd-crio-wipe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CRI-O: wipe containers")))
+
+(def (cmd-crio-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CRI-O: inspect container")))
+
+(def (cmd-crio-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CRI-O: container logs")))
+
+;; ── Round 453 — Lima ext, Colima ext, Finch ext, Rancher Desktop ext ──
+
+(def (cmd-lima-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lima: start instance")))
+
+(def (cmd-lima-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lima: stop instance")))
+
+(def (cmd-lima-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lima: shell into instance")))
+
+(def (cmd-lima-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lima: list instances")))
+
+(def (cmd-lima-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lima: copy files")))
+
+(def (cmd-colima-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Colima: start")))
+
+(def (cmd-colima-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Colima: stop")))
+
+(def (cmd-colima-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Colima: status")))
+
+(def (cmd-colima-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Colima: list profiles")))
+
+(def (cmd-colima-ssh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Colima: SSH into VM")))
