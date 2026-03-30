@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 327 — Fstrim ext, Swapctl ext, Inotify ext, Fanotify ext, Dnotify ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `fstrim-all` | :orange_circle: | Trim all filesystems |
+| `fstrim-device` | :orange_circle: | Trim specific mount |
+| `fstrim-dryrun` | :orange_circle: | Dry run trim |
+| `fstrim-verbose` | :orange_circle: | Verbose trim |
+| `swapon-show` | :orange_circle: | Show swap areas |
+| `swapon-enable` | :orange_circle: | Enable swap device |
+| `swapoff-disable` | :orange_circle: | Disable swap device |
+| `swap-priority` | :orange_circle: | Set swap priority |
+| `inotifywait-watch` | :orange_circle: | Watch path |
+| `inotifywait-monitor` | :orange_circle: | Monitor path |
+| `inotifywait-recursive` | :orange_circle: | Recursive watch |
+| `inotifywait-event` | :orange_circle: | Filter events |
+| `fanotify-mark` | :orange_circle: | Mark path |
+| `fanotify-monitor` | :orange_circle: | Monitor FS events |
+| `fanotify-global` | :orange_circle: | Global monitoring |
+| `fanotify-permission` | :orange_circle: | Permission events |
+| `dnotify-watch` | :orange_circle: | Watch directory |
+| `dnotify-recursive` | :orange_circle: | Recursive watch |
+| `dnotify-event` | :orange_circle: | Filter event mask |
+| `dnotify-background` | :orange_circle: | Background watch |
+
 ### Round 326 — Mount ext, Umount ext, Findmnt ext, Lsblk ext, Losetup ext
 
 | Feature | Status | Notes |

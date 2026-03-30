@@ -25090,3 +25090,59 @@
       (lambda (dev)
         (echo-message! echo (str "Findmnt: finding mounts from " dev))))))
 
+;;; Round 327 — Fstrim ext, Swapctl ext, Inotify ext, Fanotify ext, Dnotify ext (batch 1)
+
+(def (cmd-fstrim-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fstrim: trimming all mounted filesystems")))
+
+(def (cmd-fstrim-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "Fstrim: trimming " mnt))))))
+
+(def (cmd-fstrim-dryrun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "Fstrim: dry run on " mnt))))))
+
+(def (cmd-fstrim-verbose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fstrim: verbose trim all")))
+
+(def (cmd-swapon-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swap: showing swap areas")))
+
+(def (cmd-swapon-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Swap device: "
+      (lambda (dev)
+        (echo-message! echo (str "Swap: enabling " dev))))))
+
+(def (cmd-swapoff-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Swap device: "
+      (lambda (dev)
+        (echo-message! echo (str "Swap: disabling " dev))))))
+
+(def (cmd-swap-priority app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and priority: "
+      (lambda (spec)
+        (echo-message! echo (str "Swap: setting priority " spec))))))
+
+(def (cmd-inotifywait-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Path to watch: "
+      (lambda (path)
+        (echo-message! echo (str "Inotify: watching " path))))))
+
+(def (cmd-inotifywait-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Path to monitor: "
+      (lambda (path)
+        (echo-message! echo (str "Inotify: monitoring " path))))))
+

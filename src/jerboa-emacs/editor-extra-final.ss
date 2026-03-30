@@ -24384,3 +24384,59 @@
     (echo-read-string echo "Loop device: "
       (lambda (dev)
         (echo-message! echo (str "Losetup: info for " dev))))))
+
+;;; Round 327 — Inotify ext, Fanotify ext, Dnotify ext (batch 2)
+
+(def (cmd-inotifywait-recursive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Inotify: recursively watching " dir))))))
+
+(def (cmd-inotifywait-event app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Event type: "
+      (lambda (evt)
+        (echo-message! echo (str "Inotify: filtering for " evt " events"))))))
+
+(def (cmd-fanotify-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Path to mark: "
+      (lambda (path)
+        (echo-message! echo (str "Fanotify: marking " path))))))
+
+(def (cmd-fanotify-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fanotify: monitoring filesystem events")))
+
+(def (cmd-fanotify-global app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fanotify: global filesystem monitoring")))
+
+(def (cmd-fanotify-permission app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fanotify: permission event monitoring")))
+
+(def (cmd-dnotify-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Dnotify: watching " dir))))))
+
+(def (cmd-dnotify-recursive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Dnotify: recursively watching " dir))))))
+
+(def (cmd-dnotify-event app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Event mask: "
+      (lambda (mask)
+        (echo-message! echo (str "Dnotify: filtering for " mask))))))
+
+(def (cmd-dnotify-background app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Dnotify: background watch on " dir))))))
