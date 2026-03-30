@@ -20804,3 +20804,57 @@
 (def (cmd-terraform-graph app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Terraform: generating graph")))
+
+;;; Round 256 — systemd, Ansible ext (batch 2)
+
+(def (cmd-systemd-list-units app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd: listing units")))
+
+(def (cmd-systemd-start-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to start: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: starting " unit))))))
+
+(def (cmd-systemd-stop-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to stop: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: stopping " unit))))))
+
+(def (cmd-systemd-restart-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to restart: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: restarting " unit))))))
+
+(def (cmd-systemd-enable-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to enable: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: enabling " unit))))))
+
+(def (cmd-systemd-disable-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to disable: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: disabling " unit))))))
+
+(def (cmd-systemd-status-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to check: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd: checking status of " unit))))))
+
+(def (cmd-systemd-reload-daemon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd: reloading daemon")))
+
+(def (cmd-ansible-vault-encrypt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: encrypting vault file")))
+
+(def (cmd-ansible-vault-decrypt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: decrypting vault file")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 256 — Kubernetes ext, Vagrant ext, Puppet ext, systemd, Ansible ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| kubernetes-get-pods | :orange_circle: | List Kubernetes pods |
+| kubernetes-get-services | :orange_circle: | List Kubernetes services |
+| kubernetes-get-deployments | :orange_circle: | List Kubernetes deployments |
+| kubernetes-get-namespaces | :orange_circle: | List Kubernetes namespaces |
+| kubernetes-exec | :orange_circle: | Exec into a Kubernetes pod |
+| puppet-apply | :orange_circle: | Apply Puppet manifest |
+| vagrant-provision | :orange_circle: | Provision Vagrant VM |
+| vagrant-reload | :orange_circle: | Reload Vagrant VM |
+| vagrant-status | :orange_circle: | Show Vagrant VM status |
+| vagrant-box-list | :orange_circle: | List Vagrant boxes |
+| systemd-list-units | :orange_circle: | List systemd units |
+| systemd-start-unit | :orange_circle: | Start a systemd unit |
+| systemd-stop-unit | :orange_circle: | Stop a systemd unit |
+| systemd-restart-unit | :orange_circle: | Restart a systemd unit |
+| systemd-enable-unit | :orange_circle: | Enable a systemd unit |
+| systemd-disable-unit | :orange_circle: | Disable a systemd unit |
+| systemd-status-unit | :orange_circle: | Check systemd unit status |
+| systemd-reload-daemon | :orange_circle: | Reload systemd daemon |
+| ansible-vault-encrypt | :orange_circle: | Encrypt Ansible vault file |
+| ansible-vault-decrypt | :orange_circle: | Decrypt Ansible vault file |
+
 ### Round 255 — Web-mode ext, YAML ext, TOML, Terraform ext
 
 | Command | Status | Description |
