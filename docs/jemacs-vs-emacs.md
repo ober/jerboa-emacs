@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 420 — Earthly ext, Dagger ext, Tekton ext, Argo Events ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Earthly prune | — | `earthly-prune` | :orange_circle: Scaffolded |
+| Earthly bootstrap | — | `earthly-bootstrap` | :orange_circle: Scaffolded |
+| Earthly config | — | `earthly-config` | :orange_circle: Scaffolded |
+| Earthly org | — | `earthly-org` | :orange_circle: Scaffolded |
+| Earthly satellites | — | `earthly-satellites` | :orange_circle: Scaffolded |
+| Dagger version | — | `dagger-version` | :orange_circle: Scaffolded |
+| Dagger config | — | `dagger-config` | :orange_circle: Scaffolded |
+| Dagger init | — | `dagger-init` | :orange_circle: Scaffolded |
+| Dagger develop | — | `dagger-develop` | :orange_circle: Scaffolded |
+| Dagger query | — | `dagger-query` | :orange_circle: Scaffolded |
+| Tekton Hub | — | `tekton-hub` | :orange_circle: Scaffolded |
+| Tekton describe | — | `tekton-describe` | :orange_circle: Scaffolded |
+| Tekton delete | — | `tekton-delete` | :orange_circle: Scaffolded |
+| Tekton conditions | — | `tekton-conditions` | :orange_circle: Scaffolded |
+| Tekton triggers | — | `tekton-triggers` | :orange_circle: Scaffolded |
+| Argo Events sources | — | `argo-events-sources` | :orange_circle: Scaffolded |
+| Argo Events sensors | — | `argo-events-sensors` | :orange_circle: Scaffolded |
+| Argo Events triggers | — | `argo-events-triggers` | :orange_circle: Scaffolded |
+| Argo Events bus | — | `argo-events-bus` | :orange_circle: Scaffolded |
+| Argo Events gateways | — | `argo-events-gateways` | :orange_circle: Scaffolded |
+
+### Round 419 — Pkl ext, Dhall ext, Cue ext, Jsonnet ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Pkl eval | — | `pkl-eval` | :orange_circle: Scaffolded |
+| Pkl test | — | `pkl-test` | :orange_circle: Scaffolded |
+| Pkl project | — | `pkl-project` | :orange_circle: Scaffolded |
+| Pkl doc | — | `pkl-doc` | :orange_circle: Scaffolded |
+| Pkl server | — | `pkl-server` | :orange_circle: Scaffolded |
+| Dhall REPL | — | `dhall-repl` | :orange_circle: Scaffolded |
+| Dhall resolve | — | `dhall-resolve` | :orange_circle: Scaffolded |
+| Dhall encode | — | `dhall-encode` | :orange_circle: Scaffolded |
+| Dhall hash | — | `dhall-hash` | :orange_circle: Scaffolded |
+| Dhall diff | — | `dhall-diff` | :orange_circle: Scaffolded |
+| CUE import | — | `cue-import` | :orange_circle: Scaffolded |
+| CUE mod | — | `cue-mod` | :orange_circle: Scaffolded |
+| CUE trim | — | `cue-trim` | :orange_circle: Scaffolded |
+| CUE def | — | `cue-def` | :orange_circle: Scaffolded |
+| CUE cmd | — | `cue-cmd` | :orange_circle: Scaffolded |
+| Jsonnet bundle | — | `jsonnet-bundle` | :orange_circle: Scaffolded |
+| Jsonnet stream | — | `jsonnet-stream` | :orange_circle: Scaffolded |
+| Jsonnet TLA | — | `jsonnet-tla` | :orange_circle: Scaffolded |
+| Jsonnet ext | — | `jsonnet-ext` | :orange_circle: Scaffolded |
+| Jsonnet max-stack | — | `jsonnet-max-stack` | :orange_circle: Scaffolded |
+
+### Round 418 — Bun ext, Deno Deploy ext, Winterjs ext, Lagon ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Bun create | — | `bun-create` | :orange_circle: Scaffolded |
+| Bun add | — | `bun-add` | :orange_circle: Scaffolded |
+| Bun pm | — | `bun-pm` | :orange_circle: Scaffolded |
+| Bun link | — | `bun-link` | :orange_circle: Scaffolded |
+| Bun patch | — | `bun-patch` | :orange_circle: Scaffolded |
+| Deno Deploy link | — | `deno-deploy-link` | :orange_circle: Scaffolded |
+| Deno Deploy logs | — | `deno-deploy-logs` | :orange_circle: Scaffolded |
+| Deno Deploy projects | — | `deno-deploy-projects` | :orange_circle: Scaffolded |
+| Deno Deploy domains | — | `deno-deploy-domains` | :orange_circle: Scaffolded |
+| Deno Deploy analytics | — | `deno-deploy-analytics` | :orange_circle: Scaffolded |
+| WinterJS build | — | `winterjs-build` | :orange_circle: Scaffolded |
+| WinterJS run | — | `winterjs-run` | :orange_circle: Scaffolded |
+| WinterJS deploy | — | `winterjs-deploy` | :orange_circle: Scaffolded |
+| WinterJS config | — | `winterjs-config` | :orange_circle: Scaffolded |
+| WinterJS test | — | `winterjs-test` | :orange_circle: Scaffolded |
+| Lagon deploy | — | `lagon-deploy` | :orange_circle: Scaffolded |
+| Lagon build | — | `lagon-build` | :orange_circle: Scaffolded |
+| Lagon dev | — | `lagon-dev` | :orange_circle: Scaffolded |
+| Lagon logs | — | `lagon-logs` | :orange_circle: Scaffolded |
+| Lagon domains | — | `lagon-domains` | :orange_circle: Scaffolded |
+
+### Round 417 — Astro ext, Qwik ext, SolidStart ext, Fresh ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Astro build | — | `astro-build` | :orange_circle: Scaffolded |
+| Astro dev | — | `astro-dev` | :orange_circle: Scaffolded |
+| Astro check | — | `astro-check` | :orange_circle: Scaffolded |
+| Astro add | — | `astro-add` | :orange_circle: Scaffolded |
+| Astro preferences | — | `astro-preferences` | :orange_circle: Scaffolded |
+| Qwik build | — | `qwik-build` | :orange_circle: Scaffolded |
+| Qwik dev | — | `qwik-dev` | :orange_circle: Scaffolded |
+| Qwik add | — | `qwik-add` | :orange_circle: Scaffolded |
+| Qwik routes | — | `qwik-routes` | :orange_circle: Scaffolded |
+| Qwik components | — | `qwik-components` | :orange_circle: Scaffolded |
+| SolidStart build | — | `solidstart-build` | :orange_circle: Scaffolded |
+| SolidStart dev | — | `solidstart-dev` | :orange_circle: Scaffolded |
+| SolidStart routes | — | `solidstart-routes` | :orange_circle: Scaffolded |
+| SolidStart middleware | — | `solidstart-middleware` | :orange_circle: Scaffolded |
+| SolidStart API | — | `solidstart-api` | :orange_circle: Scaffolded |
+| Fresh build | — | `fresh-build` | :orange_circle: Scaffolded |
+| Fresh routes | — | `fresh-routes` | :orange_circle: Scaffolded |
+| Fresh islands | — | `fresh-islands` | :orange_circle: Scaffolded |
+| Fresh plugins | — | `fresh-plugins` | :orange_circle: Scaffolded |
+| Fresh update | — | `fresh-update` | :orange_circle: Scaffolded |
+
+### Round 416 — Tauri ext, Wails ext, Neutralino ext, Electron Forge ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Tauri build | — | `tauri-build` | :orange_circle: Scaffolded |
+| Tauri dev | — | `tauri-dev` | :orange_circle: Scaffolded |
+| Tauri init | — | `tauri-init` | :orange_circle: Scaffolded |
+| Tauri icon | — | `tauri-icon` | :orange_circle: Scaffolded |
+| Tauri signer | — | `tauri-signer` | :orange_circle: Scaffolded |
+| Wails build | — | `wails-build` | :orange_circle: Scaffolded |
+| Wails dev | — | `wails-dev` | :orange_circle: Scaffolded |
+| Wails init | — | `wails-init` | :orange_circle: Scaffolded |
+| Wails doctor | — | `wails-doctor` | :orange_circle: Scaffolded |
+| Wails generate | — | `wails-generate` | :orange_circle: Scaffolded |
+| Neutralino build | — | `neutralino-build` | :orange_circle: Scaffolded |
+| Neutralino run | — | `neutralino-run` | :orange_circle: Scaffolded |
+| Neutralino create | — | `neutralino-create` | :orange_circle: Scaffolded |
+| Neutralino update | — | `neutralino-update` | :orange_circle: Scaffolded |
+| Neutralino plugins | — | `neutralino-plugins` | :orange_circle: Scaffolded |
+| Electron Forge start | — | `eforge-start` | :orange_circle: Scaffolded |
+| Electron Forge package | — | `eforge-package` | :orange_circle: Scaffolded |
+| Electron Forge make | — | `eforge-make` | :orange_circle: Scaffolded |
+| Electron Forge publish | — | `eforge-publish` | :orange_circle: Scaffolded |
+| Electron Forge import | — | `eforge-import` | :orange_circle: Scaffolded |
+
 ### Round 415 — Neo4j ext, InfluxDB ext, TimescaleDB ext, ClickHouse ext
 
 | Feature | Emacs | jemacs | Status |
