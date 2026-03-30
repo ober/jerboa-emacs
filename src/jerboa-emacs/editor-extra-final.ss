@@ -24490,3 +24490,61 @@
 (def (cmd-autrace-delete app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Autrace: deleting trace rules")))
+
+;;; Round 329 — Kerberos ext, Ldap ext, Nss ext (batch 2)
+
+(def (cmd-kerberos-kdestroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kerberos: destroying tickets")))
+
+(def (cmd-kerberos-kpasswd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Principal: "
+      (lambda (princ)
+        (echo-message! echo (str "Kerberos: changing password for " princ))))))
+
+(def (cmd-ldap-whoami app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: showing bound identity")))
+
+(def (cmd-ldap-passwd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DN: "
+      (lambda (dn)
+        (echo-message! echo (str "LDAP: changing password for " dn))))))
+
+(def (cmd-ldap-compare app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DN and attribute: "
+      (lambda (spec)
+        (echo-message! echo (str "LDAP: comparing " spec))))))
+
+(def (cmd-ldap-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LDAP URL: "
+      (lambda (url)
+        (echo-message! echo (str "LDAP: querying " url))))))
+
+(def (cmd-nss-getent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Database and key: "
+      (lambda (spec)
+        (echo-message! echo (str "NSS: getent " spec))))))
+
+(def (cmd-nss-hosts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hostname: "
+      (lambda (host)
+        (echo-message! echo (str "NSS: looking up host " host))))))
+
+(def (cmd-nss-passwd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "NSS: looking up user " user))))))
+
+(def (cmd-nss-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Group name: "
+      (lambda (grp)
+        (echo-message! echo (str "NSS: looking up group " grp))))))

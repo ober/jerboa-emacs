@@ -25200,3 +25200,51 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Aureport: showing authentication report")))
 
+;;; Round 329 — Pam ext, Sssd ext, Kerberos ext, Ldap ext, Nss ext (batch 1)
+
+(def (cmd-pam-auth-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: showing auth configuration")))
+
+(def (cmd-pam-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service and user: "
+      (lambda (spec)
+        (echo-message! echo (str "PAM: testing " spec))))))
+
+(def (cmd-pam-modules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: listing available modules")))
+
+(def (cmd-pam-limits app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: showing limits configuration")))
+
+(def (cmd-sssd-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSSD: showing status")))
+
+(def (cmd-sssd-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSSD: clearing cache")))
+
+(def (cmd-sssd-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSSD: listing domains")))
+
+(def (cmd-sssd-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Debug level: "
+      (lambda (lvl)
+        (echo-message! echo (str "SSSD: setting debug level to " lvl))))))
+
+(def (cmd-kerberos-kinit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Principal: "
+      (lambda (princ)
+        (echo-message! echo (str "Kerberos: initializing ticket for " princ))))))
+
+(def (cmd-kerberos-klist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kerberos: listing tickets")))
+

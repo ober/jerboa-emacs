@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 329 — Pam ext, Sssd ext, Kerberos ext, Ldap ext, Nss ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pam-auth-config` | :orange_circle: | Show PAM auth config |
+| `pam-test` | :orange_circle: | Test PAM service |
+| `pam-modules` | :orange_circle: | List PAM modules |
+| `pam-limits` | :orange_circle: | Show PAM limits |
+| `sssd-status` | :orange_circle: | Show SSSD status |
+| `sssd-cache` | :orange_circle: | Clear SSSD cache |
+| `sssd-domains` | :orange_circle: | List SSSD domains |
+| `sssd-debug` | :orange_circle: | Set SSSD debug level |
+| `kerberos-kinit` | :orange_circle: | Initialize ticket |
+| `kerberos-klist` | :orange_circle: | List tickets |
+| `kerberos-kdestroy` | :orange_circle: | Destroy tickets |
+| `kerberos-kpasswd` | :orange_circle: | Change password |
+| `ldap-whoami` | :orange_circle: | Show bound identity |
+| `ldap-passwd` | :orange_circle: | Change LDAP password |
+| `ldap-compare` | :orange_circle: | Compare attribute |
+| `ldap-url` | :orange_circle: | Query LDAP URL |
+| `nss-getent` | :orange_circle: | Get NSS entry |
+| `nss-hosts` | :orange_circle: | Look up host |
+| `nss-passwd` | :orange_circle: | Look up user |
+| `nss-group` | :orange_circle: | Look up group |
+
 ### Round 328 — Auditctl ext, Ausearch ext, Aureport ext, Aulast ext, Autrace ext
 
 | Feature | Status | Notes |
