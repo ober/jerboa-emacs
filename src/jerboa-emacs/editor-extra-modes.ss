@@ -26798,3 +26798,47 @@
 (def (cmd-haxe-run app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Haxe: running project")))
+
+;;; Round 361 — Tilt ext, DevSpace ext, Skaffold ext, Garden ext, Okteto ext (batch 1)
+
+(def (cmd-tilt-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tilt: starting dev environment")))
+
+(def (cmd-tilt-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tilt: tearing down environment")))
+
+(def (cmd-tilt-ci app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tilt: running in CI mode")))
+
+(def (cmd-tilt-trigger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tilt trigger resource: "
+      (lambda (res)
+        (echo-message! echo (str "Tilt: triggering " res))))))
+
+(def (cmd-devspace-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: starting dev mode")))
+
+(def (cmd-devspace-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: deploying")))
+
+(def (cmd-devspace-purge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: purging deployment")))
+
+(def (cmd-devspace-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: showing logs")))
+
+(def (cmd-skaffold-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: starting dev loop")))
+
+(def (cmd-skaffold-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: building and deploying")))

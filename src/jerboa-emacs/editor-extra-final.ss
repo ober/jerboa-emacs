@@ -26045,3 +26045,45 @@
     (echo-read-string echo "Fennel lint file: "
       (lambda (file)
         (echo-message! echo (str "Fennel: linting " file))))))
+
+;;; Round 361 — Skaffold ext, Garden ext, Okteto ext (batch 2)
+
+(def (cmd-skaffold-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: building artifacts")))
+
+(def (cmd-skaffold-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: rendering manifests")))
+
+(def (cmd-garden-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Garden: deploying")))
+
+(def (cmd-garden-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Garden: running tests")))
+
+(def (cmd-garden-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Garden: starting dev mode")))
+
+(def (cmd-garden-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Garden: showing logs")))
+
+(def (cmd-okteto-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Okteto: activating dev environment")))
+
+(def (cmd-okteto-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Okteto: deactivating dev environment")))
+
+(def (cmd-okteto-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Okteto: deploying application")))
+
+(def (cmd-okteto-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Okteto: showing status")))

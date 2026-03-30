@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 361 — Tilt ext, DevSpace ext, Skaffold ext, Garden ext, Okteto ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| tilt-up | :orange_circle: | Tilt: start dev environment |
+| tilt-down | :orange_circle: | Tilt: tear down environment |
+| tilt-ci | :orange_circle: | Tilt: run in CI mode |
+| tilt-trigger | :orange_circle: | Tilt: trigger resource |
+| devspace-dev | :orange_circle: | DevSpace: start dev mode |
+| devspace-deploy | :orange_circle: | DevSpace: deploy |
+| devspace-purge | :orange_circle: | DevSpace: purge deployment |
+| devspace-logs | :orange_circle: | DevSpace: show logs |
+| skaffold-dev | :orange_circle: | Skaffold: start dev loop |
+| skaffold-run | :orange_circle: | Skaffold: build and deploy |
+| skaffold-build | :orange_circle: | Skaffold: build artifacts |
+| skaffold-render | :orange_circle: | Skaffold: render manifests |
+| garden-deploy | :orange_circle: | Garden: deploy |
+| garden-test | :orange_circle: | Garden: run tests |
+| garden-dev | :orange_circle: | Garden: start dev mode |
+| garden-logs | :orange_circle: | Garden: show logs |
+| okteto-up | :orange_circle: | Okteto: activate dev env |
+| okteto-down | :orange_circle: | Okteto: deactivate dev env |
+| okteto-deploy | :orange_circle: | Okteto: deploy application |
+| okteto-status | :orange_circle: | Okteto: show status |
+
 ### Round 360 — Gleam ext, Roc ext, Haxe ext, Janet ext, Fennel ext
 
 | Feature | Status | Notes |
