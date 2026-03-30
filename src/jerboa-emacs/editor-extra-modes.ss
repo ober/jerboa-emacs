@@ -28124,3 +28124,46 @@
 (def (cmd-linear-projects app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Linear: listing projects")))
+
+;; Round 391 batch 1 — Confluence ext, SharePoint ext
+(def (cmd-confluence-pages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Confluence: listing pages")))
+
+(def (cmd-confluence-spaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Confluence: listing spaces")))
+
+(def (cmd-confluence-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search query: "
+      (lambda (query)
+        (echo-message! echo (str "Confluence: searching: " query))))))
+
+(def (cmd-confluence-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Confluence: listing templates")))
+
+(def (cmd-sharepoint-sites app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SharePoint: listing sites")))
+
+(def (cmd-sharepoint-lists app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SharePoint: listing lists")))
+
+(def (cmd-sharepoint-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SharePoint: listing documents")))
+
+(def (cmd-sharepoint-pages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SharePoint: listing pages")))
+
+(def (cmd-google-docs-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Docs: creating document")))
+
+(def (cmd-google-docs-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Docs: listing documents")))

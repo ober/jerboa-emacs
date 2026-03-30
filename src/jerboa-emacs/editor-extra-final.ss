@@ -27339,3 +27339,44 @@
 (def (cmd-monday-dashboards app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Monday: listing dashboards")))
+
+;; Round 391 batch 2 — Google Docs ext, Google Sheets/Slides ext
+(def (cmd-google-docs-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Docs: exporting document")))
+
+(def (cmd-google-docs-share app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Docs: sharing document")))
+
+(def (cmd-google-sheets-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Sheets: creating spreadsheet")))
+
+(def (cmd-google-sheets-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Sheets: reading data")))
+
+(def (cmd-google-sheets-write app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Sheets: writing data")))
+
+(def (cmd-google-sheets-formulas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Sheets: managing formulas")))
+
+(def (cmd-google-slides-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Slides: creating presentation")))
+
+(def (cmd-google-slides-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Slides: listing presentations")))
+
+(def (cmd-google-slides-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Slides: exporting presentation")))
+
+(def (cmd-google-slides-present app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Google Slides: starting presentation mode")))

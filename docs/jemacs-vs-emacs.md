@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 391 — Confluence ext, SharePoint ext, Google Docs ext, Google Sheets/Slides ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Confluence pages | — | `confluence-pages` | :orange_circle: Scaffolded |
+| Confluence spaces | — | `confluence-spaces` | :orange_circle: Scaffolded |
+| Confluence search | — | `confluence-search` | :orange_circle: Scaffolded |
+| Confluence templates | — | `confluence-templates` | :orange_circle: Scaffolded |
+| SharePoint sites | — | `sharepoint-sites` | :orange_circle: Scaffolded |
+| SharePoint lists | — | `sharepoint-lists` | :orange_circle: Scaffolded |
+| SharePoint documents | — | `sharepoint-docs` | :orange_circle: Scaffolded |
+| SharePoint pages | — | `sharepoint-pages` | :orange_circle: Scaffolded |
+| Google Docs create | — | `google-docs-create` | :orange_circle: Scaffolded |
+| Google Docs list | — | `google-docs-list` | :orange_circle: Scaffolded |
+| Google Docs export | — | `google-docs-export` | :orange_circle: Scaffolded |
+| Google Docs share | — | `google-docs-share` | :orange_circle: Scaffolded |
+| Google Sheets create | — | `google-sheets-create` | :orange_circle: Scaffolded |
+| Google Sheets read | — | `google-sheets-read` | :orange_circle: Scaffolded |
+| Google Sheets write | — | `google-sheets-write` | :orange_circle: Scaffolded |
+| Google Sheets formulas | — | `google-sheets-formulas` | :orange_circle: Scaffolded |
+| Google Slides create | — | `google-slides-create` | :orange_circle: Scaffolded |
+| Google Slides list | — | `google-slides-list` | :orange_circle: Scaffolded |
+| Google Slides export | — | `google-slides-export` | :orange_circle: Scaffolded |
+| Google Slides present | — | `google-slides-present` | :orange_circle: Scaffolded |
+
 ### Round 390 — Todoist ext, TickTick ext, Linear ext, Asana/Monday ext
 
 | Feature | Emacs | jemacs | Status |
