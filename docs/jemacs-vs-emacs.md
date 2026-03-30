@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 267 — Ada ext, Fortran ext, COBOL ext, Pascal ext, Prolog ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| ada-compile | :orange_circle: | Compile Ada code |
+| ada-run | :orange_circle: | Run Ada program |
+| ada-check | :orange_circle: | Check Ada syntax |
+| ada-format | :orange_circle: | Format Ada code |
+| fortran-compile | :orange_circle: | Compile Fortran code |
+| fortran-run | :orange_circle: | Run Fortran program |
+| fortran-check | :orange_circle: | Check Fortran syntax |
+| fortran-indent-region | :orange_circle: | Indent Fortran region |
+| cobol-compile | :orange_circle: | Compile COBOL code |
+| cobol-run | :orange_circle: | Run COBOL program |
+| cobol-check | :orange_circle: | Check COBOL syntax |
+| cobol-format | :orange_circle: | Format COBOL code |
+| pascal-compile | :orange_circle: | Compile Pascal code |
+| pascal-run | :orange_circle: | Run Pascal program |
+| pascal-check | :orange_circle: | Check Pascal syntax |
+| pascal-indent | :orange_circle: | Indent Pascal code |
+| prolog-consult | :orange_circle: | Consult Prolog file |
+| prolog-run | :orange_circle: | Run Prolog query |
+| prolog-trace | :orange_circle: | Enable Prolog trace mode |
+| prolog-debug | :orange_circle: | Enable Prolog debug mode |
+
 ### Round 266 — Nim ext, Zig ext, Crystal ext, V lang ext, D lang ext
 
 | Command | Status | Description |

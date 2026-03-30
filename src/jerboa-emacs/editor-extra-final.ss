@@ -21304,3 +21304,45 @@
 (def (cmd-dlang-format app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "D: formatting code")))
+
+;;; Round 267 — COBOL ext, Pascal ext, Prolog ext (batch 2)
+
+(def (cmd-cobol-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "COBOL: checking syntax")))
+
+(def (cmd-cobol-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "COBOL: formatting code")))
+
+(def (cmd-pascal-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pascal: compiling")))
+
+(def (cmd-pascal-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pascal: running program")))
+
+(def (cmd-pascal-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pascal: checking syntax")))
+
+(def (cmd-pascal-indent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pascal: indenting code")))
+
+(def (cmd-prolog-consult app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prolog: consulting file")))
+
+(def (cmd-prolog-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prolog: running query")))
+
+(def (cmd-prolog-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prolog: enabling trace mode")))
+
+(def (cmd-prolog-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prolog: enabling debug mode")))

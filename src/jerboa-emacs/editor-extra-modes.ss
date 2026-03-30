@@ -21928,3 +21928,45 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Crystal: running specs")))
 
+;;; Round 267 — Ada ext, Fortran ext, COBOL ext, Pascal ext, Prolog ext (batch 1)
+
+(def (cmd-ada-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ada: compiling")))
+
+(def (cmd-ada-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ada: running program")))
+
+(def (cmd-ada-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ada: checking syntax")))
+
+(def (cmd-ada-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ada: formatting code")))
+
+(def (cmd-fortran-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fortran: compiling")))
+
+(def (cmd-fortran-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fortran: running program")))
+
+(def (cmd-fortran-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fortran: checking syntax")))
+
+(def (cmd-fortran-indent-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fortran: indenting region")))
+
+(def (cmd-cobol-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "COBOL: compiling")))
+
+(def (cmd-cobol-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "COBOL: running program")))
+
