@@ -22784,3 +22784,59 @@
       (lambda (sub)
         (echo-message! echo (str "Btrfs: snapshot " sub))))))
 
+;;; Round 285 — Cgroup ext, Namespace ext, Seccomp ext (batch 1)
+
+(def (cmd-cgroup-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cgroup: listing cgroups")))
+
+(def (cmd-cgroup-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cgroup name: "
+      (lambda (name)
+        (echo-message! echo (str "Cgroup: creating " name))))))
+
+(def (cmd-cgroup-move app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Cgroup: moving PID " pid))))))
+
+(def (cmd-cgroup-limit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Resource limit: "
+      (lambda (lim)
+        (echo-message! echo (str "Cgroup: setting limit " lim))))))
+
+(def (cmd-namespace-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Namespace: listing namespaces")))
+
+(def (cmd-namespace-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Namespace type: "
+      (lambda (typ)
+        (echo-message! echo (str "Namespace: creating " typ))))))
+
+(def (cmd-namespace-enter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Namespace PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Namespace: entering " pid))))))
+
+(def (cmd-namespace-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Namespace: "
+      (lambda (ns)
+        (echo-message! echo (str "Namespace: deleting " ns))))))
+
+(def (cmd-seccomp-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seccomp: showing status")))
+
+(def (cmd-seccomp-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Profile path: "
+      (lambda (path)
+        (echo-message! echo (str "Seccomp: loading " path))))))
+

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 285 — Cgroup ext, Namespace ext, Seccomp ext, Capabilities ext, Ulimit ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| cgroup-list | :orange_circle: | List cgroups |
+| cgroup-create | :orange_circle: | Create cgroup |
+| cgroup-move | :orange_circle: | Move process to cgroup |
+| cgroup-limit | :orange_circle: | Set cgroup resource limit |
+| namespace-list | :orange_circle: | List namespaces |
+| namespace-create | :orange_circle: | Create namespace |
+| namespace-enter | :orange_circle: | Enter namespace |
+| namespace-delete | :orange_circle: | Delete namespace |
+| seccomp-status | :orange_circle: | Show seccomp status |
+| seccomp-profile | :orange_circle: | Load seccomp profile |
+| seccomp-audit | :orange_circle: | View seccomp audit log |
+| seccomp-list | :orange_circle: | List syscall filters |
+| capabilities-list | :orange_circle: | List process capabilities |
+| capabilities-add | :orange_circle: | Add capability |
+| capabilities-drop | :orange_circle: | Drop capability |
+| capabilities-show | :orange_circle: | Show PID capabilities |
+| ulimit-list | :orange_circle: | List ulimits |
+| ulimit-set | :orange_circle: | Set ulimit value |
+| ulimit-hard | :orange_circle: | Show hard limits |
+| ulimit-soft | :orange_circle: | Show soft limits |
+
 ### Round 284 — LVM ext, ZFS ext, Btrfs ext, MDADM ext, LUKS ext
 
 | Command | Status | Description |

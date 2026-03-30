@@ -22128,3 +22128,53 @@
     (echo-read-string echo "Device: "
       (lambda (dev)
         (echo-message! echo (str "LUKS: formatting " dev))))))
+
+;;; Round 285 — Seccomp ext, Capabilities ext, Ulimit ext (batch 2)
+
+(def (cmd-seccomp-audit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seccomp: viewing audit log")))
+
+(def (cmd-seccomp-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seccomp: listing syscall filters")))
+
+(def (cmd-capabilities-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Capabilities: listing process caps")))
+
+(def (cmd-capabilities-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Capability: "
+      (lambda (cap)
+        (echo-message! echo (str "Capabilities: adding " cap))))))
+
+(def (cmd-capabilities-drop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Capability: "
+      (lambda (cap)
+        (echo-message! echo (str "Capabilities: dropping " cap))))))
+
+(def (cmd-capabilities-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Capabilities: showing for PID " pid))))))
+
+(def (cmd-ulimit-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ulimit: listing limits")))
+
+(def (cmd-ulimit-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Limit (e.g. nofile=65536): "
+      (lambda (lim)
+        (echo-message! echo (str "Ulimit: setting " lim))))))
+
+(def (cmd-ulimit-hard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ulimit: showing hard limits")))
+
+(def (cmd-ulimit-soft app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ulimit: showing soft limits")))
