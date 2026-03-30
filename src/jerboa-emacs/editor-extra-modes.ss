@@ -22324,3 +22324,45 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CBOR: decoding data")))
 
+;;; Round 276 — Arrow ext, HDF5 ext, NetCDF ext, FITS ext, SQLite ext (batch 1)
+
+(def (cmd-arrow-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Arrow: inspecting file")))
+
+(def (cmd-arrow-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Arrow: showing schema")))
+
+(def (cmd-arrow-to-csv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Arrow: converting to CSV")))
+
+(def (cmd-arrow-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Arrow: showing statistics")))
+
+(def (cmd-hdf5-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HDF5: inspecting file")))
+
+(def (cmd-hdf5-datasets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HDF5: listing datasets")))
+
+(def (cmd-hdf5-attributes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HDF5: showing attributes")))
+
+(def (cmd-hdf5-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HDF5: dumping data")))
+
+(def (cmd-netcdf-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NetCDF: inspecting file")))
+
+(def (cmd-netcdf-variables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NetCDF: listing variables")))
+

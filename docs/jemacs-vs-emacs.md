@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 276 — Arrow ext, HDF5 ext, NetCDF ext, FITS ext, SQLite ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| arrow-inspect | :orange_circle: | Inspect Arrow file |
+| arrow-schema | :orange_circle: | Show Arrow schema |
+| arrow-to-csv | :orange_circle: | Convert Arrow to CSV |
+| arrow-stats | :orange_circle: | Show Arrow statistics |
+| hdf5-inspect | :orange_circle: | Inspect HDF5 file |
+| hdf5-datasets | :orange_circle: | List HDF5 datasets |
+| hdf5-attributes | :orange_circle: | Show HDF5 attributes |
+| hdf5-dump | :orange_circle: | Dump HDF5 data |
+| netcdf-inspect | :orange_circle: | Inspect NetCDF file |
+| netcdf-variables | :orange_circle: | List NetCDF variables |
+| netcdf-dimensions | :orange_circle: | List NetCDF dimensions |
+| netcdf-dump | :orange_circle: | Dump NetCDF data |
+| fits-inspect | :orange_circle: | Inspect FITS file |
+| fits-header | :orange_circle: | Show FITS header |
+| fits-data | :orange_circle: | View FITS data |
+| fits-info | :orange_circle: | Show FITS file info |
+| sqlite-open | :orange_circle: | Open SQLite database |
+| sqlite-tables | :orange_circle: | List SQLite tables |
+| sqlite-schema | :orange_circle: | Show SQLite schema |
+| sqlite-vacuum | :orange_circle: | Vacuum SQLite database |
+
 ### Round 275 — FlatBuffers ext, MessagePack ext, CBOR ext, BSON ext, Parquet ext
 
 | Command | Status | Description |

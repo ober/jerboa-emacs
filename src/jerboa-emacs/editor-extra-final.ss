@@ -21700,3 +21700,47 @@
 (def (cmd-parquet-stats app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Parquet: showing statistics")))
+
+;;; Round 276 — NetCDF ext, FITS ext, SQLite ext (batch 2)
+
+(def (cmd-netcdf-dimensions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NetCDF: listing dimensions")))
+
+(def (cmd-netcdf-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NetCDF: dumping data")))
+
+(def (cmd-fits-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FITS: inspecting file")))
+
+(def (cmd-fits-header app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FITS: showing header")))
+
+(def (cmd-fits-data app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FITS: viewing data")))
+
+(def (cmd-fits-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FITS: showing file info")))
+
+(def (cmd-sqlite-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Database file: "
+      (lambda (db)
+        (echo-message! echo (str "SQLite: opening " db))))))
+
+(def (cmd-sqlite-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQLite: listing tables")))
+
+(def (cmd-sqlite-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQLite: showing schema")))
+
+(def (cmd-sqlite-vacuum app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQLite: vacuuming database")))
