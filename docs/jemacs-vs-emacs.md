@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 328 — Auditctl ext, Ausearch ext, Aureport ext, Aulast ext, Autrace ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `auditctl-list` | :orange_circle: | List audit rules |
+| `auditctl-add` | :orange_circle: | Add audit rule |
+| `auditctl-delete` | :orange_circle: | Delete audit rule |
+| `auditctl-status` | :orange_circle: | Show audit status |
+| `ausearch-event` | :orange_circle: | Search by event ID |
+| `ausearch-user` | :orange_circle: | Search by user |
+| `ausearch-file` | :orange_circle: | Search by file |
+| `ausearch-syscall` | :orange_circle: | Search by syscall |
+| `aureport-summary` | :orange_circle: | Show summary report |
+| `aureport-auth` | :orange_circle: | Authentication report |
+| `aureport-login` | :orange_circle: | Login report |
+| `aureport-file` | :orange_circle: | File access report |
+| `aulast-show` | :orange_circle: | Show last logins |
+| `aulast-user` | :orange_circle: | Last logins by user |
+| `aulast-host` | :orange_circle: | Last logins by host |
+| `aulast-tty` | :orange_circle: | Last logins by TTY |
+| `autrace-run` | :orange_circle: | Trace command |
+| `autrace-analyze` | :orange_circle: | Analyze trace |
+| `autrace-report` | :orange_circle: | Generate trace report |
+| `autrace-delete` | :orange_circle: | Delete trace rules |
+
 ### Round 327 — Fstrim ext, Swapctl ext, Inotify ext, Fanotify ext, Dnotify ext
 
 | Feature | Status | Notes |

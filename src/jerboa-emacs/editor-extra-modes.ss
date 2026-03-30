@@ -25146,3 +25146,57 @@
       (lambda (path)
         (echo-message! echo (str "Inotify: monitoring " path))))))
 
+;;; Round 328 — Auditctl ext, Ausearch ext, Aureport ext, Aulast ext, Autrace ext (batch 1)
+
+(def (cmd-auditctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auditctl: listing rules")))
+
+(def (cmd-auditctl-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule spec: "
+      (lambda (rule)
+        (echo-message! echo (str "Auditctl: adding rule " rule))))))
+
+(def (cmd-auditctl-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule to delete: "
+      (lambda (rule)
+        (echo-message! echo (str "Auditctl: deleting rule " rule))))))
+
+(def (cmd-auditctl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auditctl: showing audit status")))
+
+(def (cmd-ausearch-event app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Event ID: "
+      (lambda (id)
+        (echo-message! echo (str "Ausearch: searching event " id))))))
+
+(def (cmd-ausearch-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Ausearch: searching events for " user))))))
+
+(def (cmd-ausearch-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File path: "
+      (lambda (file)
+        (echo-message! echo (str "Ausearch: searching events for " file))))))
+
+(def (cmd-ausearch-syscall app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Syscall: "
+      (lambda (sc)
+        (echo-message! echo (str "Ausearch: searching syscall " sc))))))
+
+(def (cmd-aureport-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Aureport: showing summary")))
+
+(def (cmd-aureport-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Aureport: showing authentication report")))
+

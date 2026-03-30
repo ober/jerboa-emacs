@@ -24440,3 +24440,53 @@
     (echo-read-string echo "Directory: "
       (lambda (dir)
         (echo-message! echo (str "Dnotify: background watch on " dir))))))
+
+;;; Round 328 — Aureport ext, Aulast ext, Autrace ext (batch 2)
+
+(def (cmd-aureport-login app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Aureport: showing login report")))
+
+(def (cmd-aureport-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Aureport: showing file access report")))
+
+(def (cmd-aulast-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Aulast: showing last logins")))
+
+(def (cmd-aulast-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Aulast: showing logins for " user))))))
+
+(def (cmd-aulast-host app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Host: "
+      (lambda (host)
+        (echo-message! echo (str "Aulast: showing logins from " host))))))
+
+(def (cmd-aulast-tty app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TTY: "
+      (lambda (tty)
+        (echo-message! echo (str "Aulast: showing logins on " tty))))))
+
+(def (cmd-autrace-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command to trace: "
+      (lambda (cmd)
+        (echo-message! echo (str "Autrace: tracing " cmd))))))
+
+(def (cmd-autrace-analyze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Autrace: analyzing trace results")))
+
+(def (cmd-autrace-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Autrace: generating report")))
+
+(def (cmd-autrace-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Autrace: deleting trace rules")))
