@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 342 — Ansible ext, Salt ext, Chef ext, Puppet ext, CFEngine ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| ansible-config | :orange_circle: | Ansible: show configuration |
+| ansible-inventory | :orange_circle: | Ansible: load inventory |
+| ansible-galaxy | :orange_circle: | Ansible: install Galaxy role |
+| ansible-vault | :orange_circle: | Ansible: edit vault file |
+| salt-call | :orange_circle: | Salt: call a function |
+| salt-key | :orange_circle: | Salt: list minion keys |
+| salt-master | :orange_circle: | Salt: master status |
+| salt-minion | :orange_circle: | Salt: minion status |
+| chef-run | :orange_circle: | Chef: run a recipe |
+| chef-generate | :orange_circle: | Chef: generate cookbook/recipe |
+| chef-show-policy | :orange_circle: | Chef: show policy group |
+| chef-search | :orange_circle: | Chef: search index |
+| puppet-module | :orange_circle: | Puppet: install module |
+| puppet-resource | :orange_circle: | Puppet: show resource |
+| puppet-facts | :orange_circle: | Puppet: show system facts |
+| puppet-catalog | :orange_circle: | Puppet: compile catalog |
+| cfengine-run | :orange_circle: | CFEngine: run agent |
+| cfengine-promises | :orange_circle: | CFEngine: check promises |
+| cfengine-report | :orange_circle: | CFEngine: compliance report |
+| cfengine-hub | :orange_circle: | CFEngine: hub status |
+
 ### Round 341 — Pulumi ext, Packer ext, Boundary ext, Consul ext, Nomad ext
 
 | Feature | Status | Notes |

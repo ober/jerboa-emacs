@@ -25147,3 +25147,51 @@
     (echo-read-string echo "Nomad alloc ID: "
       (lambda (id)
         (echo-message! echo (str "Nomad: showing alloc " id))))))
+
+;;; Round 342 — Chef ext, Puppet ext, CFEngine ext (batch 2)
+
+(def (cmd-chef-show-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: showing policy group")))
+
+(def (cmd-chef-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chef search index: "
+      (lambda (idx)
+        (echo-message! echo (str "Chef: searching " idx))))))
+
+(def (cmd-puppet-module app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Puppet module: "
+      (lambda (mod)
+        (echo-message! echo (str "Puppet: installing module " mod))))))
+
+(def (cmd-puppet-resource app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Puppet resource type: "
+      (lambda (type)
+        (echo-message! echo (str "Puppet: showing resource " type))))))
+
+(def (cmd-puppet-facts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: showing system facts")))
+
+(def (cmd-puppet-catalog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: compiling catalog")))
+
+(def (cmd-cfengine-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: running agent")))
+
+(def (cmd-cfengine-promises app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: checking promises")))
+
+(def (cmd-cfengine-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: showing compliance report")))
+
+(def (cmd-cfengine-hub app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: hub status")))

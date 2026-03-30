@@ -25850,3 +25850,57 @@
 (def (cmd-boundary-authenticate app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Boundary: authenticating")))
+
+;;; Round 342 — Ansible ext, Salt ext, Chef ext, Puppet ext, CFEngine ext (batch 1)
+
+(def (cmd-ansible-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: showing configuration")))
+
+(def (cmd-ansible-inventory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ansible inventory file: "
+      (lambda (file)
+        (echo-message! echo (str "Ansible: loading inventory " file))))))
+
+(def (cmd-ansible-galaxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ansible Galaxy role: "
+      (lambda (role)
+        (echo-message! echo (str "Ansible: installing role " role))))))
+
+(def (cmd-ansible-vault app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ansible Vault file: "
+      (lambda (file)
+        (echo-message! echo (str "Ansible: editing vault " file))))))
+
+(def (cmd-salt-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Salt function: "
+      (lambda (fn)
+        (echo-message! echo (str "Salt: calling " fn))))))
+
+(def (cmd-salt-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: listing minion keys")))
+
+(def (cmd-salt-master app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: showing master status")))
+
+(def (cmd-salt-minion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: showing minion status")))
+
+(def (cmd-chef-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chef recipe: "
+      (lambda (recipe)
+        (echo-message! echo (str "Chef: running recipe " recipe))))))
+
+(def (cmd-chef-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chef generate type (cookbook/recipe): "
+      (lambda (type)
+        (echo-message! echo (str "Chef: generating " type))))))
