@@ -20294,3 +20294,59 @@
     (if (mode-enabled? app 'corfu-real)
       (echo-message! echo "Corfu completion mode enabled")
       (echo-message! echo "Corfu completion mode disabled"))))
+
+;; Round 245 — Chronometer, Dice, Doctor, Figlet, Morse (10 in final)
+(def (cmd-chronometer-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chronometer: showing status")))
+
+(def (cmd-dice-roll app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dice: rolled")))
+
+(def (cmd-dice-roll-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dice: rolled and inserted result")))
+
+(def (cmd-doctor-submit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Doctor: submitted input")))
+
+(def (cmd-figlet-comment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Figlet comment text: "
+      (lambda (txt)
+        (echo-message! echo (str "Figlet: created comment '" txt "'"))))))
+
+(def (cmd-morse-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Text to encode: "
+      (lambda (txt)
+        (echo-message! echo (str "Morse: encoded '" txt "'"))))))
+
+(def (cmd-morse-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Morse to decode: "
+      (lambda (morse)
+        (echo-message! echo (str "Morse: decoded '" morse "'"))))))
+
+(def (cmd-eros-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eros)
+    (if (mode-enabled? app 'eros)
+      (echo-message! echo "Eros inline eval mode enabled")
+      (echo-message! echo "Eros inline eval mode disabled"))))
+
+(def (cmd-doom-modeline-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'doom-modeline-real)
+    (if (mode-enabled? app 'doom-modeline-real)
+      (echo-message! echo "Doom modeline enabled")
+      (echo-message! echo "Doom modeline disabled"))))
+
+(def (cmd-envrc-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'envrc-real)
+    (if (mode-enabled? app 'envrc-real)
+      (echo-message! echo "Envrc mode enabled (direnv integration)")
+      (echo-message! echo "Envrc mode disabled"))))

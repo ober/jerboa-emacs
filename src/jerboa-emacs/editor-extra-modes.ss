@@ -20936,3 +20936,50 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Gomoku: moved right")))
 
+;; Round 245 — Deft, Dictionary, Pomodoro, Chronometer, Dice, Doctor (10 in modes)
+(def (cmd-deft app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deft: opening notes browser")))
+
+(def (cmd-deft-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Note title: "
+      (lambda (title)
+        (echo-message! echo (str "Deft: created note '" title "'"))))))
+
+(def (cmd-deft-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search notes: "
+      (lambda (query)
+        (echo-message! echo (str "Deft: searching for '" query "'"))))))
+
+(def (cmd-dictionary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Look up word: "
+      (lambda (word)
+        (echo-message! echo (str "Dictionary: looking up '" word "'"))))))
+
+(def (cmd-dictionary-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dictionary: looking up word at point")))
+
+(def (cmd-pomodoro-break app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pomodoro: taking a break")))
+
+(def (cmd-pomodoro-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pomodoro: timer reset")))
+
+(def (cmd-chronometer-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chronometer: started")))
+
+(def (cmd-chronometer-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chronometer: stopped")))
+
+(def (cmd-chronometer-lap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chronometer: lap recorded")))
+

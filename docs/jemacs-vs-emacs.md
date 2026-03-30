@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 245 — Deft, Dictionary, Pomodoro, Chronometer, Misc (gerbil-emacs parity)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| deft | :orange_circle: | Open Deft notes browser |
+| deft-new | :orange_circle: | Create new note |
+| deft-search | :orange_circle: | Search notes |
+| dictionary | :orange_circle: | Look up word in dictionary |
+| dictionary-at-point | :orange_circle: | Look up word at point |
+| pomodoro-break | :orange_circle: | Take a Pomodoro break |
+| pomodoro-reset | :orange_circle: | Reset Pomodoro timer |
+| chronometer-start | :orange_circle: | Start chronometer |
+| chronometer-stop | :orange_circle: | Stop chronometer |
+| chronometer-lap | :orange_circle: | Record chronometer lap |
+| chronometer-status | :orange_circle: | Show chronometer status |
+| dice-roll | :orange_circle: | Roll dice |
+| dice-roll-insert | :orange_circle: | Roll dice and insert result |
+| doctor-submit | :orange_circle: | Submit input to Eliza doctor |
+| figlet-comment | :orange_circle: | Create figlet ASCII comment |
+| morse-encode | :orange_circle: | Encode text to morse code |
+| morse-decode | :orange_circle: | Decode morse code to text |
+| eros-mode | :orange_circle: | Toggle Eros inline eval mode |
+| doom-modeline-real | :orange_circle: | Toggle Doom modeline |
+| envrc-mode-real | :orange_circle: | Toggle envrc/direnv mode |
+
 ### Round 244 — Mode toggles, Gomoku, HL-todo, Focus, Outline (gerbil-emacs parity)
 
 | Command | Status | Description |
