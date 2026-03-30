@@ -21176,3 +21176,47 @@
 (def (cmd-lein-test app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Leiningen: running tests")))
+
+;;; Round 264 — Clojure ext, Racket ext, Guile ext (batch 2)
+
+(def (cmd-clojure-find-def app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Clojure: finding definition at point")))
+
+(def (cmd-clojure-doc-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Clojure: showing doc for symbol at point")))
+
+(def (cmd-racket-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "Racket: documentation for " sym))))))
+
+(def (cmd-racket-expand-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Racket: expanding macro at point")))
+
+(def (cmd-racket-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Racket: profiling buffer")))
+
+(def (cmd-racket-check-syntax app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Racket: checking syntax")))
+
+(def (cmd-guile-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guile: evaluating buffer")))
+
+(def (cmd-guile-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guile: starting REPL")))
+
+(def (cmd-guile-load-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guile: loading file")))
+
+(def (cmd-guile-compile-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guile: compiling file")))

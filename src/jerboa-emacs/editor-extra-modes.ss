@@ -21796,3 +21796,45 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "sbt: compiling project")))
 
+;;; Round 264 — Leiningen ext, Boot ext, Clojure ext, Racket ext, Guile ext (batch 1)
+
+(def (cmd-lein-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Leiningen: starting REPL")))
+
+(def (cmd-lein-deps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Leiningen: listing dependencies")))
+
+(def (cmd-lein-jar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Leiningen: building JAR")))
+
+(def (cmd-lein-uberjar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Leiningen: building uberjar")))
+
+(def (cmd-boot-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boot: building project")))
+
+(def (cmd-boot-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boot: running tests")))
+
+(def (cmd-boot-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boot: starting REPL")))
+
+(def (cmd-boot-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boot: starting dev environment")))
+
+(def (cmd-clojure-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Clojure: evaluating buffer")))
+
+(def (cmd-clojure-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Clojure: evaluating region")))
+

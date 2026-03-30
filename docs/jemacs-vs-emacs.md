@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 264 — Leiningen ext, Boot ext, Clojure ext, Racket ext, Guile ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| lein-repl | :orange_circle: | Start Leiningen REPL |
+| lein-deps | :orange_circle: | List Leiningen dependencies |
+| lein-jar | :orange_circle: | Build Leiningen JAR |
+| lein-uberjar | :orange_circle: | Build Leiningen uberjar |
+| boot-build | :orange_circle: | Build with Boot |
+| boot-test | :orange_circle: | Test with Boot |
+| boot-repl | :orange_circle: | Start Boot REPL |
+| boot-dev | :orange_circle: | Start Boot dev environment |
+| clojure-eval-buffer | :orange_circle: | Evaluate Clojure buffer |
+| clojure-eval-region | :orange_circle: | Evaluate Clojure region |
+| clojure-find-def | :orange_circle: | Find Clojure definition |
+| clojure-doc-at-point | :orange_circle: | Show Clojure doc at point |
+| racket-doc | :orange_circle: | Show Racket documentation |
+| racket-expand-macro | :orange_circle: | Expand Racket macro |
+| racket-profile | :orange_circle: | Profile Racket buffer |
+| racket-check-syntax | :orange_circle: | Check Racket syntax |
+| guile-eval-buffer | :orange_circle: | Evaluate Guile buffer |
+| guile-repl | :orange_circle: | Start Guile REPL |
+| guile-load-file | :orange_circle: | Load Guile file |
+| guile-compile-file | :orange_circle: | Compile Guile file |
+
 ### Round 263 — Gradle ext, Maven ext, sbt ext, Mill ext, Leiningen ext
 
 | Command | Status | Description |
