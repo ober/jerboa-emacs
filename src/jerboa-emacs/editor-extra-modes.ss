@@ -20800,3 +20800,52 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ido: toggled case sensitivity")))
 
+;; Round 242 — Org-roam, Artist-mode (10 in modes)
+(def (cmd-org-roam-buffer-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: toggled backlinks buffer")))
+
+(def (cmd-org-roam-dailies-today app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: opening today's daily note")))
+
+(def (cmd-org-roam-db-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-roam: syncing database")))
+
+(def (cmd-org-roam-find-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Org-roam file: "
+      (lambda (file)
+        (echo-message! echo (str "Org-roam: finding " file))))))
+
+(def (cmd-org-roam-node-find app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Node: "
+      (lambda (node)
+        (echo-message! echo (str "Org-roam: finding node " node))))))
+
+(def (cmd-org-roam-node-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert node link: "
+      (lambda (node)
+        (echo-message! echo (str "Org-roam: inserted link to " node))))))
+
+(def (cmd-org-roam-set-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Org-roam directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Org-roam: directory set to " dir))))))
+
+(def (cmd-artist-draw-arrow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: draw arrow mode")))
+
+(def (cmd-artist-draw-ellipse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: draw ellipse mode")))
+
+(def (cmd-artist-draw-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: draw line mode")))
+

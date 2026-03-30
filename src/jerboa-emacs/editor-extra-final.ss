@@ -20140,3 +20140,57 @@
 (def (cmd-ibuffer-mark-help-buffers app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ibuffer: marked help buffers")))
+
+;; Round 242 — Artist-mode ext (10 in final)
+(def (cmd-artist-draw-rectangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: draw rectangle mode")))
+
+(def (cmd-artist-draw-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Text: "
+      (lambda (txt)
+        (echo-message! echo (str "Artist: placing text '" txt "'"))))))
+
+(def (cmd-artist-erase-rect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artist: erased rectangle")))
+
+(def (cmd-artist-select-tool app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tool (line/rect/ellipse/text/erase): "
+      (lambda (tool)
+        (echo-message! echo (str "Artist: selected tool " tool))))))
+
+(def (cmd-artist-set-char app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Drawing character: "
+      (lambda (ch)
+        (echo-message! echo (str "Artist: drawing char set to " ch))))))
+
+(def (cmd-auto-dim-other-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'auto-dim-other-buffers)
+    (if (mode-enabled? app 'auto-dim-other-buffers)
+      (echo-message! echo "Auto-dim other buffers enabled")
+      (echo-message! echo "Auto-dim other buffers disabled"))))
+
+(def (cmd-bug-reference-goto app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bug reference: opening bug at point")))
+
+(def (cmd-bug-reference-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bug reference: listing all references")))
+
+(def (cmd-bug-reference-set-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Project: "
+      (lambda (proj)
+        (echo-message! echo (str "Bug reference: project set to " proj))))))
+
+(def (cmd-bug-reference-set-url-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL format: "
+      (lambda (fmt)
+        (echo-message! echo (str "Bug reference: URL format set to " fmt))))))

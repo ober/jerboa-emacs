@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 242 — Org-roam, Artist-mode (gerbil-emacs parity)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| org-roam-buffer-toggle | :orange_circle: | Toggle org-roam backlinks buffer |
+| org-roam-dailies-today | :orange_circle: | Open today's daily note |
+| org-roam-db-sync | :orange_circle: | Sync org-roam database |
+| org-roam-find-file | :orange_circle: | Find org-roam file |
+| org-roam-node-find | :orange_circle: | Find org-roam node |
+| org-roam-node-insert | :orange_circle: | Insert org-roam node link |
+| org-roam-set-directory | :orange_circle: | Set org-roam directory |
+| artist-draw-arrow | :orange_circle: | Draw arrow in artist mode |
+| artist-draw-ellipse | :orange_circle: | Draw ellipse in artist mode |
+| artist-draw-line | :orange_circle: | Draw line in artist mode |
+| artist-draw-rectangle | :orange_circle: | Draw rectangle in artist mode |
+| artist-draw-text | :orange_circle: | Place text in artist mode |
+| artist-erase-rect | :orange_circle: | Erase rectangle in artist mode |
+| artist-select-tool | :orange_circle: | Select artist mode tool |
+| artist-set-char | :orange_circle: | Set drawing character |
+| auto-dim-other-buffers | :orange_circle: | Toggle dimming of other buffers |
+| bug-reference-goto | :orange_circle: | Go to bug reference at point |
+| bug-reference-list | :orange_circle: | List all bug references |
+| bug-reference-set-project | :orange_circle: | Set bug reference project |
+| bug-reference-set-url-format | :orange_circle: | Set bug reference URL format |
+
 ### Round 241 — Ido ext, Smex, Ibuffer ext
 
 | Command | Status | Description |
