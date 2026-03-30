@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 335 — Hwinfo ext, Inxi ext, Lstopo ext, Likwid ext, Mcelog ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| hwinfo-all | :orange_circle: | Hwinfo: show all hardware info |
+| hwinfo-cpu | :orange_circle: | Hwinfo: CPU information |
+| hwinfo-disk | :orange_circle: | Hwinfo: disk information |
+| hwinfo-network | :orange_circle: | Hwinfo: network information |
+| inxi-system | :orange_circle: | Inxi: system summary |
+| inxi-cpu | :orange_circle: | Inxi: CPU details |
+| inxi-graphics | :orange_circle: | Inxi: graphics information |
+| inxi-audio | :orange_circle: | Inxi: audio information |
+| lstopo-show | :orange_circle: | Lstopo: show hardware topology |
+| lstopo-text | :orange_circle: | Lstopo: text topology output |
+| lstopo-xml | :orange_circle: | Lstopo: XML topology output |
+| lstopo-png | :orange_circle: | Lstopo: PNG topology output |
+| likwid-topology | :orange_circle: | Likwid: CPU topology |
+| likwid-perfctr | :orange_circle: | Likwid: performance counters |
+| likwid-pin | :orange_circle: | Likwid: pin threads to CPUs |
+| likwid-bench | :orange_circle: | Likwid: run benchmarks |
+| mcelog-show | :orange_circle: | Mcelog: show machine check events |
+| mcelog-daemon | :orange_circle: | Mcelog: daemon status |
+| mcelog-client | :orange_circle: | Mcelog: client query |
+| mcelog-triggers | :orange_circle: | Mcelog: showing trigger scripts |
+
 ### Round 334 — Lscpu ext, Lspci ext, Lsusb ext, Lshw ext, Dmidecode ext
 
 | Feature | Status | Notes |

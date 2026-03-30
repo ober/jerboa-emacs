@@ -24786,3 +24786,53 @@
 (def (cmd-dmidecode-keyword app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dmidecode: listing keywords")))
+
+;;; Round 335 — Lstopo ext, Likwid ext, Mcelog ext (batch 2)
+
+(def (cmd-lstopo-xml app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lstopo: XML topology output")))
+
+(def (cmd-lstopo-png app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Lstopo: saving PNG to " file))))))
+
+(def (cmd-likwid-topology app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Likwid: showing CPU topology")))
+
+(def (cmd-likwid-perfctr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Group and command: "
+      (lambda (spec)
+        (echo-message! echo (str "Likwid: running perfctr " spec))))))
+
+(def (cmd-likwid-pin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CPUs and command: "
+      (lambda (spec)
+        (echo-message! echo (str "Likwid: pinning " spec))))))
+
+(def (cmd-likwid-bench app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Benchmark: "
+      (lambda (bench)
+        (echo-message! echo (str "Likwid: running benchmark " bench))))))
+
+(def (cmd-mcelog-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mcelog: showing machine check errors")))
+
+(def (cmd-mcelog-daemon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mcelog: daemon status")))
+
+(def (cmd-mcelog-client app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mcelog: querying daemon")))
+
+(def (cmd-mcelog-triggers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mcelog: showing trigger scripts")))

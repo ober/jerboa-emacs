@@ -25492,3 +25492,45 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Lsusb: verbose USB listing")))
 
+;;; Round 335 — Hwinfo ext, Inxi ext, Lstopo ext, Likwid ext, Mcelog ext (batch 1)
+
+(def (cmd-hwinfo-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hwinfo: showing all hardware info")))
+
+(def (cmd-hwinfo-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hwinfo: showing CPU info")))
+
+(def (cmd-hwinfo-disk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hwinfo: showing disk info")))
+
+(def (cmd-hwinfo-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hwinfo: showing network info")))
+
+(def (cmd-inxi-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inxi: showing system info")))
+
+(def (cmd-inxi-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inxi: showing CPU info")))
+
+(def (cmd-inxi-graphics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inxi: showing graphics info")))
+
+(def (cmd-inxi-audio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inxi: showing audio info")))
+
+(def (cmd-lstopo-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lstopo: showing hardware topology")))
+
+(def (cmd-lstopo-text app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lstopo: text topology output")))
+
