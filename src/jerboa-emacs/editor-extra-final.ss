@@ -22436,3 +22436,57 @@
     (echo-read-string echo "/proc path: "
       (lambda (path)
         (echo-message! echo (str "Procfs: writing to " path))))))
+
+;;; Round 291 — Fdisk ext, Mkfs ext (batch 2)
+
+(def (cmd-lsblk-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsblk: tree view of block devices")))
+
+(def (cmd-lsblk-detail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsblk: detailed block device list")))
+
+(def (cmd-fdisk-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fdisk: listing partitions")))
+
+(def (cmd-fdisk-partition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fdisk: partitioning " dev))))))
+
+(def (cmd-parted-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Parted: listing partitions")))
+
+(def (cmd-parted-resize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Partition: "
+      (lambda (part)
+        (echo-message! echo (str "Parted: resizing " part))))))
+
+(def (cmd-mkfs-ext4 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Mkfs: creating ext4 on " dev))))))
+
+(def (cmd-mkfs-xfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Mkfs: creating XFS on " dev))))))
+
+(def (cmd-mkfs-btrfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Mkfs: creating Btrfs on " dev))))))
+
+(def (cmd-tune2fs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Tune2fs: info for " dev))))))

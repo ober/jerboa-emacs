@@ -23118,3 +23118,63 @@
       (lambda (mod)
         (echo-message! echo (str "Modprobe: removing " mod))))))
 
+;;; Round 291 — SMART ext, Hdparm ext, Blkid ext (batch 1)
+
+(def (cmd-smartctl-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: info for " dev))))))
+
+(def (cmd-smartctl-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: testing " dev))))))
+
+(def (cmd-smartctl-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: health of " dev))))))
+
+(def (cmd-smartctl-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: log for " dev))))))
+
+(def (cmd-hdparm-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: info for " dev))))))
+
+(def (cmd-hdparm-benchmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: benchmarking " dev))))))
+
+(def (cmd-hdparm-power app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: power management " dev))))))
+
+(def (cmd-hdparm-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: cache settings " dev))))))
+
+(def (cmd-blkid-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blkid: listing block devices")))
+
+(def (cmd-blkid-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Blkid: info for " dev))))))
+

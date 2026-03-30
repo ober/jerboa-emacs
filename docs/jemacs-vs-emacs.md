@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 291 — SMART ext, Hdparm ext, Blkid ext, Fdisk ext, Mkfs ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| smartctl-info | :orange_circle: | Show SMART info |
+| smartctl-test | :orange_circle: | Run SMART test |
+| smartctl-health | :orange_circle: | Check disk health |
+| smartctl-log | :orange_circle: | Show SMART log |
+| hdparm-info | :orange_circle: | Show disk parameters |
+| hdparm-benchmark | :orange_circle: | Benchmark disk |
+| hdparm-power | :orange_circle: | Disk power management |
+| hdparm-cache | :orange_circle: | Disk cache settings |
+| blkid-list | :orange_circle: | List block devices |
+| blkid-info | :orange_circle: | Show device info |
+| lsblk-tree | :orange_circle: | Tree view of devices |
+| lsblk-detail | :orange_circle: | Detailed device list |
+| fdisk-list | :orange_circle: | List partitions |
+| fdisk-partition | :orange_circle: | Partition device |
+| parted-list | :orange_circle: | List partitions (parted) |
+| parted-resize | :orange_circle: | Resize partition |
+| mkfs-ext4 | :orange_circle: | Create ext4 filesystem |
+| mkfs-xfs | :orange_circle: | Create XFS filesystem |
+| mkfs-btrfs | :orange_circle: | Create Btrfs filesystem |
+| tune2fs-info | :orange_circle: | Show ext filesystem info |
+
 ### Round 290 — Dmesg ext, Kernel Log ext, Modprobe ext, Sysctl ext, Procfs ext
 
 | Command | Status | Description |
