@@ -5708,6 +5708,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `copilot-panel-complete` | :orange_circle: Scaffold | Panel complete |
 | `nov-reopen-as-kill` | :orange_circle: Scaffold | Reopen as kill |
 | `doc-view-open-text-mode` | :orange_circle: Scaffold | Open text mode |
+
+### Round 701 — Calc ext, Calendar ext & Built-in Games ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `calc-units-simplify` | :orange_circle: Scaffold | Units simplify |
+| `calc-graph-name` | :orange_circle: Scaffold | Graph name |
+| `calc-graph-plot` | :orange_circle: Scaffold | Graph plot |
+| `calendar-other-month` | :orange_circle: Scaffold | Other month |
+| `ses-set-column-width` | :orange_circle: Scaffold | SES column width |
+| `artist-draw-rect` | :orange_circle: Scaffold | Draw rectangle |
+| `zone-leave-me-alone` | :orange_circle: Scaffold | Leave me alone |
+| `denato-region` | :orange_circle: Scaffold | Denato region |
+| `lm-game` | :orange_circle: Scaffold | Neural net game |
+| `hanoi-unix` | :orange_circle: Scaffold | Unix towers |
+
+### Round 702 — Package Manager ext (Elpaca, Quelpa, Straight)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `elpaca-manager` | :orange_circle: Scaffold | Manager |
+| `elpaca-browse` | :orange_circle: Scaffold | Browse |
+| `elpaca-fetch-all` | :orange_circle: Scaffold | Fetch all |
+| `quelpa` | :orange_circle: Scaffold | Install package |
+| `quelpa-upgrade` | :orange_circle: Scaffold | Upgrade |
+| `quelpa-upgrade-all` | :orange_circle: Scaffold | Upgrade all |
+| `auto-package-update` | :orange_circle: Scaffold | Auto update |
+| `use-package-report` | :orange_circle: Scaffold | Report |
+| `straight-pull-all` | :orange_circle: Scaffold | Pull all |
+| `straight-rebuild-all` | :orange_circle: Scaffold | Rebuild all |
+
+### Round 703 — Bookmark ext (BM, Dogears, Bookmark+)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `bookmark-plus-mode` | :orange_circle: Scaffold | Bookmark+ mode |
+| `bmkp-toggle-autonames` | :orange_circle: Scaffold | Toggle autonames |
+| `bmkp-filter-name` | :orange_circle: Scaffold | Filter by name |
+| `bm-toggle` | :orange_circle: Scaffold | Toggle bookmark |
+| `bm-next` | :orange_circle: Scaffold | Next bookmark |
+| `bm-previous` | :orange_circle: Scaffold | Previous bookmark |
+| `bm-bookmark-regexp` | :orange_circle: Scaffold | Bookmark regexp |
+| `bm-show-all` | :orange_circle: Scaffold | Show all |
+| `dogears-go` | :orange_circle: Scaffold | Go |
+| `dogears-back` | :orange_circle: Scaffold | Back |
+
+### Round 704 — Commands, Image & EWW ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `disable-command` | :orange_circle: Scaffold | Disable command |
+| `enable-command` | :orange_circle: Scaffold | Enable command |
+| `image-transform-fit-window` | :orange_circle: Scaffold | Fit to window |
+| `net-utils-host` | :orange_circle: Scaffold | Host lookup |
+| `eww-browse-with-external-browser` | :orange_circle: Scaffold | External browser |
+| `eww-toggle-colors` | :orange_circle: Scaffold | Toggle colors |
+| `eww-toggle-fonts` | :orange_circle: Scaffold | Toggle fonts |
+| `eww-add-bookmark` | :orange_circle: Scaffold | Add bookmark |
+| `eww-list-bookmarks` | :orange_circle: Scaffold | List bookmarks |
+| `eww-readable` | :orange_circle: Scaffold | Readable view |
+
+### Round 705 — HTTP/REST Clients & Dogears ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `dogears-forward` | :orange_circle: Scaffold | Forward |
+| `dogears-remember` | :orange_circle: Scaffold | Remember |
+| `tab-bookmark-open` | :orange_circle: Scaffold | Open tab bookmark |
+| `tab-bookmark-save` | :orange_circle: Scaffold | Save tab bookmark |
+| `register-read` | :orange_circle: Scaffold | Read register |
+| `verb-mode` | :orange_circle: Scaffold | Verb HTTP mode |
+| `httprepl` | :orange_circle: Scaffold | Interactive HTTP |
+| `httprepl-send` | :orange_circle: Scaffold | Send request |
+| `pgmacs` | :orange_circle: Scaffold | PostgreSQL |
+| `pgmacs-open` | :orange_circle: Scaffold | Open connection |
+
+### Round 706 — SQL ext & EmacsQL
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `emacsql-sqlite` | :orange_circle: Scaffold | SQLite |
+| `emacsql-connect` | :orange_circle: Scaffold | Connect |
+| `sql-show-sqli-buffer` | :orange_circle: Scaffold | Show sqli buffer |
+| `sql-list-all` | :orange_circle: Scaffold | List all |
+| `sql-list-table` | :orange_circle: Scaffold | List table |
+| `sql-rename-column` | :orange_circle: Scaffold | Rename column |
+| `sql-redirect` | :orange_circle: Scaffold | Redirect output |
+| `sql-begin-transaction` | :orange_circle: Scaffold | Begin transaction |
+| `sql-commit` | :orange_circle: Scaffold | Commit |
+| `sql-rollback` | :orange_circle: Scaffold | Rollback |
+
+### Round 707 — Docker, Kubernetes & Config Management
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `docker-start` | :orange_circle: Scaffold | Start container |
+| `kubernetes-pods` | :orange_circle: Scaffold | Pods |
+| `kubernetes-deployments` | :orange_circle: Scaffold | Deployments |
+| `kubel-set-namespace` | :orange_circle: Scaffold | Set namespace |
+| `kubel-set-context` | :orange_circle: Scaffold | Set context |
+| `ansible-start` | :orange_circle: Scaffold | Ansible start |
+| `puppet-mode` | :orange_circle: Scaffold | Puppet mode |
+| `salt-mode` | :orange_circle: Scaffold | Salt mode |
+| `salt-state-apply` | :orange_circle: Scaffold | State apply |
+| `guix-start` | :orange_circle: Scaffold | Guix start |
+
+### Round 708 — Nix Flake, Envrc & Direnv
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `nix-flake-show` | :orange_circle: Scaffold | Flake show |
+| `nix-flake-check` | :orange_circle: Scaffold | Flake check |
+| `nix-flake-update` | :orange_circle: Scaffold | Flake update |
+| `envrc-mode` | :orange_circle: Scaffold | Toggle mode |
+| `envrc-allow` | :orange_circle: Scaffold | Allow |
+| `envrc-deny` | :orange_circle: Scaffold | Deny |
+| `envrc-reload` | :orange_circle: Scaffold | Reload |
+| `direnv-update-environment` | :orange_circle: Scaffold | Update env |
+| `direnv-allow` | :orange_circle: Scaffold | Allow |
+| `direnv-deny` | :orange_circle: Scaffold | Deny |
+
+### Round 709 — Proced, Image, Server & Help ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `proced-filter` | :orange_circle: Scaffold | Filter |
+| `proced-sort` | :orange_circle: Scaffold | Sort |
+| `server-force-delete` | :orange_circle: Scaffold | Force delete |
+| `server-mode` | :orange_circle: Scaffold | Toggle mode |
+| `list-fontsets` | :orange_circle: Scaffold | List fontsets |
+| `customize-save-theme` | :orange_circle: Scaffold | Save theme |
+| `display-about-screen` | :orange_circle: Scaffold | About screen |
+| `image-dired-display-thumb` | :orange_circle: Scaffold | Display thumb |
+| `thumbs-browse` | :orange_circle: Scaffold | Browse |
+| `thumbs-mode` | :orange_circle: Scaffold | Toggle mode |
+
+### Round 710 — Tree-sitter ext, Combobulate ext & TS-fold
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `treesit-explore` | :orange_circle: Scaffold | Explore mode |
+| `treesit-install-grammar` | :orange_circle: Scaffold | Install grammar |
+| `treesit-inspect-node` | :orange_circle: Scaffold | Inspect node |
+| `combobulate-transpose` | :orange_circle: Scaffold | Transpose nodes |
+| `combobulate-envelop` | :orange_circle: Scaffold | Envelop |
+| `combobulate-splice-up` | :orange_circle: Scaffold | Splice up |
+| `ts-fold-toggle` | :orange_circle: Scaffold | Toggle fold |
+| `ts-fold-open-all` | :orange_circle: Scaffold | Open all |
+| `ts-fold-close-all` | :orange_circle: Scaffold | Close all |
+| `ts-docstr-mode` | :orange_circle: Scaffold | Docstring mode |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |

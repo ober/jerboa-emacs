@@ -13297,4 +13297,35 @@
   ;; Round 700: Flycheck ext, Flymake ext, Mastodon ext
   (register-command! 'flycheck-posframe-mode cmd-flycheck-posframe-mode) (register-command! 'flycheck-mode-line-status cmd-flycheck-mode-line-status) (register-command! 'flymake-proc-legacy cmd-flymake-proc-legacy) (register-command! 'flymake-disabled-backends cmd-flymake-disabled-backends) (register-command! 'ement-room-set-topic cmd-ement-room-set-topic)
   (register-command! 'mastodon-tl-home cmd-mastodon-tl-home) (register-command! 'mastodon-tl-federated cmd-mastodon-tl-federated) (register-command! 'copilot-panel-complete cmd-copilot-panel) (register-command! 'nov-reopen-as-kill cmd-nov-browse-url) (register-command! 'doc-view-open-text-mode cmd-doc-view-open-text)
+
+  ;; Round 701: Calc ext, Calendar ext, Games ext
+  (register-command! 'calc-units-simplify cmd-calc-units-simplify) (register-command! 'calc-graph-name cmd-calc-graph-name) (register-command! 'calc-graph-plot cmd-calc-graph-plot) (register-command! 'calendar-other-month cmd-calendar-other-month) (register-command! 'ses-set-column-width cmd-ses-set-column-width)
+  (register-command! 'artist-draw-rect cmd-artist-draw-rect) (register-command! 'zone-leave-me-alone cmd-zone-leave-me-alone) (register-command! 'denato-region cmd-denato-region) (register-command! 'lm-game cmd-lm-game) (register-command! 'hanoi-unix cmd-hanoi-unix)
+  ;; Round 702: Package Manager ext
+  (register-command! 'elpaca-manager cmd-elpaca-manager) (register-command! 'elpaca-browse cmd-elpaca-browse) (register-command! 'elpaca-fetch-all cmd-elpaca-fetch-all) (register-command! 'quelpa cmd-quelpa) (register-command! 'quelpa-upgrade cmd-quelpa-upgrade)
+  (register-command! 'quelpa-upgrade-all cmd-quelpa-upgrade-all) (register-command! 'auto-package-update cmd-auto-package-update) (register-command! 'use-package-report cmd-use-package-report) (register-command! 'straight-pull-all cmd-straight-pull-all) (register-command! 'straight-rebuild-all cmd-straight-rebuild-all)
+  ;; Round 703: Bookmark ext
+  (register-command! 'bookmark-plus-mode cmd-bookmark-plus-mode) (register-command! 'bmkp-toggle-autonames cmd-bmkp-toggle-autonames) (register-command! 'bmkp-filter-name cmd-bmkp-filter-name) (register-command! 'bm-toggle cmd-bm-toggle) (register-command! 'bm-next cmd-bm-next)
+  (register-command! 'bm-previous cmd-bm-previous) (register-command! 'bm-bookmark-regexp cmd-bm-bookmark-regexp) (register-command! 'bm-show-all cmd-bm-show-all) (register-command! 'dogears-go cmd-dogears-go) (register-command! 'dogears-back cmd-dogears-back)
+  ;; Round 704: Commands, Image, EWW ext
+  (register-command! 'disable-command cmd-disable-command) (register-command! 'enable-command cmd-enable-command) (register-command! 'image-transform-fit-window cmd-image-transform-fit-window) (register-command! 'net-utils-host cmd-net-utils-host) (register-command! 'eww-browse-with-external-browser cmd-eww-browse-with-external-browser)
+  (register-command! 'eww-toggle-colors cmd-eww-toggle-colors) (register-command! 'eww-toggle-fonts cmd-eww-toggle-fonts) (register-command! 'eww-add-bookmark cmd-eww-add-bookmark) (register-command! 'eww-list-bookmarks cmd-eww-list-bookmarks) (register-command! 'eww-readable cmd-eww-readable)
+  ;; Round 705: HTTP, REST, Dogears ext
+  (register-command! 'dogears-forward cmd-dogears-forward) (register-command! 'dogears-remember cmd-dogears-remember) (register-command! 'tab-bookmark-open cmd-tab-bookmark-open) (register-command! 'tab-bookmark-save cmd-tab-bookmark-save) (register-command! 'register-read cmd-register-read)
+  (register-command! 'verb-mode cmd-verb-mode) (register-command! 'httprepl cmd-httprepl) (register-command! 'httprepl-send cmd-httprepl-send) (register-command! 'pgmacs cmd-pgmacs) (register-command! 'pgmacs-open cmd-pgmacs-open)
+  ;; Round 706: SQL ext, EmacsQL
+  (register-command! 'emacsql-sqlite cmd-emacsql-sqlite) (register-command! 'emacsql-connect cmd-emacsql-connect) (register-command! 'sql-show-sqli-buffer cmd-sql-show-sqli-buffer) (register-command! 'sql-list-all cmd-sql-list-all) (register-command! 'sql-list-table cmd-sql-list-table)
+  (register-command! 'sql-rename-column cmd-sql-rename-column) (register-command! 'sql-redirect cmd-sql-redirect) (register-command! 'sql-begin-transaction cmd-sql-begin-transaction) (register-command! 'sql-commit cmd-sql-commit) (register-command! 'sql-rollback cmd-sql-rollback)
+  ;; Round 707: Docker, Kubernetes, Ansible, Salt
+  (register-command! 'docker-start cmd-docker-start) (register-command! 'kubernetes-pods cmd-kubernetes-pods) (register-command! 'kubernetes-deployments cmd-kubernetes-deployments) (register-command! 'kubel-set-namespace cmd-kubel-set-namespace) (register-command! 'kubel-set-context cmd-kubel-set-context)
+  (register-command! 'ansible-start cmd-ansible-start) (register-command! 'puppet-mode cmd-puppet-mode) (register-command! 'salt-mode cmd-salt-mode) (register-command! 'salt-state-apply cmd-salt-state-apply) (register-command! 'guix-start cmd-guix-start)
+  ;; Round 708: Nix, Envrc, Direnv
+  (register-command! 'nix-flake-show cmd-nix-flake-show) (register-command! 'nix-flake-check cmd-nix-flake-check) (register-command! 'nix-flake-update cmd-nix-flake-update) (register-command! 'envrc-mode cmd-envrc-mode) (register-command! 'envrc-allow cmd-envrc-allow)
+  (register-command! 'envrc-deny cmd-envrc-deny) (register-command! 'envrc-reload cmd-envrc-reload) (register-command! 'direnv-update-environment cmd-direnv-update-environment) (register-command! 'direnv-allow cmd-direnv-allow) (register-command! 'direnv-deny cmd-direnv-deny)
+  ;; Round 709: Proced, Image, Server ext
+  (register-command! 'proced-filter cmd-proced-filter) (register-command! 'proced-sort cmd-proced-sort) (register-command! 'server-force-delete cmd-server-force-delete) (register-command! 'server-mode cmd-server-mode) (register-command! 'list-fontsets cmd-list-fontsets)
+  (register-command! 'customize-save-theme cmd-customize-save-theme) (register-command! 'display-about-screen cmd-display-about-screen) (register-command! 'image-dired-display-thumb cmd-image-dired-display-thumb) (register-command! 'thumbs-browse cmd-thumbs-browse) (register-command! 'thumbs-mode cmd-thumbs-mode)
+  ;; Round 710: Tree-sitter ext, Combobulate ext
+  (register-command! 'treesit-explore cmd-treesit-explore) (register-command! 'treesit-install-grammar cmd-treesit-install-grammar) (register-command! 'treesit-inspect-node cmd-treesit-inspect-node) (register-command! 'combobulate-transpose cmd-combobulate-transpose) (register-command! 'combobulate-envelop cmd-combobulate-envelop)
+  (register-command! 'combobulate-splice-up cmd-combobulate-splice-up) (register-command! 'ts-fold-toggle cmd-ts-fold-toggle) (register-command! 'ts-fold-open-all cmd-ts-fold-open-all) (register-command! 'ts-fold-close-all cmd-ts-fold-close-all) (register-command! 'ts-docstr-mode cmd-ts-docstr-mode)
 )
