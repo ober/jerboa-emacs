@@ -30652,3 +30652,129 @@
 (def (cmd-colima-ssh app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Colima: SSH into VM")))
+
+;; ── Round 456 — Traefik ext2, Envoy ext2, HAProxy ext2, Nginx ext2 ──
+
+(def (cmd-traefik-middleware app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: middleware config")))
+
+(def (cmd-traefik-tls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: TLS config")))
+
+(def (cmd-traefik-entrypoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: entrypoints")))
+
+(def (cmd-traefik-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: services")))
+
+(def (cmd-traefik-dashboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: dashboard")))
+
+(def (cmd-envoy-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: clusters")))
+
+(def (cmd-envoy-listeners app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: listeners")))
+
+(def (cmd-envoy-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: routes")))
+
+(def (cmd-envoy-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: statistics")))
+
+(def (cmd-envoy-config-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: config dump")))
+
+;; ── Round 457 — Caddy ext2, Varnish ext, Squid ext, mitmproxy ext ──
+
+(def (cmd-haproxy-backends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: backends")))
+
+(def (cmd-haproxy-servers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: servers")))
+
+(def (cmd-haproxy-acls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: ACLs")))
+
+(def (cmd-haproxy-maps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: maps")))
+
+(def (cmd-haproxy-stick-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: stick tables")))
+
+(def (cmd-nginx-upstream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: upstream config")))
+
+(def (cmd-nginx-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: cache config")))
+
+(def (cmd-nginx-rate-limit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: rate limiting")))
+
+(def (cmd-nginx-access-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: access log")))
+
+(def (cmd-nginx-error-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: error log")))
+
+;; ── Round 458 — OpenResty ext, Kong ext2, APISIX ext2, Tyk ext2 ──
+
+(def (cmd-caddy-reverse-proxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: reverse proxy")))
+
+(def (cmd-caddy-tls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: TLS config")))
+
+(def (cmd-caddy-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: encoding config")))
+
+(def (cmd-caddy-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: templates")))
+
+(def (cmd-caddy-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: metrics")))
+
+(def (cmd-varnish-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Varnish: statistics")))
+
+(def (cmd-varnish-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Varnish: log")))
+
+(def (cmd-varnish-admin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Varnish: admin console")))
+
+(def (cmd-varnish-ban app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Varnish: ban expressions")))
+
+(def (cmd-varnish-vcl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Varnish: VCL config")))

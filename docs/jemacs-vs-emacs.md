@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 460 — Postman ext2, Insomnia ext2, HTTPie ext2, curl ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Postman list collections | — | `postman-collections-list` | :orange_circle: Scaffolded |
+| Postman list environments | — | `postman-environments-list` | :orange_circle: Scaffolded |
+| Postman monitors | — | `postman-monitor` | :orange_circle: Scaffolded |
+| Postman mock servers | — | `postman-mock` | :orange_circle: Scaffolded |
+| Postman documentation | — | `postman-docs` | :orange_circle: Scaffolded |
+| Insomnia collections | — | `insomnia-collections` | :orange_circle: Scaffolded |
+| Insomnia environments | — | `insomnia-environments` | :orange_circle: Scaffolded |
+| Insomnia plugins | — | `insomnia-plugins` | :orange_circle: Scaffolded |
+| Insomnia export | — | `insomnia-export` | :orange_circle: Scaffolded |
+| Insomnia test runner | — | `insomnia-test` | :orange_circle: Scaffolded |
+| HTTPie sessions | — | `httpie-sessions` | :orange_circle: Scaffolded |
+| HTTPie plugins | — | `httpie-plugins` | :orange_circle: Scaffolded |
+| HTTPie themes | — | `httpie-themes` | :orange_circle: Scaffolded |
+| HTTPie auth | — | `httpie-auth` | :orange_circle: Scaffolded |
+| HTTPie config | — | `httpie-config` | :orange_circle: Scaffolded |
+| curl timing | — | `curl-timing` | :orange_circle: Scaffolded |
+| curl resolve | — | `curl-resolve` | :orange_circle: Scaffolded |
+| curl certificate | — | `curl-cert` | :orange_circle: Scaffolded |
+| curl cookies | — | `curl-cookies` | :orange_circle: Scaffolded |
+| curl verbose | — | `curl-verbose` | :orange_circle: Scaffolded |
+
+### Round 459 — Gravitee ext, WSO2 ext, MuleSoft ext, Apigee ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Gravitee APIs | — | `gravitee-apis` | :orange_circle: Scaffolded |
+| Gravitee plans | — | `gravitee-plans` | :orange_circle: Scaffolded |
+| Gravitee subscriptions | — | `gravitee-subscriptions` | :orange_circle: Scaffolded |
+| Gravitee policies | — | `gravitee-policies` | :orange_circle: Scaffolded |
+| Gravitee analytics | — | `gravitee-analytics` | :orange_circle: Scaffolded |
+| WSO2 APIs | — | `wso2-apis` | :orange_circle: Scaffolded |
+| WSO2 applications | — | `wso2-apps` | :orange_circle: Scaffolded |
+| WSO2 subscriptions | — | `wso2-subscriptions` | :orange_circle: Scaffolded |
+| WSO2 throttling | — | `wso2-throttle` | :orange_circle: Scaffolded |
+| WSO2 analytics | — | `wso2-analytics` | :orange_circle: Scaffolded |
+| MuleSoft applications | — | `mulesoft-apps` | :orange_circle: Scaffolded |
+| MuleSoft APIs | — | `mulesoft-apis` | :orange_circle: Scaffolded |
+| MuleSoft connectors | — | `mulesoft-connectors` | :orange_circle: Scaffolded |
+| MuleSoft runtime | — | `mulesoft-runtime` | :orange_circle: Scaffolded |
+| MuleSoft analytics | — | `mulesoft-analytics` | :orange_circle: Scaffolded |
+| Apigee API proxies | — | `apigee-proxies` | :orange_circle: Scaffolded |
+| Apigee products | — | `apigee-products` | :orange_circle: Scaffolded |
+| Apigee developers | — | `apigee-developers` | :orange_circle: Scaffolded |
+| Apigee apps | — | `apigee-apps` | :orange_circle: Scaffolded |
+| Apigee analytics | — | `apigee-analytics` | :orange_circle: Scaffolded |
+
+### Round 458 — OpenResty ext, Kong ext2, APISIX ext2, Tyk ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| OpenResty Lua | — | `openresty-lua` | :orange_circle: Scaffolded |
+| OpenResty config | — | `openresty-config` | :orange_circle: Scaffolded |
+| OpenResty test | — | `openresty-test` | :orange_circle: Scaffolded |
+| OpenResty reload | — | `openresty-reload` | :orange_circle: Scaffolded |
+| OpenResty logs | — | `openresty-log` | :orange_circle: Scaffolded |
+| Kong routes | — | `kong-routes` | :orange_circle: Scaffolded |
+| Kong consumers | — | `kong-consumers` | :orange_circle: Scaffolded |
+| Kong plugins list | — | `kong-plugins-list` | :orange_circle: Scaffolded |
+| Kong upstreams | — | `kong-upstreams` | :orange_circle: Scaffolded |
+| Kong certificates | — | `kong-certificates` | :orange_circle: Scaffolded |
+| APISIX routes list | — | `apisix-routes-list` | :orange_circle: Scaffolded |
+| APISIX upstreams list | — | `apisix-upstreams-list` | :orange_circle: Scaffolded |
+| APISIX consumers list | — | `apisix-consumers-list` | :orange_circle: Scaffolded |
+| APISIX plugins list | — | `apisix-plugins-list` | :orange_circle: Scaffolded |
+| APISIX SSL | — | `apisix-ssl` | :orange_circle: Scaffolded |
+| Tyk APIs list | — | `tyk-apis-list` | :orange_circle: Scaffolded |
+| Tyk policies list | — | `tyk-policies-list` | :orange_circle: Scaffolded |
+| Tyk keys list | — | `tyk-keys-list` | :orange_circle: Scaffolded |
+| Tyk reload | — | `tyk-reload` | :orange_circle: Scaffolded |
+| Tyk analytics | — | `tyk-analytics` | :orange_circle: Scaffolded |
+
+### Round 457 — Caddy ext2, Varnish ext, Squid ext, mitmproxy ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Caddy reverse proxy | — | `caddy-reverse-proxy` | :orange_circle: Scaffolded |
+| Caddy TLS | — | `caddy-tls` | :orange_circle: Scaffolded |
+| Caddy encoding | — | `caddy-encode` | :orange_circle: Scaffolded |
+| Caddy templates | — | `caddy-templates` | :orange_circle: Scaffolded |
+| Caddy metrics | — | `caddy-metrics` | :orange_circle: Scaffolded |
+| Varnish statistics | — | `varnish-stat` | :orange_circle: Scaffolded |
+| Varnish log | — | `varnish-log` | :orange_circle: Scaffolded |
+| Varnish admin | — | `varnish-admin` | :orange_circle: Scaffolded |
+| Varnish ban | — | `varnish-ban` | :orange_circle: Scaffolded |
+| Varnish VCL | — | `varnish-vcl` | :orange_circle: Scaffolded |
+| Squid info | — | `squid-info` | :orange_circle: Scaffolded |
+| Squid cache manager | — | `squid-mgr` | :orange_circle: Scaffolded |
+| Squid client | — | `squid-client` | :orange_circle: Scaffolded |
+| Squid cache stats | — | `squid-cache` | :orange_circle: Scaffolded |
+| Squid access log | — | `squid-access` | :orange_circle: Scaffolded |
+| mitmproxy flows | — | `mitmproxy-flows` | :orange_circle: Scaffolded |
+| mitmproxy filter | — | `mitmproxy-filter` | :orange_circle: Scaffolded |
+| mitmproxy intercept | — | `mitmproxy-intercept` | :orange_circle: Scaffolded |
+| mitmproxy replay | — | `mitmproxy-replay` | :orange_circle: Scaffolded |
+| mitmproxy export | — | `mitmproxy-export` | :orange_circle: Scaffolded |
+
+### Round 456 — Traefik ext2, Envoy ext2, HAProxy ext2, Nginx ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Traefik middleware | — | `traefik-middleware` | :orange_circle: Scaffolded |
+| Traefik TLS | — | `traefik-tls` | :orange_circle: Scaffolded |
+| Traefik entrypoints | — | `traefik-entrypoints` | :orange_circle: Scaffolded |
+| Traefik services | — | `traefik-services` | :orange_circle: Scaffolded |
+| Traefik dashboard | — | `traefik-dashboard` | :orange_circle: Scaffolded |
+| Envoy clusters | — | `envoy-clusters` | :orange_circle: Scaffolded |
+| Envoy listeners | — | `envoy-listeners` | :orange_circle: Scaffolded |
+| Envoy routes | — | `envoy-routes` | :orange_circle: Scaffolded |
+| Envoy statistics | — | `envoy-stats` | :orange_circle: Scaffolded |
+| Envoy config dump | — | `envoy-config-dump` | :orange_circle: Scaffolded |
+| HAProxy backends | — | `haproxy-backends` | :orange_circle: Scaffolded |
+| HAProxy servers | — | `haproxy-servers` | :orange_circle: Scaffolded |
+| HAProxy ACLs | — | `haproxy-acls` | :orange_circle: Scaffolded |
+| HAProxy maps | — | `haproxy-maps` | :orange_circle: Scaffolded |
+| HAProxy stick tables | — | `haproxy-stick-tables` | :orange_circle: Scaffolded |
+| Nginx upstream | — | `nginx-upstream` | :orange_circle: Scaffolded |
+| Nginx cache | — | `nginx-cache` | :orange_circle: Scaffolded |
+| Nginx rate limit | — | `nginx-rate-limit` | :orange_circle: Scaffolded |
+| Nginx access log | — | `nginx-access-log` | :orange_circle: Scaffolded |
+| Nginx error log | — | `nginx-error-log` | :orange_circle: Scaffolded |
+
 ### Round 455 — Cilium ext2, Calico ext2, Flannel ext, Weave ext
 
 | Feature | Emacs | jemacs | Status |

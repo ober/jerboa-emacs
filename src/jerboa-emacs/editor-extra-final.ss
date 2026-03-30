@@ -30290,3 +30290,293 @@
 (def (cmd-weave-reset app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Weave: reset")))
+
+;; ── Round 457 — Squid ext, mitmproxy ext ──
+
+(def (cmd-squid-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Squid: info")))
+
+(def (cmd-squid-mgr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Squid: cache manager")))
+
+(def (cmd-squid-client app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Squid: client tool")))
+
+(def (cmd-squid-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Squid: cache stats")))
+
+(def (cmd-squid-access app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Squid: access log")))
+
+(def (cmd-mitmproxy-flows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mitmproxy: flows")))
+
+(def (cmd-mitmproxy-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mitmproxy: filter")))
+
+(def (cmd-mitmproxy-intercept app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mitmproxy: intercept")))
+
+(def (cmd-mitmproxy-replay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mitmproxy: replay")))
+
+(def (cmd-mitmproxy-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mitmproxy: export")))
+
+;; ── Round 458 — OpenResty ext, Kong ext2, APISIX ext2, Tyk ext2 ──
+
+(def (cmd-openresty-lua app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenResty: Lua scripting")))
+
+(def (cmd-openresty-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenResty: configuration")))
+
+(def (cmd-openresty-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenResty: test")))
+
+(def (cmd-openresty-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenResty: reload")))
+
+(def (cmd-openresty-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenResty: logs")))
+
+(def (cmd-kong-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kong: routes")))
+
+(def (cmd-kong-consumers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kong: consumers")))
+
+(def (cmd-kong-plugins-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kong: list plugins")))
+
+(def (cmd-kong-upstreams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kong: upstreams")))
+
+(def (cmd-kong-certificates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kong: certificates")))
+
+;; ── Round 459 — Gravitee ext, WSO2 ext, MuleSoft ext, Apigee ext ──
+
+(def (cmd-apisix-routes-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "APISIX: list routes")))
+
+(def (cmd-apisix-upstreams-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "APISIX: list upstreams")))
+
+(def (cmd-apisix-consumers-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "APISIX: list consumers")))
+
+(def (cmd-apisix-plugins-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "APISIX: list plugins")))
+
+(def (cmd-apisix-ssl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "APISIX: SSL certificates")))
+
+(def (cmd-tyk-apis-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tyk: list APIs")))
+
+(def (cmd-tyk-policies-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tyk: list policies")))
+
+(def (cmd-tyk-keys-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tyk: list keys")))
+
+(def (cmd-tyk-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tyk: reload gateway")))
+
+(def (cmd-tyk-analytics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tyk: analytics")))
+
+(def (cmd-gravitee-apis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gravitee: APIs")))
+
+(def (cmd-gravitee-plans app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gravitee: plans")))
+
+(def (cmd-gravitee-subscriptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gravitee: subscriptions")))
+
+(def (cmd-gravitee-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gravitee: policies")))
+
+(def (cmd-gravitee-analytics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gravitee: analytics")))
+
+(def (cmd-wso2-apis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WSO2: APIs")))
+
+(def (cmd-wso2-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WSO2: applications")))
+
+(def (cmd-wso2-subscriptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WSO2: subscriptions")))
+
+(def (cmd-wso2-throttle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WSO2: throttling")))
+
+(def (cmd-wso2-analytics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WSO2: analytics")))
+
+;; ── Round 459 — MuleSoft ext, Apigee ext ──
+
+(def (cmd-mulesoft-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MuleSoft: applications")))
+
+(def (cmd-mulesoft-apis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MuleSoft: APIs")))
+
+(def (cmd-mulesoft-connectors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MuleSoft: connectors")))
+
+(def (cmd-mulesoft-runtime app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MuleSoft: runtime")))
+
+(def (cmd-mulesoft-analytics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MuleSoft: analytics")))
+
+(def (cmd-apigee-proxies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Apigee: API proxies")))
+
+(def (cmd-apigee-products app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Apigee: products")))
+
+(def (cmd-apigee-developers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Apigee: developers")))
+
+(def (cmd-apigee-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Apigee: apps")))
+
+(def (cmd-apigee-analytics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Apigee: analytics")))
+
+;; ── Round 460 — Postman ext2, Insomnia ext2, HTTPie ext2, curl ext2 ──
+
+(def (cmd-postman-collections-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: list collections")))
+
+(def (cmd-postman-environments-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: list environments")))
+
+(def (cmd-postman-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: monitors")))
+
+(def (cmd-postman-mock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: mock servers")))
+
+(def (cmd-postman-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: documentation")))
+
+(def (cmd-insomnia-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: collections")))
+
+(def (cmd-insomnia-environments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: environments")))
+
+(def (cmd-insomnia-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: plugins")))
+
+(def (cmd-insomnia-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: export")))
+
+(def (cmd-insomnia-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: test runner")))
+
+(def (cmd-httpie-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: sessions")))
+
+(def (cmd-httpie-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: plugins")))
+
+(def (cmd-httpie-themes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: themes")))
+
+(def (cmd-httpie-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: authentication")))
+
+(def (cmd-httpie-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: configuration")))
+
+(def (cmd-curl-timing app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "curl: timing info")))
+
+(def (cmd-curl-resolve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "curl: resolve host")))
+
+(def (cmd-curl-cert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "curl: certificate info")))
+
+(def (cmd-curl-cookies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "curl: cookie management")))
+
+(def (cmd-curl-verbose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "curl: verbose output")))
