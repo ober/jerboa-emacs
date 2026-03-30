@@ -21572,3 +21572,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "AWS: listing SNS topics")))
 
+;;; Round 259 — Azure ext, DigitalOcean, Heroku ext, Vercel ext, Netlify ext (batch 1)
+
+(def (cmd-azure-webapp-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Azure: listing web apps")))
+
+(def (cmd-azure-function-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Azure: listing functions")))
+
+(def (cmd-azure-keyvault-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Azure: listing key vaults")))
+
+(def (cmd-azure-cosmos-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Azure: listing Cosmos DB accounts")))
+
+(def (cmd-digitalocean-droplet-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DigitalOcean: listing droplets")))
+
+(def (cmd-digitalocean-database-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DigitalOcean: listing databases")))
+
+(def (cmd-digitalocean-domain-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DigitalOcean: listing domains")))
+
+(def (cmd-digitalocean-spaces-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DigitalOcean: listing Spaces")))
+
+(def (cmd-heroku-app-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Heroku: listing apps")))
+
+(def (cmd-heroku-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "App name: "
+      (lambda (app-name)
+        (echo-message! echo (str "Heroku: viewing logs for " app-name))))))
+

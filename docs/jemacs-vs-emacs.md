@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 259 — Azure ext, DigitalOcean, Heroku ext, Vercel ext, Netlify ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| azure-webapp-list | :orange_circle: | List Azure web apps |
+| azure-function-list | :orange_circle: | List Azure functions |
+| azure-keyvault-list | :orange_circle: | List Azure key vaults |
+| azure-cosmos-list | :orange_circle: | List Azure Cosmos DB accounts |
+| digitalocean-droplet-list | :orange_circle: | List DigitalOcean droplets |
+| digitalocean-database-list | :orange_circle: | List DigitalOcean databases |
+| digitalocean-domain-list | :orange_circle: | List DigitalOcean domains |
+| digitalocean-spaces-list | :orange_circle: | List DigitalOcean Spaces |
+| heroku-app-list | :orange_circle: | List Heroku apps |
+| heroku-logs | :orange_circle: | View Heroku app logs |
+| heroku-run | :orange_circle: | Run command on Heroku |
+| heroku-config-list | :orange_circle: | List Heroku config vars |
+| vercel-deploy | :orange_circle: | Deploy to Vercel |
+| vercel-env-list | :orange_circle: | List Vercel environment variables |
+| vercel-project-list | :orange_circle: | List Vercel projects |
+| vercel-domains-list | :orange_circle: | List Vercel domains |
+| netlify-deploy | :orange_circle: | Deploy to Netlify |
+| netlify-sites-list | :orange_circle: | List Netlify sites |
+| netlify-env-list | :orange_circle: | List Netlify environment variables |
+| netlify-functions-list | :orange_circle: | List Netlify functions |
+
 ### Round 258 — Prometheus ext, Grafana ext, AWS ext, GCP ext, Azure ext
 
 | Command | Status | Description |

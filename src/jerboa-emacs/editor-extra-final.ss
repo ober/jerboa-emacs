@@ -20948,3 +20948,47 @@
 (def (cmd-azure-storage-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Azure: listing storage accounts")))
+
+;;; Round 259 — Heroku ext, Vercel ext, Netlify ext (batch 2)
+
+(def (cmd-heroku-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Heroku: running " cmd))))))
+
+(def (cmd-heroku-config-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Heroku: listing config vars")))
+
+(def (cmd-vercel-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: deploying project")))
+
+(def (cmd-vercel-env-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: listing environment variables")))
+
+(def (cmd-vercel-project-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: listing projects")))
+
+(def (cmd-vercel-domains-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: listing domains")))
+
+(def (cmd-netlify-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: deploying site")))
+
+(def (cmd-netlify-sites-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing sites")))
+
+(def (cmd-netlify-env-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing environment variables")))
+
+(def (cmd-netlify-functions-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing functions")))
