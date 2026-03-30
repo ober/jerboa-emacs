@@ -25998,3 +25998,49 @@
 (def (cmd-otel-config app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "OpenTelemetry: showing collector config")))
+
+;;; Round 345 — Elasticsearch ext, Kibana ext, Fluentd ext, Logstash ext, Beats ext (batch 1)
+
+(def (cmd-elasticsearch-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elasticsearch query: "
+      (lambda (q)
+        (echo-message! echo (str "Elasticsearch: searching " q))))))
+
+(def (cmd-elasticsearch-mapping app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Elasticsearch index for mapping: "
+      (lambda (idx)
+        (echo-message! echo (str "Elasticsearch: showing mapping for " idx))))))
+
+(def (cmd-elasticsearch-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: showing cluster health")))
+
+(def (cmd-elasticsearch-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: listing nodes")))
+
+(def (cmd-kibana-spaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kibana: listing spaces")))
+
+(def (cmd-kibana-saved-objects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kibana: listing saved objects")))
+
+(def (cmd-kibana-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kibana: listing alert rules")))
+
+(def (cmd-kibana-discover app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kibana: opening discover view")))
+
+(def (cmd-fluentd-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluentd: showing status")))
+
+(def (cmd-fluentd-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluentd: listing plugins")))

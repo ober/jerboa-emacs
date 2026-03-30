@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 345 — Elasticsearch ext, Kibana ext, Fluentd ext, Logstash ext, Beats ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| elasticsearch-search | :orange_circle: | Elasticsearch: search query |
+| elasticsearch-mapping | :orange_circle: | Elasticsearch: show index mapping |
+| elasticsearch-cluster | :orange_circle: | Elasticsearch: cluster health |
+| elasticsearch-nodes | :orange_circle: | Elasticsearch: list nodes |
+| kibana-spaces | :orange_circle: | Kibana: list spaces |
+| kibana-saved-objects | :orange_circle: | Kibana: list saved objects |
+| kibana-rules | :orange_circle: | Kibana: list alert rules |
+| kibana-discover | :orange_circle: | Kibana: open discover view |
+| fluentd-status | :orange_circle: | Fluentd: show status |
+| fluentd-plugins | :orange_circle: | Fluentd: list plugins |
+| fluentd-config | :orange_circle: | Fluentd: show configuration |
+| fluentd-buffers | :orange_circle: | Fluentd: show buffer status |
+| logstash-pipelines | :orange_circle: | Logstash: list pipelines |
+| logstash-stats | :orange_circle: | Logstash: show statistics |
+| logstash-plugins | :orange_circle: | Logstash: list plugins |
+| logstash-reload | :orange_circle: | Logstash: reload configuration |
+| beats-status | :orange_circle: | Beats: show status |
+| beats-modules | :orange_circle: | Beats: list modules |
+| beats-setup | :orange_circle: | Beats: run setup |
+| beats-keystore | :orange_circle: | Beats: manage keystore |
+
 ### Round 344 — Jaeger ext, Zipkin ext, OpenTelemetry ext, Datadog ext, NewRelic ext
 
 | Feature | Status | Notes |

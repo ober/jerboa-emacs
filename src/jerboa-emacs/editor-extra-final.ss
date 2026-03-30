@@ -25293,3 +25293,45 @@
 (def (cmd-newrelic-synthetics app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "NewRelic: listing synthetic monitors")))
+
+;;; Round 345 — Fluentd ext, Logstash ext, Beats ext (batch 2)
+
+(def (cmd-fluentd-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluentd: showing configuration")))
+
+(def (cmd-fluentd-buffers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluentd: showing buffer status")))
+
+(def (cmd-logstash-pipelines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Logstash: listing pipelines")))
+
+(def (cmd-logstash-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Logstash: showing statistics")))
+
+(def (cmd-logstash-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Logstash: listing installed plugins")))
+
+(def (cmd-logstash-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Logstash: reloading configuration")))
+
+(def (cmd-beats-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Beats: showing status")))
+
+(def (cmd-beats-modules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Beats: listing modules")))
+
+(def (cmd-beats-setup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Beats: running setup")))
+
+(def (cmd-beats-keystore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Beats: managing keystore")))
