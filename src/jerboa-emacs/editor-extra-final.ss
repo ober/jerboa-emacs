@@ -25609,3 +25609,53 @@
 (def (cmd-jenkins-queue app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Jenkins: showing build queue")))
+
+;;; Round 352 — Trivy ext, Grype ext, Syft ext (batch 2)
+
+(def (cmd-trivy-repo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Trivy scan repo: "
+      (lambda (repo)
+        (echo-message! echo (str "Trivy: scanning repo " repo))))))
+
+(def (cmd-trivy-sbom app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trivy: generating SBOM")))
+
+(def (cmd-grype-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Grype scan target: "
+      (lambda (target)
+        (echo-message! echo (str "Grype: scanning " target))))))
+
+(def (cmd-grype-db-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grype: updating vulnerability database")))
+
+(def (cmd-grype-db-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grype: showing database status")))
+
+(def (cmd-grype-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grype: showing configuration")))
+
+(def (cmd-syft-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Syft scan target: "
+      (lambda (target)
+        (echo-message! echo (str "Syft: scanning " target))))))
+
+(def (cmd-syft-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Syft: listing packages")))
+
+(def (cmd-syft-cataloger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Syft: listing catalogers")))
+
+(def (cmd-syft-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Syft convert format: "
+      (lambda (fmt)
+        (echo-message! echo (str "Syft: converting SBOM to " fmt))))))

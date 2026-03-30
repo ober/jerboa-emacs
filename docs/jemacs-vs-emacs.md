@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 352 — Sonarqube ext, Snyk ext, Trivy ext, Grype ext, Syft ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| sonarqube-scan | :orange_circle: | SonarQube: run analysis |
+| sonarqube-quality-gate | :orange_circle: | SonarQube: check quality gate |
+| sonarqube-issues | :orange_circle: | SonarQube: list issues |
+| sonarqube-measures | :orange_circle: | SonarQube: project measures |
+| snyk-test | :orange_circle: | Snyk: test vulnerabilities |
+| snyk-monitor | :orange_circle: | Snyk: monitor project |
+| snyk-fix | :orange_circle: | Snyk: apply fixes |
+| snyk-code | :orange_circle: | Snyk: scan code |
+| trivy-image | :orange_circle: | Trivy: scan container image |
+| trivy-filesystem | :orange_circle: | Trivy: scan filesystem |
+| trivy-repo | :orange_circle: | Trivy: scan repository |
+| trivy-sbom | :orange_circle: | Trivy: generate SBOM |
+| grype-scan | :orange_circle: | Grype: scan for vulnerabilities |
+| grype-db-update | :orange_circle: | Grype: update database |
+| grype-db-status | :orange_circle: | Grype: database status |
+| grype-config | :orange_circle: | Grype: show configuration |
+| syft-scan | :orange_circle: | Syft: scan for packages |
+| syft-packages | :orange_circle: | Syft: list packages |
+| syft-cataloger | :orange_circle: | Syft: list catalogers |
+| syft-convert | :orange_circle: | Syft: convert SBOM format |
+
 ### Round 351 — ArgoCD ext, FluxCD ext, Tekton ext, Spinnaker ext, Jenkins ext
 
 | Feature | Status | Notes |

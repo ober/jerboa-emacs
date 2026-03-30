@@ -26324,3 +26324,49 @@
 (def (cmd-tekton-tasks app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tekton: listing tasks")))
+
+;;; Round 352 — Sonarqube ext, Snyk ext, Trivy ext, Grype ext, Syft ext (batch 1)
+
+(def (cmd-sonarqube-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: running analysis")))
+
+(def (cmd-sonarqube-quality-gate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: checking quality gate")))
+
+(def (cmd-sonarqube-issues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: listing issues")))
+
+(def (cmd-sonarqube-measures app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: showing project measures")))
+
+(def (cmd-snyk-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: testing for vulnerabilities")))
+
+(def (cmd-snyk-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: monitoring project")))
+
+(def (cmd-snyk-fix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: applying fixes")))
+
+(def (cmd-snyk-code app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: scanning code for issues")))
+
+(def (cmd-trivy-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Trivy scan image: "
+      (lambda (img)
+        (echo-message! echo (str "Trivy: scanning image " img))))))
+
+(def (cmd-trivy-filesystem app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Trivy scan path: "
+      (lambda (path)
+        (echo-message! echo (str "Trivy: scanning filesystem " path))))))
