@@ -4583,6 +4583,256 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 530 — Consul KV ext, FoundationDB, CockroachDB, YugabyteDB
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `consul-kv-delete` | :orange_circle: Scaffolded | Consul KV: delete key |
+| `consul-kv-export` | :orange_circle: Scaffolded | Consul KV: export |
+| `consul-kv-import` | :orange_circle: Scaffolded | Consul KV: import |
+| `consul-kv-tree` | :orange_circle: Scaffolded | Consul KV: tree view |
+| `consul-kv-lock` | :orange_circle: Scaffolded | Consul KV: lock |
+| `foundationdb-status` | :orange_circle: Scaffolded | FoundationDB: status |
+| `foundationdb-backup` | :orange_circle: Scaffolded | FoundationDB: backup |
+| `foundationdb-restore` | :orange_circle: Scaffolded | FoundationDB: restore |
+| `foundationdb-configure` | :orange_circle: Scaffolded | FoundationDB: configure |
+| `foundationdb-exclude` | :orange_circle: Scaffolded | FoundationDB: exclude server |
+| `cockroachdb-sql` | :orange_circle: Scaffolded | CockroachDB: SQL shell |
+| `cockroachdb-init` | :orange_circle: Scaffolded | CockroachDB: initialize |
+| `cockroachdb-start` | :orange_circle: Scaffolded | CockroachDB: start node |
+| `cockroachdb-cert` | :orange_circle: Scaffolded | CockroachDB: certificates |
+| `cockroachdb-dump` | :orange_circle: Scaffolded | CockroachDB: dump data |
+| `yugabytedb-sql` | :orange_circle: Scaffolded | YugabyteDB: SQL shell |
+| `yugabytedb-admin` | :orange_circle: Scaffolded | YugabyteDB: admin |
+| `yugabytedb-backup` | :orange_circle: Scaffolded | YugabyteDB: backup |
+| `yugabytedb-restore` | :orange_circle: Scaffolded | YugabyteDB: restore |
+| `yugabytedb-master` | :orange_circle: Scaffolded | YugabyteDB: master |
+
+### Round 529 — Meilisearch, Typesense, Zincsearch, etcd ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `meilisearch-index` | :orange_circle: Scaffolded | Meilisearch: index management |
+| `meilisearch-search` | :orange_circle: Scaffolded | Meilisearch: search |
+| `meilisearch-task` | :orange_circle: Scaffolded | Meilisearch: tasks |
+| `meilisearch-key` | :orange_circle: Scaffolded | Meilisearch: API keys |
+| `meilisearch-dump` | :orange_circle: Scaffolded | Meilisearch: dump |
+| `typesense-collection` | :orange_circle: Scaffolded | Typesense: collection |
+| `typesense-document` | :orange_circle: Scaffolded | Typesense: document |
+| `typesense-search` | :orange_circle: Scaffolded | Typesense: search |
+| `typesense-key` | :orange_circle: Scaffolded | Typesense: API keys |
+| `typesense-alias` | :orange_circle: Scaffolded | Typesense: alias |
+| `zincsearch-index` | :orange_circle: Scaffolded | Zincsearch: index |
+| `zincsearch-search` | :orange_circle: Scaffolded | Zincsearch: search |
+| `zincsearch-template` | :orange_circle: Scaffolded | Zincsearch: template |
+| `zincsearch-user` | :orange_circle: Scaffolded | Zincsearch: user |
+| `zincsearch-bulk` | :orange_circle: Scaffolded | Zincsearch: bulk ingest |
+| `etcd-watch` | :orange_circle: Scaffolded | etcd: watch keys |
+| `etcd-lease` | :orange_circle: Scaffolded | etcd: lease management |
+| `etcd-member` | :orange_circle: Scaffolded | etcd: member management |
+| `etcd-snapshot` | :orange_circle: Scaffolded | etcd: snapshot |
+| `etcd-defrag` | :orange_circle: Scaffolded | etcd: defragment |
+
+### Round 528 — VictoriaMetrics ext, ClickHouse ext, Elasticsearch ext, OpenSearch
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `victoriametrics-import` | :orange_circle: Scaffolded | VictoriaMetrics: import data |
+| `victoriametrics-export` | :orange_circle: Scaffolded | VictoriaMetrics: export data |
+| `victoriametrics-snapshot` | :orange_circle: Scaffolded | VictoriaMetrics: snapshot |
+| `victoriametrics-rules` | :orange_circle: Scaffolded | VictoriaMetrics: recording rules |
+| `victoriametrics-targets` | :orange_circle: Scaffolded | VictoriaMetrics: targets |
+| `clickhouse-import` | :orange_circle: Scaffolded | ClickHouse: import data |
+| `clickhouse-export` | :orange_circle: Scaffolded | ClickHouse: export data |
+| `clickhouse-optimize` | :orange_circle: Scaffolded | ClickHouse: optimize table |
+| `clickhouse-mutation` | :orange_circle: Scaffolded | ClickHouse: mutation |
+| `clickhouse-system` | :orange_circle: Scaffolded | ClickHouse: system queries |
+| `elasticsearch-bulk` | :orange_circle: Scaffolded | Elasticsearch: bulk API |
+| `elasticsearch-snapshot` | :orange_circle: Scaffolded | Elasticsearch: snapshot |
+| `elasticsearch-alias` | :orange_circle: Scaffolded | Elasticsearch: alias |
+| `elasticsearch-template` | :orange_circle: Scaffolded | Elasticsearch: template |
+| `elasticsearch-reindex` | :orange_circle: Scaffolded | Elasticsearch: reindex |
+| `opensearch-query` | :orange_circle: Scaffolded | OpenSearch: query |
+| `opensearch-index` | :orange_circle: Scaffolded | OpenSearch: index |
+| `opensearch-snapshot` | :orange_circle: Scaffolded | OpenSearch: snapshot |
+| `opensearch-alias` | :orange_circle: Scaffolded | OpenSearch: alias |
+| `opensearch-template` | :orange_circle: Scaffolded | OpenSearch: template |
+
+### Round 527 — TigerGraph, InfluxDB ext, TimescaleDB, QuestDB
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `tigergraph-query` | :orange_circle: Scaffolded | TigerGraph: GSQL query |
+| `tigergraph-load` | :orange_circle: Scaffolded | TigerGraph: load data |
+| `tigergraph-schema` | :orange_circle: Scaffolded | TigerGraph: schema |
+| `tigergraph-backup` | :orange_circle: Scaffolded | TigerGraph: backup |
+| `tigergraph-rest` | :orange_circle: Scaffolded | TigerGraph: REST API |
+| `influxdb-bucket` | :orange_circle: Scaffolded | InfluxDB: bucket management |
+| `influxdb-task` | :orange_circle: Scaffolded | InfluxDB: tasks |
+| `influxdb-backup` | :orange_circle: Scaffolded | InfluxDB: backup |
+| `influxdb-org` | :orange_circle: Scaffolded | InfluxDB: organization |
+| `influxdb-token` | :orange_circle: Scaffolded | InfluxDB: token management |
+| `timescaledb-hypertable` | :orange_circle: Scaffolded | TimescaleDB: hypertable |
+| `timescaledb-chunk` | :orange_circle: Scaffolded | TimescaleDB: chunk management |
+| `timescaledb-policy` | :orange_circle: Scaffolded | TimescaleDB: retention policy |
+| `timescaledb-compress` | :orange_circle: Scaffolded | TimescaleDB: compression |
+| `timescaledb-cagg` | :orange_circle: Scaffolded | TimescaleDB: continuous aggregate |
+| `questdb-query` | :orange_circle: Scaffolded | QuestDB: SQL query |
+| `questdb-import` | :orange_circle: Scaffolded | QuestDB: import data |
+| `questdb-export` | :orange_circle: Scaffolded | QuestDB: export data |
+| `questdb-status` | :orange_circle: Scaffolded | QuestDB: server status |
+| `questdb-config` | :orange_circle: Scaffolded | QuestDB: configuration |
+
+### Round 526 — Neo4j ext, Dgraph, ArangoDB, JanusGraph
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `neo4j-import` | :orange_circle: Scaffolded | Neo4j: import data |
+| `neo4j-backup` | :orange_circle: Scaffolded | Neo4j: backup database |
+| `neo4j-admin` | :orange_circle: Scaffolded | Neo4j: admin console |
+| `neo4j-browser` | :orange_circle: Scaffolded | Neo4j: browser |
+| `neo4j-cypher` | :orange_circle: Scaffolded | Neo4j: Cypher shell |
+| `dgraph-query` | :orange_circle: Scaffolded | Dgraph: query |
+| `dgraph-mutation` | :orange_circle: Scaffolded | Dgraph: mutation |
+| `dgraph-schema` | :orange_circle: Scaffolded | Dgraph: schema |
+| `dgraph-backup` | :orange_circle: Scaffolded | Dgraph: backup |
+| `dgraph-export` | :orange_circle: Scaffolded | Dgraph: export |
+| `arangodb-query` | :orange_circle: Scaffolded | ArangoDB: AQL query |
+| `arangodb-import` | :orange_circle: Scaffolded | ArangoDB: import data |
+| `arangodb-backup` | :orange_circle: Scaffolded | ArangoDB: backup |
+| `arangodb-restore` | :orange_circle: Scaffolded | ArangoDB: restore |
+| `arangodb-dump` | :orange_circle: Scaffolded | ArangoDB: dump |
+| `janusgraph-query` | :orange_circle: Scaffolded | JanusGraph: Gremlin query |
+| `janusgraph-schema` | :orange_circle: Scaffolded | JanusGraph: schema |
+| `janusgraph-index` | :orange_circle: Scaffolded | JanusGraph: index |
+| `janusgraph-config` | :orange_circle: Scaffolded | JanusGraph: config |
+| `janusgraph-server` | :orange_circle: Scaffolded | JanusGraph: server |
+
+### Round 525 — Kafka ext, NATS ext, Pulsar, ZeroMQ
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `kafka-topic` | :orange_circle: Scaffolded | Kafka: topic management |
+| `kafka-consumer` | :orange_circle: Scaffolded | Kafka: consumer |
+| `kafka-producer` | :orange_circle: Scaffolded | Kafka: producer |
+| `kafka-group` | :orange_circle: Scaffolded | Kafka: consumer group |
+| `kafka-offset` | :orange_circle: Scaffolded | Kafka: offset management |
+| `nats-account` | :orange_circle: Scaffolded | NATS: account management |
+| `nats-context` | :orange_circle: Scaffolded | NATS: context |
+| `nats-leafnode` | :orange_circle: Scaffolded | NATS: leaf node |
+| `nats-kv` | :orange_circle: Scaffolded | NATS: key-value store |
+| `nats-object` | :orange_circle: Scaffolded | NATS: object store |
+| `pulsar-topic` | :orange_circle: Scaffolded | Pulsar: topic management |
+| `pulsar-subscription` | :orange_circle: Scaffolded | Pulsar: subscription |
+| `pulsar-namespace` | :orange_circle: Scaffolded | Pulsar: namespace |
+| `pulsar-tenant` | :orange_circle: Scaffolded | Pulsar: tenant |
+| `pulsar-function` | :orange_circle: Scaffolded | Pulsar: function |
+| `zeromq-pub` | :orange_circle: Scaffolded | ZeroMQ: publisher |
+| `zeromq-sub` | :orange_circle: Scaffolded | ZeroMQ: subscriber |
+| `zeromq-push` | :orange_circle: Scaffolded | ZeroMQ: push socket |
+| `zeromq-pull` | :orange_circle: Scaffolded | ZeroMQ: pull socket |
+| `zeromq-router` | :orange_circle: Scaffolded | ZeroMQ: router socket |
+
+### Round 524 — MongoDB ext, Redis CLI, Memcached ext, RabbitMQ ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mongodb-query` | :orange_circle: Scaffolded | MongoDB: query |
+| `mongodb-index` | :orange_circle: Scaffolded | MongoDB: index management |
+| `mongodb-backup` | :orange_circle: Scaffolded | MongoDB: backup |
+| `mongodb-restore` | :orange_circle: Scaffolded | MongoDB: restore |
+| `mongodb-explain` | :orange_circle: Scaffolded | MongoDB: explain query |
+| `redis-cli-get` | :orange_circle: Scaffolded | Redis CLI: get key |
+| `redis-cli-set` | :orange_circle: Scaffolded | Redis CLI: set key |
+| `redis-cli-info` | :orange_circle: Scaffolded | Redis CLI: server info |
+| `redis-cli-monitor` | :orange_circle: Scaffolded | Redis CLI: monitor |
+| `redis-cli-cluster` | :orange_circle: Scaffolded | Redis CLI: cluster |
+| `memcached-config` | :orange_circle: Scaffolded | Memcached: configuration |
+| `memcached-slab` | :orange_circle: Scaffolded | Memcached: slab stats |
+| `memcached-item` | :orange_circle: Scaffolded | Memcached: item stats |
+| `memcached-conn` | :orange_circle: Scaffolded | Memcached: connections |
+| `memcached-thread` | :orange_circle: Scaffolded | Memcached: thread stats |
+| `rabbitmq-queue` | :orange_circle: Scaffolded | RabbitMQ: queue management |
+| `rabbitmq-exchange` | :orange_circle: Scaffolded | RabbitMQ: exchange |
+| `rabbitmq-binding` | :orange_circle: Scaffolded | RabbitMQ: binding |
+| `rabbitmq-user` | :orange_circle: Scaffolded | RabbitMQ: user management |
+| `rabbitmq-vhost` | :orange_circle: Scaffolded | RabbitMQ: vhost |
+
+### Round 523 — Kubeflow, BentoML, PostgreSQL ext, MySQL ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `kubeflow-pipeline` | :orange_circle: Scaffolded | Kubeflow: pipeline |
+| `kubeflow-experiment` | :orange_circle: Scaffolded | Kubeflow: experiment |
+| `kubeflow-notebook` | :orange_circle: Scaffolded | Kubeflow: notebook |
+| `kubeflow-serving` | :orange_circle: Scaffolded | Kubeflow: serving |
+| `kubeflow-katib` | :orange_circle: Scaffolded | Kubeflow: Katib tuning |
+| `bentoml-build` | :orange_circle: Scaffolded | BentoML: build bento |
+| `bentoml-serve` | :orange_circle: Scaffolded | BentoML: serve model |
+| `bentoml-deploy` | :orange_circle: Scaffolded | BentoML: deploy |
+| `bentoml-model` | :orange_circle: Scaffolded | BentoML: model management |
+| `bentoml-containerize` | :orange_circle: Scaffolded | BentoML: containerize |
+| `postgres-query` | :orange_circle: Scaffolded | PostgreSQL: run query |
+| `postgres-backup` | :orange_circle: Scaffolded | PostgreSQL: backup |
+| `postgres-restore` | :orange_circle: Scaffolded | PostgreSQL: restore |
+| `postgres-vacuum` | :orange_circle: Scaffolded | PostgreSQL: vacuum |
+| `postgres-reindex` | :orange_circle: Scaffolded | PostgreSQL: reindex |
+| `mysql-query` | :orange_circle: Scaffolded | MySQL: run query |
+| `mysql-backup` | :orange_circle: Scaffolded | MySQL: backup |
+| `mysql-restore` | :orange_circle: Scaffolded | MySQL: restore |
+| `mysql-optimize` | :orange_circle: Scaffolded | MySQL: optimize tables |
+| `mysql-repair` | :orange_circle: Scaffolded | MySQL: repair tables |
+
+### Round 522 — ONNX, MLflow ext, W&B ext, DVC ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `onnx-convert` | :orange_circle: Scaffolded | ONNX: convert model |
+| `onnx-validate` | :orange_circle: Scaffolded | ONNX: validate model |
+| `onnx-optimize` | :orange_circle: Scaffolded | ONNX: optimize model |
+| `onnx-infer` | :orange_circle: Scaffolded | ONNX: inference |
+| `onnx-check` | :orange_circle: Scaffolded | ONNX: check model |
+| `mlflow-experiment` | :orange_circle: Scaffolded | MLflow: experiment |
+| `mlflow-model` | :orange_circle: Scaffolded | MLflow: model registry |
+| `mlflow-tracking` | :orange_circle: Scaffolded | MLflow: tracking |
+| `mlflow-register` | :orange_circle: Scaffolded | MLflow: register model |
+| `mlflow-compare` | :orange_circle: Scaffolded | MLflow: compare runs |
+| `wandb-project` | :orange_circle: Scaffolded | W&B: project |
+| `wandb-run` | :orange_circle: Scaffolded | W&B: run |
+| `wandb-table` | :orange_circle: Scaffolded | W&B: table |
+| `wandb-report` | :orange_circle: Scaffolded | W&B: report |
+| `wandb-config` | :orange_circle: Scaffolded | W&B: config |
+| `dvc-remote` | :orange_circle: Scaffolded | DVC: remote management |
+| `dvc-diff` | :orange_circle: Scaffolded | DVC: diff |
+| `dvc-metrics` | :orange_circle: Scaffolded | DVC: metrics |
+| `dvc-plots` | :orange_circle: Scaffolded | DVC: plots |
+| `dvc-params` | :orange_circle: Scaffolded | DVC: parameters |
+
+### Round 521 — PyTorch, TensorFlow, JAX, Keras
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pytorch-train` | :orange_circle: Scaffolded | PyTorch: train model |
+| `pytorch-eval` | :orange_circle: Scaffolded | PyTorch: evaluate model |
+| `pytorch-export` | :orange_circle: Scaffolded | PyTorch: export model |
+| `pytorch-profile` | :orange_circle: Scaffolded | PyTorch: profiler |
+| `pytorch-distributed` | :orange_circle: Scaffolded | PyTorch: distributed training |
+| `tensorflow-train` | :orange_circle: Scaffolded | TensorFlow: train model |
+| `tensorflow-serve` | :orange_circle: Scaffolded | TensorFlow: serve model |
+| `tensorflow-lite` | :orange_circle: Scaffolded | TensorFlow: Lite conversion |
+| `tensorflow-board` | :orange_circle: Scaffolded | TensorFlow: TensorBoard |
+| `tensorflow-saved` | :orange_circle: Scaffolded | TensorFlow: SavedModel |
+| `jax-jit` | :orange_circle: Scaffolded | JAX: JIT compile |
+| `jax-grad` | :orange_circle: Scaffolded | JAX: gradient |
+| `jax-vmap` | :orange_circle: Scaffolded | JAX: vectorize |
+| `jax-pmap` | :orange_circle: Scaffolded | JAX: parallel map |
+| `jax-device` | :orange_circle: Scaffolded | JAX: device management |
+| `keras-model` | :orange_circle: Scaffolded | Keras: model summary |
+| `keras-layer` | :orange_circle: Scaffolded | Keras: layer config |
+| `keras-compile` | :orange_circle: Scaffolded | Keras: compile model |
+| `keras-fit` | :orange_circle: Scaffolded | Keras: fit model |
+| `keras-predict` | :orange_circle: Scaffolded | Keras: predict |
+
 ### Round 520 — Typst, Texinfo, Groff, LilyPond
 
 | Feature | Status | Notes |
