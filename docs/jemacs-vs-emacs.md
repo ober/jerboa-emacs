@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 381 — Upstash ext, Turso ext, Fauna ext, DynamoDB/CosmosDB ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Upstash Redis | — | `upstash-redis` | :orange_circle: Scaffolded |
+| Upstash Kafka | — | `upstash-kafka` | :orange_circle: Scaffolded |
+| Upstash QStash | — | `upstash-qstash` | :orange_circle: Scaffolded |
+| Upstash Vector | — | `upstash-vector` | :orange_circle: Scaffolded |
+| Turso databases | — | `turso-databases` | :orange_circle: Scaffolded |
+| Turso groups | — | `turso-groups` | :orange_circle: Scaffolded |
+| Turso tokens | — | `turso-tokens` | :orange_circle: Scaffolded |
+| Turso replicas | — | `turso-replicas` | :orange_circle: Scaffolded |
+| Fauna databases | — | `fauna-databases` | :orange_circle: Scaffolded |
+| Fauna collections | — | `fauna-collections` | :orange_circle: Scaffolded |
+| Fauna indexes | — | `fauna-indexes` | :orange_circle: Scaffolded |
+| Fauna functions | — | `fauna-functions` | :orange_circle: Scaffolded |
+| DynamoDB tables | — | `dynamo-tables` | :orange_circle: Scaffolded |
+| DynamoDB query | — | `dynamo-query` | :orange_circle: Scaffolded |
+| DynamoDB scan | — | `dynamo-scan` | :orange_circle: Scaffolded |
+| DynamoDB streams | — | `dynamo-streams` | :orange_circle: Scaffolded |
+| CosmosDB databases | — | `cosmos-databases` | :orange_circle: Scaffolded |
+| CosmosDB containers | — | `cosmos-containers` | :orange_circle: Scaffolded |
+| CosmosDB SQL query | — | `cosmos-queries` | :orange_circle: Scaffolded |
+| CosmosDB throughput | — | `cosmos-throughput` | :orange_circle: Scaffolded |
+
 ### Round 380 — Supabase ext, PlanetScale ext, Neon ext, CockroachDB/TiDB ext
 
 | Feature | Emacs | jemacs | Status |

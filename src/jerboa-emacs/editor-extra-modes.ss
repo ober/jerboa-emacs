@@ -27700,3 +27700,44 @@
 (def (cmd-neon-databases app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Neon: listing databases")))
+
+;; Round 381 batch 1 — Upstash ext, Turso ext
+(def (cmd-upstash-redis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: managing Redis database")))
+
+(def (cmd-upstash-kafka app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: managing Kafka cluster")))
+
+(def (cmd-upstash-qstash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: managing QStash messages")))
+
+(def (cmd-upstash-vector app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: managing Vector index")))
+
+(def (cmd-turso-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: listing databases")))
+
+(def (cmd-turso-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: listing groups")))
+
+(def (cmd-turso-tokens app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: managing auth tokens")))
+
+(def (cmd-turso-replicas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: listing replicas")))
+
+(def (cmd-fauna-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fauna: listing databases")))
+
+(def (cmd-fauna-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fauna: listing collections")))

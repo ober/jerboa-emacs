@@ -26919,3 +26919,48 @@
 (def (cmd-tidb-monitoring app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TiDB: showing monitoring dashboard")))
+
+;; Round 381 batch 2 — Fauna ext, DynamoDB/CosmosDB ext
+(def (cmd-fauna-indexes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fauna: listing indexes")))
+
+(def (cmd-fauna-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fauna: listing user-defined functions")))
+
+(def (cmd-dynamo-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: listing tables")))
+
+(def (cmd-dynamo-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Table name: "
+      (lambda (table)
+        (echo-message! echo (str "DynamoDB: querying " table))))))
+
+(def (cmd-dynamo-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: scanning table")))
+
+(def (cmd-dynamo-streams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: listing streams")))
+
+(def (cmd-cosmos-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CosmosDB: listing databases")))
+
+(def (cmd-cosmos-containers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CosmosDB: listing containers")))
+
+(def (cmd-cosmos-queries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SQL query: "
+      (lambda (sql)
+        (echo-message! echo (str "CosmosDB: executing: " sql))))))
+
+(def (cmd-cosmos-throughput app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CosmosDB: showing throughput metrics")))
