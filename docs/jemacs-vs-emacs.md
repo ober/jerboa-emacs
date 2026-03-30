@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 266 — Nim ext, Zig ext, Crystal ext, V lang ext, D lang ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| nim-doc | :orange_circle: | Show Nim symbol documentation |
+| nim-build-doc | :orange_circle: | Build Nim documentation |
+| nim-doc-search | :orange_circle: | Search Nim documentation |
+| zig-fmt | :orange_circle: | Format Zig code |
+| zig-check | :orange_circle: | Check Zig code |
+| zig-doc | :orange_circle: | Generate Zig documentation |
+| zig-clean | :orange_circle: | Clean Zig build artifacts |
+| crystal-build | :orange_circle: | Build Crystal project |
+| crystal-run | :orange_circle: | Run Crystal program |
+| crystal-spec | :orange_circle: | Run Crystal specs |
+| crystal-format | :orange_circle: | Format Crystal code |
+| crystal-tool-format | :orange_circle: | Run Crystal tool format |
+| crystal-playground | :orange_circle: | Open Crystal playground |
+| crystal-doc | :orange_circle: | Generate Crystal documentation |
+| vlang-fmt | :orange_circle: | Format V code |
+| vlang-repl | :orange_circle: | Start V REPL |
+| dlang-build | :orange_circle: | Build D project |
+| dlang-run | :orange_circle: | Run D program |
+| dlang-test | :orange_circle: | Run D tests |
+| dlang-format | :orange_circle: | Format D code |
+
 ### Round 265 — Elixir ext, Erlang ext, OCaml ext, F# ext, Scala ext
 
 | Command | Status | Description |

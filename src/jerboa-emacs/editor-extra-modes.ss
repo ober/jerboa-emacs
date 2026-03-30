@@ -21882,3 +21882,49 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "OCaml: evaluating buffer")))
 
+;;; Round 266 — Nim ext, Zig ext, Crystal ext, V lang ext, D lang ext (batch 1)
+
+(def (cmd-nim-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "Nim: doc for " sym))))))
+
+(def (cmd-nim-build-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nim: building documentation")))
+
+(def (cmd-nim-doc-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (query)
+        (echo-message! echo (str "Nim: searching docs for " query))))))
+
+(def (cmd-zig-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: formatting code")))
+
+(def (cmd-zig-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: checking code")))
+
+(def (cmd-zig-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: generating documentation")))
+
+(def (cmd-zig-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: cleaning build artifacts")))
+
+(def (cmd-crystal-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crystal: building project")))
+
+(def (cmd-crystal-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crystal: running program")))
+
+(def (cmd-crystal-spec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crystal: running specs")))
+

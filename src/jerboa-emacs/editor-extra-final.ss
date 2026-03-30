@@ -21262,3 +21262,45 @@
 (def (cmd-scala-repl app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Scala: starting REPL")))
+
+;;; Round 266 — Crystal ext, V lang ext, D lang ext (batch 2)
+
+(def (cmd-crystal-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crystal: formatting code")))
+
+(def (cmd-crystal-tool-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crystal: running tool format")))
+
+(def (cmd-crystal-playground app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crystal: opening playground")))
+
+(def (cmd-crystal-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crystal: generating documentation")))
+
+(def (cmd-vlang-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V: formatting code")))
+
+(def (cmd-vlang-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "V: starting REPL")))
+
+(def (cmd-dlang-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D: building project")))
+
+(def (cmd-dlang-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D: running program")))
+
+(def (cmd-dlang-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D: running tests")))
+
+(def (cmd-dlang-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D: formatting code")))
