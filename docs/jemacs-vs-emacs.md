@@ -7208,6 +7208,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `hydra-repeat` | :orange_circle: | `hydra-repeat` |
 | `hydra-set-property` | :orange_circle: | `hydra-set-property` |
 | `hydra-idle-message` | :orange_circle: | `hydra-idle-message` |
+
+### Round 801: Eat-eshell ext / Comint ext 3
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `eat-eshell-exec-hook` | :orange_circle: | `eat-eshell-exec-hook` |
+| `eat-eshell-visual-command-mode` | :orange_circle: | `eat-eshell-visual-command-mode` |
+| `eat-eshell-mode-map-toggle` | :orange_circle: | `eat-eshell-mode-map-toggle` |
+| `eat-eshell-history` | :orange_circle: | `eat-eshell-history` |
+| `eat-eshell-prompt-function` | :orange_circle: | `eat-eshell-prompt-set` |
+| `comint-dynamic-list-input-ring` | :orange_circle: | `comint-dynamic-list-input-ring` |
+| `comint-kill-input` | :orange_circle: | `comint-kill-input` |
+| `comint-strip-ctrl-m` | :orange_circle: | `comint-strip-ctrl-m` |
+| `comint-clear-buffer` | :orange_circle: | `comint-clear-buffer-on-next-output` |
+| `comint-password-prompt-regexp` | :orange_circle: | `comint-watch-for-password-prompt-hook` |
+
+### Round 802: Nushell / Xonsh (modern shells)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `nushell-mode` | :orange_circle: | `nushell-mode` |
+| `nushell-send-command` | :orange_circle: | `nushell-send-command` |
+| `nushell-send-region` | :orange_circle: | `nushell-send-region` |
+| `nushell-describe-type` | :orange_circle: | `nushell-describe-type` |
+| `nushell-list-commands` | :orange_circle: | `nushell-list-commands` |
+| `xonsh-mode` | :orange_circle: | `xonsh-mode` |
+| `xonsh-send-command` | :orange_circle: | `xonsh-send-command` |
+| `xonsh-send-region` | :orange_circle: | `xonsh-send-region` |
+| `xonsh-show-history` | :orange_circle: | `xonsh-show-history` |
+| `xonsh-toggle-foreign-aliases` | :orange_circle: | `xonsh-toggle-foreign-aliases` |
+
+### Round 803: Ztree / Ranger-mode
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `ztree-diff` | :orange_circle: | `ztree-diff` |
+| `ztree-dir` | :orange_circle: | `ztree-dir` |
+| `ztree-toggle-expand-subtree` | :orange_circle: | `ztree-toggle-expand` |
+| `ztree-refresh-buffer` | :orange_circle: | `ztree-refresh` |
+| `ztree-diff-partial-rescan` | :orange_circle: | `ztree-hard-diff` |
+| `ranger` | :orange_circle: | `ranger-mode` |
+| `ranger-close` | :orange_circle: | `ranger-close` |
+| `ranger-toggle-dotfiles` | :orange_circle: | `ranger-toggle-dotfiles` |
+| `ranger-show-file-details` | :orange_circle: | `ranger-show-file-details` |
+| `ranger-sort-criteria` | :orange_circle: | `ranger-sort-criteria` |
+
+### Round 804: Neotree ext 2 / Treemacs-icons ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `neotree-hidden-file-toggle` | :orange_circle: | `neotree-show-hidden-toggle` |
+| `neotree-select-up-node` | :orange_circle: | `neotree-dir-up` |
+| `neotree-quick-look` | :orange_circle: | `neotree-quick-look` |
+| `neotree-select-window` | :orange_circle: | `neotree-select-window` |
+| `neotree-copy-filepath-to-yank-ring` | :orange_circle: | `neotree-copy-filepath` |
+| `treemacs-icons-dired-mode` | :orange_circle: | `treemacs-icons-dired-enable` |
+| `treemacs-icons-custom-display` | :orange_circle: | `treemacs-icons-display-custom` |
+| `treemacs-icons-user-theme` | :orange_circle: | `treemacs-icons-user-theme` |
+| `treemacs-icons-color` | :orange_circle: | `treemacs-icons-color` |
+| `treemacs-icons-refresh` | :orange_circle: | `treemacs-icons-refresh` |
+
+### Round 805: Ediff ext 2 / Emerge ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `ediff-copy-both-to-C` | :orange_circle: | `ediff-copy-both-to-C` |
+| `ediff-revert-buffers-then-recompute-diffs` | :orange_circle: | `ediff-revert-buffers` |
+| `ediff-toggle-help` | :orange_circle: | `ediff-prefer-long-help` |
+| `ediff-make-fine-diffs` | :orange_circle: | `ediff-fine-diff` |
+| `ediff-combine-diffs` | :orange_circle: | `ediff-combine-diffs` |
+| `emerge-files-with-ancestor-command` | :orange_circle: | `emerge-revision` |
+| `emerge-quit` | :orange_circle: | `emerge-quit` |
+| `emerge-select-A` | :orange_circle: | `emerge-select-a` |
+| `emerge-select-B` | :orange_circle: | `emerge-select-b` |
+| `emerge-keep-both` | :orange_circle: | `emerge-keep-both` |
+
+### Round 806: Magit-todos ext 2 / Git-messenger ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `magit-todos-list` | :orange_circle: | `magit-todos-list-internal` |
+| `magit-todos-jump-to-item` | :orange_circle: | `magit-todos-jump-to-item` |
+| `magit-todos-mode` (toggle) | :orange_circle: | `magit-todos-mode-toggle` |
+| `magit-todos-branch-list` | :orange_circle: | `magit-todos-branch-list` |
+| `magit-todos-section-toggle` | :orange_circle: | `magit-todos-section-toggle` |
+| `git-messenger:copy-message` | :orange_circle: | `git-messenger-copy-message` |
+| `git-messenger:copy-commit-id` | :orange_circle: | `git-messenger-copy-commit-id` |
+| `git-messenger:popup-show-with-magit` | :orange_circle: | `git-messenger-show-with-magit` |
+| `git-messenger:show-parent` | :orange_circle: | `git-messenger-show-parent` |
+| `git-messenger:popup-diff` | :orange_circle: | `git-messenger-toggle-diff` |
+
+### Round 807: SMerge ext 2 / Ediff-trees
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `smerge-keep-upper` | :orange_circle: | `smerge-keep-upper` |
+| `smerge-keep-lower` | :orange_circle: | `smerge-keep-lower` |
+| `smerge-keep-current` | :orange_circle: | `smerge-keep-current` |
+| `smerge-swap` | :orange_circle: | `smerge-swap` |
+| `smerge-diff-base-mine` | :orange_circle: | `smerge-diff-base-mine` |
+| `ediff-directories` | :orange_circle: | `ediff-trees` |
+| `ediff-directories-recursively` | :orange_circle: | `ediff-trees-recursive` |
+| `ediff-directories-ignore` | :orange_circle: | `ediff-trees-ignore-pattern` |
+| `ediff-trees-report` | :orange_circle: | `ediff-trees-report` |
+| `ediff-trees-sync` | :orange_circle: | `ediff-trees-sync` |
+
+### Round 808: Blamer ext 2 / Git-timemachine ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `blamer-show-commit-info` (toggle) | :orange_circle: | `blamer-toggle-show` |
+| `blamer-copy-commit-hash` | :orange_circle: | `blamer-copy-hash` |
+| `blamer-show-posframe-commit-info` | :orange_circle: | `blamer-show-popup` |
+| `blamer-mode-line-display` | :orange_circle: | `blamer-mode-line` |
+| `blamer-pretty-print` | :orange_circle: | `blamer-pretty-show` |
+| `git-timemachine-show-revision-fuzzy` | :orange_circle: | `git-timemachine-show-revision-fuzzy` |
+| `git-timemachine-show-current-revision` | :orange_circle: | `git-timemachine-show-commit` |
+| `git-timemachine-show-nth-revision` | :orange_circle: | `git-timemachine-show-nth-revision` |
+| `git-timemachine-switch-branch` | :orange_circle: | `git-timemachine-switch-branch` |
+| `git-timemachine-quit` | :orange_circle: | `git-timemachine-quit-and-blame` |
+
+### Round 809: Hexl ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `hexl-octal-string` | :orange_circle: | `hexl-octal-string` |
+| `hexl-decimal-string` | :orange_circle: | `hexl-decimal-string` |
+| `hexl-hex-string` | :orange_circle: | `hexl-hex-string` |
+| `hexl-insert-octal-char` | :orange_circle: | `hexl-insert-octal-char` |
+| `hexl-insert-hex-char` | :orange_circle: | `hexl-insert-hex-char` |
+| `hexl-ruler-mode` | :orange_circle: | `hexl-mode-ruler` |
+| `hexl-follow-ascii` | :orange_circle: | `hexl-follow-ascii` |
+| `hexl-bits-mode` | :orange_circle: | `hexl-bits-mode` |
+| `hexl-quoted-insert` | :orange_circle: | `hexl-quoted-insert` |
+| `hexl-set-address` | :orange_circle: | `hexl-set-address` |
+
+### Round 810: Sly-asdf / Sly-quicklisp
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `sly-asdf-load-system` | :orange_circle: | `sly-asdf-load-system` |
+| `sly-asdf-browse-system` | :orange_circle: | `sly-asdf-browse-system` |
+| `sly-asdf-compile-system` | :orange_circle: | `sly-asdf-compile-system` |
+| `sly-asdf-test-system` | :orange_circle: | `sly-asdf-test-system` |
+| `sly-asdf-reload-system` | :orange_circle: | `sly-asdf-reload-system` |
+| `sly-quicklisp-quickload` | :orange_circle: | `sly-quicklisp-install` |
+| `sly-quicklisp-update-dist` | :orange_circle: | `sly-quicklisp-update` |
+| `sly-quicklisp-systems` | :orange_circle: | `sly-quicklisp-list` |
+| `sly-quicklisp-system-apropos` | :orange_circle: | `sly-quicklisp-search` |
+| `sly-quicklisp-uninstall-dist` | :orange_circle: | `sly-quicklisp-uninstall` |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
