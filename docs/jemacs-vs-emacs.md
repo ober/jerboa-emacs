@@ -5108,6 +5108,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `five-by-five` | :orange_circle: Scaffold | 5x5 puzzle game |
 | `five-by-five-crack-mutating` | :orange_circle: Scaffold | 5x5 crack mutating |
 | `five-by-five-crack-xoring` | :orange_circle: Scaffold | 5x5 crack xoring |
+
+### Round 661 — Org Table Extensions
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-table-create-or-convert` | :orange_circle: Scaffold | Create or convert from region |
+| `org-table-export` | :orange_circle: Scaffold | Export table |
+| `org-table-import` | :orange_circle: Scaffold | Import table |
+| `org-table-fedit-abort` | :orange_circle: Scaffold | Formula edit abort |
+| `org-table-fedit-finish` | :orange_circle: Scaffold | Formula edit finish |
+| `org-table-wrap-region` | :orange_circle: Scaffold | Wrap region |
+| `org-table-iterate-buffer` | :orange_circle: Scaffold | Iterate buffer tables |
+| `org-table-edit-formulas` | :orange_circle: Scaffold | Edit formulas |
+| `org-table-insert-hline` | :orange_circle: Scaffold | Insert hline |
+| `org-table-toggle-column-width` | :orange_circle: Scaffold | Toggle column width |
+
+### Round 662 — Tab Bar & Winner
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `tab-new` | :orange_circle: Scaffold | New tab |
+| `tab-close` | :orange_circle: Scaffold | Close tab |
+| `tab-next` | :orange_circle: Scaffold | Next tab |
+| `tab-previous` | :orange_circle: Scaffold | Previous tab |
+| `tab-rename` | :orange_circle: Scaffold | Rename tab |
+| `tab-move` | :orange_circle: Scaffold | Move tab |
+| `tab-undo-close` | :orange_circle: Scaffold | Undo close tab |
+| `winner-mode` | :orange_circle: Scaffold | Toggle winner mode |
+| `winner-save-config` | :orange_circle: Scaffold | Save window config |
+| `winner-restore-config` | :orange_circle: Scaffold | Restore window config |
+
+### Round 663 — Org Publish & Visual Modes
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-publish` | :orange_circle: Scaffold | Publish |
+| `org-publish-current-project` | :orange_circle: Scaffold | Publish current project |
+| `org-indent-item` | :orange_circle: Scaffold | Indent item |
+| `org-indent-item-tree` | :orange_circle: Scaffold | Indent item tree |
+| `org-num-mode` | :orange_circle: Scaffold | Numbering mode |
+| `org-superstar-mode` | :orange_circle: Scaffold | Pretty bullets |
+| `org-appear-mode` | :orange_circle: Scaffold | Auto-unhide markers |
+| `org-modern-mode` | :orange_circle: Scaffold | Modern styling |
+| `org-fragtog-mode` | :orange_circle: Scaffold | Auto LaTeX fragments |
+| `org-variable-pitch-mode` | :orange_circle: Scaffold | Variable pitch |
+
+### Round 664 — Expand Region & Multiple Cursors ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `expand-region` | :orange_circle: Scaffold | Expand region |
+| `er-expand-region` | :orange_circle: Scaffold | Expand (er/) |
+| `er-contract-region` | :orange_circle: Scaffold | Contract region |
+| `er-mark-word` | :orange_circle: Scaffold | Mark word |
+| `er-mark-symbol` | :orange_circle: Scaffold | Mark symbol |
+| `er-mark-inside-pairs` | :orange_circle: Scaffold | Mark inside pairs |
+| `mc-mark-next-like-this` | :orange_circle: Scaffold | MC mark next like this |
+| `mc-mark-previous-like-this` | :orange_circle: Scaffold | MC mark previous like this |
+| `mc-mark-all-like-this` | :orange_circle: Scaffold | MC mark all like this |
+| `mc-edit-lines` | :orange_circle: Scaffold | MC edit lines |
+
+### Round 665 — Smartparens Extensions
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `sp-forward-slurp` | :orange_circle: Scaffold | Forward slurp sexp |
+| `sp-backward-slurp` | :orange_circle: Scaffold | Backward slurp sexp |
+| `sp-forward-barf` | :orange_circle: Scaffold | Forward barf sexp |
+| `sp-backward-barf` | :orange_circle: Scaffold | Backward barf sexp |
+| `sp-splice` | :orange_circle: Scaffold | Splice sexp |
+| `sp-unwrap` | :orange_circle: Scaffold | Unwrap sexp |
+| `sp-rewrap` | :orange_circle: Scaffold | Rewrap sexp |
+| `sp-select-next` | :orange_circle: Scaffold | Select next sexp |
+| `sp-select-previous` | :orange_circle: Scaffold | Select previous sexp |
+| `sp-join` | :orange_circle: Scaffold | Join sexps |
+
+### Round 666 — Helm ext, Orderless & Embark
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `helm-M-x` | :orange_circle: Scaffold | Helm M-x |
+| `helm-mini` | :orange_circle: Scaffold | Helm mini |
+| `helm-resume` | :orange_circle: Scaffold | Helm resume |
+| `helm-show-kill-ring` | :orange_circle: Scaffold | Helm kill ring |
+| `helm-mark-ring` | :orange_circle: Scaffold | Helm mark ring |
+| `helm-all-mark-rings` | :orange_circle: Scaffold | Helm all mark rings |
+| `orderless-mode` | :orange_circle: Scaffold | Orderless mode |
+| `embark-act` | :orange_circle: Scaffold | Embark act |
+| `embark-dwim-action` | :orange_circle: Scaffold | Embark DWIM |
+| `embark-collect-completions` | :orange_circle: Scaffold | Embark collect |
+
+### Round 667 — Ivy, Counsel & Swiper ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ivy-mode` | :orange_circle: Scaffold | Toggle ivy mode |
+| `counsel-M-x` | :orange_circle: Scaffold | Counsel M-x |
+| `counsel-describe-function` | :orange_circle: Scaffold | Describe function |
+| `counsel-describe-variable` | :orange_circle: Scaffold | Describe variable |
+| `swiper-all` | :orange_circle: Scaffold | Search all buffers |
+| `counsel-ag` | :orange_circle: Scaffold | Ag search |
+| `counsel-fzf` | :orange_circle: Scaffold | Fzf find |
+| `counsel-recentf` | :orange_circle: Scaffold | Recent files |
+| `counsel-yank-pop` | :orange_circle: Scaffold | Yank pop |
+| `counsel-bookmark` | :orange_circle: Scaffold | Bookmarks |
+
+### Round 668 — Company, Flyspell, Eglot & Project ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `company-complete` | :orange_circle: Scaffold | Company complete |
+| `company-select-next` | :orange_circle: Scaffold | Select next |
+| `company-select-previous` | :orange_circle: Scaffold | Select previous |
+| `company-abort` | :orange_circle: Scaffold | Abort completion |
+| `company-show-doc` | :orange_circle: Scaffold | Show documentation |
+| `flyspell-buffer` | :orange_circle: Scaffold | Check buffer |
+| `flyspell-auto-correct` | :orange_circle: Scaffold | Auto correct word |
+| `eglot-find-type-definition` | :orange_circle: Scaffold | Find type definition |
+| `project-eshell` | :orange_circle: Scaffold | Project eshell |
+| `project-shell` | :orange_circle: Scaffold | Project shell |
+
+### Round 669 — Perspective & Eyebrowse
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `perspective-mode` | :orange_circle: Scaffold | Toggle mode |
+| `persp-switch` | :orange_circle: Scaffold | Switch perspective |
+| `persp-rename` | :orange_circle: Scaffold | Rename perspective |
+| `persp-add-buffer` | :orange_circle: Scaffold | Add buffer |
+| `persp-remove-buffer` | :orange_circle: Scaffold | Remove buffer |
+| `persp-set-buffer` | :orange_circle: Scaffold | Set buffer |
+| `eyebrowse-switch-config` | :orange_circle: Scaffold | Switch config |
+| `eyebrowse-create-config` | :orange_circle: Scaffold | Create config |
+| `eyebrowse-close-config` | :orange_circle: Scaffold | Close config |
+| `eyebrowse-rename-config` | :orange_circle: Scaffold | Rename config |
+
+### Round 670 — Which-key, Doom UI, Icons & Misc
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `which-key-mode` | :orange_circle: Scaffold | Toggle which-key |
+| `doom-themes-toggle` | :orange_circle: Scaffold | Toggle doom themes |
+| `doom-modeline-toggle` | :orange_circle: Scaffold | Toggle doom modeline |
+| `all-the-icons-install` | :orange_circle: Scaffold | Install icon fonts |
+| `imenu-list-toggle` | :orange_circle: Scaffold | Toggle imenu list |
+| `whitespace-toggle-options` | :orange_circle: Scaffold | Toggle whitespace options |
+| `goto-address-prog` | :orange_circle: Scaffold | Goto address prog mode |
+| `bug-reference-prog` | :orange_circle: Scaffold | Bug reference prog mode |
+| `lsp-restart-workspace` | :orange_circle: Scaffold | LSP restart workspace |
+| `vterm-new-session` | :orange_circle: Scaffold | VTerm new session |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
