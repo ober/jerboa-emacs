@@ -27618,3 +27618,44 @@
 (def (cmd-mailgun-domains app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mailgun: listing domains")))
+
+;; Round 379 batch 1 — Firebase ext, Vercel ext
+(def (cmd-firebase-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: managing auth users")))
+
+(def (cmd-firebase-firestore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: browsing Firestore collections")))
+
+(def (cmd-firebase-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: listing cloud functions")))
+
+(def (cmd-firebase-hosting app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: managing hosting sites")))
+
+(def (cmd-vercel-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: listing domains")))
+
+(def (cmd-vercel-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: managing environment variables")))
+
+(def (cmd-vercel-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: viewing deployment logs")))
+
+(def (cmd-vercel-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: listing projects")))
+
+(def (cmd-netlify-sites app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing sites")))
+
+(def (cmd-netlify-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing functions")))

@@ -26837,3 +26837,44 @@
 (def (cmd-postmark-stats app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Postmark: showing delivery stats")))
+
+;; Round 379 batch 2 — Netlify ext, Cloudflare/Fly.io ext
+(def (cmd-netlify-forms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing form submissions")))
+
+(def (cmd-netlify-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing build plugins")))
+
+(def (cmd-cloudflare-workers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: listing Workers")))
+
+(def (cmd-cloudflare-pages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: listing Pages projects")))
+
+(def (cmd-cloudflare-dns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: managing DNS records")))
+
+(def (cmd-cloudflare-waf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: managing WAF rules")))
+
+(def (cmd-flyio-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: deploying application")))
+
+(def (cmd-flyio-machines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: listing machines")))
+
+(def (cmd-flyio-volumes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: listing volumes")))
+
+(def (cmd-flyio-secrets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: managing secrets")))

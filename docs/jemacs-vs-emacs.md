@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 379 — Firebase ext, Vercel ext, Netlify ext, Cloudflare/Fly.io ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Firebase auth users | — | `firebase-auth` | :orange_circle: Scaffolded |
+| Firebase Firestore | — | `firebase-firestore` | :orange_circle: Scaffolded |
+| Firebase functions | — | `firebase-functions` | :orange_circle: Scaffolded |
+| Firebase hosting | — | `firebase-hosting` | :orange_circle: Scaffolded |
+| Vercel domains | — | `vercel-domains` | :orange_circle: Scaffolded |
+| Vercel env vars | — | `vercel-env` | :orange_circle: Scaffolded |
+| Vercel deploy logs | — | `vercel-logs` | :orange_circle: Scaffolded |
+| Vercel projects | — | `vercel-projects` | :orange_circle: Scaffolded |
+| Netlify sites | — | `netlify-sites` | :orange_circle: Scaffolded |
+| Netlify functions | — | `netlify-functions` | :orange_circle: Scaffolded |
+| Netlify forms | — | `netlify-forms` | :orange_circle: Scaffolded |
+| Netlify plugins | — | `netlify-plugins` | :orange_circle: Scaffolded |
+| Cloudflare Workers | — | `cloudflare-workers` | :orange_circle: Scaffolded |
+| Cloudflare Pages | — | `cloudflare-pages` | :orange_circle: Scaffolded |
+| Cloudflare DNS | — | `cloudflare-dns` | :orange_circle: Scaffolded |
+| Cloudflare WAF | — | `cloudflare-waf` | :orange_circle: Scaffolded |
+| Fly.io deploy | — | `flyio-deploy` | :orange_circle: Scaffolded |
+| Fly.io machines | — | `flyio-machines` | :orange_circle: Scaffolded |
+| Fly.io volumes | — | `flyio-volumes` | :orange_circle: Scaffolded |
+| Fly.io secrets | — | `flyio-secrets` | :orange_circle: Scaffolded |
+
 ### Round 378 — Twilio ext, SendGrid ext, Mailgun ext, SES/Postmark ext
 
 | Feature | Emacs | jemacs | Status |
