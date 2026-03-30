@@ -23770,3 +23770,63 @@
 (def (cmd-mpstat-per-cpu app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mpstat: showing per-CPU statistics")))
+
+;;; Round 316 — Sdparm ext, Nvme ext, Fio ext (batch 2)
+
+(def (cmd-sdparm-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Parameter=value device: "
+      (lambda (spec)
+        (echo-message! echo (str "Sdparm: setting " spec))))))
+
+(def (cmd-sdparm-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Parameter device: "
+      (lambda (spec)
+        (echo-message! echo (str "Sdparm: getting " spec))))))
+
+(def (cmd-nvme-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NVMe: listing devices")))
+
+(def (cmd-nvme-smart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "NVMe: SMART log for " dev))))))
+
+(def (cmd-nvme-identify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "NVMe: identifying " dev))))))
+
+(def (cmd-nvme-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "NVMe: formatting " dev))))))
+
+(def (cmd-fio-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Job file: "
+      (lambda (job)
+        (echo-message! echo (str "Fio: running " job))))))
+
+(def (cmd-fio-parse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Fio: parsing " file))))))
+
+(def (cmd-fio-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Workload type: "
+      (lambda (wl)
+        (echo-message! echo (str "Fio: generating job for " wl))))))
+
+(def (cmd-fio-compare app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Result files: "
+      (lambda (files)
+        (echo-message! echo (str "Fio: comparing " files))))))

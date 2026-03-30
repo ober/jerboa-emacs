@@ -24480,3 +24480,63 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Sar: showing memory usage")))
 
+;;; Round 316 — Smartctl ext, Hdparm ext, Sdparm ext, Nvme ext, Fio ext (batch 1)
+
+(def (cmd-smartctl-attributes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: showing attributes for " dev))))))
+
+(def (cmd-smartctl-capabilities app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: showing capabilities for " dev))))))
+
+(def (cmd-smartctl-error-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: showing error log for " dev))))))
+
+(def (cmd-smartctl-selftest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "SMART: running self-test on " dev))))))
+
+(def (cmd-hdparm-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: showing settings for " dev))))))
+
+(def (cmd-hdparm-security app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: showing security for " dev))))))
+
+(def (cmd-hdparm-acoustic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: acoustic management for " dev))))))
+
+(def (cmd-hdparm-readonly app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Hdparm: toggling read-only for " dev))))))
+
+(def (cmd-sdparm-inquiry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Sdparm: inquiry for " dev))))))
+
+(def (cmd-sdparm-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sdparm: listing parameters")))
+

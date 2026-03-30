@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 316 — Smartctl ext, Hdparm ext, Sdparm ext, Nvme ext, Fio ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `smartctl-attributes` | :orange_circle: | Show SMART attributes |
+| `smartctl-capabilities` | :orange_circle: | Show SMART capabilities |
+| `smartctl-error-log` | :orange_circle: | Show SMART error log |
+| `smartctl-selftest` | :orange_circle: | Run SMART self-test |
+| `hdparm-settings` | :orange_circle: | Show drive settings |
+| `hdparm-security` | :orange_circle: | Show drive security |
+| `hdparm-acoustic` | :orange_circle: | Acoustic management |
+| `hdparm-readonly` | :orange_circle: | Toggle read-only mode |
+| `sdparm-inquiry` | :orange_circle: | SCSI device inquiry |
+| `sdparm-list` | :orange_circle: | List SCSI parameters |
+| `sdparm-set` | :orange_circle: | Set SCSI parameter |
+| `sdparm-get` | :orange_circle: | Get SCSI parameter |
+| `nvme-list` | :orange_circle: | List NVMe devices |
+| `nvme-smart` | :orange_circle: | Show NVMe SMART log |
+| `nvme-identify` | :orange_circle: | Identify NVMe device |
+| `nvme-format` | :orange_circle: | Format NVMe device |
+| `fio-run` | :orange_circle: | Run fio benchmark |
+| `fio-parse` | :orange_circle: | Parse fio output |
+| `fio-generate` | :orange_circle: | Generate fio job file |
+| `fio-compare` | :orange_circle: | Compare fio results |
+
 ### Round 315 — Sysstat ext, Iostat ext, Sar ext, Pidstat ext, Mpstat ext
 
 | Feature | Status | Notes |
