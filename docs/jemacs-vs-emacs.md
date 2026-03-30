@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 250 — Treesitter ext, Native-compile, Eglot ext, JSONRPC
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| treesit-font-lock-recompute-features | :orange_circle: | Recompute treesit font-lock features |
+| native-comp-speed-set | :orange_circle: | Set native compilation speed |
+| package-recompile-all | :orange_circle: | Recompile all packages |
+| package-isolate | :orange_circle: | Isolate a package for testing |
+| loaddefs-generate | :orange_circle: | Generate autoload definitions |
+| batch-native-compile | :orange_circle: | Batch native compile files |
+| restart-emacs-start-new-emacs | :orange_circle: | Restart in new Emacs instance |
+| multisession-edit-value | :orange_circle: | Edit multisession variable |
+| multisession-delete | :orange_circle: | Delete multisession variable |
+| connection-local-set-profile-variables | :orange_circle: | Set connection-local profile vars |
+| hack-connection-local-variables | :orange_circle: | Apply connection-local variables |
+| jsonrpc-request | :orange_circle: | Send JSONRPC request |
+| jsonrpc-notify | :orange_circle: | Send JSONRPC notification |
+| jsonrpc-shutdown | :orange_circle: | Shutdown JSONRPC connection |
+| eglot-list-connections | :orange_circle: | List active Eglot connections |
+| eglot-forget-pending-continuations | :orange_circle: | Forget pending continuations |
+| eglot-signal-didClose | :orange_circle: | Signal didClose to server |
+| eglot-signal-didChangeWatchedFiles | :orange_circle: | Signal watched files changed |
+| eglot-reconnect-all | :orange_circle: | Reconnect all Eglot servers |
+| eglot-boosts-enable | :orange_circle: | Toggle Eglot boosts |
+
 ### Round 249 — CUA ext, Password-store, EPA
 
 | Command | Status | Description |

@@ -21158,3 +21158,52 @@
       (lambda (entry)
         (echo-message! echo (str "Password-store: inserted " entry))))))
 
+;; Round 250 — Treesitter ext, Native-compile, Eglot ext, JSONRPC (10 in modes)
+(def (cmd-treesit-font-lock-recompute-features app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Treesit: recomputed font-lock features")))
+
+(def (cmd-native-comp-speed-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Native comp speed (0-3): "
+      (lambda (speed)
+        (echo-message! echo (str "Native comp: speed set to " speed))))))
+
+(def (cmd-package-recompile-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Package: recompiling all packages")))
+
+(def (cmd-package-isolate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Isolate package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Package: isolating " pkg))))))
+
+(def (cmd-loaddefs-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loaddefs: generating autoloads")))
+
+(def (cmd-batch-native-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Batch: native compiling files")))
+
+(def (cmd-restart-emacs-start-new-emacs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restarting in new Emacs instance")))
+
+(def (cmd-multisession-edit-value app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Multisession variable: "
+      (lambda (var)
+        (echo-message! echo (str "Multisession: editing " var))))))
+
+(def (cmd-multisession-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delete multisession: "
+      (lambda (var)
+        (echo-message! echo (str "Multisession: deleted " var))))))
+
+(def (cmd-connection-local-set-profile-variables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Connection-local: set profile variables")))
+

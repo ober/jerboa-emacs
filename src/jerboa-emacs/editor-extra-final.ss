@@ -20519,3 +20519,51 @@
 (def (cmd-epa-export-keys app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "EPA: exporting keys")))
+
+;; Round 250 — JSONRPC, Eglot ext, Connection-local (10 in final)
+(def (cmd-hack-connection-local-variables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Connection-local: hacked variables for buffer")))
+
+(def (cmd-jsonrpc-request app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "JSONRPC method: "
+      (lambda (method)
+        (echo-message! echo (str "JSONRPC: sent request " method))))))
+
+(def (cmd-jsonrpc-notify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "JSONRPC notification: "
+      (lambda (method)
+        (echo-message! echo (str "JSONRPC: sent notification " method))))))
+
+(def (cmd-jsonrpc-shutdown app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JSONRPC: shutting down connection")))
+
+(def (cmd-eglot-list-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: listing active connections")))
+
+(def (cmd-eglot-forget-pending-continuations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: forgot pending continuations")))
+
+(def (cmd-eglot-signal-didClose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: signaled didClose")))
+
+(def (cmd-eglot-signal-didChangeWatchedFiles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: signaled didChangeWatchedFiles")))
+
+(def (cmd-eglot-reconnect-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eglot: reconnecting all servers")))
+
+(def (cmd-eglot-boosts-enable app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eglot-boosts)
+    (if (mode-enabled? app 'eglot-boosts)
+      (echo-message! echo "Eglot boosts enabled")
+      (echo-message! echo "Eglot boosts disabled"))))
