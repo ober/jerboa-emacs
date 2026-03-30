@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 284 — LVM ext, ZFS ext, Btrfs ext, MDADM ext, LUKS ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| lvm-list | :orange_circle: | List LVM volumes |
+| lvm-create | :orange_circle: | Create LVM volume |
+| lvm-extend | :orange_circle: | Extend LVM volume |
+| lvm-reduce | :orange_circle: | Reduce LVM volume |
+| zfs-list | :orange_circle: | List ZFS datasets |
+| zfs-create | :orange_circle: | Create ZFS dataset |
+| zfs-snapshot | :orange_circle: | Create ZFS snapshot |
+| zfs-destroy | :orange_circle: | Destroy ZFS dataset |
+| btrfs-list | :orange_circle: | List Btrfs subvolumes |
+| btrfs-snapshot | :orange_circle: | Create Btrfs snapshot |
+| btrfs-balance | :orange_circle: | Start Btrfs balance |
+| btrfs-scrub | :orange_circle: | Start Btrfs scrub |
+| mdadm-status | :orange_circle: | Show RAID array status |
+| mdadm-create | :orange_circle: | Create RAID array |
+| mdadm-add | :orange_circle: | Add device to array |
+| mdadm-remove | :orange_circle: | Remove device from array |
+| luks-open | :orange_circle: | Open LUKS volume |
+| luks-close | :orange_circle: | Close LUKS volume |
+| luks-status | :orange_circle: | Show LUKS status |
+| luks-format | :orange_circle: | Format LUKS device |
+
 ### Round 283 — SELinux ext, AppArmor ext, Firewalld ext, Nftables ext, Iptables ext
 
 | Command | Status | Description |

@@ -22728,3 +22728,59 @@
       (lambda (rule)
         (echo-message! echo (str "Firewalld: adding rule " rule))))))
 
+;;; Round 284 — LVM ext, ZFS ext, Btrfs ext (batch 1)
+
+(def (cmd-lvm-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LVM: listing volumes")))
+
+(def (cmd-lvm-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Volume name: "
+      (lambda (name)
+        (echo-message! echo (str "LVM: creating " name))))))
+
+(def (cmd-lvm-extend app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Volume: "
+      (lambda (vol)
+        (echo-message! echo (str "LVM: extending " vol))))))
+
+(def (cmd-lvm-reduce app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Volume: "
+      (lambda (vol)
+        (echo-message! echo (str "LVM: reducing " vol))))))
+
+(def (cmd-zfs-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ZFS: listing datasets")))
+
+(def (cmd-zfs-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dataset name: "
+      (lambda (name)
+        (echo-message! echo (str "ZFS: creating " name))))))
+
+(def (cmd-zfs-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dataset@snap: "
+      (lambda (snap)
+        (echo-message! echo (str "ZFS: snapshot " snap))))))
+
+(def (cmd-zfs-destroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dataset: "
+      (lambda (ds)
+        (echo-message! echo (str "ZFS: destroying " ds))))))
+
+(def (cmd-btrfs-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Btrfs: listing subvolumes")))
+
+(def (cmd-btrfs-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subvolume: "
+      (lambda (sub)
+        (echo-message! echo (str "Btrfs: snapshot " sub))))))
+

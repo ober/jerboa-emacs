@@ -22074,3 +22074,57 @@
 (def (cmd-iptables-save app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Iptables: saving rules")))
+
+;;; Round 284 — Btrfs ext, MDADM ext, LUKS ext (batch 2)
+
+(def (cmd-btrfs-balance app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Btrfs: starting balance")))
+
+(def (cmd-btrfs-scrub app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Btrfs: starting scrub")))
+
+(def (cmd-mdadm-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MDADM: showing array status")))
+
+(def (cmd-mdadm-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Array name: "
+      (lambda (name)
+        (echo-message! echo (str "MDADM: creating " name))))))
+
+(def (cmd-mdadm-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "MDADM: adding " dev))))))
+
+(def (cmd-mdadm-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "MDADM: removing " dev))))))
+
+(def (cmd-luks-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "LUKS: opening " dev))))))
+
+(def (cmd-luks-close app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mapping name: "
+      (lambda (name)
+        (echo-message! echo (str "LUKS: closing " name))))))
+
+(def (cmd-luks-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LUKS: showing status")))
+
+(def (cmd-luks-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "LUKS: formatting " dev))))))
