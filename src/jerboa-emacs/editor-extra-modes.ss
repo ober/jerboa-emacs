@@ -29376,3 +29376,213 @@
 (def (cmd-dagger-query app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dagger: GraphQL query")))
+
+;; Round 421 — Mojo ext, Zig ext, Gleam ext, Roc ext (batch 1)
+
+(def (cmd-mojo-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mojo: building project")))
+
+(def (cmd-mojo-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mojo: running program")))
+
+(def (cmd-mojo-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mojo: running tests")))
+
+(def (cmd-mojo-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mojo: generating docs")))
+
+(def (cmd-mojo-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mojo: packaging module")))
+
+(def (cmd-zig-translate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: translating C code")))
+
+(def (cmd-zig-fetch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: fetching dependencies")))
+
+(def (cmd-zig-zen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: zen of Zig")))
+
+(def (cmd-zig-cc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: C compiler mode")))
+
+(def (cmd-zig-ar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zig: archive tool")))
+
+;; Round 422 — Elixir ext, Phoenix ext, Oban ext, LiveView ext (batch 1)
+
+(def (cmd-elixir-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: compiling project")))
+
+(def (cmd-elixir-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: running tests")))
+
+(def (cmd-elixir-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: generating docs")))
+
+(def (cmd-elixir-deps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: managing dependencies")))
+
+(def (cmd-elixir-release app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: building release")))
+
+(def (cmd-phoenix-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Phoenix: creating new project")))
+
+(def (cmd-phoenix-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Phoenix: starting server")))
+
+(def (cmd-phoenix-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Phoenix: listing routes")))
+
+(def (cmd-phoenix-gen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Phoenix: code generator")))
+
+(def (cmd-phoenix-gen-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Phoenix: auth generator")))
+
+;; Round 423 — Deno KV ext, Cloudflare D1 ext, PlanetScale ext, Neon ext (batch 1)
+
+(def (cmd-deno-kv-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno KV: getting value")))
+
+(def (cmd-deno-kv-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno KV: setting value")))
+
+(def (cmd-deno-kv-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno KV: deleting key")))
+
+(def (cmd-deno-kv-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno KV: listing keys")))
+
+(def (cmd-deno-kv-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno KV: watching changes")))
+
+(def (cmd-d1-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D1: creating database")))
+
+(def (cmd-d1-execute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D1: executing query")))
+
+(def (cmd-d1-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D1: exporting data")))
+
+(def (cmd-d1-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D1: importing data")))
+
+(def (cmd-d1-migrations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D1: managing migrations")))
+
+;; Round 424 — Supabase ext, Appwrite ext, Firebase ext, Convex ext (batch 1)
+
+(def (cmd-supabase-db app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: database management")))
+
+(def (cmd-supabase-realtime app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: realtime channels")))
+
+(def (cmd-supabase-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: inspecting database")))
+
+(def (cmd-supabase-seed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: seeding data")))
+
+(def (cmd-supabase-edge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: edge functions")))
+
+(def (cmd-appwrite-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appwrite: database management")))
+
+(def (cmd-appwrite-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appwrite: cloud functions")))
+
+(def (cmd-appwrite-storage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appwrite: file storage")))
+
+(def (cmd-appwrite-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appwrite: user management")))
+
+(def (cmd-appwrite-teams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appwrite: team management")))
+
+;; Round 425 — Temporal ext, Restate ext, Inngest ext, Trigger.dev ext (batch 1)
+
+(def (cmd-temporal-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: searching workflows")))
+
+(def (cmd-temporal-batch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: batch operations")))
+
+(def (cmd-temporal-operator app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: operator commands")))
+
+(def (cmd-temporal-codec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: codec server")))
+
+(def (cmd-temporal-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: resetting workflow")))
+
+(def (cmd-restate-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restate: listing services")))
+
+(def (cmd-restate-invocations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restate: listing invocations")))
+
+(def (cmd-restate-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restate: state management")))
+
+(def (cmd-restate-deployments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restate: deployments")))
+
+(def (cmd-restate-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restate: key management")))

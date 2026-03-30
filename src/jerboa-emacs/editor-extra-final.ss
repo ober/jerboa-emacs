@@ -28590,4 +28590,214 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Argo Events: gateways")))
 
+;; Round 421 — Mojo ext, Zig ext, Gleam ext, Roc ext (batch 2)
+
+(def (cmd-gleam-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: generating docs")))
+
+(def (cmd-gleam-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: publishing package")))
+
+(def (cmd-gleam-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: interactive shell")))
+
+(def (cmd-gleam-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: exporting project")))
+
+(def (cmd-gleam-hex app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: Hex package manager")))
+
+(def (cmd-roc-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Roc: formatting code")))
+
+(def (cmd-roc-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Roc: interactive REPL")))
+
+(def (cmd-roc-glue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Roc: generating glue code")))
+
+(def (cmd-roc-platform app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Roc: platform management")))
+
+(def (cmd-roc-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Roc: development mode")))
+
+;; Round 422 — Elixir ext, Phoenix ext, Oban ext, LiveView ext (batch 2)
+
+(def (cmd-oban-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Oban: job status")))
+
+(def (cmd-oban-pause app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Oban: pausing queues")))
+
+(def (cmd-oban-resume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Oban: resuming queues")))
+
+(def (cmd-oban-drain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Oban: draining queues")))
+
+(def (cmd-oban-retry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Oban: retrying failed jobs")))
+
+(def (cmd-liveview-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiveView: mount lifecycle")))
+
+(def (cmd-liveview-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiveView: event handlers")))
+
+(def (cmd-liveview-components app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiveView: components")))
+
+(def (cmd-liveview-streams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiveView: streams")))
+
+(def (cmd-liveview-uploads app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiveView: file uploads")))
+
+;; Round 423 — Deno KV ext, Cloudflare D1 ext, PlanetScale ext, Neon ext (batch 2)
+
+(def (cmd-planetscale-password app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: password management")))
+
+(def (cmd-planetscale-org app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: organization")))
+
+(def (cmd-planetscale-audit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: audit log")))
+
+(def (cmd-planetscale-promote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: promoting branch")))
+
+(def (cmd-planetscale-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: managing backups")))
+
+(def (cmd-neon-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: listing projects")))
+
+(def (cmd-neon-roles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: role management")))
+
+(def (cmd-neon-compute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: compute endpoints")))
+
+(def (cmd-neon-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: project settings")))
+
+(def (cmd-neon-ip-allow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: IP allowlist")))
+
+;; Round 424 — Supabase ext, Appwrite ext, Firebase ext, Convex ext (batch 2)
+
+(def (cmd-firebase-emulators app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: local emulators")))
+
+(def (cmd-firebase-extensions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: extensions")))
+
+(def (cmd-firebase-crashlytics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: Crashlytics")))
+
+(def (cmd-firebase-perf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: Performance monitoring")))
+
+(def (cmd-firebase-messaging app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: Cloud Messaging")))
+
+(def (cmd-convex-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Convex: development mode")))
+
+(def (cmd-convex-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Convex: deploying functions")))
+
+(def (cmd-convex-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Convex: running function")))
+
+(def (cmd-convex-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Convex: importing data")))
+
+(def (cmd-convex-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Convex: exporting data")))
+
+;; Round 425 — Temporal ext, Restate ext, Inngest ext, Trigger.dev ext (batch 2)
+
+(def (cmd-inngest-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: dev server")))
+
+(def (cmd-inngest-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: deploying functions")))
+
+(def (cmd-inngest-serve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: serving locally")))
+
+(def (cmd-inngest-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: sending event")))
+
+(def (cmd-inngest-replay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: replaying events")))
+
+(def (cmd-triggerdev-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: dev mode")))
+
+(def (cmd-triggerdev-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: deploying tasks")))
+
+(def (cmd-triggerdev-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: listing runs")))
+
+(def (cmd-triggerdev-triggers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: trigger config")))
+
+(def (cmd-triggerdev-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: initializing project")))
+
 ;; Milestone: Round 400 — 9,000+ commands in jemacs!

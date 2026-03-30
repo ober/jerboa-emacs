@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 425 — Temporal ext, Restate ext, Inngest ext, Trigger.dev ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Temporal search | — | `temporal-search` | :orange_circle: Scaffolded |
+| Temporal batch | — | `temporal-batch` | :orange_circle: Scaffolded |
+| Temporal operator | — | `temporal-operator` | :orange_circle: Scaffolded |
+| Temporal codec | — | `temporal-codec` | :orange_circle: Scaffolded |
+| Temporal reset | — | `temporal-reset` | :orange_circle: Scaffolded |
+| Restate services | — | `restate-services` | :orange_circle: Scaffolded |
+| Restate invocations | — | `restate-invocations` | :orange_circle: Scaffolded |
+| Restate state | — | `restate-state` | :orange_circle: Scaffolded |
+| Restate deployments | — | `restate-deployments` | :orange_circle: Scaffolded |
+| Restate keys | — | `restate-keys` | :orange_circle: Scaffolded |
+| Inngest dev | — | `inngest-dev` | :orange_circle: Scaffolded |
+| Inngest deploy | — | `inngest-deploy` | :orange_circle: Scaffolded |
+| Inngest serve | — | `inngest-serve` | :orange_circle: Scaffolded |
+| Inngest send | — | `inngest-send` | :orange_circle: Scaffolded |
+| Inngest replay | — | `inngest-replay` | :orange_circle: Scaffolded |
+| Trigger.dev dev | — | `triggerdev-dev` | :orange_circle: Scaffolded |
+| Trigger.dev deploy | — | `triggerdev-deploy` | :orange_circle: Scaffolded |
+| Trigger.dev runs | — | `triggerdev-runs` | :orange_circle: Scaffolded |
+| Trigger.dev triggers | — | `triggerdev-triggers` | :orange_circle: Scaffolded |
+| Trigger.dev init | — | `triggerdev-init` | :orange_circle: Scaffolded |
+
+### Round 424 — Supabase ext, Appwrite ext, Firebase ext, Convex ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Supabase DB | — | `supabase-db` | :orange_circle: Scaffolded |
+| Supabase realtime | — | `supabase-realtime` | :orange_circle: Scaffolded |
+| Supabase inspect | — | `supabase-inspect` | :orange_circle: Scaffolded |
+| Supabase seed | — | `supabase-seed` | :orange_circle: Scaffolded |
+| Supabase edge | — | `supabase-edge` | :orange_circle: Scaffolded |
+| Appwrite databases | — | `appwrite-databases` | :orange_circle: Scaffolded |
+| Appwrite functions | — | `appwrite-functions` | :orange_circle: Scaffolded |
+| Appwrite storage | — | `appwrite-storage` | :orange_circle: Scaffolded |
+| Appwrite users | — | `appwrite-users` | :orange_circle: Scaffolded |
+| Appwrite teams | — | `appwrite-teams` | :orange_circle: Scaffolded |
+| Firebase emulators | — | `firebase-emulators` | :orange_circle: Scaffolded |
+| Firebase extensions | — | `firebase-extensions` | :orange_circle: Scaffolded |
+| Firebase Crashlytics | — | `firebase-crashlytics` | :orange_circle: Scaffolded |
+| Firebase Performance | — | `firebase-perf` | :orange_circle: Scaffolded |
+| Firebase Messaging | — | `firebase-messaging` | :orange_circle: Scaffolded |
+| Convex dev | — | `convex-dev` | :orange_circle: Scaffolded |
+| Convex deploy | — | `convex-deploy` | :orange_circle: Scaffolded |
+| Convex run | — | `convex-run` | :orange_circle: Scaffolded |
+| Convex import | — | `convex-import` | :orange_circle: Scaffolded |
+| Convex export | — | `convex-export` | :orange_circle: Scaffolded |
+
+### Round 423 — Deno KV ext, Cloudflare D1 ext, PlanetScale ext, Neon ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Deno KV get | — | `deno-kv-get` | :orange_circle: Scaffolded |
+| Deno KV set | — | `deno-kv-set` | :orange_circle: Scaffolded |
+| Deno KV delete | — | `deno-kv-delete` | :orange_circle: Scaffolded |
+| Deno KV list | — | `deno-kv-list` | :orange_circle: Scaffolded |
+| Deno KV watch | — | `deno-kv-watch` | :orange_circle: Scaffolded |
+| D1 create | — | `d1-create` | :orange_circle: Scaffolded |
+| D1 execute | — | `d1-execute` | :orange_circle: Scaffolded |
+| D1 export | — | `d1-export` | :orange_circle: Scaffolded |
+| D1 import | — | `d1-import` | :orange_circle: Scaffolded |
+| D1 migrations | — | `d1-migrations` | :orange_circle: Scaffolded |
+| PlanetScale password | — | `planetscale-password` | :orange_circle: Scaffolded |
+| PlanetScale org | — | `planetscale-org` | :orange_circle: Scaffolded |
+| PlanetScale audit | — | `planetscale-audit` | :orange_circle: Scaffolded |
+| PlanetScale promote | — | `planetscale-promote` | :orange_circle: Scaffolded |
+| PlanetScale backup | — | `planetscale-backup` | :orange_circle: Scaffolded |
+| Neon projects | — | `neon-projects` | :orange_circle: Scaffolded |
+| Neon roles | — | `neon-roles` | :orange_circle: Scaffolded |
+| Neon compute | — | `neon-compute` | :orange_circle: Scaffolded |
+| Neon settings | — | `neon-settings` | :orange_circle: Scaffolded |
+| Neon IP allow | — | `neon-ip-allow` | :orange_circle: Scaffolded |
+
+### Round 422 — Elixir ext, Phoenix ext, Oban ext, LiveView ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Elixir compile | — | `elixir-compile` | :orange_circle: Scaffolded |
+| Elixir test | — | `elixir-test` | :orange_circle: Scaffolded |
+| Elixir docs | — | `elixir-docs` | :orange_circle: Scaffolded |
+| Elixir deps | — | `elixir-deps` | :orange_circle: Scaffolded |
+| Elixir release | — | `elixir-release` | :orange_circle: Scaffolded |
+| Phoenix new | — | `phoenix-new` | :orange_circle: Scaffolded |
+| Phoenix server | — | `phoenix-server` | :orange_circle: Scaffolded |
+| Phoenix routes | — | `phoenix-routes` | :orange_circle: Scaffolded |
+| Phoenix gen | — | `phoenix-gen` | :orange_circle: Scaffolded |
+| Phoenix gen auth | — | `phoenix-gen-auth` | :orange_circle: Scaffolded |
+| Oban status | — | `oban-status` | :orange_circle: Scaffolded |
+| Oban pause | — | `oban-pause` | :orange_circle: Scaffolded |
+| Oban resume | — | `oban-resume` | :orange_circle: Scaffolded |
+| Oban drain | — | `oban-drain` | :orange_circle: Scaffolded |
+| Oban retry | — | `oban-retry` | :orange_circle: Scaffolded |
+| LiveView mount | — | `liveview-mount` | :orange_circle: Scaffolded |
+| LiveView events | — | `liveview-events` | :orange_circle: Scaffolded |
+| LiveView components | — | `liveview-components` | :orange_circle: Scaffolded |
+| LiveView streams | — | `liveview-streams` | :orange_circle: Scaffolded |
+| LiveView uploads | — | `liveview-uploads` | :orange_circle: Scaffolded |
+
+### Round 421 — Mojo ext, Zig ext, Gleam ext, Roc ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Mojo build | — | `mojo-build` | :orange_circle: Scaffolded |
+| Mojo run | — | `mojo-run` | :orange_circle: Scaffolded |
+| Mojo test | — | `mojo-test` | :orange_circle: Scaffolded |
+| Mojo doc | — | `mojo-doc` | :orange_circle: Scaffolded |
+| Mojo package | — | `mojo-package` | :orange_circle: Scaffolded |
+| Zig translate | — | `zig-translate` | :orange_circle: Scaffolded |
+| Zig fetch | — | `zig-fetch` | :orange_circle: Scaffolded |
+| Zig zen | — | `zig-zen` | :orange_circle: Scaffolded |
+| Zig cc | — | `zig-cc` | :orange_circle: Scaffolded |
+| Zig ar | — | `zig-ar` | :orange_circle: Scaffolded |
+| Gleam docs | — | `gleam-docs` | :orange_circle: Scaffolded |
+| Gleam publish | — | `gleam-publish` | :orange_circle: Scaffolded |
+| Gleam shell | — | `gleam-shell` | :orange_circle: Scaffolded |
+| Gleam export | — | `gleam-export` | :orange_circle: Scaffolded |
+| Gleam Hex | — | `gleam-hex` | :orange_circle: Scaffolded |
+| Roc format | — | `roc-format` | :orange_circle: Scaffolded |
+| Roc REPL | — | `roc-repl` | :orange_circle: Scaffolded |
+| Roc glue | — | `roc-glue` | :orange_circle: Scaffolded |
+| Roc platform | — | `roc-platform` | :orange_circle: Scaffolded |
+| Roc dev | — | `roc-dev` | :orange_circle: Scaffolded |
+
 ### Round 420 — Earthly ext, Dagger ext, Tekton ext, Argo Events ext
 
 | Feature | Emacs | jemacs | Status |
