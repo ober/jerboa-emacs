@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 541 — PCB Design (KiCad)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pcb-layout` | :orange_circle: Scaffold | PCB layout editor |
+| `pcb-route` | :orange_circle: Scaffold | Auto-route traces |
+| `pcb-drc` | :orange_circle: Scaffold | Design rule check |
+| `pcb-gerber` | :orange_circle: Scaffold | Export gerber files |
+| `pcb-bom` | :orange_circle: Scaffold | Bill of materials |
+| `kicad-schematic` | :orange_circle: Scaffold | KiCad schematic editor |
+| `kicad-footprint` | :orange_circle: Scaffold | KiCad footprint editor |
+| `kicad-3dview` | :orange_circle: Scaffold | KiCad 3D board view |
+| `kicad-netlist` | :orange_circle: Scaffold | Generate netlist |
+| `kicad-erc` | :orange_circle: Scaffold | Electrical rule check |
+
+### Round 542 — 3D CAD/CAM (OpenSCAD, G-code, STL)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `openscad-animate` | :orange_circle: Scaffold | OpenSCAD animation |
+| `openscad-measure` | :orange_circle: Scaffold | Measure distance |
+| `gcode-simulate` | :orange_circle: Scaffold | Simulate toolpath |
+| `gcode-validate` | :orange_circle: Scaffold | Validate G-code syntax |
+| `gcode-optimize` | :orange_circle: Scaffold | Optimize tool path |
+| `gcode-preview` | :orange_circle: Scaffold | 3D preview |
+| `gcode-toolpath` | :orange_circle: Scaffold | Edit toolpath |
+| `stl-repair` | :orange_circle: Scaffold | Repair STL mesh |
+| `stl-analyze` | :orange_circle: Scaffold | Analyze geometry |
+| `stl-slice` | :orange_circle: Scaffold | Slice for 3D printing |
+
+### Round 543 — Music Production (MIDI, LilyPond, Csound)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `midi-play` | :orange_circle: Scaffold | Play MIDI sequence |
+| `midi-record` | :orange_circle: Scaffold | Record MIDI input |
+| `midi-quantize` | :orange_circle: Scaffold | Quantize notes |
+| `midi-transpose` | :orange_circle: Scaffold | Transpose notes |
+| `midi-velocity` | :orange_circle: Scaffold | Adjust velocity |
+| `lilypond-transpose` | :orange_circle: Scaffold | LilyPond transpose |
+| `lilypond-dynamics` | :orange_circle: Scaffold | LilyPond dynamics |
+| `lilypond-part` | :orange_circle: Scaffold | Extract part |
+| `csound-render` | :orange_circle: Scaffold | Render audio |
+| `csound-score` | :orange_circle: Scaffold | Edit Csound score |
+
+### Round 544 — Graphics/Shaders (GLSL, Vulkan, OpenGL)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `shader-compile` | :orange_circle: Scaffold | Compile GLSL |
+| `shader-preview` | :orange_circle: Scaffold | Live preview |
+| `shader-lint` | :orange_circle: Scaffold | Lint GLSL |
+| `shader-optimize` | :orange_circle: Scaffold | Optimize shader |
+| `shader-debug` | :orange_circle: Scaffold | Debug step |
+| `vulkan-validate` | :orange_circle: Scaffold | Validation layers |
+| `vulkan-spirv` | :orange_circle: Scaffold | SPIR-V inspector |
+| `vulkan-pipeline` | :orange_circle: Scaffold | Pipeline viewer |
+| `vulkan-debug` | :orange_circle: Scaffold | Debug utils |
+| `vulkan-profile` | :orange_circle: Scaffold | GPU profiler |
+
+### Round 545 — Geoscience (Seismology, Weather, GIS)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `seismology-plot` | :orange_circle: Scaffold | Plot waveform |
+| `seismology-filter` | :orange_circle: Scaffold | Bandpass filter |
+| `seismology-pick` | :orange_circle: Scaffold | Pick arrivals |
+| `seismology-locate` | :orange_circle: Scaffold | Locate event |
+| `seismology-magnitude` | :orange_circle: Scaffold | Compute magnitude |
+| `weather-radar` | :orange_circle: Scaffold | Radar display |
+| `weather-satellite` | :orange_circle: Scaffold | Satellite imagery |
+| `weather-forecast` | :orange_circle: Scaffold | Forecast model |
+| `weather-model` | :orange_circle: Scaffold | Numerical model |
+| `weather-alert` | :orange_circle: Scaffold | Alert monitor |
+
+### Round 546 — Circuit Simulation (SPICE, LTspice, ngspice)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `spice-simulate` | :orange_circle: Scaffold | Run SPICE simulation |
+| `spice-netlist` | :orange_circle: Scaffold | Generate netlist |
+| `spice-plot` | :orange_circle: Scaffold | Plot results |
+| `spice-sweep` | :orange_circle: Scaffold | Parameter sweep |
+| `spice-monte-carlo` | :orange_circle: Scaffold | Monte Carlo analysis |
+| `ltspice-run` | :orange_circle: Scaffold | Run LTspice |
+| `ltspice-export` | :orange_circle: Scaffold | Export data |
+| `ltspice-measure` | :orange_circle: Scaffold | Measure |
+| `ngspice-run` | :orange_circle: Scaffold | Run ngspice |
+| `ngspice-plot` | :orange_circle: Scaffold | Plot ngspice |
+
+### Round 547 — Formal Methods (Z3, SMT, Alloy)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `z3-solve` | :orange_circle: Scaffold | Solve constraints |
+| `z3-optimize` | :orange_circle: Scaffold | Optimize objective |
+| `z3-fixedpoint` | :orange_circle: Scaffold | Fixedpoint query |
+| `smt-check` | :orange_circle: Scaffold | Check satisfiability |
+| `smt-model` | :orange_circle: Scaffold | Extract model |
+| `smt-unsat` | :orange_circle: Scaffold | Unsat core |
+| `smt-interpolate` | :orange_circle: Scaffold | Interpolation |
+| `smt-abstract` | :orange_circle: Scaffold | Abstract interpretation |
+| `alloy-instance` | :orange_circle: Scaffold | Show instance |
+| `alloy-theme` | :orange_circle: Scaffold | Theme editor |
+
+### Round 548 — Automata/Formal Languages
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `petri-net-fire` | :orange_circle: Scaffold | Fire transition |
+| `petri-net-analyze` | :orange_circle: Scaffold | Analyze net |
+| `petri-net-reachable` | :orange_circle: Scaffold | Reachability check |
+| `petri-net-deadlock` | :orange_circle: Scaffold | Deadlock detection |
+| `petri-net-invariant` | :orange_circle: Scaffold | Compute invariant |
+| `automata-simulate` | :orange_circle: Scaffold | Simulate automaton |
+| `automata-minimize` | :orange_circle: Scaffold | Minimize DFA |
+| `automata-complement` | :orange_circle: Scaffold | Complement |
+| `grammar-parse` | :orange_circle: Scaffold | Parse input |
+| `grammar-first` | :orange_circle: Scaffold | FIRST sets |
+
+### Round 549 — Embedded/PLC (SCADA, Modbus, CAN)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `plc-ladder` | :orange_circle: Scaffold | Ladder logic editor |
+| `plc-scan` | :orange_circle: Scaffold | Scan I/O |
+| `plc-monitor` | :orange_circle: Scaffold | Monitor variables |
+| `plc-simulate` | :orange_circle: Scaffold | Simulate program |
+| `plc-program` | :orange_circle: Scaffold | Upload program |
+| `scada-dashboard` | :orange_circle: Scaffold | Dashboard view |
+| `scada-alarm` | :orange_circle: Scaffold | Alarm manager |
+| `scada-trend` | :orange_circle: Scaffold | Trend viewer |
+| `modbus-read` | :orange_circle: Scaffold | Read registers |
+| `canbus-decode` | :orange_circle: Scaffold | Decode CAN frames |
+
+### Round 550 — Signal Processing (DSP, FFT, Wavelets)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `dsp-filter` | :orange_circle: Scaffold | Apply DSP filter |
+| `dsp-convolve` | :orange_circle: Scaffold | Convolve signals |
+| `dsp-resample` | :orange_circle: Scaffold | Resample |
+| `dsp-window` | :orange_circle: Scaffold | Apply window function |
+| `fft-compute` | :orange_circle: Scaffold | Compute FFT |
+| `fft-inverse` | :orange_circle: Scaffold | Inverse FFT |
+| `fft-spectrum` | :orange_circle: Scaffold | Spectrum display |
+| `wavelet-decompose` | :orange_circle: Scaffold | Wavelet decompose |
+| `wavelet-reconstruct` | :orange_circle: Scaffold | Wavelet reconstruct |
+| `spectral-analyze` | :orange_circle: Scaffold | Spectral analysis |
+
 ### Round 531 — Solidity, Hardhat, Foundry, Truffle
 
 | Feature | Status | Notes |
