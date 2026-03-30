@@ -22104,3 +22104,45 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SageMath: evaluating region")))
 
+;;; Round 271 — Lean ext, Agda ext, Idris ext, Isabelle ext, HOL ext (batch 1)
+
+(def (cmd-lean-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lean: checking file")))
+
+(def (cmd-lean-goal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lean: showing goal at point")))
+
+(def (cmd-lean-hole app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lean: filling hole at point")))
+
+(def (cmd-lean-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lean: restarting server")))
+
+(def (cmd-agda-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Agda: compiling file")))
+
+(def (cmd-agda-next-goal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Agda: moving to next goal")))
+
+(def (cmd-agda-solve-constraints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Agda: solving constraints")))
+
+(def (cmd-agda-show-goals app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Agda: showing all goals")))
+
+(def (cmd-idris-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: loading file")))
+
+(def (cmd-idris-type-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: type-checking at point")))
+

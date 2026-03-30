@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 271 — Lean ext, Agda ext, Idris ext, Isabelle ext, HOL ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| lean-check | :orange_circle: | Check Lean file |
+| lean-goal | :orange_circle: | Show Lean goal at point |
+| lean-hole | :orange_circle: | Fill Lean hole at point |
+| lean-restart | :orange_circle: | Restart Lean server |
+| agda-compile | :orange_circle: | Compile Agda file |
+| agda-next-goal | :orange_circle: | Move to next Agda goal |
+| agda-solve-constraints | :orange_circle: | Solve Agda constraints |
+| agda-show-goals | :orange_circle: | Show all Agda goals |
+| idris-load | :orange_circle: | Load Idris file |
+| idris-type-check | :orange_circle: | Type-check Idris at point |
+| idris-generate-def | :orange_circle: | Generate Idris definition |
+| idris-doc-at-point | :orange_circle: | Show Idris doc at point |
+| isabelle-process | :orange_circle: | Process Isabelle theory |
+| isabelle-go-back | :orange_circle: | Go back one Isabelle step |
+| isabelle-cancel | :orange_circle: | Cancel Isabelle processing |
+| isabelle-sorry | :orange_circle: | Insert Isabelle sorry |
+| hol-eval | :orange_circle: | Evaluate HOL expression |
+| hol-load | :orange_circle: | Load HOL theory |
+| hol-type-of | :orange_circle: | Show HOL type at point |
+| hol-print-thm | :orange_circle: | Print HOL theorem |
+
 ### Round 270 — Octave ext, Maxima ext, SageMath ext, GAP ext, Coq ext
 
 | Command | Status | Description |

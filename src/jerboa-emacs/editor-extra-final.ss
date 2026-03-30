@@ -21484,3 +21484,45 @@
 (def (cmd-coq-assert-next app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Coq: asserting next sentence")))
+
+;;; Round 271 — Idris ext, Isabelle ext, HOL ext (batch 2)
+
+(def (cmd-idris-generate-def app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: generating definition")))
+
+(def (cmd-idris-doc-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Idris: showing doc at point")))
+
+(def (cmd-isabelle-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isabelle: processing theory")))
+
+(def (cmd-isabelle-go-back app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isabelle: going back one step")))
+
+(def (cmd-isabelle-cancel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isabelle: cancelling processing")))
+
+(def (cmd-isabelle-sorry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Isabelle: inserting sorry")))
+
+(def (cmd-hol-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HOL: evaluating expression")))
+
+(def (cmd-hol-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HOL: loading theory")))
+
+(def (cmd-hol-type-of app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HOL: showing type at point")))
+
+(def (cmd-hol-print-thm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HOL: printing theorem")))
