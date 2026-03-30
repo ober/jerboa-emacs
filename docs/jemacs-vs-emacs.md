@@ -4958,6 +4958,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `org-dblock-update` | :orange_circle: Scaffold | Update dblock |
 | `org-dynamic-block-insert-dblock` | :orange_circle: Scaffold | Insert dblock |
 
+
+### Round 651 — Org Agenda Actions
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-agenda-todo` | :orange_circle: Scaffold | Toggle TODO in agenda |
+| `org-agenda-done` | :orange_circle: Scaffold | Mark DONE in agenda |
+| `org-agenda-archive` | :orange_circle: Scaffold | Archive from agenda |
+| `org-agenda-refile` | :orange_circle: Scaffold | Refile from agenda |
+| `org-agenda-set-tags` | :orange_circle: Scaffold | Set tags in agenda |
+| `org-agenda-set-effort` | :orange_circle: Scaffold | Set effort in agenda |
+| `org-agenda-clock-in` | :orange_circle: Scaffold | Clock in from agenda |
+| `org-agenda-clock-out` | :orange_circle: Scaffold | Clock out from agenda |
+| `org-agenda-clock-cancel` | :orange_circle: Scaffold | Cancel clock from agenda |
+| `org-agenda-deadline` | :orange_circle: Scaffold | Set deadline in agenda |
+
+### Round 652 — Org Agenda Priority & Bulk
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-agenda-priority` | :orange_circle: Scaffold | Set priority in agenda |
+| `org-agenda-priority-up` | :orange_circle: Scaffold | Priority up in agenda |
+| `org-agenda-priority-down` | :orange_circle: Scaffold | Priority down in agenda |
+| `org-agenda-bulk-mark` | :orange_circle: Scaffold | Bulk mark in agenda |
+| `org-agenda-bulk-unmark` | :orange_circle: Scaffold | Bulk unmark in agenda |
+| `org-agenda-bulk-action` | :orange_circle: Scaffold | Bulk action in agenda |
+| `org-agenda-filter-by-tag` | :orange_circle: Scaffold | Filter by tag |
+| `org-agenda-filter-by-category` | :orange_circle: Scaffold | Filter by category |
+| `org-agenda-filter-by-regexp` | :orange_circle: Scaffold | Filter by regexp |
+| `org-agenda-remove-all-filters` | :orange_circle: Scaffold | Remove all filters |
+
+### Round 653 — Org Agenda Navigation & Dates
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-agenda-later` | :orange_circle: Scaffold | Next span |
+| `org-agenda-earlier` | :orange_circle: Scaffold | Previous span |
+| `org-agenda-goto-today` | :orange_circle: Scaffold | Go to today |
+| `org-agenda-goto-date` | :orange_circle: Scaffold | Go to date |
+| `org-agenda-day-view` | :orange_circle: Scaffold | Day view |
+| `org-agenda-week-view` | :orange_circle: Scaffold | Week view |
+| `org-agenda-month-view` | :orange_circle: Scaffold | Month view |
+| `org-agenda-year-view` | :orange_circle: Scaffold | Year view |
+| `org-agenda-log-mode` | :orange_circle: Scaffold | Toggle log mode |
+| `org-agenda-columns` | :orange_circle: Scaffold | Column view |
+
+### Round 654 — Org Clock & Timer Extensions
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-clock-display` | :orange_circle: Scaffold | Display clock overlay |
+| `org-clock-report` | :orange_circle: Scaffold | Generate clock report |
+| `org-clock-goto` | :orange_circle: Scaffold | Go to clocked heading |
+| `org-clock-modify-effort-estimate` | :orange_circle: Scaffold | Modify effort |
+| `org-timer-set-timer` | :orange_circle: Scaffold | Set countdown |
+| `org-timer-start` | :orange_circle: Scaffold | Start relative timer |
+| `org-timer-stop` | :orange_circle: Scaffold | Stop timer |
+| `org-timer-pause-or-continue` | :orange_circle: Scaffold | Pause/continue timer |
+| `org-timer-item` | :orange_circle: Scaffold | Insert timer item |
+| `org-timer-change-times-in-region` | :orange_circle: Scaffold | Adjust times in region |
+
+### Round 655 — Org Export Extensions
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-export-dispatch` | :orange_circle: Scaffold | Export dispatcher |
+| `org-export-to-html` | :orange_circle: Scaffold | Export to HTML |
+| `org-export-to-latex` | :orange_circle: Scaffold | Export to LaTeX |
+| `org-export-to-pdf` | :orange_circle: Scaffold | Export to PDF |
+| `org-export-to-odt` | :orange_circle: Scaffold | Export to ODT |
+| `org-export-to-markdown` | :orange_circle: Scaffold | Export to Markdown |
+| `org-export-to-ascii` | :orange_circle: Scaffold | Export to ASCII |
+| `org-export-to-icalendar` | :orange_circle: Scaffold | Export to iCalendar |
+| `org-export-visible` | :orange_circle: Scaffold | Export visible only |
+| `org-export-insert-default-template` | :orange_circle: Scaffold | Insert export template |
+
+### Round 656 — Org Babel Extensions
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-babel-execute-src-block` | :orange_circle: Scaffold | Execute source block |
+| `org-babel-execute-buffer` | :orange_circle: Scaffold | Execute all blocks |
+| `org-babel-tangle` | :orange_circle: Scaffold | Tangle code blocks |
+| `org-babel-detangle` | :orange_circle: Scaffold | Detangle code |
+| `org-babel-goto-named-src-block` | :orange_circle: Scaffold | Jump to named block |
+| `org-babel-goto-named-result` | :orange_circle: Scaffold | Jump to named result |
+| `org-babel-next-src-block` | :orange_circle: Scaffold | Next source block |
+| `org-babel-previous-src-block` | :orange_circle: Scaffold | Previous source block |
+| `org-babel-mark-block` | :orange_circle: Scaffold | Mark source block |
+| `org-babel-demarcate-block` | :orange_circle: Scaffold | Split/wrap block |
+
+### Round 657 — Org Element & List APIs
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-element-at-point` | :orange_circle: Scaffold | Element at cursor |
+| `org-element-context` | :orange_circle: Scaffold | Smallest element at cursor |
+| `org-element-parse-buffer` | :orange_circle: Scaffold | Parse entire buffer |
+| `org-element-type` | :orange_circle: Scaffold | Type of element |
+| `org-list-indent-item` | :orange_circle: Scaffold | Indent list item |
+| `org-list-dedent-item` | :orange_circle: Scaffold | Dedent list item |
+| `org-list-repair` | :orange_circle: Scaffold | Repair list |
+| `org-sort-list` | :orange_circle: Scaffold | Sort list items |
+| `org-toggle-item` | :orange_circle: Scaffold | Toggle item type |
+| `org-reset-checkbox-state` | :orange_circle: Scaffold | Reset checkboxes |
+
+### Round 658 — Org Footnote, Link & Speed
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-footnote-new` | :orange_circle: Scaffold | New footnote |
+| `org-footnote-action` | :orange_circle: Scaffold | Footnote action |
+| `org-footnote-normalize` | :orange_circle: Scaffold | Normalize footnotes |
+| `org-footnote-renumber` | :orange_circle: Scaffold | Renumber footnotes |
+| `org-insert-link` | :orange_circle: Scaffold | Insert link |
+| `org-store-link` | :orange_circle: Scaffold | Store link |
+| `org-next-link` | :orange_circle: Scaffold | Next link |
+| `org-previous-link` | :orange_circle: Scaffold | Previous link |
+| `org-toggle-link-display` | :orange_circle: Scaffold | Toggle link display |
+| `org-speed-command-activate` | :orange_circle: Scaffold | Speed command |
+
+### Round 659 — Org Crypt, Habit & Protocol
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-encrypt-entry` | :orange_circle: Scaffold | Encrypt entry |
+| `org-decrypt-entry` | :orange_circle: Scaffold | Decrypt entry |
+| `org-encrypt-entries` | :orange_circle: Scaffold | Encrypt all entries |
+| `org-decrypt-entries` | :orange_circle: Scaffold | Decrypt all entries |
+| `org-habit-toggle-display` | :orange_circle: Scaffold | Toggle habit graph |
+| `org-habit-stats` | :orange_circle: Scaffold | Habit statistics |
+| `org-protocol-capture` | :orange_circle: Scaffold | Protocol capture |
+| `org-protocol-store-link` | :orange_circle: Scaffold | Protocol store link |
+| `org-mobile-push` | :orange_circle: Scaffold | Push to mobile |
+| `org-mobile-pull` | :orange_circle: Scaffold | Pull from mobile |
+
+### Round 660 — Org Misc & 5x5 Game
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-columns` | :orange_circle: Scaffold | Column view |
+| `org-columns-quit` | :orange_circle: Scaffold | Quit columns |
+| `org-columns-next-allowed-value` | :orange_circle: Scaffold | Next allowed value |
+| `org-columns-edit-value` | :orange_circle: Scaffold | Edit column value |
+| `org-id-get-create` | :orange_circle: Scaffold | Get/create ID |
+| `org-id-copy` | :orange_circle: Scaffold | Copy ID |
+| `org-attach` | :orange_circle: Scaffold | Attach interface |
+| `five-by-five` | :orange_circle: Scaffold | 5x5 puzzle game |
+| `five-by-five-crack-mutating` | :orange_circle: Scaffold | 5x5 crack mutating |
+| `five-by-five-crack-xoring` | :orange_circle: Scaffold | 5x5 crack xoring |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
