@@ -27268,3 +27268,48 @@
 (def (cmd-postman-export app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Postman: exporting collection")))
+
+;; Round 371 batch 1 — Sentry ext, Datadog ext
+(def (cmd-sentry-issues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sentry: listing issues")))
+
+(def (cmd-sentry-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sentry: listing events")))
+
+(def (cmd-sentry-releases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sentry: listing releases")))
+
+(def (cmd-sentry-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sentry: listing projects")))
+
+(def (cmd-datadog-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Log query: "
+      (lambda (query)
+        (echo-message! echo (str "Datadog: searching logs for " query))))))
+
+(def (cmd-datadog-traces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datadog: listing traces")))
+
+(def (cmd-datadog-apm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datadog: APM service overview")))
+
+(def (cmd-datadog-rum app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datadog: Real User Monitoring overview")))
+
+(def (cmd-newrelic-nrql app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "NRQL query: "
+      (lambda (query)
+        (echo-message! echo (str "New Relic: executing NRQL: " query))))))
+
+(def (cmd-newrelic-entities app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "New Relic: listing entities")))

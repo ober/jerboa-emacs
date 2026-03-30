@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 371 — Sentry ext, Datadog ext, NewRelic ext, PagerDuty/OpsGenie ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Sentry list issues | — | `sentry-issues` | :orange_circle: Scaffolded |
+| Sentry list events | — | `sentry-events` | :orange_circle: Scaffolded |
+| Sentry list releases | — | `sentry-releases` | :orange_circle: Scaffolded |
+| Sentry list projects | — | `sentry-projects` | :orange_circle: Scaffolded |
+| Datadog log search | — | `datadog-logs` | :orange_circle: Scaffolded |
+| Datadog traces | — | `datadog-traces` | :orange_circle: Scaffolded |
+| Datadog APM overview | — | `datadog-apm` | :orange_circle: Scaffolded |
+| Datadog RUM | — | `datadog-rum` | :orange_circle: Scaffolded |
+| New Relic NRQL query | — | `newrelic-nrql` | :orange_circle: Scaffolded |
+| New Relic entities | — | `newrelic-entities` | :orange_circle: Scaffolded |
+| New Relic workloads | — | `newrelic-workloads` | :orange_circle: Scaffolded |
+| New Relic Nerdpacks | — | `newrelic-nerdpacks` | :orange_circle: Scaffolded |
+| PagerDuty incidents | — | `pagerduty-incidents` | :orange_circle: Scaffolded |
+| PagerDuty services | — | `pagerduty-services` | :orange_circle: Scaffolded |
+| PagerDuty on-call | — | `pagerduty-oncall` | :orange_circle: Scaffolded |
+| PagerDuty schedules | — | `pagerduty-schedules` | :orange_circle: Scaffolded |
+| OpsGenie alerts | — | `opsgenie-alerts` | :orange_circle: Scaffolded |
+| OpsGenie teams | — | `opsgenie-teams` | :orange_circle: Scaffolded |
+| OpsGenie schedules | — | `opsgenie-schedules` | :orange_circle: Scaffolded |
+| OpsGenie alert policies | — | `opsgenie-policies` | :orange_circle: Scaffolded |
+
 ### Round 370 — OpenAPI ext, Swagger ext, Postman ext, Insomnia/HTTPie ext
 
 | Feature | Emacs | jemacs | Status |

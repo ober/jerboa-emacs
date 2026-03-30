@@ -26499,3 +26499,44 @@
 (def (cmd-httpie-auth app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "HTTPie: configuring authentication")))
+
+;; Round 371 batch 2 — NewRelic ext, PagerDuty/OpsGenie ext
+(def (cmd-newrelic-workloads app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "New Relic: listing workloads")))
+
+(def (cmd-newrelic-nerdpacks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "New Relic: listing Nerdpacks")))
+
+(def (cmd-pagerduty-incidents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PagerDuty: listing incidents")))
+
+(def (cmd-pagerduty-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PagerDuty: listing services")))
+
+(def (cmd-pagerduty-oncall app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PagerDuty: showing on-call schedule")))
+
+(def (cmd-pagerduty-schedules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PagerDuty: listing schedules")))
+
+(def (cmd-opsgenie-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsGenie: listing alerts")))
+
+(def (cmd-opsgenie-teams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsGenie: listing teams")))
+
+(def (cmd-opsgenie-schedules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsGenie: listing schedules")))
+
+(def (cmd-opsgenie-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsGenie: listing alert policies")))
