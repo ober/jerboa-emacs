@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 286 — PAM ext, SSHD ext, GPG ext, SSL ext, Vault ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| pam-status | :orange_circle: | Show PAM status |
+| pam-config | :orange_circle: | View PAM configuration |
+| pam-module-list | :orange_circle: | List PAM modules |
+| pam-auth-test | :orange_circle: | Test PAM authentication |
+| sshd-config | :orange_circle: | View SSHD configuration |
+| sshd-restart | :orange_circle: | Restart SSHD service |
+| sshd-keygen | :orange_circle: | Generate SSH key |
+| sshd-authorized-keys | :orange_circle: | List authorized keys |
+| gpg-list-keys | :orange_circle: | List GPG keys |
+| gpg-import | :orange_circle: | Import GPG key |
+| gpg-export | :orange_circle: | Export GPG key |
+| gpg-sign-file | :orange_circle: | Sign file with GPG |
+| ssl-cert-info | :orange_circle: | Show certificate info |
+| ssl-cert-verify | :orange_circle: | Verify certificate |
+| ssl-cert-generate | :orange_circle: | Generate SSL certificate |
+| ssl-cert-expiry | :orange_circle: | Check certificate expiry |
+| vault-status | :orange_circle: | Show Vault status |
+| vault-seal | :orange_circle: | Seal Vault |
+| vault-unseal | :orange_circle: | Unseal Vault |
+| vault-read | :orange_circle: | Read Vault secret |
+
 ### Round 285 — Cgroup ext, Namespace ext, Seccomp ext, Capabilities ext, Ulimit ext
 
 | Command | Status | Description |

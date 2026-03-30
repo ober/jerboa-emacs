@@ -22840,3 +22840,51 @@
       (lambda (path)
         (echo-message! echo (str "Seccomp: loading " path))))))
 
+;;; Round 286 — PAM ext, SSHD ext, GPG ext (batch 1)
+
+(def (cmd-pam-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: showing status")))
+
+(def (cmd-pam-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: viewing configuration")))
+
+(def (cmd-pam-module-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: listing modules")))
+
+(def (cmd-pam-auth-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service: "
+      (lambda (svc)
+        (echo-message! echo (str "PAM: testing auth for " svc))))))
+
+(def (cmd-sshd-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHD: viewing configuration")))
+
+(def (cmd-sshd-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHD: restarting service")))
+
+(def (cmd-sshd-keygen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key type (rsa/ed25519): "
+      (lambda (typ)
+        (echo-message! echo (str "SSHD: generating " typ " key"))))))
+
+(def (cmd-sshd-authorized-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHD: listing authorized keys")))
+
+(def (cmd-gpg-list-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GPG: listing keys")))
+
+(def (cmd-gpg-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key file: "
+      (lambda (file)
+        (echo-message! echo (str "GPG: importing " file))))))
+

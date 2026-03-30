@@ -22178,3 +22178,61 @@
 (def (cmd-ulimit-soft app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ulimit: showing soft limits")))
+
+;;; Round 286 — GPG ext, SSL ext, Vault ext (batch 2)
+
+(def (cmd-gpg-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key ID: "
+      (lambda (kid)
+        (echo-message! echo (str "GPG: exporting " kid))))))
+
+(def (cmd-gpg-sign-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "GPG: signing " file))))))
+
+(def (cmd-ssl-cert-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Certificate file: "
+      (lambda (cert)
+        (echo-message! echo (str "SSL: info for " cert))))))
+
+(def (cmd-ssl-cert-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Certificate file: "
+      (lambda (cert)
+        (echo-message! echo (str "SSL: verifying " cert))))))
+
+(def (cmd-ssl-cert-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Common name: "
+      (lambda (cn)
+        (echo-message! echo (str "SSL: generating cert for " cn))))))
+
+(def (cmd-ssl-cert-expiry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Certificate file: "
+      (lambda (cert)
+        (echo-message! echo (str "SSL: checking expiry of " cert))))))
+
+(def (cmd-vault-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: showing status")))
+
+(def (cmd-vault-seal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: sealing")))
+
+(def (cmd-vault-unseal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unseal key: "
+      (lambda (key)
+        (echo-message! echo "Vault: unsealing")))))
+
+(def (cmd-vault-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Secret path: "
+      (lambda (path)
+        (echo-message! echo (str "Vault: reading " path))))))
