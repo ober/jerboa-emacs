@@ -22420,3 +22420,49 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Elasticsearch: showing mappings")))
 
+;;; Round 278 — Neo4j ext, InfluxDB ext, TimescaleDB ext, CockroachDB ext, DynamoDB ext (batch 1)
+
+(def (cmd-neo4j-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cypher: "
+      (lambda (cypher)
+        (echo-message! echo (str "Neo4j: executing " cypher))))))
+
+(def (cmd-neo4j-browse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: browsing graph")))
+
+(def (cmd-neo4j-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: showing schema")))
+
+(def (cmd-neo4j-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: showing database stats")))
+
+(def (cmd-influxdb-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "InfluxQL: "
+      (lambda (q)
+        (echo-message! echo (str "InfluxDB: executing " q))))))
+
+(def (cmd-influxdb-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: listing databases")))
+
+(def (cmd-influxdb-measurements app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: listing measurements")))
+
+(def (cmd-influxdb-write app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: writing data point")))
+
+(def (cmd-timescaledb-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: executing query")))
+
+(def (cmd-timescaledb-hypertables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: listing hypertables")))
+

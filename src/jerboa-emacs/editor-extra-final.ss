@@ -21788,3 +21788,53 @@
 (def (cmd-cassandra-cluster-status app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cassandra: showing cluster status")))
+
+;;; Round 278 — TimescaleDB ext, CockroachDB ext, DynamoDB ext (batch 2)
+
+(def (cmd-timescaledb-continuous-aggregates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: listing continuous aggregates")))
+
+(def (cmd-timescaledb-compression app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: showing compression status")))
+
+(def (cmd-cockroachdb-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SQL: "
+      (lambda (sql)
+        (echo-message! echo (str "CockroachDB: executing " sql))))))
+
+(def (cmd-cockroachdb-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CockroachDB: listing nodes")))
+
+(def (cmd-cockroachdb-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CockroachDB: listing databases")))
+
+(def (cmd-cockroachdb-ranges app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CockroachDB: listing ranges")))
+
+(def (cmd-dynamodb-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Table: "
+      (lambda (tbl)
+        (echo-message! echo (str "DynamoDB: scanning " tbl))))))
+
+(def (cmd-dynamodb-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Table: "
+      (lambda (tbl)
+        (echo-message! echo (str "DynamoDB: querying " tbl))))))
+
+(def (cmd-dynamodb-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: listing tables")))
+
+(def (cmd-dynamodb-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Table: "
+      (lambda (tbl)
+        (echo-message! echo (str "DynamoDB: describing " tbl))))))

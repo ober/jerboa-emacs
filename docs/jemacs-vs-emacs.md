@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 278 — Neo4j ext, InfluxDB ext, TimescaleDB ext, CockroachDB ext, DynamoDB ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| neo4j-query | :orange_circle: | Execute Neo4j Cypher query |
+| neo4j-browse | :orange_circle: | Browse Neo4j graph |
+| neo4j-schema | :orange_circle: | Show Neo4j schema |
+| neo4j-stats | :orange_circle: | Show Neo4j database stats |
+| influxdb-query | :orange_circle: | Execute InfluxDB query |
+| influxdb-databases | :orange_circle: | List InfluxDB databases |
+| influxdb-measurements | :orange_circle: | List InfluxDB measurements |
+| influxdb-write | :orange_circle: | Write InfluxDB data point |
+| timescaledb-query | :orange_circle: | Execute TimescaleDB query |
+| timescaledb-hypertables | :orange_circle: | List TimescaleDB hypertables |
+| timescaledb-continuous-aggregates | :orange_circle: | List TimescaleDB continuous aggregates |
+| timescaledb-compression | :orange_circle: | Show TimescaleDB compression status |
+| cockroachdb-query | :orange_circle: | Execute CockroachDB query |
+| cockroachdb-nodes | :orange_circle: | List CockroachDB nodes |
+| cockroachdb-databases | :orange_circle: | List CockroachDB databases |
+| cockroachdb-ranges | :orange_circle: | List CockroachDB ranges |
+| dynamodb-scan | :orange_circle: | Scan DynamoDB table |
+| dynamodb-query | :orange_circle: | Query DynamoDB table |
+| dynamodb-tables | :orange_circle: | List DynamoDB tables |
+| dynamodb-describe | :orange_circle: | Describe DynamoDB table |
+
 ### Round 277 — Redis ext, Memcached ext, Elasticsearch ext, MongoDB ext, Cassandra ext
 
 | Command | Status | Description |
