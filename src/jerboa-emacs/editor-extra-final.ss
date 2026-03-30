@@ -26415,3 +26415,44 @@
 (def (cmd-activemq-topics app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "ActiveMQ: listing topics")))
+
+;; Round 369 batch 2 — Protobuf ext, Avro/Serialization ext
+(def (cmd-protobuf-deps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: analyzing dependencies")))
+
+(def (cmd-protobuf-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: querying schema registry")))
+
+(def (cmd-avro-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: displaying schema")))
+
+(def (cmd-avro-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: encoding data")))
+
+(def (cmd-avro-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: decoding data")))
+
+(def (cmd-avro-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: querying schema registry")))
+
+(def (cmd-capnproto-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: decoding message")))
+
+(def (cmd-capnproto-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: encoding message")))
+
+(def (cmd-ion-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Amazon Ion: encoding data")))
+
+(def (cmd-ion-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Amazon Ion: decoding data")))

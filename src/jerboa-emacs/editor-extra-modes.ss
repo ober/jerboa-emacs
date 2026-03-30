@@ -27180,3 +27180,48 @@
 (def (cmd-pulsar-sinks app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pulsar: listing sinks")))
+
+;; Round 369 batch 1 — GraphQL ext, gRPC ext
+(def (cmd-graphql-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: displaying schema")))
+
+(def (cmd-graphql-subscribe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subscription name: "
+      (lambda (name)
+        (echo-message! echo (str "GraphQL: subscribing to " name))))))
+
+(def (cmd-graphql-federation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: checking federation composition")))
+
+(def (cmd-graphql-persisted app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: managing persisted queries")))
+
+(def (cmd-grpc-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "gRPC: listing services")))
+
+(def (cmd-grpc-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service name: "
+      (lambda (svc)
+        (echo-message! echo (str "gRPC: describing " svc))))))
+
+(def (cmd-grpc-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "gRPC: checking health status")))
+
+(def (cmd-grpc-reflect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "gRPC: server reflection")))
+
+(def (cmd-protobuf-breaking app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: checking for breaking changes")))
+
+(def (cmd-protobuf-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: generating code stubs")))

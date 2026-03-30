@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 369 — GraphQL ext, gRPC ext, Protobuf ext, Avro/Serialization ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| GraphQL display schema | `graphql-mode` | `graphql-schema` | :orange_circle: Scaffolded |
+| GraphQL subscribe | — | `graphql-subscribe` | :orange_circle: Scaffolded |
+| GraphQL federation check | — | `graphql-federation` | :orange_circle: Scaffolded |
+| GraphQL persisted queries | — | `graphql-persisted` | :orange_circle: Scaffolded |
+| gRPC list services | `grpc-mode` | `grpc-list` | :orange_circle: Scaffolded |
+| gRPC describe service | — | `grpc-describe` | :orange_circle: Scaffolded |
+| gRPC health check | — | `grpc-health` | :orange_circle: Scaffolded |
+| gRPC server reflection | — | `grpc-reflect` | :orange_circle: Scaffolded |
+| Protobuf breaking changes | `buf` | `protobuf-breaking` | :orange_circle: Scaffolded |
+| Protobuf generate stubs | — | `protobuf-generate` | :orange_circle: Scaffolded |
+| Protobuf dependencies | — | `protobuf-deps` | :orange_circle: Scaffolded |
+| Protobuf schema registry | — | `protobuf-registry` | :orange_circle: Scaffolded |
+| Avro display schema | — | `avro-schema` | :orange_circle: Scaffolded |
+| Avro encode data | — | `avro-encode` | :orange_circle: Scaffolded |
+| Avro decode data | — | `avro-decode` | :orange_circle: Scaffolded |
+| Avro schema registry | — | `avro-registry` | :orange_circle: Scaffolded |
+| Cap'n Proto decode | — | `capnproto-decode` | :orange_circle: Scaffolded |
+| Cap'n Proto encode | — | `capnproto-encode` | :orange_circle: Scaffolded |
+| Amazon Ion encode | — | `ion-encode` | :orange_circle: Scaffolded |
+| Amazon Ion decode | — | `ion-decode` | :orange_circle: Scaffolded |
+
 ### Round 368 — MQTT ext, AMQP ext, NSQ ext, RabbitMQ/ActiveMQ ext
 
 | Feature | Emacs | jemacs | Status |
