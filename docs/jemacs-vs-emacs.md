@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 332 — Slabtop ext, Pmap ext, Smem ext, Fincore ext, Lslocks ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `slabtop-show` | :orange_circle: | Show kernel slab cache |
+| `slabtop-once` | :orange_circle: | One-shot slab display |
+| `slabtop-sort` | :orange_circle: | Sort slab output |
+| `slabtop-delay` | :orange_circle: | Set refresh delay |
+| `pmap-show` | :orange_circle: | Show memory map |
+| `pmap-extended` | :orange_circle: | Extended memory map |
+| `pmap-device` | :orange_circle: | Device format map |
+| `pmap-quiet` | :orange_circle: | Quiet format map |
+| `smem-show` | :orange_circle: | Show memory usage |
+| `smem-process` | :orange_circle: | Per-process memory |
+| `smem-user` | :orange_circle: | Per-user memory |
+| `smem-system` | :orange_circle: | System-wide memory |
+| `fincore-show` | :orange_circle: | Show cached pages |
+| `fincore-file` | :orange_circle: | File cache info |
+| `fincore-summary` | :orange_circle: | Cache summary |
+| `fincore-json` | :orange_circle: | JSON output |
+| `lslocks-show` | :orange_circle: | Show file locks |
+| `lslocks-json` | :orange_circle: | Locks as JSON |
+| `lslocks-noheading` | :orange_circle: | Locks without header |
+| `lslocks-pid` | :orange_circle: | Locks by PID |
+
 ### Round 331 — Collectl ext, Atop ext, Glances ext, Htop-ext ext, Btop ext
 
 | Feature | Status | Notes |

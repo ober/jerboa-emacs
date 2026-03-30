@@ -24646,3 +24646,49 @@
     (echo-read-string echo "Output file: "
       (lambda (file)
         (echo-message! echo (str "Btop: exporting to " file))))))
+
+;;; Round 332 — Smem ext, Fincore ext, Lslocks ext (batch 2)
+
+(def (cmd-smem-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smem: showing per-user memory")))
+
+(def (cmd-smem-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smem: showing system-wide memory")))
+
+(def (cmd-fincore-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fincore: showing cached pages")))
+
+(def (cmd-fincore-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Fincore: showing cache for " file))))))
+
+(def (cmd-fincore-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fincore: showing summary")))
+
+(def (cmd-fincore-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fincore: showing JSON output")))
+
+(def (cmd-lslocks-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lslocks: showing file locks")))
+
+(def (cmd-lslocks-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lslocks: showing locks as JSON")))
+
+(def (cmd-lslocks-noheading app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lslocks: showing locks without header")))
+
+(def (cmd-lslocks-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Lslocks: showing locks for PID " pid))))))

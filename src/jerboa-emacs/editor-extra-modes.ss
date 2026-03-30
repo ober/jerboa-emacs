@@ -25338,3 +25338,57 @@
       (lambda (fmt)
         (echo-message! echo (str "Glances: exporting as " fmt))))))
 
+;;; Round 332 — Slabtop ext, Pmap ext, Smem ext, Fincore ext, Lslocks ext (batch 1)
+
+(def (cmd-slabtop-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Slabtop: showing kernel slab cache")))
+
+(def (cmd-slabtop-once app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Slabtop: one-shot display")))
+
+(def (cmd-slabtop-sort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sort by (size/objs/slabs): "
+      (lambda (col)
+        (echo-message! echo (str "Slabtop: sorting by " col))))))
+
+(def (cmd-slabtop-delay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delay (seconds): "
+      (lambda (sec)
+        (echo-message! echo (str "Slabtop: refresh every " sec "s"))))))
+
+(def (cmd-pmap-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Pmap: showing memory map of PID " pid))))))
+
+(def (cmd-pmap-extended app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Pmap: extended info for PID " pid))))))
+
+(def (cmd-pmap-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Pmap: device format for PID " pid))))))
+
+(def (cmd-pmap-quiet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Pmap: quiet format for PID " pid))))))
+
+(def (cmd-smem-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smem: showing memory usage")))
+
+(def (cmd-smem-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Smem: showing per-process memory")))
+
