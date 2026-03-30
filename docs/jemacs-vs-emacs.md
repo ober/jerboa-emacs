@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 248 — Xref ext, Project.el ext, Flymake ext, Eldoc ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| xref-find-references-at-point | :orange_circle: | Find references at point |
+| xref-go-forward | :orange_circle: | Navigate xref forward |
+| xref-find-definitions-other-window | :orange_circle: | Find definitions in other window |
+| xref-find-definitions-other-frame | :orange_circle: | Find definitions in other frame |
+| project-dired | :orange_circle: | Open dired in project root |
+| project-find-regexp-in-files | :orange_circle: | Search regexp in project files |
+| flymake-show-diagnostic | :orange_circle: | Show diagnostic at point |
+| eldoc-doc-buffer | :orange_circle: | Show eldoc documentation buffer |
+| eldoc-toggle-display | :orange_circle: | Toggle eldoc display |
+| tab-bar-move-tab-backward | :orange_circle: | Move tab backward |
+| tab-bar-move-tab-forward | :orange_circle: | Move tab forward |
+| pixel-scroll-interpolate-up | :orange_circle: | Smooth scroll interpolate up |
+| pixel-scroll-interpolate-down | :orange_circle: | Smooth scroll interpolate down |
+| scroll-bar-toolkit-scroll | :orange_circle: | Toolkit scroll bar action |
+| global-so-long-mode | :orange_circle: | Toggle global so-long mode |
+| completing-read-default | :orange_circle: | Default completing read style |
+| read-extended-command-predicate | :orange_circle: | Extended command predicate filter |
+| use-package-autoload-keymap | :orange_circle: | Autoload keymap for package |
+| sqlite-mode-open-file | :orange_circle: | Open SQLite file in sqlite-mode |
+| image-dired-tag-files | :orange_circle: | Tag image files in image-dired |
+
 ### Round 247 — Final gerbil-emacs parity (Quickrun, String-edit)
 
 | Command | Status | Description |

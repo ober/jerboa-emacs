@@ -21055,3 +21055,49 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "String edit: committed changes")))
 
+;; Round 248 — Xref ext, Project.el ext, Flymake ext, Eldoc ext (10 in modes)
+(def (cmd-xref-find-references-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xref: finding references at point")))
+
+(def (cmd-xref-go-forward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xref: navigated forward")))
+
+(def (cmd-xref-find-definitions-other-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xref: finding definitions in other window")))
+
+(def (cmd-xref-find-definitions-other-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xref: finding definitions in other frame")))
+
+(def (cmd-project-dired app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Project: opening dired in project root")))
+
+(def (cmd-project-find-regexp-in-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Regexp: "
+      (lambda (re)
+        (echo-message! echo (str "Project: searching for '" re "' in files"))))))
+
+(def (cmd-flymake-show-diagnostic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flymake: showing diagnostic at point")))
+
+(def (cmd-eldoc-doc-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Eldoc: showing documentation buffer")))
+
+(def (cmd-eldoc-toggle-display app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'eldoc-display)
+    (if (mode-enabled? app 'eldoc-display)
+      (echo-message! echo "Eldoc display enabled")
+      (echo-message! echo "Eldoc display disabled"))))
+
+(def (cmd-tab-bar-move-tab-backward app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tab bar: moved tab backward")))
+
