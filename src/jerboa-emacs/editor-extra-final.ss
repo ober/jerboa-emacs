@@ -28170,4 +28170,214 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SNS: topic attributes")))
 
+;; Round 411 — AWS IAM ext, AWS CloudWatch ext, AWS Route53 ext, AWS ACM ext (batch 2)
+
+(def (cmd-route53-zones app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Route53: hosted zones")))
+
+(def (cmd-route53-records app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Route53: DNS records")))
+
+(def (cmd-route53-health-checks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Route53: health checks")))
+
+(def (cmd-route53-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Route53: registered domains")))
+
+(def (cmd-route53-resolvers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Route53: resolver endpoints")))
+
+(def (cmd-acm-certificates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ACM: listing certificates")))
+
+(def (cmd-acm-request app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ACM: requesting certificate")))
+
+(def (cmd-acm-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ACM: describing certificate")))
+
+(def (cmd-acm-renew app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ACM: renewing certificate")))
+
+(def (cmd-acm-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ACM: certificate tags")))
+
+;; Round 412 — AWS EKS ext, AWS Fargate ext, AWS Step Functions ext, AWS EventBridge ext (batch 2)
+
+(def (cmd-stepfn-machines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Step Functions: state machines")))
+
+(def (cmd-stepfn-executions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Step Functions: executions")))
+
+(def (cmd-stepfn-activities app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Step Functions: activities")))
+
+(def (cmd-stepfn-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Step Functions: starting execution")))
+
+(def (cmd-stepfn-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Step Functions: describing execution")))
+
+(def (cmd-eventbridge-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EventBridge: listing rules")))
+
+(def (cmd-eventbridge-buses app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EventBridge: event buses")))
+
+(def (cmd-eventbridge-targets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EventBridge: rule targets")))
+
+(def (cmd-eventbridge-archives app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EventBridge: event archives")))
+
+(def (cmd-eventbridge-schemas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EventBridge: schema registry")))
+
+;; Round 413 — AWS CodePipeline ext, AWS CodeBuild ext, AWS CodeDeploy ext, AWS CodeCommit ext (batch 2)
+
+(def (cmd-codedeploy-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeDeploy: listing applications")))
+
+(def (cmd-codedeploy-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeDeploy: deployment groups")))
+
+(def (cmd-codedeploy-deployments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeDeploy: listing deployments")))
+
+(def (cmd-codedeploy-configs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeDeploy: deployment configs")))
+
+(def (cmd-codedeploy-instances app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeDeploy: on-premises instances")))
+
+(def (cmd-codecommit-repos app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeCommit: listing repositories")))
+
+(def (cmd-codecommit-branches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeCommit: listing branches")))
+
+(def (cmd-codecommit-prs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeCommit: pull requests")))
+
+(def (cmd-codecommit-comments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeCommit: comments")))
+
+(def (cmd-codecommit-triggers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeCommit: triggers")))
+
+;; Round 414 — Redis ext, Memcached ext, Cassandra ext, CouchDB ext (batch 2)
+
+(def (cmd-memcached-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: watching keys")))
+
+(def (cmd-memcached-lru app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: LRU crawler")))
+
+(def (cmd-memcached-cas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: CAS operations")))
+
+(def (cmd-cassandra-keyspaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: listing keyspaces")))
+
+(def (cmd-cassandra-queries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: running query")))
+
+(def (cmd-cassandra-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: node status")))
+
+(def (cmd-cassandra-repairs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: repair management")))
+
+(def (cmd-cassandra-compaction app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: compaction stats")))
+
+(def (cmd-couchdb-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CouchDB: listing databases")))
+
+(def (cmd-couchdb-documents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CouchDB: querying documents")))
+
+;; Round 415 — Neo4j ext, InfluxDB ext, TimescaleDB ext, ClickHouse ext (batch 2)
+
+(def (cmd-couchdb-views app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CouchDB: design views")))
+
+(def (cmd-couchdb-replication app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CouchDB: replication")))
+
+(def (cmd-couchdb-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CouchDB: user management")))
+
+(def (cmd-timescaledb-chunks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: chunk management")))
+
+(def (cmd-timescaledb-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: retention policies")))
+
+(def (cmd-timescaledb-continuous-aggs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: continuous aggregates")))
+
+(def (cmd-timescaledb-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TimescaleDB: background jobs")))
+
+(def (cmd-clickhouse-queries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: running query")))
+
+(def (cmd-clickhouse-partitions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: partition management")))
+
+(def (cmd-clickhouse-formats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: output formats")))
+
 ;; Milestone: Round 400 — 9,000+ commands in jemacs!

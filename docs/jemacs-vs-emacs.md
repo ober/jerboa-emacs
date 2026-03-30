@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 415 — Neo4j ext, InfluxDB ext, TimescaleDB ext, ClickHouse ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| CouchDB views | — | `couchdb-views` | :orange_circle: Scaffolded |
+| CouchDB replication | — | `couchdb-replication` | :orange_circle: Scaffolded |
+| CouchDB users | — | `couchdb-users` | :orange_circle: Scaffolded |
+| Neo4j databases | — | `neo4j-databases` | :orange_circle: Scaffolded |
+| Neo4j indexes | — | `neo4j-indexes` | :orange_circle: Scaffolded |
+| Neo4j constraints | — | `neo4j-constraints` | :orange_circle: Scaffolded |
+| Neo4j procedures | — | `neo4j-procedures` | :orange_circle: Scaffolded |
+| Neo4j labels | — | `neo4j-labels` | :orange_circle: Scaffolded |
+| InfluxDB queries | — | `influxdb-queries` | :orange_circle: Scaffolded |
+| InfluxDB retention | — | `influxdb-retention` | :orange_circle: Scaffolded |
+| InfluxDB users | — | `influxdb-users` | :orange_circle: Scaffolded |
+| InfluxDB tags | — | `influxdb-tags` | :orange_circle: Scaffolded |
+| InfluxDB series | — | `influxdb-series` | :orange_circle: Scaffolded |
+| TimescaleDB chunks | — | `timescaledb-chunks` | :orange_circle: Scaffolded |
+| TimescaleDB policies | — | `timescaledb-policies` | :orange_circle: Scaffolded |
+| TimescaleDB continuous aggs | — | `timescaledb-continuous-aggs` | :orange_circle: Scaffolded |
+| TimescaleDB jobs | — | `timescaledb-jobs` | :orange_circle: Scaffolded |
+| ClickHouse queries | — | `clickhouse-queries` | :orange_circle: Scaffolded |
+| ClickHouse partitions | — | `clickhouse-partitions` | :orange_circle: Scaffolded |
+| ClickHouse formats | — | `clickhouse-formats` | :orange_circle: Scaffolded |
+
+### Round 414 — Redis ext, Memcached ext, Cassandra ext, CouchDB ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Redis config | — | `redis-config` | :orange_circle: Scaffolded |
+| Redis cluster | — | `redis-cluster` | :orange_circle: Scaffolded |
+| Redis Sentinel | — | `redis-sentinel` | :orange_circle: Scaffolded |
+| Redis pub/sub | — | `redis-pubsub` | :orange_circle: Scaffolded |
+| Redis streams | — | `redis-streams` | :orange_circle: Scaffolded |
+| Redis modules | — | `redis-modules` | :orange_circle: Scaffolded |
+| Redis ACL | — | `redis-acl` | :orange_circle: Scaffolded |
+| Redis memory | — | `redis-memory` | :orange_circle: Scaffolded |
+| Memcached threads | — | `memcached-threads` | :orange_circle: Scaffolded |
+| Memcached settings | — | `memcached-settings` | :orange_circle: Scaffolded |
+| Memcached watch | — | `memcached-watch` | :orange_circle: Scaffolded |
+| Memcached LRU | — | `memcached-lru` | :orange_circle: Scaffolded |
+| Memcached CAS | — | `memcached-cas` | :orange_circle: Scaffolded |
+| Cassandra keyspaces | — | `cassandra-keyspaces` | :orange_circle: Scaffolded |
+| Cassandra queries | — | `cassandra-queries` | :orange_circle: Scaffolded |
+| Cassandra nodes | — | `cassandra-nodes` | :orange_circle: Scaffolded |
+| Cassandra repairs | — | `cassandra-repairs` | :orange_circle: Scaffolded |
+| Cassandra compaction | — | `cassandra-compaction` | :orange_circle: Scaffolded |
+| CouchDB databases | — | `couchdb-databases` | :orange_circle: Scaffolded |
+| CouchDB documents | — | `couchdb-documents` | :orange_circle: Scaffolded |
+
+### Round 413 — AWS CodePipeline ext, AWS CodeBuild ext, AWS CodeDeploy ext, AWS CodeCommit ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| CodePipeline list | — | `codepipeline-list` | :orange_circle: Scaffolded |
+| CodePipeline status | — | `codepipeline-status` | :orange_circle: Scaffolded |
+| CodePipeline stages | — | `codepipeline-stages` | :orange_circle: Scaffolded |
+| CodePipeline actions | — | `codepipeline-actions` | :orange_circle: Scaffolded |
+| CodePipeline webhooks | — | `codepipeline-webhooks` | :orange_circle: Scaffolded |
+| CodeBuild projects | — | `codebuild-projects` | :orange_circle: Scaffolded |
+| CodeBuild builds | — | `codebuild-builds` | :orange_circle: Scaffolded |
+| CodeBuild reports | — | `codebuild-reports` | :orange_circle: Scaffolded |
+| CodeBuild webhooks | — | `codebuild-webhooks` | :orange_circle: Scaffolded |
+| CodeBuild cache | — | `codebuild-cache` | :orange_circle: Scaffolded |
+| CodeDeploy apps | — | `codedeploy-apps` | :orange_circle: Scaffolded |
+| CodeDeploy groups | — | `codedeploy-groups` | :orange_circle: Scaffolded |
+| CodeDeploy deployments | — | `codedeploy-deployments` | :orange_circle: Scaffolded |
+| CodeDeploy configs | — | `codedeploy-configs` | :orange_circle: Scaffolded |
+| CodeDeploy instances | — | `codedeploy-instances` | :orange_circle: Scaffolded |
+| CodeCommit repos | — | `codecommit-repos` | :orange_circle: Scaffolded |
+| CodeCommit branches | — | `codecommit-branches` | :orange_circle: Scaffolded |
+| CodeCommit PRs | — | `codecommit-prs` | :orange_circle: Scaffolded |
+| CodeCommit comments | — | `codecommit-comments` | :orange_circle: Scaffolded |
+| CodeCommit triggers | — | `codecommit-triggers` | :orange_circle: Scaffolded |
+
+### Round 412 — AWS EKS ext, AWS Fargate ext, AWS Step Functions ext, AWS EventBridge ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| EKS clusters | — | `eks-clusters` | :orange_circle: Scaffolded |
+| EKS node groups | — | `eks-nodegroups` | :orange_circle: Scaffolded |
+| EKS addons | — | `eks-addons` | :orange_circle: Scaffolded |
+| EKS Fargate | — | `eks-fargate` | :orange_circle: Scaffolded |
+| EKS identity | — | `eks-identity` | :orange_circle: Scaffolded |
+| Fargate profiles | — | `fargate-profiles` | :orange_circle: Scaffolded |
+| Fargate tasks | — | `fargate-tasks` | :orange_circle: Scaffolded |
+| Fargate services | — | `fargate-services` | :orange_circle: Scaffolded |
+| Fargate capacity | — | `fargate-capacity` | :orange_circle: Scaffolded |
+| Fargate platform | — | `fargate-platform` | :orange_circle: Scaffolded |
+| Step Functions machines | — | `stepfn-machines` | :orange_circle: Scaffolded |
+| Step Functions executions | — | `stepfn-executions` | :orange_circle: Scaffolded |
+| Step Functions activities | — | `stepfn-activities` | :orange_circle: Scaffolded |
+| Step Functions start | — | `stepfn-start` | :orange_circle: Scaffolded |
+| Step Functions describe | — | `stepfn-describe` | :orange_circle: Scaffolded |
+| EventBridge rules | — | `eventbridge-rules` | :orange_circle: Scaffolded |
+| EventBridge buses | — | `eventbridge-buses` | :orange_circle: Scaffolded |
+| EventBridge targets | — | `eventbridge-targets` | :orange_circle: Scaffolded |
+| EventBridge archives | — | `eventbridge-archives` | :orange_circle: Scaffolded |
+| EventBridge schemas | — | `eventbridge-schemas` | :orange_circle: Scaffolded |
+
+### Round 411 — AWS IAM ext, AWS CloudWatch ext, AWS Route53 ext, AWS ACM ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| IAM users | — | `iam-users` | :orange_circle: Scaffolded |
+| IAM roles | — | `iam-roles` | :orange_circle: Scaffolded |
+| IAM policies | — | `iam-policies` | :orange_circle: Scaffolded |
+| IAM groups | — | `iam-groups` | :orange_circle: Scaffolded |
+| IAM MFA | — | `iam-mfa` | :orange_circle: Scaffolded |
+| CloudWatch alarms | — | `cloudwatch-alarms` | :orange_circle: Scaffolded |
+| CloudWatch metrics | — | `cloudwatch-metrics` | :orange_circle: Scaffolded |
+| CloudWatch logs | — | `cloudwatch-logs` | :orange_circle: Scaffolded |
+| CloudWatch dashboards | — | `cloudwatch-dashboards` | :orange_circle: Scaffolded |
+| CloudWatch events | — | `cloudwatch-events` | :orange_circle: Scaffolded |
+| Route53 zones | — | `route53-zones` | :orange_circle: Scaffolded |
+| Route53 records | — | `route53-records` | :orange_circle: Scaffolded |
+| Route53 health checks | — | `route53-health-checks` | :orange_circle: Scaffolded |
+| Route53 domains | — | `route53-domains` | :orange_circle: Scaffolded |
+| Route53 resolvers | — | `route53-resolvers` | :orange_circle: Scaffolded |
+| ACM certificates | — | `acm-certificates` | :orange_circle: Scaffolded |
+| ACM request | — | `acm-request` | :orange_circle: Scaffolded |
+| ACM describe | — | `acm-describe` | :orange_circle: Scaffolded |
+| ACM renew | — | `acm-renew` | :orange_circle: Scaffolded |
+| ACM tags | — | `acm-tags` | :orange_circle: Scaffolded |
+
 ### Round 410 — AWS RDS ext, AWS DynamoDB ext, AWS SQS ext, AWS SNS ext
 
 | Feature | Emacs | jemacs | Status |

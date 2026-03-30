@@ -28956,3 +28956,213 @@
 (def (cmd-dynamodb-global-tables app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "DynamoDB: global tables")))
+
+;; Round 411 — AWS IAM ext, AWS CloudWatch ext, AWS Route53 ext, AWS ACM ext (batch 1)
+
+(def (cmd-iam-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IAM: listing users")))
+
+(def (cmd-iam-roles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IAM: listing roles")))
+
+(def (cmd-iam-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IAM: listing policies")))
+
+(def (cmd-iam-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IAM: listing groups")))
+
+(def (cmd-iam-mfa app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IAM: MFA devices")))
+
+(def (cmd-cloudwatch-alarms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CloudWatch: listing alarms")))
+
+(def (cmd-cloudwatch-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CloudWatch: listing metrics")))
+
+(def (cmd-cloudwatch-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CloudWatch: log groups")))
+
+(def (cmd-cloudwatch-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CloudWatch: dashboards")))
+
+(def (cmd-cloudwatch-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CloudWatch: Events rules")))
+
+;; Round 412 — AWS EKS ext, AWS Fargate ext, AWS Step Functions ext, AWS EventBridge ext (batch 1)
+
+(def (cmd-eks-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EKS: listing clusters")))
+
+(def (cmd-eks-nodegroups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EKS: node groups")))
+
+(def (cmd-eks-addons app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EKS: managing addons")))
+
+(def (cmd-eks-fargate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EKS: Fargate profiles")))
+
+(def (cmd-eks-identity app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EKS: identity providers")))
+
+(def (cmd-fargate-profiles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fargate: listing profiles")))
+
+(def (cmd-fargate-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fargate: listing tasks")))
+
+(def (cmd-fargate-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fargate: listing services")))
+
+(def (cmd-fargate-capacity app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fargate: capacity providers")))
+
+(def (cmd-fargate-platform app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fargate: platform versions")))
+
+;; Round 413 — AWS CodePipeline ext, AWS CodeBuild ext, AWS CodeDeploy ext, AWS CodeCommit ext (batch 1)
+
+(def (cmd-codepipeline-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodePipeline: listing pipelines")))
+
+(def (cmd-codepipeline-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodePipeline: pipeline status")))
+
+(def (cmd-codepipeline-stages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodePipeline: listing stages")))
+
+(def (cmd-codepipeline-actions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodePipeline: listing actions")))
+
+(def (cmd-codepipeline-webhooks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodePipeline: webhooks")))
+
+(def (cmd-codebuild-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeBuild: listing projects")))
+
+(def (cmd-codebuild-builds app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeBuild: listing builds")))
+
+(def (cmd-codebuild-reports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeBuild: build reports")))
+
+(def (cmd-codebuild-webhooks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeBuild: webhooks")))
+
+(def (cmd-codebuild-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CodeBuild: cache management")))
+
+;; Round 414 — Redis ext, Memcached ext, Cassandra ext, CouchDB ext (batch 1)
+
+(def (cmd-redis-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: configuration")))
+
+(def (cmd-redis-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: cluster info")))
+
+(def (cmd-redis-sentinel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: Sentinel status")))
+
+(def (cmd-redis-pubsub app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: pub/sub channels")))
+
+(def (cmd-redis-streams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: stream management")))
+
+(def (cmd-redis-modules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: loaded modules")))
+
+(def (cmd-redis-acl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: ACL management")))
+
+(def (cmd-redis-memory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: memory analysis")))
+
+(def (cmd-memcached-threads app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: thread stats")))
+
+(def (cmd-memcached-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: settings")))
+
+;; Round 415 — Neo4j ext, InfluxDB ext, TimescaleDB ext, ClickHouse ext (batch 1)
+
+(def (cmd-neo4j-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: listing databases")))
+
+(def (cmd-neo4j-indexes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: managing indexes")))
+
+(def (cmd-neo4j-constraints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: managing constraints")))
+
+(def (cmd-neo4j-procedures app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: listing procedures")))
+
+(def (cmd-neo4j-labels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neo4j: listing labels")))
+
+(def (cmd-influxdb-queries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: running query")))
+
+(def (cmd-influxdb-retention app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: retention policies")))
+
+(def (cmd-influxdb-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: user management")))
+
+(def (cmd-influxdb-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: tag keys")))
+
+(def (cmd-influxdb-series app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "InfluxDB: series management")))
