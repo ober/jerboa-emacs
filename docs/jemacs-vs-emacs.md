@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 300 — Dpkg ext, Apt ext, RPM ext, Yum ext, Pacman ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| dpkg-list | :orange_circle: | List installed packages |
+| dpkg-install | :orange_circle: | Install deb package |
+| dpkg-remove | :orange_circle: | Remove deb package |
+| dpkg-info | :orange_circle: | Show package info |
+| apt-show | :orange_circle: | Show apt package |
+| apt-depends | :orange_circle: | Show dependencies |
+| apt-rdepends | :orange_circle: | Show reverse deps |
+| apt-policy | :orange_circle: | Show apt policy |
+| rpm-list | :orange_circle: | List RPM packages |
+| rpm-install | :orange_circle: | Install RPM package |
+| rpm-remove | :orange_circle: | Remove RPM package |
+| rpm-info | :orange_circle: | Show RPM info |
+| yum-search | :orange_circle: | Search yum packages |
+| yum-info | :orange_circle: | Show yum package info |
+| yum-depends | :orange_circle: | Show yum deps |
+| yum-history | :orange_circle: | Show yum history |
+| pacman-search | :orange_circle: | Search pacman packages |
+| pacman-info | :orange_circle: | Show pacman info |
+| pacman-files | :orange_circle: | List package files |
+| pacman-orphans | :orange_circle: | List orphaned packages |
+
 ### Round 299 — Ar ext, Pkg-config ext, Ldconfig ext, Locale ext, Timezone ext
 
 | Command | Status | Description |

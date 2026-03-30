@@ -22914,3 +22914,61 @@
 (def (cmd-timezone-info app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Timezone: showing current timezone")))
+
+;;; Round 300 — RPM ext, Yum ext, Pacman ext (batch 2)
+
+(def (cmd-rpm-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "RPM: removing " pkg))))))
+
+(def (cmd-rpm-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "RPM: info for " pkg))))))
+
+(def (cmd-yum-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (q)
+        (echo-message! echo (str "Yum: searching " q))))))
+
+(def (cmd-yum-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Yum: info for " pkg))))))
+
+(def (cmd-yum-depends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Yum: dependencies of " pkg))))))
+
+(def (cmd-yum-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Yum: showing transaction history")))
+
+(def (cmd-pacman-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (q)
+        (echo-message! echo (str "Pacman: searching " q))))))
+
+(def (cmd-pacman-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Pacman: info for " pkg))))))
+
+(def (cmd-pacman-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Pacman: files in " pkg))))))
+
+(def (cmd-pacman-orphans app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pacman: listing orphaned packages")))

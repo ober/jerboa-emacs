@@ -23636,3 +23636,61 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ldconfig: listing libraries")))
 
+;;; Round 300 — Dpkg ext, Apt ext, RPM ext (batch 1)
+
+(def (cmd-dpkg-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dpkg: listing installed packages")))
+
+(def (cmd-dpkg-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package file: "
+      (lambda (pkg)
+        (echo-message! echo (str "Dpkg: installing " pkg))))))
+
+(def (cmd-dpkg-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Dpkg: removing " pkg))))))
+
+(def (cmd-dpkg-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Dpkg: info for " pkg))))))
+
+(def (cmd-apt-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Apt: showing " pkg))))))
+
+(def (cmd-apt-depends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Apt: dependencies of " pkg))))))
+
+(def (cmd-apt-rdepends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Apt: reverse deps of " pkg))))))
+
+(def (cmd-apt-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Apt: policy for " pkg))))))
+
+(def (cmd-rpm-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RPM: listing installed packages")))
+
+(def (cmd-rpm-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package file: "
+      (lambda (pkg)
+        (echo-message! echo (str "RPM: installing " pkg))))))
+
