@@ -4583,6 +4583,256 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 510 — Lmod, Singularity, Apptainer, Charliecloud
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lmod-load` | :orange_circle: Scaffolded | Lmod: load module |
+| `lmod-avail` | :orange_circle: Scaffolded | Lmod: available modules |
+| `lmod-spider` | :orange_circle: Scaffolded | Lmod: spider search |
+| `lmod-list` | :orange_circle: Scaffolded | Lmod: list loaded |
+| `lmod-save` | :orange_circle: Scaffolded | Lmod: save collection |
+| `singularity-build` | :orange_circle: Scaffolded | Singularity: build image |
+| `singularity-run` | :orange_circle: Scaffolded | Singularity: run container |
+| `singularity-exec` | :orange_circle: Scaffolded | Singularity: exec command |
+| `singularity-shell` | :orange_circle: Scaffolded | Singularity: shell into |
+| `singularity-pull` | :orange_circle: Scaffolded | Singularity: pull image |
+| `apptainer-build` | :orange_circle: Scaffolded | Apptainer: build image |
+| `apptainer-run` | :orange_circle: Scaffolded | Apptainer: run container |
+| `apptainer-exec` | :orange_circle: Scaffolded | Apptainer: exec command |
+| `apptainer-shell` | :orange_circle: Scaffolded | Apptainer: shell into |
+| `apptainer-pull` | :orange_circle: Scaffolded | Apptainer: pull image |
+| `charliecloud-build` | :orange_circle: Scaffolded | Charliecloud: build image |
+| `charliecloud-run` | :orange_circle: Scaffolded | Charliecloud: run container |
+| `charliecloud-pull` | :orange_circle: Scaffolded | Charliecloud: pull image |
+| `charliecloud-push` | :orange_circle: Scaffolded | Charliecloud: push image |
+| `charliecloud-list` | :orange_circle: Scaffolded | Charliecloud: list images |
+
+### Round 509 — CUDA ext, OpenCL, Spack, EasyBuild
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `cuda-compile` | :orange_circle: Scaffolded | CUDA: compile kernel |
+| `cuda-profile` | :orange_circle: Scaffolded | CUDA: profile execution |
+| `cuda-memcheck` | :orange_circle: Scaffolded | CUDA: memory check |
+| `cuda-debug` | :orange_circle: Scaffolded | CUDA: debug session |
+| `cuda-info` | :orange_circle: Scaffolded | CUDA: device info |
+| `opencl-info` | :orange_circle: Scaffolded | OpenCL: platform info |
+| `opencl-compile` | :orange_circle: Scaffolded | OpenCL: compile kernel |
+| `opencl-profile` | :orange_circle: Scaffolded | OpenCL: profile execution |
+| `opencl-platform` | :orange_circle: Scaffolded | OpenCL: platform selection |
+| `opencl-device` | :orange_circle: Scaffolded | OpenCL: device selection |
+| `spack-install` | :orange_circle: Scaffolded | Spack: install package |
+| `spack-find` | :orange_circle: Scaffolded | Spack: find packages |
+| `spack-env` | :orange_circle: Scaffolded | Spack: environment |
+| `spack-spec` | :orange_circle: Scaffolded | Spack: spec resolution |
+| `spack-develop` | :orange_circle: Scaffolded | Spack: develop mode |
+| `easybuild-install` | :orange_circle: Scaffolded | EasyBuild: install |
+| `easybuild-search` | :orange_circle: Scaffolded | EasyBuild: search |
+| `easybuild-robot` | :orange_circle: Scaffolded | EasyBuild: robot path |
+| `easybuild-config` | :orange_circle: Scaffolded | EasyBuild: configuration |
+| `easybuild-test` | :orange_circle: Scaffolded | EasyBuild: test build |
+
+### Round 508 — Icarus Verilog, GTKWave, SLURM ext, MPI
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `iverilog-compile` | :orange_circle: Scaffolded | Icarus Verilog: compile |
+| `iverilog-simulate` | :orange_circle: Scaffolded | Icarus Verilog: simulate |
+| `iverilog-dump` | :orange_circle: Scaffolded | Icarus Verilog: dump signals |
+| `iverilog-module` | :orange_circle: Scaffolded | Icarus Verilog: module info |
+| `iverilog-vpi` | :orange_circle: Scaffolded | Icarus Verilog: VPI interface |
+| `gtkwave-open` | :orange_circle: Scaffolded | GTKWave: open waveform |
+| `gtkwave-zoom` | :orange_circle: Scaffolded | GTKWave: zoom control |
+| `gtkwave-marker` | :orange_circle: Scaffolded | GTKWave: set marker |
+| `gtkwave-signal` | :orange_circle: Scaffolded | GTKWave: add signal |
+| `gtkwave-export` | :orange_circle: Scaffolded | GTKWave: export view |
+| `slurm-submit` | :orange_circle: Scaffolded | SLURM: submit job |
+| `slurm-queue` | :orange_circle: Scaffolded | SLURM: view queue |
+| `slurm-cancel` | :orange_circle: Scaffolded | SLURM: cancel job |
+| `slurm-info` | :orange_circle: Scaffolded | SLURM: job info |
+| `slurm-partition` | :orange_circle: Scaffolded | SLURM: partition info |
+| `mpi-run` | :orange_circle: Scaffolded | MPI: run program |
+| `mpi-compile` | :orange_circle: Scaffolded | MPI: compile program |
+| `mpi-info` | :orange_circle: Scaffolded | MPI: implementation info |
+| `mpi-hostfile` | :orange_circle: Scaffolded | MPI: manage hostfile |
+| `mpi-debug` | :orange_circle: Scaffolded | MPI: debug session |
+
+### Round 507 — PlatformIO ext, Yosys, nextpnr, Verilator
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `platformio-build` | :orange_circle: Scaffolded | PlatformIO: build firmware |
+| `platformio-upload` | :orange_circle: Scaffolded | PlatformIO: upload firmware |
+| `platformio-monitor` | :orange_circle: Scaffolded | PlatformIO: serial monitor |
+| `platformio-test` | :orange_circle: Scaffolded | PlatformIO: run tests |
+| `platformio-check` | :orange_circle: Scaffolded | PlatformIO: static analysis |
+| `yosys-synth` | :orange_circle: Scaffolded | Yosys: synthesize design |
+| `yosys-read` | :orange_circle: Scaffolded | Yosys: read source |
+| `yosys-write` | :orange_circle: Scaffolded | Yosys: write output |
+| `yosys-script` | :orange_circle: Scaffolded | Yosys: run script |
+| `yosys-show` | :orange_circle: Scaffolded | Yosys: show design |
+| `nextpnr-place` | :orange_circle: Scaffolded | nextpnr: place design |
+| `nextpnr-route` | :orange_circle: Scaffolded | nextpnr: route design |
+| `nextpnr-pack` | :orange_circle: Scaffolded | nextpnr: pack design |
+| `nextpnr-timing` | :orange_circle: Scaffolded | nextpnr: timing analysis |
+| `nextpnr-gui` | :orange_circle: Scaffolded | nextpnr: GUI viewer |
+| `verilator-lint` | :orange_circle: Scaffolded | Verilator: lint check |
+| `verilator-compile` | :orange_circle: Scaffolded | Verilator: compile |
+| `verilator-trace` | :orange_circle: Scaffolded | Verilator: trace signals |
+| `verilator-coverage` | :orange_circle: Scaffolded | Verilator: coverage |
+| `verilator-threads` | :orange_circle: Scaffolded | Verilator: multi-thread |
+
+### Round 506 — OpenOCD, GDB Server, J-Link, ST-Link
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `openocd-flash` | :orange_circle: Scaffolded | OpenOCD: flash firmware |
+| `openocd-debug` | :orange_circle: Scaffolded | OpenOCD: debug session |
+| `openocd-reset` | :orange_circle: Scaffolded | OpenOCD: reset target |
+| `openocd-halt` | :orange_circle: Scaffolded | OpenOCD: halt target |
+| `openocd-telnet` | :orange_circle: Scaffolded | OpenOCD: telnet interface |
+| `gdb-server-connect` | :orange_circle: Scaffolded | GDB Server: connect |
+| `gdb-server-monitor` | :orange_circle: Scaffolded | GDB Server: monitor command |
+| `gdb-server-load` | :orange_circle: Scaffolded | GDB Server: load firmware |
+| `gdb-server-break` | :orange_circle: Scaffolded | GDB Server: set breakpoint |
+| `gdb-server-step` | :orange_circle: Scaffolded | GDB Server: step execution |
+| `jlink-flash` | :orange_circle: Scaffolded | J-Link: flash firmware |
+| `jlink-erase` | :orange_circle: Scaffolded | J-Link: erase chip |
+| `jlink-reset` | :orange_circle: Scaffolded | J-Link: reset target |
+| `jlink-rtt` | :orange_circle: Scaffolded | J-Link: RTT viewer |
+| `jlink-swd` | :orange_circle: Scaffolded | J-Link: SWD interface |
+| `stlink-flash` | :orange_circle: Scaffolded | ST-Link: flash firmware |
+| `stlink-erase` | :orange_circle: Scaffolded | ST-Link: erase chip |
+| `stlink-reset` | :orange_circle: Scaffolded | ST-Link: reset target |
+| `stlink-info` | :orange_circle: Scaffolded | ST-Link: probe info |
+| `stlink-probe` | :orange_circle: Scaffolded | ST-Link: detect probes |
+
+### Round 505 — MkDocs, Docusaurus, Hugo ext, Gatsby
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mkdocs-build` | :orange_circle: Scaffolded | MkDocs: build site |
+| `mkdocs-serve` | :orange_circle: Scaffolded | MkDocs: serve locally |
+| `mkdocs-deploy` | :orange_circle: Scaffolded | MkDocs: deploy |
+| `mkdocs-new` | :orange_circle: Scaffolded | MkDocs: new project |
+| `mkdocs-gh-deploy` | :orange_circle: Scaffolded | MkDocs: GitHub Pages deploy |
+| `docusaurus-start` | :orange_circle: Scaffolded | Docusaurus: start dev server |
+| `docusaurus-build` | :orange_circle: Scaffolded | Docusaurus: build site |
+| `docusaurus-deploy` | :orange_circle: Scaffolded | Docusaurus: deploy |
+| `docusaurus-swizzle` | :orange_circle: Scaffolded | Docusaurus: swizzle component |
+| `docusaurus-clear` | :orange_circle: Scaffolded | Docusaurus: clear cache |
+| `hugo-build` | :orange_circle: Scaffolded | Hugo: build site |
+| `hugo-serve` | :orange_circle: Scaffolded | Hugo: serve locally |
+| `hugo-new` | :orange_circle: Scaffolded | Hugo: new content |
+| `hugo-deploy` | :orange_circle: Scaffolded | Hugo: deploy site |
+| `hugo-mod` | :orange_circle: Scaffolded | Hugo: module management |
+| `gatsby-build` | :orange_circle: Scaffolded | Gatsby: build site |
+| `gatsby-develop` | :orange_circle: Scaffolded | Gatsby: develop server |
+| `gatsby-serve` | :orange_circle: Scaffolded | Gatsby: serve production |
+| `gatsby-clean` | :orange_circle: Scaffolded | Gatsby: clean cache |
+| `gatsby-repl` | :orange_circle: Scaffolded | Gatsby: REPL |
+
+### Round 504 — Coveralls, Codecov, Snyk ext, Sphinx ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `coveralls-upload` | :orange_circle: Scaffolded | Coveralls: upload coverage |
+| `coveralls-config` | :orange_circle: Scaffolded | Coveralls: configuration |
+| `coveralls-parallel` | :orange_circle: Scaffolded | Coveralls: parallel builds |
+| `coveralls-badge` | :orange_circle: Scaffolded | Coveralls: badge URL |
+| `coveralls-webhook` | :orange_circle: Scaffolded | Coveralls: webhook |
+| `codecov-upload` | :orange_circle: Scaffolded | Codecov: upload coverage |
+| `codecov-flags` | :orange_circle: Scaffolded | Codecov: flags |
+| `codecov-report` | :orange_circle: Scaffolded | Codecov: report |
+| `codecov-graph` | :orange_circle: Scaffolded | Codecov: coverage graph |
+| `codecov-notify` | :orange_circle: Scaffolded | Codecov: notifications |
+| `snyk-ignore` | :orange_circle: Scaffolded | Snyk: ignore vulnerability |
+| `snyk-protect` | :orange_circle: Scaffolded | Snyk: protect packages |
+| `snyk-wizard` | :orange_circle: Scaffolded | Snyk: setup wizard |
+| `snyk-auth` | :orange_circle: Scaffolded | Snyk: authenticate |
+| `snyk-policy` | :orange_circle: Scaffolded | Snyk: policy management |
+| `sphinx-build` | :orange_circle: Scaffolded | Sphinx: build docs |
+| `sphinx-apidoc` | :orange_circle: Scaffolded | Sphinx: API documentation |
+| `sphinx-autobuild` | :orange_circle: Scaffolded | Sphinx: auto-rebuild |
+| `sphinx-intl` | :orange_circle: Scaffolded | Sphinx: internationalization |
+| `sphinx-linkcheck` | :orange_circle: Scaffolded | Sphinx: check links |
+
+### Round 503 — PHPUnit ext, Minitest ext, SonarQube ext, CodeClimate
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `phpunit-config` | :orange_circle: Scaffolded | PHPUnit: configuration |
+| `phpunit-coverage` | :orange_circle: Scaffolded | PHPUnit: coverage |
+| `phpunit-filter` | :orange_circle: Scaffolded | PHPUnit: filter tests |
+| `phpunit-group` | :orange_circle: Scaffolded | PHPUnit: test groups |
+| `phpunit-bootstrap` | :orange_circle: Scaffolded | PHPUnit: bootstrap |
+| `minitest-run` | :orange_circle: Scaffolded | Minitest: run tests |
+| `minitest-focus` | :orange_circle: Scaffolded | Minitest: focus test |
+| `minitest-parallel` | :orange_circle: Scaffolded | Minitest: parallel |
+| `minitest-reporter` | :orange_circle: Scaffolded | Minitest: reporter |
+| `minitest-benchmark` | :orange_circle: Scaffolded | Minitest: benchmark |
+| `sonarqube-gate` | :orange_circle: Scaffolded | SonarQube: quality gate |
+| `sonarqube-profile` | :orange_circle: Scaffolded | SonarQube: quality profile |
+| `sonarqube-rule` | :orange_circle: Scaffolded | SonarQube: manage rules |
+| `sonarqube-webhook` | :orange_circle: Scaffolded | SonarQube: webhooks |
+| `sonarqube-quality` | :orange_circle: Scaffolded | SonarQube: quality report |
+| `codeclimate-analyze` | :orange_circle: Scaffolded | CodeClimate: analyze |
+| `codeclimate-prepare` | :orange_circle: Scaffolded | CodeClimate: prepare |
+| `codeclimate-validate` | :orange_circle: Scaffolded | CodeClimate: validate config |
+| `codeclimate-engines` | :orange_circle: Scaffolded | CodeClimate: engines |
+| `codeclimate-diff` | :orange_circle: Scaffolded | CodeClimate: diff analysis |
+
+### Round 502 — Vitest ext, Pytest ext, RSpec ext, JUnit ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vitest-typecheck` | :orange_circle: Scaffolded | Vitest: type checking |
+| `vitest-workspace` | :orange_circle: Scaffolded | Vitest: workspace |
+| `vitest-list` | :orange_circle: Scaffolded | Vitest: list tests |
+| `vitest-related` | :orange_circle: Scaffolded | Vitest: related tests |
+| `vitest-config` | :orange_circle: Scaffolded | Vitest: configuration |
+| `pytest-fixture` | :orange_circle: Scaffolded | Pytest: fixtures |
+| `pytest-mark` | :orange_circle: Scaffolded | Pytest: markers |
+| `pytest-parametrize` | :orange_circle: Scaffolded | Pytest: parametrize |
+| `pytest-capture` | :orange_circle: Scaffolded | Pytest: capture output |
+| `pytest-plugin` | :orange_circle: Scaffolded | Pytest: plugins |
+| `rspec-format` | :orange_circle: Scaffolded | RSpec: format output |
+| `rspec-tag` | :orange_circle: Scaffolded | RSpec: tag tests |
+| `rspec-profile` | :orange_circle: Scaffolded | RSpec: profile slow tests |
+| `rspec-bisect` | :orange_circle: Scaffolded | RSpec: bisect failures |
+| `rspec-doc` | :orange_circle: Scaffolded | RSpec: documentation format |
+| `junit-runner` | :orange_circle: Scaffolded | JUnit: test runner |
+| `junit-suite` | :orange_circle: Scaffolded | JUnit: test suite |
+| `junit-param` | :orange_circle: Scaffolded | JUnit: parameterized tests |
+| `junit-extension` | :orange_circle: Scaffolded | JUnit: extensions |
+| `junit-report` | :orange_circle: Scaffolded | JUnit: test report |
+
+### Round 501 — Jest ext, Mocha ext, Cypress ext, Playwright ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `jest-config` | :orange_circle: Scaffolded | Jest: configuration |
+| `jest-coverage` | :orange_circle: Scaffolded | Jest: coverage report |
+| `jest-snapshot` | :orange_circle: Scaffolded | Jest: snapshot testing |
+| `jest-watch` | :orange_circle: Scaffolded | Jest: watch mode |
+| `jest-cache` | :orange_circle: Scaffolded | Jest: cache management |
+| `mocha-config` | :orange_circle: Scaffolded | Mocha: configuration |
+| `mocha-grep` | :orange_circle: Scaffolded | Mocha: grep tests |
+| `mocha-reporter` | :orange_circle: Scaffolded | Mocha: reporter |
+| `mocha-parallel` | :orange_circle: Scaffolded | Mocha: parallel execution |
+| `mocha-retry` | :orange_circle: Scaffolded | Mocha: retry failed |
+| `cypress-verify` | :orange_circle: Scaffolded | Cypress: verify installation |
+| `cypress-cache` | :orange_circle: Scaffolded | Cypress: cache management |
+| `cypress-info` | :orange_circle: Scaffolded | Cypress: system info |
+| `cypress-screenshot` | :orange_circle: Scaffolded | Cypress: screenshot |
+| `cypress-component` | :orange_circle: Scaffolded | Cypress: component testing |
+| `playwright-show` | :orange_circle: Scaffolded | Playwright: show report |
+| `playwright-install` | :orange_circle: Scaffolded | Playwright: install browsers |
+| `playwright-report` | :orange_circle: Scaffolded | Playwright: HTML report |
+| `playwright-pdf` | :orange_circle: Scaffolded | Playwright: PDF generation |
+| `playwright-video` | :orange_circle: Scaffolded | Playwright: video recording |
+
 ### Round 500 — Vite ext, Webpack ext, Rollup ext, Parcel ext
 
 | Feature | Status | Notes |
