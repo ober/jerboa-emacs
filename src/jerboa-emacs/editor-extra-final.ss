@@ -26327,3 +26327,48 @@
 (def (cmd-keycloak-roles app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Keycloak: listing roles")))
+
+;; Round 367 batch 2 — OIDC ext, Kerberos/PAM/NTLM ext
+(def (cmd-oidc-token app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OIDC: requesting token")))
+
+(def (cmd-oidc-jwks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OIDC: fetching JWKS public keys")))
+
+(def (cmd-kerberos-kvno app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service principal: "
+      (lambda (principal)
+        (echo-message! echo (str "Kerberos: fetching kvno for " principal))))))
+
+(def (cmd-pam-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: testing authentication")))
+
+(def (cmd-pam-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PAM service name: "
+      (lambda (svc)
+        (echo-message! echo (str "PAM: checking configuration for " svc))))))
+
+(def (cmd-ntlm-hash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NTLM: computing hash")))
+
+(def (cmd-ntlm-negotiate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NTLM: initiating negotiate handshake")))
+
+(def (cmd-radius-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: sending authentication request")))
+
+(def (cmd-radius-acct app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: sending accounting request")))
+
+(def (cmd-radius-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: checking server status")))

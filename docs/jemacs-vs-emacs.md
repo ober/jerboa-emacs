@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 367 — OAuth ext, SAML ext, OIDC ext, Kerberos/PAM/NTLM ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| OAuth authorize flow | `oauth2-auth` | `oauth-authorize` | :orange_circle: Scaffolded |
+| OAuth refresh token | `oauth2-refresh-access` | `oauth-refresh` | :orange_circle: Scaffolded |
+| OAuth revoke token | `oauth2-token-revoke` | `oauth-revoke` | :orange_circle: Scaffolded |
+| OAuth introspect token | — | `oauth-introspect` | :orange_circle: Scaffolded |
+| SAML fetch metadata | — | `saml-metadata` | :orange_circle: Scaffolded |
+| SAML SSO login | — | `saml-login` | :orange_circle: Scaffolded |
+| SAML single logout | — | `saml-logout` | :orange_circle: Scaffolded |
+| SAML validate assertion | — | `saml-validate` | :orange_circle: Scaffolded |
+| OIDC discover endpoints | — | `oidc-discover` | :orange_circle: Scaffolded |
+| OIDC fetch userinfo | — | `oidc-userinfo` | :orange_circle: Scaffolded |
+| OIDC request token | — | `oidc-token` | :orange_circle: Scaffolded |
+| OIDC fetch JWKS keys | — | `oidc-jwks` | :orange_circle: Scaffolded |
+| Kerberos kvno lookup | — | `kerberos-kvno` | :orange_circle: Scaffolded |
+| PAM test auth | — | `pam-auth` | :orange_circle: Scaffolded |
+| PAM check config | — | `pam-check` | :orange_circle: Scaffolded |
+| NTLM compute hash | — | `ntlm-hash` | :orange_circle: Scaffolded |
+| NTLM negotiate handshake | — | `ntlm-negotiate` | :orange_circle: Scaffolded |
+| RADIUS authentication | — | `radius-auth` | :orange_circle: Scaffolded |
+| RADIUS accounting | — | `radius-acct` | :orange_circle: Scaffolded |
+| RADIUS server status | — | `radius-status` | :orange_circle: Scaffolded |
+
 ### Round 366 — Vault-SSH ext, CertManager ext, SPIFFE ext, ACME ext, Keycloak ext
 
 | Feature | Status | Notes |

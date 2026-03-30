@@ -27090,3 +27090,48 @@
 (def (cmd-spiffe-agents app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SPIFFE: listing agents")))
+
+;; Round 367 batch 1 — OAuth ext, SAML ext
+(def (cmd-oauth-authorize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OAuth provider: "
+      (lambda (provider)
+        (echo-message! echo (str "OAuth: initiating authorization flow for " provider))))))
+
+(def (cmd-oauth-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OAuth: refreshing access token")))
+
+(def (cmd-oauth-revoke app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OAuth: revoking token")))
+
+(def (cmd-oauth-introspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OAuth: introspecting token")))
+
+(def (cmd-saml-metadata app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SAML: fetching metadata")))
+
+(def (cmd-saml-login app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SAML: initiating SSO login")))
+
+(def (cmd-saml-logout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SAML: initiating single logout")))
+
+(def (cmd-saml-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SAML: validating assertion")))
+
+(def (cmd-oidc-discover app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OIDC issuer URL: "
+      (lambda (url)
+        (echo-message! echo (str "OIDC: discovering endpoints for " url))))))
+
+(def (cmd-oidc-userinfo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OIDC: fetching userinfo")))
