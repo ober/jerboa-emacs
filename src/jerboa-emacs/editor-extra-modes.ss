@@ -24284,3 +24284,51 @@
       (lambda (iface)
         (echo-message! echo (str "Networkctl: status of " iface))))))
 
+;;; Round 312 — Resolvectl ext, Bootctl ext, Homectl ext, Oomctl ext, Systemd-analyze ext (batch 1)
+
+(def (cmd-resolvectl-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Resolvectl: starting DNS monitor")))
+
+(def (cmd-resolvectl-log-level app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Log level: "
+      (lambda (lvl)
+        (echo-message! echo (str "Resolvectl: setting log level to " lvl))))))
+
+(def (cmd-resolvectl-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Resolvectl: resetting server features")))
+
+(def (cmd-bootctl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bootctl: showing boot loader status")))
+
+(def (cmd-bootctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bootctl: listing boot entries")))
+
+(def (cmd-bootctl-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bootctl: installing boot loader")))
+
+(def (cmd-bootctl-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bootctl: updating boot loader")))
+
+(def (cmd-homectl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Homectl: listing home directories")))
+
+(def (cmd-homectl-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username to create: "
+      (lambda (user)
+        (echo-message! echo (str "Homectl: creating home for " user))))))
+
+(def (cmd-homectl-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username to remove: "
+      (lambda (user)
+        (echo-message! echo (str "Homectl: removing home for " user))))))
+

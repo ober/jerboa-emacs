@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 312 — Resolvectl ext, Bootctl ext, Homectl ext, Oomctl ext, Systemd-analyze ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `resolvectl-monitor` | :orange_circle: | Monitor DNS resolutions |
+| `resolvectl-log-level` | :orange_circle: | Set resolver log level |
+| `resolvectl-reset` | :orange_circle: | Reset server features |
+| `bootctl-status` | :orange_circle: | Show boot loader status |
+| `bootctl-list` | :orange_circle: | List boot entries |
+| `bootctl-install` | :orange_circle: | Install boot loader |
+| `bootctl-update` | :orange_circle: | Update boot loader |
+| `homectl-list` | :orange_circle: | List home directories |
+| `homectl-create` | :orange_circle: | Create home directory |
+| `homectl-remove` | :orange_circle: | Remove home directory |
+| `homectl-inspect` | :orange_circle: | Inspect home directory |
+| `oomctl-dump` | :orange_circle: | Dump OOM killer state |
+| `oomctl-status` | :orange_circle: | Show systemd-oomd status |
+| `systemd-analyze-blame` | :orange_circle: | Show unit startup blame |
+| `systemd-analyze-critical` | :orange_circle: | Show critical chain |
+| `systemd-analyze-plot` | :orange_circle: | Generate boot plot |
+| `systemd-analyze-dot` | :orange_circle: | Generate dependency graph |
+| `systemd-analyze-security` | :orange_circle: | Security audit unit |
+| `systemd-analyze-unit` | :orange_circle: | Show unit paths |
+| `systemd-analyze-verify` | :orange_circle: | Verify unit file |
+
 ### Round 311 — Coredumpctl ext, Busctl ext, Networkctl ext, Portablectl ext, Userdbctl ext
 
 | Feature | Status | Notes |

@@ -23560,3 +23560,55 @@
 (def (cmd-userdbctl-services app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Userdbctl: listing services")))
+
+;;; Round 312 — Homectl ext, Oomctl ext, Systemd-analyze ext (batch 2)
+
+(def (cmd-homectl-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username to inspect: "
+      (lambda (user)
+        (echo-message! echo (str "Homectl: inspecting home of " user))))))
+
+(def (cmd-oomctl-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Oomctl: dumping OOM killer state")))
+
+(def (cmd-oomctl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Oomctl: showing systemd-oomd status")))
+
+(def (cmd-systemd-analyze-blame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd-analyze: showing blame")))
+
+(def (cmd-systemd-analyze-critical app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd-analyze: showing critical chain")))
+
+(def (cmd-systemd-analyze-plot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd-analyze: generating boot plot")))
+
+(def (cmd-systemd-analyze-dot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "Systemd-analyze: generating dot for " pat))))))
+
+(def (cmd-systemd-analyze-security app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to audit: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd-analyze: security audit of " unit))))))
+
+(def (cmd-systemd-analyze-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit paths: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd-analyze: unit paths for " unit))))))
+
+(def (cmd-systemd-analyze-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Unit to verify: "
+      (lambda (unit)
+        (echo-message! echo (str "Systemd-analyze: verifying " unit))))))
