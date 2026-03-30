@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 274 — OpenAPI ext, AsyncAPI ext, JSON Schema ext, Avro ext, Cap'n Proto ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| openapi-validate | :orange_circle: | Validate OpenAPI specification |
+| openapi-preview | :orange_circle: | Preview OpenAPI documentation |
+| openapi-generate | :orange_circle: | Generate OpenAPI client |
+| openapi-lint | :orange_circle: | Lint OpenAPI specification |
+| asyncapi-validate | :orange_circle: | Validate AsyncAPI specification |
+| asyncapi-preview | :orange_circle: | Preview AsyncAPI documentation |
+| asyncapi-generate | :orange_circle: | Generate AsyncAPI code |
+| asyncapi-lint | :orange_circle: | Lint AsyncAPI specification |
+| jsonschema-validate | :orange_circle: | Validate JSON Schema document |
+| jsonschema-generate | :orange_circle: | Generate JSON Schema |
+| jsonschema-format | :orange_circle: | Format JSON Schema |
+| jsonschema-lint | :orange_circle: | Lint JSON Schema |
+| avro-compile | :orange_circle: | Compile Avro schema |
+| avro-validate | :orange_circle: | Validate Avro schema |
+| avro-generate | :orange_circle: | Generate code from Avro schema |
+| avro-format | :orange_circle: | Format Avro schema |
+| capnproto-compile | :orange_circle: | Compile Cap'n Proto schema |
+| capnproto-validate | :orange_circle: | Validate Cap'n Proto schema |
+| capnproto-generate | :orange_circle: | Generate Cap'n Proto code |
+| capnproto-format | :orange_circle: | Format Cap'n Proto schema |
+
 ### Round 273 — SPARQL ext, GraphQL ext, gRPC ext, Protocol Buffers ext, Thrift ext
 
 | Command | Status | Description |

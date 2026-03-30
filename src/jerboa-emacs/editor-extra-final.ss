@@ -21616,3 +21616,45 @@
 (def (cmd-thrift-validate app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Thrift: validating schema")))
+
+;;; Round 274 — JSON Schema ext, Avro ext, Cap'n Proto ext (batch 2)
+
+(def (cmd-jsonschema-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JSON Schema: formatting")))
+
+(def (cmd-jsonschema-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JSON Schema: linting")))
+
+(def (cmd-avro-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: compiling schema")))
+
+(def (cmd-avro-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: validating schema")))
+
+(def (cmd-avro-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: generating code from schema")))
+
+(def (cmd-avro-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: formatting schema")))
+
+(def (cmd-capnproto-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: compiling schema")))
+
+(def (cmd-capnproto-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: validating schema")))
+
+(def (cmd-capnproto-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: generating code")))
+
+(def (cmd-capnproto-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: formatting schema")))

@@ -22238,3 +22238,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "gRPC: listing services")))
 
+;;; Round 274 — OpenAPI ext, AsyncAPI ext, JSON Schema ext, Avro ext, Cap'n Proto ext (batch 1)
+
+(def (cmd-openapi-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAPI: validating specification")))
+
+(def (cmd-openapi-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAPI: previewing documentation")))
+
+(def (cmd-openapi-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Language: "
+      (lambda (lang)
+        (echo-message! echo (str "OpenAPI: generating " lang " client"))))))
+
+(def (cmd-openapi-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAPI: linting specification")))
+
+(def (cmd-asyncapi-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsyncAPI: validating specification")))
+
+(def (cmd-asyncapi-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsyncAPI: previewing documentation")))
+
+(def (cmd-asyncapi-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsyncAPI: generating code")))
+
+(def (cmd-asyncapi-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsyncAPI: linting specification")))
+
+(def (cmd-jsonschema-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JSON Schema: validating document")))
+
+(def (cmd-jsonschema-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JSON Schema: generating schema")))
+
