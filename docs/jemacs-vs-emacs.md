@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 287 — ACL ext, Xattr ext, Chattr ext, Quota ext, Fstab ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| acl-get | :orange_circle: | Get file ACL |
+| acl-set | :orange_circle: | Set file ACL |
+| acl-remove | :orange_circle: | Remove file ACL |
+| acl-default | :orange_circle: | Set default ACL |
+| xattr-list | :orange_circle: | List extended attributes |
+| xattr-get | :orange_circle: | Get extended attribute |
+| xattr-set | :orange_circle: | Set extended attribute |
+| xattr-remove | :orange_circle: | Remove extended attribute |
+| chown-recursive | :orange_circle: | Recursive chown |
+| chmod-recursive | :orange_circle: | Recursive chmod |
+| chattr-set | :orange_circle: | Set file attributes |
+| chattr-get | :orange_circle: | Get file attributes |
+| quota-check | :orange_circle: | Check disk quotas |
+| quota-set | :orange_circle: | Set user quota |
+| quota-report | :orange_circle: | Generate quota report |
+| quota-status | :orange_circle: | Show quota status |
+| fstab-list | :orange_circle: | List fstab entries |
+| fstab-add | :orange_circle: | Add fstab entry |
+| fstab-remove | :orange_circle: | Remove fstab entry |
+| fstab-check | :orange_circle: | Check fstab syntax |
+
 ### Round 286 — PAM ext, SSHD ext, GPG ext, SSL ext, Vault ext
 
 | Command | Status | Description |

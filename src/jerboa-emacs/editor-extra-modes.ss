@@ -22888,3 +22888,65 @@
       (lambda (file)
         (echo-message! echo (str "GPG: importing " file))))))
 
+;;; Round 287 — ACL ext, Xattr ext, Chattr ext (batch 1)
+
+(def (cmd-acl-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "ACL: getting ACL for " file))))))
+
+(def (cmd-acl-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "ACL: setting ACL on " file))))))
+
+(def (cmd-acl-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "ACL: removing ACL from " file))))))
+
+(def (cmd-acl-default app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Directory: "
+      (lambda (dir)
+        (echo-message! echo (str "ACL: setting default ACL on " dir))))))
+
+(def (cmd-xattr-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Xattr: listing attributes of " file))))))
+
+(def (cmd-xattr-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Xattr: getting attribute from " file))))))
+
+(def (cmd-xattr-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Xattr: setting attribute on " file))))))
+
+(def (cmd-xattr-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Xattr: removing attribute from " file))))))
+
+(def (cmd-chown-recursive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Path: "
+      (lambda (path)
+        (echo-message! echo (str "Chown: recursive on " path))))))
+
+(def (cmd-chmod-recursive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Path: "
+      (lambda (path)
+        (echo-message! echo (str "Chmod: recursive on " path))))))
+

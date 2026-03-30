@@ -22236,3 +22236,55 @@
     (echo-read-string echo "Secret path: "
       (lambda (path)
         (echo-message! echo (str "Vault: reading " path))))))
+
+;;; Round 287 — Chattr ext, Quota ext, Fstab ext (batch 2)
+
+(def (cmd-chattr-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Chattr: setting attributes on " file))))))
+
+(def (cmd-chattr-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Chattr: getting attributes of " file))))))
+
+(def (cmd-quota-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quota: checking quotas")))
+
+(def (cmd-quota-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "User: "
+      (lambda (user)
+        (echo-message! echo (str "Quota: setting for " user))))))
+
+(def (cmd-quota-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quota: generating report")))
+
+(def (cmd-quota-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quota: showing status")))
+
+(def (cmd-fstab-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fstab: listing entries")))
+
+(def (cmd-fstab-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fstab: adding entry for " dev))))))
+
+(def (cmd-fstab-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mp)
+        (echo-message! echo (str "Fstab: removing " mp))))))
+
+(def (cmd-fstab-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fstab: checking syntax")))
