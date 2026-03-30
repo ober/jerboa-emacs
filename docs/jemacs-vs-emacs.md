@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 621 — Vector Databases
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vecdb-insert` | :orange_circle: Scaffold | Insert vector |
+| `vecdb-search` | :orange_circle: Scaffold | Similarity search |
+| `vecdb-upsert` | :orange_circle: Scaffold | Upsert |
+| `vecdb-delete` | :orange_circle: Scaffold | Delete |
+| `vecdb-index` | :orange_circle: Scaffold | Build index |
+| `vecdb-quantize` | :orange_circle: Scaffold | Quantize |
+| `vecdb-cluster` | :orange_circle: Scaffold | Cluster |
+| `vecdb-filter` | :orange_circle: Scaffold | Metadata filter |
+| `vecdb-batch` | :orange_circle: Scaffold | Batch insert |
+| `vecdb-metadata` | :orange_circle: Scaffold | Metadata |
+
+### Round 622 — Embedding Models
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `embedding-encode` | :orange_circle: Scaffold | Encode text |
+| `embedding-batch` | :orange_circle: Scaffold | Batch encode |
+| `embedding-cosine` | :orange_circle: Scaffold | Cosine similarity |
+| `embedding-dot` | :orange_circle: Scaffold | Dot product |
+| `embedding-normalize` | :orange_circle: Scaffold | Normalize |
+| `embedding-reduce` | :orange_circle: Scaffold | Dimensionality reduce |
+| `embedding-cluster` | :orange_circle: Scaffold | Cluster |
+| `embedding-visualize` | :orange_circle: Scaffold | Visualize |
+| `embedding-cache` | :orange_circle: Scaffold | Cache |
+| `embedding-finetune` | :orange_circle: Scaffold | Fine-tune |
+
+### Round 623 — Knowledge Graphs
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `kg-add-triple` | :orange_circle: Scaffold | Add triple |
+| `kg-query` | :orange_circle: Scaffold | Query |
+| `kg-infer` | :orange_circle: Scaffold | Infer |
+| `kg-embed` | :orange_circle: Scaffold | Embed |
+| `kg-link-predict` | :orange_circle: Scaffold | Link prediction |
+| `kg-path` | :orange_circle: Scaffold | Find path |
+| `kg-subgraph` | :orange_circle: Scaffold | Extract subgraph |
+| `kg-merge` | :orange_circle: Scaffold | Merge graphs |
+| `kg-validate` | :orange_circle: Scaffold | Validate |
+| `kg-export` | :orange_circle: Scaffold | Export |
+
+### Round 624 — Ontology
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ontology-class` | :orange_circle: Scaffold | Define class |
+| `ontology-property` | :orange_circle: Scaffold | Define property |
+| `ontology-individual` | :orange_circle: Scaffold | Add individual |
+| `ontology-restriction` | :orange_circle: Scaffold | Restriction |
+| `ontology-inherit` | :orange_circle: Scaffold | Inheritance |
+| `ontology-reason` | :orange_circle: Scaffold | Reason |
+| `ontology-validate` | :orange_circle: Scaffold | Validate |
+| `ontology-align` | :orange_circle: Scaffold | Align |
+| `ontology-merge` | :orange_circle: Scaffold | Merge |
+| `ontology-visualize` | :orange_circle: Scaffold | Visualize |
+
+### Round 625 — Semantic Web (RDF, SPARQL)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `rdf-parse` | :orange_circle: Scaffold | Parse RDF |
+| `rdf-serialize` | :orange_circle: Scaffold | Serialize |
+| `rdf-validate` | :orange_circle: Scaffold | Validate |
+| `rdf-merge` | :orange_circle: Scaffold | Merge graphs |
+| `rdf-diff` | :orange_circle: Scaffold | Diff |
+| `sparql-select` | :orange_circle: Scaffold | SELECT query |
+| `sparql-update` | :orange_circle: Scaffold | UPDATE |
+| `sparql-ask` | :orange_circle: Scaffold | ASK |
+| `sparql-federate` | :orange_circle: Scaffold | Federate |
+| `sparql-filter` | :orange_circle: Scaffold | Filter |
+
+### Round 626 — Linked Data & OWL
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `linkeddata-dereference` | :orange_circle: Scaffold | Dereference URI |
+| `linkeddata-crawl` | :orange_circle: Scaffold | Crawl |
+| `linkeddata-publish` | :orange_circle: Scaffold | Publish |
+| `linkeddata-validate` | :orange_circle: Scaffold | Validate |
+| `linkeddata-enrich` | :orange_circle: Scaffold | Enrich |
+| `sparql-insert` | :orange_circle: Scaffold | INSERT |
+| `sparql-delete` | :orange_circle: Scaffold | DELETE |
+| `owl-classify` | :orange_circle: Scaffold | Classify |
+| `owl-consistency` | :orange_circle: Scaffold | Consistency |
+| `owl-entailment` | :orange_circle: Scaffold | Entailment |
+
+### Round 627 — Property Graphs
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `propgraph-node` | :orange_circle: Scaffold | Add node |
+| `propgraph-edge` | :orange_circle: Scaffold | Add edge |
+| `propgraph-traverse` | :orange_circle: Scaffold | Traverse |
+| `propgraph-pattern` | :orange_circle: Scaffold | Pattern match |
+| `propgraph-index` | :orange_circle: Scaffold | Index |
+| `propgraph-label` | :orange_circle: Scaffold | Label |
+| `propgraph-property` | :orange_circle: Scaffold | Set property |
+| `propgraph-shortest` | :orange_circle: Scaffold | Shortest path |
+| `propgraph-community` | :orange_circle: Scaffold | Community detect |
+| `propgraph-centrality` | :orange_circle: Scaffold | Centrality |
+
+### Round 628 — Graph Analytics
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pagerank-compute` | :orange_circle: Scaffold | PageRank |
+| `pagerank-personalized` | :orange_circle: Scaffold | Personalized PR |
+| `louvain-detect` | :orange_circle: Scaffold | Louvain community |
+| `label-propagation` | :orange_circle: Scaffold | Label propagation |
+| `betweenness-centrality` | :orange_circle: Scaffold | Betweenness |
+| `closeness-centrality` | :orange_circle: Scaffold | Closeness |
+| `eigenvector-centrality` | :orange_circle: Scaffold | Eigenvector |
+| `graph-clustering` | :orange_circle: Scaffold | Clustering coeff |
+| `graph-diameter` | :orange_circle: Scaffold | Diameter |
+| `graph-connected` | :orange_circle: Scaffold | Connected components |
+
+### Round 629 — Hypergraphs
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `hypergraph-add` | :orange_circle: Scaffold | Add edge |
+| `hypergraph-query` | :orange_circle: Scaffold | Query |
+| `hypergraph-traverse` | :orange_circle: Scaffold | Traverse |
+| `hypergraph-contract` | :orange_circle: Scaffold | Contract |
+| `hypergraph-cut` | :orange_circle: Scaffold | Min cut |
+| `hypergraph-partition` | :orange_circle: Scaffold | Partition |
+| `hypergraph-dual` | :orange_circle: Scaffold | Dual |
+| `hypergraph-incidence` | :orange_circle: Scaffold | Incidence |
+| `hypergraph-color` | :orange_circle: Scaffold | Coloring |
+| `hypergraph-transversal` | :orange_circle: Scaffold | Transversal |
+
+### Round 630 — Category Theory
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `functor-map` | :orange_circle: Scaffold | Functor map |
+| `functor-compose` | :orange_circle: Scaffold | Compose functors |
+| `monad-bind` | :orange_circle: Scaffold | Monad bind |
+| `monad-return` | :orange_circle: Scaffold | Monad return |
+| `monad-join` | :orange_circle: Scaffold | Monad join |
+| `natural-transform` | :orange_circle: Scaffold | Natural transform |
+| `adjunction-unit` | :orange_circle: Scaffold | Adjunction unit |
+| `adjunction-counit` | :orange_circle: Scaffold | Adjunction counit |
+| `yoneda-embed` | :orange_circle: Scaffold | Yoneda embedding |
+| `kan-extension` | :orange_circle: Scaffold | Kan extension |
+
 ### Round 611 — Hash Functions (SipHash, MurmurHash, xxHash)
 
 | Feature | Status | Notes |

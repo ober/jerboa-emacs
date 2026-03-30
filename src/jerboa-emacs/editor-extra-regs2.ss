@@ -13049,4 +13049,35 @@
   ;; Round 620: Inverted Index & Search
   (register-command! 'invindex-build cmd-invindex-build) (register-command! 'invindex-merge cmd-invindex-merge) (register-command! 'invindex-posting cmd-invindex-posting) (register-command! 'invindex-skip cmd-invindex-skip) (register-command! 'invindex-compress cmd-invindex-compress)
   (register-command! 'bm25-score cmd-bm25-score) (register-command! 'tfidf-compute cmd-tfidf-compute) (register-command! 'boolquery-and cmd-boolquery-and) (register-command! 'boolquery-or cmd-boolquery-or) (register-command! 'boolquery-not cmd-boolquery-not)
+
+  ;; Round 621: Vector Databases
+  (register-command! 'vecdb-insert cmd-vecdb-insert) (register-command! 'vecdb-search cmd-vecdb-search) (register-command! 'vecdb-upsert cmd-vecdb-upsert) (register-command! 'vecdb-delete cmd-vecdb-delete) (register-command! 'vecdb-index cmd-vecdb-index)
+  (register-command! 'vecdb-quantize cmd-vecdb-quantize) (register-command! 'vecdb-cluster cmd-vecdb-cluster) (register-command! 'vecdb-filter cmd-vecdb-filter) (register-command! 'vecdb-batch cmd-vecdb-batch) (register-command! 'vecdb-metadata cmd-vecdb-metadata)
+  ;; Round 622: Embedding Models
+  (register-command! 'embedding-encode cmd-embedding-encode) (register-command! 'embedding-batch cmd-embedding-batch) (register-command! 'embedding-cosine cmd-embedding-cosine) (register-command! 'embedding-dot cmd-embedding-dot) (register-command! 'embedding-normalize cmd-embedding-normalize)
+  (register-command! 'embedding-reduce cmd-embedding-reduce) (register-command! 'embedding-cluster cmd-embedding-cluster) (register-command! 'embedding-visualize cmd-embedding-visualize) (register-command! 'embedding-cache cmd-embedding-cache) (register-command! 'embedding-finetune cmd-embedding-finetune)
+  ;; Round 623: Knowledge Graphs
+  (register-command! 'kg-add-triple cmd-kg-add-triple) (register-command! 'kg-query cmd-kg-query) (register-command! 'kg-infer cmd-kg-infer) (register-command! 'kg-embed cmd-kg-embed) (register-command! 'kg-link-predict cmd-kg-link-predict)
+  (register-command! 'kg-path cmd-kg-path) (register-command! 'kg-subgraph cmd-kg-subgraph) (register-command! 'kg-merge cmd-kg-merge) (register-command! 'kg-validate cmd-kg-validate) (register-command! 'kg-export cmd-kg-export)
+  ;; Round 624: Ontology
+  (register-command! 'ontology-class cmd-ontology-class) (register-command! 'ontology-property cmd-ontology-property) (register-command! 'ontology-individual cmd-ontology-individual) (register-command! 'ontology-restriction cmd-ontology-restriction) (register-command! 'ontology-inherit cmd-ontology-inherit)
+  (register-command! 'ontology-reason cmd-ontology-reason) (register-command! 'ontology-validate cmd-ontology-validate) (register-command! 'ontology-align cmd-ontology-align) (register-command! 'ontology-merge cmd-ontology-merge) (register-command! 'ontology-visualize cmd-ontology-visualize)
+  ;; Round 625: Semantic Web (RDF, SPARQL)
+  (register-command! 'rdf-parse cmd-rdf-parse) (register-command! 'rdf-serialize cmd-rdf-serialize) (register-command! 'rdf-validate cmd-rdf-validate) (register-command! 'rdf-merge cmd-rdf-merge) (register-command! 'rdf-diff cmd-rdf-diff)
+  (register-command! 'sparql-select cmd-sparql-select) (register-command! 'sparql-update cmd-sparql-update) (register-command! 'sparql-ask cmd-sparql-ask) (register-command! 'sparql-federate cmd-sparql-federate) (register-command! 'sparql-filter cmd-sparql-filter)
+  ;; Round 626: Linked Data + OWL
+  (register-command! 'linkeddata-dereference cmd-linkeddata-dereference) (register-command! 'linkeddata-crawl cmd-linkeddata-crawl) (register-command! 'linkeddata-publish cmd-linkeddata-publish) (register-command! 'linkeddata-validate cmd-linkeddata-validate) (register-command! 'linkeddata-enrich cmd-linkeddata-enrich)
+  (register-command! 'sparql-insert cmd-sparql-insert) (register-command! 'sparql-delete cmd-sparql-delete) (register-command! 'owl-classify cmd-owl-classify) (register-command! 'owl-consistency cmd-owl-consistency) (register-command! 'owl-entailment cmd-owl-entailment)
+  ;; Round 627: Property Graphs
+  (register-command! 'propgraph-node cmd-propgraph-node) (register-command! 'propgraph-edge cmd-propgraph-edge) (register-command! 'propgraph-traverse cmd-propgraph-traverse) (register-command! 'propgraph-pattern cmd-propgraph-pattern) (register-command! 'propgraph-index cmd-propgraph-index)
+  (register-command! 'propgraph-label cmd-propgraph-label) (register-command! 'propgraph-property cmd-propgraph-property) (register-command! 'propgraph-shortest cmd-propgraph-shortest) (register-command! 'propgraph-community cmd-propgraph-community) (register-command! 'propgraph-centrality cmd-propgraph-centrality)
+  ;; Round 628: Graph Analytics
+  (register-command! 'pagerank-compute cmd-pagerank-compute) (register-command! 'pagerank-personalized cmd-pagerank-personalized) (register-command! 'louvain-detect cmd-louvain-detect) (register-command! 'label-propagation cmd-label-propagation) (register-command! 'betweenness-centrality cmd-betweenness-centrality)
+  (register-command! 'closeness-centrality cmd-closeness-centrality) (register-command! 'eigenvector-centrality cmd-eigenvector-centrality) (register-command! 'graph-clustering cmd-graph-clustering) (register-command! 'graph-diameter cmd-graph-diameter) (register-command! 'graph-connected cmd-graph-connected)
+  ;; Round 629: Hypergraphs
+  (register-command! 'hypergraph-add cmd-hypergraph-add) (register-command! 'hypergraph-query cmd-hypergraph-query) (register-command! 'hypergraph-traverse cmd-hypergraph-traverse) (register-command! 'hypergraph-contract cmd-hypergraph-contract) (register-command! 'hypergraph-cut cmd-hypergraph-cut)
+  (register-command! 'hypergraph-partition cmd-hypergraph-partition) (register-command! 'hypergraph-dual cmd-hypergraph-dual) (register-command! 'hypergraph-incidence cmd-hypergraph-incidence) (register-command! 'hypergraph-color cmd-hypergraph-color) (register-command! 'hypergraph-transversal cmd-hypergraph-transversal)
+  ;; Round 630: Category Theory
+  (register-command! 'functor-map cmd-functor-map) (register-command! 'functor-compose cmd-functor-compose) (register-command! 'monad-bind cmd-monad-bind) (register-command! 'monad-return cmd-monad-return) (register-command! 'monad-join cmd-monad-join)
+  (register-command! 'natural-transform cmd-natural-transform) (register-command! 'adjunction-unit cmd-adjunction-unit) (register-command! 'adjunction-counit cmd-adjunction-counit) (register-command! 'yoneda-embed cmd-yoneda-embed) (register-command! 'kan-extension cmd-kan-extension)
 )
