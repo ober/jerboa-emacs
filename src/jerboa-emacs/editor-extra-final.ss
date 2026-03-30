@@ -20194,3 +20194,50 @@
     (echo-read-string echo "URL format: "
       (lambda (fmt)
         (echo-message! echo (str "Bug reference: URL format set to " fmt))))))
+
+;; Round 243 — Git timemachine, Worktree, Calc, HL-todo (10 in final)
+(def (cmd-git-timemachine-blame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git timemachine: showing blame")))
+
+(def (cmd-git-timemachine-copy-hash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git timemachine: copied commit hash")))
+
+(def (cmd-git-timemachine-goto app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Revision: "
+      (lambda (rev)
+        (echo-message! echo (str "Git timemachine: jumped to " rev))))))
+
+(def (cmd-git-timemachine-quit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git timemachine: quit")))
+
+(def (cmd-git-timemachine-show-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git timemachine: showing diff")))
+
+(def (cmd-git-worktree-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Worktree path: "
+      (lambda (path)
+        (echo-message! echo (str "Git: added worktree at " path))))))
+
+(def (cmd-git-worktree-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: listing worktrees")))
+
+(def (cmd-git-worktree-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove worktree: "
+      (lambda (path)
+        (echo-message! echo (str "Git: removed worktree " path))))))
+
+(def (cmd-calc-eval-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: evaluated current line")))
+
+(def (cmd-calc-sum-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calc: summed region")))

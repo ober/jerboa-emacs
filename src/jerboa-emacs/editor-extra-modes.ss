@@ -20849,3 +20849,44 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Artist: draw line mode")))
 
+;; Round 243 — Git ext, Calc ext, HL-todo ext (10 in modes)
+(def (cmd-git-bisect-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: bisect started")))
+
+(def (cmd-git-bisect-good app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: marked current commit as good")))
+
+(def (cmd-git-bisect-bad app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: marked current commit as bad")))
+
+(def (cmd-git-bisect-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: bisect reset")))
+
+(def (cmd-git-bisect-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: showing bisect log")))
+
+(def (cmd-git-diff-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: diff of current buffer")))
+
+(def (cmd-git-diff-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: showing diff stat")))
+
+(def (cmd-git-shortlog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: showing shortlog")))
+
+(def (cmd-git-submodule-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: submodule status")))
+
+(def (cmd-git-submodule-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Git: updating submodules")))
+

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 243 — Git ext, Calc ext (gerbil-emacs parity)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| git-bisect-start | :orange_circle: | Start git bisect |
+| git-bisect-good | :orange_circle: | Mark commit as good |
+| git-bisect-bad | :orange_circle: | Mark commit as bad |
+| git-bisect-reset | :orange_circle: | Reset git bisect |
+| git-bisect-log | :orange_circle: | Show bisect log |
+| git-diff-buffer | :orange_circle: | Diff current buffer |
+| git-diff-stat | :orange_circle: | Show diff stat |
+| git-shortlog | :orange_circle: | Show git shortlog |
+| git-submodule-status | :orange_circle: | Show submodule status |
+| git-submodule-update | :orange_circle: | Update git submodules |
+| git-timemachine-blame | :orange_circle: | Show blame in timemachine |
+| git-timemachine-copy-hash | :orange_circle: | Copy commit hash |
+| git-timemachine-goto | :orange_circle: | Go to specific revision |
+| git-timemachine-quit | :orange_circle: | Quit timemachine |
+| git-timemachine-show-diff | :orange_circle: | Show diff in timemachine |
+| git-worktree-add | :orange_circle: | Add git worktree |
+| git-worktree-list | :orange_circle: | List git worktrees |
+| git-worktree-remove | :orange_circle: | Remove git worktree |
+| calc-eval-line | :orange_circle: | Evaluate current line in calc |
+| calc-sum-region | :orange_circle: | Sum numbers in region |
+
 ### Round 242 — Org-roam, Artist-mode (gerbil-emacs parity)
 
 | Command | Status | Description |
