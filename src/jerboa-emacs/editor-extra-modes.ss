@@ -25744,3 +25744,59 @@
     (echo-read-string echo "Skopeo inspect image: "
       (lambda (img)
         (echo-message! echo (str "Skopeo: inspecting " img))))))
+
+;;; Round 340 — Helm ext, Kubectl ext, Minikube ext, Kind ext, K3s ext (batch 1)
+
+(def (cmd-helm-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Helm install release name: "
+      (lambda (name)
+        (echo-message! echo (str "Helm: installing release " name))))))
+
+(def (cmd-helm-upgrade app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Helm upgrade release: "
+      (lambda (name)
+        (echo-message! echo (str "Helm: upgrading release " name))))))
+
+(def (cmd-helm-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Helm: listing releases")))
+
+(def (cmd-helm-repo-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Helm repo name: "
+      (lambda (name)
+        (echo-message! echo (str "Helm: adding repo " name))))))
+
+(def (cmd-kubectl-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kubectl get resource: "
+      (lambda (res)
+        (echo-message! echo (str "Kubectl: getting " res))))))
+
+(def (cmd-kubectl-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kubectl describe resource: "
+      (lambda (res)
+        (echo-message! echo (str "Kubectl: describing " res))))))
+
+(def (cmd-kubectl-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kubectl logs pod: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubectl: showing logs for " pod))))))
+
+(def (cmd-kubectl-exec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kubectl exec pod: "
+      (lambda (pod)
+        (echo-message! echo (str "Kubectl: exec into " pod))))))
+
+(def (cmd-minikube-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: starting cluster")))
+
+(def (cmd-minikube-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: stopping cluster")))

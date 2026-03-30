@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 340 — Helm ext, Kubectl ext, Minikube ext, Kind ext, K3s ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| helm-install | :orange_circle: | Helm: install a release |
+| helm-upgrade | :orange_circle: | Helm: upgrade a release |
+| helm-list | :orange_circle: | Helm: list releases |
+| helm-repo-add | :orange_circle: | Helm: add a repo |
+| kubectl-get | :orange_circle: | Kubectl: get resources |
+| kubectl-describe | :orange_circle: | Kubectl: describe a resource |
+| kubectl-logs | :orange_circle: | Kubectl: show pod logs |
+| kubectl-exec | :orange_circle: | Kubectl: exec into pod |
+| minikube-start | :orange_circle: | Minikube: start cluster |
+| minikube-stop | :orange_circle: | Minikube: stop cluster |
+| minikube-status | :orange_circle: | Minikube: show status |
+| minikube-dashboard | :orange_circle: | Minikube: open dashboard |
+| kind-create | :orange_circle: | Kind: create cluster |
+| kind-delete | :orange_circle: | Kind: delete cluster |
+| kind-load | :orange_circle: | Kind: load image |
+| kind-export | :orange_circle: | Kind: export logs |
+| k3s-start | :orange_circle: | K3s: start server |
+| k3s-stop | :orange_circle: | K3s: stop server |
+| k3s-status | :orange_circle: | K3s: show status |
+| k3s-kubectl | :orange_circle: | K3s: run kubectl command |
+
 ### Round 339 — Podman ext, Buildah ext, Skopeo ext, Crictl ext, Crun ext
 
 | Feature | Status | Notes |

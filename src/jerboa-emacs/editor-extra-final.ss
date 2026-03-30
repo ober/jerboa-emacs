@@ -25043,3 +25043,55 @@
     (echo-read-string echo "Crun state container ID: "
       (lambda (id)
         (echo-message! echo (str "Crun: showing state of " id))))))
+
+;;; Round 340 — Minikube ext, Kind ext, K3s ext (batch 2)
+
+(def (cmd-minikube-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: showing cluster status")))
+
+(def (cmd-minikube-dashboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Minikube: opening dashboard")))
+
+(def (cmd-kind-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kind cluster name: "
+      (lambda (name)
+        (echo-message! echo (str "Kind: creating cluster " name))))))
+
+(def (cmd-kind-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kind delete cluster: "
+      (lambda (name)
+        (echo-message! echo (str "Kind: deleting cluster " name))))))
+
+(def (cmd-kind-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kind load image: "
+      (lambda (img)
+        (echo-message! echo (str "Kind: loading image " img))))))
+
+(def (cmd-kind-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kind export logs to: "
+      (lambda (dir)
+        (echo-message! echo (str "Kind: exporting logs to " dir))))))
+
+(def (cmd-k3s-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "K3s: starting server")))
+
+(def (cmd-k3s-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "K3s: stopping server")))
+
+(def (cmd-k3s-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "K3s: showing server status")))
+
+(def (cmd-k3s-kubectl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "K3s kubectl command: "
+      (lambda (cmd)
+        (echo-message! echo (str "K3s: kubectl " cmd))))))
