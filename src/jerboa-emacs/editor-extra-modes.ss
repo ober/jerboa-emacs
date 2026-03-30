@@ -32346,3 +32346,409 @@
 (def (cmd-singularity-pull app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Singularity: pull image")))
+
+;; Round 511: Godot, Love2D, Raylib, SDL2 (20 commands)
+(def (cmd-godot-scene app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Godot: scene editor")))
+
+(def (cmd-godot-shader app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Godot: shader editor")))
+
+(def (cmd-godot-signal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Godot: signal connections")))
+
+(def (cmd-godot-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Godot: export project")))
+
+(def (cmd-godot-debugger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Godot: debugger")))
+
+(def (cmd-love2d-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Love2D: run game")))
+
+(def (cmd-love2d-conf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Love2D: configuration")))
+
+(def (cmd-love2d-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Love2D: package game")))
+
+(def (cmd-love2d-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Love2D: debug")))
+
+(def (cmd-love2d-console app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Love2D: console")))
+
+(def (cmd-raylib-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Raylib: build project")))
+
+(def (cmd-raylib-example app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Raylib: examples")))
+
+(def (cmd-raylib-shader app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Raylib: shader")))
+
+(def (cmd-raylib-texture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Raylib: texture")))
+
+(def (cmd-raylib-audio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Raylib: audio")))
+
+(def (cmd-sdl2-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SDL2: initialize")))
+
+(def (cmd-sdl2-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SDL2: window management")))
+
+(def (cmd-sdl2-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SDL2: renderer")))
+
+(def (cmd-sdl2-event app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SDL2: event handling")))
+
+(def (cmd-sdl2-mixer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SDL2: audio mixer")))
+
+;; Round 513: LAME, Opus, Blender ext, OpenSCAD (20 commands)
+(def (cmd-lame-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LAME: encode MP3")))
+
+(def (cmd-lame-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LAME: decode MP3")))
+
+(def (cmd-lame-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LAME: ID3 tags")))
+
+(def (cmd-lame-quality app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LAME: quality settings")))
+
+(def (cmd-lame-preset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LAME: encoding preset")))
+
+(def (cmd-opus-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Opus: encode audio")))
+
+(def (cmd-opus-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Opus: decode audio")))
+
+(def (cmd-opus-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Opus: file info")))
+
+(def (cmd-opus-header app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Opus: header info")))
+
+(def (cmd-opus-comment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Opus: comments")))
+
+(def (cmd-blender-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blender: render scene")))
+
+(def (cmd-blender-script app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blender: run script")))
+
+(def (cmd-blender-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blender: export model")))
+
+(def (cmd-blender-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blender: import model")))
+
+(def (cmd-blender-batch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blender: batch render")))
+
+(def (cmd-openscad-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAD: render model")))
+
+(def (cmd-openscad-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAD: export STL")))
+
+(def (cmd-openscad-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAD: preview")))
+
+(def (cmd-openscad-library app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAD: library")))
+
+(def (cmd-openscad-customize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAD: customizer")))
+
+;; Round 515 batch 1: ogr2ogr, PROJ (10 commands)
+(def (cmd-ogr2ogr-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ogr2ogr: convert format")))
+
+(def (cmd-ogr2ogr-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ogr2ogr: layer info")))
+
+(def (cmd-ogr2ogr-clip app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ogr2ogr: clip geometry")))
+
+(def (cmd-ogr2ogr-reproject app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ogr2ogr: reproject")))
+
+(def (cmd-ogr2ogr-sql app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ogr2ogr: SQL query")))
+
+(def (cmd-proj-transform app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PROJ: transform coordinates")))
+
+(def (cmd-proj-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PROJ: CRS info")))
+
+(def (cmd-proj-factors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PROJ: projection factors")))
+
+(def (cmd-proj-geod app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PROJ: geodesic calculations")))
+
+(def (cmd-proj-crs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PROJ: CRS database")))
+
+;; Round 516: Pandas ext, Matplotlib ext, Seaborn, Plotly (20 commands)
+(def (cmd-pandas-dataframe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandas: DataFrame operations")))
+
+(def (cmd-pandas-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandas: merge/join")))
+
+(def (cmd-pandas-groupby app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandas: group by")))
+
+(def (cmd-pandas-pivot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandas: pivot table")))
+
+(def (cmd-pandas-io app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandas: I/O operations")))
+
+(def (cmd-matplotlib-plot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matplotlib: create plot")))
+
+(def (cmd-matplotlib-figure app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matplotlib: figure management")))
+
+(def (cmd-matplotlib-axis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matplotlib: axis config")))
+
+(def (cmd-matplotlib-style app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matplotlib: style sheets")))
+
+(def (cmd-matplotlib-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matplotlib: save figure")))
+
+(def (cmd-seaborn-heatmap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seaborn: heatmap")))
+
+(def (cmd-seaborn-scatter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seaborn: scatter plot")))
+
+(def (cmd-seaborn-bar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seaborn: bar plot")))
+
+(def (cmd-seaborn-violin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seaborn: violin plot")))
+
+(def (cmd-seaborn-pair app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Seaborn: pair plot")))
+
+(def (cmd-plotly-chart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Plotly: chart")))
+
+(def (cmd-plotly-scatter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Plotly: scatter")))
+
+(def (cmd-plotly-bar app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Plotly: bar chart")))
+
+(def (cmd-plotly-layout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Plotly: layout")))
+
+(def (cmd-plotly-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Plotly: export")))
+
+;; Round 518: Jupyter ext, JupyterLab ext, RStudio, Octave (20 commands)
+(def (cmd-jupyter-notebook app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jupyter: open notebook")))
+
+(def (cmd-jupyter-kernel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jupyter: kernel management")))
+
+(def (cmd-jupyter-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jupyter: convert notebook")))
+
+(def (cmd-jupyter-trust app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jupyter: trust notebook")))
+
+(def (cmd-jupyter-extension app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jupyter: extensions")))
+
+(def (cmd-jupyterlab-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JupyterLab: build")))
+
+(def (cmd-jupyterlab-extension app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JupyterLab: extensions")))
+
+(def (cmd-jupyterlab-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JupyterLab: themes")))
+
+(def (cmd-jupyterlab-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JupyterLab: workspaces")))
+
+(def (cmd-jupyterlab-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JupyterLab: configuration")))
+
+(def (cmd-rstudio-project app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RStudio: project")))
+
+(def (cmd-rstudio-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RStudio: Connect publish")))
+
+(def (cmd-rstudio-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RStudio: publish")))
+
+(def (cmd-rstudio-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RStudio: package tools")))
+
+(def (cmd-rstudio-shiny app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RStudio: Shiny app")))
+
+(def (cmd-octave-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: evaluate")))
+
+(def (cmd-octave-plot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: plot")))
+
+(def (cmd-octave-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: load data")))
+
+(def (cmd-octave-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: save data")))
+
+(def (cmd-octave-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: packages")))
+
+;; Round 520 batch 1: Typst, Texinfo (10 commands)
+(def (cmd-typst-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Typst: compile document")))
+
+(def (cmd-typst-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Typst: watch mode")))
+
+(def (cmd-typst-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Typst: initialize project")))
+
+(def (cmd-typst-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Typst: packages")))
+
+(def (cmd-typst-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Typst: query document")))
+
+(def (cmd-texinfo-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Texinfo: compile")))
+
+(def (cmd-texinfo-html app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Texinfo: to HTML")))
+
+(def (cmd-texinfo-pdf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Texinfo: to PDF")))
+
+(def (cmd-texinfo-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Texinfo: to Info")))
+
+(def (cmd-texinfo-xml app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Texinfo: to XML")))

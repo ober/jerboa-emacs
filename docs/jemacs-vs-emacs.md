@@ -4583,6 +4583,256 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 520 — Typst, Texinfo, Groff, LilyPond
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `typst-compile` | :orange_circle: Scaffolded | Typst: compile document |
+| `typst-watch` | :orange_circle: Scaffolded | Typst: watch mode |
+| `typst-init` | :orange_circle: Scaffolded | Typst: initialize project |
+| `typst-package` | :orange_circle: Scaffolded | Typst: packages |
+| `typst-query` | :orange_circle: Scaffolded | Typst: query document |
+| `texinfo-compile` | :orange_circle: Scaffolded | Texinfo: compile |
+| `texinfo-html` | :orange_circle: Scaffolded | Texinfo: to HTML |
+| `texinfo-pdf` | :orange_circle: Scaffolded | Texinfo: to PDF |
+| `texinfo-info` | :orange_circle: Scaffolded | Texinfo: to Info |
+| `texinfo-xml` | :orange_circle: Scaffolded | Texinfo: to XML |
+| `groff-compile` | :orange_circle: Scaffolded | Groff: compile document |
+| `groff-man` | :orange_circle: Scaffolded | Groff: man macro |
+| `groff-ms` | :orange_circle: Scaffolded | Groff: ms macro |
+| `groff-mm` | :orange_circle: Scaffolded | Groff: mm macro |
+| `groff-pdf` | :orange_circle: Scaffolded | Groff: to PDF |
+| `lilypond-compile` | :orange_circle: Scaffolded | LilyPond: compile score |
+| `lilypond-midi` | :orange_circle: Scaffolded | LilyPond: MIDI output |
+| `lilypond-pdf` | :orange_circle: Scaffolded | LilyPond: PDF output |
+| `lilypond-svg` | :orange_circle: Scaffolded | LilyPond: SVG output |
+| `lilypond-preview` | :orange_circle: Scaffolded | LilyPond: preview |
+
+### Round 519 — Maxima, LaTeX ext, Pandoc ext, AsciiDoc
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `maxima-solve` | :orange_circle: Scaffolded | Maxima: solve equation |
+| `maxima-simplify` | :orange_circle: Scaffolded | Maxima: simplify |
+| `maxima-integrate` | :orange_circle: Scaffolded | Maxima: integrate |
+| `maxima-plot` | :orange_circle: Scaffolded | Maxima: plot |
+| `maxima-diff` | :orange_circle: Scaffolded | Maxima: differentiate |
+| `latex-compile` | :orange_circle: Scaffolded | LaTeX: compile document |
+| `latex-bibtex` | :orange_circle: Scaffolded | LaTeX: BibTeX |
+| `latex-glossary` | :orange_circle: Scaffolded | LaTeX: glossary |
+| `latex-index` | :orange_circle: Scaffolded | LaTeX: index |
+| `latex-clean` | :orange_circle: Scaffolded | LaTeX: clean aux files |
+| `pandoc-convert` | :orange_circle: Scaffolded | Pandoc: convert document |
+| `pandoc-template` | :orange_circle: Scaffolded | Pandoc: templates |
+| `pandoc-filter` | :orange_circle: Scaffolded | Pandoc: filters |
+| `pandoc-metadata` | :orange_circle: Scaffolded | Pandoc: metadata |
+| `pandoc-defaults` | :orange_circle: Scaffolded | Pandoc: defaults file |
+| `asciidoc-convert` | :orange_circle: Scaffolded | AsciiDoc: convert |
+| `asciidoc-pdf` | :orange_circle: Scaffolded | AsciiDoc: to PDF |
+| `asciidoc-html` | :orange_circle: Scaffolded | AsciiDoc: to HTML |
+| `asciidoc-docbook` | :orange_circle: Scaffolded | AsciiDoc: to DocBook |
+| `asciidoc-manpage` | :orange_circle: Scaffolded | AsciiDoc: to manpage |
+
+### Round 518 — Jupyter ext, JupyterLab ext, RStudio, Octave
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `jupyter-notebook` | :orange_circle: Scaffolded | Jupyter: open notebook |
+| `jupyter-kernel` | :orange_circle: Scaffolded | Jupyter: kernel management |
+| `jupyter-convert` | :orange_circle: Scaffolded | Jupyter: convert notebook |
+| `jupyter-trust` | :orange_circle: Scaffolded | Jupyter: trust notebook |
+| `jupyter-extension` | :orange_circle: Scaffolded | Jupyter: extensions |
+| `jupyterlab-build` | :orange_circle: Scaffolded | JupyterLab: build |
+| `jupyterlab-extension` | :orange_circle: Scaffolded | JupyterLab: extensions |
+| `jupyterlab-theme` | :orange_circle: Scaffolded | JupyterLab: themes |
+| `jupyterlab-workspace` | :orange_circle: Scaffolded | JupyterLab: workspaces |
+| `jupyterlab-config` | :orange_circle: Scaffolded | JupyterLab: configuration |
+| `rstudio-project` | :orange_circle: Scaffolded | RStudio: project |
+| `rstudio-connect` | :orange_circle: Scaffolded | RStudio: Connect publish |
+| `rstudio-publish` | :orange_circle: Scaffolded | RStudio: publish |
+| `rstudio-package` | :orange_circle: Scaffolded | RStudio: package tools |
+| `rstudio-shiny` | :orange_circle: Scaffolded | RStudio: Shiny app |
+| `octave-eval` | :orange_circle: Scaffolded | Octave: evaluate |
+| `octave-plot` | :orange_circle: Scaffolded | Octave: plot |
+| `octave-load` | :orange_circle: Scaffolded | Octave: load data |
+| `octave-save` | :orange_circle: Scaffolded | Octave: save data |
+| `octave-package` | :orange_circle: Scaffolded | Octave: packages |
+
+### Round 517 — Bokeh, Gnuplot ext, ParaView, VTK
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `bokeh-figure` | :orange_circle: Scaffolded | Bokeh: figure |
+| `bokeh-plot` | :orange_circle: Scaffolded | Bokeh: plot |
+| `bokeh-server` | :orange_circle: Scaffolded | Bokeh: server |
+| `bokeh-export` | :orange_circle: Scaffolded | Bokeh: export |
+| `bokeh-widget` | :orange_circle: Scaffolded | Bokeh: widgets |
+| `gnuplot-plot` | :orange_circle: Scaffolded | Gnuplot: plot data |
+| `gnuplot-set` | :orange_circle: Scaffolded | Gnuplot: set options |
+| `gnuplot-fit` | :orange_circle: Scaffolded | Gnuplot: curve fitting |
+| `gnuplot-terminal` | :orange_circle: Scaffolded | Gnuplot: terminal type |
+| `gnuplot-multiplot` | :orange_circle: Scaffolded | Gnuplot: multiplot |
+| `paraview-open` | :orange_circle: Scaffolded | ParaView: open data |
+| `paraview-filter` | :orange_circle: Scaffolded | ParaView: apply filter |
+| `paraview-render` | :orange_circle: Scaffolded | ParaView: render |
+| `paraview-export` | :orange_circle: Scaffolded | ParaView: export |
+| `paraview-animate` | :orange_circle: Scaffolded | ParaView: animation |
+| `vtk-reader` | :orange_circle: Scaffolded | VTK: data reader |
+| `vtk-filter` | :orange_circle: Scaffolded | VTK: filter pipeline |
+| `vtk-mapper` | :orange_circle: Scaffolded | VTK: mapper |
+| `vtk-render` | :orange_circle: Scaffolded | VTK: render window |
+| `vtk-export` | :orange_circle: Scaffolded | VTK: export scene |
+
+### Round 516 — Pandas ext, Matplotlib ext, Seaborn, Plotly
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pandas-dataframe` | :orange_circle: Scaffolded | Pandas: DataFrame operations |
+| `pandas-merge` | :orange_circle: Scaffolded | Pandas: merge/join |
+| `pandas-groupby` | :orange_circle: Scaffolded | Pandas: group by |
+| `pandas-pivot` | :orange_circle: Scaffolded | Pandas: pivot table |
+| `pandas-io` | :orange_circle: Scaffolded | Pandas: I/O operations |
+| `matplotlib-plot` | :orange_circle: Scaffolded | Matplotlib: create plot |
+| `matplotlib-figure` | :orange_circle: Scaffolded | Matplotlib: figure management |
+| `matplotlib-axis` | :orange_circle: Scaffolded | Matplotlib: axis config |
+| `matplotlib-style` | :orange_circle: Scaffolded | Matplotlib: style sheets |
+| `matplotlib-save` | :orange_circle: Scaffolded | Matplotlib: save figure |
+| `seaborn-heatmap` | :orange_circle: Scaffolded | Seaborn: heatmap |
+| `seaborn-scatter` | :orange_circle: Scaffolded | Seaborn: scatter plot |
+| `seaborn-bar` | :orange_circle: Scaffolded | Seaborn: bar plot |
+| `seaborn-violin` | :orange_circle: Scaffolded | Seaborn: violin plot |
+| `seaborn-pair` | :orange_circle: Scaffolded | Seaborn: pair plot |
+| `plotly-chart` | :orange_circle: Scaffolded | Plotly: chart |
+| `plotly-scatter` | :orange_circle: Scaffolded | Plotly: scatter |
+| `plotly-bar` | :orange_circle: Scaffolded | Plotly: bar chart |
+| `plotly-layout` | :orange_circle: Scaffolded | Plotly: layout |
+| `plotly-export` | :orange_circle: Scaffolded | Plotly: export |
+
+### Round 515 — ogr2ogr, PROJ, NumPy ext, SciPy ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ogr2ogr-convert` | :orange_circle: Scaffolded | ogr2ogr: convert format |
+| `ogr2ogr-info` | :orange_circle: Scaffolded | ogr2ogr: layer info |
+| `ogr2ogr-clip` | :orange_circle: Scaffolded | ogr2ogr: clip geometry |
+| `ogr2ogr-reproject` | :orange_circle: Scaffolded | ogr2ogr: reproject |
+| `ogr2ogr-sql` | :orange_circle: Scaffolded | ogr2ogr: SQL query |
+| `proj-transform` | :orange_circle: Scaffolded | PROJ: transform coordinates |
+| `proj-info` | :orange_circle: Scaffolded | PROJ: CRS info |
+| `proj-factors` | :orange_circle: Scaffolded | PROJ: projection factors |
+| `proj-geod` | :orange_circle: Scaffolded | PROJ: geodesic calculations |
+| `proj-crs` | :orange_circle: Scaffolded | PROJ: CRS database |
+| `numpy-array` | :orange_circle: Scaffolded | NumPy: array operations |
+| `numpy-linalg` | :orange_circle: Scaffolded | NumPy: linear algebra |
+| `numpy-fft` | :orange_circle: Scaffolded | NumPy: FFT |
+| `numpy-random` | :orange_circle: Scaffolded | NumPy: random |
+| `numpy-einsum` | :orange_circle: Scaffolded | NumPy: einsum |
+| `scipy-optimize` | :orange_circle: Scaffolded | SciPy: optimize |
+| `scipy-integrate` | :orange_circle: Scaffolded | SciPy: integrate |
+| `scipy-interpolate` | :orange_circle: Scaffolded | SciPy: interpolate |
+| `scipy-signal` | :orange_circle: Scaffolded | SciPy: signal processing |
+| `scipy-sparse` | :orange_circle: Scaffolded | SciPy: sparse matrices |
+
+### Round 514 — FreeCAD, KiCad, QGIS, GDAL
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `freecad-macro` | :orange_circle: Scaffolded | FreeCAD: run macro |
+| `freecad-export` | :orange_circle: Scaffolded | FreeCAD: export model |
+| `freecad-mesh` | :orange_circle: Scaffolded | FreeCAD: mesh tools |
+| `freecad-assembly` | :orange_circle: Scaffolded | FreeCAD: assembly |
+| `freecad-sketch` | :orange_circle: Scaffolded | FreeCAD: sketcher |
+| `kicad-schematic` | :orange_circle: Scaffolded | KiCad: schematic editor |
+| `kicad-pcb` | :orange_circle: Scaffolded | KiCad: PCB layout |
+| `kicad-library` | :orange_circle: Scaffolded | KiCad: library manager |
+| `kicad-gerber` | :orange_circle: Scaffolded | KiCad: Gerber export |
+| `kicad-bom` | :orange_circle: Scaffolded | KiCad: BOM generator |
+| `qgis-layer` | :orange_circle: Scaffolded | QGIS: layer management |
+| `qgis-process` | :orange_circle: Scaffolded | QGIS: processing tools |
+| `qgis-plugin` | :orange_circle: Scaffolded | QGIS: plugin manager |
+| `qgis-export` | :orange_circle: Scaffolded | QGIS: export map |
+| `qgis-style` | :orange_circle: Scaffolded | QGIS: style manager |
+| `gdal-translate` | :orange_circle: Scaffolded | GDAL: translate raster |
+| `gdal-warp` | :orange_circle: Scaffolded | GDAL: warp raster |
+| `gdal-info` | :orange_circle: Scaffolded | GDAL: raster info |
+| `gdal-merge` | :orange_circle: Scaffolded | GDAL: merge rasters |
+| `gdal-calc` | :orange_circle: Scaffolded | GDAL: raster calculator |
+
+### Round 513 — LAME, Opus, Blender ext, OpenSCAD
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lame-encode` | :orange_circle: Scaffolded | LAME: encode MP3 |
+| `lame-decode` | :orange_circle: Scaffolded | LAME: decode MP3 |
+| `lame-tag` | :orange_circle: Scaffolded | LAME: ID3 tags |
+| `lame-quality` | :orange_circle: Scaffolded | LAME: quality settings |
+| `lame-preset` | :orange_circle: Scaffolded | LAME: encoding preset |
+| `opus-encode` | :orange_circle: Scaffolded | Opus: encode audio |
+| `opus-decode` | :orange_circle: Scaffolded | Opus: decode audio |
+| `opus-info` | :orange_circle: Scaffolded | Opus: file info |
+| `opus-header` | :orange_circle: Scaffolded | Opus: header info |
+| `opus-comment` | :orange_circle: Scaffolded | Opus: comments |
+| `blender-render` | :orange_circle: Scaffolded | Blender: render scene |
+| `blender-script` | :orange_circle: Scaffolded | Blender: run script |
+| `blender-export` | :orange_circle: Scaffolded | Blender: export model |
+| `blender-import` | :orange_circle: Scaffolded | Blender: import model |
+| `blender-batch` | :orange_circle: Scaffolded | Blender: batch render |
+| `openscad-render` | :orange_circle: Scaffolded | OpenSCAD: render model |
+| `openscad-export` | :orange_circle: Scaffolded | OpenSCAD: export STL |
+| `openscad-preview` | :orange_circle: Scaffolded | OpenSCAD: preview |
+| `openscad-library` | :orange_circle: Scaffolded | OpenSCAD: library |
+| `openscad-customize` | :orange_circle: Scaffolded | OpenSCAD: customizer |
+
+### Round 512 — SFML, FFmpeg ext, SoX, Audacity
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `sfml-window` | :orange_circle: Scaffolded | SFML: window |
+| `sfml-render` | :orange_circle: Scaffolded | SFML: render |
+| `sfml-audio` | :orange_circle: Scaffolded | SFML: audio |
+| `sfml-network` | :orange_circle: Scaffolded | SFML: network |
+| `sfml-shader` | :orange_circle: Scaffolded | SFML: shader |
+| `ffmpeg-convert` | :orange_circle: Scaffolded | FFmpeg: convert format |
+| `ffmpeg-stream` | :orange_circle: Scaffolded | FFmpeg: stream media |
+| `ffmpeg-filter` | :orange_circle: Scaffolded | FFmpeg: apply filter |
+| `ffmpeg-probe` | :orange_circle: Scaffolded | FFmpeg: probe file |
+| `ffmpeg-record` | :orange_circle: Scaffolded | FFmpeg: record |
+| `sox-convert` | :orange_circle: Scaffolded | SoX: convert audio |
+| `sox-effect` | :orange_circle: Scaffolded | SoX: apply effect |
+| `sox-trim` | :orange_circle: Scaffolded | SoX: trim audio |
+| `sox-mix` | :orange_circle: Scaffolded | SoX: mix audio |
+| `sox-stat` | :orange_circle: Scaffolded | SoX: audio statistics |
+| `audacity-import` | :orange_circle: Scaffolded | Audacity: import audio |
+| `audacity-export` | :orange_circle: Scaffolded | Audacity: export audio |
+| `audacity-effect` | :orange_circle: Scaffolded | Audacity: apply effect |
+| `audacity-normalize` | :orange_circle: Scaffolded | Audacity: normalize |
+| `audacity-label` | :orange_circle: Scaffolded | Audacity: labels |
+
+### Round 511 — Godot, Love2D, Raylib, SDL2
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `godot-scene` | :orange_circle: Scaffolded | Godot: scene editor |
+| `godot-shader` | :orange_circle: Scaffolded | Godot: shader editor |
+| `godot-signal` | :orange_circle: Scaffolded | Godot: signal connections |
+| `godot-export` | :orange_circle: Scaffolded | Godot: export project |
+| `godot-debugger` | :orange_circle: Scaffolded | Godot: debugger |
+| `love2d-run` | :orange_circle: Scaffolded | Love2D: run game |
+| `love2d-conf` | :orange_circle: Scaffolded | Love2D: configuration |
+| `love2d-package` | :orange_circle: Scaffolded | Love2D: package game |
+| `love2d-debug` | :orange_circle: Scaffolded | Love2D: debug |
+| `love2d-console` | :orange_circle: Scaffolded | Love2D: console |
+| `raylib-build` | :orange_circle: Scaffolded | Raylib: build project |
+| `raylib-example` | :orange_circle: Scaffolded | Raylib: examples |
+| `raylib-shader` | :orange_circle: Scaffolded | Raylib: shader |
+| `raylib-texture` | :orange_circle: Scaffolded | Raylib: texture |
+| `raylib-audio` | :orange_circle: Scaffolded | Raylib: audio |
+| `sdl2-init` | :orange_circle: Scaffolded | SDL2: initialize |
+| `sdl2-window` | :orange_circle: Scaffolded | SDL2: window management |
+| `sdl2-render` | :orange_circle: Scaffolded | SDL2: renderer |
+| `sdl2-event` | :orange_circle: Scaffolded | SDL2: event handling |
+| `sdl2-mixer` | :orange_circle: Scaffolded | SDL2: audio mixer |
+
 ### Round 510 — Lmod, Singularity, Apptainer, Charliecloud
 
 | Feature | Status | Notes |

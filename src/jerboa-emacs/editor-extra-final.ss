@@ -33122,3 +33122,409 @@
 (def (cmd-charliecloud-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Charliecloud: list images")))
+
+;; Round 512: SFML, FFmpeg ext, SoX, Audacity (20 commands)
+(def (cmd-sfml-window app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SFML: window")))
+
+(def (cmd-sfml-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SFML: render")))
+
+(def (cmd-sfml-audio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SFML: audio")))
+
+(def (cmd-sfml-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SFML: network")))
+
+(def (cmd-sfml-shader app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SFML: shader")))
+
+(def (cmd-ffmpeg-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FFmpeg: convert format")))
+
+(def (cmd-ffmpeg-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FFmpeg: stream media")))
+
+(def (cmd-ffmpeg-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FFmpeg: apply filter")))
+
+(def (cmd-ffmpeg-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FFmpeg: probe file")))
+
+(def (cmd-ffmpeg-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FFmpeg: record")))
+
+(def (cmd-sox-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SoX: convert audio")))
+
+(def (cmd-sox-effect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SoX: apply effect")))
+
+(def (cmd-sox-trim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SoX: trim audio")))
+
+(def (cmd-sox-mix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SoX: mix audio")))
+
+(def (cmd-sox-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SoX: audio statistics")))
+
+(def (cmd-audacity-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Audacity: import audio")))
+
+(def (cmd-audacity-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Audacity: export audio")))
+
+(def (cmd-audacity-effect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Audacity: apply effect")))
+
+(def (cmd-audacity-normalize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Audacity: normalize")))
+
+(def (cmd-audacity-label app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Audacity: labels")))
+
+;; Round 514: FreeCAD, KiCad, QGIS, GDAL (20 commands)
+(def (cmd-freecad-macro app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeCAD: run macro")))
+
+(def (cmd-freecad-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeCAD: export model")))
+
+(def (cmd-freecad-mesh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeCAD: mesh tools")))
+
+(def (cmd-freecad-assembly app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeCAD: assembly")))
+
+(def (cmd-freecad-sketch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeCAD: sketcher")))
+
+(def (cmd-kicad-schematic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KiCad: schematic editor")))
+
+(def (cmd-kicad-pcb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KiCad: PCB layout")))
+
+(def (cmd-kicad-library app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KiCad: library manager")))
+
+(def (cmd-kicad-gerber app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KiCad: Gerber export")))
+
+(def (cmd-kicad-bom app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KiCad: BOM generator")))
+
+(def (cmd-qgis-layer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QGIS: layer management")))
+
+(def (cmd-qgis-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QGIS: processing tools")))
+
+(def (cmd-qgis-plugin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QGIS: plugin manager")))
+
+(def (cmd-qgis-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QGIS: export map")))
+
+(def (cmd-qgis-style app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QGIS: style manager")))
+
+(def (cmd-gdal-translate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDAL: translate raster")))
+
+(def (cmd-gdal-warp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDAL: warp raster")))
+
+(def (cmd-gdal-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDAL: raster info")))
+
+(def (cmd-gdal-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDAL: merge rasters")))
+
+(def (cmd-gdal-calc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDAL: raster calculator")))
+
+;; Round 515 batch 2: NumPy ext, SciPy ext (10 commands)
+(def (cmd-numpy-array app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NumPy: array operations")))
+
+(def (cmd-numpy-linalg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NumPy: linear algebra")))
+
+(def (cmd-numpy-fft app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NumPy: FFT")))
+
+(def (cmd-numpy-random app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NumPy: random")))
+
+(def (cmd-numpy-einsum app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NumPy: einsum")))
+
+(def (cmd-scipy-optimize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SciPy: optimize")))
+
+(def (cmd-scipy-integrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SciPy: integrate")))
+
+(def (cmd-scipy-interpolate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SciPy: interpolate")))
+
+(def (cmd-scipy-signal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SciPy: signal processing")))
+
+(def (cmd-scipy-sparse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SciPy: sparse matrices")))
+
+;; Round 517: Bokeh, Gnuplot ext, ParaView, VTK (20 commands)
+(def (cmd-bokeh-figure app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bokeh: figure")))
+
+(def (cmd-bokeh-plot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bokeh: plot")))
+
+(def (cmd-bokeh-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bokeh: server")))
+
+(def (cmd-bokeh-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bokeh: export")))
+
+(def (cmd-bokeh-widget app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bokeh: widgets")))
+
+(def (cmd-gnuplot-plot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnuplot: plot data")))
+
+(def (cmd-gnuplot-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnuplot: set options")))
+
+(def (cmd-gnuplot-fit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnuplot: curve fitting")))
+
+(def (cmd-gnuplot-terminal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnuplot: terminal type")))
+
+(def (cmd-gnuplot-multiplot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gnuplot: multiplot")))
+
+(def (cmd-paraview-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ParaView: open data")))
+
+(def (cmd-paraview-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ParaView: apply filter")))
+
+(def (cmd-paraview-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ParaView: render")))
+
+(def (cmd-paraview-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ParaView: export")))
+
+(def (cmd-paraview-animate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ParaView: animation")))
+
+(def (cmd-vtk-reader app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VTK: data reader")))
+
+(def (cmd-vtk-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VTK: filter pipeline")))
+
+(def (cmd-vtk-mapper app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VTK: mapper")))
+
+(def (cmd-vtk-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VTK: render window")))
+
+(def (cmd-vtk-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VTK: export scene")))
+
+;; Round 519: Maxima, LaTeX ext, Pandoc ext, AsciiDoc (20 commands)
+(def (cmd-maxima-solve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: solve equation")))
+
+(def (cmd-maxima-simplify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: simplify")))
+
+(def (cmd-maxima-integrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: integrate")))
+
+(def (cmd-maxima-plot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: plot")))
+
+(def (cmd-maxima-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: differentiate")))
+
+(def (cmd-latex-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: compile document")))
+
+(def (cmd-latex-bibtex app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: BibTeX")))
+
+(def (cmd-latex-glossary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: glossary")))
+
+(def (cmd-latex-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: index")))
+
+(def (cmd-latex-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: clean aux files")))
+
+(def (cmd-pandoc-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandoc: convert document")))
+
+(def (cmd-pandoc-template app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandoc: templates")))
+
+(def (cmd-pandoc-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandoc: filters")))
+
+(def (cmd-pandoc-metadata app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandoc: metadata")))
+
+(def (cmd-pandoc-defaults app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pandoc: defaults file")))
+
+(def (cmd-asciidoc-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsciiDoc: convert")))
+
+(def (cmd-asciidoc-pdf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsciiDoc: to PDF")))
+
+(def (cmd-asciidoc-html app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsciiDoc: to HTML")))
+
+(def (cmd-asciidoc-docbook app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsciiDoc: to DocBook")))
+
+(def (cmd-asciidoc-manpage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AsciiDoc: to manpage")))
+
+;; Round 520 batch 2: Groff, LilyPond (10 commands)
+(def (cmd-groff-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groff: compile document")))
+
+(def (cmd-groff-man app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groff: man macro")))
+
+(def (cmd-groff-ms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groff: ms macro")))
+
+(def (cmd-groff-mm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groff: mm macro")))
+
+(def (cmd-groff-pdf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groff: to PDF")))
+
+(def (cmd-lilypond-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LilyPond: compile score")))
+
+(def (cmd-lilypond-midi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LilyPond: MIDI output")))
+
+(def (cmd-lilypond-pdf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LilyPond: PDF output")))
+
+(def (cmd-lilypond-svg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LilyPond: SVG output")))
+
+(def (cmd-lilypond-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LilyPond: preview")))
