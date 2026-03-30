@@ -27225,3 +27225,46 @@
 (def (cmd-protobuf-generate app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Protobuf: generating code stubs")))
+
+;; Round 370 batch 1 — OpenAPI ext, Swagger ext
+(def (cmd-openapi-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAPI: computing spec diff")))
+
+(def (cmd-openapi-mock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAPI: generating mock server")))
+
+(def (cmd-openapi-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAPI: merging specs")))
+
+(def (cmd-openapi-bundle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAPI: bundling spec with references")))
+
+(def (cmd-swagger-ui app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swagger: launching UI preview")))
+
+(def (cmd-swagger-editor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swagger: opening editor")))
+
+(def (cmd-swagger-codegen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target language: "
+      (lambda (lang)
+        (echo-message! echo (str "Swagger: generating " lang " client"))))))
+
+(def (cmd-swagger-mock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Swagger: starting mock server")))
+
+(def (cmd-postman-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: importing collection")))
+
+(def (cmd-postman-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: exporting collection")))

@@ -26456,3 +26456,46 @@
 (def (cmd-ion-decode app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Amazon Ion: decoding data")))
+
+;; Round 370 batch 2 — Postman ext, Insomnia/HTTPie ext
+(def (cmd-postman-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: running collection")))
+
+(def (cmd-postman-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postman: managing environments")))
+
+(def (cmd-insomnia-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: importing workspace")))
+
+(def (cmd-insomnia-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: exporting workspace")))
+
+(def (cmd-insomnia-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: running request collection")))
+
+(def (cmd-insomnia-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Insomnia: managing environments")))
+
+(def (cmd-httpie-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "HTTPie: sending request to " url))))))
+
+(def (cmd-httpie-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: managing sessions")))
+
+(def (cmd-httpie-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: listing plugins")))
+
+(def (cmd-httpie-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTPie: configuring authentication")))

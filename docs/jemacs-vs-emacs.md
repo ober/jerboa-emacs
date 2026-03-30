@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 370 — OpenAPI ext, Swagger ext, Postman ext, Insomnia/HTTPie ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| OpenAPI spec diff | — | `openapi-diff` | :orange_circle: Scaffolded |
+| OpenAPI mock server | — | `openapi-mock` | :orange_circle: Scaffolded |
+| OpenAPI merge specs | — | `openapi-merge` | :orange_circle: Scaffolded |
+| OpenAPI bundle refs | — | `openapi-bundle` | :orange_circle: Scaffolded |
+| Swagger UI preview | — | `swagger-ui` | :orange_circle: Scaffolded |
+| Swagger editor | — | `swagger-editor` | :orange_circle: Scaffolded |
+| Swagger code generation | — | `swagger-codegen` | :orange_circle: Scaffolded |
+| Swagger mock server | — | `swagger-mock` | :orange_circle: Scaffolded |
+| Postman import | — | `postman-import` | :orange_circle: Scaffolded |
+| Postman export | — | `postman-export` | :orange_circle: Scaffolded |
+| Postman run collection | — | `postman-run` | :orange_circle: Scaffolded |
+| Postman environments | — | `postman-env` | :orange_circle: Scaffolded |
+| Insomnia import | — | `insomnia-import` | :orange_circle: Scaffolded |
+| Insomnia export | — | `insomnia-export` | :orange_circle: Scaffolded |
+| Insomnia run requests | — | `insomnia-run` | :orange_circle: Scaffolded |
+| Insomnia environments | — | `insomnia-env` | :orange_circle: Scaffolded |
+| HTTPie send request | — | `httpie-send` | :orange_circle: Scaffolded |
+| HTTPie sessions | — | `httpie-sessions` | :orange_circle: Scaffolded |
+| HTTPie plugins | — | `httpie-plugins` | :orange_circle: Scaffolded |
+| HTTPie auth config | — | `httpie-auth` | :orange_circle: Scaffolded |
+
 ### Round 369 — GraphQL ext, gRPC ext, Protobuf ext, Avro/Serialization ext
 
 | Feature | Emacs | jemacs | Status |
