@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 378 — Twilio ext, SendGrid ext, Mailgun ext, SES/Postmark ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Twilio send SMS | — | `twilio-sms` | :orange_circle: Scaffolded |
+| Twilio list calls | — | `twilio-calls` | :orange_circle: Scaffolded |
+| Twilio phone numbers | — | `twilio-numbers` | :orange_circle: Scaffolded |
+| Twilio verification | — | `twilio-verify` | :orange_circle: Scaffolded |
+| SendGrid send email | — | `sendgrid-send` | :orange_circle: Scaffolded |
+| SendGrid templates | — | `sendgrid-templates` | :orange_circle: Scaffolded |
+| SendGrid contacts | — | `sendgrid-contacts` | :orange_circle: Scaffolded |
+| SendGrid stats | — | `sendgrid-stats` | :orange_circle: Scaffolded |
+| Mailgun send email | — | `mailgun-send` | :orange_circle: Scaffolded |
+| Mailgun domains | — | `mailgun-domains` | :orange_circle: Scaffolded |
+| Mailgun routes | — | `mailgun-routes` | :orange_circle: Scaffolded |
+| Mailgun logs | — | `mailgun-logs` | :orange_circle: Scaffolded |
+| SES send email | — | `ses-send` | :orange_circle: Scaffolded |
+| SES templates | — | `ses-templates` | :orange_circle: Scaffolded |
+| SES identities | — | `ses-identities` | :orange_circle: Scaffolded |
+| SES sending stats | — | `ses-stats` | :orange_circle: Scaffolded |
+| Postmark send email | — | `postmark-send` | :orange_circle: Scaffolded |
+| Postmark templates | — | `postmark-templates` | :orange_circle: Scaffolded |
+| Postmark servers | — | `postmark-servers` | :orange_circle: Scaffolded |
+| Postmark delivery stats | — | `postmark-stats` | :orange_circle: Scaffolded |
+
 ### Round 377 — Stripe ext, PayPal ext, Braintree ext, Square/Adyen ext
 
 | Feature | Emacs | jemacs | Status |

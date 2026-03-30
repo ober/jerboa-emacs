@@ -26792,3 +26792,48 @@
 (def (cmd-adyen-reports app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Adyen: listing reports")))
+
+;; Round 378 batch 2 — Mailgun ext, SES/Postmark ext
+(def (cmd-mailgun-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mailgun: listing routes")))
+
+(def (cmd-mailgun-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mailgun: viewing logs")))
+
+(def (cmd-ses-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recipient: "
+      (lambda (to)
+        (echo-message! echo (str "SES: sending email to " to))))))
+
+(def (cmd-ses-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: listing templates")))
+
+(def (cmd-ses-identities app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: listing verified identities")))
+
+(def (cmd-ses-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SES: showing sending stats")))
+
+(def (cmd-postmark-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recipient: "
+      (lambda (to)
+        (echo-message! echo (str "Postmark: sending email to " to))))))
+
+(def (cmd-postmark-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postmark: listing templates")))
+
+(def (cmd-postmark-servers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postmark: listing servers")))
+
+(def (cmd-postmark-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Postmark: showing delivery stats")))

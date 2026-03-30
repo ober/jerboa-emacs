@@ -27571,3 +27571,50 @@
 (def (cmd-braintree-customers app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Braintree: listing customers")))
+
+;; Round 378 batch 1 — Twilio ext, SendGrid ext
+(def (cmd-twilio-sms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "To number: "
+      (lambda (to)
+        (echo-message! echo (str "Twilio: sending SMS to " to))))))
+
+(def (cmd-twilio-calls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Twilio: listing calls")))
+
+(def (cmd-twilio-numbers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Twilio: listing phone numbers")))
+
+(def (cmd-twilio-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Twilio: sending verification")))
+
+(def (cmd-sendgrid-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recipient: "
+      (lambda (to)
+        (echo-message! echo (str "SendGrid: sending email to " to))))))
+
+(def (cmd-sendgrid-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SendGrid: listing templates")))
+
+(def (cmd-sendgrid-contacts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SendGrid: listing contacts")))
+
+(def (cmd-sendgrid-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SendGrid: showing email stats")))
+
+(def (cmd-mailgun-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recipient: "
+      (lambda (to)
+        (echo-message! echo (str "Mailgun: sending email to " to))))))
+
+(def (cmd-mailgun-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mailgun: listing domains")))
