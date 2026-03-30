@@ -13080,4 +13080,35 @@
   ;; Round 630: Category Theory
   (register-command! 'functor-map cmd-functor-map) (register-command! 'functor-compose cmd-functor-compose) (register-command! 'monad-bind cmd-monad-bind) (register-command! 'monad-return cmd-monad-return) (register-command! 'monad-join cmd-monad-join)
   (register-command! 'natural-transform cmd-natural-transform) (register-command! 'adjunction-unit cmd-adjunction-unit) (register-command! 'adjunction-counit cmd-adjunction-counit) (register-command! 'yoneda-embed cmd-yoneda-embed) (register-command! 'kan-extension cmd-kan-extension)
+
+  ;; Round 631: Process Calculi
+  (register-command! 'pi-calc-send cmd-pi-calc-send) (register-command! 'pi-calc-recv cmd-pi-calc-recv) (register-command! 'pi-calc-parallel cmd-pi-calc-parallel) (register-command! 'pi-calc-restrict cmd-pi-calc-restrict) (register-command! 'pi-calc-replicate cmd-pi-calc-replicate)
+  (register-command! 'csp-channel cmd-csp-channel) (register-command! 'csp-parallel cmd-csp-parallel) (register-command! 'csp-choice cmd-csp-choice) (register-command! 'csp-sequential cmd-csp-sequential) (register-command! 'csp-interleave cmd-csp-interleave)
+  ;; Round 632: Session Types
+  (register-command! 'session-dual cmd-session-dual) (register-command! 'session-send cmd-session-send) (register-command! 'session-recv cmd-session-recv) (register-command! 'session-branch cmd-session-branch) (register-command! 'session-select cmd-session-select)
+  (register-command! 'session-recurse cmd-session-recurse) (register-command! 'session-delegate cmd-session-delegate) (register-command! 'session-check cmd-session-check) (register-command! 'session-project cmd-session-project) (register-command! 'session-deadlock cmd-session-deadlock)
+  ;; Round 633: Linear Types
+  (register-command! 'linear-consume cmd-linear-consume) (register-command! 'linear-borrow cmd-linear-borrow) (register-command! 'linear-move cmd-linear-move) (register-command! 'linear-copy cmd-linear-copy) (register-command! 'linear-drop cmd-linear-drop)
+  (register-command! 'linear-split cmd-linear-split) (register-command! 'linear-merge cmd-linear-merge) (register-command! 'linear-affine cmd-linear-affine) (register-command! 'linear-relevant cmd-linear-relevant) (register-command! 'linear-check cmd-linear-check)
+  ;; Round 634: Dependent Types
+  (register-command! 'dependent-pi cmd-dependent-pi) (register-command! 'dependent-sigma cmd-dependent-sigma) (register-command! 'dependent-universe cmd-dependent-universe) (register-command! 'dependent-check cmd-dependent-check) (register-command! 'dependent-normalize cmd-dependent-normalize)
+  (register-command! 'dependent-elaborate cmd-dependent-elaborate) (register-command! 'dependent-infer cmd-dependent-infer) (register-command! 'dependent-solve cmd-dependent-solve) (register-command! 'dependent-telescope cmd-dependent-telescope) (register-command! 'dependent-pattern cmd-dependent-pattern)
+  ;; Round 635: Refinement Types
+  (register-command! 'refinement-check cmd-refinement-check) (register-command! 'refinement-infer cmd-refinement-infer) (register-command! 'refinement-liquid cmd-refinement-liquid) (register-command! 'refinement-abstract cmd-refinement-abstract) (register-command! 'refinement-horn cmd-refinement-horn)
+  (register-command! 'refinement-fixpoint cmd-refinement-fixpoint) (register-command! 'refinement-counterexample cmd-refinement-counterexample) (register-command! 'refinement-strengthen cmd-refinement-strengthen) (register-command! 'refinement-weaken cmd-refinement-weaken) (register-command! 'refinement-subtype cmd-refinement-subtype)
+  ;; Round 636: Gradual Types
+  (register-command! 'gradual-cast cmd-gradual-cast) (register-command! 'gradual-blame cmd-gradual-blame) (register-command! 'gradual-consistent cmd-gradual-consistent) (register-command! 'gradual-precision cmd-gradual-precision) (register-command! 'gradual-embed cmd-gradual-embed)
+  (register-command! 'gradual-project cmd-gradual-project) (register-command! 'gradual-boundary cmd-gradual-boundary) (register-command! 'gradual-monitor cmd-gradual-monitor) (register-command! 'gradual-seal cmd-gradual-seal) (register-command! 'gradual-ground cmd-gradual-ground)
+  ;; Round 637: Row Polymorphism
+  (register-command! 'row-extend cmd-row-extend) (register-command! 'row-restrict cmd-row-restrict) (register-command! 'row-merge cmd-row-merge) (register-command! 'row-lacks cmd-row-lacks) (register-command! 'row-polymorphic cmd-row-polymorphic)
+  (register-command! 'row-variant cmd-row-variant) (register-command! 'row-record cmd-row-record) (register-command! 'row-case cmd-row-case) (register-command! 'row-inject cmd-row-inject) (register-command! 'row-project cmd-row-project)
+  ;; Round 638: Substructural Logic
+  (register-command! 'substruct-exchange cmd-substruct-exchange) (register-command! 'substruct-contraction cmd-substruct-contraction) (register-command! 'substruct-weakening cmd-substruct-weakening) (register-command! 'substruct-cut cmd-substruct-cut) (register-command! 'substruct-focus cmd-substruct-focus)
+  (register-command! 'substruct-blur cmd-substruct-blur) (register-command! 'substruct-tensor cmd-substruct-tensor) (register-command! 'substruct-par cmd-substruct-par) (register-command! 'substruct-bang cmd-substruct-bang) (register-command! 'substruct-whynot cmd-substruct-whynot)
+  ;; Round 639: Separation Logic
+  (register-command! 'separation-frame cmd-separation-frame) (register-command! 'separation-star cmd-separation-star) (register-command! 'separation-magic-wand cmd-separation-magic-wand) (register-command! 'separation-points-to cmd-separation-points-to) (register-command! 'separation-emp cmd-separation-emp)
+  (register-command! 'separation-entails cmd-separation-entails) (register-command! 'separation-footprint cmd-separation-footprint) (register-command! 'separation-frame-rule cmd-separation-frame-rule) (register-command! 'separation-biabduction cmd-separation-biabduction) (register-command! 'separation-abstract cmd-separation-abstract)
+  ;; Round 640: Hoare Logic
+  (register-command! 'hoare-triple cmd-hoare-triple) (register-command! 'hoare-pre cmd-hoare-pre) (register-command! 'hoare-post cmd-hoare-post) (register-command! 'hoare-weakest-pre cmd-hoare-weakest-pre) (register-command! 'hoare-strongest-post cmd-hoare-strongest-post)
+  (register-command! 'hoare-loop-invariant cmd-hoare-loop-invariant) (register-command! 'hoare-frame cmd-hoare-frame) (register-command! 'hoare-consequence cmd-hoare-consequence) (register-command! 'hoare-sequence cmd-hoare-sequence) (register-command! 'hoare-conditional cmd-hoare-conditional)
 )

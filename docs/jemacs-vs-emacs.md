@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 631 — Process Calculi (Pi-calculus, CSP)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pi-calc-send` | :orange_circle: Scaffold | Send |
+| `pi-calc-recv` | :orange_circle: Scaffold | Receive |
+| `pi-calc-parallel` | :orange_circle: Scaffold | Parallel |
+| `pi-calc-restrict` | :orange_circle: Scaffold | Restrict |
+| `pi-calc-replicate` | :orange_circle: Scaffold | Replicate |
+| `csp-channel` | :orange_circle: Scaffold | Channel |
+| `csp-parallel` | :orange_circle: Scaffold | Parallel |
+| `csp-choice` | :orange_circle: Scaffold | Choice |
+| `csp-sequential` | :orange_circle: Scaffold | Sequential |
+| `csp-interleave` | :orange_circle: Scaffold | Interleave |
+
+### Round 632 — Session Types
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `session-dual` | :orange_circle: Scaffold | Dual type |
+| `session-send` | :orange_circle: Scaffold | Send |
+| `session-recv` | :orange_circle: Scaffold | Receive |
+| `session-branch` | :orange_circle: Scaffold | Branch |
+| `session-select` | :orange_circle: Scaffold | Select |
+| `session-recurse` | :orange_circle: Scaffold | Recurse |
+| `session-delegate` | :orange_circle: Scaffold | Delegate |
+| `session-check` | :orange_circle: Scaffold | Check |
+| `session-project` | :orange_circle: Scaffold | Project |
+| `session-deadlock` | :orange_circle: Scaffold | Deadlock freedom |
+
+### Round 633 — Linear Types
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `linear-consume` | :orange_circle: Scaffold | Consume |
+| `linear-borrow` | :orange_circle: Scaffold | Borrow |
+| `linear-move` | :orange_circle: Scaffold | Move |
+| `linear-copy` | :orange_circle: Scaffold | Copy |
+| `linear-drop` | :orange_circle: Scaffold | Drop |
+| `linear-split` | :orange_circle: Scaffold | Split |
+| `linear-merge` | :orange_circle: Scaffold | Merge |
+| `linear-affine` | :orange_circle: Scaffold | Affine |
+| `linear-relevant` | :orange_circle: Scaffold | Relevant |
+| `linear-check` | :orange_circle: Scaffold | Check |
+
+### Round 634 — Dependent Types
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `dependent-pi` | :orange_circle: Scaffold | Pi type |
+| `dependent-sigma` | :orange_circle: Scaffold | Sigma type |
+| `dependent-universe` | :orange_circle: Scaffold | Universe level |
+| `dependent-check` | :orange_circle: Scaffold | Type check |
+| `dependent-normalize` | :orange_circle: Scaffold | Normalize |
+| `dependent-elaborate` | :orange_circle: Scaffold | Elaborate |
+| `dependent-infer` | :orange_circle: Scaffold | Infer |
+| `dependent-solve` | :orange_circle: Scaffold | Solve metavar |
+| `dependent-telescope` | :orange_circle: Scaffold | Telescope |
+| `dependent-pattern` | :orange_circle: Scaffold | Pattern match |
+
+### Round 635 — Refinement Types
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `refinement-check` | :orange_circle: Scaffold | Check |
+| `refinement-infer` | :orange_circle: Scaffold | Infer |
+| `refinement-liquid` | :orange_circle: Scaffold | Liquid types |
+| `refinement-abstract` | :orange_circle: Scaffold | Abstract |
+| `refinement-horn` | :orange_circle: Scaffold | Horn clause |
+| `refinement-fixpoint` | :orange_circle: Scaffold | Fixpoint |
+| `refinement-counterexample` | :orange_circle: Scaffold | Counterexample |
+| `refinement-strengthen` | :orange_circle: Scaffold | Strengthen |
+| `refinement-weaken` | :orange_circle: Scaffold | Weaken |
+| `refinement-subtype` | :orange_circle: Scaffold | Subtype |
+
+### Round 636 — Gradual Types
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gradual-cast` | :orange_circle: Scaffold | Cast |
+| `gradual-blame` | :orange_circle: Scaffold | Blame |
+| `gradual-consistent` | :orange_circle: Scaffold | Consistent |
+| `gradual-precision` | :orange_circle: Scaffold | Precision |
+| `gradual-embed` | :orange_circle: Scaffold | Embed |
+| `gradual-project` | :orange_circle: Scaffold | Project |
+| `gradual-boundary` | :orange_circle: Scaffold | Boundary |
+| `gradual-monitor` | :orange_circle: Scaffold | Monitor |
+| `gradual-seal` | :orange_circle: Scaffold | Seal |
+| `gradual-ground` | :orange_circle: Scaffold | Ground type |
+
+### Round 637 — Row Polymorphism
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `row-extend` | :orange_circle: Scaffold | Extend |
+| `row-restrict` | :orange_circle: Scaffold | Restrict |
+| `row-merge` | :orange_circle: Scaffold | Merge |
+| `row-lacks` | :orange_circle: Scaffold | Lacks constraint |
+| `row-polymorphic` | :orange_circle: Scaffold | Polymorphic |
+| `row-variant` | :orange_circle: Scaffold | Variant |
+| `row-record` | :orange_circle: Scaffold | Record |
+| `row-case` | :orange_circle: Scaffold | Case |
+| `row-inject` | :orange_circle: Scaffold | Inject |
+| `row-project` | :orange_circle: Scaffold | Project |
+
+### Round 638 — Substructural Logic
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `substruct-exchange` | :orange_circle: Scaffold | Exchange |
+| `substruct-contraction` | :orange_circle: Scaffold | Contraction |
+| `substruct-weakening` | :orange_circle: Scaffold | Weakening |
+| `substruct-cut` | :orange_circle: Scaffold | Cut |
+| `substruct-focus` | :orange_circle: Scaffold | Focus |
+| `substruct-blur` | :orange_circle: Scaffold | Blur |
+| `substruct-tensor` | :orange_circle: Scaffold | Tensor |
+| `substruct-par` | :orange_circle: Scaffold | Par |
+| `substruct-bang` | :orange_circle: Scaffold | Bang |
+| `substruct-whynot` | :orange_circle: Scaffold | Why-not |
+
+### Round 639 — Separation Logic
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `separation-frame` | :orange_circle: Scaffold | Frame |
+| `separation-star` | :orange_circle: Scaffold | Separating conjunction |
+| `separation-magic-wand` | :orange_circle: Scaffold | Magic wand |
+| `separation-points-to` | :orange_circle: Scaffold | Points-to |
+| `separation-emp` | :orange_circle: Scaffold | Empty heap |
+| `separation-entails` | :orange_circle: Scaffold | Entails |
+| `separation-footprint` | :orange_circle: Scaffold | Footprint |
+| `separation-frame-rule` | :orange_circle: Scaffold | Frame rule |
+| `separation-biabduction` | :orange_circle: Scaffold | Biabduction |
+| `separation-abstract` | :orange_circle: Scaffold | Abstract |
+
+### Round 640 — Hoare Logic
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `hoare-triple` | :orange_circle: Scaffold | Hoare triple |
+| `hoare-pre` | :orange_circle: Scaffold | Precondition |
+| `hoare-post` | :orange_circle: Scaffold | Postcondition |
+| `hoare-weakest-pre` | :orange_circle: Scaffold | Weakest precondition |
+| `hoare-strongest-post` | :orange_circle: Scaffold | Strongest postcondition |
+| `hoare-loop-invariant` | :orange_circle: Scaffold | Loop invariant |
+| `hoare-frame` | :orange_circle: Scaffold | Frame rule |
+| `hoare-consequence` | :orange_circle: Scaffold | Consequence |
+| `hoare-sequence` | :orange_circle: Scaffold | Sequence |
+| `hoare-conditional` | :orange_circle: Scaffold | Conditional |
+
 ### Round 621 — Vector Databases
 
 | Feature | Status | Notes |
