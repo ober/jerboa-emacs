@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 322 — Sysctl ext, Procfs ext, Sysfs ext, Devtmpfs ext, Udevadm ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `sysctl-show` | :orange_circle: | Show sysctl parameter |
+| `sysctl-all` | :orange_circle: | Show all parameters |
+| `sysctl-pattern` | :orange_circle: | Match parameters by pattern |
+| `sysctl-search` | :orange_circle: | Search parameters |
+| `procfs-meminfo` | :orange_circle: | Show /proc/meminfo |
+| `procfs-cpuinfo` | :orange_circle: | Show /proc/cpuinfo |
+| `procfs-loadavg` | :orange_circle: | Show /proc/loadavg |
+| `procfs-mounts` | :orange_circle: | Show /proc/mounts |
+| `sysfs-list` | :orange_circle: | List sysfs entries |
+| `sysfs-search` | :orange_circle: | Search sysfs attributes |
+| `sysfs-attribute` | :orange_circle: | Read sysfs attribute |
+| `sysfs-driver` | :orange_circle: | Show driver info |
+| `devtmpfs-list` | :orange_circle: | List /dev entries |
+| `devtmpfs-create` | :orange_circle: | Create device node |
+| `devtmpfs-remove` | :orange_circle: | Remove device node |
+| `devtmpfs-permissions` | :orange_circle: | Show device permissions |
+| `udevadm-info` | :orange_circle: | Show device info |
+| `udevadm-trigger` | :orange_circle: | Trigger udev events |
+| `udevadm-settle` | :orange_circle: | Wait for queue to settle |
+| `udevadm-monitor` | :orange_circle: | Monitor udev events |
+
 ### Round 321 — Kmod ext, Modprobe ext, Dkms ext, Dracut ext, Mkinitcpio ext
 
 | Feature | Status | Notes |

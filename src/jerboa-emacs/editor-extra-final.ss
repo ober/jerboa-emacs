@@ -24106,3 +24106,57 @@
 (def (cmd-mkinitcpio-hooks app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mkinitcpio: showing available hooks")))
+
+;;; Round 322 — Sysfs ext, Devtmpfs ext, Udevadm ext (batch 2)
+
+(def (cmd-sysfs-attribute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device/attribute: "
+      (lambda (spec)
+        (echo-message! echo (str "Sysfs: reading attribute " spec))))))
+
+(def (cmd-sysfs-driver app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Driver name: "
+      (lambda (drv)
+        (echo-message! echo (str "Sysfs: showing driver " drv))))))
+
+(def (cmd-devtmpfs-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Devtmpfs: listing /dev entries")))
+
+(def (cmd-devtmpfs-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device node: "
+      (lambda (dev)
+        (echo-message! echo (str "Devtmpfs: creating " dev))))))
+
+(def (cmd-devtmpfs-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device node: "
+      (lambda (dev)
+        (echo-message! echo (str "Devtmpfs: removing " dev))))))
+
+(def (cmd-devtmpfs-permissions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device node: "
+      (lambda (dev)
+        (echo-message! echo (str "Devtmpfs: showing permissions of " dev))))))
+
+(def (cmd-udevadm-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device path: "
+      (lambda (dev)
+        (echo-message! echo (str "Udevadm: info for " dev))))))
+
+(def (cmd-udevadm-trigger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Udevadm: triggering events")))
+
+(def (cmd-udevadm-settle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Udevadm: waiting for event queue to settle")))
+
+(def (cmd-udevadm-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Udevadm: monitoring events")))

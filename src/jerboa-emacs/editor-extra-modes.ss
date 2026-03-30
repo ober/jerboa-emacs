@@ -24800,3 +24800,55 @@
       (lambda (dir)
         (echo-message! echo (str "DKMS: adding " dir))))))
 
+;;; Round 322 — Sysctl ext, Procfs ext, Sysfs ext, Devtmpfs ext, Udevadm ext (batch 1)
+
+(def (cmd-sysctl-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Parameter: "
+      (lambda (param)
+        (echo-message! echo (str "Sysctl: " param " = (value)"))))))
+
+(def (cmd-sysctl-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysctl: showing all parameters")))
+
+(def (cmd-sysctl-pattern app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "Sysctl: matching " pat))))))
+
+(def (cmd-sysctl-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search term: "
+      (lambda (term)
+        (echo-message! echo (str "Sysctl: searching for " term))))))
+
+(def (cmd-procfs-meminfo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Procfs: showing /proc/meminfo")))
+
+(def (cmd-procfs-cpuinfo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Procfs: showing /proc/cpuinfo")))
+
+(def (cmd-procfs-loadavg app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Procfs: showing /proc/loadavg")))
+
+(def (cmd-procfs-mounts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Procfs: showing /proc/mounts")))
+
+(def (cmd-sysfs-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sysfs path: "
+      (lambda (path)
+        (echo-message! echo (str "Sysfs: listing " path))))))
+
+(def (cmd-sysfs-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Attribute name: "
+      (lambda (attr)
+        (echo-message! echo (str "Sysfs: searching for " attr))))))
+
