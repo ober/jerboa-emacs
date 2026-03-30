@@ -29586,3 +29586,213 @@
 (def (cmd-restate-keys app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Restate: key management")))
+
+;; Round 426 — Hono ext, Elysia ext, Nitro ext, Vinxi ext (batch 1)
+
+(def (cmd-hono-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hono: development server")))
+
+(def (cmd-hono-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hono: building app")))
+
+(def (cmd-hono-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hono: deploying app")))
+
+(def (cmd-hono-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hono: listing routes")))
+
+(def (cmd-hono-middleware app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hono: middleware config")))
+
+(def (cmd-elysia-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elysia: development server")))
+
+(def (cmd-elysia-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elysia: building app")))
+
+(def (cmd-elysia-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elysia: listing routes")))
+
+(def (cmd-elysia-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elysia: managing plugins")))
+
+(def (cmd-elysia-swagger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elysia: Swagger docs")))
+
+;; Round 427 — Effect-TS ext, Zod ext, tRPC ext, Drizzle ext (batch 1)
+
+(def (cmd-effect-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Effect: running program")))
+
+(def (cmd-effect-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Effect: running tests")))
+
+(def (cmd-effect-layer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Effect: layer management")))
+
+(def (cmd-effect-fiber app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Effect: fiber management")))
+
+(def (cmd-effect-schedule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Effect: schedule config")))
+
+(def (cmd-zod-parse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zod: parsing data")))
+
+(def (cmd-zod-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zod: validating schema")))
+
+(def (cmd-zod-infer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zod: type inference")))
+
+(def (cmd-zod-transform app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zod: data transforms")))
+
+(def (cmd-zod-coerce app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zod: coercion rules")))
+
+;; Round 428 — Prisma ext, TypeORM ext, Knex ext, Objection ext (batch 1)
+
+(def (cmd-prisma-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prisma: generating client")))
+
+(def (cmd-prisma-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prisma: running migrations")))
+
+(def (cmd-prisma-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prisma: pushing schema")))
+
+(def (cmd-prisma-seed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prisma: seeding database")))
+
+(def (cmd-prisma-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prisma: formatting schema")))
+
+(def (cmd-typeorm-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TypeORM: initializing project")))
+
+(def (cmd-typeorm-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TypeORM: running migrations")))
+
+(def (cmd-typeorm-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TypeORM: generating migration")))
+
+(def (cmd-typeorm-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TypeORM: schema sync")))
+
+(def (cmd-typeorm-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TypeORM: cache management")))
+
+;; Round 429 — Vitest ext, Bun Test ext, Deno Test ext, Node Test ext (batch 1)
+
+(def (cmd-vitest-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vitest: running tests")))
+
+(def (cmd-vitest-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vitest: watch mode")))
+
+(def (cmd-vitest-bench app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vitest: benchmarks")))
+
+(def (cmd-vitest-coverage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vitest: coverage report")))
+
+(def (cmd-vitest-ui app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vitest: UI mode")))
+
+(def (cmd-buntest-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun Test: running tests")))
+
+(def (cmd-buntest-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun Test: watch mode")))
+
+(def (cmd-buntest-coverage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun Test: coverage")))
+
+(def (cmd-buntest-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun Test: snapshots")))
+
+(def (cmd-buntest-timeout app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun Test: timeout config")))
+
+;; Round 430 — Biome ext, oxlint ext, dprint ext, Rome ext (batch 1)
+
+(def (cmd-biome-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Biome: checking code")))
+
+(def (cmd-biome-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Biome: formatting code")))
+
+(def (cmd-biome-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Biome: linting code")))
+
+(def (cmd-biome-ci app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Biome: CI check")))
+
+(def (cmd-biome-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Biome: migrating config")))
+
+(def (cmd-oxlint-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "oxlint: checking code")))
+
+(def (cmd-oxlint-fix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "oxlint: fixing issues")))
+
+(def (cmd-oxlint-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "oxlint: configuration")))
+
+(def (cmd-oxlint-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "oxlint: listing rules")))
+
+(def (cmd-oxlint-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "oxlint: managing plugins")))

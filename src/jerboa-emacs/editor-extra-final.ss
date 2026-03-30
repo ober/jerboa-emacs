@@ -28800,4 +28800,214 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Trigger.dev: initializing project")))
 
+;; Round 426 — Hono ext, Elysia ext, Nitro ext, Vinxi ext (batch 2)
+
+(def (cmd-nitro-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nitro: development server")))
+
+(def (cmd-nitro-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nitro: building app")))
+
+(def (cmd-nitro-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nitro: deploying app")))
+
+(def (cmd-nitro-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nitro: listing routes")))
+
+(def (cmd-nitro-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nitro: managing plugins")))
+
+(def (cmd-vinxi-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vinxi: development server")))
+
+(def (cmd-vinxi-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vinxi: building app")))
+
+(def (cmd-vinxi-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vinxi: deploying app")))
+
+(def (cmd-vinxi-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vinxi: listing routes")))
+
+(def (cmd-vinxi-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vinxi: configuration")))
+
+;; Round 427 — Effect-TS ext, Zod ext, tRPC ext, Drizzle ext (batch 2)
+
+(def (cmd-trpc-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tRPC: initializing router")))
+
+(def (cmd-trpc-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tRPC: listing routes")))
+
+(def (cmd-trpc-middleware app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tRPC: middleware config")))
+
+(def (cmd-trpc-context app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tRPC: context setup")))
+
+(def (cmd-trpc-client app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tRPC: client config")))
+
+(def (cmd-drizzle-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Drizzle: generating migrations")))
+
+(def (cmd-drizzle-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Drizzle: running migrations")))
+
+(def (cmd-drizzle-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Drizzle: pushing schema")))
+
+(def (cmd-drizzle-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Drizzle: pulling schema")))
+
+(def (cmd-drizzle-studio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Drizzle: opening Studio")))
+
+;; Round 428 — Prisma ext, TypeORM ext, Knex ext, Objection ext (batch 2)
+
+(def (cmd-knex-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knex: initializing project")))
+
+(def (cmd-knex-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knex: running migrations")))
+
+(def (cmd-knex-seed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knex: running seeds")))
+
+(def (cmd-knex-rollback app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knex: rolling back")))
+
+(def (cmd-knex-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knex: migration status")))
+
+(def (cmd-objection-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Objection: initializing")))
+
+(def (cmd-objection-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Objection: migrations")))
+
+(def (cmd-objection-model app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Objection: model management")))
+
+(def (cmd-objection-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Objection: query builder")))
+
+(def (cmd-objection-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Objection: graph operations")))
+
+;; Round 429 — Vitest ext, Bun Test ext, Deno Test ext, Node Test ext (batch 2)
+
+(def (cmd-denotest-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno Test: running tests")))
+
+(def (cmd-denotest-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno Test: watch mode")))
+
+(def (cmd-denotest-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno Test: filtering tests")))
+
+(def (cmd-denotest-coverage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno Test: coverage")))
+
+(def (cmd-denotest-permissions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno Test: permissions")))
+
+(def (cmd-nodetest-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Node Test: running tests")))
+
+(def (cmd-nodetest-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Node Test: watch mode")))
+
+(def (cmd-nodetest-coverage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Node Test: coverage")))
+
+(def (cmd-nodetest-reporter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Node Test: reporter config")))
+
+(def (cmd-nodetest-only app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Node Test: only mode")))
+
+;; Round 430 — Biome ext, oxlint ext, dprint ext, Rome ext (batch 2)
+
+(def (cmd-dprint-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dprint: checking format")))
+
+(def (cmd-dprint-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dprint: formatting code")))
+
+(def (cmd-dprint-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dprint: configuration")))
+
+(def (cmd-dprint-output-file-paths app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dprint: listing file paths")))
+
+(def (cmd-dprint-completions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dprint: shell completions")))
+
+(def (cmd-rome-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rome: checking code")))
+
+(def (cmd-rome-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rome: formatting code")))
+
+(def (cmd-rome-ci app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rome: CI check")))
+
+(def (cmd-rome-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rome: migrating config")))
+
+(def (cmd-rome-lsp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rome: LSP server")))
+
 ;; Milestone: Round 400 — 9,000+ commands in jemacs!

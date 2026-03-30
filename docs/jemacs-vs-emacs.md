@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 430 — Biome ext, oxlint ext, dprint ext, Rome ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Biome check | — | `biome-check` | :orange_circle: Scaffolded |
+| Biome format | — | `biome-format` | :orange_circle: Scaffolded |
+| Biome lint | — | `biome-lint` | :orange_circle: Scaffolded |
+| Biome CI | — | `biome-ci` | :orange_circle: Scaffolded |
+| Biome migrate | — | `biome-migrate` | :orange_circle: Scaffolded |
+| oxlint check | — | `oxlint-check` | :orange_circle: Scaffolded |
+| oxlint fix | — | `oxlint-fix` | :orange_circle: Scaffolded |
+| oxlint config | — | `oxlint-config` | :orange_circle: Scaffolded |
+| oxlint rules | — | `oxlint-rules` | :orange_circle: Scaffolded |
+| oxlint plugins | — | `oxlint-plugins` | :orange_circle: Scaffolded |
+| dprint check | — | `dprint-check` | :orange_circle: Scaffolded |
+| dprint fmt | — | `dprint-fmt` | :orange_circle: Scaffolded |
+| dprint config | — | `dprint-config` | :orange_circle: Scaffolded |
+| dprint file paths | — | `dprint-output-file-paths` | :orange_circle: Scaffolded |
+| dprint completions | — | `dprint-completions` | :orange_circle: Scaffolded |
+| Rome check | — | `rome-check` | :orange_circle: Scaffolded |
+| Rome format | — | `rome-format` | :orange_circle: Scaffolded |
+| Rome CI | — | `rome-ci` | :orange_circle: Scaffolded |
+| Rome migrate | — | `rome-migrate` | :orange_circle: Scaffolded |
+| Rome LSP | — | `rome-lsp` | :orange_circle: Scaffolded |
+
+### Round 429 — Vitest ext, Bun Test ext, Deno Test ext, Node Test ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Vitest run | — | `vitest-run` | :orange_circle: Scaffolded |
+| Vitest watch | — | `vitest-watch` | :orange_circle: Scaffolded |
+| Vitest bench | — | `vitest-bench` | :orange_circle: Scaffolded |
+| Vitest coverage | — | `vitest-coverage` | :orange_circle: Scaffolded |
+| Vitest UI | — | `vitest-ui` | :orange_circle: Scaffolded |
+| Bun Test run | — | `buntest-run` | :orange_circle: Scaffolded |
+| Bun Test watch | — | `buntest-watch` | :orange_circle: Scaffolded |
+| Bun Test coverage | — | `buntest-coverage` | :orange_circle: Scaffolded |
+| Bun Test snapshot | — | `buntest-snapshot` | :orange_circle: Scaffolded |
+| Bun Test timeout | — | `buntest-timeout` | :orange_circle: Scaffolded |
+| Deno Test run | — | `denotest-run` | :orange_circle: Scaffolded |
+| Deno Test watch | — | `denotest-watch` | :orange_circle: Scaffolded |
+| Deno Test filter | — | `denotest-filter` | :orange_circle: Scaffolded |
+| Deno Test coverage | — | `denotest-coverage` | :orange_circle: Scaffolded |
+| Deno Test permissions | — | `denotest-permissions` | :orange_circle: Scaffolded |
+| Node Test run | — | `nodetest-run` | :orange_circle: Scaffolded |
+| Node Test watch | — | `nodetest-watch` | :orange_circle: Scaffolded |
+| Node Test coverage | — | `nodetest-coverage` | :orange_circle: Scaffolded |
+| Node Test reporter | — | `nodetest-reporter` | :orange_circle: Scaffolded |
+| Node Test only | — | `nodetest-only` | :orange_circle: Scaffolded |
+
+### Round 428 — Prisma ext, TypeORM ext, Knex ext, Objection ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Prisma generate | — | `prisma-generate` | :orange_circle: Scaffolded |
+| Prisma migrate | — | `prisma-migrate` | :orange_circle: Scaffolded |
+| Prisma push | — | `prisma-push` | :orange_circle: Scaffolded |
+| Prisma seed | — | `prisma-seed` | :orange_circle: Scaffolded |
+| Prisma format | — | `prisma-format` | :orange_circle: Scaffolded |
+| TypeORM init | — | `typeorm-init` | :orange_circle: Scaffolded |
+| TypeORM migrate | — | `typeorm-migrate` | :orange_circle: Scaffolded |
+| TypeORM generate | — | `typeorm-generate` | :orange_circle: Scaffolded |
+| TypeORM schema | — | `typeorm-schema` | :orange_circle: Scaffolded |
+| TypeORM cache | — | `typeorm-cache` | :orange_circle: Scaffolded |
+| Knex init | — | `knex-init` | :orange_circle: Scaffolded |
+| Knex migrate | — | `knex-migrate` | :orange_circle: Scaffolded |
+| Knex seed | — | `knex-seed` | :orange_circle: Scaffolded |
+| Knex rollback | — | `knex-rollback` | :orange_circle: Scaffolded |
+| Knex status | — | `knex-status` | :orange_circle: Scaffolded |
+| Objection init | — | `objection-init` | :orange_circle: Scaffolded |
+| Objection migrate | — | `objection-migrate` | :orange_circle: Scaffolded |
+| Objection model | — | `objection-model` | :orange_circle: Scaffolded |
+| Objection query | — | `objection-query` | :orange_circle: Scaffolded |
+| Objection graph | — | `objection-graph` | :orange_circle: Scaffolded |
+
+### Round 427 — Effect-TS ext, Zod ext, tRPC ext, Drizzle ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Effect run | — | `effect-run` | :orange_circle: Scaffolded |
+| Effect test | — | `effect-test` | :orange_circle: Scaffolded |
+| Effect layer | — | `effect-layer` | :orange_circle: Scaffolded |
+| Effect fiber | — | `effect-fiber` | :orange_circle: Scaffolded |
+| Effect schedule | — | `effect-schedule` | :orange_circle: Scaffolded |
+| Zod parse | — | `zod-parse` | :orange_circle: Scaffolded |
+| Zod validate | — | `zod-validate` | :orange_circle: Scaffolded |
+| Zod infer | — | `zod-infer` | :orange_circle: Scaffolded |
+| Zod transform | — | `zod-transform` | :orange_circle: Scaffolded |
+| Zod coerce | — | `zod-coerce` | :orange_circle: Scaffolded |
+| tRPC init | — | `trpc-init` | :orange_circle: Scaffolded |
+| tRPC routes | — | `trpc-routes` | :orange_circle: Scaffolded |
+| tRPC middleware | — | `trpc-middleware` | :orange_circle: Scaffolded |
+| tRPC context | — | `trpc-context` | :orange_circle: Scaffolded |
+| tRPC client | — | `trpc-client` | :orange_circle: Scaffolded |
+| Drizzle generate | — | `drizzle-generate` | :orange_circle: Scaffolded |
+| Drizzle migrate | — | `drizzle-migrate` | :orange_circle: Scaffolded |
+| Drizzle push | — | `drizzle-push` | :orange_circle: Scaffolded |
+| Drizzle pull | — | `drizzle-pull` | :orange_circle: Scaffolded |
+| Drizzle Studio | — | `drizzle-studio` | :orange_circle: Scaffolded |
+
+### Round 426 — Hono ext, Elysia ext, Nitro ext, Vinxi ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Hono dev | — | `hono-dev` | :orange_circle: Scaffolded |
+| Hono build | — | `hono-build` | :orange_circle: Scaffolded |
+| Hono deploy | — | `hono-deploy` | :orange_circle: Scaffolded |
+| Hono routes | — | `hono-routes` | :orange_circle: Scaffolded |
+| Hono middleware | — | `hono-middleware` | :orange_circle: Scaffolded |
+| Elysia dev | — | `elysia-dev` | :orange_circle: Scaffolded |
+| Elysia build | — | `elysia-build` | :orange_circle: Scaffolded |
+| Elysia routes | — | `elysia-routes` | :orange_circle: Scaffolded |
+| Elysia plugins | — | `elysia-plugins` | :orange_circle: Scaffolded |
+| Elysia Swagger | — | `elysia-swagger` | :orange_circle: Scaffolded |
+| Nitro dev | — | `nitro-dev` | :orange_circle: Scaffolded |
+| Nitro build | — | `nitro-build` | :orange_circle: Scaffolded |
+| Nitro deploy | — | `nitro-deploy` | :orange_circle: Scaffolded |
+| Nitro routes | — | `nitro-routes` | :orange_circle: Scaffolded |
+| Nitro plugins | — | `nitro-plugins` | :orange_circle: Scaffolded |
+| Vinxi dev | — | `vinxi-dev` | :orange_circle: Scaffolded |
+| Vinxi build | — | `vinxi-build` | :orange_circle: Scaffolded |
+| Vinxi deploy | — | `vinxi-deploy` | :orange_circle: Scaffolded |
+| Vinxi routes | — | `vinxi-routes` | :orange_circle: Scaffolded |
+| Vinxi config | — | `vinxi-config` | :orange_circle: Scaffolded |
+
 ### Round 425 — Temporal ext, Restate ext, Inngest ext, Trigger.dev ext
 
 | Feature | Emacs | jemacs | Status |
