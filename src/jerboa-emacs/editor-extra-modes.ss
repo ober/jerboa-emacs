@@ -23454,3 +23454,65 @@
       (lambda (iface)
         (echo-message! echo (str "Iftop: monitoring " iface))))))
 
+;;; Round 297 — Strace ext, Ltrace ext, Perf ext (batch 1)
+
+(def (cmd-strace-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Strace: attaching to " pid))))))
+
+(def (cmd-strace-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Strace: running " cmd))))))
+
+(def (cmd-strace-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Syscall filter: "
+      (lambda (flt)
+        (echo-message! echo (str "Strace: filter " flt))))))
+
+(def (cmd-strace-count app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Strace: counting syscalls for " pid))))))
+
+(def (cmd-ltrace-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Ltrace: attaching to " pid))))))
+
+(def (cmd-ltrace-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Ltrace: running " cmd))))))
+
+(def (cmd-ltrace-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Library filter: "
+      (lambda (flt)
+        (echo-message! echo (str "Ltrace: filter " flt))))))
+
+(def (cmd-ltrace-library app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Library: "
+      (lambda (lib)
+        (echo-message! echo (str "Ltrace: tracing " lib))))))
+
+(def (cmd-perf-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Perf: stat " cmd))))))
+
+(def (cmd-perf-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Perf: recording " cmd))))))
+

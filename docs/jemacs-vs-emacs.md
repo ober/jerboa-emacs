@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 297 — Strace ext, Ltrace ext, Perf ext, Valgrind ext, GDB ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| strace-attach | :orange_circle: | Attach strace to PID |
+| strace-run | :orange_circle: | Run command under strace |
+| strace-filter | :orange_circle: | Filter strace syscalls |
+| strace-count | :orange_circle: | Count syscalls |
+| ltrace-attach | :orange_circle: | Attach ltrace to PID |
+| ltrace-run | :orange_circle: | Run command under ltrace |
+| ltrace-filter | :orange_circle: | Filter ltrace calls |
+| ltrace-library | :orange_circle: | Trace specific library |
+| perf-stat | :orange_circle: | Perf stat counters |
+| perf-record | :orange_circle: | Record perf data |
+| perf-report | :orange_circle: | Show perf report |
+| perf-top | :orange_circle: | Live perf profiling |
+| valgrind-memcheck | :orange_circle: | Valgrind memcheck |
+| valgrind-callgrind | :orange_circle: | Valgrind callgrind |
+| valgrind-cachegrind | :orange_circle: | Valgrind cachegrind |
+| valgrind-massif | :orange_circle: | Valgrind massif |
+| gdb-attach | :orange_circle: | Attach GDB to PID |
+| gdb-run | :orange_circle: | Run program in GDB |
+| gdb-backtrace | :orange_circle: | Show GDB backtrace |
+| gdb-breakpoint | :orange_circle: | Set GDB breakpoint |
+
 ### Round 296 — Tcpdump ext, Tshark ext, Iftop ext, Nethogs ext, Vnstat ext, Iperf3 ext
 
 | Command | Status | Description |

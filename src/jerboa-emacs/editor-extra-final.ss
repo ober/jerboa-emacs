@@ -22746,3 +22746,59 @@
     (echo-read-string echo "Server: "
       (lambda (srv)
         (echo-message! echo (str "Iperf3: connecting to " srv))))))
+
+;;; Round 297 — Perf ext, Valgrind ext, GDB ext (batch 2)
+
+(def (cmd-perf-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf: showing report")))
+
+(def (cmd-perf-top app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf: live profiling")))
+
+(def (cmd-valgrind-memcheck app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Valgrind: memcheck " cmd))))))
+
+(def (cmd-valgrind-callgrind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Valgrind: callgrind " cmd))))))
+
+(def (cmd-valgrind-cachegrind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Valgrind: cachegrind " cmd))))))
+
+(def (cmd-valgrind-massif app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Valgrind: massif " cmd))))))
+
+(def (cmd-gdb-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "GDB: attaching to " pid))))))
+
+(def (cmd-gdb-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Program: "
+      (lambda (prog)
+        (echo-message! echo (str "GDB: running " prog))))))
+
+(def (cmd-gdb-backtrace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: showing backtrace")))
+
+(def (cmd-gdb-breakpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Location: "
+      (lambda (loc)
+        (echo-message! echo (str "GDB: breakpoint at " loc))))))
