@@ -30904,3 +30904,129 @@
 (def (cmd-mtr-udp app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "mtr: UDP mode")))
+
+;; ── Round 466 — systemd ext2, journalctl ext2, loginctl ext, timedatectl ext ──
+
+(def (cmd-systemd-analyze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "systemd: analyze boot")))
+
+(def (cmd-systemd-list-timers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "systemd: list timers")))
+
+(def (cmd-systemd-list-sockets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "systemd: list sockets")))
+
+(def (cmd-systemd-list-units app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "systemd: list units")))
+
+(def (cmd-systemd-cat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "systemd: cat unit file")))
+
+(def (cmd-journalctl-follow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "journalctl: follow logs")))
+
+(def (cmd-journalctl-boot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "journalctl: boot logs")))
+
+(def (cmd-journalctl-unit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "journalctl: unit logs")))
+
+(def (cmd-journalctl-priority app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "journalctl: by priority")))
+
+(def (cmd-journalctl-since app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "journalctl: since timestamp")))
+
+;; ── Round 467 — hostnamectl ext, localectl ext, coredumpctl ext, resolvectl ext ──
+
+(def (cmd-loginctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "loginctl: list sessions")))
+
+(def (cmd-loginctl-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "loginctl: show session")))
+
+(def (cmd-loginctl-lock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "loginctl: lock session")))
+
+(def (cmd-loginctl-terminate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "loginctl: terminate session")))
+
+(def (cmd-loginctl-inhibit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "loginctl: inhibit")))
+
+(def (cmd-timedatectl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "timedatectl: status")))
+
+(def (cmd-timedatectl-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "timedatectl: set time")))
+
+(def (cmd-timedatectl-ntp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "timedatectl: NTP sync")))
+
+(def (cmd-timedatectl-timezone app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "timedatectl: timezone")))
+
+(def (cmd-timedatectl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "timedatectl: list timezones")))
+
+;; ── Round 468 — machinectl ext, portablectl ext, busctl ext, networkctl ext ──
+
+(def (cmd-hostnamectl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "hostnamectl: status")))
+
+(def (cmd-hostnamectl-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "hostnamectl: set hostname")))
+
+(def (cmd-hostnamectl-icon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "hostnamectl: icon name")))
+
+(def (cmd-hostnamectl-chassis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "hostnamectl: chassis type")))
+
+(def (cmd-hostnamectl-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "hostnamectl: deployment")))
+
+(def (cmd-localectl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "localectl: status")))
+
+(def (cmd-localectl-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "localectl: set locale")))
+
+(def (cmd-localectl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "localectl: list locales")))
+
+(def (cmd-localectl-x11 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "localectl: X11 keymap")))
+
+(def (cmd-localectl-keymap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "localectl: console keymap")))

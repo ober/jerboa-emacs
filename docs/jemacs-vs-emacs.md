@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 470 — dm-crypt ext, cryptsetup ext, LUKS ext, fscrypt ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| dm-crypt open | — | `dmcrypt-open` | :orange_circle: Scaffolded |
+| dm-crypt close | — | `dmcrypt-close` | :orange_circle: Scaffolded |
+| dm-crypt status | — | `dmcrypt-status` | :orange_circle: Scaffolded |
+| dm-crypt resize | — | `dmcrypt-resize` | :orange_circle: Scaffolded |
+| dm-crypt benchmark | — | `dmcrypt-benchmark` | :orange_circle: Scaffolded |
+| cryptsetup format | — | `cryptsetup-format` | :orange_circle: Scaffolded |
+| cryptsetup open | — | `cryptsetup-open` | :orange_circle: Scaffolded |
+| cryptsetup close | — | `cryptsetup-close` | :orange_circle: Scaffolded |
+| cryptsetup status | — | `cryptsetup-status` | :orange_circle: Scaffolded |
+| cryptsetup LUKS dump | — | `cryptsetup-luksdump` | :orange_circle: Scaffolded |
+| LUKS add key | — | `luks-add-key` | :orange_circle: Scaffolded |
+| LUKS remove key | — | `luks-remove-key` | :orange_circle: Scaffolded |
+| LUKS change key | — | `luks-change-key` | :orange_circle: Scaffolded |
+| LUKS header | — | `luks-header` | :orange_circle: Scaffolded |
+| LUKS backup | — | `luks-backup` | :orange_circle: Scaffolded |
+| fscrypt encrypt | — | `fscrypt-encrypt` | :orange_circle: Scaffolded |
+| fscrypt unlock | — | `fscrypt-unlock` | :orange_circle: Scaffolded |
+| fscrypt lock | — | `fscrypt-lock` | :orange_circle: Scaffolded |
+| fscrypt status | — | `fscrypt-status` | :orange_circle: Scaffolded |
+| fscrypt metadata | — | `fscrypt-metadata` | :orange_circle: Scaffolded |
+
+### Round 469 — LVM ext, mdadm ext, BTRFS ext, ZFS ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| LVM physical volumes | — | `lvm-pvs` | :orange_circle: Scaffolded |
+| LVM volume groups | — | `lvm-vgs` | :orange_circle: Scaffolded |
+| LVM logical volumes | — | `lvm-lvs` | :orange_circle: Scaffolded |
+| LVM create | — | `lvm-create` | :orange_circle: Scaffolded |
+| LVM extend | — | `lvm-extend` | :orange_circle: Scaffolded |
+| mdadm create | — | `mdadm-create` | :orange_circle: Scaffolded |
+| mdadm detail | — | `mdadm-detail` | :orange_circle: Scaffolded |
+| mdadm assemble | — | `mdadm-assemble` | :orange_circle: Scaffolded |
+| mdadm monitor | — | `mdadm-monitor` | :orange_circle: Scaffolded |
+| mdadm grow | — | `mdadm-grow` | :orange_circle: Scaffolded |
+| BTRFS subvolume | — | `btrfs-subvolume` | :orange_circle: Scaffolded |
+| BTRFS snapshot | — | `btrfs-snapshot` | :orange_circle: Scaffolded |
+| BTRFS balance | — | `btrfs-balance` | :orange_circle: Scaffolded |
+| BTRFS scrub | — | `btrfs-scrub` | :orange_circle: Scaffolded |
+| BTRFS device | — | `btrfs-device` | :orange_circle: Scaffolded |
+| ZFS list | — | `zfs-list` | :orange_circle: Scaffolded |
+| ZFS snapshot | — | `zfs-snapshot` | :orange_circle: Scaffolded |
+| ZFS clone | — | `zfs-clone` | :orange_circle: Scaffolded |
+| ZFS send | — | `zfs-send` | :orange_circle: Scaffolded |
+| ZFS receive | — | `zfs-receive` | :orange_circle: Scaffolded |
+
+### Round 468 — machinectl ext, portablectl ext, busctl ext, networkctl ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| machinectl list | — | `machinectl-list` | :orange_circle: Scaffolded |
+| machinectl show | — | `machinectl-show` | :orange_circle: Scaffolded |
+| machinectl start | — | `machinectl-start` | :orange_circle: Scaffolded |
+| machinectl login | — | `machinectl-login` | :orange_circle: Scaffolded |
+| machinectl shell | — | `machinectl-shell` | :orange_circle: Scaffolded |
+| portablectl list | — | `portablectl-list` | :orange_circle: Scaffolded |
+| portablectl attach | — | `portablectl-attach` | :orange_circle: Scaffolded |
+| portablectl detach | — | `portablectl-detach` | :orange_circle: Scaffolded |
+| portablectl inspect | — | `portablectl-inspect` | :orange_circle: Scaffolded |
+| portablectl reattach | — | `portablectl-reattach` | :orange_circle: Scaffolded |
+| busctl list | — | `busctl-list` | :orange_circle: Scaffolded |
+| busctl monitor | — | `busctl-monitor` | :orange_circle: Scaffolded |
+| busctl capture | — | `busctl-capture` | :orange_circle: Scaffolded |
+| busctl tree | — | `busctl-tree` | :orange_circle: Scaffolded |
+| busctl call | — | `busctl-call` | :orange_circle: Scaffolded |
+| networkctl list | — | `networkctl-list` | :orange_circle: Scaffolded |
+| networkctl status | — | `networkctl-status` | :orange_circle: Scaffolded |
+| networkctl up | — | `networkctl-up` | :orange_circle: Scaffolded |
+| networkctl down | — | `networkctl-down` | :orange_circle: Scaffolded |
+| networkctl reload | — | `networkctl-reload` | :orange_circle: Scaffolded |
+
+### Round 467 — hostnamectl ext, localectl ext, coredumpctl ext, resolvectl ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| hostnamectl status | — | `hostnamectl-status` | :orange_circle: Scaffolded |
+| hostnamectl set | — | `hostnamectl-set` | :orange_circle: Scaffolded |
+| hostnamectl icon | — | `hostnamectl-icon` | :orange_circle: Scaffolded |
+| hostnamectl chassis | — | `hostnamectl-chassis` | :orange_circle: Scaffolded |
+| hostnamectl deploy | — | `hostnamectl-deploy` | :orange_circle: Scaffolded |
+| localectl status | — | `localectl-status` | :orange_circle: Scaffolded |
+| localectl set | — | `localectl-set` | :orange_circle: Scaffolded |
+| localectl list | — | `localectl-list` | :orange_circle: Scaffolded |
+| localectl X11 | — | `localectl-x11` | :orange_circle: Scaffolded |
+| localectl keymap | — | `localectl-keymap` | :orange_circle: Scaffolded |
+| coredumpctl list | — | `coredumpctl-list` | :orange_circle: Scaffolded |
+| coredumpctl info | — | `coredumpctl-info` | :orange_circle: Scaffolded |
+| coredumpctl dump | — | `coredumpctl-dump` | :orange_circle: Scaffolded |
+| coredumpctl debug | — | `coredumpctl-debug` | :orange_circle: Scaffolded |
+| coredumpctl gdb | — | `coredumpctl-gdb` | :orange_circle: Scaffolded |
+| resolvectl status | — | `resolvectl-status` | :orange_circle: Scaffolded |
+| resolvectl query | — | `resolvectl-query` | :orange_circle: Scaffolded |
+| resolvectl statistics | — | `resolvectl-statistics` | :orange_circle: Scaffolded |
+| resolvectl flush | — | `resolvectl-flush` | :orange_circle: Scaffolded |
+| resolvectl DNS | — | `resolvectl-dns` | :orange_circle: Scaffolded |
+
+### Round 466 — systemd ext2, journalctl ext2, loginctl ext, timedatectl ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| systemd analyze | — | `systemd-analyze` | :orange_circle: Scaffolded |
+| systemd list timers | — | `systemd-list-timers` | :orange_circle: Scaffolded |
+| systemd list sockets | — | `systemd-list-sockets` | :orange_circle: Scaffolded |
+| systemd list units | — | `systemd-list-units` | :orange_circle: Scaffolded |
+| systemd cat | — | `systemd-cat` | :orange_circle: Scaffolded |
+| journalctl follow | — | `journalctl-follow` | :orange_circle: Scaffolded |
+| journalctl boot | — | `journalctl-boot` | :orange_circle: Scaffolded |
+| journalctl unit | — | `journalctl-unit` | :orange_circle: Scaffolded |
+| journalctl priority | — | `journalctl-priority` | :orange_circle: Scaffolded |
+| journalctl since | — | `journalctl-since` | :orange_circle: Scaffolded |
+| loginctl list | — | `loginctl-list` | :orange_circle: Scaffolded |
+| loginctl show | — | `loginctl-show` | :orange_circle: Scaffolded |
+| loginctl lock | — | `loginctl-lock` | :orange_circle: Scaffolded |
+| loginctl terminate | — | `loginctl-terminate` | :orange_circle: Scaffolded |
+| loginctl inhibit | — | `loginctl-inhibit` | :orange_circle: Scaffolded |
+| timedatectl status | — | `timedatectl-status` | :orange_circle: Scaffolded |
+| timedatectl set | — | `timedatectl-set` | :orange_circle: Scaffolded |
+| timedatectl NTP | — | `timedatectl-ntp` | :orange_circle: Scaffolded |
+| timedatectl timezone | — | `timedatectl-timezone` | :orange_circle: Scaffolded |
+| timedatectl list | — | `timedatectl-list` | :orange_circle: Scaffolded |
+
 ### Round 465 — OpenVPN ext, WireGuard ext2, StrongSwan ext, Tailscale ext2
 
 | Feature | Emacs | jemacs | Status |
