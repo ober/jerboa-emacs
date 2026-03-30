@@ -29444,3 +29444,267 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Lance: compaction")))
 
+
+;; ── Round 441 — Cap'n Proto ext2, Thrift ext2 ──
+
+(def (cmd-capnproto-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: compile schema")))
+
+(def (cmd-capnproto-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: eval expression")))
+
+(def (cmd-capnproto-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: display schema")))
+
+(def (cmd-capnproto-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cap'n Proto: convert format")))
+
+(def (cmd-thrift-audit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: audit IDL")))
+
+(def (cmd-thrift-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: diff schemas")))
+
+(def (cmd-thrift-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: dump binary")))
+
+(def (cmd-avro-fingerprint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: schema fingerprint")))
+
+(def (cmd-avro-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: validate data")))
+
+(def (cmd-twirp-proto app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Twirp: proto definition")))
+
+;; ── Round 443 — Zipkin ext2, SigNoz ext ──
+
+(def (cmd-zipkin-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: list services")))
+
+(def (cmd-zipkin-dependencies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: dependency graph")))
+
+(def (cmd-signoz-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SigNoz: dashboards")))
+
+(def (cmd-signoz-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SigNoz: alerts")))
+
+(def (cmd-signoz-traces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SigNoz: traces")))
+
+(def (cmd-signoz-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SigNoz: logs")))
+
+(def (cmd-loki-compactor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: compactor")))
+
+(def (cmd-loki-retention app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: retention policies")))
+
+(def (cmd-loki-distributor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: distributor")))
+
+(def (cmd-loki-ring app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: hash ring")))
+
+;; ── Round 444 — Grafana Tempo ext2, Mimir ext, Pyroscope ext ──
+
+(def (cmd-tempo-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: search traces")))
+
+(def (cmd-tempo-ingester app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: ingester status")))
+
+(def (cmd-tempo-compactor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: compactor status")))
+
+(def (cmd-tempo-flush app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: flush blocks")))
+
+(def (cmd-mimir-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mimir: rules")))
+
+(def (cmd-mimir-tenants app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mimir: tenants")))
+
+(def (cmd-mimir-ring app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mimir: hash ring")))
+
+(def (cmd-mimir-compactor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mimir: compactor")))
+
+(def (cmd-pyroscope-profiles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pyroscope: profiles")))
+
+(def (cmd-pyroscope-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pyroscope: applications")))
+
+;; ── Round 445 — Benthos ext, Vector ext, Fluentbit ext, Telegraf ext ──
+
+(def (cmd-pyroscope-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pyroscope: diff profiles")))
+
+(def (cmd-pyroscope-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pyroscope: export data")))
+
+(def (cmd-benthos-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Benthos: run pipeline")))
+
+(def (cmd-benthos-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Benthos: lint config")))
+
+(def (cmd-benthos-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Benthos: run tests")))
+
+(def (cmd-benthos-studio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Benthos: studio")))
+
+(def (cmd-vector-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vector: validate config")))
+
+(def (cmd-vector-top app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vector: top metrics")))
+
+(def (cmd-vector-tap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vector: tap events")))
+
+(def (cmd-vector-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vector: topology graph")))
+
+(def (cmd-fluentbit-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluent Bit: configuration")))
+
+(def (cmd-fluentbit-parsers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluent Bit: parsers")))
+
+(def (cmd-fluentbit-filters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluent Bit: filters")))
+
+(def (cmd-fluentbit-outputs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fluent Bit: outputs")))
+
+(def (cmd-telegraf-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telegraf: configuration")))
+
+(def (cmd-telegraf-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telegraf: plugins")))
+
+(def (cmd-telegraf-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telegraf: test config")))
+
+(def (cmd-telegraf-inputs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telegraf: input plugins")))
+
+;; ── Round 442 extra ──
+
+(def (cmd-avro-idl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: IDL compilation")))
+
+(def (cmd-thrift-gen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: generate code")))
+
+(def (cmd-thrift-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: server scaffold")))
+
+(def (cmd-thrift-client app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: client scaffold")))
+
+(def (cmd-thrift-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: test service")))
+
+;; ── Round 444 extra ──
+
+(def (cmd-jaeger-compare app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: compare traces")))
+
+(def (cmd-jaeger-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: export traces")))
+
+(def (cmd-jaeger-sampling app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: sampling strategies")))
+
+(def (cmd-jaeger-storage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: storage backends")))
+
+(def (cmd-loki-querier app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: querier")))
+
+(def (cmd-loki-ingester app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: ingester")))
+
+(def (cmd-tempo-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: metrics generator")))
+
+(def (cmd-tempo-querier app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: querier")))
+
+(def (cmd-mimir-alertmanager app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mimir: alertmanager")))
+
+(def (cmd-mimir-distributor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mimir: distributor")))

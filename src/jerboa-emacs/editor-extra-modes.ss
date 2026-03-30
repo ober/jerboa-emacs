@@ -30216,3 +30216,187 @@
 (def (cmd-duckdb-types app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "DuckDB: type system")))
+
+;; ── Round 441 — Buf Connect ext, ConnectRPC ext, Twirp ext, Cap'n Proto ext ──
+
+(def (cmd-buf-connect-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf Connect: list services")))
+
+(def (cmd-buf-connect-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf Connect: generate stubs")))
+
+(def (cmd-buf-connect-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf Connect: call method")))
+
+(def (cmd-buf-connect-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf Connect: health check")))
+
+(def (cmd-connectrpc-reflect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ConnectRPC: server reflection")))
+
+(def (cmd-connectrpc-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ConnectRPC: describe service")))
+
+(def (cmd-connectrpc-invoke app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ConnectRPC: invoke method")))
+
+(def (cmd-connectrpc-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ConnectRPC: streaming call")))
+
+(def (cmd-twirp-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Twirp: call endpoint")))
+
+(def (cmd-twirp-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Twirp: list routes")))
+
+;; ── Round 442 — FlatBuffers ext, MessagePack ext, Avro ext, Thrift ext ──
+
+(def (cmd-flatbuffers-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: compile schema")))
+
+(def (cmd-flatbuffers-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: generate code")))
+
+(def (cmd-flatbuffers-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: display schema")))
+
+(def (cmd-flatbuffers-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: verify binary")))
+
+(def (cmd-msgpack-pack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: pack data")))
+
+(def (cmd-msgpack-unpack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: unpack data")))
+
+(def (cmd-msgpack-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: inspect binary")))
+
+(def (cmd-msgpack-convert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: convert format")))
+
+(def (cmd-avro-codegen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: code generation")))
+
+(def (cmd-avro-random app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: random data generation")))
+
+;; ── Round 443 — OTel Collector ext, Jaeger ext2, Zipkin ext2, SigNoz ext ──
+
+(def (cmd-otel-collector-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OTel Collector: configuration")))
+
+(def (cmd-otel-collector-pipelines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OTel Collector: pipelines")))
+
+(def (cmd-otel-collector-receivers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OTel Collector: receivers")))
+
+(def (cmd-otel-collector-exporters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OTel Collector: exporters")))
+
+(def (cmd-jaeger-traces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: search traces")))
+
+(def (cmd-jaeger-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: list services")))
+
+(def (cmd-jaeger-operations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: list operations")))
+
+(def (cmd-jaeger-dependencies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: dependency graph")))
+
+(def (cmd-zipkin-traces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: search traces")))
+
+(def (cmd-zipkin-spans app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: list spans")))
+
+;; ── Round 442 extra ──
+
+(def (cmd-flatbuffers-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: diff schemas")))
+
+(def (cmd-flatbuffers-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: JSON conversion")))
+
+(def (cmd-msgpack-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: schema validation")))
+
+(def (cmd-msgpack-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: streaming decode")))
+
+(def (cmd-avro-compatibility app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avro: compatibility check")))
+
+;; ── Round 443 extra ──
+
+(def (cmd-zipkin-autocomplete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: autocomplete tags")))
+
+(def (cmd-zipkin-aggregates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: aggregates")))
+
+(def (cmd-signoz-exceptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SigNoz: exceptions")))
+
+(def (cmd-signoz-infra app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SigNoz: infrastructure")))
+
+;; ── Round 445 extra ──
+
+(def (cmd-telegraf-aggregators app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telegraf: aggregator plugins")))
+
+(def (cmd-telegraf-processors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Telegraf: processor plugins")))
+
+(def (cmd-benthos-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Benthos: show configuration")))
+
+(def (cmd-benthos-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Benthos: create pipeline")))

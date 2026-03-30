@@ -4583,6 +4583,137 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 445 — Benthos ext, Vector ext, Fluentbit ext, Telegraf ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Pyroscope diff profiles | — | `pyroscope-diff` | :orange_circle: Scaffolded |
+| Pyroscope export | — | `pyroscope-export` | :orange_circle: Scaffolded |
+| Benthos run pipeline | — | `benthos-run` | :orange_circle: Scaffolded |
+| Benthos lint config | — | `benthos-lint` | :orange_circle: Scaffolded |
+| Benthos run tests | — | `benthos-test` | :orange_circle: Scaffolded |
+| Benthos studio | — | `benthos-studio` | :orange_circle: Scaffolded |
+| Vector validate config | — | `vector-validate` | :orange_circle: Scaffolded |
+| Vector top metrics | — | `vector-top` | :orange_circle: Scaffolded |
+| Vector tap events | — | `vector-tap` | :orange_circle: Scaffolded |
+| Vector topology graph | — | `vector-graph` | :orange_circle: Scaffolded |
+| Fluent Bit config | — | `fluentbit-config` | :orange_circle: Scaffolded |
+| Fluent Bit parsers | — | `fluentbit-parsers` | :orange_circle: Scaffolded |
+| Fluent Bit filters | — | `fluentbit-filters` | :orange_circle: Scaffolded |
+| Fluent Bit outputs | — | `fluentbit-outputs` | :orange_circle: Scaffolded |
+| Telegraf config | — | `telegraf-config` | :orange_circle: Scaffolded |
+| Telegraf plugins | — | `telegraf-plugins` | :orange_circle: Scaffolded |
+| Telegraf test config | — | `telegraf-test` | :orange_circle: Scaffolded |
+| Telegraf input plugins | — | `telegraf-inputs` | :orange_circle: Scaffolded |
+| Telegraf aggregator plugins | — | `telegraf-aggregators` | :orange_circle: Scaffolded |
+| Telegraf processor plugins | — | `telegraf-processors` | :orange_circle: Scaffolded |
+| Benthos show configuration | — | `benthos-config` | :orange_circle: Scaffolded |
+| Benthos create pipeline | — | `benthos-create` | :orange_circle: Scaffolded |
+
+### Round 444 — Grafana Tempo ext2, Mimir ext, Pyroscope ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Tempo search traces | — | `tempo-search` | :orange_circle: Scaffolded |
+| Tempo ingester status | — | `tempo-ingester` | :orange_circle: Scaffolded |
+| Tempo compactor status | — | `tempo-compactor` | :orange_circle: Scaffolded |
+| Tempo flush blocks | — | `tempo-flush` | :orange_circle: Scaffolded |
+| Mimir rules | — | `mimir-rules` | :orange_circle: Scaffolded |
+| Mimir tenants | — | `mimir-tenants` | :orange_circle: Scaffolded |
+| Mimir hash ring | — | `mimir-ring` | :orange_circle: Scaffolded |
+| Mimir compactor | — | `mimir-compactor` | :orange_circle: Scaffolded |
+| Pyroscope profiles | — | `pyroscope-profiles` | :orange_circle: Scaffolded |
+| Pyroscope applications | — | `pyroscope-apps` | :orange_circle: Scaffolded |
+| Jaeger compare traces | — | `jaeger-compare` | :orange_circle: Scaffolded |
+| Jaeger export traces | — | `jaeger-export` | :orange_circle: Scaffolded |
+| Jaeger sampling strategies | — | `jaeger-sampling` | :orange_circle: Scaffolded |
+| Jaeger storage backends | — | `jaeger-storage` | :orange_circle: Scaffolded |
+| Loki querier | — | `loki-querier` | :orange_circle: Scaffolded |
+| Loki ingester | — | `loki-ingester` | :orange_circle: Scaffolded |
+| Tempo metrics generator | — | `tempo-metrics` | :orange_circle: Scaffolded |
+| Tempo querier | — | `tempo-querier` | :orange_circle: Scaffolded |
+| Mimir alertmanager | — | `mimir-alertmanager` | :orange_circle: Scaffolded |
+| Mimir distributor | — | `mimir-distributor` | :orange_circle: Scaffolded |
+
+### Round 443 — OTel Collector ext, Jaeger ext2, Zipkin ext2, SigNoz ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| OTel Collector config | — | `otel-collector-config` | :orange_circle: Scaffolded |
+| OTel Collector pipelines | — | `otel-collector-pipelines` | :orange_circle: Scaffolded |
+| OTel Collector receivers | — | `otel-collector-receivers` | :orange_circle: Scaffolded |
+| OTel Collector exporters | — | `otel-collector-exporters` | :orange_circle: Scaffolded |
+| Jaeger search traces | — | `jaeger-traces` | :orange_circle: Scaffolded |
+| Jaeger list services | — | `jaeger-services` | :orange_circle: Scaffolded |
+| Jaeger list operations | — | `jaeger-operations` | :orange_circle: Scaffolded |
+| Jaeger dependency graph | — | `jaeger-dependencies` | :orange_circle: Scaffolded |
+| Zipkin search traces | — | `zipkin-traces` | :orange_circle: Scaffolded |
+| Zipkin list spans | — | `zipkin-spans` | :orange_circle: Scaffolded |
+| Zipkin list services | — | `zipkin-services` | :orange_circle: Scaffolded |
+| Zipkin dependency graph | — | `zipkin-dependencies` | :orange_circle: Scaffolded |
+| SigNoz dashboards | — | `signoz-dashboards` | :orange_circle: Scaffolded |
+| SigNoz alerts | — | `signoz-alerts` | :orange_circle: Scaffolded |
+| SigNoz traces | — | `signoz-traces` | :orange_circle: Scaffolded |
+| SigNoz logs | — | `signoz-logs` | :orange_circle: Scaffolded |
+| Loki compactor | — | `loki-compactor` | :orange_circle: Scaffolded |
+| Loki retention policies | — | `loki-retention` | :orange_circle: Scaffolded |
+| Loki distributor | — | `loki-distributor` | :orange_circle: Scaffolded |
+| Loki hash ring | — | `loki-ring` | :orange_circle: Scaffolded |
+| Zipkin autocomplete tags | — | `zipkin-autocomplete` | :orange_circle: Scaffolded |
+| Zipkin aggregates | — | `zipkin-aggregates` | :orange_circle: Scaffolded |
+| SigNoz exceptions | — | `signoz-exceptions` | :orange_circle: Scaffolded |
+| SigNoz infrastructure | — | `signoz-infra` | :orange_circle: Scaffolded |
+
+### Round 442 — FlatBuffers ext, MessagePack ext, Avro ext2, Thrift ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| FlatBuffers compile schema | — | `flatbuffers-compile` | :orange_circle: Scaffolded |
+| FlatBuffers generate code | — | `flatbuffers-generate` | :orange_circle: Scaffolded |
+| FlatBuffers display schema | — | `flatbuffers-schema` | :orange_circle: Scaffolded |
+| FlatBuffers verify binary | — | `flatbuffers-verify` | :orange_circle: Scaffolded |
+| MessagePack pack | — | `msgpack-pack` | :orange_circle: Scaffolded |
+| MessagePack unpack | — | `msgpack-unpack` | :orange_circle: Scaffolded |
+| MessagePack inspect | — | `msgpack-inspect` | :orange_circle: Scaffolded |
+| MessagePack convert | — | `msgpack-convert` | :orange_circle: Scaffolded |
+| Avro code generation | — | `avro-codegen` | :orange_circle: Scaffolded |
+| Avro random data | — | `avro-random` | :orange_circle: Scaffolded |
+| FlatBuffers diff schemas | — | `flatbuffers-diff` | :orange_circle: Scaffolded |
+| FlatBuffers JSON conversion | — | `flatbuffers-json` | :orange_circle: Scaffolded |
+| MessagePack schema validation | — | `msgpack-schema` | :orange_circle: Scaffolded |
+| MessagePack streaming decode | — | `msgpack-stream` | :orange_circle: Scaffolded |
+| Avro compatibility check | — | `avro-compatibility` | :orange_circle: Scaffolded |
+| Avro IDL compilation | — | `avro-idl` | :orange_circle: Scaffolded |
+| Thrift generate code | — | `thrift-gen` | :orange_circle: Scaffolded |
+| Thrift server scaffold | — | `thrift-server` | :orange_circle: Scaffolded |
+| Thrift client scaffold | — | `thrift-client` | :orange_circle: Scaffolded |
+| Thrift test service | — | `thrift-test` | :orange_circle: Scaffolded |
+
+### Round 441 — Buf Connect ext, ConnectRPC ext, Twirp ext, Serialization ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Buf Connect list services | — | `buf-connect-list` | :orange_circle: Scaffolded |
+| Buf Connect generate stubs | — | `buf-connect-generate` | :orange_circle: Scaffolded |
+| Buf Connect call method | — | `buf-connect-call` | :orange_circle: Scaffolded |
+| Buf Connect health check | — | `buf-connect-health` | :orange_circle: Scaffolded |
+| ConnectRPC server reflection | — | `connectrpc-reflect` | :orange_circle: Scaffolded |
+| ConnectRPC describe service | — | `connectrpc-describe` | :orange_circle: Scaffolded |
+| ConnectRPC invoke method | — | `connectrpc-invoke` | :orange_circle: Scaffolded |
+| ConnectRPC streaming call | — | `connectrpc-stream` | :orange_circle: Scaffolded |
+| Twirp call endpoint | — | `twirp-call` | :orange_circle: Scaffolded |
+| Twirp list routes | — | `twirp-routes` | :orange_circle: Scaffolded |
+| Cap'n Proto compile | — | `capnproto-compile` | :orange_circle: Scaffolded |
+| Cap'n Proto eval | — | `capnproto-eval` | :orange_circle: Scaffolded |
+| Cap'n Proto schema | — | `capnproto-schema` | :orange_circle: Scaffolded |
+| Cap'n Proto convert | — | `capnproto-convert` | :orange_circle: Scaffolded |
+| Thrift audit IDL | — | `thrift-audit` | :orange_circle: Scaffolded |
+| Thrift diff schemas | — | `thrift-diff` | :orange_circle: Scaffolded |
+| Thrift dump binary | — | `thrift-dump` | :orange_circle: Scaffolded |
+| Avro schema fingerprint | — | `avro-fingerprint` | :orange_circle: Scaffolded |
+| Avro validate data | — | `avro-validate` | :orange_circle: Scaffolded |
+| Twirp proto definition | — | `twirp-proto` | :orange_circle: Scaffolded |
+
 ### Round 440 — Polars ext, DuckDB ext, DataFusion ext, Lance ext
 
 | Feature | Emacs | jemacs | Status |
