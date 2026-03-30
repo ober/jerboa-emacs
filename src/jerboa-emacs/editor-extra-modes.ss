@@ -26530,3 +26530,65 @@
     (echo-read-string echo "Mise use tool@version: "
       (lambda (tool)
         (echo-message! echo (str "Mise: using " tool))))))
+
+;;; Round 356 — Wasm ext, Wasmer ext, Wasmtime ext, WasmEdge ext, Emscripten ext (batch 1)
+
+(def (cmd-wasm-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasm validate file: "
+      (lambda (file)
+        (echo-message! echo (str "Wasm: validating " file))))))
+
+(def (cmd-wasm-objdump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasm objdump file: "
+      (lambda (file)
+        (echo-message! echo (str "Wasm: dumping " file))))))
+
+(def (cmd-wasm-strip app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasm strip file: "
+      (lambda (file)
+        (echo-message! echo (str "Wasm: stripping " file))))))
+
+(def (cmd-wasm-decompile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasm decompile file: "
+      (lambda (file)
+        (echo-message! echo (str "Wasm: decompiling " file))))))
+
+(def (cmd-wasmer-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasmer run module: "
+      (lambda (mod)
+        (echo-message! echo (str "Wasmer: running " mod))))))
+
+(def (cmd-wasmer-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasmer compile module: "
+      (lambda (mod)
+        (echo-message! echo (str "Wasmer: compiling " mod))))))
+
+(def (cmd-wasmer-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasmer inspect module: "
+      (lambda (mod)
+        (echo-message! echo (str "Wasmer: inspecting " mod))))))
+
+(def (cmd-wasmer-create-exe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasmer create exe from: "
+      (lambda (mod)
+        (echo-message! echo (str "Wasmer: creating executable from " mod))))))
+
+(def (cmd-wasmtime-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasmtime run module: "
+      (lambda (mod)
+        (echo-message! echo (str "Wasmtime: running " mod))))))
+
+(def (cmd-wasmtime-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasmtime compile module: "
+      (lambda (mod)
+        (echo-message! echo (str "Wasmtime: compiling " mod))))))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 356 — Wasm ext, Wasmer ext, Wasmtime ext, WasmEdge ext, Emscripten ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| wasm-validate | :orange_circle: | Wasm: validate module |
+| wasm-objdump | :orange_circle: | Wasm: dump module |
+| wasm-strip | :orange_circle: | Wasm: strip module |
+| wasm-decompile | :orange_circle: | Wasm: decompile module |
+| wasmer-run | :orange_circle: | Wasmer: run module |
+| wasmer-compile | :orange_circle: | Wasmer: compile module |
+| wasmer-inspect | :orange_circle: | Wasmer: inspect module |
+| wasmer-create-exe | :orange_circle: | Wasmer: create executable |
+| wasmtime-run | :orange_circle: | Wasmtime: run module |
+| wasmtime-compile | :orange_circle: | Wasmtime: compile module |
+| wasmtime-explore | :orange_circle: | Wasmtime: explore module |
+| wasmtime-settings | :orange_circle: | Wasmtime: show settings |
+| wasmedge-run | :orange_circle: | WasmEdge: run module |
+| wasmedge-compile | :orange_circle: | WasmEdge: compile module |
+| wasmedge-version | :orange_circle: | WasmEdge: show version |
+| wasmedge-plugins | :orange_circle: | WasmEdge: list plugins |
+| emscripten-compile | :orange_circle: | Emscripten: compile file |
+| emscripten-link | :orange_circle: | Emscripten: link output |
+| emscripten-run | :orange_circle: | Emscripten: run file |
+| emscripten-ports | :orange_circle: | Emscripten: list ports |
+
 ### Round 355 — Dagger ext, Earthly ext, Mise ext, Asdf ext, Direnv ext
 
 | Feature | Status | Notes |

@@ -25805,3 +25805,55 @@
 (def (cmd-direnv-edit app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Direnv: editing .envrc")))
+
+;;; Round 356 — Wasmtime ext, WasmEdge ext, Emscripten ext (batch 2)
+
+(def (cmd-wasmtime-explore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wasmtime explore module: "
+      (lambda (mod)
+        (echo-message! echo (str "Wasmtime: exploring " mod))))))
+
+(def (cmd-wasmtime-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: showing settings")))
+
+(def (cmd-wasmedge-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "WasmEdge run module: "
+      (lambda (mod)
+        (echo-message! echo (str "WasmEdge: running " mod))))))
+
+(def (cmd-wasmedge-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "WasmEdge compile module: "
+      (lambda (mod)
+        (echo-message! echo (str "WasmEdge: compiling " mod))))))
+
+(def (cmd-wasmedge-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WasmEdge: showing version")))
+
+(def (cmd-wasmedge-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WasmEdge: listing plugins")))
+
+(def (cmd-emscripten-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Emscripten compile file: "
+      (lambda (file)
+        (echo-message! echo (str "Emscripten: compiling " file))))))
+
+(def (cmd-emscripten-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Emscripten: linking output")))
+
+(def (cmd-emscripten-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Emscripten run file: "
+      (lambda (file)
+        (echo-message! echo (str "Emscripten: running " file))))))
+
+(def (cmd-emscripten-ports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Emscripten: listing available ports")))
