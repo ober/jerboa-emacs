@@ -27216,3 +27216,44 @@
 (def (cmd-semgrep-findings app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Semgrep: listing findings")))
+
+;; Round 388 batch 2 — Zeplin ext, Storybook/Chromatic ext
+(def (cmd-zeplin-styleguide app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zeplin: viewing styleguide")))
+
+(def (cmd-zeplin-components app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zeplin: listing components")))
+
+(def (cmd-storybook-stories app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Storybook: listing stories")))
+
+(def (cmd-storybook-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Storybook: viewing documentation")))
+
+(def (cmd-storybook-addons app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Storybook: listing addons")))
+
+(def (cmd-storybook-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Storybook: running interaction tests")))
+
+(def (cmd-chromatic-builds app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chromatic: listing builds")))
+
+(def (cmd-chromatic-snapshots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chromatic: listing snapshots")))
+
+(def (cmd-chromatic-reviews app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chromatic: listing reviews")))
+
+(def (cmd-chromatic-baselines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chromatic: managing baselines")))

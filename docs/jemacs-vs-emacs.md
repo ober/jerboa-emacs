@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 388 — Figma ext, Sketch ext, Zeplin ext, Storybook/Chromatic ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Figma files | — | `figma-files` | :orange_circle: Scaffolded |
+| Figma components | — | `figma-components` | :orange_circle: Scaffolded |
+| Figma styles | — | `figma-styles` | :orange_circle: Scaffolded |
+| Figma variables | — | `figma-variables` | :orange_circle: Scaffolded |
+| Sketch documents | — | `sketch-documents` | :orange_circle: Scaffolded |
+| Sketch symbols | — | `sketch-symbols` | :orange_circle: Scaffolded |
+| Sketch libraries | — | `sketch-libraries` | :orange_circle: Scaffolded |
+| Sketch prototypes | — | `sketch-prototypes` | :orange_circle: Scaffolded |
+| Zeplin projects | — | `zeplin-projects` | :orange_circle: Scaffolded |
+| Zeplin screens | — | `zeplin-screens` | :orange_circle: Scaffolded |
+| Zeplin styleguide | — | `zeplin-styleguide` | :orange_circle: Scaffolded |
+| Zeplin components | — | `zeplin-components` | :orange_circle: Scaffolded |
+| Storybook stories | — | `storybook-stories` | :orange_circle: Scaffolded |
+| Storybook docs | — | `storybook-docs` | :orange_circle: Scaffolded |
+| Storybook addons | — | `storybook-addons` | :orange_circle: Scaffolded |
+| Storybook tests | — | `storybook-tests` | :orange_circle: Scaffolded |
+| Chromatic builds | — | `chromatic-builds` | :orange_circle: Scaffolded |
+| Chromatic snapshots | — | `chromatic-snapshots` | :orange_circle: Scaffolded |
+| Chromatic reviews | — | `chromatic-reviews` | :orange_circle: Scaffolded |
+| Chromatic baselines | — | `chromatic-baselines` | :orange_circle: Scaffolded |
+
 ### Round 387 — Snyk ext, SonarQube ext, Checkmarx ext, Veracode/Semgrep ext
 
 | Feature | Emacs | jemacs | Status |

@@ -27999,3 +27999,44 @@
 (def (cmd-checkmarx-projects app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Checkmarx: listing projects")))
+
+;; Round 388 batch 1 — Figma ext, Sketch ext
+(def (cmd-figma-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Figma: listing files")))
+
+(def (cmd-figma-components app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Figma: listing components")))
+
+(def (cmd-figma-styles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Figma: listing styles")))
+
+(def (cmd-figma-variables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Figma: listing variables")))
+
+(def (cmd-sketch-documents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sketch: listing documents")))
+
+(def (cmd-sketch-symbols app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sketch: listing symbols")))
+
+(def (cmd-sketch-libraries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sketch: listing libraries")))
+
+(def (cmd-sketch-prototypes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sketch: listing prototypes")))
+
+(def (cmd-zeplin-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zeplin: listing projects")))
+
+(def (cmd-zeplin-screens app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zeplin: listing screens")))
