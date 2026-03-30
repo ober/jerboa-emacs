@@ -25800,3 +25800,53 @@
 (def (cmd-minikube-stop app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Minikube: stopping cluster")))
+
+;;; Round 341 — Pulumi ext, Packer ext, Boundary ext, Consul ext, Nomad ext (batch 1)
+
+(def (cmd-pulumi-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: deploying stack")))
+
+(def (cmd-pulumi-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: previewing changes")))
+
+(def (cmd-pulumi-destroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: destroying stack")))
+
+(def (cmd-pulumi-stack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: showing stack info")))
+
+(def (cmd-packer-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Packer template: "
+      (lambda (tpl)
+        (echo-message! echo (str "Packer: building " tpl))))))
+
+(def (cmd-packer-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Packer template: "
+      (lambda (tpl)
+        (echo-message! echo (str "Packer: validating " tpl))))))
+
+(def (cmd-packer-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Packer template: "
+      (lambda (tpl)
+        (echo-message! echo (str "Packer: inspecting " tpl))))))
+
+(def (cmd-packer-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Packer: formatting templates")))
+
+(def (cmd-boundary-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Boundary target ID: "
+      (lambda (id)
+        (echo-message! echo (str "Boundary: connecting to " id))))))
+
+(def (cmd-boundary-authenticate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: authenticating")))

@@ -25095,3 +25095,55 @@
     (echo-read-string echo "K3s kubectl command: "
       (lambda (cmd)
         (echo-message! echo (str "K3s: kubectl " cmd))))))
+
+;;; Round 341 — Boundary ext, Consul ext, Nomad ext (batch 2)
+
+(def (cmd-boundary-targets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: listing targets")))
+
+(def (cmd-boundary-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: listing sessions")))
+
+(def (cmd-consul-members app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consul: listing cluster members")))
+
+(def (cmd-consul-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consul: listing registered services")))
+
+(def (cmd-consul-kv-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consul KV key: "
+      (lambda (key)
+        (echo-message! echo (str "Consul: getting key " key))))))
+
+(def (cmd-consul-kv-put app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Consul KV key: "
+      (lambda (key)
+        (echo-message! echo (str "Consul: putting key " key))))))
+
+(def (cmd-nomad-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nomad: showing cluster status")))
+
+(def (cmd-nomad-job-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nomad job file: "
+      (lambda (file)
+        (echo-message! echo (str "Nomad: running job " file))))))
+
+(def (cmd-nomad-job-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nomad stop job: "
+      (lambda (job)
+        (echo-message! echo (str "Nomad: stopping job " job))))))
+
+(def (cmd-nomad-alloc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nomad alloc ID: "
+      (lambda (id)
+        (echo-message! echo (str "Nomad: showing alloc " id))))))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 341 — Pulumi ext, Packer ext, Boundary ext, Consul ext, Nomad ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| pulumi-up | :orange_circle: | Pulumi: deploy stack |
+| pulumi-preview | :orange_circle: | Pulumi: preview changes |
+| pulumi-destroy | :orange_circle: | Pulumi: destroy stack |
+| pulumi-stack | :orange_circle: | Pulumi: show stack info |
+| packer-build | :orange_circle: | Packer: build image |
+| packer-validate | :orange_circle: | Packer: validate template |
+| packer-inspect | :orange_circle: | Packer: inspect template |
+| packer-fmt | :orange_circle: | Packer: format templates |
+| boundary-connect | :orange_circle: | Boundary: connect to target |
+| boundary-authenticate | :orange_circle: | Boundary: authenticate |
+| boundary-targets | :orange_circle: | Boundary: list targets |
+| boundary-sessions | :orange_circle: | Boundary: list sessions |
+| consul-members | :orange_circle: | Consul: list cluster members |
+| consul-services | :orange_circle: | Consul: list services |
+| consul-kv-get | :orange_circle: | Consul: get KV value |
+| consul-kv-put | :orange_circle: | Consul: put KV value |
+| nomad-status | :orange_circle: | Nomad: cluster status |
+| nomad-job-run | :orange_circle: | Nomad: run a job |
+| nomad-job-stop | :orange_circle: | Nomad: stop a job |
+| nomad-alloc | :orange_circle: | Nomad: show allocation |
+
 ### Round 340 — Helm ext, Kubectl ext, Minikube ext, Kind ext, K3s ext
 
 | Feature | Status | Notes |
