@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 571 — ECS Game Engines
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ecs-entity` | :orange_circle: Scaffold | Create entity |
+| `ecs-component` | :orange_circle: Scaffold | Add component |
+| `ecs-system` | :orange_circle: Scaffold | Register system |
+| `ecs-query` | :orange_circle: Scaffold | Query entities |
+| `ecs-archetype` | :orange_circle: Scaffold | Archetype info |
+| `ecs-world` | :orange_circle: Scaffold | World state |
+| `ecs-spawn` | :orange_circle: Scaffold | Spawn entity |
+| `ecs-despawn` | :orange_circle: Scaffold | Despawn entity |
+| `ecs-schedule` | :orange_circle: Scaffold | Schedule system |
+| `ecs-event` | :orange_circle: Scaffold | Emit event |
+
+### Round 572 — Data Serialization (Bencode, Ion, Thrift)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `bencode-encode` | :orange_circle: Scaffold | Bencode encode |
+| `bencode-decode` | :orange_circle: Scaffold | Bencode decode |
+| `ion-serialize` | :orange_circle: Scaffold | Ion serialize |
+| `ion-deserialize` | :orange_circle: Scaffold | Ion deserialize |
+| `ion-text` | :orange_circle: Scaffold | Ion text format |
+| `thrift-read` | :orange_circle: Scaffold | Thrift read |
+| `thrift-service` | :orange_circle: Scaffold | Thrift service |
+| `capnproto-read` | :orange_circle: Scaffold | Cap'n Proto read |
+| `asn1-decode` | :orange_circle: Scaffold | ASN.1 decode |
+| `asn1-schema` | :orange_circle: Scaffold | ASN.1 schema |
+
+### Round 573 — Image Processing
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `image-blur` | :orange_circle: Scaffold | Blur |
+| `image-sharpen` | :orange_circle: Scaffold | Sharpen |
+| `image-edge` | :orange_circle: Scaffold | Edge detect |
+| `image-threshold` | :orange_circle: Scaffold | Threshold |
+| `image-erode` | :orange_circle: Scaffold | Erode |
+| `image-dilate` | :orange_circle: Scaffold | Dilate |
+| `image-histogram` | :orange_circle: Scaffold | Histogram |
+| `image-resize` | :orange_circle: Scaffold | Resize |
+| `image-rotate` | :orange_circle: Scaffold | Rotate |
+| `image-crop` | :orange_circle: Scaffold | Crop |
+
+### Round 574 — Network Security (TLS, Firewall)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `tls-handshake` | :orange_circle: Scaffold | Handshake debug |
+| `tls-verify` | :orange_circle: Scaffold | Verify cert |
+| `tls-cipher` | :orange_circle: Scaffold | Cipher suite |
+| `tls-certificate` | :orange_circle: Scaffold | Certificate info |
+| `tls-revoke` | :orange_circle: Scaffold | Revoke cert |
+| `firewall-rule` | :orange_circle: Scaffold | Add rule |
+| `firewall-inspect` | :orange_circle: Scaffold | Inspect |
+| `firewall-nat` | :orange_circle: Scaffold | NAT config |
+| `firewall-log` | :orange_circle: Scaffold | View log |
+| `firewall-zone` | :orange_circle: Scaffold | Zone config |
+
+### Round 575 — Numerical Methods
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `newton-raphson` | :orange_circle: Scaffold | Newton-Raphson |
+| `bisection-method` | :orange_circle: Scaffold | Bisection |
+| `euler-method` | :orange_circle: Scaffold | Euler method |
+| `runge-kutta` | :orange_circle: Scaffold | Runge-Kutta |
+| `gauss-quadrature` | :orange_circle: Scaffold | Gauss quadrature |
+| `simpson-integrate` | :orange_circle: Scaffold | Simpson rule |
+| `trapezoidal-rule` | :orange_circle: Scaffold | Trapezoidal |
+| `finite-difference` | :orange_circle: Scaffold | Finite difference |
+| `interpolate-lagrange` | :orange_circle: Scaffold | Lagrange interp |
+| `interpolate-spline` | :orange_circle: Scaffold | Spline interp |
+
+### Round 576 — Optimization Algorithms
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gradient-descent` | :orange_circle: Scaffold | Gradient descent |
+| `simulated-anneal` | :orange_circle: Scaffold | Simulated annealing |
+| `genetic-algorithm` | :orange_circle: Scaffold | Genetic algorithm |
+| `particle-swarm` | :orange_circle: Scaffold | Particle swarm |
+| `ant-colony` | :orange_circle: Scaffold | Ant colony |
+| `tabu-search` | :orange_circle: Scaffold | Tabu search |
+| `hill-climb` | :orange_circle: Scaffold | Hill climbing |
+| `evolutionary-strategy` | :orange_circle: Scaffold | Evolutionary |
+| `bayesian-optimize` | :orange_circle: Scaffold | Bayesian opt |
+| `nelder-mead` | :orange_circle: Scaffold | Nelder-Mead |
+
+### Round 577 — Concurrency Primitives
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mutex-lock` | :orange_circle: Scaffold | Mutex lock |
+| `mutex-unlock` | :orange_circle: Scaffold | Mutex unlock |
+| `rwlock-read` | :orange_circle: Scaffold | Read lock |
+| `rwlock-write` | :orange_circle: Scaffold | Write lock |
+| `semaphore-wait` | :orange_circle: Scaffold | Semaphore wait |
+| `semaphore-signal` | :orange_circle: Scaffold | Semaphore signal |
+| `barrier-wait` | :orange_circle: Scaffold | Barrier wait |
+| `channel-send` | :orange_circle: Scaffold | Channel send |
+| `channel-recv` | :orange_circle: Scaffold | Channel recv |
+| `futex-wake` | :orange_circle: Scaffold | Futex wake |
+
+### Round 578 — Virtual Machines (Bytecode, JIT)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vm-bytecode` | :orange_circle: Scaffold | Bytecode assemble |
+| `vm-execute` | :orange_circle: Scaffold | Execute |
+| `vm-stack` | :orange_circle: Scaffold | Stack inspect |
+| `vm-register` | :orange_circle: Scaffold | Register file |
+| `vm-jit` | :orange_circle: Scaffold | JIT compile |
+| `vm-gc` | :orange_circle: Scaffold | GC |
+| `vm-debug` | :orange_circle: Scaffold | Debug |
+| `vm-disasm` | :orange_circle: Scaffold | Disassemble |
+| `vm-optimize` | :orange_circle: Scaffold | Optimize IR |
+| `vm-compile` | :orange_circle: Scaffold | Compile source |
+
+### Round 579 — Serialization ext (Avro, FlatBuffers, MsgPack)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `avro-serialize` | :orange_circle: Scaffold | Avro serialize |
+| `avro-deserialize` | :orange_circle: Scaffold | Avro deserialize |
+| `flatbuf-compile` | :orange_circle: Scaffold | FlatBuffers compile |
+| `flatbuf-read` | :orange_circle: Scaffold | FlatBuffers read |
+| `protobuf-field` | :orange_circle: Scaffold | Protobuf field inspect |
+| `msgpack-ext` | :orange_circle: Scaffold | MsgPack ext type |
+| `msgpack-timestamp` | :orange_circle: Scaffold | MsgPack timestamp |
+| `cbor-sequence` | :orange_circle: Scaffold | CBOR sequence |
+| `cbor-map` | :orange_circle: Scaffold | CBOR map inspect |
+| `asn1-encode` | :orange_circle: Scaffold | ASN.1 encode |
+
+### Round 580 — Container Runtimes (OCI, cgroup)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `oci-build` | :orange_circle: Scaffold | OCI build image |
+| `oci-inspect` | :orange_circle: Scaffold | OCI inspect |
+| `oci-manifest` | :orange_circle: Scaffold | OCI manifest |
+| `cgroup-create` | :orange_circle: Scaffold | cgroup create |
+| `cgroup-limit` | :orange_circle: Scaffold | cgroup limits |
+| `cgroup-stat` | :orange_circle: Scaffold | cgroup stats |
+| `namespace-create` | :orange_circle: Scaffold | Namespace create |
+| `namespace-enter` | :orange_circle: Scaffold | Namespace enter |
+| `seccomp-profile` | :orange_circle: Scaffold | Seccomp profile |
+| `overlay-mount` | :orange_circle: Scaffold | OverlayFS mount |
+
 ### Round 561 — Ray Marching / SDF
 
 | Feature | Status | Notes |

@@ -12894,4 +12894,35 @@
   ;; Round 570: Garbage Collectors
   (register-command! 'gc-mark cmd-gc-mark) (register-command! 'gc-sweep cmd-gc-sweep) (register-command! 'gc-compact cmd-gc-compact) (register-command! 'gc-generational cmd-gc-generational) (register-command! 'gc-incremental cmd-gc-incremental)
   (register-command! 'gc-concurrent cmd-gc-concurrent) (register-command! 'gc-reference-count cmd-gc-reference-count) (register-command! 'gc-cycle-detect cmd-gc-cycle-detect) (register-command! 'gc-finalize cmd-gc-finalize) (register-command! 'gc-stats cmd-gc-stats)
+
+  ;; Round 571: ECS Game Engines
+  (register-command! 'ecs-entity cmd-ecs-entity) (register-command! 'ecs-component cmd-ecs-component) (register-command! 'ecs-system cmd-ecs-system) (register-command! 'ecs-query cmd-ecs-query) (register-command! 'ecs-archetype cmd-ecs-archetype)
+  (register-command! 'ecs-world cmd-ecs-world) (register-command! 'ecs-spawn cmd-ecs-spawn) (register-command! 'ecs-despawn cmd-ecs-despawn) (register-command! 'ecs-schedule cmd-ecs-schedule) (register-command! 'ecs-event cmd-ecs-event)
+  ;; Round 572: Data Serialization
+  (register-command! 'bencode-encode cmd-bencode-encode) (register-command! 'bencode-decode cmd-bencode-decode) (register-command! 'ion-serialize cmd-ion-serialize) (register-command! 'ion-deserialize cmd-ion-deserialize) (register-command! 'ion-text cmd-ion-text)
+  (register-command! 'thrift-read cmd-thrift-read) (register-command! 'thrift-service cmd-thrift-service) (register-command! 'capnproto-read cmd-capnproto-read) (register-command! 'asn1-decode cmd-asn1-decode) (register-command! 'asn1-schema cmd-asn1-schema)
+  ;; Round 573: Image Processing
+  (register-command! 'image-blur cmd-image-blur) (register-command! 'image-sharpen cmd-image-sharpen) (register-command! 'image-edge cmd-image-edge) (register-command! 'image-threshold cmd-image-threshold) (register-command! 'image-erode cmd-image-erode)
+  (register-command! 'image-dilate cmd-image-dilate) (register-command! 'image-histogram cmd-image-histogram) (register-command! 'image-resize cmd-image-resize) (register-command! 'image-rotate cmd-image-rotate) (register-command! 'image-crop cmd-image-crop)
+  ;; Round 574: Network Security
+  (register-command! 'tls-handshake cmd-tls-handshake) (register-command! 'tls-verify cmd-tls-verify) (register-command! 'tls-cipher cmd-tls-cipher) (register-command! 'tls-certificate cmd-tls-certificate) (register-command! 'tls-revoke cmd-tls-revoke)
+  (register-command! 'firewall-rule cmd-firewall-rule) (register-command! 'firewall-inspect cmd-firewall-inspect) (register-command! 'firewall-nat cmd-firewall-nat) (register-command! 'firewall-log cmd-firewall-log) (register-command! 'firewall-zone cmd-firewall-zone)
+  ;; Round 575: Numerical Methods
+  (register-command! 'newton-raphson cmd-newton-raphson) (register-command! 'bisection-method cmd-bisection-method) (register-command! 'euler-method cmd-euler-method) (register-command! 'runge-kutta cmd-runge-kutta) (register-command! 'gauss-quadrature cmd-gauss-quadrature)
+  (register-command! 'simpson-integrate cmd-simpson-integrate) (register-command! 'trapezoidal-rule cmd-trapezoidal-rule) (register-command! 'finite-difference cmd-finite-difference) (register-command! 'interpolate-lagrange cmd-interpolate-lagrange) (register-command! 'interpolate-spline cmd-interpolate-spline)
+  ;; Round 576: Optimization Algorithms
+  (register-command! 'gradient-descent cmd-gradient-descent) (register-command! 'simulated-anneal cmd-simulated-anneal) (register-command! 'genetic-algorithm cmd-genetic-algorithm) (register-command! 'particle-swarm cmd-particle-swarm) (register-command! 'ant-colony cmd-ant-colony)
+  (register-command! 'tabu-search cmd-tabu-search) (register-command! 'hill-climb cmd-hill-climb) (register-command! 'evolutionary-strategy cmd-evolutionary-strategy) (register-command! 'bayesian-optimize cmd-bayesian-optimize) (register-command! 'nelder-mead cmd-nelder-mead)
+  ;; Round 577: Concurrency Primitives
+  (register-command! 'mutex-lock cmd-mutex-lock) (register-command! 'mutex-unlock cmd-mutex-unlock) (register-command! 'rwlock-read cmd-rwlock-read) (register-command! 'rwlock-write cmd-rwlock-write) (register-command! 'semaphore-wait cmd-semaphore-wait)
+  (register-command! 'semaphore-signal cmd-semaphore-signal) (register-command! 'barrier-wait cmd-barrier-wait) (register-command! 'channel-send cmd-channel-send) (register-command! 'channel-recv cmd-channel-recv) (register-command! 'futex-wake cmd-futex-wake)
+  ;; Round 578: Virtual Machines
+  (register-command! 'vm-bytecode cmd-vm-bytecode) (register-command! 'vm-execute cmd-vm-execute) (register-command! 'vm-stack cmd-vm-stack) (register-command! 'vm-register cmd-vm-register) (register-command! 'vm-jit cmd-vm-jit)
+  (register-command! 'vm-gc cmd-vm-gc) (register-command! 'vm-debug cmd-vm-debug) (register-command! 'vm-disasm cmd-vm-disasm) (register-command! 'vm-optimize cmd-vm-optimize) (register-command! 'vm-compile cmd-vm-compile)
+  ;; Round 579: Protocol Buffers / Serialization ext
+  (register-command! 'avro-serialize cmd-avro-serialize) (register-command! 'avro-deserialize cmd-avro-deserialize) (register-command! 'flatbuf-compile cmd-flatbuf-compile) (register-command! 'flatbuf-read cmd-flatbuf-read) (register-command! 'protobuf-field cmd-protobuf-field)
+  (register-command! 'msgpack-ext cmd-msgpack-ext) (register-command! 'msgpack-timestamp cmd-msgpack-timestamp) (register-command! 'cbor-sequence cmd-cbor-sequence) (register-command! 'cbor-map cmd-cbor-map) (register-command! 'asn1-encode cmd-asn1-encode)
+  ;; Round 580: Container Runtimes
+  (register-command! 'oci-build cmd-oci-build) (register-command! 'oci-inspect cmd-oci-inspect) (register-command! 'oci-manifest cmd-oci-manifest) (register-command! 'cgroup-create cmd-cgroup-create) (register-command! 'cgroup-limit cmd-cgroup-limit)
+  (register-command! 'cgroup-stat cmd-cgroup-stat) (register-command! 'namespace-create cmd-namespace-create) (register-command! 'namespace-enter cmd-namespace-enter) (register-command! 'seccomp-profile cmd-seccomp-profile) (register-command! 'overlay-mount cmd-overlay-mount)
 )
