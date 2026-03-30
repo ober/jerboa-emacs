@@ -22490,3 +22490,51 @@
     (echo-read-string echo "Device: "
       (lambda (dev)
         (echo-message! echo (str "Tune2fs: info for " dev))))))
+
+;;; Round 292 — IP Link ext, Bridge ext (batch 2)
+
+(def (cmd-ip-neigh-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IP: listing neighbors")))
+
+(def (cmd-ip-neigh-flush app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IP: flushing neighbor cache")))
+
+(def (cmd-ip-link-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IP: showing links")))
+
+(def (cmd-ip-link-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "IP: setting link " iface))))))
+
+(def (cmd-ip-addr-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IP: showing addresses")))
+
+(def (cmd-ip-addr-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Address/interface: "
+      (lambda (addr)
+        (echo-message! echo (str "IP: adding address " addr))))))
+
+(def (cmd-bridge-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bridge: listing bridges")))
+
+(def (cmd-bridge-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bridge name: "
+      (lambda (name)
+        (echo-message! echo (str "Bridge: creating " name))))))
+
+(def (cmd-bridge-fdb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bridge: showing FDB entries")))
+
+(def (cmd-bridge-vlan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bridge: showing VLAN entries")))

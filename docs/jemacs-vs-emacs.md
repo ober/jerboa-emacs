@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 292 — TC ext, IP Rule ext, IP Route ext, IP Link ext, Bridge ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| tc-qdisc-list | :orange_circle: | List TC qdiscs |
+| tc-qdisc-add | :orange_circle: | Add TC qdisc |
+| tc-class-list | :orange_circle: | List TC classes |
+| tc-class-add | :orange_circle: | Add TC class |
+| tc-filter-list | :orange_circle: | List TC filters |
+| tc-filter-add | :orange_circle: | Add TC filter |
+| ip-rule-list | :orange_circle: | List IP rules |
+| ip-rule-add | :orange_circle: | Add IP rule |
+| ip-route-show | :orange_circle: | Show IP routes |
+| ip-route-add | :orange_circle: | Add IP route |
+| ip-neigh-list | :orange_circle: | List IP neighbors |
+| ip-neigh-flush | :orange_circle: | Flush neighbor cache |
+| ip-link-show | :orange_circle: | Show network links |
+| ip-link-set | :orange_circle: | Set link properties |
+| ip-addr-show | :orange_circle: | Show IP addresses |
+| ip-addr-add | :orange_circle: | Add IP address |
+| bridge-list | :orange_circle: | List bridges |
+| bridge-add | :orange_circle: | Create bridge |
+| bridge-fdb | :orange_circle: | Show bridge FDB |
+| bridge-vlan | :orange_circle: | Show bridge VLANs |
+
 ### Round 291 — SMART ext, Hdparm ext, Blkid ext, Fdisk ext, Mkfs ext
 
 | Command | Status | Description |

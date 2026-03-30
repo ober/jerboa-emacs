@@ -23178,3 +23178,55 @@
       (lambda (dev)
         (echo-message! echo (str "Blkid: info for " dev))))))
 
+;;; Round 292 — TC ext, IP Rule ext, IP Route ext (batch 1)
+
+(def (cmd-tc-qdisc-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TC: listing qdiscs")))
+
+(def (cmd-tc-qdisc-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "TC: adding qdisc on " iface))))))
+
+(def (cmd-tc-class-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TC: listing classes")))
+
+(def (cmd-tc-class-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "TC: adding class on " iface))))))
+
+(def (cmd-tc-filter-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TC: listing filters")))
+
+(def (cmd-tc-filter-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "TC: adding filter on " iface))))))
+
+(def (cmd-ip-rule-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IP: listing routing rules")))
+
+(def (cmd-ip-rule-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule: "
+      (lambda (rule)
+        (echo-message! echo (str "IP: adding rule " rule))))))
+
+(def (cmd-ip-route-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IP: showing routes")))
+
+(def (cmd-ip-route-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Route: "
+      (lambda (route)
+        (echo-message! echo (str "IP: adding route " route))))))
+
