@@ -27958,3 +27958,44 @@
 (def (cmd-cortex-scorecards app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cortex: listing scorecards")))
+
+;; Round 387 batch 1 — Snyk ext, SonarQube ext
+(def (cmd-snyk-container app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: scanning container image")))
+
+(def (cmd-snyk-iac app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: scanning infrastructure as code")))
+
+(def (cmd-snyk-sbom app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: generating SBOM")))
+
+(def (cmd-snyk-log4shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snyk: scanning for Log4Shell vulnerabilities")))
+
+(def (cmd-sonarqube-analyze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: running analysis")))
+
+(def (cmd-sonarqube-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: listing projects")))
+
+(def (cmd-sonarqube-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: listing rules")))
+
+(def (cmd-sonarqube-gates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SonarQube: listing quality gates")))
+
+(def (cmd-checkmarx-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Checkmarx: running scan")))
+
+(def (cmd-checkmarx-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Checkmarx: listing projects")))

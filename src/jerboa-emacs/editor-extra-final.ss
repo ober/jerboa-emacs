@@ -27175,3 +27175,44 @@
 (def (cmd-compass-teams app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Compass: listing teams")))
+
+;; Round 387 batch 2 — Checkmarx ext, Veracode/Semgrep ext
+(def (cmd-checkmarx-results app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Checkmarx: listing scan results")))
+
+(def (cmd-checkmarx-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Checkmarx: listing policies")))
+
+(def (cmd-veracode-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Veracode: running scan")))
+
+(def (cmd-veracode-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Veracode: listing applications")))
+
+(def (cmd-veracode-findings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Veracode: listing findings")))
+
+(def (cmd-veracode-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Veracode: listing policies")))
+
+(def (cmd-semgrep-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semgrep: running scan")))
+
+(def (cmd-semgrep-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semgrep: listing rules")))
+
+(def (cmd-semgrep-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semgrep: deploying rules")))
+
+(def (cmd-semgrep-findings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semgrep: listing findings")))

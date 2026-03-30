@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 387 — Snyk ext, SonarQube ext, Checkmarx ext, Veracode/Semgrep ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Snyk container scan | — | `snyk-container` | :orange_circle: Scaffolded |
+| Snyk IaC scan | — | `snyk-iac` | :orange_circle: Scaffolded |
+| Snyk SBOM generation | — | `snyk-sbom` | :orange_circle: Scaffolded |
+| Snyk Log4Shell scan | — | `snyk-log4shell` | :orange_circle: Scaffolded |
+| SonarQube analysis | — | `sonarqube-analyze` | :orange_circle: Scaffolded |
+| SonarQube projects | — | `sonarqube-projects` | :orange_circle: Scaffolded |
+| SonarQube rules | — | `sonarqube-rules` | :orange_circle: Scaffolded |
+| SonarQube quality gates | — | `sonarqube-gates` | :orange_circle: Scaffolded |
+| Checkmarx scan | — | `checkmarx-scan` | :orange_circle: Scaffolded |
+| Checkmarx projects | — | `checkmarx-projects` | :orange_circle: Scaffolded |
+| Checkmarx results | — | `checkmarx-results` | :orange_circle: Scaffolded |
+| Checkmarx policies | — | `checkmarx-policies` | :orange_circle: Scaffolded |
+| Veracode scan | — | `veracode-scan` | :orange_circle: Scaffolded |
+| Veracode applications | — | `veracode-apps` | :orange_circle: Scaffolded |
+| Veracode findings | — | `veracode-findings` | :orange_circle: Scaffolded |
+| Veracode policies | — | `veracode-policies` | :orange_circle: Scaffolded |
+| Semgrep scan | — | `semgrep-scan` | :orange_circle: Scaffolded |
+| Semgrep rules | — | `semgrep-rules` | :orange_circle: Scaffolded |
+| Semgrep deploy rules | — | `semgrep-deploy` | :orange_circle: Scaffolded |
+| Semgrep findings | — | `semgrep-findings` | :orange_circle: Scaffolded |
+
 ### Round 386 — Backstage ext, Port ext, Cortex ext, OpsLevel/Compass ext
 
 | Feature | Emacs | jemacs | Status |
