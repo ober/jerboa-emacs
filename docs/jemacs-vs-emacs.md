@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 393 — Shopify ext, WooCommerce ext, Magento ext, BigCommerce/Medusa ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Shopify products | — | `shopify-products` | :orange_circle: Scaffolded |
+| Shopify orders | — | `shopify-orders` | :orange_circle: Scaffolded |
+| Shopify customers | — | `shopify-customers` | :orange_circle: Scaffolded |
+| Shopify inventory | — | `shopify-inventory` | :orange_circle: Scaffolded |
+| WooCommerce products | — | `woocommerce-products` | :orange_circle: Scaffolded |
+| WooCommerce orders | — | `woocommerce-orders` | :orange_circle: Scaffolded |
+| WooCommerce customers | — | `woocommerce-customers` | :orange_circle: Scaffolded |
+| WooCommerce coupons | — | `woocommerce-coupons` | :orange_circle: Scaffolded |
+| Magento products | — | `magento-products` | :orange_circle: Scaffolded |
+| Magento orders | — | `magento-orders` | :orange_circle: Scaffolded |
+| Magento customers | — | `magento-customers` | :orange_circle: Scaffolded |
+| Magento categories | — | `magento-categories` | :orange_circle: Scaffolded |
+| BigCommerce products | — | `bigcommerce-products` | :orange_circle: Scaffolded |
+| BigCommerce orders | — | `bigcommerce-orders` | :orange_circle: Scaffolded |
+| BigCommerce customers | — | `bigcommerce-customers` | :orange_circle: Scaffolded |
+| BigCommerce categories | — | `bigcommerce-categories` | :orange_circle: Scaffolded |
+| Medusa products | — | `medusa-products` | :orange_circle: Scaffolded |
+| Medusa orders | — | `medusa-orders` | :orange_circle: Scaffolded |
+| Medusa customers | — | `medusa-customers` | :orange_circle: Scaffolded |
+| Medusa regions | — | `medusa-regions` | :orange_circle: Scaffolded |
+
 ### Round 392 — Zoom ext, Teams ext, Webex ext, Discord/Matrix ext
 
 | Feature | Emacs | jemacs | Status |

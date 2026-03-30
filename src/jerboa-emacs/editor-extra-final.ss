@@ -27421,3 +27421,44 @@
 (def (cmd-matrix-users app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Matrix: listing users")))
+
+;; Round 393 batch 2 — Magento ext, BigCommerce/Medusa ext
+(def (cmd-magento-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magento: listing customers")))
+
+(def (cmd-magento-categories app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magento: listing categories")))
+
+(def (cmd-bigcommerce-products app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BigCommerce: listing products")))
+
+(def (cmd-bigcommerce-orders app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BigCommerce: listing orders")))
+
+(def (cmd-bigcommerce-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BigCommerce: listing customers")))
+
+(def (cmd-bigcommerce-categories app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BigCommerce: listing categories")))
+
+(def (cmd-medusa-products app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Medusa: listing products")))
+
+(def (cmd-medusa-orders app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Medusa: listing orders")))
+
+(def (cmd-medusa-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Medusa: listing customers")))
+
+(def (cmd-medusa-regions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Medusa: listing regions")))

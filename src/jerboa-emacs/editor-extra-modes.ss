@@ -28208,3 +28208,44 @@
 (def (cmd-webex-rooms app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Webex: listing rooms")))
+
+;; Round 393 batch 1 — Shopify ext, WooCommerce ext
+(def (cmd-shopify-products app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shopify: listing products")))
+
+(def (cmd-shopify-orders app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shopify: listing orders")))
+
+(def (cmd-shopify-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shopify: listing customers")))
+
+(def (cmd-shopify-inventory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Shopify: managing inventory")))
+
+(def (cmd-woocommerce-products app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WooCommerce: listing products")))
+
+(def (cmd-woocommerce-orders app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WooCommerce: listing orders")))
+
+(def (cmd-woocommerce-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WooCommerce: listing customers")))
+
+(def (cmd-woocommerce-coupons app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WooCommerce: listing coupons")))
+
+(def (cmd-magento-products app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magento: listing products")))
+
+(def (cmd-magento-orders app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Magento: listing orders")))
