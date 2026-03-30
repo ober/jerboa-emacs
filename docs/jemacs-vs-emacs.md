@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 375 — MLflow ext, W&B ext, Kubeflow ext, SageMaker/Ray ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| MLflow experiments | — | `mlflow-experiments` | :orange_circle: Scaffolded |
+| MLflow runs | — | `mlflow-runs` | :orange_circle: Scaffolded |
+| MLflow models | — | `mlflow-models` | :orange_circle: Scaffolded |
+| MLflow model registry | — | `mlflow-registry` | :orange_circle: Scaffolded |
+| W&B runs | — | `wandb-runs` | :orange_circle: Scaffolded |
+| W&B sweeps | — | `wandb-sweeps` | :orange_circle: Scaffolded |
+| W&B artifacts | — | `wandb-artifacts` | :orange_circle: Scaffolded |
+| W&B reports | — | `wandb-reports` | :orange_circle: Scaffolded |
+| Kubeflow pipelines | — | `kubeflow-pipelines` | :orange_circle: Scaffolded |
+| Kubeflow experiments | — | `kubeflow-experiments` | :orange_circle: Scaffolded |
+| Kubeflow notebooks | — | `kubeflow-notebooks` | :orange_circle: Scaffolded |
+| Kubeflow models | — | `kubeflow-models` | :orange_circle: Scaffolded |
+| SageMaker endpoints | — | `sagemaker-endpoints` | :orange_circle: Scaffolded |
+| SageMaker training | — | `sagemaker-training` | :orange_circle: Scaffolded |
+| SageMaker models | — | `sagemaker-models` | :orange_circle: Scaffolded |
+| SageMaker pipelines | — | `sagemaker-pipelines` | :orange_circle: Scaffolded |
+| Ray jobs | — | `ray-jobs` | :orange_circle: Scaffolded |
+| Ray clusters | — | `ray-clusters` | :orange_circle: Scaffolded |
+| Ray Serve deployments | — | `ray-serve` | :orange_circle: Scaffolded |
+| Ray Tune trials | — | `ray-tune` | :orange_circle: Scaffolded |
+
 ### Round 374 — Airflow ext, Spark ext, Flink ext, Dagster/Prefect ext
 
 | Feature | Emacs | jemacs | Status |

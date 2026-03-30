@@ -27448,3 +27448,44 @@
 (def (cmd-flink-savepoints app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Flink: listing savepoints")))
+
+;; Round 375 batch 1 — MLflow ext, W&B ext
+(def (cmd-mlflow-experiments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MLflow: listing experiments")))
+
+(def (cmd-mlflow-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MLflow: listing runs")))
+
+(def (cmd-mlflow-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MLflow: listing registered models")))
+
+(def (cmd-mlflow-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MLflow: querying model registry")))
+
+(def (cmd-wandb-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "W&B: listing runs")))
+
+(def (cmd-wandb-sweeps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "W&B: listing sweeps")))
+
+(def (cmd-wandb-artifacts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "W&B: listing artifacts")))
+
+(def (cmd-wandb-reports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "W&B: listing reports")))
+
+(def (cmd-kubeflow-pipelines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kubeflow: listing pipelines")))
+
+(def (cmd-kubeflow-experiments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kubeflow: listing experiments")))

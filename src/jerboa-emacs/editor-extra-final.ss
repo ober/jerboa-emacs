@@ -26669,3 +26669,44 @@
 (def (cmd-prefect-agents app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Prefect: listing agents")))
+
+;; Round 375 batch 2 — Kubeflow ext, SageMaker/Ray ext
+(def (cmd-kubeflow-notebooks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kubeflow: listing notebooks")))
+
+(def (cmd-kubeflow-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kubeflow: listing served models")))
+
+(def (cmd-sagemaker-endpoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SageMaker: listing endpoints")))
+
+(def (cmd-sagemaker-training app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SageMaker: listing training jobs")))
+
+(def (cmd-sagemaker-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SageMaker: listing models")))
+
+(def (cmd-sagemaker-pipelines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SageMaker: listing pipelines")))
+
+(def (cmd-ray-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ray: listing jobs")))
+
+(def (cmd-ray-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ray: listing clusters")))
+
+(def (cmd-ray-serve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ray Serve: listing deployments")))
+
+(def (cmd-ray-tune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ray Tune: listing trials")))
