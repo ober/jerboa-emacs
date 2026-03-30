@@ -27489,3 +27489,44 @@
 (def (cmd-kubeflow-experiments app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Kubeflow: listing experiments")))
+
+;; Round 376 batch 1 — dbt ext, Fivetran ext
+(def (cmd-dbt-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dbt: running models")))
+
+(def (cmd-dbt-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dbt: running tests")))
+
+(def (cmd-dbt-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dbt: compiling project")))
+
+(def (cmd-dbt-docs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dbt: generating documentation")))
+
+(def (cmd-fivetran-connectors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fivetran: listing connectors")))
+
+(def (cmd-fivetran-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fivetran: triggering sync")))
+
+(def (cmd-fivetran-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fivetran: checking sync status")))
+
+(def (cmd-fivetran-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fivetran: viewing sync logs")))
+
+(def (cmd-airbyte-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airbyte: listing connections")))
+
+(def (cmd-airbyte-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airbyte: triggering sync")))

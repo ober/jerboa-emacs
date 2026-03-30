@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 376 — dbt ext, Fivetran ext, Airbyte ext, Stitch/Singer ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| dbt run models | — | `dbt-run` | :orange_circle: Scaffolded |
+| dbt run tests | — | `dbt-test` | :orange_circle: Scaffolded |
+| dbt compile | — | `dbt-compile` | :orange_circle: Scaffolded |
+| dbt generate docs | — | `dbt-docs` | :orange_circle: Scaffolded |
+| Fivetran connectors | — | `fivetran-connectors` | :orange_circle: Scaffolded |
+| Fivetran trigger sync | — | `fivetran-sync` | :orange_circle: Scaffolded |
+| Fivetran sync status | — | `fivetran-status` | :orange_circle: Scaffolded |
+| Fivetran sync logs | — | `fivetran-logs` | :orange_circle: Scaffolded |
+| Airbyte connections | — | `airbyte-connections` | :orange_circle: Scaffolded |
+| Airbyte trigger sync | — | `airbyte-sync` | :orange_circle: Scaffolded |
+| Airbyte sources | — | `airbyte-sources` | :orange_circle: Scaffolded |
+| Airbyte destinations | — | `airbyte-destinations` | :orange_circle: Scaffolded |
+| Stitch integrations | — | `stitch-integrations` | :orange_circle: Scaffolded |
+| Stitch recent loads | — | `stitch-loads` | :orange_circle: Scaffolded |
+| Stitch sources | — | `stitch-sources` | :orange_circle: Scaffolded |
+| Stitch schemas | — | `stitch-schemas` | :orange_circle: Scaffolded |
+| Singer taps | — | `singer-taps` | :orange_circle: Scaffolded |
+| Singer targets | — | `singer-targets` | :orange_circle: Scaffolded |
+| Singer catalog | — | `singer-catalog` | :orange_circle: Scaffolded |
+| Singer state | — | `singer-state` | :orange_circle: Scaffolded |
+
 ### Round 375 — MLflow ext, W&B ext, Kubeflow ext, SageMaker/Ray ext
 
 | Feature | Emacs | jemacs | Status |

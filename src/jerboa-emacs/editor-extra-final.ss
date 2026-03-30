@@ -26710,3 +26710,44 @@
 (def (cmd-ray-tune app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ray Tune: listing trials")))
+
+;; Round 376 batch 2 — Airbyte ext, Stitch/Singer ext
+(def (cmd-airbyte-sources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airbyte: listing sources")))
+
+(def (cmd-airbyte-destinations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airbyte: listing destinations")))
+
+(def (cmd-stitch-integrations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stitch: listing integrations")))
+
+(def (cmd-stitch-loads app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stitch: listing recent loads")))
+
+(def (cmd-stitch-sources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stitch: listing sources")))
+
+(def (cmd-stitch-schemas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stitch: listing schemas")))
+
+(def (cmd-singer-taps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Singer: listing available taps")))
+
+(def (cmd-singer-targets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Singer: listing available targets")))
+
+(def (cmd-singer-catalog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Singer: discovering catalog")))
+
+(def (cmd-singer-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Singer: managing replication state")))
