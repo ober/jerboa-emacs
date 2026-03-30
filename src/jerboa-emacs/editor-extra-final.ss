@@ -22972,3 +22972,63 @@
 (def (cmd-pacman-orphans app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pacman: listing orphaned packages")))
+
+;;; Round 301 — AppImage ext, Nix ext, Brew ext (batch 2)
+
+(def (cmd-appimage-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "AppImage file: "
+      (lambda (file)
+        (echo-message! echo (str "AppImage: info for " file))))))
+
+(def (cmd-appimage-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "AppImage file: "
+      (lambda (file)
+        (echo-message! echo (str "AppImage: updating " file))))))
+
+(def (cmd-nix-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Nix: installing " pkg))))))
+
+(def (cmd-nix-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Nix: removing " pkg))))))
+
+(def (cmd-nix-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Nix: info for " pkg))))))
+
+(def (cmd-nix-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: showing profile")))
+
+(def (cmd-brew-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (q)
+        (echo-message! echo (str "Brew: searching " q))))))
+
+(def (cmd-brew-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Formula: "
+      (lambda (formula)
+        (echo-message! echo (str "Brew: installing " formula))))))
+
+(def (cmd-brew-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Formula: "
+      (lambda (formula)
+        (echo-message! echo (str "Brew: removing " formula))))))
+
+(def (cmd-brew-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Formula: "
+      (lambda (formula)
+        (echo-message! echo (str "Brew: info for " formula))))))

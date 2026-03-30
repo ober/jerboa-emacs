@@ -23694,3 +23694,61 @@
       (lambda (pkg)
         (echo-message! echo (str "RPM: installing " pkg))))))
 
+;;; Round 301 — Snap ext, Flatpak ext, AppImage ext (batch 1)
+
+(def (cmd-snap-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: listing installed snaps")))
+
+(def (cmd-snap-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Snap: "
+      (lambda (snap)
+        (echo-message! echo (str "Snap: installing " snap))))))
+
+(def (cmd-snap-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Snap: "
+      (lambda (snap)
+        (echo-message! echo (str "Snap: removing " snap))))))
+
+(def (cmd-snap-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Snap: "
+      (lambda (snap)
+        (echo-message! echo (str "Snap: info for " snap))))))
+
+(def (cmd-flatpak-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: listing installed apps")))
+
+(def (cmd-flatpak-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "App ID: "
+      (lambda (app-id)
+        (echo-message! echo (str "Flatpak: installing " app-id))))))
+
+(def (cmd-flatpak-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "App ID: "
+      (lambda (app-id)
+        (echo-message! echo (str "Flatpak: removing " app-id))))))
+
+(def (cmd-flatpak-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "App ID: "
+      (lambda (app-id)
+        (echo-message! echo (str "Flatpak: info for " app-id))))))
+
+(def (cmd-appimage-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "AppImage file: "
+      (lambda (file)
+        (echo-message! echo (str "AppImage: running " file))))))
+
+(def (cmd-appimage-extract app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "AppImage file: "
+      (lambda (file)
+        (echo-message! echo (str "AppImage: extracting " file))))))
+

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 301 — Snap ext, Flatpak ext, AppImage ext, Nix ext, Brew ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| snap-list | :orange_circle: | List installed snaps |
+| snap-install | :orange_circle: | Install snap |
+| snap-remove | :orange_circle: | Remove snap |
+| snap-info | :orange_circle: | Show snap info |
+| flatpak-list | :orange_circle: | List flatpak apps |
+| flatpak-install | :orange_circle: | Install flatpak |
+| flatpak-remove | :orange_circle: | Remove flatpak |
+| flatpak-info | :orange_circle: | Show flatpak info |
+| appimage-run | :orange_circle: | Run AppImage |
+| appimage-extract | :orange_circle: | Extract AppImage |
+| appimage-info | :orange_circle: | Show AppImage info |
+| appimage-update | :orange_circle: | Update AppImage |
+| nix-install | :orange_circle: | Install nix package |
+| nix-remove | :orange_circle: | Remove nix package |
+| nix-info | :orange_circle: | Show nix package info |
+| nix-profile | :orange_circle: | Show nix profile |
+| brew-search | :orange_circle: | Search brew packages |
+| brew-install | :orange_circle: | Install brew formula |
+| brew-remove | :orange_circle: | Remove brew formula |
+| brew-info | :orange_circle: | Show brew info |
+
 ### Round 300 — Dpkg ext, Apt ext, RPM ext, Yum ext, Pacman ext
 
 | Command | Status | Description |
