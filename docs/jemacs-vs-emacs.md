@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 355 — Dagger ext, Earthly ext, Mise ext, Asdf ext, Direnv ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| dagger-call | :orange_circle: | Dagger: call a function |
+| dagger-functions | :orange_circle: | Dagger: list functions |
+| dagger-shell | :orange_circle: | Dagger: interactive shell |
+| dagger-run | :orange_circle: | Dagger: run command |
+| earthly-build | :orange_circle: | Earthly: build target |
+| earthly-targets | :orange_circle: | Earthly: list targets |
+| earthly-secrets | :orange_circle: | Earthly: list secrets |
+| earthly-ls | :orange_circle: | Earthly: list artifacts |
+| mise-install | :orange_circle: | Mise: install tool |
+| mise-use | :orange_circle: | Mise: use tool version |
+| mise-list | :orange_circle: | Mise: list installed tools |
+| mise-env | :orange_circle: | Mise: show environment |
+| asdf-install | :orange_circle: | Asdf: install plugin version |
+| asdf-current | :orange_circle: | Asdf: show current versions |
+| asdf-list | :orange_circle: | Asdf: list installed versions |
+| asdf-plugin | :orange_circle: | Asdf: manage plugin |
+| direnv-reload | :orange_circle: | Direnv: reload environment |
+| direnv-deny | :orange_circle: | Direnv: deny .envrc |
+| direnv-status | :orange_circle: | Direnv: show status |
+| direnv-edit | :orange_circle: | Direnv: edit .envrc |
+
 ### Round 354 — Crossplane ext, Kustomize ext, Jsonnet ext, CUE ext, Dhall ext
 
 | Feature | Status | Notes |

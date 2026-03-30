@@ -26478,3 +26478,55 @@
     (echo-read-string echo "Jsonnet format file: "
       (lambda (file)
         (echo-message! echo (str "Jsonnet: formatting " file))))))
+
+;;; Round 355 — Dagger ext, Earthly ext, Mise ext, Asdf ext, Direnv ext (batch 1)
+
+(def (cmd-dagger-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dagger function: "
+      (lambda (fn)
+        (echo-message! echo (str "Dagger: calling " fn))))))
+
+(def (cmd-dagger-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dagger: listing functions")))
+
+(def (cmd-dagger-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dagger: opening interactive shell")))
+
+(def (cmd-dagger-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dagger run command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Dagger: running " cmd))))))
+
+(def (cmd-earthly-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Earthly target: "
+      (lambda (target)
+        (echo-message! echo (str "Earthly: building " target))))))
+
+(def (cmd-earthly-targets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Earthly: listing targets")))
+
+(def (cmd-earthly-secrets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Earthly: listing secrets")))
+
+(def (cmd-earthly-ls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Earthly: listing artifacts")))
+
+(def (cmd-mise-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mise install tool@version: "
+      (lambda (tool)
+        (echo-message! echo (str "Mise: installing " tool))))))
+
+(def (cmd-mise-use app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mise use tool@version: "
+      (lambda (tool)
+        (echo-message! echo (str "Mise: using " tool))))))

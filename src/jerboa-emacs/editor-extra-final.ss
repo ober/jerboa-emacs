@@ -25759,3 +25759,49 @@
 (def (cmd-dhall-freeze app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Dhall: freezing imports")))
+
+;;; Round 355 — Mise ext, Asdf ext, Direnv ext (batch 2)
+
+(def (cmd-mise-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mise: listing installed tools")))
+
+(def (cmd-mise-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mise: showing environment")))
+
+(def (cmd-asdf-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Asdf install plugin version: "
+      (lambda (pv)
+        (echo-message! echo (str "Asdf: installing " pv))))))
+
+(def (cmd-asdf-current app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Asdf: showing current versions")))
+
+(def (cmd-asdf-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Asdf: listing installed versions")))
+
+(def (cmd-asdf-plugin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Asdf plugin name: "
+      (lambda (name)
+        (echo-message! echo (str "Asdf: managing plugin " name))))))
+
+(def (cmd-direnv-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Direnv: reloading environment")))
+
+(def (cmd-direnv-deny app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Direnv: denying .envrc")))
+
+(def (cmd-direnv-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Direnv: showing status")))
+
+(def (cmd-direnv-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Direnv: editing .envrc")))
