@@ -27044,3 +27044,49 @@
 (def (cmd-patroni-switchover app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Patroni: initiating switchover")))
+
+;;; Round 366 — Vault-SSH ext, CertManager ext, SPIFFE ext, ACME ext, Keycloak ext (batch 1)
+
+(def (cmd-vault-ssh-sign app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Vault SSH sign public key: "
+      (lambda (key)
+        (echo-message! echo (str "Vault SSH: signing " key))))))
+
+(def (cmd-vault-ssh-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault SSH: verifying certificate")))
+
+(def (cmd-vault-ssh-role app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Vault SSH role: "
+      (lambda (role)
+        (echo-message! echo (str "Vault SSH: showing role " role))))))
+
+(def (cmd-vault-ssh-ca app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault SSH: showing CA public key")))
+
+(def (cmd-certmanager-certs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CertManager: listing certificates")))
+
+(def (cmd-certmanager-issuers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CertManager: listing issuers")))
+
+(def (cmd-certmanager-orders app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CertManager: listing orders")))
+
+(def (cmd-certmanager-challenges app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CertManager: listing challenges")))
+
+(def (cmd-spiffe-entries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SPIFFE: listing registration entries")))
+
+(def (cmd-spiffe-agents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SPIFFE: listing agents")))

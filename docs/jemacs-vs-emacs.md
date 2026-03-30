@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 366 — Vault-SSH ext, CertManager ext, SPIFFE ext, ACME ext, Keycloak ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| vault-ssh-sign | :orange_circle: | Vault SSH: sign public key |
+| vault-ssh-verify | :orange_circle: | Vault SSH: verify certificate |
+| vault-ssh-role | :orange_circle: | Vault SSH: show role |
+| vault-ssh-ca | :orange_circle: | Vault SSH: show CA key |
+| certmanager-certs | :orange_circle: | CertManager: list certificates |
+| certmanager-issuers | :orange_circle: | CertManager: list issuers |
+| certmanager-orders | :orange_circle: | CertManager: list orders |
+| certmanager-challenges | :orange_circle: | CertManager: list challenges |
+| spiffe-entries | :orange_circle: | SPIFFE: list entries |
+| spiffe-agents | :orange_circle: | SPIFFE: list agents |
+| spiffe-bundles | :orange_circle: | SPIFFE: list trust bundles |
+| spiffe-health | :orange_circle: | SPIFFE: server health |
+| acme-register | :orange_circle: | ACME: register account |
+| acme-issue | :orange_circle: | ACME: issue certificate |
+| acme-renew | :orange_circle: | ACME: renew certificate |
+| acme-revoke | :orange_circle: | ACME: revoke certificate |
+| keycloak-realms | :orange_circle: | Keycloak: list realms |
+| keycloak-users | :orange_circle: | Keycloak: list users |
+| keycloak-clients | :orange_circle: | Keycloak: list clients |
+| keycloak-roles | :orange_circle: | Keycloak: list roles |
+
 ### Round 365 — ETCD ext, ZooKeeper ext, Patroni ext, Stolon ext, PGBouncer ext
 
 | Feature | Status | Notes |

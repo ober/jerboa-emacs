@@ -26277,3 +26277,53 @@
 (def (cmd-pgbouncer-reload app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PGBouncer: reloading configuration")))
+
+;;; Round 366 — SPIFFE ext, ACME ext, Keycloak ext (batch 2)
+
+(def (cmd-spiffe-bundles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SPIFFE: listing trust bundles")))
+
+(def (cmd-spiffe-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SPIFFE: checking server health")))
+
+(def (cmd-acme-register app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ACME register email: "
+      (lambda (email)
+        (echo-message! echo (str "ACME: registering account " email))))))
+
+(def (cmd-acme-issue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ACME issue domain: "
+      (lambda (domain)
+        (echo-message! echo (str "ACME: issuing certificate for " domain))))))
+
+(def (cmd-acme-renew app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ACME renew domain: "
+      (lambda (domain)
+        (echo-message! echo (str "ACME: renewing certificate for " domain))))))
+
+(def (cmd-acme-revoke app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ACME revoke domain: "
+      (lambda (domain)
+        (echo-message! echo (str "ACME: revoking certificate for " domain))))))
+
+(def (cmd-keycloak-realms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keycloak: listing realms")))
+
+(def (cmd-keycloak-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keycloak: listing users")))
+
+(def (cmd-keycloak-clients app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keycloak: listing clients")))
+
+(def (cmd-keycloak-roles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Keycloak: listing roles")))
