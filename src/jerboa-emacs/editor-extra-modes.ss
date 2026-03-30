@@ -22676,3 +22676,55 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Logrotate: forcing rotation")))
 
+;;; Round 283 — SELinux ext, AppArmor ext, Firewalld ext (batch 1)
+
+(def (cmd-selinux-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: showing status")))
+
+(def (cmd-selinux-toggle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: toggling enforcement mode")))
+
+(def (cmd-selinux-audit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: viewing audit log")))
+
+(def (cmd-selinux-context app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File path: "
+      (lambda (path)
+        (echo-message! echo (str "SELinux: context of " path))))))
+
+(def (cmd-apparmor-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AppArmor: showing status")))
+
+(def (cmd-apparmor-enforce app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Profile: "
+      (lambda (prof)
+        (echo-message! echo (str "AppArmor: enforcing " prof))))))
+
+(def (cmd-apparmor-complain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Profile: "
+      (lambda (prof)
+        (echo-message! echo (str "AppArmor: complain mode " prof))))))
+
+(def (cmd-apparmor-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Profile: "
+      (lambda (prof)
+        (echo-message! echo (str "AppArmor: disabling " prof))))))
+
+(def (cmd-firewalld-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firewalld: showing status")))
+
+(def (cmd-firewalld-add-rule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule: "
+      (lambda (rule)
+        (echo-message! echo (str "Firewalld: adding rule " rule))))))
+

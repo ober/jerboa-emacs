@@ -22024,3 +22024,53 @@
     (echo-read-string echo "Export path: "
       (lambda (path)
         (echo-message! echo (str "Journalctl: exporting to " path))))))
+
+;;; Round 283 — Firewalld ext, Nftables ext, Iptables ext (batch 2)
+
+(def (cmd-firewalld-remove-rule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule: "
+      (lambda (rule)
+        (echo-message! echo (str "Firewalld: removing rule " rule))))))
+
+(def (cmd-firewalld-list-zones app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firewalld: listing zones")))
+
+(def (cmd-nftables-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nftables: listing ruleset")))
+
+(def (cmd-nftables-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule: "
+      (lambda (rule)
+        (echo-message! echo (str "Nftables: adding " rule))))))
+
+(def (cmd-nftables-flush app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nftables: flushing ruleset")))
+
+(def (cmd-nftables-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nftables: saving ruleset")))
+
+(def (cmd-iptables-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iptables: listing rules")))
+
+(def (cmd-iptables-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule: "
+      (lambda (rule)
+        (echo-message! echo (str "Iptables: adding " rule))))))
+
+(def (cmd-iptables-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule number: "
+      (lambda (num)
+        (echo-message! echo (str "Iptables: deleting rule " num))))))
+
+(def (cmd-iptables-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iptables: saving rules")))

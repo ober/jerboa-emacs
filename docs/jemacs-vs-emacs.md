@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 283 — SELinux ext, AppArmor ext, Firewalld ext, Nftables ext, Iptables ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| selinux-status | :orange_circle: | Show SELinux status |
+| selinux-toggle | :orange_circle: | Toggle SELinux mode |
+| selinux-audit | :orange_circle: | View SELinux audit log |
+| selinux-context | :orange_circle: | Show file SELinux context |
+| apparmor-status | :orange_circle: | Show AppArmor status |
+| apparmor-enforce | :orange_circle: | Set profile to enforce |
+| apparmor-complain | :orange_circle: | Set profile to complain |
+| apparmor-disable | :orange_circle: | Disable AppArmor profile |
+| firewalld-status | :orange_circle: | Show firewalld status |
+| firewalld-add-rule | :orange_circle: | Add firewalld rule |
+| firewalld-remove-rule | :orange_circle: | Remove firewalld rule |
+| firewalld-list-zones | :orange_circle: | List firewalld zones |
+| nftables-list | :orange_circle: | List nftables ruleset |
+| nftables-add | :orange_circle: | Add nftables rule |
+| nftables-flush | :orange_circle: | Flush nftables ruleset |
+| nftables-save | :orange_circle: | Save nftables ruleset |
+| iptables-list | :orange_circle: | List iptables rules |
+| iptables-add | :orange_circle: | Add iptables rule |
+| iptables-delete | :orange_circle: | Delete iptables rule |
+| iptables-save | :orange_circle: | Save iptables rules |
+
 ### Round 282 — Syslog ext, Journalctl ext, Logrotate ext, Rsyslog ext, Auditd ext
 
 | Command | Status | Description |
