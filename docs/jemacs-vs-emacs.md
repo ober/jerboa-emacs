@@ -4583,6 +4583,134 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 440 — Polars ext, DuckDB ext, DataFusion ext, Lance ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Delta Lake read | — | `deltalake-read` | :orange_circle: Scaffolded |
+| Delta Lake optimize | — | `deltalake-optimize` | :orange_circle: Scaffolded |
+| Delta Lake vacuum | — | `deltalake-vacuum` | :orange_circle: Scaffolded |
+| Polars read | — | `polars-read` | :orange_circle: Scaffolded |
+| Polars filter | — | `polars-filter` | :orange_circle: Scaffolded |
+| Polars group | — | `polars-group` | :orange_circle: Scaffolded |
+| Polars join | — | `polars-join` | :orange_circle: Scaffolded |
+| Polars write | — | `polars-write` | :orange_circle: Scaffolded |
+| DuckDB extensions | — | `duckdb-extensions` | :orange_circle: Scaffolded |
+| DuckDB attach | — | `duckdb-attach` | :orange_circle: Scaffolded |
+| DuckDB describe | — | `duckdb-describe` | :orange_circle: Scaffolded |
+| DuckDB settings | — | `duckdb-settings` | :orange_circle: Scaffolded |
+| DuckDB types | — | `duckdb-types` | :orange_circle: Scaffolded |
+| DataFusion query | — | `datafusion-query` | :orange_circle: Scaffolded |
+| DataFusion register | — | `datafusion-register` | :orange_circle: Scaffolded |
+| DataFusion explain | — | `datafusion-explain` | :orange_circle: Scaffolded |
+| DataFusion partitions | — | `datafusion-partitions` | :orange_circle: Scaffolded |
+| DataFusion catalog | — | `datafusion-catalog` | :orange_circle: Scaffolded |
+| Lance create | — | `lance-create` | :orange_circle: Scaffolded |
+| Lance insert | — | `lance-insert` | :orange_circle: Scaffolded |
+| Lance search | — | `lance-search` | :orange_circle: Scaffolded |
+| Lance index | — | `lance-index` | :orange_circle: Scaffolded |
+| Lance compact | — | `lance-compact` | :orange_circle: Scaffolded |
+
+### Round 439 — DVC ext, Pachyderm ext, LakeFS ext, Delta Lake ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| ClearML data | — | `clearml-data` | :orange_circle: Scaffolded |
+| ClearML pipeline | — | `clearml-pipeline` | :orange_circle: Scaffolded |
+| ClearML serving | — | `clearml-serving` | :orange_circle: Scaffolded |
+| DVC init | — | `dvc-init` | :orange_circle: Scaffolded |
+| DVC add | — | `dvc-add` | :orange_circle: Scaffolded |
+| DVC push | — | `dvc-push` | :orange_circle: Scaffolded |
+| DVC pull | — | `dvc-pull` | :orange_circle: Scaffolded |
+| DVC repro | — | `dvc-repro` | :orange_circle: Scaffolded |
+| Pachyderm create | — | `pachyderm-create` | :orange_circle: Scaffolded |
+| Pachyderm put | — | `pachyderm-put` | :orange_circle: Scaffolded |
+| Pachyderm get | — | `pachyderm-get` | :orange_circle: Scaffolded |
+| Pachyderm list | — | `pachyderm-list` | :orange_circle: Scaffolded |
+| Pachyderm inspect | — | `pachyderm-inspect` | :orange_circle: Scaffolded |
+| LakeFS init | — | `lakefs-init` | :orange_circle: Scaffolded |
+| LakeFS commit | — | `lakefs-commit` | :orange_circle: Scaffolded |
+| LakeFS branch | — | `lakefs-branch` | :orange_circle: Scaffolded |
+| LakeFS merge | — | `lakefs-merge` | :orange_circle: Scaffolded |
+| LakeFS diff | — | `lakefs-diff` | :orange_circle: Scaffolded |
+| Delta Lake create | — | `deltalake-create` | :orange_circle: Scaffolded |
+| Delta Lake write | — | `deltalake-write` | :orange_circle: Scaffolded |
+
+### Round 438 — MLflow ext, W&B ext, Neptune ext, ClearML ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Triton config | — | `triton-config` | :orange_circle: Scaffolded |
+| Triton metrics | — | `triton-metrics` | :orange_circle: Scaffolded |
+| Triton ensemble | — | `triton-ensemble` | :orange_circle: Scaffolded |
+| MLflow run | — | `mlflow-run` | :orange_circle: Scaffolded |
+| MLflow artifacts | — | `mlflow-artifacts` | :orange_circle: Scaffolded |
+| MLflow serve | — | `mlflow-serve` | :orange_circle: Scaffolded |
+| MLflow deploy | — | `mlflow-deploy` | :orange_circle: Scaffolded |
+| MLflow UI | — | `mlflow-ui` | :orange_circle: Scaffolded |
+| W&B init | — | `wandb-init` | :orange_circle: Scaffolded |
+| W&B log | — | `wandb-log` | :orange_circle: Scaffolded |
+| W&B sweep | — | `wandb-sweep` | :orange_circle: Scaffolded |
+| W&B artifact | — | `wandb-artifact` | :orange_circle: Scaffolded |
+| W&B alert | — | `wandb-alert` | :orange_circle: Scaffolded |
+| Neptune init | — | `neptune-init` | :orange_circle: Scaffolded |
+| Neptune log | — | `neptune-log` | :orange_circle: Scaffolded |
+| Neptune fetch | — | `neptune-fetch` | :orange_circle: Scaffolded |
+| Neptune compare | — | `neptune-compare` | :orange_circle: Scaffolded |
+| Neptune artifacts | — | `neptune-artifacts` | :orange_circle: Scaffolded |
+| ClearML init | — | `clearml-init` | :orange_circle: Scaffolded |
+| ClearML task | — | `clearml-task` | :orange_circle: Scaffolded |
+
+### Round 437 — Ollama ext, vLLM ext, TGI ext, Triton ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Ollama embeddings | — | `ollama-embeddings` | :orange_circle: Scaffolded |
+| Ollama show | — | `ollama-show` | :orange_circle: Scaffolded |
+| Ollama copy | — | `ollama-copy` | :orange_circle: Scaffolded |
+| Ollama push | — | `ollama-push` | :orange_circle: Scaffolded |
+| Ollama chat | — | `ollama-chat` | :orange_circle: Scaffolded |
+| Ollama serve | — | `ollama-serve` | :orange_circle: Scaffolded |
+| vLLM bench | — | `vllm-bench` | :orange_circle: Scaffolded |
+| vLLM config | — | `vllm-config` | :orange_circle: Scaffolded |
+| vLLM quantize | — | `vllm-quantize` | :orange_circle: Scaffolded |
+| vLLM batch | — | `vllm-batch` | :orange_circle: Scaffolded |
+| vLLM LoRA | — | `vllm-lora` | :orange_circle: Scaffolded |
+| vLLM stream | — | `vllm-stream` | :orange_circle: Scaffolded |
+| TGI models | — | `tgi-models` | :orange_circle: Scaffolded |
+| TGI config | — | `tgi-config` | :orange_circle: Scaffolded |
+| TGI quantize | — | `tgi-quantize` | :orange_circle: Scaffolded |
+| TGI bench | — | `tgi-bench` | :orange_circle: Scaffolded |
+| TGI batch | — | `tgi-batch` | :orange_circle: Scaffolded |
+| TGI stream | — | `tgi-stream` | :orange_circle: Scaffolded |
+| Triton serve | — | `triton-serve` | :orange_circle: Scaffolded |
+| Triton models | — | `triton-models` | :orange_circle: Scaffolded |
+
+### Round 436 — Cohere ext, Perplexity ext, Together ext, Fireworks ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Cohere chat | — | `cohere-chat` | :orange_circle: Scaffolded |
+| Cohere embed | — | `cohere-embed` | :orange_circle: Scaffolded |
+| Cohere rerank | — | `cohere-rerank` | :orange_circle: Scaffolded |
+| Cohere classify | — | `cohere-classify` | :orange_circle: Scaffolded |
+| Cohere generate | — | `cohere-generate` | :orange_circle: Scaffolded |
+| Perplexity chat | — | `perplexity-chat` | :orange_circle: Scaffolded |
+| Perplexity search | — | `perplexity-search` | :orange_circle: Scaffolded |
+| Perplexity models | — | `perplexity-models` | :orange_circle: Scaffolded |
+| Perplexity citations | — | `perplexity-citations` | :orange_circle: Scaffolded |
+| Perplexity related | — | `perplexity-related` | :orange_circle: Scaffolded |
+| Together chat | — | `together-chat` | :orange_circle: Scaffolded |
+| Together models | — | `together-models` | :orange_circle: Scaffolded |
+| Together finetune | — | `together-finetune` | :orange_circle: Scaffolded |
+| Together inference | — | `together-inference` | :orange_circle: Scaffolded |
+| Together embeddings | — | `together-embeddings` | :orange_circle: Scaffolded |
+| Fireworks chat | — | `fireworks-chat` | :orange_circle: Scaffolded |
+| Fireworks models | — | `fireworks-models` | :orange_circle: Scaffolded |
+| Fireworks deploy | — | `fireworks-deploy` | :orange_circle: Scaffolded |
+| Fireworks finetune | — | `fireworks-finetune` | :orange_circle: Scaffolded |
+| Fireworks embeddings | — | `fireworks-embeddings` | :orange_circle: Scaffolded |
+
 ### Round 435 — OpenAI ext, Anthropic ext, Mistral ext, Groq ext
 
 | Feature | Emacs | jemacs | Status |
