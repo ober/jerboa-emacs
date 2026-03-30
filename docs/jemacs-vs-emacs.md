@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 380 — Supabase ext, PlanetScale ext, Neon ext, CockroachDB/TiDB ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Supabase auth users | — | `supabase-auth` | :orange_circle: Scaffolded |
+| Supabase storage | — | `supabase-storage` | :orange_circle: Scaffolded |
+| Supabase edge functions | — | `supabase-functions` | :orange_circle: Scaffolded |
+| Supabase migrations | — | `supabase-migrations` | :orange_circle: Scaffolded |
+| PlanetScale branches | — | `planetscale-branches` | :orange_circle: Scaffolded |
+| PlanetScale deploy | — | `planetscale-deploy` | :orange_circle: Scaffolded |
+| PlanetScale schema | — | `planetscale-schema` | :orange_circle: Scaffolded |
+| PlanetScale insights | — | `planetscale-insights` | :orange_circle: Scaffolded |
+| Neon branches | — | `neon-branches` | :orange_circle: Scaffolded |
+| Neon databases | — | `neon-databases` | :orange_circle: Scaffolded |
+| Neon compute endpoints | — | `neon-endpoints` | :orange_circle: Scaffolded |
+| Neon operations | — | `neon-operations` | :orange_circle: Scaffolded |
+| CockroachDB zones | — | `cockroachdb-zones` | :orange_circle: Scaffolded |
+| CockroachDB jobs | — | `cockroachdb-jobs` | :orange_circle: Scaffolded |
+| CockroachDB statements | — | `cockroachdb-statements` | :orange_circle: Scaffolded |
+| CockroachDB changefeeds | — | `cockroachdb-changefeeds` | :orange_circle: Scaffolded |
+| TiDB clusters | — | `tidb-clusters` | :orange_circle: Scaffolded |
+| TiDB backups | — | `tidb-backups` | :orange_circle: Scaffolded |
+| TiDB imports | — | `tidb-imports` | :orange_circle: Scaffolded |
+| TiDB monitoring | — | `tidb-monitoring` | :orange_circle: Scaffolded |
+
 ### Round 379 — Firebase ext, Vercel ext, Netlify ext, Cloudflare/Fly.io ext
 
 | Feature | Emacs | jemacs | Status |

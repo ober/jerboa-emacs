@@ -27659,3 +27659,44 @@
 (def (cmd-netlify-functions app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Netlify: listing functions")))
+
+;; Round 380 batch 1 — Supabase ext, PlanetScale ext
+(def (cmd-supabase-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: managing auth users")))
+
+(def (cmd-supabase-storage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: browsing storage buckets")))
+
+(def (cmd-supabase-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: listing edge functions")))
+
+(def (cmd-supabase-migrations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: managing migrations")))
+
+(def (cmd-planetscale-branches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: listing branches")))
+
+(def (cmd-planetscale-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: creating deploy request")))
+
+(def (cmd-planetscale-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: showing schema")))
+
+(def (cmd-planetscale-insights app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: viewing query insights")))
+
+(def (cmd-neon-branches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: listing branches")))
+
+(def (cmd-neon-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: listing databases")))

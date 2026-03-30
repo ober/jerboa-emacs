@@ -26878,3 +26878,44 @@
 (def (cmd-flyio-secrets app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Fly.io: managing secrets")))
+
+;; Round 380 batch 2 — Neon ext, CockroachDB/TiDB ext
+(def (cmd-neon-endpoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: listing compute endpoints")))
+
+(def (cmd-neon-operations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Neon: listing operations")))
+
+(def (cmd-cockroachdb-zones app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CockroachDB: listing zone configurations")))
+
+(def (cmd-cockroachdb-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CockroachDB: listing jobs")))
+
+(def (cmd-cockroachdb-statements app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CockroachDB: listing active statements")))
+
+(def (cmd-cockroachdb-changefeeds app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CockroachDB: listing changefeeds")))
+
+(def (cmd-tidb-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TiDB: listing clusters")))
+
+(def (cmd-tidb-backups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TiDB: listing backups")))
+
+(def (cmd-tidb-imports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TiDB: listing import tasks")))
+
+(def (cmd-tidb-monitoring app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TiDB: showing monitoring dashboard")))
