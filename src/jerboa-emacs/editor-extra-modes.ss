@@ -29796,3 +29796,213 @@
 (def (cmd-oxlint-plugins app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "oxlint: managing plugins")))
+
+;; Round 431 — Turso ext, libSQL ext, EdgeDB ext, SurrealDB ext (batch 1)
+
+(def (cmd-turso-db app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: database management")))
+
+(def (cmd-turso-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: authentication")))
+
+(def (cmd-turso-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: group management")))
+
+(def (cmd-turso-org app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: organization")))
+
+(def (cmd-turso-extensions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turso: extensions management")))
+
+(def (cmd-libsql-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "libSQL: server management")))
+
+(def (cmd-libsql-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "libSQL: interactive shell")))
+
+(def (cmd-libsql-replicate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "libSQL: replication")))
+
+(def (cmd-libsql-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "libSQL: backup management")))
+
+(def (cmd-libsql-extensions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "libSQL: extensions")))
+
+;; Round 432 — Upstash ext, Momento ext, Valkey ext, KeyDB ext (batch 1)
+
+(def (cmd-upstash-ratelimit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: rate limiting")))
+
+(def (cmd-upstash-devtools app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: dev tools")))
+
+(def (cmd-upstash-analytics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: analytics")))
+
+(def (cmd-upstash-edge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: edge config")))
+
+(def (cmd-upstash-workflow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Upstash: workflow management")))
+
+(def (cmd-momento-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Momento: cache management")))
+
+(def (cmd-momento-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Momento: topic pub/sub")))
+
+(def (cmd-momento-leaderboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Momento: leaderboards")))
+
+(def (cmd-momento-storage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Momento: storage")))
+
+(def (cmd-momento-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Momento: authentication")))
+
+;; Round 433 — Wrangler ext, Miniflare ext, Workers AI ext, Vectorize ext (batch 1)
+
+(def (cmd-wrangler-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wrangler: development mode")))
+
+(def (cmd-wrangler-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wrangler: deploying worker")))
+
+(def (cmd-wrangler-tail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wrangler: tailing logs")))
+
+(def (cmd-wrangler-secret app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wrangler: managing secrets")))
+
+(def (cmd-wrangler-kv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wrangler: KV store")))
+
+(def (cmd-miniflare-dev app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Miniflare: local development")))
+
+(def (cmd-miniflare-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Miniflare: configuration")))
+
+(def (cmd-miniflare-mounts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Miniflare: mount bindings")))
+
+(def (cmd-miniflare-bindings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Miniflare: service bindings")))
+
+(def (cmd-miniflare-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Miniflare: cache API")))
+
+;; Round 434 — Vercel AI ext, LangChain ext, LlamaIndex ext, Haystack ext (batch 1)
+
+(def (cmd-vercelai-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel AI: generating text")))
+
+(def (cmd-vercelai-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel AI: streaming")))
+
+(def (cmd-vercelai-embed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel AI: embeddings")))
+
+(def (cmd-vercelai-tools app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel AI: tool calling")))
+
+(def (cmd-vercelai-providers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel AI: providers")))
+
+(def (cmd-langchain-agent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: agent config")))
+
+(def (cmd-langchain-chain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: chain builder")))
+
+(def (cmd-langchain-prompt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: prompt template")))
+
+(def (cmd-langchain-vectorstore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: vector store")))
+
+(def (cmd-langchain-retriever app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: retriever config")))
+
+;; Round 435 — OpenAI ext, Anthropic ext, Mistral ext, Groq ext (batch 1)
+
+(def (cmd-openai-completions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: completions API")))
+
+(def (cmd-openai-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: image generation")))
+
+(def (cmd-openai-audio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: audio API")))
+
+(def (cmd-openai-assistants app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: assistants API")))
+
+(def (cmd-openai-moderations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: moderation API")))
+
+(def (cmd-anthropic-tools app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: tool use")))
+
+(def (cmd-anthropic-vision app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: vision API")))
+
+(def (cmd-anthropic-batch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: batch API")))
+
+(def (cmd-anthropic-streaming app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: streaming")))
+
+(def (cmd-anthropic-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: prompt caching")))

@@ -29010,4 +29010,214 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Rome: LSP server")))
 
+;; Round 431 — Turso ext, libSQL ext, EdgeDB ext, SurrealDB ext (batch 2)
+
+(def (cmd-edgedb-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EdgeDB: running migrations")))
+
+(def (cmd-edgedb-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EdgeDB: running query")))
+
+(def (cmd-edgedb-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EdgeDB: dumping database")))
+
+(def (cmd-edgedb-restore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EdgeDB: restoring database")))
+
+(def (cmd-edgedb-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EdgeDB: watching changes")))
+
+(def (cmd-surrealdb-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SurrealDB: starting server")))
+
+(def (cmd-surrealdb-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SurrealDB: importing data")))
+
+(def (cmd-surrealdb-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SurrealDB: exporting data")))
+
+(def (cmd-surrealdb-sql app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SurrealDB: SQL console")))
+
+(def (cmd-surrealdb-ml app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SurrealDB: ML functions")))
+
+;; Round 432 — Upstash ext, Momento ext, Valkey ext, KeyDB ext (batch 2)
+
+(def (cmd-valkey-cli app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valkey: CLI interface")))
+
+(def (cmd-valkey-benchmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valkey: benchmarking")))
+
+(def (cmd-valkey-sentinel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valkey: Sentinel HA")))
+
+(def (cmd-valkey-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valkey: cluster management")))
+
+(def (cmd-valkey-modules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valkey: module management")))
+
+(def (cmd-keydb-active-rep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KeyDB: active replication")))
+
+(def (cmd-keydb-flash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KeyDB: FLASH storage")))
+
+(def (cmd-keydb-multithreading app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KeyDB: multithreading config")))
+
+(def (cmd-keydb-subkey-expires app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KeyDB: subkey expiration")))
+
+(def (cmd-keydb-mvcc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KeyDB: MVCC snapshots")))
+
+;; Round 433 — Wrangler ext, Miniflare ext, Workers AI ext, Vectorize ext (batch 2)
+
+(def (cmd-workers-ai-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Workers AI: listing models")))
+
+(def (cmd-workers-ai-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Workers AI: running inference")))
+
+(def (cmd-workers-ai-gateway app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Workers AI: gateway config")))
+
+(def (cmd-workers-ai-finetune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Workers AI: fine-tuning")))
+
+(def (cmd-workers-ai-embeddings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Workers AI: embeddings")))
+
+(def (cmd-vectorize-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vectorize: creating index")))
+
+(def (cmd-vectorize-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vectorize: inserting vectors")))
+
+(def (cmd-vectorize-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vectorize: querying vectors")))
+
+(def (cmd-vectorize-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vectorize: index management")))
+
+(def (cmd-vectorize-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vectorize: deleting vectors")))
+
+;; Round 434 — Vercel AI ext, LangChain ext, LlamaIndex ext, Haystack ext (batch 2)
+
+(def (cmd-llamaindex-agent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: agent builder")))
+
+(def (cmd-llamaindex-chat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: chat engine")))
+
+(def (cmd-llamaindex-tools app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: tool management")))
+
+(def (cmd-llamaindex-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: node parsing")))
+
+(def (cmd-llamaindex-callbacks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: callback handlers")))
+
+(def (cmd-haystack-pipeline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haystack: pipeline builder")))
+
+(def (cmd-haystack-components app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haystack: components")))
+
+(def (cmd-haystack-stores app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haystack: document stores")))
+
+(def (cmd-haystack-embedders app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haystack: embedder models")))
+
+(def (cmd-haystack-generators app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haystack: text generators")))
+
+;; Round 435 — OpenAI ext, Anthropic ext, Mistral ext, Groq ext (batch 2)
+
+(def (cmd-openai-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: file management")))
+
+(def (cmd-mistral-chat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mistral: chat completions")))
+
+(def (cmd-mistral-embed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mistral: embeddings")))
+
+(def (cmd-mistral-finetune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mistral: fine-tuning")))
+
+(def (cmd-mistral-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mistral: model listing")))
+
+(def (cmd-mistral-agents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mistral: agent platform")))
+
+(def (cmd-groq-chat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groq: chat completions")))
+
+(def (cmd-groq-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groq: model listing")))
+
+(def (cmd-groq-audio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groq: audio processing")))
+
+(def (cmd-groq-vision app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Groq: vision API")))
+
 ;; Milestone: Round 400 — 9,000+ commands in jemacs!

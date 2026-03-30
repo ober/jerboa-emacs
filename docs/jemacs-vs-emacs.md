@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 435 — OpenAI ext, Anthropic ext, Mistral ext, Groq ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| OpenAI completions | — | `openai-completions` | :orange_circle: Scaffolded |
+| OpenAI images | — | `openai-images` | :orange_circle: Scaffolded |
+| OpenAI audio | — | `openai-audio` | :orange_circle: Scaffolded |
+| OpenAI assistants | — | `openai-assistants` | :orange_circle: Scaffolded |
+| OpenAI moderations | — | `openai-moderations` | :orange_circle: Scaffolded |
+| OpenAI files | — | `openai-files` | :orange_circle: Scaffolded |
+| Anthropic tools | — | `anthropic-tools` | :orange_circle: Scaffolded |
+| Anthropic vision | — | `anthropic-vision` | :orange_circle: Scaffolded |
+| Anthropic batch | — | `anthropic-batch` | :orange_circle: Scaffolded |
+| Anthropic streaming | — | `anthropic-streaming` | :orange_circle: Scaffolded |
+| Anthropic cache | — | `anthropic-cache` | :orange_circle: Scaffolded |
+| Mistral chat | — | `mistral-chat` | :orange_circle: Scaffolded |
+| Mistral embed | — | `mistral-embed` | :orange_circle: Scaffolded |
+| Mistral finetune | — | `mistral-finetune` | :orange_circle: Scaffolded |
+| Mistral models | — | `mistral-models` | :orange_circle: Scaffolded |
+| Mistral agents | — | `mistral-agents` | :orange_circle: Scaffolded |
+| Groq chat | — | `groq-chat` | :orange_circle: Scaffolded |
+| Groq models | — | `groq-models` | :orange_circle: Scaffolded |
+| Groq audio | — | `groq-audio` | :orange_circle: Scaffolded |
+| Groq vision | — | `groq-vision` | :orange_circle: Scaffolded |
+
+### Round 434 — Vercel AI ext, LangChain ext, LlamaIndex ext, Haystack ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Vercel AI generate | — | `vercelai-generate` | :orange_circle: Scaffolded |
+| Vercel AI stream | — | `vercelai-stream` | :orange_circle: Scaffolded |
+| Vercel AI embed | — | `vercelai-embed` | :orange_circle: Scaffolded |
+| Vercel AI tools | — | `vercelai-tools` | :orange_circle: Scaffolded |
+| Vercel AI providers | — | `vercelai-providers` | :orange_circle: Scaffolded |
+| LangChain agent | — | `langchain-agent` | :orange_circle: Scaffolded |
+| LangChain chain | — | `langchain-chain` | :orange_circle: Scaffolded |
+| LangChain prompt | — | `langchain-prompt` | :orange_circle: Scaffolded |
+| LangChain vectorstore | — | `langchain-vectorstore` | :orange_circle: Scaffolded |
+| LangChain retriever | — | `langchain-retriever` | :orange_circle: Scaffolded |
+| LlamaIndex agent | — | `llamaindex-agent` | :orange_circle: Scaffolded |
+| LlamaIndex chat | — | `llamaindex-chat` | :orange_circle: Scaffolded |
+| LlamaIndex tools | — | `llamaindex-tools` | :orange_circle: Scaffolded |
+| LlamaIndex nodes | — | `llamaindex-nodes` | :orange_circle: Scaffolded |
+| LlamaIndex callbacks | — | `llamaindex-callbacks` | :orange_circle: Scaffolded |
+| Haystack pipeline | — | `haystack-pipeline` | :orange_circle: Scaffolded |
+| Haystack components | — | `haystack-components` | :orange_circle: Scaffolded |
+| Haystack stores | — | `haystack-stores` | :orange_circle: Scaffolded |
+| Haystack embedders | — | `haystack-embedders` | :orange_circle: Scaffolded |
+| Haystack generators | — | `haystack-generators` | :orange_circle: Scaffolded |
+
+### Round 433 — Wrangler ext, Miniflare ext, Workers AI ext, Vectorize ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Wrangler dev | — | `wrangler-dev` | :orange_circle: Scaffolded |
+| Wrangler deploy | — | `wrangler-deploy` | :orange_circle: Scaffolded |
+| Wrangler tail | — | `wrangler-tail` | :orange_circle: Scaffolded |
+| Wrangler secret | — | `wrangler-secret` | :orange_circle: Scaffolded |
+| Wrangler KV | — | `wrangler-kv` | :orange_circle: Scaffolded |
+| Miniflare dev | — | `miniflare-dev` | :orange_circle: Scaffolded |
+| Miniflare config | — | `miniflare-config` | :orange_circle: Scaffolded |
+| Miniflare mounts | — | `miniflare-mounts` | :orange_circle: Scaffolded |
+| Miniflare bindings | — | `miniflare-bindings` | :orange_circle: Scaffolded |
+| Miniflare cache | — | `miniflare-cache` | :orange_circle: Scaffolded |
+| Workers AI models | — | `workers-ai-models` | :orange_circle: Scaffolded |
+| Workers AI run | — | `workers-ai-run` | :orange_circle: Scaffolded |
+| Workers AI gateway | — | `workers-ai-gateway` | :orange_circle: Scaffolded |
+| Workers AI finetune | — | `workers-ai-finetune` | :orange_circle: Scaffolded |
+| Workers AI embeddings | — | `workers-ai-embeddings` | :orange_circle: Scaffolded |
+| Vectorize create | — | `vectorize-create` | :orange_circle: Scaffolded |
+| Vectorize insert | — | `vectorize-insert` | :orange_circle: Scaffolded |
+| Vectorize query | — | `vectorize-query` | :orange_circle: Scaffolded |
+| Vectorize index | — | `vectorize-index` | :orange_circle: Scaffolded |
+| Vectorize delete | — | `vectorize-delete` | :orange_circle: Scaffolded |
+
+### Round 432 — Upstash ext, Momento ext, Valkey ext, KeyDB ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Upstash rate limit | — | `upstash-ratelimit` | :orange_circle: Scaffolded |
+| Upstash devtools | — | `upstash-devtools` | :orange_circle: Scaffolded |
+| Upstash analytics | — | `upstash-analytics` | :orange_circle: Scaffolded |
+| Upstash edge | — | `upstash-edge` | :orange_circle: Scaffolded |
+| Upstash workflow | — | `upstash-workflow` | :orange_circle: Scaffolded |
+| Momento cache | — | `momento-cache` | :orange_circle: Scaffolded |
+| Momento topics | — | `momento-topics` | :orange_circle: Scaffolded |
+| Momento leaderboard | — | `momento-leaderboard` | :orange_circle: Scaffolded |
+| Momento storage | — | `momento-storage` | :orange_circle: Scaffolded |
+| Momento auth | — | `momento-auth` | :orange_circle: Scaffolded |
+| Valkey CLI | — | `valkey-cli` | :orange_circle: Scaffolded |
+| Valkey benchmark | — | `valkey-benchmark` | :orange_circle: Scaffolded |
+| Valkey Sentinel | — | `valkey-sentinel` | :orange_circle: Scaffolded |
+| Valkey cluster | — | `valkey-cluster` | :orange_circle: Scaffolded |
+| Valkey modules | — | `valkey-modules` | :orange_circle: Scaffolded |
+| KeyDB active rep | — | `keydb-active-rep` | :orange_circle: Scaffolded |
+| KeyDB FLASH | — | `keydb-flash` | :orange_circle: Scaffolded |
+| KeyDB multithreading | — | `keydb-multithreading` | :orange_circle: Scaffolded |
+| KeyDB subkey expires | — | `keydb-subkey-expires` | :orange_circle: Scaffolded |
+| KeyDB MVCC | — | `keydb-mvcc` | :orange_circle: Scaffolded |
+
+### Round 431 — Turso ext, libSQL ext, EdgeDB ext, SurrealDB ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Turso DB | — | `turso-db` | :orange_circle: Scaffolded |
+| Turso auth | — | `turso-auth` | :orange_circle: Scaffolded |
+| Turso group | — | `turso-group` | :orange_circle: Scaffolded |
+| Turso org | — | `turso-org` | :orange_circle: Scaffolded |
+| Turso extensions | — | `turso-extensions` | :orange_circle: Scaffolded |
+| libSQL server | — | `libsql-server` | :orange_circle: Scaffolded |
+| libSQL shell | — | `libsql-shell` | :orange_circle: Scaffolded |
+| libSQL replicate | — | `libsql-replicate` | :orange_circle: Scaffolded |
+| libSQL backup | — | `libsql-backup` | :orange_circle: Scaffolded |
+| libSQL extensions | — | `libsql-extensions` | :orange_circle: Scaffolded |
+| EdgeDB migrate | — | `edgedb-migrate` | :orange_circle: Scaffolded |
+| EdgeDB query | — | `edgedb-query` | :orange_circle: Scaffolded |
+| EdgeDB dump | — | `edgedb-dump` | :orange_circle: Scaffolded |
+| EdgeDB restore | — | `edgedb-restore` | :orange_circle: Scaffolded |
+| EdgeDB watch | — | `edgedb-watch` | :orange_circle: Scaffolded |
+| SurrealDB start | — | `surrealdb-start` | :orange_circle: Scaffolded |
+| SurrealDB import | — | `surrealdb-import` | :orange_circle: Scaffolded |
+| SurrealDB export | — | `surrealdb-export` | :orange_circle: Scaffolded |
+| SurrealDB SQL | — | `surrealdb-sql` | :orange_circle: Scaffolded |
+| SurrealDB ML | — | `surrealdb-ml` | :orange_circle: Scaffolded |
+
 ### Round 430 — Biome ext, oxlint ext, dprint ext, Rome ext
 
 | Feature | Emacs | jemacs | Status |
