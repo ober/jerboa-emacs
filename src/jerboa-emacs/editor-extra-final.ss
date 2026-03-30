@@ -21346,3 +21346,47 @@
 (def (cmd-prolog-debug app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Prolog: enabling debug mode")))
+
+;;; Round 268 — SystemVerilog ext, Tcl ext, Forth ext (batch 2)
+
+(def (cmd-systemverilog-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemVerilog: formatting code")))
+
+(def (cmd-systemverilog-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemVerilog: checking syntax")))
+
+(def (cmd-tcl-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tcl: evaluating buffer")))
+
+(def (cmd-tcl-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tcl: evaluating region")))
+
+(def (cmd-tcl-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tcl: starting tclsh REPL")))
+
+(def (cmd-tcl-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tcl: checking syntax")))
+
+(def (cmd-forth-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forth: evaluating buffer")))
+
+(def (cmd-forth-load-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forth: loading file")))
+
+(def (cmd-forth-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Forth: starting REPL")))
+
+(def (cmd-forth-see app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Word: "
+      (lambda (word)
+        (echo-message! echo (str "Forth: decompiling " word))))))

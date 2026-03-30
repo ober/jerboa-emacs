@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 268 — Verilog ext, VHDL ext, SystemVerilog ext, Tcl ext, Forth ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| verilog-compile | :orange_circle: | Compile Verilog code |
+| verilog-simulate | :orange_circle: | Run Verilog simulation |
+| verilog-lint | :orange_circle: | Lint Verilog code |
+| verilog-auto | :orange_circle: | Run Verilog AUTO expansion |
+| vhdl-compile | :orange_circle: | Compile VHDL code |
+| vhdl-simulate | :orange_circle: | Run VHDL simulation |
+| vhdl-lint | :orange_circle: | Lint VHDL code |
+| vhdl-template | :orange_circle: | Insert VHDL template |
+| systemverilog-compile | :orange_circle: | Compile SystemVerilog code |
+| systemverilog-lint | :orange_circle: | Lint SystemVerilog code |
+| systemverilog-format | :orange_circle: | Format SystemVerilog code |
+| systemverilog-check | :orange_circle: | Check SystemVerilog syntax |
+| tcl-eval-buffer | :orange_circle: | Evaluate Tcl buffer |
+| tcl-eval-region | :orange_circle: | Evaluate Tcl region |
+| tcl-repl | :orange_circle: | Start Tcl REPL |
+| tcl-check | :orange_circle: | Check Tcl syntax |
+| forth-eval-buffer | :orange_circle: | Evaluate Forth buffer |
+| forth-load-file | :orange_circle: | Load Forth file |
+| forth-repl | :orange_circle: | Start Forth REPL |
+| forth-see | :orange_circle: | Decompile Forth word |
+
 ### Round 267 — Ada ext, Fortran ext, COBOL ext, Pascal ext, Prolog ext
 
 | Command | Status | Description |

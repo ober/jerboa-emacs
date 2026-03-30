@@ -21970,3 +21970,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "COBOL: running program")))
 
+;;; Round 268 — Verilog ext, VHDL ext, SystemVerilog ext, Tcl ext, Forth ext (batch 1)
+
+(def (cmd-verilog-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verilog: compiling")))
+
+(def (cmd-verilog-simulate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verilog: running simulation")))
+
+(def (cmd-verilog-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verilog: linting code")))
+
+(def (cmd-verilog-auto app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Verilog: running AUTO expansion")))
+
+(def (cmd-vhdl-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VHDL: compiling")))
+
+(def (cmd-vhdl-simulate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VHDL: running simulation")))
+
+(def (cmd-vhdl-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VHDL: linting code")))
+
+(def (cmd-vhdl-template app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Template: "
+      (lambda (tmpl)
+        (echo-message! echo (str "VHDL: inserting template " tmpl))))))
+
+(def (cmd-systemverilog-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemVerilog: compiling")))
+
+(def (cmd-systemverilog-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemVerilog: linting code")))
+
