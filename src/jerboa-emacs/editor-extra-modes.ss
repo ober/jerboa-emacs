@@ -27784,3 +27784,48 @@
 (def (cmd-qdrant-points app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Qdrant: browsing points")))
+
+;; Round 383 batch 1 — LangChain ext, LlamaIndex ext
+(def (cmd-langchain-chains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: listing chains")))
+
+(def (cmd-langchain-agents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: listing agents")))
+
+(def (cmd-langchain-memory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: managing memory")))
+
+(def (cmd-langchain-tools app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LangChain: listing tools")))
+
+(def (cmd-llamaindex-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: listing indexes")))
+
+(def (cmd-llamaindex-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (query)
+        (echo-message! echo (str "LlamaIndex: querying: " query))))))
+
+(def (cmd-llamaindex-ingest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: ingesting documents")))
+
+(def (cmd-llamaindex-retriever app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LlamaIndex: configuring retriever")))
+
+(def (cmd-openai-chat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Prompt: "
+      (lambda (prompt)
+        (echo-message! echo (str "OpenAI: sending chat: " prompt))))))
+
+(def (cmd-openai-embeddings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: generating embeddings")))

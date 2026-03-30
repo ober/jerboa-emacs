@@ -27005,3 +27005,46 @@
 (def (cmd-chroma-delete app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Chroma: deleting documents")))
+
+;; Round 383 batch 2 — OpenAI ext, Anthropic/HuggingFace ext
+(def (cmd-openai-finetune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: managing fine-tune jobs")))
+
+(def (cmd-openai-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenAI: listing models")))
+
+(def (cmd-anthropic-messages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Prompt: "
+      (lambda (prompt)
+        (echo-message! echo (str "Anthropic: sending message: " prompt))))))
+
+(def (cmd-anthropic-completions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: generating completion")))
+
+(def (cmd-anthropic-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: listing models")))
+
+(def (cmd-anthropic-usage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anthropic: showing API usage")))
+
+(def (cmd-huggingface-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HuggingFace: browsing models")))
+
+(def (cmd-huggingface-datasets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HuggingFace: browsing datasets")))
+
+(def (cmd-huggingface-spaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HuggingFace: browsing Spaces")))
+
+(def (cmd-huggingface-inference app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HuggingFace: running inference")))

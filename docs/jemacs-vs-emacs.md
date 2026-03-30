@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 383 — LangChain ext, LlamaIndex ext, OpenAI ext, Anthropic/HuggingFace ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| LangChain chains | — | `langchain-chains` | :orange_circle: Scaffolded |
+| LangChain agents | — | `langchain-agents` | :orange_circle: Scaffolded |
+| LangChain memory | — | `langchain-memory` | :orange_circle: Scaffolded |
+| LangChain tools | — | `langchain-tools` | :orange_circle: Scaffolded |
+| LlamaIndex indexes | — | `llamaindex-index` | :orange_circle: Scaffolded |
+| LlamaIndex query | — | `llamaindex-query` | :orange_circle: Scaffolded |
+| LlamaIndex ingest | — | `llamaindex-ingest` | :orange_circle: Scaffolded |
+| LlamaIndex retriever | — | `llamaindex-retriever` | :orange_circle: Scaffolded |
+| OpenAI chat | — | `openai-chat` | :orange_circle: Scaffolded |
+| OpenAI embeddings | — | `openai-embeddings` | :orange_circle: Scaffolded |
+| OpenAI fine-tune | — | `openai-finetune` | :orange_circle: Scaffolded |
+| OpenAI models | — | `openai-models` | :orange_circle: Scaffolded |
+| Anthropic messages | — | `anthropic-messages` | :orange_circle: Scaffolded |
+| Anthropic completions | — | `anthropic-completions` | :orange_circle: Scaffolded |
+| Anthropic models | — | `anthropic-models` | :orange_circle: Scaffolded |
+| Anthropic usage | — | `anthropic-usage` | :orange_circle: Scaffolded |
+| HuggingFace models | — | `huggingface-models` | :orange_circle: Scaffolded |
+| HuggingFace datasets | — | `huggingface-datasets` | :orange_circle: Scaffolded |
+| HuggingFace Spaces | — | `huggingface-spaces` | :orange_circle: Scaffolded |
+| HuggingFace inference | — | `huggingface-inference` | :orange_circle: Scaffolded |
+
 ### Round 382 — Pinecone ext, Weaviate ext, Qdrant ext, Milvus/Chroma ext
 
 | Feature | Emacs | jemacs | Status |
