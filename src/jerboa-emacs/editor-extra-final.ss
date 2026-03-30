@@ -27750,4 +27750,46 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Datree: editing configuration")))
 
+;; Round 401 — Vault ext, Consul ext, Nomad ext, Boundary/Waypoint ext (batch 2)
+
+(def (cmd-nomad-namespace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nomad: namespace management")))
+
+(def (cmd-nomad-sentinel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nomad: Sentinel policies")))
+
+(def (cmd-nomad-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nomad: CSI volume management")))
+
+(def (cmd-nomad-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nomad: server management")))
+
+(def (cmd-boundary-scopes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: listing scopes")))
+
+(def (cmd-boundary-credentials app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: credential management")))
+
+(def (cmd-boundary-hosts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: host catalog")))
+
+(def (cmd-waypoint-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Waypoint: building artifact")))
+
+(def (cmd-waypoint-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Waypoint: deploying artifact")))
+
+(def (cmd-waypoint-release app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Waypoint: releasing deployment")))
+
 ;; Milestone: Round 400 — 9,000+ commands in jemacs!

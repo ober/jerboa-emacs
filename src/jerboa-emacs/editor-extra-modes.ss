@@ -28536,3 +28536,45 @@
 (def (cmd-gatekeeper-audit app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Gatekeeper: running audit")))
+
+;; Round 401 — Vault ext, Consul ext, Nomad ext, Boundary/Waypoint ext (batch 1)
+
+(def (cmd-vault-operator app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: operator diagnostics")))
+
+(def (cmd-vault-agent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: agent status")))
+
+(def (cmd-vault-injector app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: sidecar injector config")))
+
+(def (cmd-vault-csi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: CSI provider status")))
+
+(def (cmd-consul-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consul: Connect service mesh")))
+
+(def (cmd-consul-intentions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consul: listing intentions")))
+
+(def (cmd-consul-acl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consul: ACL management")))
+
+(def (cmd-consul-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Consul: snapshot management")))
+
+(def (cmd-nomad-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nomad: listing evaluations")))
+
+(def (cmd-nomad-deployment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nomad: listing deployments")))

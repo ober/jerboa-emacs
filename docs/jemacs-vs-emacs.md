@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 401 — Vault ext, Consul ext, Nomad ext, Boundary/Waypoint ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Vault operator | — | `vault-operator` | :orange_circle: Scaffolded |
+| Vault agent | — | `vault-agent` | :orange_circle: Scaffolded |
+| Vault injector | — | `vault-injector` | :orange_circle: Scaffolded |
+| Vault CSI | — | `vault-csi` | :orange_circle: Scaffolded |
+| Consul Connect | — | `consul-connect` | :orange_circle: Scaffolded |
+| Consul intentions | — | `consul-intentions` | :orange_circle: Scaffolded |
+| Consul ACL | — | `consul-acl` | :orange_circle: Scaffolded |
+| Consul snapshot | — | `consul-snapshot` | :orange_circle: Scaffolded |
+| Nomad evaluations | — | `nomad-eval` | :orange_circle: Scaffolded |
+| Nomad deployments | — | `nomad-deployment` | :orange_circle: Scaffolded |
+| Nomad namespaces | — | `nomad-namespace` | :orange_circle: Scaffolded |
+| Nomad Sentinel | — | `nomad-sentinel` | :orange_circle: Scaffolded |
+| Nomad volumes | — | `nomad-volume` | :orange_circle: Scaffolded |
+| Nomad server | — | `nomad-server` | :orange_circle: Scaffolded |
+| Boundary scopes | — | `boundary-scopes` | :orange_circle: Scaffolded |
+| Boundary credentials | — | `boundary-credentials` | :orange_circle: Scaffolded |
+| Boundary hosts | — | `boundary-hosts` | :orange_circle: Scaffolded |
+| Waypoint build | — | `waypoint-build` | :orange_circle: Scaffolded |
+| Waypoint deploy | — | `waypoint-deploy` | :orange_circle: Scaffolded |
+| Waypoint release | — | `waypoint-release` | :orange_circle: Scaffolded |
+
 ### Round 400 — Crossplane ext, Kyverno ext, Gatekeeper ext, Polaris/Datree ext
 
 | Feature | Emacs | jemacs | Status |
