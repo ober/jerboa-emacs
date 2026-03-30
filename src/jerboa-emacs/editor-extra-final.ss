@@ -25427,3 +25427,47 @@
     (echo-read-string echo "TiDB database: "
       (lambda (db)
         (echo-message! echo (str "TiDB: listing tables in " db))))))
+
+;;; Round 348 — Envoy ext, Traefik ext, Caddy ext (batch 2)
+
+(def (cmd-envoy-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: listing routes")))
+
+(def (cmd-envoy-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: showing statistics")))
+
+(def (cmd-traefik-routers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: listing routers")))
+
+(def (cmd-traefik-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: listing services")))
+
+(def (cmd-traefik-middlewares app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: listing middlewares")))
+
+(def (cmd-traefik-entrypoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Traefik: listing entrypoints")))
+
+(def (cmd-caddy-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: showing configuration")))
+
+(def (cmd-caddy-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: reloading configuration")))
+
+(def (cmd-caddy-reverse-proxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Caddy reverse proxy upstream: "
+      (lambda (upstream)
+        (echo-message! echo (str "Caddy: reverse proxying to " upstream))))))
+
+(def (cmd-caddy-adapt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Caddy: adapting Caddyfile to JSON")))

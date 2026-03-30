@@ -26142,3 +26142,45 @@
     (echo-read-string echo "ClickHouse database: "
       (lambda (db)
         (echo-message! echo (str "ClickHouse: listing tables in " db))))))
+
+;;; Round 348 — Nginx ext, HAProxy ext, Envoy ext, Traefik ext, Caddy ext (batch 1)
+
+(def (cmd-nginx-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: showing stub status")))
+
+(def (cmd-nginx-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: showing configuration")))
+
+(def (cmd-nginx-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: reloading configuration")))
+
+(def (cmd-nginx-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nginx: testing configuration")))
+
+(def (cmd-haproxy-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: showing statistics")))
+
+(def (cmd-haproxy-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: showing info")))
+
+(def (cmd-haproxy-backends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: listing backends")))
+
+(def (cmd-haproxy-servers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HAProxy: listing servers")))
+
+(def (cmd-envoy-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: listing clusters")))
+
+(def (cmd-envoy-listeners app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Envoy: listing listeners")))

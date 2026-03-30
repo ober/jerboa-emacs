@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 348 — Nginx ext, HAProxy ext, Envoy ext, Traefik ext, Caddy ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| nginx-status | :orange_circle: | Nginx: show stub status |
+| nginx-config | :orange_circle: | Nginx: show configuration |
+| nginx-reload | :orange_circle: | Nginx: reload configuration |
+| nginx-test | :orange_circle: | Nginx: test configuration |
+| haproxy-stats | :orange_circle: | HAProxy: show statistics |
+| haproxy-info | :orange_circle: | HAProxy: show info |
+| haproxy-backends | :orange_circle: | HAProxy: list backends |
+| haproxy-servers | :orange_circle: | HAProxy: list servers |
+| envoy-clusters | :orange_circle: | Envoy: list clusters |
+| envoy-listeners | :orange_circle: | Envoy: list listeners |
+| envoy-routes | :orange_circle: | Envoy: list routes |
+| envoy-stats | :orange_circle: | Envoy: show statistics |
+| traefik-routers | :orange_circle: | Traefik: list routers |
+| traefik-services | :orange_circle: | Traefik: list services |
+| traefik-middlewares | :orange_circle: | Traefik: list middlewares |
+| traefik-entrypoints | :orange_circle: | Traefik: list entrypoints |
+| caddy-config | :orange_circle: | Caddy: show configuration |
+| caddy-reload | :orange_circle: | Caddy: reload configuration |
+| caddy-reverse-proxy | :orange_circle: | Caddy: reverse proxy setup |
+| caddy-adapt | :orange_circle: | Caddy: adapt Caddyfile to JSON |
+
 ### Round 347 — PostgreSQL ext, MySQL ext, ClickHouse ext, ScyllaDB ext, TiDB ext
 
 | Feature | Status | Notes |
