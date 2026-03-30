@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 611 — Hash Functions (SipHash, MurmurHash, xxHash)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `hash-siphash` | :orange_circle: Scaffold | SipHash |
+| `hash-murmur` | :orange_circle: Scaffold | MurmurHash |
+| `hash-xxhash` | :orange_circle: Scaffold | xxHash |
+| `hash-crc32` | :orange_circle: Scaffold | CRC32 |
+| `hash-fnv` | :orange_circle: Scaffold | FNV |
+| `hash-cityhash` | :orange_circle: Scaffold | CityHash |
+| `hash-farmhash` | :orange_circle: Scaffold | FarmHash |
+| `hash-wyhash` | :orange_circle: Scaffold | wyHash |
+| `hash-robin-hood` | :orange_circle: Scaffold | Robin Hood |
+| `hash-cuckoo` | :orange_circle: Scaffold | Cuckoo hash |
+
+### Round 612 — Merkle Trees
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `merkle-build` | :orange_circle: Scaffold | Build tree |
+| `merkle-verify` | :orange_circle: Scaffold | Verify proof |
+| `merkle-proof` | :orange_circle: Scaffold | Generate proof |
+| `merkle-diff` | :orange_circle: Scaffold | Diff trees |
+| `merkle-root` | :orange_circle: Scaffold | Root hash |
+| `merkle-append` | :orange_circle: Scaffold | Append leaf |
+| `merkle-audit` | :orange_circle: Scaffold | Audit |
+| `merkle-compact` | :orange_circle: Scaffold | Compact |
+| `merkle-serialize` | :orange_circle: Scaffold | Serialize |
+| `merkle-multi` | :orange_circle: Scaffold | Multi-proof |
+
+### Round 613 — Consistent Hashing & DHT
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `chash-ring` | :orange_circle: Scaffold | Hash ring |
+| `chash-add` | :orange_circle: Scaffold | Add node |
+| `chash-remove` | :orange_circle: Scaffold | Remove node |
+| `chash-lookup` | :orange_circle: Scaffold | Lookup key |
+| `chash-virtual` | :orange_circle: Scaffold | Virtual nodes |
+| `dht-put` | :orange_circle: Scaffold | Put key |
+| `dht-get` | :orange_circle: Scaffold | Get key |
+| `dht-lookup` | :orange_circle: Scaffold | Lookup node |
+| `dht-join` | :orange_circle: Scaffold | Join ring |
+| `dht-leave` | :orange_circle: Scaffold | Leave ring |
+
+### Round 614 — Erasure Coding
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `erasure-encode` | :orange_circle: Scaffold | Encode |
+| `erasure-decode` | :orange_circle: Scaffold | Decode |
+| `erasure-repair` | :orange_circle: Scaffold | Repair |
+| `erasure-verify` | :orange_circle: Scaffold | Verify |
+| `erasure-stripe` | :orange_circle: Scaffold | Stripe |
+| `erasure-optimal` | :orange_circle: Scaffold | Optimal params |
+| `chash-rebalance` | :orange_circle: Scaffold | Rebalance ring |
+| `dht-stabilize` | :orange_circle: Scaffold | Stabilize |
+| `dht-finger` | :orange_circle: Scaffold | Finger table |
+| `dht-replicate` | :orange_circle: Scaffold | Replicate |
+
+### Round 615 — LSM Trees
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lsm-put` | :orange_circle: Scaffold | Put key-value |
+| `lsm-get` | :orange_circle: Scaffold | Get key |
+| `lsm-compact` | :orange_circle: Scaffold | Compact |
+| `lsm-merge` | :orange_circle: Scaffold | Merge levels |
+| `lsm-bloom` | :orange_circle: Scaffold | Bloom filter |
+| `lsm-level` | :orange_circle: Scaffold | Level info |
+| `lsm-flush` | :orange_circle: Scaffold | Flush memtable |
+| `lsm-sstable` | :orange_circle: Scaffold | SSTable info |
+| `lsm-manifest` | :orange_circle: Scaffold | Manifest |
+| `lsm-tombstone` | :orange_circle: Scaffold | Tombstone |
+
+### Round 616 — Columnar Storage
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `columnar-compress` | :orange_circle: Scaffold | Compress |
+| `columnar-encode` | :orange_circle: Scaffold | Encode |
+| `columnar-scan` | :orange_circle: Scaffold | Scan |
+| `columnar-predicate` | :orange_circle: Scaffold | Predicate pushdown |
+| `columnar-project` | :orange_circle: Scaffold | Project columns |
+| `columnar-vectorize` | :orange_circle: Scaffold | Vectorize |
+| `columnar-batch` | :orange_circle: Scaffold | Batch |
+| `columnar-dictionary` | :orange_circle: Scaffold | Dictionary encoding |
+| `columnar-rle` | :orange_circle: Scaffold | Run-length encoding |
+| `columnar-parquet` | :orange_circle: Scaffold | Parquet |
+
+### Round 617 — Time-Series DB
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `tsdb-insert` | :orange_circle: Scaffold | Insert point |
+| `tsdb-query` | :orange_circle: Scaffold | Query range |
+| `tsdb-aggregate` | :orange_circle: Scaffold | Aggregate |
+| `tsdb-downsample` | :orange_circle: Scaffold | Downsample |
+| `tsdb-retention` | :orange_circle: Scaffold | Retention policy |
+| `tsdb-compact` | :orange_circle: Scaffold | Compact |
+| `tsdb-chunk` | :orange_circle: Scaffold | Chunk info |
+| `tsdb-label` | :orange_circle: Scaffold | Label index |
+| `tsdb-range` | :orange_circle: Scaffold | Range scan |
+| `tsdb-continuous` | :orange_circle: Scaffold | Continuous query |
+
+### Round 618 — Spatial Indexing (R-tree, Quadtree)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `rtree-insert` | :orange_circle: Scaffold | Insert |
+| `rtree-search` | :orange_circle: Scaffold | Search |
+| `rtree-delete` | :orange_circle: Scaffold | Delete |
+| `rtree-range` | :orange_circle: Scaffold | Range query |
+| `rtree-nearest` | :orange_circle: Scaffold | Nearest neighbor |
+| `rtree-split` | :orange_circle: Scaffold | Split node |
+| `rtree-bulk-load` | :orange_circle: Scaffold | Bulk load |
+| `quadtree-insert` | :orange_circle: Scaffold | Insert |
+| `quadtree-search` | :orange_circle: Scaffold | Search |
+| `quadtree-range` | :orange_circle: Scaffold | Range |
+
+### Round 619 — Full-Text Search
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `fts-index` | :orange_circle: Scaffold | Index document |
+| `fts-search` | :orange_circle: Scaffold | Search |
+| `fts-tokenize` | :orange_circle: Scaffold | Tokenize |
+| `fts-stem` | :orange_circle: Scaffold | Stem words |
+| `fts-rank` | :orange_circle: Scaffold | Rank results |
+| `fts-highlight` | :orange_circle: Scaffold | Highlight |
+| `fts-suggest` | :orange_circle: Scaffold | Suggest |
+| `fts-facet` | :orange_circle: Scaffold | Faceted search |
+| `fts-filter` | :orange_circle: Scaffold | Filter |
+| `fts-fuzzy` | :orange_circle: Scaffold | Fuzzy match |
+
+### Round 620 — Inverted Index & Search Internals
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `invindex-build` | :orange_circle: Scaffold | Build index |
+| `invindex-merge` | :orange_circle: Scaffold | Merge segments |
+| `invindex-posting` | :orange_circle: Scaffold | Posting list |
+| `invindex-skip` | :orange_circle: Scaffold | Skip list |
+| `invindex-compress` | :orange_circle: Scaffold | Compress |
+| `bm25-score` | :orange_circle: Scaffold | BM25 scoring |
+| `tfidf-compute` | :orange_circle: Scaffold | TF-IDF |
+| `boolquery-and` | :orange_circle: Scaffold | Boolean AND |
+| `boolquery-or` | :orange_circle: Scaffold | Boolean OR |
+| `boolquery-not` | :orange_circle: Scaffold | Boolean NOT |
+
 ### Round 601 — Consensus ext (VR, PBFT, ZAB)
 
 | Feature | Status | Notes |

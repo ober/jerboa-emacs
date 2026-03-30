@@ -13018,4 +13018,35 @@
   ;; Round 610: State Machines
   (register-command! 'statemachine-transition cmd-statemachine-transition) (register-command! 'statemachine-guard cmd-statemachine-guard) (register-command! 'statemachine-action cmd-statemachine-action) (register-command! 'statemachine-enter cmd-statemachine-enter) (register-command! 'statemachine-exit cmd-statemachine-exit)
   (register-command! 'statemachine-initial cmd-statemachine-initial) (register-command! 'statemachine-final cmd-statemachine-final) (register-command! 'statemachine-parallel cmd-statemachine-parallel) (register-command! 'statemachine-history cmd-statemachine-history) (register-command! 'statemachine-event cmd-statemachine-event)
+
+  ;; Round 611: Hash Functions
+  (register-command! 'hash-siphash cmd-hash-siphash) (register-command! 'hash-murmur cmd-hash-murmur) (register-command! 'hash-xxhash cmd-hash-xxhash) (register-command! 'hash-crc32 cmd-hash-crc32) (register-command! 'hash-fnv cmd-hash-fnv)
+  (register-command! 'hash-cityhash cmd-hash-cityhash) (register-command! 'hash-farmhash cmd-hash-farmhash) (register-command! 'hash-wyhash cmd-hash-wyhash) (register-command! 'hash-robin-hood cmd-hash-robin-hood) (register-command! 'hash-cuckoo cmd-hash-cuckoo)
+  ;; Round 612: Merkle Trees
+  (register-command! 'merkle-build cmd-merkle-build) (register-command! 'merkle-verify cmd-merkle-verify) (register-command! 'merkle-proof cmd-merkle-proof) (register-command! 'merkle-diff cmd-merkle-diff) (register-command! 'merkle-root cmd-merkle-root)
+  (register-command! 'merkle-append cmd-merkle-append) (register-command! 'merkle-audit cmd-merkle-audit) (register-command! 'merkle-compact cmd-merkle-compact) (register-command! 'merkle-serialize cmd-merkle-serialize) (register-command! 'merkle-multi cmd-merkle-multi)
+  ;; Round 613: Consistent Hashing & DHT
+  (register-command! 'chash-ring cmd-chash-ring) (register-command! 'chash-add cmd-chash-add) (register-command! 'chash-remove cmd-chash-remove) (register-command! 'chash-lookup cmd-chash-lookup) (register-command! 'chash-virtual cmd-chash-virtual)
+  (register-command! 'dht-put cmd-dht-put) (register-command! 'dht-get cmd-dht-get) (register-command! 'dht-lookup cmd-dht-lookup) (register-command! 'dht-join cmd-dht-join) (register-command! 'dht-leave cmd-dht-leave)
+  ;; Round 614: Erasure Coding + DHT ext
+  (register-command! 'erasure-encode cmd-erasure-encode) (register-command! 'erasure-decode cmd-erasure-decode) (register-command! 'erasure-repair cmd-erasure-repair) (register-command! 'erasure-verify cmd-erasure-verify) (register-command! 'erasure-stripe cmd-erasure-stripe)
+  (register-command! 'erasure-optimal cmd-erasure-optimal) (register-command! 'chash-rebalance cmd-chash-rebalance) (register-command! 'dht-stabilize cmd-dht-stabilize) (register-command! 'dht-finger cmd-dht-finger) (register-command! 'dht-replicate cmd-dht-replicate)
+  ;; Round 615: LSM Trees
+  (register-command! 'lsm-put cmd-lsm-put) (register-command! 'lsm-get cmd-lsm-get) (register-command! 'lsm-compact cmd-lsm-compact) (register-command! 'lsm-merge cmd-lsm-merge) (register-command! 'lsm-bloom cmd-lsm-bloom)
+  (register-command! 'lsm-level cmd-lsm-level) (register-command! 'lsm-flush cmd-lsm-flush) (register-command! 'lsm-sstable cmd-lsm-sstable) (register-command! 'lsm-manifest cmd-lsm-manifest) (register-command! 'lsm-tombstone cmd-lsm-tombstone)
+  ;; Round 616: Columnar Storage
+  (register-command! 'columnar-compress cmd-columnar-compress) (register-command! 'columnar-encode cmd-columnar-encode) (register-command! 'columnar-scan cmd-columnar-scan) (register-command! 'columnar-predicate cmd-columnar-predicate) (register-command! 'columnar-project cmd-columnar-project)
+  (register-command! 'columnar-vectorize cmd-columnar-vectorize) (register-command! 'columnar-batch cmd-columnar-batch) (register-command! 'columnar-dictionary cmd-columnar-dictionary) (register-command! 'columnar-rle cmd-columnar-rle) (register-command! 'columnar-parquet cmd-columnar-parquet)
+  ;; Round 617: Time-Series DB
+  (register-command! 'tsdb-insert cmd-tsdb-insert) (register-command! 'tsdb-query cmd-tsdb-query) (register-command! 'tsdb-aggregate cmd-tsdb-aggregate) (register-command! 'tsdb-downsample cmd-tsdb-downsample) (register-command! 'tsdb-retention cmd-tsdb-retention)
+  (register-command! 'tsdb-compact cmd-tsdb-compact) (register-command! 'tsdb-chunk cmd-tsdb-chunk) (register-command! 'tsdb-label cmd-tsdb-label) (register-command! 'tsdb-range cmd-tsdb-range) (register-command! 'tsdb-continuous cmd-tsdb-continuous)
+  ;; Round 618: Spatial Indexing
+  (register-command! 'rtree-insert cmd-rtree-insert) (register-command! 'rtree-search cmd-rtree-search) (register-command! 'rtree-delete cmd-rtree-delete) (register-command! 'rtree-range cmd-rtree-range) (register-command! 'rtree-nearest cmd-rtree-nearest)
+  (register-command! 'rtree-split cmd-rtree-split) (register-command! 'rtree-bulk-load cmd-rtree-bulk-load) (register-command! 'quadtree-insert cmd-quadtree-insert) (register-command! 'quadtree-search cmd-quadtree-search) (register-command! 'quadtree-range cmd-quadtree-range)
+  ;; Round 619: Full-Text Search
+  (register-command! 'fts-index cmd-fts-index) (register-command! 'fts-search cmd-fts-search) (register-command! 'fts-tokenize cmd-fts-tokenize) (register-command! 'fts-stem cmd-fts-stem) (register-command! 'fts-rank cmd-fts-rank)
+  (register-command! 'fts-highlight cmd-fts-highlight) (register-command! 'fts-suggest cmd-fts-suggest) (register-command! 'fts-facet cmd-fts-facet) (register-command! 'fts-filter cmd-fts-filter) (register-command! 'fts-fuzzy cmd-fts-fuzzy)
+  ;; Round 620: Inverted Index & Search
+  (register-command! 'invindex-build cmd-invindex-build) (register-command! 'invindex-merge cmd-invindex-merge) (register-command! 'invindex-posting cmd-invindex-posting) (register-command! 'invindex-skip cmd-invindex-skip) (register-command! 'invindex-compress cmd-invindex-compress)
+  (register-command! 'bm25-score cmd-bm25-score) (register-command! 'tfidf-compute cmd-tfidf-compute) (register-command! 'boolquery-and cmd-boolquery-and) (register-command! 'boolquery-or cmd-boolquery-or) (register-command! 'boolquery-not cmd-boolquery-not)
 )
