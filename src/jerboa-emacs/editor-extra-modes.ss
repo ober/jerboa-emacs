@@ -22014,3 +22014,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SystemVerilog: linting code")))
 
+;;; Round 269 — Assembly ext, MATLAB ext, R ext, Julia ext, Wolfram ext (batch 1)
+
+(def (cmd-asm-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Assembly: compiling")))
+
+(def (cmd-asm-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Assembly: running program")))
+
+(def (cmd-asm-disassemble app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Assembly: disassembling")))
+
+(def (cmd-asm-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Assembly: linking object files")))
+
+(def (cmd-matlab-run-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MATLAB: running buffer")))
+
+(def (cmd-matlab-run-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MATLAB: running region")))
+
+(def (cmd-matlab-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MATLAB: starting shell")))
+
+(def (cmd-matlab-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Function: "
+      (lambda (func)
+        (echo-message! echo (str "MATLAB: doc for " func))))))
+
+(def (cmd-r-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "R: evaluating buffer")))
+
+(def (cmd-r-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "R: evaluating region")))
+

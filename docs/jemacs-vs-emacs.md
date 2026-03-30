@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 269 — Assembly ext, MATLAB ext, R ext, Julia ext, Wolfram ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| asm-compile | :orange_circle: | Compile assembly code |
+| asm-run | :orange_circle: | Run assembly program |
+| asm-disassemble | :orange_circle: | Disassemble binary |
+| asm-link | :orange_circle: | Link assembly object files |
+| matlab-run-buffer | :orange_circle: | Run MATLAB buffer |
+| matlab-run-region | :orange_circle: | Run MATLAB region |
+| matlab-shell | :orange_circle: | Start MATLAB shell |
+| matlab-doc | :orange_circle: | Show MATLAB documentation |
+| r-eval-buffer | :orange_circle: | Evaluate R buffer |
+| r-eval-region | :orange_circle: | Evaluate R region |
+| r-shell | :orange_circle: | Start R shell |
+| r-install-package | :orange_circle: | Install R package |
+| julia-eval-buffer | :orange_circle: | Evaluate Julia buffer |
+| julia-eval-region | :orange_circle: | Evaluate Julia region |
+| julia-doc | :orange_circle: | Show Julia documentation |
+| julia-run-tests | :orange_circle: | Run Julia tests |
+| wolfram-eval-buffer | :orange_circle: | Evaluate Wolfram buffer |
+| wolfram-eval-region | :orange_circle: | Evaluate Wolfram region |
+| wolfram-kernel | :orange_circle: | Start Wolfram kernel |
+| wolfram-doc | :orange_circle: | Show Wolfram documentation |
+
 ### Round 268 — Verilog ext, VHDL ext, SystemVerilog ext, Tcl ext, Forth ext
 
 | Command | Status | Description |

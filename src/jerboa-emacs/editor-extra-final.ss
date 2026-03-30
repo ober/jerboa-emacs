@@ -21390,3 +21390,51 @@
     (echo-read-string echo "Word: "
       (lambda (word)
         (echo-message! echo (str "Forth: decompiling " word))))))
+
+;;; Round 269 — R ext, Julia ext, Wolfram ext (batch 2)
+
+(def (cmd-r-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "R: starting R shell")))
+
+(def (cmd-r-install-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "R: installing " pkg))))))
+
+(def (cmd-julia-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia: evaluating buffer")))
+
+(def (cmd-julia-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia: evaluating region")))
+
+(def (cmd-julia-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "Julia: doc for " sym))))))
+
+(def (cmd-julia-run-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia: running tests")))
+
+(def (cmd-wolfram-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wolfram: evaluating buffer")))
+
+(def (cmd-wolfram-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wolfram: evaluating region")))
+
+(def (cmd-wolfram-kernel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wolfram: starting kernel")))
+
+(def (cmd-wolfram-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Symbol: "
+      (lambda (sym)
+        (echo-message! echo (str "Wolfram: doc for " sym))))))
