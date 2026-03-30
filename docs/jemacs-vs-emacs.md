@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 265 — Elixir ext, Erlang ext, OCaml ext, F# ext, Scala ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| elixir-eval-buffer | :orange_circle: | Evaluate Elixir buffer |
+| elixir-eval-region | :orange_circle: | Evaluate Elixir region |
+| elixir-iex | :orange_circle: | Start Elixir IEx shell |
+| elixir-mix-test | :orange_circle: | Run Elixir mix test |
+| elixir-mix-compile | :orange_circle: | Run Elixir mix compile |
+| erlang-man | :orange_circle: | Show Erlang module manual |
+| erlang-find-tag | :orange_circle: | Find Erlang tag at point |
+| erlang-run-tests | :orange_circle: | Run Erlang tests |
+| erlang-edoc | :orange_circle: | Generate Erlang EDoc |
+| ocaml-eval-buffer | :orange_circle: | Evaluate OCaml buffer |
+| ocaml-eval-region | :orange_circle: | Evaluate OCaml region |
+| ocaml-toplevel | :orange_circle: | Start OCaml toplevel |
+| ocaml-type-at-point | :orange_circle: | Show OCaml type at point |
+| fsharp-eval-buffer | :orange_circle: | Evaluate F# buffer |
+| fsharp-eval-region | :orange_circle: | Evaluate F# region |
+| fsharp-repl | :orange_circle: | Start F# REPL |
+| fsharp-compile | :orange_circle: | Compile F# project |
+| scala-eval-buffer | :orange_circle: | Evaluate Scala buffer |
+| scala-eval-region | :orange_circle: | Evaluate Scala region |
+| scala-repl | :orange_circle: | Start Scala REPL |
+
 ### Round 264 — Leiningen ext, Boot ext, Clojure ext, Racket ext, Guile ext
 
 | Command | Status | Description |

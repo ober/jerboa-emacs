@@ -21838,3 +21838,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Clojure: evaluating region")))
 
+;;; Round 265 — Elixir ext, Erlang ext, OCaml ext, F# ext, Scala ext (batch 1)
+
+(def (cmd-elixir-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: evaluating buffer")))
+
+(def (cmd-elixir-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: evaluating region")))
+
+(def (cmd-elixir-iex app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: starting IEx shell")))
+
+(def (cmd-elixir-mix-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: running mix test")))
+
+(def (cmd-elixir-mix-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: running mix compile")))
+
+(def (cmd-erlang-man app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module: "
+      (lambda (mod)
+        (echo-message! echo (str "Erlang: manual for " mod))))))
+
+(def (cmd-erlang-find-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Erlang: finding tag at point")))
+
+(def (cmd-erlang-run-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Erlang: running tests")))
+
+(def (cmd-erlang-edoc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Erlang: generating EDoc")))
+
+(def (cmd-ocaml-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OCaml: evaluating buffer")))
+
