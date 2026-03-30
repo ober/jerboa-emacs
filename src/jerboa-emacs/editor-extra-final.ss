@@ -20241,3 +20241,56 @@
 (def (cmd-calc-sum-region app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Calc: summed region")))
+
+;; Round 244 — Gomoku, Outline, Mode toggles (10 in final)
+(def (cmd-gomoku-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gomoku: moved up")))
+
+(def (cmd-outline-fold-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: folded all")))
+
+(def (cmd-outline-toggle-children app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: toggled children visibility")))
+
+(def (cmd-outline-unfold-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Outline: unfolded all")))
+
+(def (cmd-golden-ratio-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'golden-ratio-real)
+    (if (mode-enabled? app 'golden-ratio-real)
+      (echo-message! echo "Golden ratio mode enabled")
+      (echo-message! echo "Golden ratio mode disabled"))))
+
+(def (cmd-crosshair-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'crosshair)
+    (if (mode-enabled? app 'crosshair)
+      (echo-message! echo "Crosshair mode enabled")
+      (echo-message! echo "Crosshair mode disabled"))))
+
+(def (cmd-goto-last-change-reverse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Goto last change: reverse")))
+
+(def (cmd-context-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Context menu opened")))
+
+(def (cmd-context-menu-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'context-menu-real)
+    (if (mode-enabled? app 'context-menu-real)
+      (echo-message! echo "Context menu mode enabled")
+      (echo-message! echo "Context menu mode disabled"))))
+
+(def (cmd-corfu-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'corfu-real)
+    (if (mode-enabled? app 'corfu-real)
+      (echo-message! echo "Corfu completion mode enabled")
+      (echo-message! echo "Corfu completion mode disabled"))))

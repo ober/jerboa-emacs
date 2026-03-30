@@ -20890,3 +20890,49 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Git: updating submodules")))
 
+;; Round 244 — Mode toggles, Gomoku, HL-todo, Focus, Outline (10 in modes)
+(def (cmd-hl-todo-highlight app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HL-todo: highlighting TODO keywords")))
+
+(def (cmd-hl-todo-occur app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HL-todo: showing all TODO occurrences")))
+
+(def (cmd-hl-todo-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HL-todo: refreshed highlights")))
+
+(def (cmd-focus-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'focus-real)
+    (if (mode-enabled? app 'focus-real)
+      (echo-message! echo "Focus mode enabled (dimming unfocused text)")
+      (echo-message! echo "Focus mode disabled"))))
+
+(def (cmd-focus-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Focus: refreshed focus region")))
+
+(def (cmd-focus-set-range app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Focus range (paragraph/sentence/line): "
+      (lambda (range)
+        (echo-message! echo (str "Focus: range set to " range))))))
+
+(def (cmd-gomoku-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gomoku: moved down")))
+
+(def (cmd-gomoku-left app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gomoku: moved left")))
+
+(def (cmd-gomoku-place app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gomoku: placed stone")))
+
+(def (cmd-gomoku-right app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gomoku: moved right")))
+

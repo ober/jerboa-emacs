@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 244 — Mode toggles, Gomoku, HL-todo, Focus, Outline (gerbil-emacs parity)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| hl-todo-highlight | :orange_circle: | Highlight TODO keywords |
+| hl-todo-occur | :orange_circle: | Show all TODO occurrences |
+| hl-todo-refresh | :orange_circle: | Refresh HL-todo highlights |
+| focus-mode-real | :orange_circle: | Toggle focus mode (dim unfocused) |
+| focus-refresh | :orange_circle: | Refresh focus region |
+| focus-set-range | :orange_circle: | Set focus range |
+| gomoku-down | :orange_circle: | Move down in Gomoku |
+| gomoku-left | :orange_circle: | Move left in Gomoku |
+| gomoku-place | :orange_circle: | Place stone in Gomoku |
+| gomoku-right | :orange_circle: | Move right in Gomoku |
+| gomoku-up | :orange_circle: | Move up in Gomoku |
+| outline-fold-all | :orange_circle: | Fold all outline sections |
+| outline-toggle-children | :orange_circle: | Toggle children visibility |
+| outline-unfold-all | :orange_circle: | Unfold all outline sections |
+| golden-ratio-mode-real | :orange_circle: | Toggle golden ratio window sizing |
+| crosshair-mode | :orange_circle: | Toggle crosshair cursor display |
+| goto-last-change-reverse | :orange_circle: | Navigate changes in reverse |
+| context-menu | :orange_circle: | Open context menu |
+| context-menu-mode-real | :orange_circle: | Toggle context menu mode |
+| corfu-mode-real | :orange_circle: | Toggle Corfu completion mode |
+
 ### Round 243 — Git ext, Calc ext (gerbil-emacs parity)
 
 | Command | Status | Description |
