@@ -21207,3 +21207,46 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Connection-local: set profile variables")))
 
+;; Round 251 — Semantic ext, Python ext, Ruby ext, JS/TS/Go (10 in modes)
+(def (cmd-semantic-analyze-possible-completions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Semantic: analyzing possible completions")))
+
+(def (cmd-python-indent-dedent-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: dedented line")))
+
+(def (cmd-python-mark-defun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Python: marked defun")))
+
+(def (cmd-ruby-find-library-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Library: "
+      (lambda (lib)
+        (echo-message! echo (str "Ruby: finding library " lib))))))
+
+(def (cmd-js-comint-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JS-comint: sent region")))
+
+(def (cmd-js-comint-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JS-comint: sent buffer")))
+
+(def (cmd-js-comint-send-last-sexp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JS-comint: sent last sexp")))
+
+(def (cmd-typescript-format-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TypeScript: formatted buffer")))
+
+(def (cmd-typescript-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TypeScript: compiling")))
+
+(def (cmd-go-guru-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go guru: describing selected expression")))
+

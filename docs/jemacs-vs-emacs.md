@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 251 — Semantic ext, Python ext, Ruby ext, JS/TS/Go guru
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| semantic-analyze-possible-completions | :orange_circle: | Analyze possible completions |
+| python-indent-dedent-line | :orange_circle: | Dedent current Python line |
+| python-mark-defun | :orange_circle: | Mark Python defun |
+| ruby-find-library-file | :orange_circle: | Find Ruby library file |
+| js-comint-send-region | :orange_circle: | Send region to JS REPL |
+| js-comint-send-buffer | :orange_circle: | Send buffer to JS REPL |
+| js-comint-send-last-sexp | :orange_circle: | Send last sexp to JS REPL |
+| typescript-format-buffer | :orange_circle: | Format TypeScript buffer |
+| typescript-compile | :orange_circle: | Compile TypeScript |
+| go-guru-describe | :orange_circle: | Go guru describe expression |
+| go-guru-definition | :orange_circle: | Go guru jump to definition |
+| go-guru-callers | :orange_circle: | Go guru find callers |
+| go-guru-callees | :orange_circle: | Go guru find callees |
+| go-guru-implements | :orange_circle: | Go guru find implementations |
+| go-guru-referrers | :orange_circle: | Go guru find referrers |
+| go-guru-pointsto | :orange_circle: | Go guru points-to analysis |
+| go-guru-freevars | :orange_circle: | Go guru find free variables |
+| go-guru-whicherrs | :orange_circle: | Go guru which errors |
+| go-guru-peers | :orange_circle: | Go guru find channel peers |
+| go-guru-set-scope | :orange_circle: | Go guru set analysis scope |
+
 ### Round 250 — Treesitter ext, Native-compile, Eglot ext, JSONRPC
 
 | Command | Status | Description |
