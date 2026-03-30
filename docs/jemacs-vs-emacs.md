@@ -7788,6 +7788,566 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `burly-tabs-mode` | :orange_circle: | Enable Burly tabs mode |
 | `burly-reset-tab` | :orange_circle: | Reset Burly tab |
 | `burly-open-url` | :orange_circle: | Open Burly URL |
+
+### Round 841: Emacspeak / Festival (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `emacspeak-mode` | :orange_circle: | Enable Emacspeak mode |
+| `emacspeak-toggle-speech` | :orange_circle: | Toggle Emacspeak speech |
+| `emacspeak-speak-line` | :orange_circle: | Speak current line |
+| `emacspeak-speak-region` | :orange_circle: | Speak selected region |
+| `emacspeak-speak-buffer` | :orange_circle: | Speak entire buffer |
+| `festival-mode` | :orange_circle: | Enable Festival TTS mode |
+| `festival-say-region` | :orange_circle: | Say selected region |
+| `festival-say-buffer` | :orange_circle: | Say entire buffer |
+| `festival-set-voice` | :orange_circle: | Set Festival voice |
+| `festival-stop` | :orange_circle: | Stop Festival speech |
+
+### Round 842: IBus / Fcitx (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `ibus-mode` | :orange_circle: | Enable IBus mode |
+| `ibus-toggle` | :orange_circle: | Toggle IBus input |
+| `ibus-next-engine` | :orange_circle: | Switch to next IBus engine |
+| `ibus-prev-engine` | :orange_circle: | Switch to previous IBus engine |
+| `ibus-setup` | :orange_circle: | Open IBus setup |
+| `fcitx-mode` | :orange_circle: | Enable Fcitx mode |
+| `fcitx-toggle` | :orange_circle: | Toggle Fcitx input |
+| `fcitx-remote-status` | :orange_circle: | Show Fcitx remote status |
+| `fcitx-switch-input-method` | :orange_circle: | Switch Fcitx input method |
+| `fcitx-reload-config` | :orange_circle: | Reload Fcitx config |
+
+### Round 843: Mozc / Anthy (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `mozc-mode` | :orange_circle: | Enable Mozc mode |
+| `mozc-toggle` | :orange_circle: | Toggle Mozc input |
+| `mozc-set-mode` | :orange_circle: | Set Mozc input mode |
+| `mozc-reconvert` | :orange_circle: | Reconvert with Mozc |
+| `mozc-config` | :orange_circle: | Configure Mozc |
+| `anthy-mode` | :orange_circle: | Enable Anthy mode |
+| `anthy-toggle` | :orange_circle: | Toggle Anthy input |
+| `anthy-set-mode` | :orange_circle: | Set Anthy input mode |
+| `anthy-reconvert` | :orange_circle: | Reconvert with Anthy |
+| `anthy-config` | :orange_circle: | Configure Anthy |
+
+### Round 844: SKK / Pyim (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `skk-mode` | :orange_circle: | Enable SKK mode |
+| `skk-toggle` | :orange_circle: | Toggle SKK input |
+| `skk-set-henkan-point` | :orange_circle: | Set SKK henkan point |
+| `skk-auto-fill-mode` | :orange_circle: | SKK auto fill mode |
+| `skk-setup` | :orange_circle: | Setup SKK |
+| `pyim-mode` | :orange_circle: | Enable Pyim mode |
+| `pyim-toggle` | :orange_circle: | Toggle Pyim input |
+| `pyim-convert` | :orange_circle: | Convert with Pyim |
+| `pyim-select-word` | :orange_circle: | Select Pyim word |
+| `pyim-add-word` | :orange_circle: | Add word to Pyim |
+
+### Round 845: Modalka / Ryo-modal (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `modalka-mode` | :orange_circle: | Enable Modalka mode |
+| `modalka-define-key` | :orange_circle: | Define Modalka key |
+| `modalka-define-kbd-macro` | :orange_circle: | Define Modalka kbd macro |
+| `modalka-remove-key` | :orange_circle: | Remove Modalka key |
+| `modalka-global-mode` | :orange_circle: | Enable Modalka global mode |
+| `ryo-modal-mode` | :orange_circle: | Enable Ryo-modal mode |
+| `ryo-modal-key` | :orange_circle: | Define Ryo-modal key |
+| `ryo-modal-keys` | :orange_circle: | Define Ryo-modal keys |
+| `ryo-modal-repeat` | :orange_circle: | Repeat Ryo-modal last |
+| `ryo-modal-which-key` | :orange_circle: | Ryo-modal which-key |
+
+### Round 846: Evil-easymotion / Evil-org (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `evil-easymotion-mode` | :orange_circle: | Enable Evil-easymotion mode |
+| `evil-easymotion-forward` | :orange_circle: | Easymotion forward |
+| `evil-easymotion-backward` | :orange_circle: | Easymotion backward |
+| `evil-easymotion-next-line` | :orange_circle: | Easymotion next line |
+| `evil-easymotion-search` | :orange_circle: | Easymotion search |
+| `evil-org-mode` | :orange_circle: | Enable Evil-org mode |
+| `evil-org-agenda-set-keys` | :orange_circle: | Set Evil-org agenda keys |
+| `evil-org-set-key-theme` | :orange_circle: | Set Evil-org key theme |
+| `evil-org-open-above` | :orange_circle: | Evil-org open above |
+| `evil-org-open-below` | :orange_circle: | Evil-org open below |
+
+### Round 847: Ghost-text / Atomic-chrome ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `ghost-text-mode` | :orange_circle: | Enable Ghost-text mode |
+| `ghost-text-start` | :orange_circle: | Start Ghost-text server |
+| `ghost-text-stop` | :orange_circle: | Stop Ghost-text server |
+| `ghost-text-set-port` | :orange_circle: | Set Ghost-text port |
+| `ghost-text-toggle` | :orange_circle: | Toggle Ghost-text |
+| `atomic-chrome-edit-done` | :orange_circle: | Finish Atomic Chrome edit |
+| `atomic-chrome-edit-abort` | :orange_circle: | Abort Atomic Chrome edit |
+| `atomic-chrome-set-url-map` | :orange_circle: | Set Atomic Chrome URL map |
+| `atomic-chrome-toggle-auto` | :orange_circle: | Toggle Atomic Chrome auto |
+| `atomic-chrome-set-extension` | :orange_circle: | Set Atomic Chrome extension |
+
+### Round 848: Walkman / Impostman (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `walkman-mode` | :orange_circle: | Enable Walkman mode |
+| `walkman-execute` | :orange_circle: | Execute Walkman request |
+| `walkman-at-point` | :orange_circle: | Run Walkman at point |
+| `walkman-set-var` | :orange_circle: | Set Walkman variable |
+| `walkman-copy-as-curl` | :orange_circle: | Copy Walkman as curl |
+| `impostman-import` | :orange_circle: | Import Impostman collection |
+| `impostman-discover-api` | :orange_circle: | Discover Impostman API |
+| `impostman-set-env` | :orange_circle: | Set Impostman environment |
+| `impostman-run-collection` | :orange_circle: | Run Impostman collection |
+| `impostman-export` | :orange_circle: | Export Impostman |
+
+### Round 849: Hurl ext / Bencode (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `hurl-run-file` | :orange_circle: | Run Hurl file |
+| `hurl-run-entry` | :orange_circle: | Run Hurl entry |
+| `hurl-set-variable` | :orange_circle: | Set Hurl variable |
+| `hurl-format` | :orange_circle: | Format Hurl file |
+| `hurl-validate` | :orange_circle: | Validate Hurl file |
+| `bencode-decode` | :orange_circle: | Decode bencode |
+| `bencode-encode` | :orange_circle: | Encode bencode |
+| `bencode-decode-region` | :orange_circle: | Decode bencode region |
+| `bencode-encode-region` | :orange_circle: | Encode bencode region |
+| `bencode-format` | :orange_circle: | Format bencode |
+
+### Round 850: Espeak / Speechd ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `espeak-mode` | :orange_circle: | Enable Espeak mode |
+| `espeak-speak-region` | :orange_circle: | Speak region with Espeak |
+| `espeak-speak-buffer` | :orange_circle: | Speak buffer with Espeak |
+| `espeak-set-voice` | :orange_circle: | Set Espeak voice |
+| `espeak-set-rate` | :orange_circle: | Set Espeak rate |
+| `speechd-set-voice` | :orange_circle: | Set Speechd voice |
+| `speechd-set-speech-rate` | :orange_circle: | Set Speechd speech rate |
+| `speechd-pause` | :orange_circle: | Pause Speechd |
+| `speechd-resume` | :orange_circle: | Resume Speechd |
+| `speechd-cancel` | :orange_circle: | Cancel Speechd |
+
+### Round 851: Slack / Discord ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `slack-mode` | :orange_circle: | Enable Slack mode |
+| `slack-channel-select` | :orange_circle: | Select Slack channel |
+| `slack-post-message` | :orange_circle: | Post Slack message |
+| `slack-upload-file` | :orange_circle: | Upload file to Slack |
+| `slack-search-messages` | :orange_circle: | Search Slack messages |
+| `discord-connect` | :orange_circle: | Connect to Discord |
+| `discord-disconnect` | :orange_circle: | Disconnect from Discord |
+| `discord-send-message` | :orange_circle: | Send Discord message |
+| `discord-join-channel` | :orange_circle: | Join Discord channel |
+| `discord-list-servers` | :orange_circle: | List Discord servers |
+
+### Round 852: Reddit / HackerNews (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `reddit-mode` | :orange_circle: | Enable Reddit mode |
+| `reddit-browse-subreddit` | :orange_circle: | Browse subreddit |
+| `reddit-browse-front-page` | :orange_circle: | Browse Reddit front page |
+| `reddit-submit-post` | :orange_circle: | Submit Reddit post |
+| `reddit-view-comments` | :orange_circle: | View Reddit comments |
+| `hackernews-browse` | :orange_circle: | Browse HackerNews |
+| `hackernews-top-stories` | :orange_circle: | HackerNews top stories |
+| `hackernews-new-stories` | :orange_circle: | HackerNews new stories |
+| `hackernews-ask-stories` | :orange_circle: | HackerNews ask stories |
+| `hackernews-show-stories` | :orange_circle: | HackerNews show stories |
+
+### Round 853: Lobsters / Solr (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `lobsters-mode` | :orange_circle: | Enable Lobsters mode |
+| `lobsters-browse` | :orange_circle: | Browse Lobsters |
+| `lobsters-newest` | :orange_circle: | Lobsters newest stories |
+| `lobsters-hottest` | :orange_circle: | Lobsters hottest stories |
+| `lobsters-submit` | :orange_circle: | Submit to Lobsters |
+| `solr-mode` | :orange_circle: | Enable Solr mode |
+| `solr-query` | :orange_circle: | Query Solr |
+| `solr-add-document` | :orange_circle: | Add Solr document |
+| `solr-delete-document` | :orange_circle: | Delete Solr document |
+| `solr-commit` | :orange_circle: | Commit Solr changes |
+
+### Round 854: SCIM / UIM (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `scim-mode` | :orange_circle: | Enable SCIM mode |
+| `scim-toggle` | :orange_circle: | Toggle SCIM |
+| `scim-next-input` | :orange_circle: | SCIM next input |
+| `scim-prev-input` | :orange_circle: | SCIM previous input |
+| `scim-setup` | :orange_circle: | Setup SCIM |
+| `uim-mode` | :orange_circle: | Enable UIM mode |
+| `uim-toggle` | :orange_circle: | Toggle UIM |
+| `uim-switch-im` | :orange_circle: | Switch UIM input method |
+| `uim-pref-set` | :orange_circle: | Set UIM preference |
+| `uim-toolbar-toggle` | :orange_circle: | Toggle UIM toolbar |
+
+### Round 855: Cabal / Bower (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `cabal-mode` | :orange_circle: | Enable Cabal mode |
+| `cabal-build` | :orange_circle: | Cabal build |
+| `cabal-test` | :orange_circle: | Cabal test |
+| `cabal-run` | :orange_circle: | Cabal run |
+| `cabal-clean` | :orange_circle: | Cabal clean |
+| `bower-install` | :orange_circle: | Bower install |
+| `bower-update` | :orange_circle: | Bower update |
+| `bower-search` | :orange_circle: | Bower search |
+| `bower-list` | :orange_circle: | Bower list |
+| `bower-uninstall` | :orange_circle: | Bower uninstall |
+
+### Round 856: Snowpack / ImageMagick (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `snowpack-start` | :orange_circle: | Start Snowpack |
+| `snowpack-build` | :orange_circle: | Snowpack build |
+| `snowpack-dev` | :orange_circle: | Snowpack dev server |
+| `snowpack-add-plugin` | :orange_circle: | Add Snowpack plugin |
+| `snowpack-config` | :orange_circle: | Snowpack config |
+| `imagemagick-convert` | :orange_circle: | ImageMagick convert |
+| `imagemagick-resize` | :orange_circle: | ImageMagick resize |
+| `imagemagick-crop` | :orange_circle: | ImageMagick crop |
+| `imagemagick-rotate` | :orange_circle: | ImageMagick rotate |
+| `imagemagick-composite` | :orange_circle: | ImageMagick composite |
+
+### Round 857: Unity / Unreal (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `unity-mode` | :orange_circle: | Enable Unity mode |
+| `unity-build` | :orange_circle: | Unity build |
+| `unity-run` | :orange_circle: | Unity run |
+| `unity-attach-debugger` | :orange_circle: | Attach Unity debugger |
+| `unity-open-project` | :orange_circle: | Open Unity project |
+| `unreal-mode` | :orange_circle: | Enable Unreal mode |
+| `unreal-build` | :orange_circle: | Unreal build |
+| `unreal-cook` | :orange_circle: | Unreal cook content |
+| `unreal-package` | :orange_circle: | Unreal package |
+| `unreal-open-editor` | :orange_circle: | Open Unreal editor |
+
+### Round 858: GIMP / Inkscape (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `gimp-mode` | :orange_circle: | Enable GIMP mode |
+| `gimp-open-file` | :orange_circle: | Open file in GIMP |
+| `gimp-script-fu` | :orange_circle: | Run GIMP Script-Fu |
+| `gimp-batch-process` | :orange_circle: | GIMP batch process |
+| `gimp-export` | :orange_circle: | GIMP export |
+| `inkscape-mode` | :orange_circle: | Enable Inkscape mode |
+| `inkscape-open-file` | :orange_circle: | Open file in Inkscape |
+| `inkscape-export-png` | :orange_circle: | Inkscape export PNG |
+| `inkscape-export-svg` | :orange_circle: | Inkscape export SVG |
+| `inkscape-batch-process` | :orange_circle: | Inkscape batch process |
+
+### Round 859: OBS / VLC (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `obs-mode` | :orange_circle: | Enable OBS mode |
+| `obs-start-recording` | :orange_circle: | Start OBS recording |
+| `obs-stop-recording` | :orange_circle: | Stop OBS recording |
+| `obs-switch-scene` | :orange_circle: | Switch OBS scene |
+| `obs-toggle-stream` | :orange_circle: | Toggle OBS stream |
+| `vlc-mode` | :orange_circle: | Enable VLC mode |
+| `vlc-play` | :orange_circle: | VLC play |
+| `vlc-pause` | :orange_circle: | VLC pause |
+| `vlc-stop` | :orange_circle: | VLC stop |
+| `vlc-next-track` | :orange_circle: | VLC next track |
+
+### Round 860: Hangul / Cangjie (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `hangul-mode` | :orange_circle: | Enable Hangul mode |
+| `hangul-toggle` | :orange_circle: | Toggle Hangul input |
+| `hangul-set-keyboard` | :orange_circle: | Set Hangul keyboard |
+| `hangul-switch-hanja` | :orange_circle: | Switch Hangul hanja |
+| `hangul-setup` | :orange_circle: | Setup Hangul |
+| `cangjie-mode` | :orange_circle: | Enable Cangjie mode |
+| `cangjie-toggle` | :orange_circle: | Toggle Cangjie input |
+| `cangjie-set-version` | :orange_circle: | Set Cangjie version |
+| `cangjie-quick-mode` | :orange_circle: | Cangjie quick mode |
+| `cangjie-setup` | :orange_circle: | Setup Cangjie |
+
+### Round 861: Jabber / XMPP (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `jabber-connect` | :orange_circle: | Connect to Jabber |
+| `jabber-disconnect` | :orange_circle: | Disconnect from Jabber |
+| `jabber-send-message` | :orange_circle: | Send Jabber message |
+| `jabber-roster-toggle` | :orange_circle: | Toggle Jabber roster |
+| `jabber-chat-start` | :orange_circle: | Start Jabber chat |
+| `xmpp-connect` | :orange_circle: | Connect to XMPP |
+| `xmpp-disconnect` | :orange_circle: | Disconnect from XMPP |
+| `xmpp-send-message` | :orange_circle: | Send XMPP message |
+| `xmpp-join-room` | :orange_circle: | Join XMPP room |
+| `xmpp-set-status` | :orange_circle: | Set XMPP status |
+
+### Round 862: Bitlbee / Weechat (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `bitlbee-connect` | :orange_circle: | Connect to Bitlbee |
+| `bitlbee-disconnect` | :orange_circle: | Disconnect from Bitlbee |
+| `bitlbee-add-account` | :orange_circle: | Add Bitlbee account |
+| `bitlbee-remove-account` | :orange_circle: | Remove Bitlbee account |
+| `bitlbee-list-contacts` | :orange_circle: | List Bitlbee contacts |
+| `weechat-connect` | :orange_circle: | Connect to Weechat |
+| `weechat-disconnect` | :orange_circle: | Disconnect from Weechat |
+| `weechat-send-message` | :orange_circle: | Send Weechat message |
+| `weechat-switch-buffer` | :orange_circle: | Switch Weechat buffer |
+| `weechat-list-channels` | :orange_circle: | List Weechat channels |
+
+### Round 863: ZNC / Woman (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `znc-connect` | :orange_circle: | Connect to ZNC |
+| `znc-disconnect` | :orange_circle: | Disconnect from ZNC |
+| `znc-add-network` | :orange_circle: | Add ZNC network |
+| `znc-remove-network` | :orange_circle: | Remove ZNC network |
+| `znc-list-modules` | :orange_circle: | List ZNC modules |
+| `woman-mode` | :orange_circle: | Enable WoMan mode |
+| `woman-find-file` | :orange_circle: | WoMan find file |
+| `woman-bookmark` | :orange_circle: | WoMan bookmark |
+| `woman-next-section` | :orange_circle: | WoMan next section |
+| `woman-prev-section` | :orange_circle: | WoMan previous section |
+
+### Round 864: Dash-docs / Zeal (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `dash-docs-mode` | :orange_circle: | Enable Dash-docs mode |
+| `dash-docs-search` | :orange_circle: | Search Dash docs |
+| `dash-docs-activate-docset` | :orange_circle: | Activate Dash docset |
+| `dash-docs-deactivate-docset` | :orange_circle: | Deactivate Dash docset |
+| `dash-docs-install-docset` | :orange_circle: | Install Dash docset |
+| `zeal-mode` | :orange_circle: | Enable Zeal mode |
+| `zeal-search` | :orange_circle: | Search Zeal |
+| `zeal-search-at-point` | :orange_circle: | Search Zeal at point |
+| `zeal-install-docset` | :orange_circle: | Install Zeal docset |
+| `zeal-browse` | :orange_circle: | Browse Zeal |
+
+### Round 865: Howdoi / LeetCode (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `howdoi-query` | :orange_circle: | Query Howdoi |
+| `howdoi-search` | :orange_circle: | Search Howdoi |
+| `howdoi-insert-answer` | :orange_circle: | Insert Howdoi answer |
+| `howdoi-next-answer` | :orange_circle: | Next Howdoi answer |
+| `howdoi-prev-answer` | :orange_circle: | Previous Howdoi answer |
+| `leetcode-mode` | :orange_circle: | Enable LeetCode mode |
+| `leetcode-browse` | :orange_circle: | Browse LeetCode |
+| `leetcode-submit` | :orange_circle: | Submit LeetCode solution |
+| `leetcode-test-solution` | :orange_circle: | Test LeetCode solution |
+| `leetcode-daily-challenge` | :orange_circle: | LeetCode daily challenge |
+
+### Round 866: Exercism / Codewars (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `exercism-mode` | :orange_circle: | Enable Exercism mode |
+| `exercism-submit` | :orange_circle: | Submit Exercism solution |
+| `exercism-download` | :orange_circle: | Download Exercism exercise |
+| `exercism-browse` | :orange_circle: | Browse Exercism |
+| `exercism-test` | :orange_circle: | Test Exercism solution |
+| `codewars-mode` | :orange_circle: | Enable Codewars mode |
+| `codewars-browse` | :orange_circle: | Browse Codewars |
+| `codewars-submit` | :orange_circle: | Submit Codewars solution |
+| `codewars-test` | :orange_circle: | Test Codewars solution |
+| `codewars-next-kata` | :orange_circle: | Next Codewars kata |
+
+### Round 867: Advent-of-Code / Rosetta (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `advent-of-code-mode` | :orange_circle: | Enable AoC mode |
+| `advent-of-code-download` | :orange_circle: | Download AoC input |
+| `advent-of-code-submit` | :orange_circle: | Submit AoC answer |
+| `advent-of-code-leaderboard` | :orange_circle: | AoC leaderboard |
+| `advent-of-code-browse` | :orange_circle: | Browse AoC |
+| `rosetta-mode` | :orange_circle: | Enable Rosetta mode |
+| `rosetta-browse` | :orange_circle: | Browse Rosetta Code |
+| `rosetta-search` | :orange_circle: | Search Rosetta Code |
+| `rosetta-insert-template` | :orange_circle: | Insert Rosetta template |
+| `rosetta-compare` | :orange_circle: | Compare Rosetta solutions |
+
+### Round 868: Dired-collapse ext / Dired-rsync ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `dired-collapse-mode-toggle` | :orange_circle: | Toggle dired-collapse mode |
+| `dired-collapse-refresh` | :orange_circle: | Refresh dired-collapse |
+| `dired-collapse-depth` | :orange_circle: | Set dired-collapse depth |
+| `dired-collapse-dirs` | :orange_circle: | Collapse dired dirs |
+| `dired-collapse-show-hidden` | :orange_circle: | Show hidden collapsed |
+| `dired-rsync-options-menu` | :orange_circle: | Dired-rsync options menu |
+| `dired-rsync-default-options` | :orange_circle: | Dired-rsync default options |
+| `dired-rsync-compress` | :orange_circle: | Dired-rsync compress |
+| `dired-rsync-partial` | :orange_circle: | Dired-rsync partial transfer |
+| `dired-rsync-progress` | :orange_circle: | Dired-rsync show progress |
+
+### Round 869: Telega ext / SX ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `telega-chat-pin` | :orange_circle: | Pin Telega chat |
+| `telega-chat-unpin` | :orange_circle: | Unpin Telega chat |
+| `telega-chat-set-title` | :orange_circle: | Set Telega chat title |
+| `telega-chat-set-description` | :orange_circle: | Set Telega chat description |
+| `telega-forward-message` | :orange_circle: | Forward Telega message |
+| `sx-search-questions` | :orange_circle: | Search SX questions |
+| `sx-browse-questions` | :orange_circle: | Browse SX questions |
+| `sx-ask-question` | :orange_circle: | Ask SX question |
+| `sx-display-question` | :orange_circle: | Display SX question |
+| `sx-accept-answer` | :orange_circle: | Accept SX answer |
+
+### Round 870: TLDR ext / Cheat ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `tldr-update-docs` | :orange_circle: | Update TLDR docs |
+| `tldr-search` | :orange_circle: | Search TLDR |
+| `tldr-browse` | :orange_circle: | Browse TLDR |
+| `tldr-set-platform` | :orange_circle: | Set TLDR platform |
+| `tldr-contribute` | :orange_circle: | Contribute to TLDR |
+| `cheat-search` | :orange_circle: | Search cheat sheets |
+| `cheat-browse` | :orange_circle: | Browse cheat sheets |
+| `cheat-community` | :orange_circle: | Community cheat sheets |
+| `cheat-personal` | :orange_circle: | Personal cheat sheets |
+| `cheat-tags` | :orange_circle: | Cheat sheet tags |
+
+### Round 871: DevDocs ext / Info ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `devdocs-install-user-docset` | :orange_circle: | Install user DevDocs docset |
+| `devdocs-update` | :orange_circle: | Update DevDocs |
+| `devdocs-delete` | :orange_circle: | Delete DevDocs docset |
+| `devdocs-search-all` | :orange_circle: | Search all DevDocs |
+| `devdocs-set-current-doc` | :orange_circle: | Set current DevDocs doc |
+| `info-search-next` | :orange_circle: | Info search next |
+| `info-search-case-sensitive` | :orange_circle: | Info case sensitive search |
+| `info-history-back-forward` | :orange_circle: | Info history back/forward |
+| `info-copy-node-name` | :orange_circle: | Copy Info node name |
+| `info-redisplay` | :orange_circle: | Redisplay Info |
+
+### Round 872: Dirvish ext 2 / Dired-narrow ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `dirvish-history-clear` | :orange_circle: | Clear Dirvish history |
+| `dirvish-layout-switch-default` | :orange_circle: | Switch to default Dirvish layout |
+| `dirvish-fd-ask-directory` | :orange_circle: | Dirvish fd ask directory |
+| `dirvish-subtree-up` | :orange_circle: | Dirvish subtree up |
+| `dirvish-collapse-dirs` | :orange_circle: | Dirvish collapse dirs |
+| `dired-narrow-regexp-filter` | :orange_circle: | Dired-narrow regexp filter |
+| `dired-narrow-fuzzy-filter` | :orange_circle: | Dired-narrow fuzzy filter |
+| `dired-narrow-exit` | :orange_circle: | Exit dired-narrow |
+| `dired-narrow-restore` | :orange_circle: | Restore dired-narrow |
+| `dired-narrow-by-extension` | :orange_circle: | Dired-narrow by extension |
+
+### Round 873: Dired-ranger ext / Dired-sidebar ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `dired-ranger-copy-ring` | :orange_circle: | Copy to dired-ranger ring |
+| `dired-ranger-paste-ring` | :orange_circle: | Paste from dired-ranger ring |
+| `dired-ranger-move-ring` | :orange_circle: | Move from dired-ranger ring |
+| `dired-ranger-bookmark-goto` | :orange_circle: | Goto dired-ranger bookmark |
+| `dired-ranger-sort-by-date` | :orange_circle: | Sort dired-ranger by date |
+| `dired-sidebar-show-all` | :orange_circle: | Show all in dired-sidebar |
+| `dired-sidebar-hide-all` | :orange_circle: | Hide all in dired-sidebar |
+| `dired-sidebar-follow-current` | :orange_circle: | Follow current in dired-sidebar |
+| `dired-sidebar-refresh` | :orange_circle: | Refresh dired-sidebar |
+| `dired-sidebar-set-width` | :orange_circle: | Set dired-sidebar width |
+
+### Round 874: Project ext 2 / Projectile ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `project-forget-all-zombie-projects` | :orange_circle: | Forget all zombie projects |
+| `project-list-buffers-all` | :orange_circle: | List all project buffers |
+| `project-switch-to-buffer-other-window` | :orange_circle: | Switch project buffer other window |
+| `project-eshell-other-window` | :orange_circle: | Project eshell other window |
+| `project-async-run-shell-command` | :orange_circle: | Project async shell command |
+| `projectile-find-file-in-known-projects` | :orange_circle: | Find file in known projects |
+| `projectile-browse-dirty-projects` | :orange_circle: | Browse dirty projects |
+| `projectile-edit-dir-locals` | :orange_circle: | Edit project dir-locals |
+| `projectile-find-references` | :orange_circle: | Projectile find references |
+| `projectile-find-implementation` | :orange_circle: | Projectile find implementation |
+
+### Round 875: Treemacs ext 2 / Treemacs-icons (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `treemacs-collapse-all-project-nodes` | :orange_circle: | Collapse all project nodes |
+| `treemacs-expand-all-projects` | :orange_circle: | Expand all projects |
+| `treemacs-set-scope-type` | :orange_circle: | Set Treemacs scope type |
+| `treemacs-narrow-to-project` | :orange_circle: | Narrow to Treemacs project |
+| `treemacs-widen-from-project` | :orange_circle: | Widen from Treemacs project |
+| `treemacs-icons-dired-enable` | :orange_circle: | Enable Treemacs icons in dired |
+| `treemacs-icons-reset` | :orange_circle: | Reset Treemacs icons |
+| `treemacs-icons-set-custom` | :orange_circle: | Set custom Treemacs icons |
+| `treemacs-icons-toggle-theme` | :orange_circle: | Toggle Treemacs icons theme |
+| `treemacs-icons-refresh-all` | :orange_circle: | Refresh all Treemacs icons |
+
+### Round 876: ERC ext 2 / Rcirc ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `erc-track-switch-buffer-other-window` | :orange_circle: | ERC track switch other window |
+| `erc-log-save-all` | :orange_circle: | Save all ERC logs |
+| `erc-autojoin-add` | :orange_circle: | Add ERC autojoin channel |
+| `erc-autojoin-remove` | :orange_circle: | Remove ERC autojoin channel |
+| `erc-spelling-toggle` | :orange_circle: | Toggle ERC spelling |
+| `rcirc-multiline-toggle` | :orange_circle: | Toggle rcirc multiline |
+| `rcirc-next-active-buffer-prev` | :orange_circle: | Rcirc prev active buffer |
+| `rcirc-track-switch` | :orange_circle: | Rcirc track switch |
+| `rcirc-browse-url-at-point` | :orange_circle: | Rcirc browse URL at point |
+| `rcirc-omit-toggle-all` | :orange_circle: | Toggle rcirc omit all |
+
+### Round 877: Ement ext 2 / Matrix ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `ement-room-set-avatar` | :orange_circle: | Set Ement room avatar |
+| `ement-room-set-topic-prompt` | :orange_circle: | Set Ement room topic |
+| `ement-room-invite-member` | :orange_circle: | Invite Ement room member |
+| `ement-room-kick-user` | :orange_circle: | Kick Ement room user |
+| `ement-room-ban-user` | :orange_circle: | Ban Ement room user |
+| `matrix-send-file` | :orange_circle: | Send Matrix file |
+| `matrix-send-image` | :orange_circle: | Send Matrix image |
+| `matrix-send-audio` | :orange_circle: | Send Matrix audio |
+| `matrix-send-video` | :orange_circle: | Send Matrix video |
+| `matrix-create-room` | :orange_circle: | Create Matrix room |
+
+### Round 878: Man ext / WoMan ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `man-follow-xref` | :orange_circle: | Follow Man cross-reference |
+| `man-goto-see-also` | :orange_circle: | Goto Man SEE ALSO |
+| `man-previous-manpage` | :orange_circle: | Previous manpage |
+| `man-next-manpage` | :orange_circle: | Next manpage |
+| `man-not-hierarchical` | :orange_circle: | Man flat display |
+| `woman-set-manual-path` | :orange_circle: | Set WoMan manual path |
+| `woman-expand-manual` | :orange_circle: | Expand WoMan manual |
+| `woman-decode-buffer` | :orange_circle: | Decode WoMan buffer |
+| `woman-locale-set` | :orange_circle: | Set WoMan locale |
+| `woman-cache-clear` | :orange_circle: | Clear WoMan cache |
+
+### Round 879: Elfeed ext 2 / Newsticker ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `elfeed-db-compact-now` | :orange_circle: | Compact Elfeed database |
+| `elfeed-unjam` | :orange_circle: | Unjam Elfeed |
+| `elfeed-export-opml-file` | :orange_circle: | Export Elfeed OPML |
+| `elfeed-import-opml-file` | :orange_circle: | Import Elfeed OPML |
+| `elfeed-set-max-connections` | :orange_circle: | Set Elfeed max connections |
+| `newsticker-start-ticker` | :orange_circle: | Start Newsticker |
+| `newsticker-stop-ticker` | :orange_circle: | Stop Newsticker |
+| `newsticker-show-extra` | :orange_circle: | Show Newsticker extra |
+| `newsticker-show-old-items` | :orange_circle: | Show Newsticker old items |
+| `newsticker-mark-all-read` | :orange_circle: | Mark all Newsticker read |
+
+### Round 880: URL ext 2 / SHR ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `url-cookie-list-clear` | :orange_circle: | Clear URL cookie list |
+| `url-cache-expire` | :orange_circle: | Expire URL cache |
+| `url-proxy-set` | :orange_circle: | Set URL proxy |
+| `url-history-save` | :orange_circle: | Save URL history |
+| `url-handler-toggle` | :orange_circle: | Toggle URL handler |
+| `shr-inhibit-images` | :orange_circle: | Inhibit SHR images |
+| `shr-external-browser` | :orange_circle: | Open in external browser |
+| `shr-zoom-in` | :orange_circle: | SHR zoom in |
+| `shr-zoom-out` | :orange_circle: | SHR zoom out |
+| `shr-copy-url-at-point` | :orange_circle: | Copy SHR URL at point |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
