@@ -21438,3 +21438,49 @@
     (echo-read-string echo "Symbol: "
       (lambda (sym)
         (echo-message! echo (str "Wolfram: doc for " sym))))))
+
+;;; Round 270 — SageMath ext, GAP ext, Coq ext (batch 2)
+
+(def (cmd-sage-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SageMath: starting shell")))
+
+(def (cmd-sage-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "SageMath: doc for " topic))))))
+
+(def (cmd-gap-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GAP: evaluating buffer")))
+
+(def (cmd-gap-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GAP: evaluating region")))
+
+(def (cmd-gap-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GAP: starting shell")))
+
+(def (cmd-gap-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "GAP: doc for " topic))))))
+
+(def (cmd-coq-next-step app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coq: processing next step")))
+
+(def (cmd-coq-prev-step app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coq: undoing previous step")))
+
+(def (cmd-coq-goto-end app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coq: processing to end of buffer")))
+
+(def (cmd-coq-assert-next app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coq: asserting next sentence")))

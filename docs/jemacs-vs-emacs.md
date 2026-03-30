@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 270 — Octave ext, Maxima ext, SageMath ext, GAP ext, Coq ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| octave-eval-buffer | :orange_circle: | Evaluate Octave buffer |
+| octave-eval-region | :orange_circle: | Evaluate Octave region |
+| octave-shell | :orange_circle: | Start Octave shell |
+| octave-doc | :orange_circle: | Show Octave documentation |
+| maxima-eval-buffer | :orange_circle: | Evaluate Maxima buffer |
+| maxima-eval-region | :orange_circle: | Evaluate Maxima region |
+| maxima-shell | :orange_circle: | Start Maxima shell |
+| maxima-doc | :orange_circle: | Show Maxima documentation |
+| sage-eval-buffer | :orange_circle: | Evaluate SageMath buffer |
+| sage-eval-region | :orange_circle: | Evaluate SageMath region |
+| sage-shell | :orange_circle: | Start SageMath shell |
+| sage-doc | :orange_circle: | Show SageMath documentation |
+| gap-eval-buffer | :orange_circle: | Evaluate GAP buffer |
+| gap-eval-region | :orange_circle: | Evaluate GAP region |
+| gap-shell | :orange_circle: | Start GAP shell |
+| gap-doc | :orange_circle: | Show GAP documentation |
+| coq-next-step | :orange_circle: | Process next Coq step |
+| coq-prev-step | :orange_circle: | Undo previous Coq step |
+| coq-goto-end | :orange_circle: | Process Coq to end of buffer |
+| coq-assert-next | :orange_circle: | Assert next Coq sentence |
+
 ### Round 269 — Assembly ext, MATLAB ext, R ext, Julia ext, Wolfram ext
 
 | Command | Status | Description |

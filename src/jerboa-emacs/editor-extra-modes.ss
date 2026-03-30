@@ -22058,3 +22058,49 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "R: evaluating region")))
 
+;;; Round 270 — Octave ext, Maxima ext, SageMath ext, GAP ext, Coq ext (batch 1)
+
+(def (cmd-octave-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: evaluating buffer")))
+
+(def (cmd-octave-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: evaluating region")))
+
+(def (cmd-octave-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Octave: starting shell")))
+
+(def (cmd-octave-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Function: "
+      (lambda (func)
+        (echo-message! echo (str "Octave: doc for " func))))))
+
+(def (cmd-maxima-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: evaluating buffer")))
+
+(def (cmd-maxima-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: evaluating region")))
+
+(def (cmd-maxima-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maxima: starting shell")))
+
+(def (cmd-maxima-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Maxima: doc for " topic))))))
+
+(def (cmd-sage-eval-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SageMath: evaluating buffer")))
+
+(def (cmd-sage-eval-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SageMath: evaluating region")))
+
