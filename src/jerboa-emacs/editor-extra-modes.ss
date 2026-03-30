@@ -27405,3 +27405,46 @@
 (def (cmd-snowflake-warehouses app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Snowflake: listing warehouses")))
+
+;; Round 374 batch 1 — Airflow ext, Spark ext
+(def (cmd-airflow-dags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airflow: listing DAGs")))
+
+(def (cmd-airflow-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airflow: listing tasks")))
+
+(def (cmd-airflow-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airflow: listing DAG runs")))
+
+(def (cmd-airflow-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Airflow: listing connections")))
+
+(def (cmd-spark-submit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Spark app jar/py: "
+      (lambda (app-path)
+        (echo-message! echo (str "Spark: submitting " app-path))))))
+
+(def (cmd-spark-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spark: checking application status")))
+
+(def (cmd-spark-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spark: fetching driver logs")))
+
+(def (cmd-spark-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spark: showing configuration")))
+
+(def (cmd-flink-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flink: listing jobs")))
+
+(def (cmd-flink-savepoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flink: listing savepoints")))

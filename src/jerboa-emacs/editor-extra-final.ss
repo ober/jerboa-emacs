@@ -26628,3 +26628,44 @@
 (def (cmd-duckdb-import app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "DuckDB: importing data")))
+
+;; Round 374 batch 2 — Flink ext, Dagster/Prefect ext
+(def (cmd-flink-checkpoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flink: listing checkpoints")))
+
+(def (cmd-flink-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flink: showing metrics")))
+
+(def (cmd-dagster-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dagster: listing runs")))
+
+(def (cmd-dagster-assets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dagster: listing assets")))
+
+(def (cmd-dagster-schedules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dagster: listing schedules")))
+
+(def (cmd-dagster-sensors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dagster: listing sensors")))
+
+(def (cmd-prefect-flows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prefect: listing flows")))
+
+(def (cmd-prefect-deployments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prefect: listing deployments")))
+
+(def (cmd-prefect-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prefect: listing flow runs")))
+
+(def (cmd-prefect-agents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prefect: listing agents")))

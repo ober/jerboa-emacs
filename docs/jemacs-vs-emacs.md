@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 374 — Airflow ext, Spark ext, Flink ext, Dagster/Prefect ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Airflow list DAGs | — | `airflow-dags` | :orange_circle: Scaffolded |
+| Airflow list tasks | — | `airflow-tasks` | :orange_circle: Scaffolded |
+| Airflow DAG runs | — | `airflow-runs` | :orange_circle: Scaffolded |
+| Airflow connections | — | `airflow-connections` | :orange_circle: Scaffolded |
+| Spark submit | — | `spark-submit` | :orange_circle: Scaffolded |
+| Spark app status | — | `spark-status` | :orange_circle: Scaffolded |
+| Spark driver logs | — | `spark-logs` | :orange_circle: Scaffolded |
+| Spark configuration | — | `spark-config` | :orange_circle: Scaffolded |
+| Flink list jobs | — | `flink-jobs` | :orange_circle: Scaffolded |
+| Flink savepoints | — | `flink-savepoints` | :orange_circle: Scaffolded |
+| Flink checkpoints | — | `flink-checkpoints` | :orange_circle: Scaffolded |
+| Flink metrics | — | `flink-metrics` | :orange_circle: Scaffolded |
+| Dagster runs | — | `dagster-runs` | :orange_circle: Scaffolded |
+| Dagster assets | — | `dagster-assets` | :orange_circle: Scaffolded |
+| Dagster schedules | — | `dagster-schedules` | :orange_circle: Scaffolded |
+| Dagster sensors | — | `dagster-sensors` | :orange_circle: Scaffolded |
+| Prefect flows | — | `prefect-flows` | :orange_circle: Scaffolded |
+| Prefect deployments | — | `prefect-deployments` | :orange_circle: Scaffolded |
+| Prefect flow runs | — | `prefect-runs` | :orange_circle: Scaffolded |
+| Prefect agents | — | `prefect-agents` | :orange_circle: Scaffolded |
+
 ### Round 373 — ClickHouse ext, BigQuery ext, Snowflake ext, Redshift/DuckDB ext
 
 | Feature | Emacs | jemacs | Status |
