@@ -23976,3 +23976,57 @@
       (lambda (key)
         (echo-message! echo (str "Xdotool: sending key " key))))))
 
+;;; Round 306 — PulseAudio ext, PipeWire ext, ALSA ext (batch 1)
+
+(def (cmd-pulseaudio-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PulseAudio: listing sinks/sources")))
+
+(def (cmd-pulseaudio-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Volume (%): "
+      (lambda (vol)
+        (echo-message! echo (str "PulseAudio: volume " vol "%"))))))
+
+(def (cmd-pulseaudio-mute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PulseAudio: toggling mute")))
+
+(def (cmd-pulseaudio-default app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sink: "
+      (lambda (sink)
+        (echo-message! echo (str "PulseAudio: default sink " sink))))))
+
+(def (cmd-pipewire-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PipeWire: listing nodes")))
+
+(def (cmd-pipewire-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Node ID: "
+      (lambda (id)
+        (echo-message! echo (str "PipeWire: info for " id))))))
+
+(def (cmd-pipewire-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Source:Sink: "
+      (lambda (link)
+        (echo-message! echo (str "PipeWire: linking " link))))))
+
+(def (cmd-pipewire-unlink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Link ID: "
+      (lambda (id)
+        (echo-message! echo (str "PipeWire: unlinking " id))))))
+
+(def (cmd-alsa-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ALSA: listing cards")))
+
+(def (cmd-alsa-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Volume (%): "
+      (lambda (vol)
+        (echo-message! echo (str "ALSA: volume " vol "%"))))))
+

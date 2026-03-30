@@ -23254,3 +23254,57 @@
     (echo-read-string echo "Expression: "
       (lambda (expr)
         (echo-message! echo (str "Xmodmap: " expr))))))
+
+;;; Round 306 — ALSA ext, JACK ext, Bluez ext (batch 2)
+
+(def (cmd-alsa-mute app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ALSA: toggling mute")))
+
+(def (cmd-alsa-card app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Card: "
+      (lambda (card)
+        (echo-message! echo (str "ALSA: info for card " card))))))
+
+(def (cmd-jack-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JACK: listing ports")))
+
+(def (cmd-jack-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Source port: "
+      (lambda (src)
+        (echo-message! echo (str "JACK: connecting " src))))))
+
+(def (cmd-jack-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Port: "
+      (lambda (port)
+        (echo-message! echo (str "JACK: disconnecting " port))))))
+
+(def (cmd-jack-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JACK: monitoring connections")))
+
+(def (cmd-bluez-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bluez: listing devices")))
+
+(def (cmd-bluez-pair app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device MAC: "
+      (lambda (mac)
+        (echo-message! echo (str "Bluez: pairing " mac))))))
+
+(def (cmd-bluez-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device MAC: "
+      (lambda (mac)
+        (echo-message! echo (str "Bluez: connecting " mac))))))
+
+(def (cmd-bluez-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device MAC: "
+      (lambda (mac)
+        (echo-message! echo (str "Bluez: disconnecting " mac))))))

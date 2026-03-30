@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 306 — PulseAudio ext, PipeWire ext, ALSA ext, JACK ext, Bluez ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| pulseaudio-list | :orange_circle: | List audio sinks/sources |
+| pulseaudio-volume | :orange_circle: | Set PulseAudio volume |
+| pulseaudio-mute | :orange_circle: | Toggle PulseAudio mute |
+| pulseaudio-default | :orange_circle: | Set default sink |
+| pipewire-list | :orange_circle: | List PipeWire nodes |
+| pipewire-info | :orange_circle: | Show node info |
+| pipewire-link | :orange_circle: | Link PipeWire nodes |
+| pipewire-unlink | :orange_circle: | Unlink PipeWire nodes |
+| alsa-list | :orange_circle: | List ALSA cards |
+| alsa-volume | :orange_circle: | Set ALSA volume |
+| alsa-mute | :orange_circle: | Toggle ALSA mute |
+| alsa-card | :orange_circle: | Show card info |
+| jack-list | :orange_circle: | List JACK ports |
+| jack-connect | :orange_circle: | Connect JACK ports |
+| jack-disconnect | :orange_circle: | Disconnect JACK port |
+| jack-monitor | :orange_circle: | Monitor JACK |
+| bluez-list | :orange_circle: | List Bluetooth devices |
+| bluez-pair | :orange_circle: | Pair device |
+| bluez-connect | :orange_circle: | Connect device |
+| bluez-disconnect | :orange_circle: | Disconnect device |
+
 ### Round 305 — Xrandr ext, Xinput ext, Xdotool ext, Xset ext, Xmodmap ext
 
 | Command | Status | Description |
