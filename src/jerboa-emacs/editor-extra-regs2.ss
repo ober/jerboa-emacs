@@ -12863,4 +12863,35 @@
   ;; Round 560: Audio Synthesis
   (register-command! 'synth-oscillator cmd-synth-oscillator) (register-command! 'synth-envelope cmd-synth-envelope) (register-command! 'synth-filter cmd-synth-filter) (register-command! 'synth-lfo cmd-synth-lfo) (register-command! 'synth-wavetable cmd-synth-wavetable)
   (register-command! 'fm-synthesis cmd-fm-synthesis) (register-command! 'am-synthesis cmd-am-synthesis) (register-command! 'additive-synth cmd-additive-synth) (register-command! 'granular-synth cmd-granular-synth) (register-command! 'vocoder-process cmd-vocoder-process)
+
+  ;; Round 561: Ray Marching / SDF
+  (register-command! 'sdf-sphere cmd-sdf-sphere) (register-command! 'sdf-box cmd-sdf-box) (register-command! 'sdf-union cmd-sdf-union) (register-command! 'sdf-subtract cmd-sdf-subtract) (register-command! 'sdf-intersect cmd-sdf-intersect)
+  (register-command! 'raymarch-step cmd-raymarch-step) (register-command! 'raymarch-render cmd-raymarch-render) (register-command! 'raymarch-shadow cmd-raymarch-shadow) (register-command! 'raymarch-ao cmd-raymarch-ao) (register-command! 'raymarch-normal cmd-raymarch-normal)
+  ;; Round 562: Constraint Solving
+  (register-command! 'constraint-propagate cmd-constraint-propagate) (register-command! 'constraint-backtrack cmd-constraint-backtrack) (register-command! 'constraint-arc-consistency cmd-constraint-arc-consistency) (register-command! 'constraint-alldiff cmd-constraint-alldiff) (register-command! 'constraint-optimize cmd-constraint-optimize)
+  (register-command! 'constraint-relax cmd-constraint-relax) (register-command! 'constraint-domain cmd-constraint-domain) (register-command! 'constraint-label cmd-constraint-label) (register-command! 'constraint-reify cmd-constraint-reify) (register-command! 'constraint-global cmd-constraint-global)
+  ;; Round 563: Symbolic Math
+  (register-command! 'symbolic-diff cmd-symbolic-diff) (register-command! 'symbolic-integrate cmd-symbolic-integrate) (register-command! 'symbolic-simplify cmd-symbolic-simplify) (register-command! 'symbolic-expand cmd-symbolic-expand) (register-command! 'symbolic-factor cmd-symbolic-factor)
+  (register-command! 'symbolic-solve cmd-symbolic-solve) (register-command! 'symbolic-limit cmd-symbolic-limit) (register-command! 'symbolic-series cmd-symbolic-series) (register-command! 'symbolic-matrix cmd-symbolic-matrix) (register-command! 'symbolic-laplace cmd-symbolic-laplace)
+  ;; Round 564: Tensor Operations
+  (register-command! 'tensor-matmul cmd-tensor-matmul) (register-command! 'tensor-transpose cmd-tensor-transpose) (register-command! 'tensor-reshape cmd-tensor-reshape) (register-command! 'tensor-slice cmd-tensor-slice) (register-command! 'tensor-broadcast cmd-tensor-broadcast)
+  (register-command! 'tensor-einsum cmd-tensor-einsum) (register-command! 'tensor-conv cmd-tensor-conv) (register-command! 'tensor-pool cmd-tensor-pool) (register-command! 'tensor-norm cmd-tensor-norm) (register-command! 'tensor-svd cmd-tensor-svd)
+  ;; Round 565: Graph Algorithms
+  (register-command! 'graph-bfs cmd-graph-bfs) (register-command! 'graph-dfs cmd-graph-dfs) (register-command! 'graph-dijkstra cmd-graph-dijkstra) (register-command! 'graph-bellman-ford cmd-graph-bellman-ford) (register-command! 'graph-floyd cmd-graph-floyd)
+  (register-command! 'graph-kruskal cmd-graph-kruskal) (register-command! 'graph-prim cmd-graph-prim) (register-command! 'graph-topo-sort cmd-graph-topo-sort) (register-command! 'graph-scc cmd-graph-scc) (register-command! 'graph-bipartite cmd-graph-bipartite)
+  ;; Round 566: Distributed Consensus
+  (register-command! 'raft-elect cmd-raft-elect) (register-command! 'raft-append cmd-raft-append) (register-command! 'raft-commit cmd-raft-commit) (register-command! 'raft-snapshot cmd-raft-snapshot) (register-command! 'raft-membership cmd-raft-membership)
+  (register-command! 'paxos-propose cmd-paxos-propose) (register-command! 'paxos-accept cmd-paxos-accept) (register-command! 'paxos-learn cmd-paxos-learn) (register-command! 'paxos-recover cmd-paxos-recover) (register-command! 'paxos-multi cmd-paxos-multi)
+  ;; Round 567: Memory Allocators
+  (register-command! 'alloc-slab cmd-alloc-slab) (register-command! 'alloc-buddy cmd-alloc-buddy) (register-command! 'alloc-arena cmd-alloc-arena) (register-command! 'alloc-pool cmd-alloc-pool) (register-command! 'alloc-bump cmd-alloc-bump)
+  (register-command! 'alloc-free-list cmd-alloc-free-list) (register-command! 'alloc-compact cmd-alloc-compact) (register-command! 'alloc-defrag cmd-alloc-defrag) (register-command! 'alloc-profile cmd-alloc-profile) (register-command! 'alloc-trace cmd-alloc-trace)
+  ;; Round 568: Regex Engines
+  (register-command! 'regex-parse cmd-regex-parse) (register-command! 'regex-compile-nfa cmd-regex-compile-nfa) (register-command! 'regex-nfa-to-dfa cmd-regex-nfa-to-dfa) (register-command! 'regex-minimize-dfa cmd-regex-minimize-dfa) (register-command! 'regex-match cmd-regex-match)
+  (register-command! 'regex-backtrack cmd-regex-backtrack) (register-command! 'regex-capture cmd-regex-capture) (register-command! 'regex-lookahead cmd-regex-lookahead) (register-command! 'regex-unicode cmd-regex-unicode) (register-command! 'regex-optimize cmd-regex-optimize)
+  ;; Round 569: Type Inference
+  (register-command! 'typeinfer-unify cmd-typeinfer-unify) (register-command! 'typeinfer-generalize cmd-typeinfer-generalize) (register-command! 'typeinfer-instantiate cmd-typeinfer-instantiate) (register-command! 'typeinfer-constrain cmd-typeinfer-constrain) (register-command! 'typeinfer-solve cmd-typeinfer-solve)
+  (register-command! 'typeinfer-zonk cmd-typeinfer-zonk) (register-command! 'typeinfer-subsume cmd-typeinfer-subsume) (register-command! 'typeinfer-check cmd-typeinfer-check) (register-command! 'typeinfer-elaborate cmd-typeinfer-elaborate) (register-command! 'typeinfer-annotate cmd-typeinfer-annotate)
+  ;; Round 570: Garbage Collectors
+  (register-command! 'gc-mark cmd-gc-mark) (register-command! 'gc-sweep cmd-gc-sweep) (register-command! 'gc-compact cmd-gc-compact) (register-command! 'gc-generational cmd-gc-generational) (register-command! 'gc-incremental cmd-gc-incremental)
+  (register-command! 'gc-concurrent cmd-gc-concurrent) (register-command! 'gc-reference-count cmd-gc-reference-count) (register-command! 'gc-cycle-detect cmd-gc-cycle-detect) (register-command! 'gc-finalize cmd-gc-finalize) (register-command! 'gc-stats cmd-gc-stats)
 )

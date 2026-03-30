@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 561 — Ray Marching / SDF
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `sdf-sphere` | :orange_circle: Scaffold | SDF sphere primitive |
+| `sdf-box` | :orange_circle: Scaffold | SDF box primitive |
+| `sdf-union` | :orange_circle: Scaffold | SDF union |
+| `sdf-subtract` | :orange_circle: Scaffold | SDF subtraction |
+| `sdf-intersect` | :orange_circle: Scaffold | SDF intersection |
+| `raymarch-step` | :orange_circle: Scaffold | Ray march step |
+| `raymarch-render` | :orange_circle: Scaffold | Render scene |
+| `raymarch-shadow` | :orange_circle: Scaffold | Shadow rays |
+| `raymarch-ao` | :orange_circle: Scaffold | Ambient occlusion |
+| `raymarch-normal` | :orange_circle: Scaffold | Normal estimation |
+
+### Round 562 — Constraint Solving (CSP)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `constraint-propagate` | :orange_circle: Scaffold | Propagate constraints |
+| `constraint-backtrack` | :orange_circle: Scaffold | Backtrack search |
+| `constraint-arc-consistency` | :orange_circle: Scaffold | Arc consistency |
+| `constraint-alldiff` | :orange_circle: Scaffold | All-different |
+| `constraint-optimize` | :orange_circle: Scaffold | Optimize |
+| `constraint-relax` | :orange_circle: Scaffold | Relax constraint |
+| `constraint-domain` | :orange_circle: Scaffold | Reduce domain |
+| `constraint-label` | :orange_circle: Scaffold | Labeling |
+| `constraint-reify` | :orange_circle: Scaffold | Reify constraint |
+| `constraint-global` | :orange_circle: Scaffold | Global constraint |
+
+### Round 563 — Symbolic Math
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `symbolic-diff` | :orange_circle: Scaffold | Differentiate |
+| `symbolic-integrate` | :orange_circle: Scaffold | Integrate |
+| `symbolic-simplify` | :orange_circle: Scaffold | Simplify |
+| `symbolic-expand` | :orange_circle: Scaffold | Expand |
+| `symbolic-factor` | :orange_circle: Scaffold | Factor |
+| `symbolic-solve` | :orange_circle: Scaffold | Solve equation |
+| `symbolic-limit` | :orange_circle: Scaffold | Compute limit |
+| `symbolic-series` | :orange_circle: Scaffold | Taylor series |
+| `symbolic-matrix` | :orange_circle: Scaffold | Matrix operations |
+| `symbolic-laplace` | :orange_circle: Scaffold | Laplace transform |
+
+### Round 564 — Tensor Operations
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `tensor-matmul` | :orange_circle: Scaffold | Matrix multiply |
+| `tensor-transpose` | :orange_circle: Scaffold | Transpose |
+| `tensor-reshape` | :orange_circle: Scaffold | Reshape |
+| `tensor-slice` | :orange_circle: Scaffold | Slice |
+| `tensor-broadcast` | :orange_circle: Scaffold | Broadcast |
+| `tensor-einsum` | :orange_circle: Scaffold | Einstein summation |
+| `tensor-conv` | :orange_circle: Scaffold | Convolution |
+| `tensor-pool` | :orange_circle: Scaffold | Pooling |
+| `tensor-norm` | :orange_circle: Scaffold | Normalize |
+| `tensor-svd` | :orange_circle: Scaffold | SVD decomposition |
+
+### Round 565 — Graph Algorithms
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `graph-bfs` | :orange_circle: Scaffold | BFS traversal |
+| `graph-dfs` | :orange_circle: Scaffold | DFS traversal |
+| `graph-dijkstra` | :orange_circle: Scaffold | Dijkstra shortest path |
+| `graph-bellman-ford` | :orange_circle: Scaffold | Bellman-Ford |
+| `graph-floyd` | :orange_circle: Scaffold | Floyd-Warshall |
+| `graph-kruskal` | :orange_circle: Scaffold | Kruskal MST |
+| `graph-prim` | :orange_circle: Scaffold | Prim MST |
+| `graph-topo-sort` | :orange_circle: Scaffold | Topological sort |
+| `graph-scc` | :orange_circle: Scaffold | Strongly connected |
+| `graph-bipartite` | :orange_circle: Scaffold | Bipartite check |
+
+### Round 566 — Distributed Consensus (Raft, Paxos)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `raft-elect` | :orange_circle: Scaffold | Leader election |
+| `raft-append` | :orange_circle: Scaffold | Append entries |
+| `raft-commit` | :orange_circle: Scaffold | Commit log |
+| `raft-snapshot` | :orange_circle: Scaffold | Snapshot |
+| `raft-membership` | :orange_circle: Scaffold | Membership change |
+| `paxos-propose` | :orange_circle: Scaffold | Propose value |
+| `paxos-accept` | :orange_circle: Scaffold | Accept |
+| `paxos-learn` | :orange_circle: Scaffold | Learn |
+| `paxos-recover` | :orange_circle: Scaffold | Recover |
+| `paxos-multi` | :orange_circle: Scaffold | Multi-Paxos |
+
+### Round 567 — Memory Allocators
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `alloc-slab` | :orange_circle: Scaffold | Slab allocator |
+| `alloc-buddy` | :orange_circle: Scaffold | Buddy system |
+| `alloc-arena` | :orange_circle: Scaffold | Arena allocator |
+| `alloc-pool` | :orange_circle: Scaffold | Pool allocator |
+| `alloc-bump` | :orange_circle: Scaffold | Bump allocator |
+| `alloc-free-list` | :orange_circle: Scaffold | Free list |
+| `alloc-compact` | :orange_circle: Scaffold | Compact heap |
+| `alloc-defrag` | :orange_circle: Scaffold | Defragment |
+| `alloc-profile` | :orange_circle: Scaffold | Profile usage |
+| `alloc-trace` | :orange_circle: Scaffold | Trace allocations |
+
+### Round 568 — Regex Engines (NFA, DFA)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `regex-parse` | :orange_circle: Scaffold | Parse pattern |
+| `regex-compile-nfa` | :orange_circle: Scaffold | Compile to NFA |
+| `regex-nfa-to-dfa` | :orange_circle: Scaffold | NFA to DFA |
+| `regex-minimize-dfa` | :orange_circle: Scaffold | Minimize DFA |
+| `regex-match` | :orange_circle: Scaffold | Match string |
+| `regex-backtrack` | :orange_circle: Scaffold | Backtrack engine |
+| `regex-capture` | :orange_circle: Scaffold | Capture groups |
+| `regex-lookahead` | :orange_circle: Scaffold | Lookahead |
+| `regex-unicode` | :orange_circle: Scaffold | Unicode properties |
+| `regex-optimize` | :orange_circle: Scaffold | Optimize pattern |
+
+### Round 569 — Type Inference
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `typeinfer-unify` | :orange_circle: Scaffold | Unify types |
+| `typeinfer-generalize` | :orange_circle: Scaffold | Generalize |
+| `typeinfer-instantiate` | :orange_circle: Scaffold | Instantiate |
+| `typeinfer-constrain` | :orange_circle: Scaffold | Add constraint |
+| `typeinfer-solve` | :orange_circle: Scaffold | Solve |
+| `typeinfer-zonk` | :orange_circle: Scaffold | Zonk metavars |
+| `typeinfer-subsume` | :orange_circle: Scaffold | Subsumption |
+| `typeinfer-check` | :orange_circle: Scaffold | Check type |
+| `typeinfer-elaborate` | :orange_circle: Scaffold | Elaborate |
+| `typeinfer-annotate` | :orange_circle: Scaffold | Annotate |
+
+### Round 570 — Garbage Collectors
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gc-mark` | :orange_circle: Scaffold | Mark phase |
+| `gc-sweep` | :orange_circle: Scaffold | Sweep phase |
+| `gc-compact` | :orange_circle: Scaffold | Compact heap |
+| `gc-generational` | :orange_circle: Scaffold | Generational collect |
+| `gc-incremental` | :orange_circle: Scaffold | Incremental collect |
+| `gc-concurrent` | :orange_circle: Scaffold | Concurrent collect |
+| `gc-reference-count` | :orange_circle: Scaffold | Reference counting |
+| `gc-cycle-detect` | :orange_circle: Scaffold | Cycle detection |
+| `gc-finalize` | :orange_circle: Scaffold | Finalize |
+| `gc-stats` | :orange_circle: Scaffold | Statistics |
+
 ### Round 551 — Control Systems (PID, LQR, Kalman)
 
 | Feature | Status | Notes |
