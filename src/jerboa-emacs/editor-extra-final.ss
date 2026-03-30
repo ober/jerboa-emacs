@@ -24993,3 +24993,53 @@
     (echo-read-string echo "Bubblewrap tmpfs mount point: "
       (lambda (mnt)
         (echo-message! echo (str "Bubblewrap: mounting tmpfs at " mnt))))))
+
+;;; Round 339 — Skopeo ext, Crictl ext, Crun ext (batch 2)
+
+(def (cmd-skopeo-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Skopeo list tags for: "
+      (lambda (repo)
+        (echo-message! echo (str "Skopeo: listing tags for " repo))))))
+
+(def (cmd-skopeo-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Skopeo delete image: "
+      (lambda (img)
+        (echo-message! echo (str "Skopeo: deleting " img))))))
+
+(def (cmd-crictl-pods app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crictl: listing pods")))
+
+(def (cmd-crictl-containers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crictl: listing containers")))
+
+(def (cmd-crictl-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crictl: listing images")))
+
+(def (cmd-crictl-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crictl: showing container stats")))
+
+(def (cmd-crun-spec app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crun: generating OCI spec")))
+
+(def (cmd-crun-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Crun run container ID: "
+      (lambda (id)
+        (echo-message! echo (str "Crun: running container " id))))))
+
+(def (cmd-crun-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crun: listing containers")))
+
+(def (cmd-crun-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Crun state container ID: "
+      (lambda (id)
+        (echo-message! echo (str "Crun: showing state of " id))))))

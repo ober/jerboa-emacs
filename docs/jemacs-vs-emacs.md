@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 339 — Podman ext, Buildah ext, Skopeo ext, Crictl ext, Crun ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| podman-ps | :orange_circle: | Podman: list running containers |
+| podman-images | :orange_circle: | Podman: list images |
+| podman-run | :orange_circle: | Podman: run a container |
+| podman-build | :orange_circle: | Podman: build an image |
+| buildah-from | :orange_circle: | Buildah: create container from image |
+| buildah-run | :orange_circle: | Buildah: run command in container |
+| buildah-commit | :orange_circle: | Buildah: commit container |
+| buildah-images | :orange_circle: | Buildah: list images |
+| skopeo-copy | :orange_circle: | Skopeo: copy image |
+| skopeo-inspect | :orange_circle: | Skopeo: inspect image |
+| skopeo-list | :orange_circle: | Skopeo: list tags |
+| skopeo-delete | :orange_circle: | Skopeo: delete image |
+| crictl-pods | :orange_circle: | Crictl: list pods |
+| crictl-containers | :orange_circle: | Crictl: list containers |
+| crictl-images | :orange_circle: | Crictl: list images |
+| crictl-stats | :orange_circle: | Crictl: container stats |
+| crun-spec | :orange_circle: | Crun: generate OCI spec |
+| crun-run | :orange_circle: | Crun: run container |
+| crun-list | :orange_circle: | Crun: list containers |
+| crun-state | :orange_circle: | Crun: show container state |
+
 ### Round 338 — Cgroups ext, Namespaces ext, Systemd-nspawn ext, Firejail ext, Bubblewrap ext
 
 | Feature | Status | Notes |

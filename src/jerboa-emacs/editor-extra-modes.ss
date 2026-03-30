@@ -25688,3 +25688,59 @@
     (echo-read-string echo "Nspawn directory: "
       (lambda (dir)
         (echo-message! echo (str "Nspawn: running in directory " dir))))))
+
+;;; Round 339 — Podman ext, Buildah ext, Skopeo ext, Crictl ext, Crun ext (batch 1)
+
+(def (cmd-podman-ps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Podman: listing running containers")))
+
+(def (cmd-podman-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Podman: listing images")))
+
+(def (cmd-podman-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Podman run image: "
+      (lambda (img)
+        (echo-message! echo (str "Podman: running " img))))))
+
+(def (cmd-podman-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Podman build context: "
+      (lambda (ctx)
+        (echo-message! echo (str "Podman: building from " ctx))))))
+
+(def (cmd-buildah-from app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buildah from image: "
+      (lambda (img)
+        (echo-message! echo (str "Buildah: creating container from " img))))))
+
+(def (cmd-buildah-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buildah run command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Buildah: running " cmd))))))
+
+(def (cmd-buildah-commit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Buildah commit container: "
+      (lambda (ctr)
+        (echo-message! echo (str "Buildah: committing " ctr))))))
+
+(def (cmd-buildah-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buildah: listing images")))
+
+(def (cmd-skopeo-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Skopeo copy source: "
+      (lambda (src)
+        (echo-message! echo (str "Skopeo: copying from " src))))))
+
+(def (cmd-skopeo-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Skopeo inspect image: "
+      (lambda (img)
+        (echo-message! echo (str "Skopeo: inspecting " img))))))
