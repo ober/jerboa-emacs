@@ -27829,3 +27829,50 @@
 (def (cmd-openai-embeddings app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "OpenAI: generating embeddings")))
+
+;; Round 384 batch 1 — Ollama ext, vLLM ext
+(def (cmd-ollama-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Model name: "
+      (lambda (model)
+        (echo-message! echo (str "Ollama: running " model))))))
+
+(def (cmd-ollama-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ollama: listing local models")))
+
+(def (cmd-ollama-pull app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Model to pull: "
+      (lambda (model)
+        (echo-message! echo (str "Ollama: pulling " model))))))
+
+(def (cmd-ollama-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ollama: creating custom model")))
+
+(def (cmd-vllm-serve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "vLLM: starting serving engine")))
+
+(def (cmd-vllm-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "vLLM: listing served models")))
+
+(def (cmd-vllm-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Prompt: "
+      (lambda (prompt)
+        (echo-message! echo (str "vLLM: generating: " prompt))))))
+
+(def (cmd-vllm-benchmark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "vLLM: running benchmark")))
+
+(def (cmd-tgi-serve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TGI: starting text generation server")))
+
+(def (cmd-tgi-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TGI: checking health")))

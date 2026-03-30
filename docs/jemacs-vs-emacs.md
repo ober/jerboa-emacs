@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 384 — Ollama ext, vLLM ext, TGI ext, LiteLLM/Replicate ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Ollama run model | — | `ollama-run` | :orange_circle: Scaffolded |
+| Ollama list models | — | `ollama-list` | :orange_circle: Scaffolded |
+| Ollama pull model | — | `ollama-pull` | :orange_circle: Scaffolded |
+| Ollama create model | — | `ollama-create` | :orange_circle: Scaffolded |
+| vLLM serve | — | `vllm-serve` | :orange_circle: Scaffolded |
+| vLLM models | — | `vllm-models` | :orange_circle: Scaffolded |
+| vLLM generate | — | `vllm-generate` | :orange_circle: Scaffolded |
+| vLLM benchmark | — | `vllm-benchmark` | :orange_circle: Scaffolded |
+| TGI serve | — | `tgi-serve` | :orange_circle: Scaffolded |
+| TGI health | — | `tgi-health` | :orange_circle: Scaffolded |
+| TGI generate | — | `tgi-generate` | :orange_circle: Scaffolded |
+| TGI metrics | — | `tgi-metrics` | :orange_circle: Scaffolded |
+| LiteLLM models | — | `litellm-models` | :orange_circle: Scaffolded |
+| LiteLLM proxy | — | `litellm-proxy` | :orange_circle: Scaffolded |
+| LiteLLM budget | — | `litellm-budget` | :orange_circle: Scaffolded |
+| LiteLLM API keys | — | `litellm-keys` | :orange_circle: Scaffolded |
+| Replicate run | — | `replicate-run` | :orange_circle: Scaffolded |
+| Replicate models | — | `replicate-models` | :orange_circle: Scaffolded |
+| Replicate predictions | — | `replicate-predictions` | :orange_circle: Scaffolded |
+| Replicate collections | — | `replicate-collections` | :orange_circle: Scaffolded |
+
 ### Round 383 — LangChain ext, LlamaIndex ext, OpenAI ext, Anthropic/HuggingFace ext
 
 | Feature | Emacs | jemacs | Status |

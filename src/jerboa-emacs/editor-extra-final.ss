@@ -27048,3 +27048,48 @@
 (def (cmd-huggingface-inference app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "HuggingFace: running inference")))
+
+;; Round 384 batch 2 — TGI ext, LiteLLM/Replicate ext
+(def (cmd-tgi-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Prompt: "
+      (lambda (prompt)
+        (echo-message! echo (str "TGI: generating: " prompt))))))
+
+(def (cmd-tgi-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TGI: showing metrics")))
+
+(def (cmd-litellm-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiteLLM: listing available models")))
+
+(def (cmd-litellm-proxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiteLLM: starting proxy server")))
+
+(def (cmd-litellm-budget app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiteLLM: showing budget/spend")))
+
+(def (cmd-litellm-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LiteLLM: managing API keys")))
+
+(def (cmd-replicate-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Model ID: "
+      (lambda (model)
+        (echo-message! echo (str "Replicate: running " model))))))
+
+(def (cmd-replicate-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Replicate: browsing models")))
+
+(def (cmd-replicate-predictions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Replicate: listing predictions")))
+
+(def (cmd-replicate-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Replicate: browsing collections")))
