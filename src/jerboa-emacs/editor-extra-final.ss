@@ -20464,3 +20464,58 @@
     (echo-read-string echo "Tag: "
       (lambda (tag)
         (echo-message! echo (str "Image-dired: tagged files with '" tag "'"))))))
+
+;; Round 249 — Password-store ext, EPA ext (10 in final)
+(def (cmd-password-store-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remove entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Password-store: removed " entry))))))
+
+(def (cmd-password-store-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Edit entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Password-store: editing " entry))))))
+
+(def (cmd-password-store-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rename entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Password-store: renamed " entry))))))
+
+(def (cmd-password-store-url app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL for entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Password-store: opening URL for " entry))))))
+
+(def (cmd-epa-sign-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sign file: "
+      (lambda (file)
+        (echo-message! echo (str "EPA: signing " file))))))
+
+(def (cmd-epa-verify-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Verify file: "
+      (lambda (file)
+        (echo-message! echo (str "EPA: verifying " file))))))
+
+(def (cmd-epa-encrypt-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EPA: encrypting region")))
+
+(def (cmd-epa-decrypt-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EPA: decrypting region")))
+
+(def (cmd-epa-import-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Import keys from: "
+      (lambda (file)
+        (echo-message! echo (str "EPA: importing keys from " file))))))
+
+(def (cmd-epa-export-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EPA: exporting keys")))

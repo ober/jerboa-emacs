@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 249 — CUA ext, Password-store, EPA
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| cua-rectangle-mark-mode | :orange_circle: | Toggle CUA rectangle mark mode |
+| cua-paste-pop | :orange_circle: | Cycle through kill ring (CUA) |
+| thing-at-point-url-at-point | :orange_circle: | Extract URL at point |
+| browse-url-of-region | :orange_circle: | Browse region as URL |
+| url-retrieve-synchronously | :orange_circle: | Retrieve URL synchronously |
+| url-copy-file | :orange_circle: | Download URL to file |
+| shr-toggle-images | :orange_circle: | Toggle SHR image display |
+| password-store-copy | :orange_circle: | Copy password from store |
+| password-store-generate | :orange_circle: | Generate new password |
+| password-store-insert | :orange_circle: | Insert password entry |
+| password-store-remove | :orange_circle: | Remove password entry |
+| password-store-edit | :orange_circle: | Edit password entry |
+| password-store-rename | :orange_circle: | Rename password entry |
+| password-store-url | :orange_circle: | Open URL for password entry |
+| epa-sign-file | :orange_circle: | Sign file with GPG |
+| epa-verify-file | :orange_circle: | Verify GPG signature |
+| epa-encrypt-region | :orange_circle: | Encrypt region with GPG |
+| epa-decrypt-region | :orange_circle: | Decrypt region with GPG |
+| epa-import-keys | :orange_circle: | Import GPG keys |
+| epa-export-keys | :orange_circle: | Export GPG keys |
+
 ### Round 248 — Xref ext, Project.el ext, Flymake ext, Eldoc ext
 
 | Command | Status | Description |

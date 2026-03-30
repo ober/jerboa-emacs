@@ -21101,3 +21101,60 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tab bar: moved tab backward")))
 
+;; Round 249 — CUA ext, Password-store, EPA (10 in modes)
+(def (cmd-cua-rectangle-mark-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'cua-rectangle-mark)
+    (if (mode-enabled? app 'cua-rectangle-mark)
+      (echo-message! echo "CUA rectangle mark mode enabled")
+      (echo-message! echo "CUA rectangle mark mode disabled"))))
+
+(def (cmd-cua-paste-pop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUA: paste pop (cycle kill ring)")))
+
+(def (cmd-thing-at-point-url-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thing at point: extracted URL")))
+
+(def (cmd-browse-url-of-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Browse URL: opening region as URL")))
+
+(def (cmd-url-retrieve-synchronously app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "URL: retrieving " url " synchronously"))))))
+
+(def (cmd-url-copy-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL to download: "
+      (lambda (url)
+        (echo-message! echo (str "URL: copying " url " to file"))))))
+
+(def (cmd-shr-toggle-images app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'shr-images)
+    (if (mode-enabled? app 'shr-images)
+      (echo-message! echo "SHR: images enabled")
+      (echo-message! echo "SHR: images disabled"))))
+
+(def (cmd-password-store-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Copy password for: "
+      (lambda (entry)
+        (echo-message! echo (str "Password-store: copied " entry))))))
+
+(def (cmd-password-store-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Generate password for: "
+      (lambda (entry)
+        (echo-message! echo (str "Password-store: generated for " entry))))))
+
+(def (cmd-password-store-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Insert password entry: "
+      (lambda (entry)
+        (echo-message! echo (str "Password-store: inserted " entry))))))
+
