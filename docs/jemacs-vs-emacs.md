@@ -5258,6 +5258,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `bug-reference-prog` | :orange_circle: Scaffold | Bug reference prog mode |
 | `lsp-restart-workspace` | :orange_circle: Scaffold | LSP restart workspace |
 | `vterm-new-session` | :orange_circle: Scaffold | VTerm new session |
+
+### Round 671 — Evil ext & Modal Editing
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `evil-surround` | :orange_circle: Scaffold | Surround with |
+| `evil-snipe` | :orange_circle: Scaffold | 2-char jump |
+| `evil-escape` | :orange_circle: Scaffold | Quick escape |
+| `meow-motion` | :orange_circle: Scaffold | Motion state |
+| `meow-keypad` | :orange_circle: Scaffold | Keypad state |
+| `meow-beacon` | :orange_circle: Scaffold | Beacon state |
+| `meow-line` | :orange_circle: Scaffold | Select line |
+| `meow-kill` | :orange_circle: Scaffold | Kill |
+| `xah-fly-keys` | :orange_circle: Scaffold | Toggle |
+| `xah-fly-command` | :orange_circle: Scaffold | Command mode |
+
+### Round 672 — String Inflection, Hungry Delete & Formatters
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `string-inflection-toggle` | :orange_circle: Scaffold | Toggle case style |
+| `string-inflection-underscore` | :orange_circle: Scaffold | Snake_case |
+| `string-inflection-kebab` | :orange_circle: Scaffold | Kebab-case |
+| `string-inflection-lower` | :orange_circle: Scaffold | Lower camelCase |
+| `hungry-delete-mode` | :orange_circle: Scaffold | Toggle mode |
+| `hungry-delete-forward` | :orange_circle: Scaffold | Delete forward |
+| `hungry-delete-backward` | :orange_circle: Scaffold | Delete backward |
+| `electric-operator-mode` | :orange_circle: Scaffold | Toggle mode |
+| `prettier-js-mode` | :orange_circle: Scaffold | Prettier mode |
+| `reformatter-mode` | :orange_circle: Scaffold | Reformatter mode |
+
+### Round 673 — Lispy, RG & Jump ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `xah-fly-insert` | :orange_circle: Scaffold | Insert mode |
+| `lispy-mode` | :orange_circle: Scaffold | Toggle lispy |
+| `lispy-goto` | :orange_circle: Scaffold | Goto symbol |
+| `lispyville-mode` | :orange_circle: Scaffold | Toggle lispyville |
+| `rg-dwim` | :orange_circle: Scaffold | RG do what I mean |
+| `rg-project` | :orange_circle: Scaffold | RG search project |
+| `rg-literal` | :orange_circle: Scaffold | RG literal search |
+| `ace-jump-char` | :orange_circle: Scaffold | Ace jump char |
+| `ace-jump-line` | :orange_circle: Scaffold | Ace jump line |
+| `avy-goto-char-in-line` | :orange_circle: Scaffold | Avy char in line |
+
+### Round 674 — EditorConfig ext, Build Tools & nREPL
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `editorconfig-apply` | :orange_circle: Scaffold | Apply config |
+| `editorconfig-format` | :orange_circle: Scaffold | Format buffer |
+| `ws-butler-trim-eob` | :orange_circle: Scaffold | Trim end of buffer |
+| `aggressive-indent-toggle` | :orange_circle: Scaffold | Toggle |
+| `fancy-compilation-mode` | :orange_circle: Scaffold | Fancy compilation |
+| `multi-compile-run` | :orange_circle: Scaffold | Multi-compile run |
+| `quickrun-region` | :orange_circle: Scaffold | Run region |
+| `quickrun-with-arg` | :orange_circle: Scaffold | Run with arg |
+| `nrepl-connect` | :orange_circle: Scaffold | nREPL connect |
+| `nrepl-close` | :orange_circle: Scaffold | nREPL close |
+
+### Round 675 — Combobulate, Symbol Overlay & Tree-sitter ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `combobulate-mode` | :orange_circle: Scaffold | Toggle mode |
+| `combobulate-nav-next` | :orange_circle: Scaffold | Navigate next |
+| `combobulate-nav-prev` | :orange_circle: Scaffold | Navigate previous |
+| `combobulate-raise` | :orange_circle: Scaffold | Raise node |
+| `combobulate-clone` | :orange_circle: Scaffold | Clone node |
+| `symbol-overlay-rename` | :orange_circle: Scaffold | Rename |
+| `symbol-overlay-count` | :orange_circle: Scaffold | Count |
+| `highlight-symbol-mode` | :orange_circle: Scaffold | Toggle mode |
+| `highlight-symbol-nav` | :orange_circle: Scaffold | Nav mode |
+| `tree-sitter-hl-mode` | :orange_circle: Scaffold | Highlight mode |
+
+### Round 676 — Inf-Clojure, Dante, SLY & EROS
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `inf-clojure` | :orange_circle: Scaffold | Start REPL |
+| `inf-clojure-eval-defun` | :orange_circle: Scaffold | Eval defun |
+| `inf-clojure-eval-buffer` | :orange_circle: Scaffold | Eval buffer |
+| `dante-mode` | :orange_circle: Scaffold | Toggle mode |
+| `dante-eval-block` | :orange_circle: Scaffold | Eval block |
+| `dante-type-at` | :orange_circle: Scaffold | Type at point |
+| `lsp-haskell-imports-action` | :orange_circle: Scaffold | Imports action |
+| `sly-compile-file` | :orange_circle: Scaffold | Compile file |
+| `eros-eval-defun` | :orange_circle: Scaffold | Eval defun inline |
+| `purescript-indent` | :orange_circle: Scaffold | Indent |
+
+### Round 677 — YASnippet ext, Tempel ext & Search ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `yas-insert-snippet` | :orange_circle: Scaffold | Insert snippet |
+| `yas-new-snippet` | :orange_circle: Scaffold | New snippet |
+| `auto-yasnippet` | :orange_circle: Scaffold | Auto yasnippet |
+| `aya-create` | :orange_circle: Scaffold | Create snippet |
+| `aya-expand` | :orange_circle: Scaffold | Expand snippet |
+| `tempel-region` | :orange_circle: Scaffold | Wrap region |
+| `tempel-defun` | :orange_circle: Scaffold | Template defun |
+| `tempel-toggle` | :orange_circle: Scaffold | Toggle active |
+| `isearch-mb-mode` | :orange_circle: Scaffold | Minibuffer isearch |
+| `phi-replace-query` | :orange_circle: Scaffold | Replace query |
+
+### Round 678 — Proof Assistants (Lean, Coq, OCaml)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lean-mode` | :orange_circle: Scaffold | Toggle Lean mode |
+| `lean-server-restart` | :orange_circle: Scaffold | Restart server |
+| `coq-mode` | :orange_circle: Scaffold | Toggle Coq mode |
+| `proof-goto-end-of-locked` | :orange_circle: Scaffold | Goto end of locked |
+| `proof-shell-start` | :orange_circle: Scaffold | Start proof shell |
+| `agda-goal-type` | :orange_circle: Scaffold | Goal type |
+| `tuareg-mode` | :orange_circle: Scaffold | Toggle OCaml mode |
+| `merlin-mode` | :orange_circle: Scaffold | Toggle Merlin |
+| `merlin-document` | :orange_circle: Scaffold | Document |
+| `utop-eval-buffer` | :orange_circle: Scaffold | Eval buffer |
+
+### Round 679 — Vundo & Drag-stuff
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vundo` | :orange_circle: Scaffold | Visual undo tree |
+| `vundo-forward` | :orange_circle: Scaffold | Forward |
+| `vundo-backward` | :orange_circle: Scaffold | Backward |
+| `vundo-stem-root` | :orange_circle: Scaffold | Stem root |
+| `vundo-stem-end` | :orange_circle: Scaffold | Stem end |
+| `drag-stuff-up` | :orange_circle: Scaffold | Drag up |
+| `drag-stuff-down` | :orange_circle: Scaffold | Drag down |
+| `drag-stuff-left` | :orange_circle: Scaffold | Drag left |
+| `drag-stuff-right` | :orange_circle: Scaffold | Drag right |
+| `anzu-replace-cursor` | :orange_circle: Scaffold | Replace at cursor |
+
+### Round 680 — Modal Editors ext (Objed, Modalka, Devil)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `utop-eval-phrase` | :orange_circle: Scaffold | Eval phrase |
+| `kakoune-mode` | :orange_circle: Scaffold | Toggle Kakoune |
+| `boon-insert-state` | :orange_circle: Scaffold | Insert state |
+| `objed-mode` | :orange_circle: Scaffold | Text object editing |
+| `objed-expand` | :orange_circle: Scaffold | Expand object |
+| `objed-next-object` | :orange_circle: Scaffold | Next object |
+| `modalka-mode` | :orange_circle: Scaffold | Toggle Modalka |
+| `ryo-modal-mode` | :orange_circle: Scaffold | Toggle RYO |
+| `fingers-mode` | :orange_circle: Scaffold | Toggle Fingers |
+| `devil-mode` | :orange_circle: Scaffold | Toggle Devil |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |

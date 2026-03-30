@@ -13204,4 +13204,35 @@
   ;; Round 670: Which-key, Doom, Icons, Misc
   (register-command! 'which-key-mode cmd-which-key-mode) (register-command! 'doom-themes-toggle cmd-doom-themes-toggle) (register-command! 'doom-modeline-toggle cmd-doom-modeline-toggle) (register-command! 'all-the-icons-install cmd-all-the-icons-install) (register-command! 'imenu-list-toggle cmd-imenu-list-toggle)
   (register-command! 'whitespace-toggle-options cmd-whitespace-toggle-options) (register-command! 'goto-address-prog cmd-goto-address-prog) (register-command! 'bug-reference-prog cmd-bug-reference-prog) (register-command! 'lsp-restart-workspace cmd-lsp-restart-workspace) (register-command! 'vterm-new-session cmd-vterm-new-session)
+
+  ;; Round 671: Evil ext, Modal
+  (register-command! 'evil-surround cmd-evil-surround) (register-command! 'evil-snipe cmd-evil-snipe) (register-command! 'evil-escape cmd-evil-escape) (register-command! 'meow-motion cmd-meow-motion) (register-command! 'meow-keypad cmd-meow-keypad)
+  (register-command! 'meow-beacon cmd-meow-beacon) (register-command! 'meow-line cmd-meow-line) (register-command! 'meow-kill cmd-meow-kill) (register-command! 'xah-fly-keys cmd-xah-fly-keys) (register-command! 'xah-fly-command cmd-xah-fly-command)
+  ;; Round 672: String Inflection, Hungry Delete, Electric
+  (register-command! 'string-inflection-toggle cmd-string-inflection-toggle) (register-command! 'string-inflection-underscore cmd-string-inflection-underscore) (register-command! 'string-inflection-kebab cmd-string-inflection-kebab) (register-command! 'string-inflection-lower cmd-string-inflection-lower) (register-command! 'hungry-delete-mode cmd-hungry-delete-mode)
+  (register-command! 'hungry-delete-forward cmd-hungry-delete-forward) (register-command! 'hungry-delete-backward cmd-hungry-delete-backward) (register-command! 'electric-operator-mode cmd-electric-operator-mode) (register-command! 'prettier-js-mode cmd-prettier-js-mode) (register-command! 'reformatter-mode cmd-reformatter-mode)
+  ;; Round 673: Lispy, Lispyville, RG, Ace Jump, Avy ext
+  (register-command! 'xah-fly-insert cmd-xah-fly-insert) (register-command! 'lispy-mode cmd-lispy-mode) (register-command! 'lispy-goto cmd-lispy-goto) (register-command! 'lispyville-mode cmd-lispyville-mode) (register-command! 'rg-dwim cmd-rg-dwim)
+  (register-command! 'rg-project cmd-rg-project) (register-command! 'rg-literal cmd-rg-literal) (register-command! 'ace-jump-char cmd-ace-jump-char) (register-command! 'ace-jump-line cmd-ace-jump-line) (register-command! 'avy-goto-char-in-line cmd-avy-goto-char-in-line)
+  ;; Round 674: EditorConfig ext, WS-Butler, Build tools
+  (register-command! 'editorconfig-apply cmd-editorconfig-apply) (register-command! 'editorconfig-format cmd-editorconfig-format) (register-command! 'ws-butler-trim-eob cmd-ws-butler-trim-eob) (register-command! 'aggressive-indent-toggle cmd-aggressive-indent-toggle) (register-command! 'fancy-compilation-mode cmd-fancy-compilation-mode)
+  (register-command! 'multi-compile-run cmd-multi-compile-run) (register-command! 'quickrun-region cmd-quickrun-region) (register-command! 'quickrun-with-arg cmd-quickrun-with-arg) (register-command! 'nrepl-connect cmd-nrepl-connect) (register-command! 'nrepl-close cmd-nrepl-close)
+  ;; Round 675: Combobulate, Symbol Overlay, Tree-sitter ext
+  (register-command! 'combobulate-mode cmd-combobulate-mode) (register-command! 'combobulate-nav-next cmd-combobulate-nav-next) (register-command! 'combobulate-nav-prev cmd-combobulate-nav-prev) (register-command! 'combobulate-raise cmd-combobulate-raise) (register-command! 'combobulate-clone cmd-combobulate-clone)
+  (register-command! 'symbol-overlay-rename cmd-symbol-overlay-rename) (register-command! 'symbol-overlay-count cmd-symbol-overlay-count) (register-command! 'highlight-symbol-mode cmd-highlight-symbol-mode) (register-command! 'highlight-symbol-nav cmd-highlight-symbol-nav) (register-command! 'tree-sitter-hl-mode cmd-tree-sitter-hl-mode)
+  ;; Round 676: Inf-Clojure, Dante, SLY, EROS
+  (register-command! 'inf-clojure cmd-inf-clojure) (register-command! 'inf-clojure-eval-defun cmd-inf-clojure-eval-defun) (register-command! 'inf-clojure-eval-buffer cmd-inf-clojure-eval-buffer) (register-command! 'dante-mode cmd-dante-mode) (register-command! 'dante-eval-block cmd-dante-eval-block)
+  (register-command! 'dante-type-at cmd-dante-type-at) (register-command! 'lsp-haskell-imports-action cmd-lsp-haskell-imports-action) (register-command! 'sly-compile-file cmd-sly-compile-file) (register-command! 'eros-eval-defun cmd-eros-eval-defun) (register-command! 'purescript-indent cmd-purescript-indent)
+  ;; Round 677: YASnippet ext, Tempel ext, Search ext
+  (register-command! 'yas-insert-snippet cmd-yas-insert-snippet) (register-command! 'yas-new-snippet cmd-yas-new-snippet) (register-command! 'auto-yasnippet cmd-auto-yasnippet) (register-command! 'aya-create cmd-aya-create) (register-command! 'aya-expand cmd-aya-expand)
+  (register-command! 'tempel-region cmd-tempel-region) (register-command! 'tempel-defun cmd-tempel-defun) (register-command! 'tempel-toggle cmd-tempel-toggle) (register-command! 'isearch-mb-mode cmd-isearch-mb-mode) (register-command! 'phi-replace-query cmd-phi-replace-query)
+  ;; Round 678: Proof Assistants
+  (register-command! 'lean-mode cmd-lean-mode) (register-command! 'lean-server-restart cmd-lean-server-restart) (register-command! 'coq-mode cmd-coq-mode) (register-command! 'proof-goto-end-of-locked cmd-proof-goto-end-of-locked) (register-command! 'proof-shell-start cmd-proof-shell-start)
+  (register-command! 'agda-goal-type cmd-agda-goal-type) (register-command! 'tuareg-mode cmd-tuareg-mode) (register-command! 'merlin-mode cmd-merlin-mode) (register-command! 'merlin-document cmd-merlin-document) (register-command! 'utop-eval-buffer cmd-utop-eval-buffer)
+  ;; Round 679: Vundo, Drag-stuff, Anzu ext
+  (register-command! 'vundo cmd-vundo) (register-command! 'vundo-forward cmd-vundo-forward) (register-command! 'vundo-backward cmd-vundo-backward) (register-command! 'vundo-stem-root cmd-vundo-stem-root) (register-command! 'vundo-stem-end cmd-vundo-stem-end)
+  (register-command! 'drag-stuff-up cmd-drag-stuff-up) (register-command! 'drag-stuff-down cmd-drag-stuff-down) (register-command! 'drag-stuff-left cmd-drag-stuff-left) (register-command! 'drag-stuff-right cmd-drag-stuff-right) (register-command! 'anzu-replace-cursor cmd-anzu-replace-cursor)
+  ;; Round 680: Modal editors ext
+  (register-command! 'utop-eval-phrase cmd-utop-eval-phrase) (register-command! 'kakoune-mode cmd-kakoune-mode) (register-command! 'boon-insert-state cmd-boon-insert-state) (register-command! 'objed-mode cmd-objed-mode) (register-command! 'objed-expand cmd-objed-expand)
+  (register-command! 'objed-next-object cmd-objed-next-object) (register-command! 'modalka-mode cmd-modalka-mode) (register-command! 'ryo-modal-mode cmd-ryo-modal-mode) (register-command! 'fingers-mode cmd-fingers-mode) (register-command! 'devil-mode cmd-devil-mode)
 )
