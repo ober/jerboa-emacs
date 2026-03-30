@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 255 — Web-mode ext, YAML ext, TOML, Terraform ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| web-mode-element-wrap | :orange_circle: | Wrap element with tag |
+| web-mode-element-kill | :orange_circle: | Kill HTML element |
+| web-mode-element-select | :orange_circle: | Select HTML element |
+| web-mode-element-parent | :orange_circle: | Navigate to parent element |
+| web-mode-element-children | :orange_circle: | Show element children |
+| web-mode-fold-or-unfold | :orange_circle: | Toggle element folding |
+| web-mode-comment-or-uncomment | :orange_circle: | Toggle HTML comment |
+| web-mode-indent-buffer | :orange_circle: | Indent entire buffer |
+| web-mode-whitespaces-show | :orange_circle: | Show whitespace |
+| web-mode-set-engine | :orange_circle: | Set template engine |
+| yaml-narrow-to-block | :orange_circle: | Narrow to YAML block |
+| toml-mode-goto-section | :orange_circle: | Jump to TOML section |
+| terraform-workspace-list | :orange_circle: | List Terraform workspaces |
+| terraform-state-show | :orange_circle: | Show Terraform resource state |
+| terraform-import | :orange_circle: | Import Terraform resource |
+| terraform-taint | :orange_circle: | Taint Terraform resource |
+| terraform-untaint | :orange_circle: | Untaint Terraform resource |
+| terraform-refresh | :orange_circle: | Refresh Terraform state |
+| terraform-console | :orange_circle: | Open Terraform console |
+| terraform-graph | :orange_circle: | Generate Terraform graph |
+
 ### Round 254 — LaTeX ext, SQL ext, Org ext, Markdown ext
 
 | Command | Status | Description |

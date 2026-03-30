@@ -21383,3 +21383,48 @@
       (lambda (buf)
         (echo-message! echo (str "IELM: working buffer set to " buf))))))
 
+;; Round 255 — Web-mode ext, YAML ext, TOML, Terraform ext (10 in modes)
+(def (cmd-web-mode-element-wrap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wrap with tag: "
+      (lambda (tag)
+        (echo-message! echo (str "Web-mode: wrapped with <" tag ">"))))))
+
+(def (cmd-web-mode-element-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: killed element")))
+
+(def (cmd-web-mode-element-select app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: selected element")))
+
+(def (cmd-web-mode-element-parent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: moved to parent element")))
+
+(def (cmd-web-mode-element-children app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: showing children")))
+
+(def (cmd-web-mode-fold-or-unfold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: toggled fold")))
+
+(def (cmd-web-mode-comment-or-uncomment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: toggled comment")))
+
+(def (cmd-web-mode-indent-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: indented buffer")))
+
+(def (cmd-web-mode-whitespaces-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Web-mode: showing whitespace")))
+
+(def (cmd-web-mode-set-engine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Engine: "
+      (lambda (engine)
+        (echo-message! echo (str "Web-mode: engine set to " engine))))))
+

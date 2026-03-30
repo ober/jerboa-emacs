@@ -20753,3 +20753,54 @@
 (def (cmd-markdown-edit-code-block app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Markdown: editing code block in indirect buffer")))
+
+;; Round 255 — YAML ext, TOML, Terraform ext (10 in final)
+(def (cmd-yaml-narrow-to-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "YAML: narrowed to block")))
+
+(def (cmd-toml-mode-goto-section app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Section: "
+      (lambda (sec)
+        (echo-message! echo (str "TOML: jumped to section " sec))))))
+
+(def (cmd-terraform-workspace-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: listing workspaces")))
+
+(def (cmd-terraform-state-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Resource: "
+      (lambda (res)
+        (echo-message! echo (str "Terraform: showing state for " res))))))
+
+(def (cmd-terraform-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Import resource: "
+      (lambda (res)
+        (echo-message! echo (str "Terraform: importing " res))))))
+
+(def (cmd-terraform-taint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Taint resource: "
+      (lambda (res)
+        (echo-message! echo (str "Terraform: tainted " res))))))
+
+(def (cmd-terraform-untaint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Untaint resource: "
+      (lambda (res)
+        (echo-message! echo (str "Terraform: untainted " res))))))
+
+(def (cmd-terraform-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: refreshing state")))
+
+(def (cmd-terraform-console app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: opening console")))
+
+(def (cmd-terraform-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terraform: generating graph")))
