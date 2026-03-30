@@ -25632,3 +25632,59 @@
     (echo-read-string echo "Chrt FIFO priority (1-99): "
       (lambda (prio)
         (echo-message! echo (str "Chrt: setting FIFO priority " prio))))))
+
+;;; Round 338 — Cgroups ext, Namespaces ext, Systemd-nspawn ext, Firejail ext, Bubblewrap ext (batch 1)
+
+(def (cmd-cgroups-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cgroups: listing control groups")))
+
+(def (cmd-cgroups-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cgroups: showing cgroup tree")))
+
+(def (cmd-cgroups-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cgroup name: "
+      (lambda (name)
+        (echo-message! echo (str "Cgroups: creating cgroup " name))))))
+
+(def (cmd-cgroups-move app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Move PID to cgroup: "
+      (lambda (pid)
+        (echo-message! echo (str "Cgroups: moving PID " pid))))))
+
+(def (cmd-namespaces-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Namespaces: listing all namespaces")))
+
+(def (cmd-namespaces-enter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Namespace PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Namespaces: entering namespace of PID " pid))))))
+
+(def (cmd-namespaces-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Namespace type (mnt/net/pid/user): "
+      (lambda (type)
+        (echo-message! echo (str "Namespaces: creating " type " namespace"))))))
+
+(def (cmd-namespaces-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Show namespaces for PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Namespaces: showing for PID " pid))))))
+
+(def (cmd-nspawn-boot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nspawn container directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Nspawn: booting container from " dir))))))
+
+(def (cmd-nspawn-directory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nspawn directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Nspawn: running in directory " dir))))))

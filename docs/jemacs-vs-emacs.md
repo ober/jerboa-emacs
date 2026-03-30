@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 338 — Cgroups ext, Namespaces ext, Systemd-nspawn ext, Firejail ext, Bubblewrap ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| cgroups-list | :orange_circle: | Cgroups: list control groups |
+| cgroups-tree | :orange_circle: | Cgroups: show cgroup tree |
+| cgroups-create | :orange_circle: | Cgroups: create a cgroup |
+| cgroups-move | :orange_circle: | Cgroups: move PID to cgroup |
+| namespaces-list | :orange_circle: | Namespaces: list all namespaces |
+| namespaces-enter | :orange_circle: | Namespaces: enter a namespace |
+| namespaces-create | :orange_circle: | Namespaces: create a namespace |
+| namespaces-pid | :orange_circle: | Namespaces: show for PID |
+| nspawn-boot | :orange_circle: | Nspawn: boot container |
+| nspawn-directory | :orange_circle: | Nspawn: run in directory |
+| nspawn-image | :orange_circle: | Nspawn: boot from image |
+| nspawn-network | :orange_circle: | Nspawn: configure networking |
+| firejail-run | :orange_circle: | Firejail: run sandboxed command |
+| firejail-profile | :orange_circle: | Firejail: use a profile |
+| firejail-list | :orange_circle: | Firejail: list sandboxed processes |
+| firejail-join | :orange_circle: | Firejail: join a sandbox |
+| bubblewrap-run | :orange_circle: | Bubblewrap: run sandboxed command |
+| bubblewrap-bind | :orange_circle: | Bubblewrap: bind a path |
+| bubblewrap-network | :orange_circle: | Bubblewrap: enable network |
+| bubblewrap-tmpfs | :orange_circle: | Bubblewrap: mount tmpfs |
+
 ### Round 337 — Ftrace ext, Irqbalance ext, Chrt ext, Ionice ext, Tuna ext
 
 | Feature | Status | Notes |

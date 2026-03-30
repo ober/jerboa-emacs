@@ -24937,3 +24937,59 @@
     (echo-read-string echo "Tuna isolate CPU: "
       (lambda (cpu)
         (echo-message! echo (str "Tuna: isolating CPU " cpu))))))
+
+;;; Round 338 — Systemd-nspawn ext, Firejail ext, Bubblewrap ext (batch 2)
+
+(def (cmd-nspawn-image app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nspawn image file: "
+      (lambda (img)
+        (echo-message! echo (str "Nspawn: booting from image " img))))))
+
+(def (cmd-nspawn-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nspawn: configuring container networking")))
+
+(def (cmd-firejail-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Firejail command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Firejail: running " cmd))))))
+
+(def (cmd-firejail-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Firejail profile: "
+      (lambda (prof)
+        (echo-message! echo (str "Firejail: using profile " prof))))))
+
+(def (cmd-firejail-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firejail: listing sandboxed processes")))
+
+(def (cmd-firejail-join app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Firejail join PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Firejail: joining sandbox " pid))))))
+
+(def (cmd-bubblewrap-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bubblewrap command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Bubblewrap: running " cmd))))))
+
+(def (cmd-bubblewrap-bind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bubblewrap bind path: "
+      (lambda (path)
+        (echo-message! echo (str "Bubblewrap: binding " path))))))
+
+(def (cmd-bubblewrap-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bubblewrap: enabling network in sandbox")))
+
+(def (cmd-bubblewrap-tmpfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bubblewrap tmpfs mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "Bubblewrap: mounting tmpfs at " mnt))))))
