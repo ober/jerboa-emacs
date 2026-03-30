@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 246 — Surround, Writeroom, Rainbow, Mode toggles (gerbil-emacs parity)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| surround-add | :orange_circle: | Add surrounding characters |
+| surround-change | :orange_circle: | Change surrounding characters |
+| surround-delete | :orange_circle: | Delete surrounding characters |
+| writeroom-mode-real | :orange_circle: | Toggle writeroom distraction-free mode |
+| rainbow-mode-real | :orange_circle: | Toggle rainbow color highlighting |
+| rainbow-refresh | :orange_circle: | Refresh rainbow highlights |
+| persistent-scratch-mode | :orange_circle: | Toggle persistent scratch mode |
+| persistent-scratch-save | :orange_circle: | Save persistent scratch |
+| persistent-scratch-restore | :orange_circle: | Restore persistent scratch |
+| ligature-mode-real | :orange_circle: | Toggle ligature display mode |
+| marginalia-mode-real | :orange_circle: | Toggle marginalia annotations |
+| marginalia-describe-commands | :orange_circle: | Describe commands with marginalia |
+| minimap-mode-real | :orange_circle: | Toggle minimap display |
+| nano-theme-real | :orange_circle: | Apply nano theme |
+| orderless-mode-real | :orange_circle: | Toggle orderless completion |
+| orderless-filter-demo | :orange_circle: | Demo orderless filtering |
+| olivetti-mode-real | :orange_circle: | Toggle olivetti centered text |
+| page-break-lines-real | :orange_circle: | Toggle page break line display |
+| pixel-scroll-precision-mode-real | :orange_circle: | Toggle pixel scroll precision |
+| save-place-mode-real | :orange_circle: | Toggle save place mode |
+
 ### Round 245 — Deft, Dictionary, Pomodoro, Chronometer, Misc (gerbil-emacs parity)
 
 | Command | Status | Description |

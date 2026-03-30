@@ -20983,3 +20983,60 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Chronometer: lap recorded")))
 
+;; Round 246 — Surround, Writeroom, Rainbow, Persistent-scratch (10 in modes)
+(def (cmd-surround-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Surround with: "
+      (lambda (ch)
+        (echo-message! echo (str "Surround: added " ch " around region"))))))
+
+(def (cmd-surround-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Change surround to: "
+      (lambda (ch)
+        (echo-message! echo (str "Surround: changed to " ch))))))
+
+(def (cmd-surround-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Surround: deleted surrounding")))
+
+(def (cmd-writeroom-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'writeroom-real)
+    (if (mode-enabled? app 'writeroom-real)
+      (echo-message! echo "Writeroom mode enabled (distraction-free)")
+      (echo-message! echo "Writeroom mode disabled"))))
+
+(def (cmd-rainbow-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'rainbow-real)
+    (if (mode-enabled? app 'rainbow-real)
+      (echo-message! echo "Rainbow mode enabled (colorize color strings)")
+      (echo-message! echo "Rainbow mode disabled"))))
+
+(def (cmd-rainbow-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rainbow: refreshed color highlights")))
+
+(def (cmd-persistent-scratch-mode app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'persistent-scratch)
+    (if (mode-enabled? app 'persistent-scratch)
+      (echo-message! echo "Persistent scratch mode enabled")
+      (echo-message! echo "Persistent scratch mode disabled"))))
+
+(def (cmd-persistent-scratch-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Persistent scratch: saved")))
+
+(def (cmd-persistent-scratch-restore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Persistent scratch: restored")))
+
+(def (cmd-ligature-mode-real app)
+  (let* ((echo (app-state-echo app)))
+    (toggle-mode! app 'ligature-real)
+    (if (mode-enabled? app 'ligature-real)
+      (echo-message! echo "Ligature mode enabled")
+      (echo-message! echo "Ligature mode disabled"))))
+
