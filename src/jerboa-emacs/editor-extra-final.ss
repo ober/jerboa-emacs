@@ -23722,3 +23722,51 @@
 (def (cmd-multipath-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Multipath: listing maps")))
+
+;;; Round 315 — Sar ext, Pidstat ext, Mpstat ext (batch 2)
+
+(def (cmd-sar-disk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sar: showing disk activity")))
+
+(def (cmd-sar-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sar: showing network statistics")))
+
+(def (cmd-pidstat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pidstat: showing process statistics")))
+
+(def (cmd-pidstat-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Pidstat: CPU stats for PID " pid))))))
+
+(def (cmd-pidstat-memory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Pidstat: memory stats for PID " pid))))))
+
+(def (cmd-pidstat-io app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Pidstat: I/O stats for PID " pid))))))
+
+(def (cmd-tapestat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tapestat: showing tape statistics")))
+
+(def (cmd-tapestat-extended app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tapestat: showing extended statistics")))
+
+(def (cmd-mpstat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mpstat: showing processor statistics")))
+
+(def (cmd-mpstat-per-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mpstat: showing per-CPU statistics")))

@@ -24436,3 +24436,47 @@
       (lambda (dev)
         (echo-message! echo (str "Cryptsetup: opening " dev))))))
 
+;;; Round 315 — Sysstat ext, Iostat ext, Sar ext, Pidstat ext, Mpstat ext (batch 1)
+
+(def (cmd-sysstat-collect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysstat: collecting system activity data")))
+
+(def (cmd-sysstat-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysstat: showing summary")))
+
+(def (cmd-sysstat-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysstat: generating graph")))
+
+(def (cmd-sysstat-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysstat: generating report")))
+
+(def (cmd-iostat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iostat: showing I/O statistics")))
+
+(def (cmd-iostat-extended app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iostat: showing extended statistics")))
+
+(def (cmd-iostat-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Iostat: showing stats for " dev))))))
+
+(def (cmd-iostat-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iostat: showing CPU utilization")))
+
+(def (cmd-sar-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sar: showing CPU usage")))
+
+(def (cmd-sar-memory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sar: showing memory usage")))
+

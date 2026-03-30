@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 315 — Sysstat ext, Iostat ext, Sar ext, Pidstat ext, Mpstat ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `sysstat-collect` | :orange_circle: | Collect system activity data |
+| `sysstat-summary` | :orange_circle: | Show sysstat summary |
+| `sysstat-graph` | :orange_circle: | Generate sysstat graph |
+| `sysstat-report` | :orange_circle: | Generate sysstat report |
+| `iostat-show` | :orange_circle: | Show I/O statistics |
+| `iostat-extended` | :orange_circle: | Show extended I/O stats |
+| `iostat-device` | :orange_circle: | Show device I/O stats |
+| `iostat-cpu` | :orange_circle: | Show CPU utilization |
+| `sar-cpu` | :orange_circle: | Show CPU usage history |
+| `sar-memory` | :orange_circle: | Show memory usage history |
+| `sar-disk` | :orange_circle: | Show disk activity history |
+| `sar-network` | :orange_circle: | Show network stats history |
+| `pidstat-show` | :orange_circle: | Show process statistics |
+| `pidstat-cpu` | :orange_circle: | Show process CPU stats |
+| `pidstat-memory` | :orange_circle: | Show process memory stats |
+| `pidstat-io` | :orange_circle: | Show process I/O stats |
+| `tapestat-show` | :orange_circle: | Show tape statistics |
+| `tapestat-extended` | :orange_circle: | Show extended tape stats |
+| `mpstat-show` | :orange_circle: | Show processor statistics |
+| `mpstat-per-cpu` | :orange_circle: | Show per-CPU statistics |
+
 ### Round 314 — LVM ext, MDADM ext, Cryptsetup ext, Dmsetup ext, Multipath ext
 
 | Feature | Status | Notes |
