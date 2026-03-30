@@ -27313,3 +27313,50 @@
 (def (cmd-newrelic-entities app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "New Relic: listing entities")))
+
+;; Round 372 batch 1 — Splunk ext, Elasticsearch ext
+(def (cmd-splunk-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SPL query: "
+      (lambda (query)
+        (echo-message! echo (str "Splunk: searching: " query))))))
+
+(def (cmd-splunk-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Splunk: listing indexes")))
+
+(def (cmd-splunk-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Splunk: listing dashboards")))
+
+(def (cmd-splunk-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Splunk: listing saved alerts")))
+
+(def (cmd-elastic-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (query)
+        (echo-message! echo (str "Elasticsearch: searching: " query))))))
+
+(def (cmd-elastic-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: listing indices")))
+
+(def (cmd-elastic-mappings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: showing mappings")))
+
+(def (cmd-elastic-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: cluster health")))
+
+(def (cmd-sumo-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sumo query: "
+      (lambda (query)
+        (echo-message! echo (str "Sumo Logic: searching: " query))))))
+
+(def (cmd-sumo-collectors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sumo Logic: listing collectors")))

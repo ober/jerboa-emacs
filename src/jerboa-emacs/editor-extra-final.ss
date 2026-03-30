@@ -26540,3 +26540,46 @@
 (def (cmd-opsgenie-policies app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "OpsGenie: listing alert policies")))
+
+;; Round 372 batch 2 — Sumo Logic ext, Loki/Tempo ext
+(def (cmd-sumo-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sumo Logic: listing dashboards")))
+
+(def (cmd-sumo-monitors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sumo Logic: listing monitors")))
+
+(def (cmd-loki-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: listing recording rules")))
+
+(def (cmd-loki-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: showing ingestion stats")))
+
+(def (cmd-loki-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: managing log deletion")))
+
+(def (cmd-loki-ruler app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: managing ruler configuration")))
+
+(def (cmd-tempo-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: listing services")))
+
+(def (cmd-tempo-traces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Trace ID: "
+      (lambda (id)
+        (echo-message! echo (str "Tempo: fetching trace " id))))))
+
+(def (cmd-tempo-spansets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: querying spansets")))
+
+(def (cmd-tempo-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: showing configuration")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 372 — Splunk ext, Elasticsearch ext, Sumo Logic ext, Loki/Tempo ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Splunk SPL search | — | `splunk-search` | :orange_circle: Scaffolded |
+| Splunk list indexes | — | `splunk-index` | :orange_circle: Scaffolded |
+| Splunk dashboards | — | `splunk-dashboards` | :orange_circle: Scaffolded |
+| Splunk saved alerts | — | `splunk-alerts` | :orange_circle: Scaffolded |
+| Elasticsearch search | — | `elastic-search` | :orange_circle: Scaffolded |
+| Elasticsearch indices | — | `elastic-index` | :orange_circle: Scaffolded |
+| Elasticsearch mappings | — | `elastic-mappings` | :orange_circle: Scaffolded |
+| Elasticsearch cluster | — | `elastic-cluster` | :orange_circle: Scaffolded |
+| Sumo Logic search | — | `sumo-search` | :orange_circle: Scaffolded |
+| Sumo Logic collectors | — | `sumo-collectors` | :orange_circle: Scaffolded |
+| Sumo Logic dashboards | — | `sumo-dashboards` | :orange_circle: Scaffolded |
+| Sumo Logic monitors | — | `sumo-monitors` | :orange_circle: Scaffolded |
+| Loki recording rules | — | `loki-rules` | :orange_circle: Scaffolded |
+| Loki ingestion stats | — | `loki-stats` | :orange_circle: Scaffolded |
+| Loki log deletion | — | `loki-delete` | :orange_circle: Scaffolded |
+| Loki ruler config | — | `loki-ruler` | :orange_circle: Scaffolded |
+| Tempo list services | — | `tempo-services` | :orange_circle: Scaffolded |
+| Tempo fetch trace | — | `tempo-traces` | :orange_circle: Scaffolded |
+| Tempo query spansets | — | `tempo-spansets` | :orange_circle: Scaffolded |
+| Tempo configuration | — | `tempo-config` | :orange_circle: Scaffolded |
+
 ### Round 371 — Sentry ext, Datadog ext, NewRelic ext, PagerDuty/OpsGenie ext
 
 | Feature | Emacs | jemacs | Status |
