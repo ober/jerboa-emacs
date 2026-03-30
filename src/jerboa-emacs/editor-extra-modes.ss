@@ -24852,3 +24852,59 @@
       (lambda (attr)
         (echo-message! echo (str "Sysfs: searching for " attr))))))
 
+;;; Round 323 — Grub ext, Efibootmgr ext, Mokutil ext, Sbsign ext, Fwupd ext (batch 1)
+
+(def (cmd-grub-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target device: "
+      (lambda (dev)
+        (echo-message! echo (str "GRUB: installing to " dev))))))
+
+(def (cmd-grub-mkconfig app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GRUB: generating configuration")))
+
+(def (cmd-grub-editenv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Variable=value: "
+      (lambda (var)
+        (echo-message! echo (str "GRUB: setting env " var))))))
+
+(def (cmd-grub-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device/path: "
+      (lambda (dev)
+        (echo-message! echo (str "GRUB: probing " dev))))))
+
+(def (cmd-efibootmgr-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EFI: listing boot entries")))
+
+(def (cmd-efibootmgr-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Label and loader: "
+      (lambda (spec)
+        (echo-message! echo (str "EFI: creating entry " spec))))))
+
+(def (cmd-efibootmgr-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Boot number: "
+      (lambda (num)
+        (echo-message! echo (str "EFI: deleting entry " num))))))
+
+(def (cmd-efibootmgr-order app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Boot order: "
+      (lambda (order)
+        (echo-message! echo (str "EFI: setting boot order " order))))))
+
+(def (cmd-mokutil-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MOK: listing enrolled keys")))
+
+(def (cmd-mokutil-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key file: "
+      (lambda (key)
+        (echo-message! echo (str "MOK: importing " key))))))
+

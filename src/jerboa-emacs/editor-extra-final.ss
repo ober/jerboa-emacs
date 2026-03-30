@@ -24160,3 +24160,57 @@
 (def (cmd-udevadm-monitor app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Udevadm: monitoring events")))
+
+;;; Round 323 — Mokutil ext, Sbsign ext, Fwupd ext (batch 2)
+
+(def (cmd-mokutil-enroll app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key to enroll: "
+      (lambda (key)
+        (echo-message! echo (str "MOK: enrolling " key))))))
+
+(def (cmd-mokutil-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MOK: showing Secure Boot status")))
+
+(def (cmd-sbsign-sign app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary to sign: "
+      (lambda (bin)
+        (echo-message! echo (str "Sbsign: signing " bin))))))
+
+(def (cmd-sbsign-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary to verify: "
+      (lambda (bin)
+        (echo-message! echo (str "Sbsign: verifying " bin))))))
+
+(def (cmd-sbsign-hash app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Sbsign: hashing " bin))))))
+
+(def (cmd-sbsign-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary to remove signature: "
+      (lambda (bin)
+        (echo-message! echo (str "Sbsign: removing signature from " bin))))))
+
+(def (cmd-fwupd-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fwupd: listing devices")))
+
+(def (cmd-fwupd-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fwupd: updating firmware on " dev))))))
+
+(def (cmd-fwupd-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fwupd: showing update history")))
+
+(def (cmd-fwupd-security app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fwupd: showing security attributes")))

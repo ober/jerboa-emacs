@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 323 — Grub ext, Efibootmgr ext, Mokutil ext, Sbsign ext, Fwupd ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `grub-install` | :orange_circle: | Install GRUB bootloader |
+| `grub-mkconfig` | :orange_circle: | Generate GRUB config |
+| `grub-editenv` | :orange_circle: | Edit GRUB environment |
+| `grub-probe` | :orange_circle: | Probe device info |
+| `efibootmgr-list` | :orange_circle: | List EFI boot entries |
+| `efibootmgr-create` | :orange_circle: | Create EFI boot entry |
+| `efibootmgr-delete` | :orange_circle: | Delete EFI boot entry |
+| `efibootmgr-order` | :orange_circle: | Set EFI boot order |
+| `mokutil-list` | :orange_circle: | List MOK keys |
+| `mokutil-import` | :orange_circle: | Import MOK key |
+| `mokutil-enroll` | :orange_circle: | Enroll MOK key |
+| `mokutil-status` | :orange_circle: | Show Secure Boot status |
+| `sbsign-sign` | :orange_circle: | Sign binary |
+| `sbsign-verify` | :orange_circle: | Verify signature |
+| `sbsign-hash` | :orange_circle: | Hash binary |
+| `sbsign-remove` | :orange_circle: | Remove signature |
+| `fwupd-list` | :orange_circle: | List firmware devices |
+| `fwupd-update` | :orange_circle: | Update firmware |
+| `fwupd-history` | :orange_circle: | Show update history |
+| `fwupd-security` | :orange_circle: | Show security attributes |
+
 ### Round 322 — Sysctl ext, Procfs ext, Sysfs ext, Devtmpfs ext, Udevadm ext
 
 | Feature | Status | Notes |
