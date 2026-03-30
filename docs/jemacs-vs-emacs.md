@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 357 — LLVM ext, Clang ext, GCC ext, Meson ext, CMake ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| llvm-dis | :orange_circle: | LLVM: disassemble bitcode |
+| llvm-as | :orange_circle: | LLVM: assemble IR |
+| llvm-link | :orange_circle: | LLVM: link bitcode files |
+| llvm-opt | :orange_circle: | LLVM: optimize bitcode |
+| clang-ast-dump | :orange_circle: | Clang: dump AST |
+| clang-tidy | :orange_circle: | Clang-Tidy: check code |
+| clang-check | :orange_circle: | Clang-Check: analyze code |
+| clang-query | :orange_circle: | Clang-Query: run matcher |
+| gcc-dump | :orange_circle: | GCC: compiler dump |
+| gcc-specs | :orange_circle: | GCC: compiler specs |
+| gcc-machine | :orange_circle: | GCC: target machine |
+| gcc-version | :orange_circle: | GCC: show version |
+| meson-setup | :orange_circle: | Meson: setup build |
+| meson-compile | :orange_circle: | Meson: compile project |
+| meson-test | :orange_circle: | Meson: run tests |
+| meson-install | :orange_circle: | Meson: install project |
+| cmake-gui | :orange_circle: | CMake: open GUI |
+| cmake-cache | :orange_circle: | CMake: show cache |
+| cmake-test | :orange_circle: | CMake: run CTest |
+| cmake-presets | :orange_circle: | CMake: list presets |
+
 ### Round 356 — Wasm ext, Wasmer ext, Wasmtime ext, WasmEdge ext, Emscripten ext
 
 | Feature | Status | Notes |

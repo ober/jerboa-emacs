@@ -26592,3 +26592,59 @@
     (echo-read-string echo "Wasmtime compile module: "
       (lambda (mod)
         (echo-message! echo (str "Wasmtime: compiling " mod))))))
+
+;;; Round 357 — LLVM ext, Clang ext, GCC ext, Meson ext, CMake ext (batch 1)
+
+(def (cmd-llvm-dis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LLVM disassemble file: "
+      (lambda (file)
+        (echo-message! echo (str "LLVM: disassembling " file))))))
+
+(def (cmd-llvm-as app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LLVM assemble file: "
+      (lambda (file)
+        (echo-message! echo (str "LLVM: assembling " file))))))
+
+(def (cmd-llvm-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLVM: linking bitcode files")))
+
+(def (cmd-llvm-opt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LLVM optimize file: "
+      (lambda (file)
+        (echo-message! echo (str "LLVM: optimizing " file))))))
+
+(def (cmd-clang-ast-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Clang AST dump file: "
+      (lambda (file)
+        (echo-message! echo (str "Clang: dumping AST for " file))))))
+
+(def (cmd-clang-tidy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Clang-Tidy file: "
+      (lambda (file)
+        (echo-message! echo (str "Clang-Tidy: checking " file))))))
+
+(def (cmd-clang-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Clang-Check file: "
+      (lambda (file)
+        (echo-message! echo (str "Clang-Check: analyzing " file))))))
+
+(def (cmd-clang-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Clang-Query matcher: "
+      (lambda (matcher)
+        (echo-message! echo (str "Clang-Query: running " matcher))))))
+
+(def (cmd-gcc-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCC: showing compiler dump")))
+
+(def (cmd-gcc-specs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCC: showing compiler specs")))

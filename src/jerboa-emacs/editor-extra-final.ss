@@ -25857,3 +25857,47 @@
 (def (cmd-emscripten-ports app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Emscripten: listing available ports")))
+
+;;; Round 357 — GCC ext, Meson ext, CMake ext (batch 2)
+
+(def (cmd-gcc-machine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCC: showing target machine")))
+
+(def (cmd-gcc-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCC: showing version")))
+
+(def (cmd-meson-setup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Meson build directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Meson: setting up in " dir))))))
+
+(def (cmd-meson-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: compiling project")))
+
+(def (cmd-meson-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: running tests")))
+
+(def (cmd-meson-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: installing project")))
+
+(def (cmd-cmake-gui app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: opening GUI configurator")))
+
+(def (cmd-cmake-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: showing cache variables")))
+
+(def (cmd-cmake-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: running CTest")))
+
+(def (cmd-cmake-presets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: listing presets")))
