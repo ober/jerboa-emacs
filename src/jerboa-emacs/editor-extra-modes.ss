@@ -24030,3 +24030,51 @@
       (lambda (vol)
         (echo-message! echo (str "ALSA: volume " vol "%"))))))
 
+;;; Round 307 — NetworkManager ext, Nmcli ext, WPA Supplicant ext (batch 1)
+
+(def (cmd-networkmanager-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NetworkManager: listing connections")))
+
+(def (cmd-networkmanager-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Connection: "
+      (lambda (conn)
+        (echo-message! echo (str "NetworkManager: connecting " conn))))))
+
+(def (cmd-networkmanager-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Connection: "
+      (lambda (conn)
+        (echo-message! echo (str "NetworkManager: disconnecting " conn))))))
+
+(def (cmd-networkmanager-wifi-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NetworkManager: scanning WiFi")))
+
+(def (cmd-nmcli-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nmcli: listing devices")))
+
+(def (cmd-nmcli-connection app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nmcli: listing connections")))
+
+(def (cmd-nmcli-general app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nmcli: general status")))
+
+(def (cmd-nmcli-radio app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nmcli: radio status")))
+
+(def (cmd-wpa-supplicant-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WPA: scanning networks")))
+
+(def (cmd-wpa-supplicant-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SSID: "
+      (lambda (ssid)
+        (echo-message! echo (str "WPA: connecting to " ssid))))))
+

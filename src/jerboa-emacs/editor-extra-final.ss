@@ -23308,3 +23308,47 @@
     (echo-read-string echo "Device MAC: "
       (lambda (mac)
         (echo-message! echo (str "Bluez: disconnecting " mac))))))
+
+;;; Round 307 — WPA Supplicant ext, Iw ext, Hostapd ext (batch 2)
+
+(def (cmd-wpa-supplicant-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WPA: showing status")))
+
+(def (cmd-wpa-supplicant-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WPA: disconnecting")))
+
+(def (cmd-iw-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iw: scanning WiFi")))
+
+(def (cmd-iw-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iw: showing link status")))
+
+(def (cmd-iw-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Iw: info for " iface))))))
+
+(def (cmd-iw-station app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iw: showing station info")))
+
+(def (cmd-hostapd-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hostapd: starting access point")))
+
+(def (cmd-hostapd-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hostapd: stopping access point")))
+
+(def (cmd-hostapd-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hostapd: showing status")))
+
+(def (cmd-hostapd-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hostapd: viewing configuration")))

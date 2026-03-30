@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 307 — NetworkManager ext, Nmcli ext, WPA Supplicant ext, Iw ext, Hostapd ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| networkmanager-list | :orange_circle: | List NM connections |
+| networkmanager-connect | :orange_circle: | Connect NM |
+| networkmanager-disconnect | :orange_circle: | Disconnect NM |
+| networkmanager-wifi-scan | :orange_circle: | Scan WiFi |
+| nmcli-device | :orange_circle: | List nmcli devices |
+| nmcli-connection | :orange_circle: | List nmcli connections |
+| nmcli-general | :orange_circle: | Nmcli general status |
+| nmcli-radio | :orange_circle: | Nmcli radio status |
+| wpa-supplicant-scan | :orange_circle: | WPA scan networks |
+| wpa-supplicant-connect | :orange_circle: | WPA connect |
+| wpa-supplicant-status | :orange_circle: | WPA status |
+| wpa-supplicant-disconnect | :orange_circle: | WPA disconnect |
+| iw-scan | :orange_circle: | Iw WiFi scan |
+| iw-link | :orange_circle: | Iw link status |
+| iw-info | :orange_circle: | Iw interface info |
+| iw-station | :orange_circle: | Iw station info |
+| hostapd-start | :orange_circle: | Start hostapd |
+| hostapd-stop | :orange_circle: | Stop hostapd |
+| hostapd-status | :orange_circle: | Show hostapd status |
+| hostapd-config | :orange_circle: | View hostapd config |
+
 ### Round 306 — PulseAudio ext, PipeWire ext, ALSA ext, JACK ext, Bluez ext
 
 | Command | Status | Description |
