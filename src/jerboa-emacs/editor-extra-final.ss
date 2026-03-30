@@ -31734,3 +31734,291 @@
 (def (cmd-cdktf-watch app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CDKTF: watch")))
+
+;; ── Round 482 — perf ext, bpftrace ext ──
+
+(def (cmd-perf-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "perf: record")))
+
+(def (cmd-perf-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "perf: report")))
+
+(def (cmd-perf-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "perf: statistics")))
+
+(def (cmd-perf-top app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "perf: top")))
+
+(def (cmd-perf-annotate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "perf: annotate")))
+
+(def (cmd-bpftrace-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "bpftrace: probe")))
+
+(def (cmd-bpftrace-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "bpftrace: list probes")))
+
+(def (cmd-bpftrace-map app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "bpftrace: map")))
+
+(def (cmd-bpftrace-hist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "bpftrace: histogram")))
+
+(def (cmd-bpftrace-stack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "bpftrace: stack trace")))
+
+;; ── Round 483 — DTrace ext, SystemTap ext, crash ext, kdump ext ──
+
+(def (cmd-dtrace-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DTrace: probe")))
+
+(def (cmd-dtrace-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DTrace: list probes")))
+
+(def (cmd-dtrace-aggregate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DTrace: aggregate")))
+
+(def (cmd-dtrace-script app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DTrace: script")))
+
+(def (cmd-dtrace-provider app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DTrace: provider")))
+
+(def (cmd-systemtap-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemTap: probe")))
+
+(def (cmd-systemtap-script app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemTap: script")))
+
+(def (cmd-systemtap-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemTap: list probes")))
+
+(def (cmd-systemtap-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemTap: trace")))
+
+(def (cmd-systemtap-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SystemTap: statistics")))
+
+(def (cmd-crash-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crash: kernel log")))
+
+(def (cmd-crash-bt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crash: backtrace")))
+
+(def (cmd-crash-ps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crash: process list")))
+
+(def (cmd-crash-files app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crash: open files")))
+
+(def (cmd-crash-vm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "crash: virtual memory")))
+
+(def (cmd-kdump-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "kdump: configuration")))
+
+(def (cmd-kdump-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "kdump: status")))
+
+(def (cmd-kdump-propagate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "kdump: propagate")))
+
+(def (cmd-kdump-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "kdump: rebuild initramfs")))
+
+(def (cmd-kdump-estimate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "kdump: estimate memory")))
+
+;; ── Round 484 — cgroups ext, namespaces ext, OverlayFS ext, tmpfs ext ──
+
+(def (cmd-cgroup-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cgroups: list")))
+
+(def (cmd-cgroup-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cgroups: create")))
+
+(def (cmd-cgroup-controllers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cgroups: controllers")))
+
+(def (cmd-cgroup-freeze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cgroups: freeze")))
+
+(def (cmd-cgroup-memory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cgroups: memory limit")))
+
+(def (cmd-namespace-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "namespaces: list")))
+
+(def (cmd-namespace-enter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "namespaces: enter")))
+
+(def (cmd-namespace-unshare app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "namespaces: unshare")))
+
+(def (cmd-namespace-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "namespaces: PID namespace")))
+
+(def (cmd-namespace-net app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "namespaces: network namespace")))
+
+(def (cmd-overlayfs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OverlayFS: mount")))
+
+(def (cmd-overlayfs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OverlayFS: info")))
+
+(def (cmd-overlayfs-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OverlayFS: merge layers")))
+
+(def (cmd-overlayfs-redirect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OverlayFS: redirect dir")))
+
+(def (cmd-overlayfs-metacopy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OverlayFS: metacopy")))
+
+(def (cmd-tmpfs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tmpfs: mount")))
+
+(def (cmd-tmpfs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tmpfs: info")))
+
+(def (cmd-tmpfs-size app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tmpfs: size")))
+
+(def (cmd-tmpfs-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tmpfs: mode")))
+
+(def (cmd-tmpfs-remount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tmpfs: remount")))
+
+;; ── Round 485 — inotify ext, fanotify ext, dbus-monitor ext, udev ext ──
+
+(def (cmd-inotify-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "inotify: watch")))
+
+(def (cmd-inotify-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "inotify: events")))
+
+(def (cmd-inotify-recursive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "inotify: recursive watch")))
+
+(def (cmd-inotify-exclude app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "inotify: exclude pattern")))
+
+(def (cmd-inotify-daemon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "inotify: daemon mode")))
+
+(def (cmd-fanotify-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fanotify: watch")))
+
+(def (cmd-fanotify-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fanotify: events")))
+
+(def (cmd-fanotify-mark app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fanotify: mark")))
+
+(def (cmd-fanotify-class app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fanotify: class")))
+
+(def (cmd-fanotify-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fanotify: init")))
+
+(def (cmd-dbus-monitor-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D-Bus: monitor session")))
+
+(def (cmd-dbus-monitor-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D-Bus: monitor system")))
+
+(def (cmd-dbus-monitor-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D-Bus: monitor filter")))
+
+(def (cmd-dbus-monitor-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D-Bus: monitor profile")))
+
+(def (cmd-dbus-monitor-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "D-Bus: monitor stats")))
+
+(def (cmd-udev-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "udev: device info")))
+
+(def (cmd-udev-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "udev: monitor events")))
+
+(def (cmd-udev-trigger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "udev: trigger events")))
+
+(def (cmd-udev-settle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "udev: settle")))
+
+(def (cmd-udev-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "udev: test rules")))

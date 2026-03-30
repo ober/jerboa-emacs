@@ -31282,3 +31282,129 @@
 (def (cmd-chef-diff app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Chef: diff")))
+
+;; ── Round 481 — GDB ext, LLDB ext, rr ext, Valgrind ext ──
+
+(def (cmd-gdb-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: run program")))
+
+(def (cmd-gdb-break app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: breakpoint")))
+
+(def (cmd-gdb-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: watchpoint")))
+
+(def (cmd-gdb-backtrace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: backtrace")))
+
+(def (cmd-gdb-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GDB: info")))
+
+(def (cmd-lldb-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLDB: run program")))
+
+(def (cmd-lldb-break app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLDB: breakpoint")))
+
+(def (cmd-lldb-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLDB: watchpoint")))
+
+(def (cmd-lldb-backtrace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLDB: backtrace")))
+
+(def (cmd-lldb-frame app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LLDB: frame info")))
+
+;; ── Round 482 — strace ext, ltrace ext, perf ext, bpftrace ext ──
+
+(def (cmd-rr-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "rr: record execution")))
+
+(def (cmd-rr-replay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "rr: replay execution")))
+
+(def (cmd-rr-when app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "rr: when condition")))
+
+(def (cmd-rr-checkpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "rr: checkpoint")))
+
+(def (cmd-rr-sources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "rr: source files")))
+
+(def (cmd-valgrind-memcheck app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valgrind: memcheck")))
+
+(def (cmd-valgrind-callgrind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valgrind: callgrind")))
+
+(def (cmd-valgrind-cachegrind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valgrind: cachegrind")))
+
+(def (cmd-valgrind-massif app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valgrind: massif")))
+
+(def (cmd-valgrind-helgrind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Valgrind: helgrind")))
+
+;; ── Round 483 — DTrace ext, SystemTap ext, crash ext, kdump ext ──
+
+(def (cmd-strace-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "strace: trace syscalls")))
+
+(def (cmd-strace-count app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "strace: count calls")))
+
+(def (cmd-strace-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "strace: summary")))
+
+(def (cmd-strace-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "strace: filter syscalls")))
+
+(def (cmd-strace-inject app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "strace: inject faults")))
+
+(def (cmd-ltrace-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ltrace: trace library calls")))
+
+(def (cmd-ltrace-library app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ltrace: library filter")))
+
+(def (cmd-ltrace-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ltrace: filter calls")))
+
+(def (cmd-ltrace-count app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ltrace: count calls")))
+
+(def (cmd-ltrace-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ltrace: summary")))

@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 485 — inotify ext, fanotify ext, dbus-monitor ext, udev ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| inotify watch | — | `inotify-watch` | :orange_circle: Scaffolded |
+| inotify events | — | `inotify-events` | :orange_circle: Scaffolded |
+| inotify recursive | — | `inotify-recursive` | :orange_circle: Scaffolded |
+| inotify exclude | — | `inotify-exclude` | :orange_circle: Scaffolded |
+| inotify daemon | — | `inotify-daemon` | :orange_circle: Scaffolded |
+| fanotify watch | — | `fanotify-watch` | :orange_circle: Scaffolded |
+| fanotify events | — | `fanotify-events` | :orange_circle: Scaffolded |
+| fanotify mark | — | `fanotify-mark` | :orange_circle: Scaffolded |
+| fanotify class | — | `fanotify-class` | :orange_circle: Scaffolded |
+| fanotify init | — | `fanotify-init` | :orange_circle: Scaffolded |
+| D-Bus monitor session | — | `dbus-monitor-session` | :orange_circle: Scaffolded |
+| D-Bus monitor system | — | `dbus-monitor-system` | :orange_circle: Scaffolded |
+| D-Bus monitor filter | — | `dbus-monitor-filter` | :orange_circle: Scaffolded |
+| D-Bus monitor profile | — | `dbus-monitor-profile` | :orange_circle: Scaffolded |
+| D-Bus monitor stats | — | `dbus-monitor-stats` | :orange_circle: Scaffolded |
+| udev info | — | `udev-info` | :orange_circle: Scaffolded |
+| udev monitor | — | `udev-monitor` | :orange_circle: Scaffolded |
+| udev trigger | — | `udev-trigger` | :orange_circle: Scaffolded |
+| udev settle | — | `udev-settle` | :orange_circle: Scaffolded |
+| udev test | — | `udev-test` | :orange_circle: Scaffolded |
+
+### Round 484 — cgroups ext, namespaces ext, OverlayFS ext, tmpfs ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| cgroups list | — | `cgroup-list` | :orange_circle: Scaffolded |
+| cgroups create | — | `cgroup-create` | :orange_circle: Scaffolded |
+| cgroups controllers | — | `cgroup-controllers` | :orange_circle: Scaffolded |
+| cgroups freeze | — | `cgroup-freeze` | :orange_circle: Scaffolded |
+| cgroups memory | — | `cgroup-memory` | :orange_circle: Scaffolded |
+| namespaces list | — | `namespace-list` | :orange_circle: Scaffolded |
+| namespaces enter | — | `namespace-enter` | :orange_circle: Scaffolded |
+| namespaces unshare | — | `namespace-unshare` | :orange_circle: Scaffolded |
+| namespaces PID | — | `namespace-pid` | :orange_circle: Scaffolded |
+| namespaces network | — | `namespace-net` | :orange_circle: Scaffolded |
+| OverlayFS mount | — | `overlayfs-mount` | :orange_circle: Scaffolded |
+| OverlayFS info | — | `overlayfs-info` | :orange_circle: Scaffolded |
+| OverlayFS merge | — | `overlayfs-merge` | :orange_circle: Scaffolded |
+| OverlayFS redirect | — | `overlayfs-redirect` | :orange_circle: Scaffolded |
+| OverlayFS metacopy | — | `overlayfs-metacopy` | :orange_circle: Scaffolded |
+| tmpfs mount | — | `tmpfs-mount` | :orange_circle: Scaffolded |
+| tmpfs info | — | `tmpfs-info` | :orange_circle: Scaffolded |
+| tmpfs size | — | `tmpfs-size` | :orange_circle: Scaffolded |
+| tmpfs mode | — | `tmpfs-mode` | :orange_circle: Scaffolded |
+| tmpfs remount | — | `tmpfs-remount` | :orange_circle: Scaffolded |
+
+### Round 483 — DTrace ext, SystemTap ext, crash ext, kdump ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| DTrace probe | — | `dtrace-probe` | :orange_circle: Scaffolded |
+| DTrace list | — | `dtrace-list` | :orange_circle: Scaffolded |
+| DTrace aggregate | — | `dtrace-aggregate` | :orange_circle: Scaffolded |
+| DTrace script | — | `dtrace-script` | :orange_circle: Scaffolded |
+| DTrace provider | — | `dtrace-provider` | :orange_circle: Scaffolded |
+| SystemTap probe | — | `systemtap-probe` | :orange_circle: Scaffolded |
+| SystemTap script | — | `systemtap-script` | :orange_circle: Scaffolded |
+| SystemTap list | — | `systemtap-list` | :orange_circle: Scaffolded |
+| SystemTap trace | — | `systemtap-trace` | :orange_circle: Scaffolded |
+| SystemTap stat | — | `systemtap-stat` | :orange_circle: Scaffolded |
+| crash log | — | `crash-log` | :orange_circle: Scaffolded |
+| crash backtrace | — | `crash-bt` | :orange_circle: Scaffolded |
+| crash processes | — | `crash-ps` | :orange_circle: Scaffolded |
+| crash files | — | `crash-files` | :orange_circle: Scaffolded |
+| crash VM | — | `crash-vm` | :orange_circle: Scaffolded |
+| kdump config | — | `kdump-config` | :orange_circle: Scaffolded |
+| kdump status | — | `kdump-status` | :orange_circle: Scaffolded |
+| kdump propagate | — | `kdump-propagate` | :orange_circle: Scaffolded |
+| kdump rebuild | — | `kdump-rebuild` | :orange_circle: Scaffolded |
+| kdump estimate | — | `kdump-estimate` | :orange_circle: Scaffolded |
+
+### Round 482 — strace ext, ltrace ext, perf ext, bpftrace ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| strace trace | — | `strace-trace` | :orange_circle: Scaffolded |
+| strace count | — | `strace-count` | :orange_circle: Scaffolded |
+| strace summary | — | `strace-summary` | :orange_circle: Scaffolded |
+| strace filter | — | `strace-filter` | :orange_circle: Scaffolded |
+| strace inject | — | `strace-inject` | :orange_circle: Scaffolded |
+| ltrace trace | — | `ltrace-trace` | :orange_circle: Scaffolded |
+| ltrace library | — | `ltrace-library` | :orange_circle: Scaffolded |
+| ltrace filter | — | `ltrace-filter` | :orange_circle: Scaffolded |
+| ltrace count | — | `ltrace-count` | :orange_circle: Scaffolded |
+| ltrace summary | — | `ltrace-summary` | :orange_circle: Scaffolded |
+| perf record | — | `perf-record` | :orange_circle: Scaffolded |
+| perf report | — | `perf-report` | :orange_circle: Scaffolded |
+| perf stat | — | `perf-stat` | :orange_circle: Scaffolded |
+| perf top | — | `perf-top` | :orange_circle: Scaffolded |
+| perf annotate | — | `perf-annotate` | :orange_circle: Scaffolded |
+| bpftrace probe | — | `bpftrace-probe` | :orange_circle: Scaffolded |
+| bpftrace list | — | `bpftrace-list` | :orange_circle: Scaffolded |
+| bpftrace map | — | `bpftrace-map` | :orange_circle: Scaffolded |
+| bpftrace histogram | — | `bpftrace-hist` | :orange_circle: Scaffolded |
+| bpftrace stack | — | `bpftrace-stack` | :orange_circle: Scaffolded |
+
+### Round 481 — GDB ext, LLDB ext, rr ext, Valgrind ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| GDB run | `gdb` | `gdb-run` | :orange_circle: Scaffolded |
+| GDB breakpoint | `gdb` | `gdb-break` | :orange_circle: Scaffolded |
+| GDB watchpoint | `gdb` | `gdb-watch` | :orange_circle: Scaffolded |
+| GDB backtrace | `gdb` | `gdb-backtrace` | :orange_circle: Scaffolded |
+| GDB info | `gdb` | `gdb-info` | :orange_circle: Scaffolded |
+| LLDB run | — | `lldb-run` | :orange_circle: Scaffolded |
+| LLDB breakpoint | — | `lldb-break` | :orange_circle: Scaffolded |
+| LLDB watchpoint | — | `lldb-watch` | :orange_circle: Scaffolded |
+| LLDB backtrace | — | `lldb-backtrace` | :orange_circle: Scaffolded |
+| LLDB frame | — | `lldb-frame` | :orange_circle: Scaffolded |
+| rr record | — | `rr-record` | :orange_circle: Scaffolded |
+| rr replay | — | `rr-replay` | :orange_circle: Scaffolded |
+| rr when | — | `rr-when` | :orange_circle: Scaffolded |
+| rr checkpoint | — | `rr-checkpoint` | :orange_circle: Scaffolded |
+| rr sources | — | `rr-sources` | :orange_circle: Scaffolded |
+| Valgrind memcheck | — | `valgrind-memcheck` | :orange_circle: Scaffolded |
+| Valgrind callgrind | — | `valgrind-callgrind` | :orange_circle: Scaffolded |
+| Valgrind cachegrind | — | `valgrind-cachegrind` | :orange_circle: Scaffolded |
+| Valgrind massif | — | `valgrind-massif` | :orange_circle: Scaffolded |
+| Valgrind helgrind | — | `valgrind-helgrind` | :orange_circle: Scaffolded |
+
 ### Round 480 — Terragrunt ext2, Terramate ext, OpenTofu ext, cdktf ext
 
 | Feature | Emacs | jemacs | Status |
