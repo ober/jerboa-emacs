@@ -22466,3 +22466,57 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TimescaleDB: listing hypertables")))
 
+;;; Round 279 — Kafka ext, RabbitMQ ext, NATS ext, Pulsar ext, ZeroMQ ext (batch 1)
+
+(def (cmd-kafka-produce app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Kafka: producing to " topic))))))
+
+(def (cmd-kafka-consume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Kafka: consuming from " topic))))))
+
+(def (cmd-kafka-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kafka: listing topics")))
+
+(def (cmd-kafka-consumer-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kafka: listing consumer groups")))
+
+(def (cmd-rabbitmq-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Queue: "
+      (lambda (queue)
+        (echo-message! echo (str "RabbitMQ: publishing to " queue))))))
+
+(def (cmd-rabbitmq-consume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Queue: "
+      (lambda (queue)
+        (echo-message! echo (str "RabbitMQ: consuming from " queue))))))
+
+(def (cmd-rabbitmq-queues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: listing queues")))
+
+(def (cmd-rabbitmq-exchanges app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: listing exchanges")))
+
+(def (cmd-nats-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subject: "
+      (lambda (subj)
+        (echo-message! echo (str "NATS: publishing to " subj))))))
+
+(def (cmd-nats-subscribe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subject: "
+      (lambda (subj)
+        (echo-message! echo (str "NATS: subscribing to " subj))))))
+

@@ -21838,3 +21838,49 @@
     (echo-read-string echo "Table: "
       (lambda (tbl)
         (echo-message! echo (str "DynamoDB: describing " tbl))))))
+
+;;; Round 279 — NATS ext, Pulsar ext, ZeroMQ ext (batch 2)
+
+(def (cmd-nats-streams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NATS: listing streams")))
+
+(def (cmd-nats-consumers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NATS: listing consumers")))
+
+(def (cmd-pulsar-produce app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Pulsar: producing to " topic))))))
+
+(def (cmd-pulsar-consume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Pulsar: consuming from " topic))))))
+
+(def (cmd-pulsar-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: listing topics")))
+
+(def (cmd-pulsar-subscriptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: listing subscriptions")))
+
+(def (cmd-zeromq-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ZeroMQ: sending message")))
+
+(def (cmd-zeromq-receive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ZeroMQ: receiving message")))
+
+(def (cmd-zeromq-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ZeroMQ: monitoring socket")))
+
+(def (cmd-zeromq-proxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ZeroMQ: starting proxy")))

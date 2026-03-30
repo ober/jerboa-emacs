@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 279 — Kafka ext, RabbitMQ ext, NATS ext, Pulsar ext, ZeroMQ ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| kafka-produce | :orange_circle: | Produce to Kafka topic |
+| kafka-consume | :orange_circle: | Consume from Kafka topic |
+| kafka-topics | :orange_circle: | List Kafka topics |
+| kafka-consumer-groups | :orange_circle: | List Kafka consumer groups |
+| rabbitmq-publish | :orange_circle: | Publish to RabbitMQ queue |
+| rabbitmq-consume | :orange_circle: | Consume from RabbitMQ queue |
+| rabbitmq-queues | :orange_circle: | List RabbitMQ queues |
+| rabbitmq-exchanges | :orange_circle: | List RabbitMQ exchanges |
+| nats-publish | :orange_circle: | Publish to NATS subject |
+| nats-subscribe | :orange_circle: | Subscribe to NATS subject |
+| nats-streams | :orange_circle: | List NATS streams |
+| nats-consumers | :orange_circle: | List NATS consumers |
+| pulsar-produce | :orange_circle: | Produce to Pulsar topic |
+| pulsar-consume | :orange_circle: | Consume from Pulsar topic |
+| pulsar-topics | :orange_circle: | List Pulsar topics |
+| pulsar-subscriptions | :orange_circle: | List Pulsar subscriptions |
+| zeromq-send | :orange_circle: | Send ZeroMQ message |
+| zeromq-receive | :orange_circle: | Receive ZeroMQ message |
+| zeromq-monitor | :orange_circle: | Monitor ZeroMQ socket |
+| zeromq-proxy | :orange_circle: | Start ZeroMQ proxy |
+
 ### Round 278 — Neo4j ext, InfluxDB ext, TimescaleDB ext, CockroachDB ext, DynamoDB ext
 
 | Command | Status | Description |
