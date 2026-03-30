@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 394 — Contentful ext, Strapi ext, Sanity ext, Directus/Payload ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Contentful entries | — | `contentful-entries` | :orange_circle: Scaffolded |
+| Contentful models | — | `contentful-models` | :orange_circle: Scaffolded |
+| Contentful assets | — | `contentful-assets` | :orange_circle: Scaffolded |
+| Contentful locales | — | `contentful-locales` | :orange_circle: Scaffolded |
+| Strapi content types | — | `strapi-types` | :orange_circle: Scaffolded |
+| Strapi entries | — | `strapi-entries` | :orange_circle: Scaffolded |
+| Strapi media | — | `strapi-media` | :orange_circle: Scaffolded |
+| Strapi users | — | `strapi-users` | :orange_circle: Scaffolded |
+| Sanity documents | — | `sanity-documents` | :orange_circle: Scaffolded |
+| Sanity datasets | — | `sanity-datasets` | :orange_circle: Scaffolded |
+| Sanity schemas | — | `sanity-schemas` | :orange_circle: Scaffolded |
+| Sanity deploy | — | `sanity-deploy` | :orange_circle: Scaffolded |
+| Directus items | — | `directus-items` | :orange_circle: Scaffolded |
+| Directus collections | — | `directus-collections` | :orange_circle: Scaffolded |
+| Directus users | — | `directus-users` | :orange_circle: Scaffolded |
+| Directus roles | — | `directus-roles` | :orange_circle: Scaffolded |
+| Payload collections | — | `payload-collections` | :orange_circle: Scaffolded |
+| Payload documents | — | `payload-documents` | :orange_circle: Scaffolded |
+| Payload media | — | `payload-media` | :orange_circle: Scaffolded |
+| Payload users | — | `payload-users` | :orange_circle: Scaffolded |
+
 ### Round 393 — Shopify ext, WooCommerce ext, Magento ext, BigCommerce/Medusa ext
 
 | Feature | Emacs | jemacs | Status |

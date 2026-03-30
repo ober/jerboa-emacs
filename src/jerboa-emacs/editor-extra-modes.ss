@@ -28249,3 +28249,44 @@
 (def (cmd-magento-orders app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Magento: listing orders")))
+
+;; Round 394 batch 1 — Contentful ext, Strapi ext
+(def (cmd-contentful-entries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Contentful: listing entries")))
+
+(def (cmd-contentful-models app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Contentful: listing content models")))
+
+(def (cmd-contentful-assets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Contentful: listing assets")))
+
+(def (cmd-contentful-locales app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Contentful: listing locales")))
+
+(def (cmd-strapi-types app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Strapi: listing content types")))
+
+(def (cmd-strapi-entries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Strapi: listing entries")))
+
+(def (cmd-strapi-media app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Strapi: listing media")))
+
+(def (cmd-strapi-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Strapi: listing users")))
+
+(def (cmd-sanity-documents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sanity: listing documents")))
+
+(def (cmd-sanity-datasets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sanity: listing datasets")))

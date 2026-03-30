@@ -27462,3 +27462,44 @@
 (def (cmd-medusa-regions app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Medusa: listing regions")))
+
+;; Round 394 batch 2 — Sanity ext, Directus/Payload ext
+(def (cmd-sanity-schemas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sanity: listing schemas")))
+
+(def (cmd-sanity-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sanity: deploying studio")))
+
+(def (cmd-directus-items app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Directus: listing items")))
+
+(def (cmd-directus-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Directus: listing collections")))
+
+(def (cmd-directus-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Directus: listing users")))
+
+(def (cmd-directus-roles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Directus: listing roles")))
+
+(def (cmd-payload-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Payload: listing collections")))
+
+(def (cmd-payload-documents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Payload: listing documents")))
+
+(def (cmd-payload-media app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Payload: listing media")))
+
+(def (cmd-payload-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Payload: listing users")))
