@@ -31408,3 +31408,129 @@
 (def (cmd-ltrace-summary app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "ltrace: summary")))
+
+;; ── Round 486 — PAM ext, LDAP ext, Kerberos ext2, RADIUS ext2 ──
+
+(def (cmd-pam-modules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: list modules")))
+
+(def (cmd-pam-limits app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: limits")))
+
+(def (cmd-pam-access app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: access rules")))
+
+(def (cmd-pam-faillock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: faillock")))
+
+(def (cmd-pam-pwquality app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PAM: password quality")))
+
+(def (cmd-ldap-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: search")))
+
+(def (cmd-ldap-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: add entry")))
+
+(def (cmd-ldap-modify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: modify entry")))
+
+(def (cmd-ldap-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: delete entry")))
+
+(def (cmd-ldap-compare app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: compare")))
+
+;; ── Round 487 — FreeIPA ext, 389DS ext, OpenLDAP ext, Samba ext ──
+
+(def (cmd-kerberos-kinit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kerberos: kinit")))
+
+(def (cmd-kerberos-klist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kerberos: klist")))
+
+(def (cmd-kerberos-kdestroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kerberos: kdestroy")))
+
+(def (cmd-kerberos-kpasswd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kerberos: kpasswd")))
+
+(def (cmd-kerberos-ktutil app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kerberos: ktutil")))
+
+(def (cmd-radius-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: test auth")))
+
+(def (cmd-radius-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: debug mode")))
+
+(def (cmd-radius-clients app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: clients")))
+
+(def (cmd-radius-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: users")))
+
+(def (cmd-radius-proxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RADIUS: proxy")))
+
+;; ── Round 488 — NFS ext, CIFS ext, GlusterFS ext, CephFS ext ──
+
+(def (cmd-freeipa-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeIPA: user management")))
+
+(def (cmd-freeipa-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeIPA: group management")))
+
+(def (cmd-freeipa-host app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeIPA: host management")))
+
+(def (cmd-freeipa-cert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeIPA: certificates")))
+
+(def (cmd-freeipa-dns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FreeIPA: DNS")))
+
+(def (cmd-ds389-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "389DS: status")))
+
+(def (cmd-ds389-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "389DS: backup")))
+
+(def (cmd-ds389-replication app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "389DS: replication")))
+
+(def (cmd-ds389-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "389DS: schema")))
+
+(def (cmd-ds389-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "389DS: monitor")))

@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 490 — Rook ext, Longhorn ext, OpenEBS ext, Portworx ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `rook-ceph` | :orange_circle: Scaffolded | Rook: manage Ceph cluster |
+| `rook-nfs` | :orange_circle: Scaffolded | Rook: NFS provisioner |
+| `rook-operator` | :orange_circle: Scaffolded | Rook: operator status |
+| `rook-toolbox` | :orange_circle: Scaffolded | Rook: toolbox access |
+| `rook-dashboard` | :orange_circle: Scaffolded | Rook: dashboard |
+| `longhorn-volume` | :orange_circle: Scaffolded | Longhorn: manage volumes |
+| `longhorn-backup` | :orange_circle: Scaffolded | Longhorn: backup management |
+| `longhorn-snapshot` | :orange_circle: Scaffolded | Longhorn: snapshot management |
+| `longhorn-engine` | :orange_circle: Scaffolded | Longhorn: engine status |
+| `longhorn-replica` | :orange_circle: Scaffolded | Longhorn: replica management |
+| `openebs-cstor` | :orange_circle: Scaffolded | OpenEBS: cStor pool |
+| `openebs-jiva` | :orange_circle: Scaffolded | OpenEBS: Jiva volumes |
+| `openebs-lvm` | :orange_circle: Scaffolded | OpenEBS: LVM local PV |
+| `openebs-zfs` | :orange_circle: Scaffolded | OpenEBS: ZFS local PV |
+| `openebs-mayastor` | :orange_circle: Scaffolded | OpenEBS: Mayastor |
+| `portworx-volume` | :orange_circle: Scaffolded | Portworx: volume management |
+| `portworx-snapshot` | :orange_circle: Scaffolded | Portworx: snapshots |
+| `portworx-pool` | :orange_circle: Scaffolded | Portworx: storage pool |
+| `portworx-cluster` | :orange_circle: Scaffolded | Portworx: cluster status |
+| `portworx-auth` | :orange_circle: Scaffolded | Portworx: authentication |
+
+### Round 489 — MinIO ext2, SeaweedFS ext, JuiceFS ext, LakeFS ext2
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `minio-bucket` | :orange_circle: Scaffolded | MinIO: bucket management |
+| `minio-policy` | :orange_circle: Scaffolded | MinIO: policy management |
+| `minio-user` | :orange_circle: Scaffolded | MinIO: user management |
+| `minio-replicate` | :orange_circle: Scaffolded | MinIO: replication |
+| `minio-heal` | :orange_circle: Scaffolded | MinIO: heal objects |
+| `seaweedfs-volume` | :orange_circle: Scaffolded | SeaweedFS: volume server |
+| `seaweedfs-filer` | :orange_circle: Scaffolded | SeaweedFS: filer management |
+| `seaweedfs-master` | :orange_circle: Scaffolded | SeaweedFS: master status |
+| `seaweedfs-mount` | :orange_circle: Scaffolded | SeaweedFS: FUSE mount |
+| `seaweedfs-status` | :orange_circle: Scaffolded | SeaweedFS: cluster status |
+| `juicefs-mount` | :orange_circle: Scaffolded | JuiceFS: mount filesystem |
+| `juicefs-status` | :orange_circle: Scaffolded | JuiceFS: status |
+| `juicefs-bench` | :orange_circle: Scaffolded | JuiceFS: benchmark |
+| `juicefs-gc` | :orange_circle: Scaffolded | JuiceFS: garbage collection |
+| `juicefs-dump` | :orange_circle: Scaffolded | JuiceFS: dump metadata |
+| `lakefs-repository` | :orange_circle: Scaffolded | LakeFS: repository management |
+| `lakefs-tag` | :orange_circle: Scaffolded | LakeFS: tag management |
+| `lakefs-actions` | :orange_circle: Scaffolded | LakeFS: actions/hooks |
+| `lakefs-export` | :orange_circle: Scaffolded | LakeFS: export data |
+| `lakefs-gc` | :orange_circle: Scaffolded | LakeFS: garbage collection |
+
+### Round 488 — NFS ext, CIFS ext, GlusterFS ext, CephFS ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `nfs-exports` | :orange_circle: Scaffolded | NFS: manage exports |
+| `nfs-mount` | :orange_circle: Scaffolded | NFS: mount shares |
+| `nfs-status` | :orange_circle: Scaffolded | NFS: server status |
+| `nfs-stat` | :orange_circle: Scaffolded | NFS: statistics |
+| `nfs-quotas` | :orange_circle: Scaffolded | NFS: quota management |
+| `cifs-mount` | :orange_circle: Scaffolded | CIFS: mount shares |
+| `cifs-status` | :orange_circle: Scaffolded | CIFS: connection status |
+| `cifs-credentials` | :orange_circle: Scaffolded | CIFS: credential management |
+| `cifs-info` | :orange_circle: Scaffolded | CIFS: share info |
+| `cifs-idmap` | :orange_circle: Scaffolded | CIFS: ID mapping |
+| `glusterfs-volume` | :orange_circle: Scaffolded | GlusterFS: volume management |
+| `glusterfs-peer` | :orange_circle: Scaffolded | GlusterFS: peer management |
+| `glusterfs-brick` | :orange_circle: Scaffolded | GlusterFS: brick operations |
+| `glusterfs-heal` | :orange_circle: Scaffolded | GlusterFS: self-heal |
+| `glusterfs-quota` | :orange_circle: Scaffolded | GlusterFS: quota management |
+| `cephfs-mount` | :orange_circle: Scaffolded | CephFS: mount filesystem |
+| `cephfs-status` | :orange_circle: Scaffolded | CephFS: status |
+| `cephfs-snap` | :orange_circle: Scaffolded | CephFS: snapshots |
+| `cephfs-auth` | :orange_circle: Scaffolded | CephFS: authentication |
+| `cephfs-quota` | :orange_circle: Scaffolded | CephFS: quota management |
+
+### Round 487 — FreeIPA ext, 389DS ext, OpenLDAP ext, Samba ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `freeipa-user` | :orange_circle: Scaffolded | FreeIPA: user management |
+| `freeipa-group` | :orange_circle: Scaffolded | FreeIPA: group management |
+| `freeipa-host` | :orange_circle: Scaffolded | FreeIPA: host management |
+| `freeipa-cert` | :orange_circle: Scaffolded | FreeIPA: certificate management |
+| `freeipa-dns` | :orange_circle: Scaffolded | FreeIPA: DNS management |
+| `ds389-status` | :orange_circle: Scaffolded | 389DS: server status |
+| `ds389-backup` | :orange_circle: Scaffolded | 389DS: backup |
+| `ds389-replication` | :orange_circle: Scaffolded | 389DS: replication |
+| `ds389-schema` | :orange_circle: Scaffolded | 389DS: schema management |
+| `ds389-monitor` | :orange_circle: Scaffolded | 389DS: monitoring |
+| `openldap-config` | :orange_circle: Scaffolded | OpenLDAP: configuration |
+| `openldap-slapcat` | :orange_circle: Scaffolded | OpenLDAP: slapcat export |
+| `openldap-slapadd` | :orange_circle: Scaffolded | OpenLDAP: slapadd import |
+| `openldap-replication` | :orange_circle: Scaffolded | OpenLDAP: replication |
+| `openldap-monitor` | :orange_circle: Scaffolded | OpenLDAP: monitoring |
+| `samba-status` | :orange_circle: Scaffolded | Samba: server status |
+| `samba-users` | :orange_circle: Scaffolded | Samba: user management |
+| `samba-shares` | :orange_circle: Scaffolded | Samba: share management |
+| `samba-domain` | :orange_circle: Scaffolded | Samba: domain controller |
+| `samba-join` | :orange_circle: Scaffolded | Samba: domain join |
+
+### Round 486 — PAM ext, LDAP ext, Kerberos ext2, RADIUS ext2
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pam-modules` | :orange_circle: Scaffolded | PAM: list modules |
+| `pam-limits` | :orange_circle: Scaffolded | PAM: resource limits |
+| `pam-access` | :orange_circle: Scaffolded | PAM: access control |
+| `pam-faillock` | :orange_circle: Scaffolded | PAM: faillock management |
+| `pam-pwquality` | :orange_circle: Scaffolded | PAM: password quality |
+| `ldap-search` | :orange_circle: Scaffolded | LDAP: search entries |
+| `ldap-add` | :orange_circle: Scaffolded | LDAP: add entries |
+| `ldap-modify` | :orange_circle: Scaffolded | LDAP: modify entries |
+| `ldap-delete` | :orange_circle: Scaffolded | LDAP: delete entries |
+| `ldap-compare` | :orange_circle: Scaffolded | LDAP: compare attributes |
+| `kerberos-kinit` | :orange_circle: Scaffolded | Kerberos: initialize ticket |
+| `kerberos-klist` | :orange_circle: Scaffolded | Kerberos: list tickets |
+| `kerberos-kdestroy` | :orange_circle: Scaffolded | Kerberos: destroy tickets |
+| `kerberos-kpasswd` | :orange_circle: Scaffolded | Kerberos: change password |
+| `kerberos-ktutil` | :orange_circle: Scaffolded | Kerberos: keytab utility |
+| `radius-test` | :orange_circle: Scaffolded | RADIUS: test authentication |
+| `radius-debug` | :orange_circle: Scaffolded | RADIUS: debug mode |
+| `radius-clients` | :orange_circle: Scaffolded | RADIUS: client management |
+| `radius-users` | :orange_circle: Scaffolded | RADIUS: user management |
+| `radius-proxy` | :orange_circle: Scaffolded | RADIUS: proxy configuration |
+
 ### Round 485 — inotify ext, fanotify ext, dbus-monitor ext, udev ext
 
 | Feature | Emacs | jemacs | Status |

@@ -32022,3 +32022,291 @@
 (def (cmd-udev-test app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "udev: test rules")))
+
+;; ── Round 487 — OpenLDAP ext, Samba ext ──
+
+(def (cmd-openldap-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenLDAP: configuration")))
+
+(def (cmd-openldap-slapcat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenLDAP: slapcat")))
+
+(def (cmd-openldap-slapadd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenLDAP: slapadd")))
+
+(def (cmd-openldap-replication app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenLDAP: replication")))
+
+(def (cmd-openldap-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenLDAP: monitor")))
+
+(def (cmd-samba-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Samba: status")))
+
+(def (cmd-samba-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Samba: users")))
+
+(def (cmd-samba-shares app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Samba: shares")))
+
+(def (cmd-samba-domain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Samba: domain")))
+
+(def (cmd-samba-join app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Samba: domain join")))
+
+;; ── Round 488 — NFS ext, CIFS ext, GlusterFS ext, CephFS ext ──
+
+(def (cmd-nfs-exports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NFS: exports")))
+
+(def (cmd-nfs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NFS: mount")))
+
+(def (cmd-nfs-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NFS: status")))
+
+(def (cmd-nfs-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NFS: statistics")))
+
+(def (cmd-nfs-quotas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NFS: quotas")))
+
+(def (cmd-cifs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIFS: mount")))
+
+(def (cmd-cifs-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIFS: status")))
+
+(def (cmd-cifs-credentials app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIFS: credentials")))
+
+(def (cmd-cifs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIFS: info")))
+
+(def (cmd-cifs-idmap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIFS: ID mapping")))
+
+(def (cmd-glusterfs-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GlusterFS: volume")))
+
+(def (cmd-glusterfs-peer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GlusterFS: peer")))
+
+(def (cmd-glusterfs-brick app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GlusterFS: brick")))
+
+(def (cmd-glusterfs-heal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GlusterFS: heal")))
+
+(def (cmd-glusterfs-quota app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GlusterFS: quota")))
+
+(def (cmd-cephfs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CephFS: mount")))
+
+(def (cmd-cephfs-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CephFS: status")))
+
+(def (cmd-cephfs-snap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CephFS: snapshot")))
+
+(def (cmd-cephfs-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CephFS: auth")))
+
+(def (cmd-cephfs-quota app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CephFS: quota")))
+
+;; ── Round 489 — MinIO ext2, SeaweedFS ext, JuiceFS ext, LakeFS ext2 ──
+
+(def (cmd-minio-bucket app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MinIO: bucket management")))
+
+(def (cmd-minio-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MinIO: policy")))
+
+(def (cmd-minio-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MinIO: user management")))
+
+(def (cmd-minio-replicate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MinIO: replication")))
+
+(def (cmd-minio-heal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MinIO: heal")))
+
+(def (cmd-seaweedfs-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: volume")))
+
+(def (cmd-seaweedfs-filer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: filer")))
+
+(def (cmd-seaweedfs-master app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: master")))
+
+(def (cmd-seaweedfs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: mount")))
+
+(def (cmd-seaweedfs-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: status")))
+
+(def (cmd-juicefs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JuiceFS: mount")))
+
+(def (cmd-juicefs-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JuiceFS: status")))
+
+(def (cmd-juicefs-bench app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JuiceFS: benchmark")))
+
+(def (cmd-juicefs-gc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JuiceFS: garbage collection")))
+
+(def (cmd-juicefs-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "JuiceFS: dump metadata")))
+
+(def (cmd-lakefs-repository app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LakeFS: repository")))
+
+(def (cmd-lakefs-tag app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LakeFS: tag")))
+
+(def (cmd-lakefs-actions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LakeFS: actions")))
+
+(def (cmd-lakefs-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LakeFS: export")))
+
+(def (cmd-lakefs-gc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LakeFS: garbage collection")))
+
+;; ── Round 490 — Rook ext, Longhorn ext, OpenEBS ext, Portworx ext ──
+
+(def (cmd-rook-ceph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rook: Ceph cluster")))
+
+(def (cmd-rook-nfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rook: NFS")))
+
+(def (cmd-rook-operator app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rook: operator")))
+
+(def (cmd-rook-toolbox app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rook: toolbox")))
+
+(def (cmd-rook-dashboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rook: dashboard")))
+
+(def (cmd-longhorn-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: volume")))
+
+(def (cmd-longhorn-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: backup")))
+
+(def (cmd-longhorn-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: snapshot")))
+
+(def (cmd-longhorn-engine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: engine")))
+
+(def (cmd-longhorn-replica app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: replica")))
+
+(def (cmd-openebs-cstor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenEBS: cStor")))
+
+(def (cmd-openebs-jiva app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenEBS: Jiva")))
+
+(def (cmd-openebs-lvm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenEBS: LVM")))
+
+(def (cmd-openebs-zfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenEBS: ZFS")))
+
+(def (cmd-openebs-mayastor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenEBS: Mayastor")))
+
+(def (cmd-portworx-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portworx: volume")))
+
+(def (cmd-portworx-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portworx: snapshot")))
+
+(def (cmd-portworx-pool app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portworx: pool")))
+
+(def (cmd-portworx-cluster app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portworx: cluster")))
+
+(def (cmd-portworx-auth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portworx: auth")))
