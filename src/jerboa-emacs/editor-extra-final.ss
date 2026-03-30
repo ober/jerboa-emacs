@@ -23196,3 +23196,61 @@
     (echo-read-string echo "/sys path: "
       (lambda (path)
         (echo-message! echo (str "Sysfs: writing to " path))))))
+
+;;; Round 305 — Xdotool ext, Xset ext, Xmodmap ext (batch 2)
+
+(def (cmd-xdotool-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Text: "
+      (lambda (text)
+        (echo-message! echo (str "Xdotool: typing " text))))))
+
+(def (cmd-xdotool-click app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Button (1/2/3): "
+      (lambda (btn)
+        (echo-message! echo (str "Xdotool: clicking button " btn))))))
+
+(def (cmd-xdotool-move app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "X Y: "
+      (lambda (pos)
+        (echo-message! echo (str "Xdotool: moving to " pos))))))
+
+(def (cmd-xset-dpms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xset: toggling DPMS")))
+
+(def (cmd-xset-bell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Volume (0-100): "
+      (lambda (vol)
+        (echo-message! echo (str "Xset: bell volume " vol))))))
+
+(def (cmd-xset-rate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Delay repeat: "
+      (lambda (rate)
+        (echo-message! echo (str "Xset: key rate " rate))))))
+
+(def (cmd-xset-font app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Font path: "
+      (lambda (path)
+        (echo-message! echo (str "Xset: font path " path))))))
+
+(def (cmd-xmodmap-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xmodmap: listing key mappings")))
+
+(def (cmd-xmodmap-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Map file: "
+      (lambda (file)
+        (echo-message! echo (str "Xmodmap: loading " file))))))
+
+(def (cmd-xmodmap-expr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Xmodmap: " expr))))))

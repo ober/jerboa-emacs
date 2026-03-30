@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 305 — Xrandr ext, Xinput ext, Xdotool ext, Xset ext, Xmodmap ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| xrandr-list | :orange_circle: | List display outputs |
+| xrandr-mode | :orange_circle: | Set display mode |
+| xrandr-rotate | :orange_circle: | Rotate display |
+| xrandr-brightness | :orange_circle: | Set brightness |
+| xrandr-primary | :orange_circle: | Set primary output |
+| xinput-list | :orange_circle: | List input devices |
+| xinput-enable | :orange_circle: | Enable input device |
+| xinput-disable | :orange_circle: | Disable input device |
+| xinput-props | :orange_circle: | Show device properties |
+| xdotool-key | :orange_circle: | Send key event |
+| xdotool-type | :orange_circle: | Type text |
+| xdotool-click | :orange_circle: | Click mouse button |
+| xdotool-move | :orange_circle: | Move mouse |
+| xset-dpms | :orange_circle: | Toggle DPMS |
+| xset-bell | :orange_circle: | Set bell volume |
+| xset-rate | :orange_circle: | Set key rate |
+| xset-font | :orange_circle: | Set font path |
+| xmodmap-list | :orange_circle: | List key mappings |
+| xmodmap-load | :orange_circle: | Load key map |
+| xmodmap-expr | :orange_circle: | Run xmodmap expression |
+
 ### Round 304 — Polkit ext, DBus ext, Udev ext, Tmpfiles ext, Sysfs ext
 
 | Command | Status | Description |

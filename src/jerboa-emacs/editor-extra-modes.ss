@@ -23918,3 +23918,61 @@
       (lambda (dev)
         (echo-message! echo (str "Udev: info for " dev))))))
 
+;;; Round 305 — Xrandr ext, Xinput ext, Xdotool ext (batch 1)
+
+(def (cmd-xrandr-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xrandr: listing outputs")))
+
+(def (cmd-xrandr-mode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Resolution: "
+      (lambda (res)
+        (echo-message! echo (str "Xrandr: setting mode " res))))))
+
+(def (cmd-xrandr-rotate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rotation (normal/left/right/inverted): "
+      (lambda (rot)
+        (echo-message! echo (str "Xrandr: rotating " rot))))))
+
+(def (cmd-xrandr-brightness app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Brightness (0.0-1.0): "
+      (lambda (br)
+        (echo-message! echo (str "Xrandr: brightness " br))))))
+
+(def (cmd-xrandr-primary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output: "
+      (lambda (out)
+        (echo-message! echo (str "Xrandr: setting primary " out))))))
+
+(def (cmd-xinput-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Xinput: listing devices")))
+
+(def (cmd-xinput-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device ID: "
+      (lambda (id)
+        (echo-message! echo (str "Xinput: enabling " id))))))
+
+(def (cmd-xinput-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device ID: "
+      (lambda (id)
+        (echo-message! echo (str "Xinput: disabling " id))))))
+
+(def (cmd-xinput-props app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device ID: "
+      (lambda (id)
+        (echo-message! echo (str "Xinput: properties of " id))))))
+
+(def (cmd-xdotool-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Xdotool: sending key " key))))))
+
