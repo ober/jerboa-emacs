@@ -4583,6 +4583,106 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 405 — GCP ext, Azure CLI ext, DigitalOcean ext, Linode ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| GCloud compute | — | `gcloud-compute` | :orange_circle: Scaffolded |
+| GCloud storage | — | `gcloud-storage` | :orange_circle: Scaffolded |
+| GCloud functions | — | `gcloud-functions` | :orange_circle: Scaffolded |
+| GCloud Run | — | `gcloud-run` | :orange_circle: Scaffolded |
+| GCloud IAM | — | `gcloud-iam` | :orange_circle: Scaffolded |
+| Azure VM | — | `az-vm` | :orange_circle: Scaffolded |
+| Azure storage | — | `az-storage` | :orange_circle: Scaffolded |
+| Azure web apps | — | `az-webapp` | :orange_circle: Scaffolded |
+| Azure Key Vault | — | `az-keyvault` | :orange_circle: Scaffolded |
+| Azure Monitor | — | `az-monitor` | :orange_circle: Scaffolded |
+| DO droplets | — | `doctl-droplet` | :orange_circle: Scaffolded |
+| DO Kubernetes | — | `doctl-kubernetes` | :orange_circle: Scaffolded |
+| DO databases | — | `doctl-database` | :orange_circle: Scaffolded |
+| DO Spaces | — | `doctl-spaces` | :orange_circle: Scaffolded |
+| DO firewall | — | `doctl-firewall` | :orange_circle: Scaffolded |
+| Linode instances | — | `linode-instances` | :orange_circle: Scaffolded |
+| Linode volumes | — | `linode-volumes` | :orange_circle: Scaffolded |
+| Linode NodeBalancers | — | `linode-nodebalancers` | :orange_circle: Scaffolded |
+| Linode domains | — | `linode-domains` | :orange_circle: Scaffolded |
+| Linode StackScripts | — | `linode-stackscripts` | :orange_circle: Scaffolded |
+
+### Round 404 — SAM ext, Amplify ext, Copilot ext, CloudFormation ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| SAM build | — | `sam-build` | :orange_circle: Scaffolded |
+| SAM deploy | — | `sam-deploy` | :orange_circle: Scaffolded |
+| SAM local invoke | — | `sam-local` | :orange_circle: Scaffolded |
+| SAM validate | — | `sam-validate` | :orange_circle: Scaffolded |
+| SAM logs | — | `sam-logs` | :orange_circle: Scaffolded |
+| Amplify init | — | `amplify-init` | :orange_circle: Scaffolded |
+| Amplify push | — | `amplify-push` | :orange_circle: Scaffolded |
+| Amplify pull | — | `amplify-pull` | :orange_circle: Scaffolded |
+| Amplify status | — | `amplify-status` | :orange_circle: Scaffolded |
+| Amplify publish | — | `amplify-publish` | :orange_circle: Scaffolded |
+| Copilot init | — | `copilot-init` | :orange_circle: Scaffolded |
+| Copilot deploy | — | `copilot-deploy` | :orange_circle: Scaffolded |
+| Copilot service | — | `copilot-svc` | :orange_circle: Scaffolded |
+| Copilot environment | — | `copilot-env` | :orange_circle: Scaffolded |
+| Copilot pipeline | — | `copilot-pipeline` | :orange_circle: Scaffolded |
+| CFN lint | — | `cfn-lint` | :orange_circle: Scaffolded |
+| CFN validate | — | `cfn-validate` | :orange_circle: Scaffolded |
+| CFN package | — | `cfn-package` | :orange_circle: Scaffolded |
+| CFN deploy | — | `cfn-deploy` | :orange_circle: Scaffolded |
+| CFN describe | — | `cfn-describe` | :orange_circle: Scaffolded |
+
+### Round 403 — Pulumi ext, CDK ext, CDKTF ext, Serverless ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Pulumi config | — | `pulumi-config` | :orange_circle: Scaffolded |
+| Pulumi import | — | `pulumi-import` | :orange_circle: Scaffolded |
+| Pulumi refresh | — | `pulumi-refresh` | :orange_circle: Scaffolded |
+| Pulumi watch | — | `pulumi-watch` | :orange_circle: Scaffolded |
+| Pulumi policy | — | `pulumi-policy` | :orange_circle: Scaffolded |
+| CDK synth | — | `cdk-synth` | :orange_circle: Scaffolded |
+| CDK diff | — | `cdk-diff` | :orange_circle: Scaffolded |
+| CDK deploy | — | `cdk-deploy` | :orange_circle: Scaffolded |
+| CDK bootstrap | — | `cdk-bootstrap` | :orange_circle: Scaffolded |
+| CDK list | — | `cdk-list` | :orange_circle: Scaffolded |
+| CDKTF synth | — | `cdktf-synth` | :orange_circle: Scaffolded |
+| CDKTF diff | — | `cdktf-diff` | :orange_circle: Scaffolded |
+| CDKTF deploy | — | `cdktf-deploy` | :orange_circle: Scaffolded |
+| CDKTF get | — | `cdktf-get` | :orange_circle: Scaffolded |
+| CDKTF providers | — | `cdktf-providers` | :orange_circle: Scaffolded |
+| Serverless deploy | — | `serverless-deploy` | :orange_circle: Scaffolded |
+| Serverless invoke | — | `serverless-invoke` | :orange_circle: Scaffolded |
+| Serverless logs | — | `serverless-logs` | :orange_circle: Scaffolded |
+| Serverless info | — | `serverless-info` | :orange_circle: Scaffolded |
+| Serverless remove | — | `serverless-remove` | :orange_circle: Scaffolded |
+
+### Round 402 — Packer ext, Vagrant ext, Terraform Cloud ext, Atlantis ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Packer fix | — | `packer-fix` | :orange_circle: Scaffolded |
+| Packer plugins | — | `packer-plugins` | :orange_circle: Scaffolded |
+| Packer HCL2 upgrade | — | `packer-hcl2-upgrade` | :orange_circle: Scaffolded |
+| Packer init | — | `packer-init` | :orange_circle: Scaffolded |
+| Vagrant box | — | `vagrant-box` | :orange_circle: Scaffolded |
+| Vagrant plugin | — | `vagrant-plugin` | :orange_circle: Scaffolded |
+| Vagrant snapshot | — | `vagrant-snapshot` | :orange_circle: Scaffolded |
+| Vagrant cloud | — | `vagrant-cloud` | :orange_circle: Scaffolded |
+| TFC workspaces | — | `tfc-workspaces` | :orange_circle: Scaffolded |
+| TFC runs | — | `tfc-runs` | :orange_circle: Scaffolded |
+| TFC variables | — | `tfc-variables` | :orange_circle: Scaffolded |
+| TFC policies | — | `tfc-policies` | :orange_circle: Scaffolded |
+| TFC modules | — | `tfc-modules` | :orange_circle: Scaffolded |
+| TFC teams | — | `tfc-teams` | :orange_circle: Scaffolded |
+| Atlantis plan | — | `atlantis-plan` | :orange_circle: Scaffolded |
+| Atlantis apply | — | `atlantis-apply` | :orange_circle: Scaffolded |
+| Atlantis status | — | `atlantis-status` | :orange_circle: Scaffolded |
+| Atlantis locks | — | `atlantis-locks` | :orange_circle: Scaffolded |
+| Atlantis projects | — | `atlantis-projects` | :orange_circle: Scaffolded |
+| Atlantis config | — | `atlantis-config` | :orange_circle: Scaffolded |
+
 ### Round 401 — Vault ext, Consul ext, Nomad ext, Boundary/Waypoint ext
 
 | Feature | Emacs | jemacs | Status |
