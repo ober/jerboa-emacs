@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 480 — Terragrunt ext2, Terramate ext, OpenTofu ext, cdktf ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Terragrunt graph | — | `terragrunt-graph` | :orange_circle: Scaffolded |
+| Terragrunt validate | — | `terragrunt-validate` | :orange_circle: Scaffolded |
+| Terragrunt HCL format | — | `terragrunt-hclfmt` | :orange_circle: Scaffolded |
+| Terragrunt render | — | `terragrunt-render` | :orange_circle: Scaffolded |
+| Terragrunt scaffold | — | `terragrunt-scaffold` | :orange_circle: Scaffolded |
+| Terramate create | — | `terramate-create` | :orange_circle: Scaffolded |
+| Terramate generate | — | `terramate-generate` | :orange_circle: Scaffolded |
+| Terramate list | — | `terramate-list` | :orange_circle: Scaffolded |
+| Terramate run | — | `terramate-run` | :orange_circle: Scaffolded |
+| Terramate debug | — | `terramate-debug` | :orange_circle: Scaffolded |
+| OpenTofu init | — | `opentofu-init` | :orange_circle: Scaffolded |
+| OpenTofu plan | — | `opentofu-plan` | :orange_circle: Scaffolded |
+| OpenTofu apply | — | `opentofu-apply` | :orange_circle: Scaffolded |
+| OpenTofu state | — | `opentofu-state` | :orange_circle: Scaffolded |
+| OpenTofu import | — | `opentofu-import` | :orange_circle: Scaffolded |
+| CDKTF synth | — | `cdktf-synth` | :orange_circle: Scaffolded |
+| CDKTF deploy | — | `cdktf-deploy` | :orange_circle: Scaffolded |
+| CDKTF destroy | — | `cdktf-destroy` | :orange_circle: Scaffolded |
+| CDKTF diff | — | `cdktf-diff` | :orange_circle: Scaffolded |
+| CDKTF watch | — | `cdktf-watch` | :orange_circle: Scaffolded |
+
+### Round 479 — Spacelift ext, env0 ext, Scalr ext, Atlantis ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Spacelift stack | — | `spacelift-stack` | :orange_circle: Scaffolded |
+| Spacelift run | — | `spacelift-run` | :orange_circle: Scaffolded |
+| Spacelift module | — | `spacelift-module` | :orange_circle: Scaffolded |
+| Spacelift policy | — | `spacelift-policy` | :orange_circle: Scaffolded |
+| Spacelift context | — | `spacelift-context` | :orange_circle: Scaffolded |
+| env0 deploy | — | `env0-deploy` | :orange_circle: Scaffolded |
+| env0 destroy | — | `env0-destroy` | :orange_circle: Scaffolded |
+| env0 drift | — | `env0-drift` | :orange_circle: Scaffolded |
+| env0 approval | — | `env0-approval` | :orange_circle: Scaffolded |
+| env0 template | — | `env0-template` | :orange_circle: Scaffolded |
+| Scalr workspace | — | `scalr-workspace` | :orange_circle: Scaffolded |
+| Scalr run | — | `scalr-run` | :orange_circle: Scaffolded |
+| Scalr variable | — | `scalr-variable` | :orange_circle: Scaffolded |
+| Scalr module | — | `scalr-module` | :orange_circle: Scaffolded |
+| Scalr policy | — | `scalr-policy` | :orange_circle: Scaffolded |
+| Atlantis plan all | — | `atlantis-plan-all` | :orange_circle: Scaffolded |
+| Atlantis apply all | — | `atlantis-apply-all` | :orange_circle: Scaffolded |
+| Atlantis unlock | — | `atlantis-unlock` | :orange_circle: Scaffolded |
+| Atlantis import | — | `atlantis-import` | :orange_circle: Scaffolded |
+| Atlantis state | — | `atlantis-state` | :orange_circle: Scaffolded |
+
+### Round 478 — CFEngine ext, cdist ext, mgmt ext, Pulumi ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| CFEngine agent | — | `cfengine-agent` | :orange_circle: Scaffolded |
+| CFEngine promises | — | `cfengine-promises` | :orange_circle: Scaffolded |
+| CFEngine report | — | `cfengine-report` | :orange_circle: Scaffolded |
+| CFEngine server | — | `cfengine-server` | :orange_circle: Scaffolded |
+| CFEngine monitor | — | `cfengine-monitor` | :orange_circle: Scaffolded |
+| cdist config | — | `cdist-config` | :orange_circle: Scaffolded |
+| cdist install | — | `cdist-install` | :orange_circle: Scaffolded |
+| cdist inventory | — | `cdist-inventory` | :orange_circle: Scaffolded |
+| cdist shell | — | `cdist-shell` | :orange_circle: Scaffolded |
+| cdist trigger | — | `cdist-trigger` | :orange_circle: Scaffolded |
+| mgmt run | — | `mgmt-run` | :orange_circle: Scaffolded |
+| mgmt deploy | — | `mgmt-deploy` | :orange_circle: Scaffolded |
+| mgmt get | — | `mgmt-get` | :orange_circle: Scaffolded |
+| mgmt graph | — | `mgmt-graph` | :orange_circle: Scaffolded |
+| mgmt langserver | — | `mgmt-langserver` | :orange_circle: Scaffolded |
+| Pulumi preview | — | `pulumi-preview` | :orange_circle: Scaffolded |
+| Pulumi refresh | — | `pulumi-refresh` | :orange_circle: Scaffolded |
+| Pulumi destroy | — | `pulumi-destroy` | :orange_circle: Scaffolded |
+| Pulumi import | — | `pulumi-import` | :orange_circle: Scaffolded |
+| Pulumi watch | — | `pulumi-watch` | :orange_circle: Scaffolded |
+
+### Round 477 — Puppet ext2, Chef ext2, Ansible ext2, Salt ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Puppet apply | — | `puppet-apply` | :orange_circle: Scaffolded |
+| Puppet agent | — | `puppet-agent` | :orange_circle: Scaffolded |
+| Puppet module | — | `puppet-module` | :orange_circle: Scaffolded |
+| Puppet resource | — | `puppet-resource` | :orange_circle: Scaffolded |
+| Puppet facts | — | `puppet-facts` | :orange_circle: Scaffolded |
+| Chef client | — | `chef-client` | :orange_circle: Scaffolded |
+| Chef solo | — | `chef-solo` | :orange_circle: Scaffolded |
+| Chef apply | — | `chef-apply` | :orange_circle: Scaffolded |
+| Chef generate | — | `chef-generate` | :orange_circle: Scaffolded |
+| Chef diff | — | `chef-diff` | :orange_circle: Scaffolded |
+| Ansible vault | — | `ansible-vault` | :orange_circle: Scaffolded |
+| Ansible galaxy | — | `ansible-galaxy` | :orange_circle: Scaffolded |
+| Ansible test | — | `ansible-test` | :orange_circle: Scaffolded |
+| Ansible doc | — | `ansible-doc` | :orange_circle: Scaffolded |
+| Ansible lint | — | `ansible-lint` | :orange_circle: Scaffolded |
+| Salt call | — | `salt-call` | :orange_circle: Scaffolded |
+| Salt key | — | `salt-key` | :orange_circle: Scaffolded |
+| Salt run | — | `salt-run` | :orange_circle: Scaffolded |
+| Salt cloud | — | `salt-cloud` | :orange_circle: Scaffolded |
+| Salt SSH | — | `salt-ssh` | :orange_circle: Scaffolded |
+
+### Round 476 — Packer ext2, Vagrant ext2, cloud-init ext, Ignition ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Packer format | — | `packer-fmt` | :orange_circle: Scaffolded |
+| Packer HCL2 upgrade | — | `packer-hcl2` | :orange_circle: Scaffolded |
+| Packer inspect | — | `packer-inspect` | :orange_circle: Scaffolded |
+| Packer plugins | — | `packer-plugins` | :orange_circle: Scaffolded |
+| Packer init | — | `packer-init` | :orange_circle: Scaffolded |
+| Vagrant SSH | — | `vagrant-ssh` | :orange_circle: Scaffolded |
+| Vagrant provision | — | `vagrant-provision` | :orange_circle: Scaffolded |
+| Vagrant snapshot | — | `vagrant-snapshot` | :orange_circle: Scaffolded |
+| Vagrant package | — | `vagrant-package` | :orange_circle: Scaffolded |
+| Vagrant plugin | — | `vagrant-plugin` | :orange_circle: Scaffolded |
+| cloud-init analyze | — | `cloudinit-analyze` | :orange_circle: Scaffolded |
+| cloud-init schema | — | `cloudinit-schema` | :orange_circle: Scaffolded |
+| cloud-init query | — | `cloudinit-query` | :orange_circle: Scaffolded |
+| cloud-init devel | — | `cloudinit-devel` | :orange_circle: Scaffolded |
+| cloud-init clean | — | `cloudinit-clean` | :orange_circle: Scaffolded |
+| Ignition validate | — | `ignition-validate` | :orange_circle: Scaffolded |
+| Ignition render | — | `ignition-render` | :orange_circle: Scaffolded |
+| Ignition config | — | `ignition-config` | :orange_circle: Scaffolded |
+| Ignition merge | — | `ignition-merge` | :orange_circle: Scaffolded |
+| Ignition translate | — | `ignition-translate` | :orange_circle: Scaffolded |
+
 ### Round 475 — Vault ext2, Conjur ext, Boundary ext, Teleport ext2
 
 | Feature | Emacs | jemacs | Status |

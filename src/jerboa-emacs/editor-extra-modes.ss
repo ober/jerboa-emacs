@@ -31156,3 +31156,129 @@
 (def (cmd-aide-report app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "AIDE: report")))
+
+;; ── Round 476 — Packer ext2, Vagrant ext2, cloud-init ext, Ignition ext ──
+
+(def (cmd-packer-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Packer: format HCL")))
+
+(def (cmd-packer-hcl2 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Packer: HCL2 upgrade")))
+
+(def (cmd-packer-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Packer: inspect template")))
+
+(def (cmd-packer-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Packer: plugins")))
+
+(def (cmd-packer-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Packer: init plugins")))
+
+(def (cmd-vagrant-ssh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: SSH into box")))
+
+(def (cmd-vagrant-provision app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: provision")))
+
+(def (cmd-vagrant-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: snapshot")))
+
+(def (cmd-vagrant-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: package box")))
+
+(def (cmd-vagrant-plugin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vagrant: plugin management")))
+
+;; ── Round 477 — Puppet ext2, Chef ext2, Ansible ext2, Salt ext2 ──
+
+(def (cmd-cloudinit-analyze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cloud-init: analyze")))
+
+(def (cmd-cloudinit-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cloud-init: schema")))
+
+(def (cmd-cloudinit-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cloud-init: query")))
+
+(def (cmd-cloudinit-devel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cloud-init: devel tools")))
+
+(def (cmd-cloudinit-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cloud-init: clean")))
+
+(def (cmd-ignition-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ignition: validate config")))
+
+(def (cmd-ignition-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ignition: render config")))
+
+(def (cmd-ignition-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ignition: config")))
+
+(def (cmd-ignition-merge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ignition: merge configs")))
+
+(def (cmd-ignition-translate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ignition: translate format")))
+
+;; ── Round 478 — CFEngine ext, cdist ext, mgmt ext, Pulumi ext2 ──
+
+(def (cmd-puppet-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: apply manifest")))
+
+(def (cmd-puppet-agent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: agent run")))
+
+(def (cmd-puppet-module app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: module")))
+
+(def (cmd-puppet-resource app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: resource")))
+
+(def (cmd-puppet-facts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppet: facts")))
+
+(def (cmd-chef-client app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: client run")))
+
+(def (cmd-chef-solo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: solo run")))
+
+(def (cmd-chef-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: apply recipe")))
+
+(def (cmd-chef-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: generate")))
+
+(def (cmd-chef-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: diff")))

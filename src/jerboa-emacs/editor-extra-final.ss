@@ -31446,3 +31446,291 @@
 (def (cmd-teleport-access app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Teleport: access requests")))
+
+;; ── Round 477 — Ansible ext2, Salt ext2 ──
+
+(def (cmd-ansible-vault app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: vault")))
+
+(def (cmd-ansible-galaxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: galaxy")))
+
+(def (cmd-ansible-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: test")))
+
+(def (cmd-ansible-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: documentation")))
+
+(def (cmd-ansible-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ansible: lint")))
+
+(def (cmd-salt-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: call module")))
+
+(def (cmd-salt-key app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: key management")))
+
+(def (cmd-salt-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: runner")))
+
+(def (cmd-salt-cloud app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: cloud")))
+
+(def (cmd-salt-ssh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: SSH")))
+
+;; ── Round 478 — CFEngine ext, cdist ext, mgmt ext, Pulumi ext2 ──
+
+(def (cmd-cfengine-agent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: agent run")))
+
+(def (cmd-cfengine-promises app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: promises")))
+
+(def (cmd-cfengine-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: report")))
+
+(def (cmd-cfengine-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: server")))
+
+(def (cmd-cfengine-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CFEngine: monitor")))
+
+(def (cmd-cdist-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cdist: configure host")))
+
+(def (cmd-cdist-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cdist: install")))
+
+(def (cmd-cdist-inventory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cdist: inventory")))
+
+(def (cmd-cdist-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cdist: shell")))
+
+(def (cmd-cdist-trigger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "cdist: trigger")))
+
+(def (cmd-mgmt-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mgmt: run")))
+
+(def (cmd-mgmt-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mgmt: deploy")))
+
+(def (cmd-mgmt-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mgmt: get resources")))
+
+(def (cmd-mgmt-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mgmt: resource graph")))
+
+(def (cmd-mgmt-langserver app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mgmt: language server")))
+
+(def (cmd-pulumi-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: preview")))
+
+(def (cmd-pulumi-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: refresh")))
+
+(def (cmd-pulumi-destroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: destroy")))
+
+(def (cmd-pulumi-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: import")))
+
+(def (cmd-pulumi-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulumi: watch")))
+
+;; ── Round 479 — Spacelift ext, env0 ext, Scalr ext, Atlantis ext2 ──
+
+(def (cmd-spacelift-stack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacelift: stack")))
+
+(def (cmd-spacelift-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacelift: run")))
+
+(def (cmd-spacelift-module app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacelift: module")))
+
+(def (cmd-spacelift-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacelift: policy")))
+
+(def (cmd-spacelift-context app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spacelift: context")))
+
+(def (cmd-env0-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "env0: deploy")))
+
+(def (cmd-env0-destroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "env0: destroy")))
+
+(def (cmd-env0-drift app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "env0: drift detection")))
+
+(def (cmd-env0-approval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "env0: approval")))
+
+(def (cmd-env0-template app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "env0: template")))
+
+(def (cmd-scalr-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scalr: workspace")))
+
+(def (cmd-scalr-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scalr: run")))
+
+(def (cmd-scalr-variable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scalr: variable")))
+
+(def (cmd-scalr-module app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scalr: module")))
+
+(def (cmd-scalr-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scalr: policy")))
+
+(def (cmd-atlantis-plan-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atlantis: plan all")))
+
+(def (cmd-atlantis-apply-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atlantis: apply all")))
+
+(def (cmd-atlantis-unlock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atlantis: unlock")))
+
+(def (cmd-atlantis-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atlantis: import")))
+
+(def (cmd-atlantis-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atlantis: state")))
+
+;; ── Round 480 — Terragrunt ext2, Terramate ext, OpenTofu ext, cdktf ext ──
+
+(def (cmd-terragrunt-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terragrunt: graph dependencies")))
+
+(def (cmd-terragrunt-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terragrunt: validate")))
+
+(def (cmd-terragrunt-hclfmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terragrunt: HCL format")))
+
+(def (cmd-terragrunt-render app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terragrunt: render JSON")))
+
+(def (cmd-terragrunt-scaffold app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terragrunt: scaffold")))
+
+(def (cmd-terramate-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terramate: create stack")))
+
+(def (cmd-terramate-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terramate: generate code")))
+
+(def (cmd-terramate-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terramate: list stacks")))
+
+(def (cmd-terramate-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terramate: run command")))
+
+(def (cmd-terramate-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Terramate: debug")))
+
+(def (cmd-opentofu-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTofu: init")))
+
+(def (cmd-opentofu-plan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTofu: plan")))
+
+(def (cmd-opentofu-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTofu: apply")))
+
+(def (cmd-opentofu-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTofu: state")))
+
+(def (cmd-opentofu-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTofu: import")))
+
+(def (cmd-cdktf-synth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CDKTF: synth")))
+
+(def (cmd-cdktf-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CDKTF: deploy")))
+
+(def (cmd-cdktf-destroy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CDKTF: destroy")))
+
+(def (cmd-cdktf-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CDKTF: diff")))
+
+(def (cmd-cdktf-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CDKTF: watch")))
