@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 641 — Org-mode Core (Cycling, Navigation)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-mode` | :orange_circle: Scaffold | Enable org-mode |
+| `org-cycle` | :orange_circle: Scaffold | Cycle visibility |
+| `org-global-cycle` | :orange_circle: Scaffold | Global cycle |
+| `org-shifttab` | :orange_circle: Scaffold | Shift-tab cycle |
+| `org-return` | :orange_circle: Scaffold | Return |
+| `org-meta-return` | :orange_circle: Scaffold | Meta-return |
+| `org-insert-item` | :orange_circle: Scaffold | Insert item |
+| `org-goto` | :orange_circle: Scaffold | Goto heading |
+| `org-switchb` | :orange_circle: Scaffold | Switch buffer |
+| `org-beginning-of-line` | :orange_circle: Scaffold | Beginning of line |
+
+### Round 642 — Org Navigation (Headings, Elements)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-end-of-line` | :orange_circle: Scaffold | End of line |
+| `org-backward-heading-same-level` | :orange_circle: Scaffold | Backward heading |
+| `org-forward-heading-same-level` | :orange_circle: Scaffold | Forward heading |
+| `org-up-heading-safe` | :orange_circle: Scaffold | Up heading |
+| `org-previous-visible-heading` | :orange_circle: Scaffold | Previous visible heading |
+| `org-next-visible-heading` | :orange_circle: Scaffold | Next visible heading |
+| `org-backward-element` | :orange_circle: Scaffold | Backward element |
+| `org-forward-element` | :orange_circle: Scaffold | Forward element |
+| `org-up-element` | :orange_circle: Scaffold | Up element |
+| `org-down-element` | :orange_circle: Scaffold | Down element |
+
+### Round 643 — Org Subtree Operations
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-move-subtree-up` | :orange_circle: Scaffold | Move subtree up |
+| `org-move-subtree-down` | :orange_circle: Scaffold | Move subtree down |
+| `org-demote-subtree` | :orange_circle: Scaffold | Demote subtree |
+| `org-promote-subtree` | :orange_circle: Scaffold | Promote subtree |
+| `org-cut-subtree` | :orange_circle: Scaffold | Cut subtree |
+| `org-copy-subtree` | :orange_circle: Scaffold | Copy subtree |
+| `org-paste-subtree` | :orange_circle: Scaffold | Paste subtree |
+| `org-mark-subtree` | :orange_circle: Scaffold | Mark subtree |
+| `org-mark-element` | :orange_circle: Scaffold | Mark element |
+| `org-clone-subtree-with-time-shift` | :orange_circle: Scaffold | Clone with time shift |
+
+### Round 644 — Org Toggle & Archive
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-toggle-comment` | :orange_circle: Scaffold | Toggle comment |
+| `org-toggle-archive-tag` | :orange_circle: Scaffold | Toggle archive tag |
+| `org-toggle-ordered-property` | :orange_circle: Scaffold | Toggle ordered |
+| `org-toggle-tag` | :orange_circle: Scaffold | Toggle tag |
+| `org-toggle-item` | :orange_circle: Scaffold | Toggle item |
+| `org-toggle-inline-images` | :orange_circle: Scaffold | Toggle inline images |
+| `org-redisplay-inline-images` | :orange_circle: Scaffold | Redisplay images |
+| `org-toggle-pretty-entities` | :orange_circle: Scaffold | Toggle pretty entities |
+| `org-archive-to-archive-sibling` | :orange_circle: Scaffold | Archive to sibling |
+| `org-force-cycle-archived` | :orange_circle: Scaffold | Force cycle archived |
+
+### Round 645 — Org TODO & Priority
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-todo` | :orange_circle: Scaffold | Toggle TODO state |
+| `org-show-todo-tree` | :orange_circle: Scaffold | Show TODO tree |
+| `org-priority` | :orange_circle: Scaffold | Set priority |
+| `org-priority-up` | :orange_circle: Scaffold | Priority up |
+| `org-priority-down` | :orange_circle: Scaffold | Priority down |
+| `org-deadline` | :orange_circle: Scaffold | Set deadline |
+| `org-schedule` | :orange_circle: Scaffold | Schedule |
+| `org-toggle-checkbox` | :orange_circle: Scaffold | Toggle checkbox |
+| `org-update-checkbox-count` | :orange_circle: Scaffold | Update checkbox count |
+| `org-update-statistics-cookies` | :orange_circle: Scaffold | Update statistics |
+
+### Round 646 — Org LaTeX & Display
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-toggle-latex-fragment` | :orange_circle: Scaffold | Toggle LaTeX |
+| `org-latex-preview` | :orange_circle: Scaffold | LaTeX preview |
+| `org-preview-latex-fragment` | :orange_circle: Scaffold | Preview fragment |
+| `org-entities-help` | :orange_circle: Scaffold | Entities help |
+| `org-toggle-time-stamp-overlays` | :orange_circle: Scaffold | Toggle timestamps |
+| `org-indent-mode` | :orange_circle: Scaffold | Indent mode |
+| `org-indent-region` | :orange_circle: Scaffold | Indent region |
+| `org-fill-paragraph` | :orange_circle: Scaffold | Fill paragraph |
+| `org-sort-entries` | :orange_circle: Scaffold | Sort entries |
+| `org-insert-structure-template` | :orange_circle: Scaffold | Structure template |
+
+### Round 647 — Org Shift/Meta Commands
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-shiftup` | :orange_circle: Scaffold | Shift-up |
+| `org-shiftdown` | :orange_circle: Scaffold | Shift-down |
+| `org-shiftleft` | :orange_circle: Scaffold | Shift-left |
+| `org-shiftright` | :orange_circle: Scaffold | Shift-right |
+| `org-metaleft` | :orange_circle: Scaffold | Meta-left |
+| `org-metaright` | :orange_circle: Scaffold | Meta-right |
+| `org-shiftmetaleft` | :orange_circle: Scaffold | Shift-meta-left |
+| `org-shiftmetaright` | :orange_circle: Scaffold | Shift-meta-right |
+| `org-ctrl-c-ctrl-c` | :orange_circle: Scaffold | C-c C-c dispatch |
+| `org-ctrl-c-minus` | :orange_circle: Scaffold | C-c - bullet cycle |
+
+### Round 648 — Org Edit & Source Blocks
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-edit-special` | :orange_circle: Scaffold | Edit special |
+| `org-edit-src-code` | :orange_circle: Scaffold | Edit source code |
+| `org-edit-src-exit` | :orange_circle: Scaffold | Exit source edit |
+| `org-ctrl-c-star` | :orange_circle: Scaffold | C-c * toggle heading |
+| `org-ctrl-c-ret` | :orange_circle: Scaffold | C-c RET table rule |
+| `org-drag-element-backward` | :orange_circle: Scaffold | Drag backward |
+| `org-drag-element-forward` | :orange_circle: Scaffold | Drag forward |
+| `org-mark-ring-push` | :orange_circle: Scaffold | Push mark ring |
+| `org-mark-ring-goto` | :orange_circle: Scaffold | Goto mark ring |
+| `org-copy-special` | :orange_circle: Scaffold | Copy special |
+
+### Round 649 — Org Properties & IDs
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-set-property-and-value` | :orange_circle: Scaffold | Set property+value |
+| `org-entry-put` | :orange_circle: Scaffold | Entry put |
+| `org-entry-get` | :orange_circle: Scaffold | Entry get |
+| `org-entry-delete` | :orange_circle: Scaffold | Entry delete |
+| `org-property-action` | :orange_circle: Scaffold | Property action |
+| `org-insert-drawer` | :orange_circle: Scaffold | Insert drawer |
+| `org-insert-property-drawer` | :orange_circle: Scaffold | Insert property drawer |
+| `org-id-get-create` | :orange_circle: Scaffold | Get/create ID |
+| `org-id-copy` | :orange_circle: Scaffold | Copy ID |
+| `org-id-goto` | :orange_circle: Scaffold | Goto ID |
+
+### Round 650 — Org Misc (Effort, Notes, Dynamic Blocks)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-set-effort` | :orange_circle: Scaffold | Set effort |
+| `org-inc-effort` | :orange_circle: Scaffold | Increment effort |
+| `org-add-note` | :orange_circle: Scaffold | Add note |
+| `org-evaluate-time-range` | :orange_circle: Scaffold | Evaluate time range |
+| `org-refile-copy` | :orange_circle: Scaffold | Refile copy |
+| `org-paste-special` | :orange_circle: Scaffold | Paste special |
+| `org-set-tags` | :orange_circle: Scaffold | Set tags |
+| `org-update-all-dblocks` | :orange_circle: Scaffold | Update all dblocks |
+| `org-dblock-update` | :orange_circle: Scaffold | Update dblock |
+| `org-dynamic-block-insert-dblock` | :orange_circle: Scaffold | Insert dblock |
+
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
