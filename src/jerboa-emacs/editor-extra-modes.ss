@@ -28331,3 +28331,44 @@
 (def (cmd-amplitude-charts app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Amplitude: listing charts")))
+
+;; Round 396 batch 1 — LaunchDarkly ext, Unleash ext
+(def (cmd-launchdarkly-flags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaunchDarkly: listing feature flags")))
+
+(def (cmd-launchdarkly-segments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaunchDarkly: listing segments")))
+
+(def (cmd-launchdarkly-environments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaunchDarkly: listing environments")))
+
+(def (cmd-launchdarkly-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaunchDarkly: listing projects")))
+
+(def (cmd-unleash-flags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unleash: listing feature toggles")))
+
+(def (cmd-unleash-segments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unleash: listing segments")))
+
+(def (cmd-unleash-strategies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unleash: listing strategies")))
+
+(def (cmd-unleash-environments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unleash: listing environments")))
+
+(def (cmd-split-splits app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Split: listing splits")))
+
+(def (cmd-split-segments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Split: listing segments")))

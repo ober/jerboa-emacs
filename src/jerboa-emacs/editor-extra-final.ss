@@ -27544,3 +27544,44 @@
 (def (cmd-posthog-flags app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PostHog: listing feature flags")))
+
+;; Round 396 batch 2 — Split ext, Flagsmith/Statsig ext
+(def (cmd-split-environments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Split: listing environments")))
+
+(def (cmd-split-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Split: listing metrics")))
+
+(def (cmd-flagsmith-flags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flagsmith: listing flags")))
+
+(def (cmd-flagsmith-segments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flagsmith: listing segments")))
+
+(def (cmd-flagsmith-environments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flagsmith: listing environments")))
+
+(def (cmd-flagsmith-identities app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flagsmith: listing identities")))
+
+(def (cmd-statsig-gates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Statsig: listing feature gates")))
+
+(def (cmd-statsig-experiments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Statsig: listing experiments")))
+
+(def (cmd-statsig-configs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Statsig: listing dynamic configs")))
+
+(def (cmd-statsig-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Statsig: listing metrics")))

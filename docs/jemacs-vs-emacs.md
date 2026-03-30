@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 396 — LaunchDarkly ext, Unleash ext, Split ext, Flagsmith/Statsig ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| LaunchDarkly flags | — | `launchdarkly-flags` | :orange_circle: Scaffolded |
+| LaunchDarkly segments | — | `launchdarkly-segments` | :orange_circle: Scaffolded |
+| LaunchDarkly environments | — | `launchdarkly-environments` | :orange_circle: Scaffolded |
+| LaunchDarkly projects | — | `launchdarkly-projects` | :orange_circle: Scaffolded |
+| Unleash toggles | — | `unleash-flags` | :orange_circle: Scaffolded |
+| Unleash segments | — | `unleash-segments` | :orange_circle: Scaffolded |
+| Unleash strategies | — | `unleash-strategies` | :orange_circle: Scaffolded |
+| Unleash environments | — | `unleash-environments` | :orange_circle: Scaffolded |
+| Split splits | — | `split-splits` | :orange_circle: Scaffolded |
+| Split segments | — | `split-segments` | :orange_circle: Scaffolded |
+| Split environments | — | `split-environments` | :orange_circle: Scaffolded |
+| Split metrics | — | `split-metrics` | :orange_circle: Scaffolded |
+| Flagsmith flags | — | `flagsmith-flags` | :orange_circle: Scaffolded |
+| Flagsmith segments | — | `flagsmith-segments` | :orange_circle: Scaffolded |
+| Flagsmith environments | — | `flagsmith-environments` | :orange_circle: Scaffolded |
+| Flagsmith identities | — | `flagsmith-identities` | :orange_circle: Scaffolded |
+| Statsig feature gates | — | `statsig-gates` | :orange_circle: Scaffolded |
+| Statsig experiments | — | `statsig-experiments` | :orange_circle: Scaffolded |
+| Statsig dynamic configs | — | `statsig-configs` | :orange_circle: Scaffolded |
+| Statsig metrics | — | `statsig-metrics` | :orange_circle: Scaffolded |
+
 ### Round 395 — Segment ext, Mixpanel ext, Amplitude ext, Heap/PostHog ext
 
 | Feature | Emacs | jemacs | Status |
