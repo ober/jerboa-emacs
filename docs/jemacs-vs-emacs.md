@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 261 — Railway ext, Render ext, Deno ext, Bun ext, pnpm ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| railway-deploy | :orange_circle: | Deploy to Railway |
+| railway-logs | :orange_circle: | View Railway deployment logs |
+| railway-status | :orange_circle: | Show Railway project status |
+| railway-env-list | :orange_circle: | List Railway environment variables |
+| render-deploy | :orange_circle: | Deploy to Render |
+| render-services-list | :orange_circle: | List Render services |
+| render-env-list | :orange_circle: | List Render environment variables |
+| render-logs | :orange_circle: | View Render service logs |
+| deno-run | :orange_circle: | Run Deno script |
+| deno-test | :orange_circle: | Run Deno tests |
+| deno-lint | :orange_circle: | Lint Deno code |
+| deno-fmt | :orange_circle: | Format Deno code |
+| deno-compile | :orange_circle: | Compile Deno to executable |
+| bun-run | :orange_circle: | Run script with Bun |
+| bun-test | :orange_circle: | Run Bun tests |
+| bun-install | :orange_circle: | Install dependencies with Bun |
+| bun-build | :orange_circle: | Build project with Bun |
+| pnpm-install | :orange_circle: | Install dependencies with pnpm |
+| pnpm-run | :orange_circle: | Run pnpm script |
+| pnpm-add | :orange_circle: | Add package with pnpm |
+
 ### Round 260 — Cloudflare ext, Firebase ext, Supabase ext, PlanetScale ext, Fly.io ext
 
 | Command | Status | Description |

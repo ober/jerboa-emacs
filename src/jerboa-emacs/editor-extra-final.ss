@@ -21040,3 +21040,51 @@
     (echo-read-string echo "Scale count: "
       (lambda (count)
         (echo-message! echo (str "Fly.io: scaling to " count " instances"))))))
+
+;;; Round 261 — Deno ext, Bun ext, pnpm ext (batch 2)
+
+(def (cmd-deno-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno: linting code")))
+
+(def (cmd-deno-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno: formatting code")))
+
+(def (cmd-deno-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno: compiling to executable")))
+
+(def (cmd-bun-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Script: "
+      (lambda (script)
+        (echo-message! echo (str "Bun: running " script))))))
+
+(def (cmd-bun-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun: running tests")))
+
+(def (cmd-bun-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun: installing dependencies")))
+
+(def (cmd-bun-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bun: building project")))
+
+(def (cmd-pnpm-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "pnpm: installing dependencies")))
+
+(def (cmd-pnpm-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Script: "
+      (lambda (script)
+        (echo-message! echo (str "pnpm: running " script))))))
+
+(def (cmd-pnpm-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "pnpm: adding " pkg))))))

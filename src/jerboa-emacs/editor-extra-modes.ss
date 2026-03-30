@@ -21658,3 +21658,45 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Supabase: listing edge functions")))
 
+;;; Round 261 — Railway ext, Render ext, Deno ext, Bun ext, pnpm ext (batch 1)
+
+(def (cmd-railway-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: deploying project")))
+
+(def (cmd-railway-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: viewing deployment logs")))
+
+(def (cmd-railway-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: showing project status")))
+
+(def (cmd-railway-env-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: listing environment variables")))
+
+(def (cmd-render-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: deploying service")))
+
+(def (cmd-render-services-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: listing services")))
+
+(def (cmd-render-env-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: listing environment variables")))
+
+(def (cmd-render-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: viewing service logs")))
+
+(def (cmd-deno-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno: running script")))
+
+(def (cmd-deno-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Deno: running tests")))
+
