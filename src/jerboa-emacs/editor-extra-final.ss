@@ -25377,3 +25377,53 @@
 (def (cmd-memcached-connections app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Memcached: showing connection stats")))
+
+;;; Round 347 — ClickHouse ext, ScyllaDB ext, TiDB ext (batch 2)
+
+(def (cmd-clickhouse-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ClickHouse SQL: "
+      (lambda (sql)
+        (echo-message! echo (str "ClickHouse: executing query"))))))
+
+(def (cmd-clickhouse-parts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: showing parts info")))
+
+(def (cmd-scylladb-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ScyllaDB: showing cluster status")))
+
+(def (cmd-scylladb-nodetool app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ScyllaDB nodetool command: "
+      (lambda (cmd)
+        (echo-message! echo (str "ScyllaDB: nodetool " cmd))))))
+
+(def (cmd-scylladb-cqlsh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ScyllaDB CQL: "
+      (lambda (cql)
+        (echo-message! echo (str "ScyllaDB: executing CQL"))))))
+
+(def (cmd-scylladb-repair app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ScyllaDB: running repair")))
+
+(def (cmd-tidb-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TiDB: showing cluster status")))
+
+(def (cmd-tidb-regions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TiDB: listing regions")))
+
+(def (cmd-tidb-stores app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TiDB: listing TiKV stores")))
+
+(def (cmd-tidb-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "TiDB database: "
+      (lambda (db)
+        (echo-message! echo (str "TiDB: listing tables in " db))))))

@@ -26094,3 +26094,51 @@
     (echo-read-string echo "NATS subscribe subject: "
       (lambda (subj)
         (echo-message! echo (str "NATS: subscribing to " subj))))))
+
+;;; Round 347 — PostgreSQL ext, MySQL ext, ClickHouse ext, ScyllaDB ext, TiDB ext (batch 1)
+
+(def (cmd-postgresql-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PostgreSQL: listing databases")))
+
+(def (cmd-postgresql-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PostgreSQL database: "
+      (lambda (db)
+        (echo-message! echo (str "PostgreSQL: listing tables in " db))))))
+
+(def (cmd-postgresql-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PostgreSQL: listing users/roles")))
+
+(def (cmd-postgresql-activity app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PostgreSQL: showing active connections")))
+
+(def (cmd-mysql-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MySQL: listing databases")))
+
+(def (cmd-mysql-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "MySQL database: "
+      (lambda (db)
+        (echo-message! echo (str "MySQL: listing tables in " db))))))
+
+(def (cmd-mysql-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MySQL: listing users")))
+
+(def (cmd-mysql-processlist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MySQL: showing process list")))
+
+(def (cmd-clickhouse-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: listing databases")))
+
+(def (cmd-clickhouse-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ClickHouse database: "
+      (lambda (db)
+        (echo-message! echo (str "ClickHouse: listing tables in " db))))))

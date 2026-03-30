@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 347 — PostgreSQL ext, MySQL ext, ClickHouse ext, ScyllaDB ext, TiDB ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| postgresql-databases | :orange_circle: | PostgreSQL: list databases |
+| postgresql-tables | :orange_circle: | PostgreSQL: list tables |
+| postgresql-users | :orange_circle: | PostgreSQL: list users/roles |
+| postgresql-activity | :orange_circle: | PostgreSQL: active connections |
+| mysql-databases | :orange_circle: | MySQL: list databases |
+| mysql-tables | :orange_circle: | MySQL: list tables |
+| mysql-users | :orange_circle: | MySQL: list users |
+| mysql-processlist | :orange_circle: | MySQL: show process list |
+| clickhouse-databases | :orange_circle: | ClickHouse: list databases |
+| clickhouse-tables | :orange_circle: | ClickHouse: list tables |
+| clickhouse-query | :orange_circle: | ClickHouse: execute SQL |
+| clickhouse-parts | :orange_circle: | ClickHouse: show parts info |
+| scylladb-status | :orange_circle: | ScyllaDB: cluster status |
+| scylladb-nodetool | :orange_circle: | ScyllaDB: run nodetool |
+| scylladb-cqlsh | :orange_circle: | ScyllaDB: execute CQL |
+| scylladb-repair | :orange_circle: | ScyllaDB: run repair |
+| tidb-status | :orange_circle: | TiDB: cluster status |
+| tidb-regions | :orange_circle: | TiDB: list regions |
+| tidb-stores | :orange_circle: | TiDB: list TiKV stores |
+| tidb-tables | :orange_circle: | TiDB: list tables |
+
 ### Round 346 — RabbitMQ ext, Kafka ext, NATS ext, Redis ext, Memcached ext
 
 | Feature | Status | Notes |
