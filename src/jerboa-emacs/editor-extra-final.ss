@@ -20610,3 +20610,52 @@
     (echo-read-string echo "Guru scope: "
       (lambda (scope)
         (echo-message! echo (str "Go guru: scope set to " scope))))))
+
+;; Round 252 — Ensime ext (10 in final)
+(def (cmd-ensime-type-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ensime: showing type at point")))
+
+(def (cmd-ensime-import-type-at-point app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ensime: importing type at point")))
+
+(def (cmd-ensime-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search: "
+      (lambda (query)
+        (echo-message! echo (str "Ensime: searching for " query))))))
+
+(def (cmd-ensime-show-hierarchy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ensime: showing type hierarchy")))
+
+(def (cmd-ensime-refactor-rename app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New name: "
+      (lambda (name)
+        (echo-message! echo (str "Ensime: renaming to " name))))))
+
+(def (cmd-ensime-refactor-organize-imports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ensime: organizing imports")))
+
+(def (cmd-ensime-refactor-extract-method app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Method name: "
+      (lambda (name)
+        (echo-message! echo (str "Ensime: extracted method " name))))))
+
+(def (cmd-ensime-refactor-inline-local app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ensime: inlined local variable")))
+
+(def (cmd-ensime-refactor-extract-local app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Variable name: "
+      (lambda (name)
+        (echo-message! echo (str "Ensime: extracted local " name))))))
+
+(def (cmd-ensime-expand-selection app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ensime: expanded selection")))

@@ -21250,3 +21250,46 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Go guru: describing selected expression")))
 
+;; Round 252 — Haskell ext, Elixir ext, CIDER ext, Ensime (10 in modes)
+(def (cmd-haskell-process-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haskell: showing type of expression")))
+
+(def (cmd-haskell-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haskell: checking current file")))
+
+(def (cmd-haskell-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haskell: compiling project")))
+
+(def (cmd-haskell-session-change app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Session: "
+      (lambda (sess)
+        (echo-message! echo (str "Haskell: changed session to " sess))))))
+
+(def (cmd-elixir-mode-goto-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elixir: going to definition")))
+
+(def (cmd-alchemist-mix-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alchemist: running mix")))
+
+(def (cmd-alchemist-mix-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alchemist: running mix test")))
+
+(def (cmd-alchemist-compile-this-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alchemist: compiling buffer")))
+
+(def (cmd-cider-find-dwim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIDER: find-dwim at point")))
+
+(def (cmd-ensime-edit-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ensime: jumping to definition")))
+

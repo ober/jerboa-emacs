@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 252 — Haskell ext, Elixir ext, CIDER ext, Ensime
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| haskell-process-type | :orange_circle: | Show type of Haskell expression |
+| haskell-check | :orange_circle: | Check current Haskell file |
+| haskell-compile | :orange_circle: | Compile Haskell project |
+| haskell-session-change | :orange_circle: | Change Haskell session |
+| elixir-mode-goto-definition | :orange_circle: | Go to Elixir definition |
+| alchemist-mix-run | :orange_circle: | Run Elixir mix task |
+| alchemist-mix-test | :orange_circle: | Run Elixir mix tests |
+| alchemist-compile-this-buffer | :orange_circle: | Compile Elixir buffer |
+| cider-find-dwim | :orange_circle: | CIDER find-dwim at point |
+| ensime-edit-definition | :orange_circle: | Jump to Scala definition |
+| ensime-type-at-point | :orange_circle: | Show Scala type at point |
+| ensime-import-type-at-point | :orange_circle: | Import Scala type at point |
+| ensime-search | :orange_circle: | Search Scala project |
+| ensime-show-hierarchy | :orange_circle: | Show Scala type hierarchy |
+| ensime-refactor-rename | :orange_circle: | Rename Scala symbol |
+| ensime-refactor-organize-imports | :orange_circle: | Organize Scala imports |
+| ensime-refactor-extract-method | :orange_circle: | Extract Scala method |
+| ensime-refactor-inline-local | :orange_circle: | Inline Scala local variable |
+| ensime-refactor-extract-local | :orange_circle: | Extract Scala local variable |
+| ensime-expand-selection | :orange_circle: | Expand Scala selection |
+
 ### Round 251 — Semantic ext, Python ext, Ruby ext, JS/TS/Go guru
 
 | Command | Status | Description |
