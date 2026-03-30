@@ -21088,3 +21088,49 @@
     (echo-read-string echo "Package: "
       (lambda (pkg)
         (echo-message! echo (str "pnpm: adding " pkg))))))
+
+;;; Round 262 — Buck2 ext, Pants ext, Gradle ext (batch 2)
+
+(def (cmd-buck2-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Buck2: running " target))))))
+
+(def (cmd-buck2-targets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buck2: listing targets")))
+
+(def (cmd-pants-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Pants: running " target))))))
+
+(def (cmd-pants-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pants: running tests")))
+
+(def (cmd-pants-fmt app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pants: formatting code")))
+
+(def (cmd-pants-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pants: linting code")))
+
+(def (cmd-pants-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pants: checking types")))
+
+(def (cmd-pants-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pants: packaging artifacts")))
+
+(def (cmd-gradle-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gradle: building project")))
+
+(def (cmd-gradle-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gradle: running tests")))

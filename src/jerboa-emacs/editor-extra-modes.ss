@@ -21700,3 +21700,55 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Deno: running tests")))
 
+;;; Round 262 — Turborepo ext, Nx ext, Buck2 ext, Pants ext, Gradle ext (batch 1)
+
+(def (cmd-turbo-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Task: "
+      (lambda (task)
+        (echo-message! echo (str "Turborepo: running " task))))))
+
+(def (cmd-turbo-prune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Turborepo: pruning for " pkg))))))
+
+(def (cmd-turbo-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turborepo: generating task graph")))
+
+(def (cmd-turbo-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turborepo: linting packages")))
+
+(def (cmd-nx-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Nx: running " target))))))
+
+(def (cmd-nx-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: generating dependency graph")))
+
+(def (cmd-nx-affected app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: listing affected projects")))
+
+(def (cmd-nx-migrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: running migrations")))
+
+(def (cmd-buck2-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Buck2: building " target))))))
+
+(def (cmd-buck2-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Buck2: testing " target))))))
+

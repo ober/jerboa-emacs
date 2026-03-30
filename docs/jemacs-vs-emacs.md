@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 262 — Turborepo ext, Nx ext, Buck2 ext, Pants ext, Gradle ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| turbo-run | :orange_circle: | Run Turborepo task |
+| turbo-prune | :orange_circle: | Prune Turborepo for package |
+| turbo-graph | :orange_circle: | Generate Turborepo task graph |
+| turbo-lint | :orange_circle: | Lint Turborepo packages |
+| nx-run | :orange_circle: | Run Nx target |
+| nx-graph | :orange_circle: | Generate Nx dependency graph |
+| nx-affected | :orange_circle: | List Nx affected projects |
+| nx-migrate | :orange_circle: | Run Nx migrations |
+| buck2-build | :orange_circle: | Build with Buck2 |
+| buck2-test | :orange_circle: | Test with Buck2 |
+| buck2-run | :orange_circle: | Run Buck2 target |
+| buck2-targets | :orange_circle: | List Buck2 targets |
+| pants-run | :orange_circle: | Run Pants target |
+| pants-test | :orange_circle: | Run Pants tests |
+| pants-fmt | :orange_circle: | Format code with Pants |
+| pants-lint | :orange_circle: | Lint code with Pants |
+| pants-check | :orange_circle: | Type-check with Pants |
+| pants-package | :orange_circle: | Package artifacts with Pants |
+| gradle-build | :orange_circle: | Build with Gradle |
+| gradle-test | :orange_circle: | Test with Gradle |
+
 ### Round 261 — Railway ext, Render ext, Deno ext, Bun ext, pnpm ext
 
 | Command | Status | Description |
