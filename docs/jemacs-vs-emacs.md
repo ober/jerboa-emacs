@@ -6458,6 +6458,456 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `sideline-flymake` | :orange_circle: | `sideline-flymake` |
 | `sideline-flycheck` | :orange_circle: | `sideline-flycheck` |
 | `sideline-lsp` | :orange_circle: | `sideline-lsp` |
+
+### Round 751: EAF ext 2 (Browser, RSS, Music, Camera)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `eaf-open-browser-with-history` | :orange_circle: | `eaf-open-browser-with-history` |
+| `eaf-open-bookmark` | :orange_circle: | `eaf-open-bookmark` |
+| `eaf-open-rss-reader` | :orange_circle: | `eaf-open-rss-reader` |
+| `eaf-open-music-player` | :orange_circle: | `eaf-open-music-player` |
+| `eaf-open-camera` | :orange_circle: | `eaf-open-camera` |
+| `eaf-open-system-resource-monitor` | :orange_circle: | `eaf-open-system-resource-monitor` |
+| `eaf-open-mindmap` | :orange_circle: | `eaf-open-mindmap` |
+| `eaf-open-system-monitor` | :orange_circle: | `eaf-open-system-monitor` |
+| `eaf-open-color-picker` | :orange_circle: | `eaf-open-color-picker` |
+| `eaf-open-demo` | :orange_circle: | `eaf-open-demo` |
+
+### Round 752: ESS ext 2 (R/Julia/SAS advanced)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `ess-eval-buffer-and-go` | :orange_circle: | `ess-eval-buffer-and-go` |
+| `ess-eval-function-and-go` | :orange_circle: | `ess-eval-function-and-go` |
+| `ess-r-devtools-load-package` | :orange_circle: | `ess-r-devtools-load-package` |
+| `ess-view-data-print` | :orange_circle: | `ess-view-data-print` |
+| `ess-developer-mode` | :orange_circle: | `ess-developer-mode` |
+| `ess-watch` | :orange_circle: | `ess-watch` |
+| `ess-tracebug` | :orange_circle: | `ess-tracebug` |
+| `ess-help-web-search` | :orange_circle: | `ess-help-web-search` |
+| `ess-r-object-popup` | :orange_circle: | `ess-r-object-popup` |
+| `ess-build-tags-for-directory` | :orange_circle: | `ess-build-tags-for-directory` |
+
+### Round 753: AUCTeX / LaTeX ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `TeX-command-sequence` | :orange_circle: | `TeX-command-sequence` |
+| `TeX-command-run-all` | :orange_circle: | `TeX-command-run-all` |
+| `TeX-pin-region` | :orange_circle: | `TeX-pin-region` |
+| `TeX-error-overview` | :orange_circle: | `TeX-error-overview` |
+| `TeX-fold-buffer` | :orange_circle: | `TeX-fold-buffer` |
+| `LaTeX-math-mode` | :orange_circle: | `LaTeX-math-mode` |
+| `LaTeX-fill-section` | :orange_circle: | `LaTeX-fill-section` |
+| `LaTeX-fill-slide` | :orange_circle: | `LaTeX-fill-slide` |
+| `reftex-parse-all` | :orange_circle: | `reftex-parse-all` |
+| `reftex-create-tags-file` | :orange_circle: | `reftex-create-tags-file` |
+
+### Round 754: Proof General / Coq ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `proof-undo-last-successful-command` | :orange_circle: | `proof-undo-last-successful` |
+| `proof-shell-exit` | :orange_circle: | `proof-shell-exit` |
+| `proof-display-some-buffers` | :orange_circle: | `proof-display-some-buffers` |
+| `proof-tree-external-display-toggle` | :orange_circle: | `proof-tree-external-display` |
+| `proof-toolbar-toggle` | :orange_circle: | `proof-toolbar-toggle` |
+| `coq-SearchAbout` | :orange_circle: | `coq-SearchAbout` |
+| `coq-Print` | :orange_circle: | `coq-Print` |
+| `coq-Check` | :orange_circle: | `coq-Check` |
+| `coq-About` | :orange_circle: | `coq-About` |
+| `coq-Locate` | :orange_circle: | `coq-Locate` |
+
+### Round 755: Lean4 / Agda ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `lean4-restart-file` | :orange_circle: | `lean4-restart-server` |
+| `lean4-input` | :orange_circle: | `lean4-input-method` |
+| `lean4-set-option` | :orange_circle: | `lean4-set-option` |
+| `lean4-lake-clean` | :orange_circle: | `lean4-lake-clean` |
+| `lean4-show-goal` | :orange_circle: | `lean4-show-goal` |
+| `agda2-load` | :orange_circle: | `agda2-load` |
+| `agda2-compile` | :orange_circle: | `agda2-compile` |
+| `agda2-auto` | :orange_circle: | `agda2-auto` |
+| `agda2-give` | :orange_circle: | `agda2-give` |
+| `agda2-refine` | :orange_circle: | `agda2-refine` |
+
+### Round 756: Idris / Haskell ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `idris-case-dwim` | :orange_circle: | `idris-case-dwim` |
+| `idris-make-lemma` | :orange_circle: | `idris-make-lemma` |
+| `idris-intro` | :orange_circle: | `idris-intro` |
+| `idris-refine` | :orange_circle: | `idris-refine` |
+| `idris-make-with-block` | :orange_circle: | `idris-make-with-block` |
+| `haskell-process-do-type` | :orange_circle: | `haskell-process-do-type` |
+| `haskell-process-do-info` | :orange_circle: | `haskell-process-do-info` |
+| `haskell-process-generate-tags` | :orange_circle: | `haskell-process-generate-tags` |
+| `haskell-interactive-mode-clear` | :orange_circle: | `haskell-interactive-mode-clear` |
+| `haskell-mode-jump-to-tag` | :orange_circle: | `haskell-mode-jump-to-tag` |
+
+### Round 757: CIDER ext 2 (Clojure advanced)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `cider-eval-defun-to-comment` | :orange_circle: | `cider-eval-defun-to-comment` |
+| `cider-browse-ns-all` | :orange_circle: | `cider-browse-ns-all` |
+| `cider-test-show-report` | :orange_circle: | `cider-test-show-report` |
+| `cider-undef` | :orange_circle: | `cider-undef` |
+| `cider-find-and-clear-repl-output` | :orange_circle: | `cider-find-and-clear-repl-output` |
+| `cider-xref-fn-refs` | :orange_circle: | `cider-xref-fn-refs` |
+| `cider-xref-fn-deps` | :orange_circle: | `cider-xref-fn-deps` |
+| `cider-scratch` | :orange_circle: | `cider-scratch` |
+| `cider-clojuredocs-web` | :orange_circle: | `cider-clojuredocs-web` |
+| `cider-clojuredocs` | :orange_circle: | `cider-clojuredocs` |
+
+### Round 758: SLY ext 2 (Common Lisp advanced)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `sly-trace-dialog` | :orange_circle: | `sly-trace-dialog-toggle` |
+| `sly-db-invoke-restart` | :orange_circle: | `sly-db-invoke-restart` |
+| `sly-db-eval-in-frame` | :orange_circle: | `sly-db-eval-in-frame` |
+| `sly-db-inspect-in-frame` | :orange_circle: | `sly-db-inspect-in-frame` |
+| `sly-db-disassemble` | :orange_circle: | `sly-db-disassemble` |
+| `sly-db-return-from-frame` | :orange_circle: | `sly-db-return-from-frame` |
+| `sly-who-binds` | :orange_circle: | `sly-who-binds` |
+| `sly-who-sets` | :orange_circle: | `sly-who-sets` |
+| `sly-who-depends-on` | :orange_circle: | `sly-who-depends-on` |
+| `sly-who-specializes` | :orange_circle: | `sly-who-specializes` |
+
+### Round 759: OCaml / F# ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `merlin-occurrences` | :orange_circle: | `merlin-occurrences` |
+| `merlin-phrase-next` | :orange_circle: | `merlin-phrase-next` |
+| `merlin-phrase-prev` | :orange_circle: | `merlin-phrase-prev` |
+| `merlin-refactor-inline` | :orange_circle: | `merlin-refactor-inline` |
+| `merlin-switch-to-mli` | :orange_circle: | `merlin-switch-to-mli` |
+| `tuareg-find-alternate-file` | :orange_circle: | `tuareg-find-alternate-file` |
+| `fsharp-ac/complete-at-point` | :orange_circle: | `fsharp-ac-complete` |
+| `fsharp-doc/show-at-point` | :orange_circle: | `fsharp-doc-at-point` |
+| `fsharp-goto-definition` | :orange_circle: | `fsharp-goto-definition` |
+| `fsharp-run-project` | :orange_circle: | `fsharp-run-project` |
+
+### Round 760: Elixir / Erlang ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `alchemist-hex-search` | :orange_circle: | `alchemist-hex-search` |
+| `alchemist-hex-info` | :orange_circle: | `alchemist-hex-info` |
+| `alchemist-mix` | :orange_circle: | `alchemist-mix` |
+| `alchemist-phoenix-routes` | :orange_circle: | `alchemist-phoenix-routes` |
+| `alchemist-phoenix-find-web` | :orange_circle: | `alchemist-phoenix-find-web` |
+| `erlang-man-module` | :orange_circle: | `erlang-man-module` |
+| `erlang-complete-tag` | :orange_circle: | `erlang-complete-tag` |
+| `erlang-mode-info` | :orange_circle: | `erlang-mode-info` |
+| `erlang-align-arrows` | :orange_circle: | `erlang-align-arrows` |
+| `erlang-goto-function` | :orange_circle: | `erlang-goto-function` |
+
+### Round 761: Casual (transient-based UI) suite
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `casual-calc` | :orange_circle: | `casual-calc` |
+| `casual-dired` | :orange_circle: | `casual-dired` |
+| `casual-info` | :orange_circle: | `casual-info` |
+| `casual-isearch` | :orange_circle: | `casual-isearch` |
+| `casual-re-builder` | :orange_circle: | `casual-re-builder` |
+| `casual-ibuffer` | :orange_circle: | `casual-ibuffer` |
+| `casual-bookmarks` | :orange_circle: | `casual-bookmarks` |
+| `casual-avy` | :orange_circle: | `casual-avy` |
+| `casual-editkit` | :orange_circle: | `casual-editkit` |
+| `casual-agenda` | :orange_circle: | `casual-agenda` |
+
+### Round 762: Activities ext 2 (window layout persistence)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `activities-persist-all` | :orange_circle: | `activities-persist-all` |
+| `activities-tab-bar-display` | :orange_circle: | `activities-tab-bar-display` |
+| `activities-load-all` | :orange_circle: | `activities-load-all` |
+| `activities-buffer-list` | :orange_circle: | `activities-buffer-list` |
+| `activities-goto-buffer` | :orange_circle: | `activities-goto-buffer` |
+| `activities-set-default` | :orange_circle: | `activities-set-default` |
+| `activities-remove-default` | :orange_circle: | `activities-remove-default` |
+| `activities-refresh-all` | :orange_circle: | `activities-refresh-all` |
+| `activities-tab-bar-mode` | :orange_circle: | `activities-tab-bar-mode` |
+| `activities-persist` | :orange_circle: | `activities-persist` |
+
+### Round 763: Ultra-scroll / Pixel-scroll ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `ultra-scroll-mode` | :orange_circle: | `ultra-scroll-mode` |
+| `ultra-scroll-up` | :orange_circle: | `ultra-scroll-up` |
+| `ultra-scroll-down` | :orange_circle: | `ultra-scroll-down` |
+| `pixel-scroll-precision-interpolate` | :orange_circle: | `pixel-scroll-precision-interpolate` |
+| `pixel-scroll-precision-scroll-down-page` | :orange_circle: | `pixel-scroll-precision-scroll-down-page` |
+| `pixel-scroll-precision-scroll-up-page` | :orange_circle: | `pixel-scroll-precision-scroll-up-page` |
+| `pixel-scroll-up-pageful` | :orange_circle: | `pixel-scroll-up-pageful` |
+| `pixel-scroll-down-pageful` | :orange_circle: | `pixel-scroll-down-pageful` |
+| `smooth-scroll-mode` | :orange_circle: | `smooth-scroll-mode` |
+| `smooth-scroll-margin` | :orange_circle: | `smooth-scroll-margin-set` |
+
+### Round 764: Logos ext 2 / Olivetti ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `logos-backward-page-dwim` | :orange_circle: | `logos-backward-page-dwim` |
+| `logos-toggle-narrowing` | :orange_circle: | `logos-toggle-narrowing` |
+| `logos-recenter-top-bottom` | :orange_circle: | `logos-recenter-top-bottom` |
+| `logos-toggle-outline-display` | :orange_circle: | `logos-toggle-outline-display` |
+| `logos-reveal-entry` | :orange_circle: | `logos-reveal-entry` |
+| `olivetti-shrink` | :orange_circle: | `olivetti-shrink` |
+| `olivetti-expand` | :orange_circle: | `olivetti-expand` |
+| `olivetti-toggle-mode` | :orange_circle: | `olivetti-toggle` |
+| `olivetti-reset` | :orange_circle: | `olivetti-reset` |
+| `olivetti-increase-body-width` | :orange_circle: | `olivetti-increase-body-width` |
+
+### Round 765: Fontaine, Cursory, Denote ext 3
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `fontaine-set-preset` | :orange_circle: | `fontaine-apply-preset` |
+| `fontaine-store-latest-preset` | :orange_circle: | `fontaine-store-latest-preset` |
+| `fontaine-restore-latest-preset` | :orange_circle: | `fontaine-restore-latest-preset` |
+| `cursory-set-preset` | :orange_circle: | `cursory-set-preset` |
+| `cursory-store-latest-preset` | :orange_circle: | `cursory-store-latest-preset` |
+| `cursory-restore-latest-preset` | :orange_circle: | `cursory-restore-latest-preset` |
+| `denote-silo` | :orange_circle: | `denote-silo` |
+| `denote-explore-degree` | :orange_circle: | `denote-explore-degree` |
+| `denote-explore-random-keyword` | :orange_circle: | `denote-explore-random-keyword` |
+| `denote-explore-random-walk` | :orange_circle: | `denote-explore-random-walk` |
+
+### Round 766: Consult-Embark integration
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `embark-consult-search` | :orange_circle: | `embark-consult-search` |
+| `embark-consult-preview` | :orange_circle: | `embark-consult-preview` |
+| `embark-consult-narrow` | :orange_circle: | `embark-consult-narrow` |
+| `embark-consult-goto` | :orange_circle: | `embark-consult-goto` |
+| `consult-embark-occur` | :orange_circle: | `consult-embark-occur` |
+| `consult-embark-export` | :orange_circle: | `consult-embark-export` |
+| `embark-collect-direct` | :orange_circle: | `embark-collect-direct` |
+| `consult-register-format` | :orange_circle: | `consult-register-format` |
+| `consult-narrow-key` | :orange_circle: | `consult-narrow-key` |
+| `consult-widen-key` | :orange_circle: | `consult-widen-key` |
+
+### Round 767: Modus / Ef themes ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `modus-themes-rotate` | :orange_circle: | `modus-themes-rotate` |
+| `modus-themes-preset-overrides-faint` | :orange_circle: | `modus-themes-preset-overrides-faint` |
+| `modus-themes-headings` | :orange_circle: | `modus-themes-headings-alist` |
+| `modus-themes-org-faces` | :orange_circle: | `modus-themes-org-faces-mode` |
+| `modus-themes-mixed-fonts` | :orange_circle: | `modus-themes-mixed-fonts` |
+| `ef-themes-rotate` | :orange_circle: | `ef-themes-rotate` |
+| `ef-themes-load-random` | :orange_circle: | `ef-themes-load-random` |
+| `ef-themes-select-dark` | :orange_circle: | `ef-themes-select-dark` |
+| `ef-themes-select-light` | :orange_circle: | `ef-themes-select-light` |
+| `ef-themes-headings` | :orange_circle: | `ef-themes-headings-alist` |
+
+### Round 768: Beframe / Standard-themes ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `beframe-mode` | :orange_circle: | `beframe-mode` |
+| `beframe-switch-buffer` | :orange_circle: | `beframe-switch-buffer` |
+| `beframe-assume` | :orange_circle: | `beframe-assume` |
+| `beframe-unassume` | :orange_circle: | `beframe-unassume` |
+| `beframe-rename` | :orange_circle: | `beframe-rename` |
+| `spacious-padding-set` | :orange_circle: | `spacious-padding-set` |
+| `standard-themes-rotate` | :orange_circle: | `standard-themes-rotate` |
+| `standard-themes-load-random` | :orange_circle: | `standard-themes-load-random` |
+| `standard-themes-dark` | :orange_circle: | `standard-themes-dark` |
+| `standard-themes-light` | :orange_circle: | `standard-themes-light` |
+
+### Round 769: Pulsar / Lin / TMR ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `pulsar-recenter-center` | :orange_circle: | `pulsar-recenter-center` |
+| `pulsar-reveal-entry` | :orange_circle: | `pulsar-reveal-entry` |
+| `pulsar-global-mode` | :orange_circle: | `pulsar-global-mode` |
+| `pulsar-pulse-region` | :orange_circle: | `pulsar-pulse-region` |
+| `pulsar-pulse-rest` | :orange_circle: | `pulsar-pulse-rest` |
+| `lin-override-foreground-color` | :orange_circle: | `lin-override-fg-color` |
+| `tmr` | :orange_circle: | `tmr` |
+| `tmr-tabulated-view` | :orange_circle: | `tmr-tabulated-view` |
+| `tmr-clone` | :orange_circle: | `tmr-clone` |
+| `tmr-remove` | :orange_circle: | `tmr-remove` |
+
+### Round 770: Substitute / Search-and-Replace ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `substitute-target-in-buffer` | :orange_circle: | `substitute-target-in-buffer` |
+| `substitute-target-in-defun` | :orange_circle: | `substitute-target-in-defun` |
+| `substitute-target-below-point` | :orange_circle: | `substitute-target-below-point` |
+| `substitute-target-above-point` | :orange_circle: | `substitute-target-above-point` |
+| `substitute-report-matches` | :orange_circle: | `substitute-report-matches` |
+| `search-replace-regexp-in-region` | :orange_circle: | `search-and-replace-regexp-in-region` |
+| `search-query-replace-regexp` | :orange_circle: | `search-and-replace-query-regexp` |
+| `keep-lines` | :orange_circle: | `search-and-replace-keep-lines` |
+| `flush-lines` | :orange_circle: | `search-and-replace-flush-lines` |
+| `count-matches` | :orange_circle: | `search-and-replace-count-matches` |
+
+### Round 771: SRecord / nhexl (binary data editing)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `nhexl-mode` | :orange_circle: | `nhexl-mode` |
+| `nhexl-nibble-edit` | :orange_circle: | `nhexl-nibble-edit` |
+| `nhexl-scroll-down` | :orange_circle: | `nhexl-scroll-down` |
+| `nhexl-scroll-up` | :orange_circle: | `nhexl-scroll-up` |
+| `nhexl-set-group-size` | :orange_circle: | `nhexl-set-group-size` |
+| `bindat-unpack` | :orange_circle: | `bindat-unpack` |
+| `bindat-pack` | :orange_circle: | `bindat-pack` |
+| `bindat-length` | :orange_circle: | `bindat-length` |
+| `bindat-format` | :orange_circle: | `bindat-format` |
+| `bindat-type` | :orange_circle: | `bindat-type` |
+
+### Round 772: Empv (MPV media player)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `empv-play` | :orange_circle: | `empv-play` |
+| `empv-pause` | :orange_circle: | `empv-pause` |
+| `empv-toggle` | :orange_circle: | `empv-toggle` |
+| `empv-play-file` | :orange_circle: | `empv-play-file` |
+| `empv-play-directory` | :orange_circle: | `empv-play-directory` |
+| `empv-playlist-next` | :orange_circle: | `empv-playlist-next` |
+| `empv-playlist-prev` | :orange_circle: | `empv-playlist-prev` |
+| `empv-volume-up` | :orange_circle: | `empv-volume-up` |
+| `empv-volume-down` | :orange_circle: | `empv-volume-down` |
+| `empv-seek-forward` | :orange_circle: | `empv-seek-forward` |
+
+### Round 773: Ready-player / Elfeed ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `ready-player-play` | :orange_circle: | `ready-player-play` |
+| `ready-player-next` | :orange_circle: | `ready-player-next` |
+| `ready-player-previous` | :orange_circle: | `ready-player-previous` |
+| `ready-player-toggle-shuffle` | :orange_circle: | `ready-player-toggle-shuffle` |
+| `ready-player-view-info` | :orange_circle: | `ready-player-view-info` |
+| `elfeed-tube-setup` | :orange_circle: | `elfeed-tube-setup` |
+| `elfeed-tube-add` | :orange_circle: | `elfeed-tube-add` |
+| `elfeed-score-set-score` | :orange_circle: | `elfeed-score-set-score` |
+| `elfeed-score-maint-update` | :orange_circle: | `elfeed-score-maint-update` |
+| `elfeed-summary` | :orange_circle: | `elfeed-summary` |
+
+### Round 774: Nov.el ext 2 / PDF-tools ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `nov-font-increase` | :orange_circle: | `nov-font-increase` |
+| `nov-font-decrease` | :orange_circle: | `nov-font-decrease` |
+| `nov-table-of-contents` | :orange_circle: | `nov-table-of-contents` |
+| `nov-highlight-region` | :orange_circle: | `nov-highlight-region` |
+| `nov-copy-page-url` | :orange_circle: | `nov-copy-page-url` |
+| `pdf-tools-install-noverify` | :orange_circle: | `pdf-tools-install-noverify` |
+| `pdf-view-midnight-minor-mode` | :orange_circle: | `pdf-view-midnight-colors` |
+| `pdf-outline-imenu` | :orange_circle: | `pdf-outline-imenu` |
+| `pdf-annot-list-follow` | :orange_circle: | `pdf-annot-list-follow` |
+| `pdf-virtual-edit-mode` | :orange_circle: | `pdf-virtual-edit` |
+
+### Round 775: Emacs-Everywhere / XWIDGET ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `emacs-everywhere-init` | :orange_circle: | `emacs-everywhere-init` |
+| `emacs-everywhere-insert` | :orange_circle: | `emacs-everywhere-insert` |
+| `emacs-everywhere-finish` | :orange_circle: | `emacs-everywhere-finish` |
+| `emacs-everywhere-abort` | :orange_circle: | `emacs-everywhere-abort` |
+| `emacs-everywhere-set-frame-parameters` | :orange_circle: | `emacs-everywhere-set-frame` |
+| `xwidget-webkit-new-session` | :orange_circle: | `xwidget-webkit-new-session` |
+| `xwidget-webkit-goto-url` | :orange_circle: | `xwidget-webkit-goto-url` |
+| `xwidget-webkit-zoom-in` | :orange_circle: | `xwidget-webkit-zoom-in` |
+| `xwidget-webkit-zoom-out` | :orange_circle: | `xwidget-webkit-zoom-out` |
+| `xwidget-webkit-stop` | :orange_circle: | `xwidget-webkit-stop` |
+
+### Round 776: Ement ext 2 / Circe ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `ement-room-send-reply` | :orange_circle: | `ement-room-send-reply` |
+| `ement-room-set-name` | :orange_circle: | `ement-room-set-name` |
+| `ement-room-tag-toggle` | :orange_circle: | `ement-room-tag-toggle` |
+| `ement-notifications` | :orange_circle: | `ement-notifications-mode` |
+| `ement-room-describe-members` | :orange_circle: | `ement-room-describe-members` |
+| `circe-command-WHOIS` | :orange_circle: | `circe-command-whois` |
+| `circe-command-TOPIC` | :orange_circle: | `circe-command-topic` |
+| `circe-command-KICK` | :orange_circle: | `circe-command-kick` |
+| `circe-command-BAN` | :orange_circle: | `circe-command-ban` |
+| `lui-track-bar-mode` | :orange_circle: | `circe-lui-track-bar` |
+
+### Round 777: EMMS ext 2 (multimedia)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `emms-player-mpv` | :orange_circle: | `emms-player-simple-mpv` |
+| `emms-streams` | :orange_circle: | `emms-stream-init` |
+| `emms-score-up-playing` | :orange_circle: | `emms-score-up` |
+| `emms-score-down-playing` | :orange_circle: | `emms-score-down` |
+| `emms-lastfm-radio-scrobble` | :orange_circle: | `emms-lastfm-scrobble` |
+| `emms-info-native-enable` | :orange_circle: | `emms-info-native` |
+| `emms-cache-save` | :orange_circle: | `emms-cache-save` |
+| `emms-playlist-mode-center-current` | :orange_circle: | `emms-playlist-mode-center-current` |
+| `emms-metaplaylist-mode-goto` | :orange_circle: | `emms-metaplaylist-goto` |
+| `emms-cue` | :orange_circle: | `emms-cue-track` |
+
+### Round 778: Bongo / Mingus (music players)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `bongo-append-enqueue` | :orange_circle: | `bongo-append-enqueue` |
+| `bongo-insert-uri` | :orange_circle: | `bongo-insert-uri` |
+| `bongo-library` | :orange_circle: | `bongo-library` |
+| `bongo-seek-forward` | :orange_circle: | `bongo-seek-forward` |
+| `bongo-seek-backward` | :orange_circle: | `bongo-seek-backward` |
+| `mingus` | :orange_circle: | `mingus-browse` |
+| `mingus-playlist` | :orange_circle: | `mingus-playlist` |
+| `mingus-toggle-repeat` | :orange_circle: | `mingus-toggle-repeat` |
+| `mingus-toggle-random` | :orange_circle: | `mingus-toggle-random` |
+| `mingus-update` | :orange_circle: | `mingus-update-database` |
+
+### Round 779: Calibre ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `calibredb-find-file` | :orange_circle: | `calibredb-find-file` |
+| `calibredb-export` | :orange_circle: | `calibredb-export` |
+| `calibredb-library-list` | :orange_circle: | `calibredb-library-list` |
+| `calibredb-switch-library` | :orange_circle: | `calibredb-switch-library` |
+| `calibredb-clone` | :orange_circle: | `calibredb-clone` |
+| `calibredb-catalog` | :orange_circle: | `calibredb-catalog` |
+| `calibredb-virtual-library-list` | :orange_circle: | `calibredb-virtual-library` |
+| `calibredb-show-metadata` | :orange_circle: | `calibredb-show-metadata` |
+| `calibredb-edit-annotation` | :orange_circle: | `calibredb-edit-annotation` |
+| `calibredb-open-file-with-default-tool` | :orange_circle: | `calibredb-open-with-default` |
+
+### Round 780: Pocket-Reader / Wallabag
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `pocket-reader-refresh` | :orange_circle: | `pocket-reader-refresh` |
+| `pocket-reader-add-link` | :orange_circle: | `pocket-reader-add-url` |
+| `pocket-reader-tag-add` | :orange_circle: | `pocket-reader-tag` |
+| `pocket-reader-re-add` | :orange_circle: | `pocket-reader-readd` |
+| `pocket-reader-open-url` | :orange_circle: | `pocket-reader-browse-url` |
+| `wallabag-add-tags` | :orange_circle: | `wallabag-tag-entry` |
+| `wallabag-full-update` | :orange_circle: | `wallabag-full-update` |
+| `wallabag-show-starred` | :orange_circle: | `wallabag-starred-entries` |
+| `wallabag-show-archived` | :orange_circle: | `wallabag-archived-entries` |
+| `wallabag-export` | :orange_circle: | `wallabag-export-entry` |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
