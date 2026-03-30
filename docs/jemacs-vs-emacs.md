@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 330 — Perf-sched ext, Numastat ext, Vmstat ext, Dstat ext, Nmon ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `perf-sched-record` | :orange_circle: | Record scheduling events |
+| `perf-sched-latency` | :orange_circle: | Show scheduling latency |
+| `perf-sched-map` | :orange_circle: | Show scheduling map |
+| `perf-sched-replay` | :orange_circle: | Replay scheduling events |
+| `numastat-show` | :orange_circle: | Show NUMA statistics |
+| `numastat-process` | :orange_circle: | Process NUMA stats |
+| `numastat-node` | :orange_circle: | Node NUMA stats |
+| `numastat-detail` | :orange_circle: | Detailed NUMA stats |
+| `vmstat-show` | :orange_circle: | Show VM statistics |
+| `vmstat-disk` | :orange_circle: | Show disk statistics |
+| `vmstat-slab` | :orange_circle: | Show slab info |
+| `vmstat-active` | :orange_circle: | Show active/inactive memory |
+| `dstat-cpu` | :orange_circle: | CPU statistics |
+| `dstat-mem` | :orange_circle: | Memory statistics |
+| `dstat-disk` | :orange_circle: | Disk statistics |
+| `dstat-net` | :orange_circle: | Network statistics |
+| `nmon-interactive` | :orange_circle: | Interactive monitor |
+| `nmon-report` | :orange_circle: | Generate report |
+| `nmon-csv` | :orange_circle: | Export CSV |
+| `nmon-snapshot` | :orange_circle: | Take system snapshot |
+
 ### Round 329 — Pam ext, Sssd ext, Kerberos ext, Ldap ext, Nss ext
 
 | Feature | Status | Notes |

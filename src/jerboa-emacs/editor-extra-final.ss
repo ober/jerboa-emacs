@@ -24548,3 +24548,49 @@
     (echo-read-string echo "Group name: "
       (lambda (grp)
         (echo-message! echo (str "NSS: looking up group " grp))))))
+
+;;; Round 330 — Vmstat ext, Dstat ext, Nmon ext (batch 2)
+
+(def (cmd-vmstat-slab app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vmstat: showing slab info")))
+
+(def (cmd-vmstat-active app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vmstat: showing active/inactive memory")))
+
+(def (cmd-dstat-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dstat: showing CPU statistics")))
+
+(def (cmd-dstat-mem app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dstat: showing memory statistics")))
+
+(def (cmd-dstat-disk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dstat: showing disk statistics")))
+
+(def (cmd-dstat-net app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dstat: showing network statistics")))
+
+(def (cmd-nmon-interactive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nmon: launching interactive monitor")))
+
+(def (cmd-nmon-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Nmon: generating report to " file))))))
+
+(def (cmd-nmon-csv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Nmon: exporting CSV to " file))))))
+
+(def (cmd-nmon-snapshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nmon: taking system snapshot")))

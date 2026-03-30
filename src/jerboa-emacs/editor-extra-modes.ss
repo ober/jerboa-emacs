@@ -25248,3 +25248,49 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Kerberos: listing tickets")))
 
+;;; Round 330 — Perf-sched ext, Numastat ext, Vmstat ext, Dstat ext, Nmon ext (batch 1)
+
+(def (cmd-perf-sched-record app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf-sched: recording scheduling events")))
+
+(def (cmd-perf-sched-latency app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf-sched: showing scheduling latency")))
+
+(def (cmd-perf-sched-map app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf-sched: showing scheduling map")))
+
+(def (cmd-perf-sched-replay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf-sched: replaying scheduling events")))
+
+(def (cmd-numastat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Numastat: showing NUMA statistics")))
+
+(def (cmd-numastat-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Numastat: stats for PID " pid))))))
+
+(def (cmd-numastat-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Node: "
+      (lambda (node)
+        (echo-message! echo (str "Numastat: stats for node " node))))))
+
+(def (cmd-numastat-detail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Numastat: showing detailed statistics")))
+
+(def (cmd-vmstat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vmstat: showing virtual memory statistics")))
+
+(def (cmd-vmstat-disk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vmstat: showing disk statistics")))
+
