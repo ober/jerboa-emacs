@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 302 — COPR ext, DNF ext, Zypper ext, Emerge ext, Portage ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| copr-enable | :orange_circle: | Enable COPR repo |
+| copr-disable | :orange_circle: | Disable COPR repo |
+| copr-list | :orange_circle: | List COPR repos |
+| copr-search | :orange_circle: | Search COPR |
+| dnf-install | :orange_circle: | Install DNF package |
+| dnf-remove | :orange_circle: | Remove DNF package |
+| dnf-update | :orange_circle: | Update all packages |
+| dnf-search | :orange_circle: | Search DNF packages |
+| zypper-install | :orange_circle: | Install zypper package |
+| zypper-remove | :orange_circle: | Remove zypper package |
+| zypper-search | :orange_circle: | Search zypper packages |
+| zypper-info | :orange_circle: | Show zypper info |
+| emerge-install | :orange_circle: | Install emerge package |
+| emerge-remove | :orange_circle: | Remove emerge package |
+| emerge-search | :orange_circle: | Search emerge packages |
+| emerge-info | :orange_circle: | Show emerge info |
+| portage-sync | :orange_circle: | Sync portage tree |
+| portage-world | :orange_circle: | Update world set |
+| portage-depclean | :orange_circle: | Clean dependencies |
+| portage-info | :orange_circle: | Show portage info |
+
 ### Round 301 — Snap ext, Flatpak ext, AppImage ext, Nix ext, Brew ext
 
 | Command | Status | Description |

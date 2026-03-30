@@ -23032,3 +23032,57 @@
     (echo-read-string echo "Formula: "
       (lambda (formula)
         (echo-message! echo (str "Brew: info for " formula))))))
+
+;;; Round 302 — Zypper ext, Emerge ext, Portage ext (batch 2)
+
+(def (cmd-zypper-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (q)
+        (echo-message! echo (str "Zypper: searching " q))))))
+
+(def (cmd-zypper-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Zypper: info for " pkg))))))
+
+(def (cmd-emerge-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Emerge: installing " pkg))))))
+
+(def (cmd-emerge-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Emerge: removing " pkg))))))
+
+(def (cmd-emerge-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (q)
+        (echo-message! echo (str "Emerge: searching " q))))))
+
+(def (cmd-emerge-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Emerge: info for " pkg))))))
+
+(def (cmd-portage-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portage: syncing tree")))
+
+(def (cmd-portage-world app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portage: updating world")))
+
+(def (cmd-portage-depclean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portage: cleaning dependencies")))
+
+(def (cmd-portage-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portage: showing system info")))

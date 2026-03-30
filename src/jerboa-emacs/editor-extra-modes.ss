@@ -23752,3 +23752,61 @@
       (lambda (file)
         (echo-message! echo (str "AppImage: extracting " file))))))
 
+;;; Round 302 — COPR ext, DNF ext, Zypper ext (batch 1)
+
+(def (cmd-copr-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "COPR repo: "
+      (lambda (repo)
+        (echo-message! echo (str "COPR: enabling " repo))))))
+
+(def (cmd-copr-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "COPR repo: "
+      (lambda (repo)
+        (echo-message! echo (str "COPR: disabling " repo))))))
+
+(def (cmd-copr-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "COPR: listing enabled repos")))
+
+(def (cmd-copr-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (q)
+        (echo-message! echo (str "COPR: searching " q))))))
+
+(def (cmd-dnf-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "DNF: installing " pkg))))))
+
+(def (cmd-dnf-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "DNF: removing " pkg))))))
+
+(def (cmd-dnf-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DNF: updating all packages")))
+
+(def (cmd-dnf-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (q)
+        (echo-message! echo (str "DNF: searching " q))))))
+
+(def (cmd-zypper-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Zypper: installing " pkg))))))
+
+(def (cmd-zypper-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Zypper: removing " pkg))))))
+
