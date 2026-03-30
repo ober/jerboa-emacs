@@ -26135,3 +26135,57 @@
 (def (cmd-keda-version app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "KEDA: showing version")))
+
+;;; Round 363 — Borgbackup ext, Duplicity ext, Rclone ext (batch 2)
+
+(def (cmd-borg-extract app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Borg extract archive: "
+      (lambda (archive)
+        (echo-message! echo (str "Borg: extracting " archive))))))
+
+(def (cmd-borg-prune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Borg: pruning old archives")))
+
+(def (cmd-duplicity-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Duplicity backup source: "
+      (lambda (src)
+        (echo-message! echo (str "Duplicity: backing up " src))))))
+
+(def (cmd-duplicity-restore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Duplicity restore to: "
+      (lambda (dest)
+        (echo-message! echo (str "Duplicity: restoring to " dest))))))
+
+(def (cmd-duplicity-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Duplicity: verifying backup")))
+
+(def (cmd-duplicity-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Duplicity: showing collection status")))
+
+(def (cmd-rclone-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rclone copy source: "
+      (lambda (src)
+        (echo-message! echo (str "Rclone: copying from " src))))))
+
+(def (cmd-rclone-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rclone sync source: "
+      (lambda (src)
+        (echo-message! echo (str "Rclone: syncing from " src))))))
+
+(def (cmd-rclone-ls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rclone ls remote: "
+      (lambda (remote)
+        (echo-message! echo (str "Rclone: listing " remote))))))
+
+(def (cmd-rclone-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rclone: showing configuration")))

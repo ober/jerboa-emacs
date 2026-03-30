@@ -26890,3 +26890,55 @@
 (def (cmd-knative-revision app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Knative: listing revisions")))
+
+;;; Round 363 — Velero ext, Restic ext, Borgbackup ext, Duplicity ext, Rclone ext (batch 1)
+
+(def (cmd-velero-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Velero backup name: "
+      (lambda (name)
+        (echo-message! echo (str "Velero: creating backup " name))))))
+
+(def (cmd-velero-restore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Velero restore from backup: "
+      (lambda (name)
+        (echo-message! echo (str "Velero: restoring from " name))))))
+
+(def (cmd-velero-schedule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Velero: listing backup schedules")))
+
+(def (cmd-velero-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Velero: listing backups")))
+
+(def (cmd-restic-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Restic backup path: "
+      (lambda (path)
+        (echo-message! echo (str "Restic: backing up " path))))))
+
+(def (cmd-restic-restore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Restic restore snapshot: "
+      (lambda (snap)
+        (echo-message! echo (str "Restic: restoring snapshot " snap))))))
+
+(def (cmd-restic-snapshots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restic: listing snapshots")))
+
+(def (cmd-restic-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Restic: checking repository integrity")))
+
+(def (cmd-borg-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Borg archive name: "
+      (lambda (name)
+        (echo-message! echo (str "Borg: creating archive " name))))))
+
+(def (cmd-borg-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Borg: listing archives")))

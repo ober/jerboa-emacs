@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 363 — Velero ext, Restic ext, Borgbackup ext, Duplicity ext, Rclone ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| velero-backup | :orange_circle: | Velero: create backup |
+| velero-restore | :orange_circle: | Velero: restore from backup |
+| velero-schedule | :orange_circle: | Velero: list schedules |
+| velero-get | :orange_circle: | Velero: list backups |
+| restic-backup | :orange_circle: | Restic: backup path |
+| restic-restore | :orange_circle: | Restic: restore snapshot |
+| restic-snapshots | :orange_circle: | Restic: list snapshots |
+| restic-check | :orange_circle: | Restic: check integrity |
+| borg-create | :orange_circle: | Borg: create archive |
+| borg-list | :orange_circle: | Borg: list archives |
+| borg-extract | :orange_circle: | Borg: extract archive |
+| borg-prune | :orange_circle: | Borg: prune archives |
+| duplicity-backup | :orange_circle: | Duplicity: backup |
+| duplicity-restore | :orange_circle: | Duplicity: restore |
+| duplicity-verify | :orange_circle: | Duplicity: verify backup |
+| duplicity-status | :orange_circle: | Duplicity: collection status |
+| rclone-copy | :orange_circle: | Rclone: copy files |
+| rclone-sync | :orange_circle: | Rclone: sync files |
+| rclone-ls | :orange_circle: | Rclone: list remote |
+| rclone-config | :orange_circle: | Rclone: show configuration |
+
 ### Round 362 — Telepresence ext, Kubevela ext, Knative ext, Dapr ext, KEDA ext
 
 | Feature | Status | Notes |
