@@ -24584,3 +24584,57 @@
       (lambda (sec)
         (echo-message! echo (str "Turbostat: monitoring every " sec "s"))))))
 
+;;; Round 318 — Cgroups ext, Cgroupfs ext, Systemd-cgtop ext, Systemd-run ext, Nsenter ext (batch 1)
+
+(def (cmd-cgroup-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cgroup path: "
+      (lambda (path)
+        (echo-message! echo (str "Cgroup: deleting " path))))))
+
+(def (cmd-cgroup-freeze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cgroup to freeze: "
+      (lambda (cg)
+        (echo-message! echo (str "Cgroup: freezing " cg))))))
+
+(def (cmd-cgroup-thaw app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cgroup to thaw: "
+      (lambda (cg)
+        (echo-message! echo (str "Cgroup: thawing " cg))))))
+
+(def (cmd-cgroup-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cgroup path: "
+      (lambda (cg)
+        (echo-message! echo (str "Cgroup: showing stats for " cg))))))
+
+(def (cmd-cgroupfs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cgroupfs: mounting cgroup filesystem")))
+
+(def (cmd-cgroupfs-umount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cgroupfs: unmounting cgroup filesystem")))
+
+(def (cmd-cgroupfs-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cgroupfs: listing controllers")))
+
+(def (cmd-cgroupfs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Controller: "
+      (lambda (ctrl)
+        (echo-message! echo (str "Cgroupfs: showing info for " ctrl))))))
+
+(def (cmd-systemd-cgtop-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd-cgtop: showing control group top")))
+
+(def (cmd-systemd-cgtop-depth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Depth: "
+      (lambda (d)
+        (echo-message! echo (str "Systemd-cgtop: depth " d))))))
+

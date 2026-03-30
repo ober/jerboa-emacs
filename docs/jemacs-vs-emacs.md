@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 318 — Cgroups ext, Cgroupfs ext, Systemd-cgtop ext, Systemd-run ext, Nsenter ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `cgroup-delete` | :orange_circle: | Delete cgroup |
+| `cgroup-freeze` | :orange_circle: | Freeze cgroup |
+| `cgroup-thaw` | :orange_circle: | Thaw cgroup |
+| `cgroup-stat` | :orange_circle: | Show cgroup stats |
+| `cgroupfs-mount` | :orange_circle: | Mount cgroup filesystem |
+| `cgroupfs-umount` | :orange_circle: | Unmount cgroup filesystem |
+| `cgroupfs-list` | :orange_circle: | List cgroup controllers |
+| `cgroupfs-info` | :orange_circle: | Show controller info |
+| `systemd-cgtop-show` | :orange_circle: | Show control group top |
+| `systemd-cgtop-depth` | :orange_circle: | Set cgtop depth |
+| `systemd-cgtop-sort` | :orange_circle: | Sort cgtop output |
+| `systemd-cgtop-batch` | :orange_circle: | Cgtop batch mode |
+| `systemd-run-transient` | :orange_circle: | Run transient unit |
+| `systemd-run-scope` | :orange_circle: | Run in scope |
+| `systemd-run-slice` | :orange_circle: | Run in slice |
+| `systemd-run-shell` | :orange_circle: | Launch shell in unit |
+| `nsenter-pid` | :orange_circle: | Enter PID namespace |
+| `nsenter-mount` | :orange_circle: | Enter mount namespace |
+| `nsenter-net` | :orange_circle: | Enter network namespace |
+| `nsenter-user` | :orange_circle: | Enter user namespace |
+
 ### Round 317 — Ipmitool ext, Lm-sensors ext, Turbostat ext, Cpupower ext, Numactl ext
 
 | Feature | Status | Notes |

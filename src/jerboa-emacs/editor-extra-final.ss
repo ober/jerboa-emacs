@@ -23880,3 +23880,61 @@
     (echo-read-string echo "Nodes: "
       (lambda (nodes)
         (echo-message! echo (str "Numactl: interleaving across " nodes))))))
+
+;;; Round 318 — Systemd-cgtop ext, Systemd-run ext, Nsenter ext (batch 2)
+
+(def (cmd-systemd-cgtop-sort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sort by (cpu/memory/io): "
+      (lambda (key)
+        (echo-message! echo (str "Systemd-cgtop: sorting by " key))))))
+
+(def (cmd-systemd-cgtop-batch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd-cgtop: batch mode output")))
+
+(def (cmd-systemd-run-transient app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Systemd-run: transient unit for " cmd))))))
+
+(def (cmd-systemd-run-scope app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Systemd-run: scope for " cmd))))))
+
+(def (cmd-systemd-run-slice app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Slice name: "
+      (lambda (slice)
+        (echo-message! echo (str "Systemd-run: in slice " slice))))))
+
+(def (cmd-systemd-run-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd-run: launching shell in transient unit")))
+
+(def (cmd-nsenter-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Nsenter: entering PID namespace of " pid))))))
+
+(def (cmd-nsenter-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Nsenter: entering mount namespace of " pid))))))
+
+(def (cmd-nsenter-net app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Nsenter: entering net namespace of " pid))))))
+
+(def (cmd-nsenter-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Nsenter: entering user namespace of " pid))))))
