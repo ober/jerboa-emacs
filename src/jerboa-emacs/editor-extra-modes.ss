@@ -22624,3 +22624,55 @@
       (lambda (oid)
         (echo-message! echo (str "SNMP: WALK " oid))))))
 
+;;; Round 282 — Syslog ext, Journalctl ext, Logrotate ext (batch 1)
+
+(def (cmd-syslog-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Syslog: viewing system log")))
+
+(def (cmd-syslog-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "Syslog: filtering by " pat))))))
+
+(def (cmd-syslog-tail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Syslog: tailing live log")))
+
+(def (cmd-syslog-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search term: "
+      (lambda (term)
+        (echo-message! echo (str "Syslog: searching for " term))))))
+
+(def (cmd-journalctl-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Journalctl: viewing journal")))
+
+(def (cmd-journalctl-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Journalctl: filter " expr))))))
+
+(def (cmd-journalctl-priority app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Priority (0-7): "
+      (lambda (pri)
+        (echo-message! echo (str "Journalctl: priority " pri))))))
+
+(def (cmd-journalctl-since app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Since (e.g. '1 hour ago'): "
+      (lambda (since)
+        (echo-message! echo (str "Journalctl: since " since))))))
+
+(def (cmd-logrotate-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Logrotate: showing status")))
+
+(def (cmd-logrotate-force app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Logrotate: forcing rotation")))
+

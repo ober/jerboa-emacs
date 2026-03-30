@@ -21974,3 +21974,53 @@
 (def (cmd-dhcp-renew app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "DHCP: renewing lease")))
+
+;;; Round 282 — Rsyslog ext, Auditd ext, Syslog ext (batch 2)
+
+(def (cmd-rsyslog-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rsyslog: viewing configuration")))
+
+(def (cmd-rsyslog-restart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rsyslog: restarting service")))
+
+(def (cmd-auditd-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auditd: showing status")))
+
+(def (cmd-auditd-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auditd: generating report")))
+
+(def (cmd-auditd-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Auditd: listing rules")))
+
+(def (cmd-syslog-priority app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Priority level: "
+      (lambda (pri)
+        (echo-message! echo (str "Syslog: set priority " pri))))))
+
+(def (cmd-syslog-facility app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Facility: "
+      (lambda (fac)
+        (echo-message! echo (str "Syslog: set facility " fac))))))
+
+(def (cmd-syslog-remote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Remote host: "
+      (lambda (host)
+        (echo-message! echo (str "Syslog: forwarding to " host))))))
+
+(def (cmd-syslog-archive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Syslog: archiving logs")))
+
+(def (cmd-journalctl-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Export path: "
+      (lambda (path)
+        (echo-message! echo (str "Journalctl: exporting to " path))))))

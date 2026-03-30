@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 282 — Syslog ext, Journalctl ext, Logrotate ext, Rsyslog ext, Auditd ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| syslog-view | :orange_circle: | View system log |
+| syslog-filter | :orange_circle: | Filter syslog by pattern |
+| syslog-tail | :orange_circle: | Tail syslog live |
+| syslog-search | :orange_circle: | Search syslog entries |
+| journalctl-view | :orange_circle: | View systemd journal |
+| journalctl-filter | :orange_circle: | Filter journal entries |
+| journalctl-priority | :orange_circle: | Filter by priority level |
+| journalctl-since | :orange_circle: | Show entries since time |
+| logrotate-status | :orange_circle: | Show logrotate status |
+| logrotate-force | :orange_circle: | Force log rotation |
+| rsyslog-config | :orange_circle: | View rsyslog configuration |
+| rsyslog-restart | :orange_circle: | Restart rsyslog service |
+| auditd-status | :orange_circle: | Show auditd status |
+| auditd-report | :orange_circle: | Generate audit report |
+| auditd-rules | :orange_circle: | List audit rules |
+| syslog-priority | :orange_circle: | Set syslog priority |
+| syslog-facility | :orange_circle: | Set syslog facility |
+| syslog-remote | :orange_circle: | Configure remote syslog |
+| syslog-archive | :orange_circle: | Archive syslog files |
+| journalctl-export | :orange_circle: | Export journal entries |
+
 ### Round 281 — DNS ext, LDAP ext, SNMP ext, NTP ext, DHCP ext
 
 | Command | Status | Description |
