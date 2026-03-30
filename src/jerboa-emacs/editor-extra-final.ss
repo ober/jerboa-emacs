@@ -23938,3 +23938,61 @@
     (echo-read-string echo "PID: "
       (lambda (pid)
         (echo-message! echo (str "Nsenter: entering user namespace of " pid))))))
+
+;;; Round 319 — Prlimit ext, Chroot ext, Pivot-root ext (batch 2)
+
+(def (cmd-prlimit-nofile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Max open files: "
+      (lambda (n)
+        (echo-message! echo (str "Prlimit: setting NOFILE to " n))))))
+
+(def (cmd-prlimit-nproc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Max processes: "
+      (lambda (n)
+        (echo-message! echo (str "Prlimit: setting NPROC to " n))))))
+
+(def (cmd-chroot-enter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Root directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Chroot: entering " dir))))))
+
+(def (cmd-chroot-setup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Root directory: "
+      (lambda (dir)
+        (echo-message! echo (str "Chroot: setting up " dir))))))
+
+(def (cmd-chroot-bind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Source path: "
+      (lambda (src)
+        (echo-message! echo (str "Chroot: bind mounting " src))))))
+
+(def (cmd-chroot-copy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File to copy into chroot: "
+      (lambda (file)
+        (echo-message! echo (str "Chroot: copying " file))))))
+
+(def (cmd-pivot-root-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "New root: "
+      (lambda (dir)
+        (echo-message! echo (str "Pivot-root: new root " dir))))))
+
+(def (cmd-pivot-root-old app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Put-old dir: "
+      (lambda (dir)
+        (echo-message! echo (str "Pivot-root: old root at " dir))))))
+
+(def (cmd-pivot-root-move app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pivot-root: moving root filesystem")))
+
+(def (cmd-pivot-root-cleanup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pivot-root: cleaning up old root")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 319 — Unshare ext, Setns ext, Prlimit ext, Chroot ext, Pivot-root ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `unshare-pid` | :orange_circle: | Create PID namespace |
+| `unshare-net` | :orange_circle: | Create network namespace |
+| `unshare-mount` | :orange_circle: | Create mount namespace |
+| `unshare-user` | :orange_circle: | Create user namespace |
+| `setns-pid` | :orange_circle: | Join PID namespace |
+| `setns-net` | :orange_circle: | Join network namespace |
+| `setns-mount` | :orange_circle: | Join mount namespace |
+| `setns-user` | :orange_circle: | Join user namespace |
+| `prlimit-show` | :orange_circle: | Show process limits |
+| `prlimit-set` | :orange_circle: | Set process limits |
+| `prlimit-nofile` | :orange_circle: | Set max open files |
+| `prlimit-nproc` | :orange_circle: | Set max processes |
+| `chroot-enter` | :orange_circle: | Enter chroot |
+| `chroot-setup` | :orange_circle: | Set up chroot |
+| `chroot-bind` | :orange_circle: | Bind mount in chroot |
+| `chroot-copy` | :orange_circle: | Copy file to chroot |
+| `pivot-root-new` | :orange_circle: | Set new root |
+| `pivot-root-old` | :orange_circle: | Set old root dir |
+| `pivot-root-move` | :orange_circle: | Move root filesystem |
+| `pivot-root-cleanup` | :orange_circle: | Clean up old root |
+
 ### Round 318 — Cgroups ext, Cgroupfs ext, Systemd-cgtop ext, Systemd-run ext, Nsenter ext
 
 | Feature | Status | Notes |

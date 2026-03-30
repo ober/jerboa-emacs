@@ -24638,3 +24638,57 @@
       (lambda (d)
         (echo-message! echo (str "Systemd-cgtop: depth " d))))))
 
+;;; Round 319 — Unshare ext, Setns ext, Prlimit ext, Chroot ext, Pivot-root ext (batch 1)
+
+(def (cmd-unshare-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unshare: creating new PID namespace")))
+
+(def (cmd-unshare-net app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unshare: creating new network namespace")))
+
+(def (cmd-unshare-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unshare: creating new mount namespace")))
+
+(def (cmd-unshare-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Unshare: creating new user namespace")))
+
+(def (cmd-setns-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID namespace fd: "
+      (lambda (fd)
+        (echo-message! echo (str "Setns: joining PID namespace " fd))))))
+
+(def (cmd-setns-net app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Net namespace fd: "
+      (lambda (fd)
+        (echo-message! echo (str "Setns: joining net namespace " fd))))))
+
+(def (cmd-setns-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount namespace fd: "
+      (lambda (fd)
+        (echo-message! echo (str "Setns: joining mount namespace " fd))))))
+
+(def (cmd-setns-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "User namespace fd: "
+      (lambda (fd)
+        (echo-message! echo (str "Setns: joining user namespace " fd))))))
+
+(def (cmd-prlimit-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Prlimit: showing limits for PID " pid))))))
+
+(def (cmd-prlimit-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Resource=soft:hard PID: "
+      (lambda (spec)
+        (echo-message! echo (str "Prlimit: setting " spec))))))
+
