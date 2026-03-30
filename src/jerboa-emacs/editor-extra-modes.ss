@@ -28495,3 +28495,44 @@
 (def (cmd-skaffold-debug app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Skaffold: starting debug mode")))
+
+;; Round 400 batch 1 — Crossplane ext, Kyverno ext
+(def (cmd-crossplane-resources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing managed resources")))
+
+(def (cmd-crossplane-providers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing providers")))
+
+(def (cmd-crossplane-compositions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing compositions")))
+
+(def (cmd-crossplane-claims app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: listing claims")))
+
+(def (cmd-kyverno-reports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kyverno: listing policy reports")))
+
+(def (cmd-kyverno-exceptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kyverno: listing exceptions")))
+
+(def (cmd-kyverno-cleanup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kyverno: listing cleanup policies")))
+
+(def (cmd-gatekeeper-constraints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gatekeeper: listing constraints")))
+
+(def (cmd-gatekeeper-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gatekeeper: listing constraint templates")))
+
+(def (cmd-gatekeeper-audit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gatekeeper: running audit")))

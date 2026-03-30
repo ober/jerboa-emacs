@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 400 — Crossplane ext, Kyverno ext, Gatekeeper ext, Polaris/Datree ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Crossplane resources | — | `crossplane-resources` | :orange_circle: Scaffolded |
+| Crossplane providers | — | `crossplane-providers` | :orange_circle: Scaffolded |
+| Crossplane compositions | — | `crossplane-compositions` | :orange_circle: Scaffolded |
+| Crossplane claims | — | `crossplane-claims` | :orange_circle: Scaffolded |
+| Kyverno policy reports | — | `kyverno-reports` | :orange_circle: Scaffolded |
+| Kyverno exceptions | — | `kyverno-exceptions` | :orange_circle: Scaffolded |
+| Kyverno cleanup policies | — | `kyverno-cleanup` | :orange_circle: Scaffolded |
+| Gatekeeper constraints | — | `gatekeeper-constraints` | :orange_circle: Scaffolded |
+| Gatekeeper templates | — | `gatekeeper-templates` | :orange_circle: Scaffolded |
+| Gatekeeper audit | — | `gatekeeper-audit` | :orange_circle: Scaffolded |
+| Gatekeeper mutations | — | `gatekeeper-mutations` | :orange_circle: Scaffolded |
+| Polaris audit | — | `polaris-audit` | :orange_circle: Scaffolded |
+| Polaris score | — | `polaris-score` | :orange_circle: Scaffolded |
+| Polaris dashboard | — | `polaris-dashboard` | :orange_circle: Scaffolded |
+| Polaris fix | — | `polaris-fix` | :orange_circle: Scaffolded |
+| Datree scan | — | `datree-scan` | :orange_circle: Scaffolded |
+| Datree policies | — | `datree-policies` | :orange_circle: Scaffolded |
+| Datree rules | — | `datree-rules` | :orange_circle: Scaffolded |
+| Datree tokens | — | `datree-tokens` | :orange_circle: Scaffolded |
+| Datree config | — | `datree-config` | :orange_circle: Scaffolded |
+
 ### Round 399 — Buf ext, Ko ext, Skaffold ext, Tilt/DevSpace ext
 
 | Feature | Emacs | jemacs | Status |
