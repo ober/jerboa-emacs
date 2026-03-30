@@ -103,6 +103,11 @@
 ;; Maximum number of characters to keep in pre-pty scrollback text
 (def *vterm-scrollback-limit* 100000)
 
+;; Re-entrancy guard: prevent nested PTY polling when qt-app-process-events!
+;; triggers the periodic timer inside qt-poll-terminal-pty-batch!.
+;; Without this, terminal A's output can bleed into terminal B's editor.
+(def *pty-poll-in-progress?* #f)
+
 ;; Per-terminal-state: timestamp (seconds) of last render
 (def *vterm-last-render-time* (make-hash-table-eq))
 
@@ -1363,6 +1368,13 @@
                               (loop (cdr wins)))))))))))
             (buffer-list))
           ;; Poll Shell/Terminal PTY output
+          ;; Guard against re-entrancy: qt-app-process-events! inside
+          ;; qt-poll-terminal-pty-batch! can fire this timer again, causing
+          ;; terminal output to bleed across buffers.
+          (unless *pty-poll-in-progress?*
+          (dynamic-wind
+            (lambda () (set! *pty-poll-in-progress?* #t))
+            (lambda ()
           (for-each
             (lambda (buf)
               (when (shell-buffer? buf)
@@ -1376,8 +1388,10 @@
                             (drain))))))))
               (when (terminal-buffer? buf)
                 (let ((ts (hash-get *terminal-state* buf)))
-                  ;; Resize PTY + vtscreen when editor dimensions change
-                  (when (and ts (terminal-pty-busy? ts))
+                  ;; Resize PTY + vtscreen when editor dimensions change.
+                  ;; Must run even when PTY is idle so splits/resizes take
+                  ;; effect before the next command is typed.
+                  (when ts
                     (let ((vt (terminal-state-vtscreen ts)))
                       (when vt
                         ;; Find editor widget for this buffer
@@ -1400,7 +1414,8 @@
                                     " -> "
                                     (number->string new-rows) "x" (number->string new-cols))
                                   (vtscreen-resize! vt new-rows new-cols)
-                                  (terminal-resize! ts new-rows new-cols)
+                                  (when (terminal-pty-busy? ts)
+                                    (terminal-resize! ts new-rows new-cols))
                                   ;; Invalidate row cache after resize
                                   (hash-remove! *vterm-row-cache* ts)
                                   ;; Force full re-render on next cycle
@@ -1443,7 +1458,8 @@
                                  (verbose-log! "PTY-BATCH+DONE: " (number->string (string-length combined)) " bytes")
                                  (qt-poll-terminal-pty-batch! fr buf ts combined)))
                              (qt-poll-terminal-pty-msg! fr buf ts msg))))))))))
-            (buffer-list))
+            (buffer-list)))
+            (lambda () (set! *pty-poll-in-progress?* #f))))  ;; end re-entrancy guard
           ;; Poll chat buffers (Claude CLI)
           (for-each
             (lambda (buf)
