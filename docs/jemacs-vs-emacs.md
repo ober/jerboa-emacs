@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 465 — OpenVPN ext, WireGuard ext2, StrongSwan ext, Tailscale ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| OpenVPN connect | — | `openvpn-connect` | :orange_circle: Scaffolded |
+| OpenVPN config | — | `openvpn-config` | :orange_circle: Scaffolded |
+| OpenVPN status | — | `openvpn-status` | :orange_circle: Scaffolded |
+| OpenVPN log | — | `openvpn-log` | :orange_circle: Scaffolded |
+| OpenVPN kill | — | `openvpn-kill` | :orange_circle: Scaffolded |
+| WireGuard peers | — | `wireguard-peers` | :orange_circle: Scaffolded |
+| WireGuard transfer | — | `wireguard-transfer` | :orange_circle: Scaffolded |
+| WireGuard handshake | — | `wireguard-handshake` | :orange_circle: Scaffolded |
+| WireGuard endpoints | — | `wireguard-endpoints` | :orange_circle: Scaffolded |
+| WireGuard allowed IPs | — | `wireguard-allowed` | :orange_circle: Scaffolded |
+| StrongSwan status | — | `strongswan-status` | :orange_circle: Scaffolded |
+| StrongSwan certificates | — | `strongswan-listcerts` | :orange_circle: Scaffolded |
+| StrongSwan connections | — | `strongswan-listconns` | :orange_circle: Scaffolded |
+| StrongSwan up | — | `strongswan-up` | :orange_circle: Scaffolded |
+| StrongSwan down | — | `strongswan-down` | :orange_circle: Scaffolded |
+| Tailscale peers | — | `tailscale-peers` | :orange_circle: Scaffolded |
+| Tailscale DNS | — | `tailscale-dns` | :orange_circle: Scaffolded |
+| Tailscale routes | — | `tailscale-routes` | :orange_circle: Scaffolded |
+| Tailscale ACLs | — | `tailscale-acls` | :orange_circle: Scaffolded |
+| Tailscale funnel | — | `tailscale-funnel` | :orange_circle: Scaffolded |
+
+### Round 464 — iptables ext, nftables ext, firewalld ext, ufw ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| iptables list | — | `iptables-list` | :orange_circle: Scaffolded |
+| iptables NAT | — | `iptables-nat` | :orange_circle: Scaffolded |
+| iptables filter | — | `iptables-filter` | :orange_circle: Scaffolded |
+| iptables mangle | — | `iptables-mangle` | :orange_circle: Scaffolded |
+| iptables save | — | `iptables-save` | :orange_circle: Scaffolded |
+| nftables list | — | `nftables-list` | :orange_circle: Scaffolded |
+| nftables add | — | `nftables-add` | :orange_circle: Scaffolded |
+| nftables delete | — | `nftables-delete` | :orange_circle: Scaffolded |
+| nftables flush | — | `nftables-flush` | :orange_circle: Scaffolded |
+| nftables monitor | — | `nftables-monitor` | :orange_circle: Scaffolded |
+| firewalld zones | — | `firewalld-zones` | :orange_circle: Scaffolded |
+| firewalld services | — | `firewalld-services` | :orange_circle: Scaffolded |
+| firewalld ports | — | `firewalld-ports` | :orange_circle: Scaffolded |
+| firewalld rules | — | `firewalld-rules` | :orange_circle: Scaffolded |
+| firewalld reload | — | `firewalld-reload` | :orange_circle: Scaffolded |
+| ufw status | — | `ufw-status` | :orange_circle: Scaffolded |
+| ufw allow | — | `ufw-allow` | :orange_circle: Scaffolded |
+| ufw deny | — | `ufw-deny` | :orange_circle: Scaffolded |
+| ufw delete | — | `ufw-delete` | :orange_circle: Scaffolded |
+| ufw logging | — | `ufw-logging` | :orange_circle: Scaffolded |
+
+### Round 463 — ss ext, ip ext, ethtool ext, NetworkManager ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| ss listening | — | `ss-listen` | :orange_circle: Scaffolded |
+| ss established | — | `ss-established` | :orange_circle: Scaffolded |
+| ss TCP | — | `ss-tcp` | :orange_circle: Scaffolded |
+| ss UDP | — | `ss-udp` | :orange_circle: Scaffolded |
+| ss summary | — | `ss-summary` | :orange_circle: Scaffolded |
+| ip address | — | `ip-addr` | :orange_circle: Scaffolded |
+| ip route | — | `ip-route` | :orange_circle: Scaffolded |
+| ip link | — | `ip-link` | :orange_circle: Scaffolded |
+| ip neighbor | — | `ip-neigh` | :orange_circle: Scaffolded |
+| ip rule | — | `ip-rule` | :orange_circle: Scaffolded |
+| ethtool info | — | `ethtool-info` | :orange_circle: Scaffolded |
+| ethtool stats | — | `ethtool-stats` | :orange_circle: Scaffolded |
+| ethtool ring | — | `ethtool-ring` | :orange_circle: Scaffolded |
+| ethtool offload | — | `ethtool-offload` | :orange_circle: Scaffolded |
+| ethtool driver | — | `ethtool-driver` | :orange_circle: Scaffolded |
+| nmcli connections | — | `nmcli-connection` | :orange_circle: Scaffolded |
+| nmcli devices | — | `nmcli-device` | :orange_circle: Scaffolded |
+| nmcli WiFi | — | `nmcli-wifi` | :orange_circle: Scaffolded |
+| nmcli general | — | `nmcli-general` | :orange_circle: Scaffolded |
+| nmcli monitor | — | `nmcli-monitor` | :orange_circle: Scaffolded |
+
+### Round 462 — iperf ext, mtr ext, traceroute ext, dig ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| iperf server | — | `iperf-server` | :orange_circle: Scaffolded |
+| iperf client | — | `iperf-client` | :orange_circle: Scaffolded |
+| iperf UDP | — | `iperf-udp` | :orange_circle: Scaffolded |
+| iperf bandwidth | — | `iperf-bandwidth` | :orange_circle: Scaffolded |
+| iperf parallel | — | `iperf-parallel` | :orange_circle: Scaffolded |
+| mtr report | — | `mtr-report` | :orange_circle: Scaffolded |
+| mtr JSON | — | `mtr-json` | :orange_circle: Scaffolded |
+| mtr wide | — | `mtr-wide` | :orange_circle: Scaffolded |
+| mtr TCP | — | `mtr-tcp` | :orange_circle: Scaffolded |
+| mtr UDP | — | `mtr-udp` | :orange_circle: Scaffolded |
+| traceroute ICMP | — | `traceroute-icmp` | :orange_circle: Scaffolded |
+| traceroute TCP | — | `traceroute-tcp` | :orange_circle: Scaffolded |
+| traceroute UDP | — | `traceroute-udp` | :orange_circle: Scaffolded |
+| traceroute AS | — | `traceroute-as` | :orange_circle: Scaffolded |
+| traceroute MTU | — | `traceroute-mtu` | :orange_circle: Scaffolded |
+| dig query | — | `dig-query` | :orange_circle: Scaffolded |
+| dig trace | — | `dig-trace` | :orange_circle: Scaffolded |
+| dig zone transfer | — | `dig-axfr` | :orange_circle: Scaffolded |
+| dig reverse | — | `dig-reverse` | :orange_circle: Scaffolded |
+| dig short | — | `dig-short` | :orange_circle: Scaffolded |
+
+### Round 461 — Wireshark ext, tcpdump ext, nmap ext, netcat ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Wireshark capture | — | `wireshark-capture` | :orange_circle: Scaffolded |
+| Wireshark filter | — | `wireshark-filter` | :orange_circle: Scaffolded |
+| Wireshark decode | — | `wireshark-decode` | :orange_circle: Scaffolded |
+| Wireshark stats | — | `wireshark-stats` | :orange_circle: Scaffolded |
+| Wireshark follow | — | `wireshark-follow` | :orange_circle: Scaffolded |
+| tcpdump capture | — | `tcpdump-capture` | :orange_circle: Scaffolded |
+| tcpdump filter | — | `tcpdump-filter` | :orange_circle: Scaffolded |
+| tcpdump read | — | `tcpdump-read` | :orange_circle: Scaffolded |
+| tcpdump write | — | `tcpdump-write` | :orange_circle: Scaffolded |
+| tcpdump stats | — | `tcpdump-stats` | :orange_circle: Scaffolded |
+| nmap scan | — | `nmap-scan` | :orange_circle: Scaffolded |
+| nmap service | — | `nmap-service` | :orange_circle: Scaffolded |
+| nmap OS | — | `nmap-os` | :orange_circle: Scaffolded |
+| nmap script | — | `nmap-script` | :orange_circle: Scaffolded |
+| nmap vuln | — | `nmap-vuln` | :orange_circle: Scaffolded |
+| netcat listen | — | `netcat-listen` | :orange_circle: Scaffolded |
+| netcat connect | — | `netcat-connect` | :orange_circle: Scaffolded |
+| netcat scan | — | `netcat-scan` | :orange_circle: Scaffolded |
+| netcat proxy | — | `netcat-proxy` | :orange_circle: Scaffolded |
+| netcat transfer | — | `netcat-transfer` | :orange_circle: Scaffolded |
+
 ### Round 460 — Postman ext2, Insomnia ext2, HTTPie ext2, curl ext2
 
 | Feature | Emacs | jemacs | Status |

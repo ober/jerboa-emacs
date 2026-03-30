@@ -30778,3 +30778,129 @@
 (def (cmd-varnish-vcl app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Varnish: VCL config")))
+
+;; ── Round 461 — Wireshark ext, tcpdump ext, nmap ext, netcat ext ──
+
+(def (cmd-wireshark-capture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireshark: capture packets")))
+
+(def (cmd-wireshark-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireshark: display filter")))
+
+(def (cmd-wireshark-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireshark: decode protocol")))
+
+(def (cmd-wireshark-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireshark: statistics")))
+
+(def (cmd-wireshark-follow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireshark: follow stream")))
+
+(def (cmd-tcpdump-capture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tcpdump: capture packets")))
+
+(def (cmd-tcpdump-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tcpdump: filter expression")))
+
+(def (cmd-tcpdump-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tcpdump: read pcap")))
+
+(def (cmd-tcpdump-write app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tcpdump: write pcap")))
+
+(def (cmd-tcpdump-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "tcpdump: statistics")))
+
+;; ── Round 462 — iperf ext, mtr ext, traceroute ext, dig ext ──
+
+(def (cmd-nmap-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmap: port scan")))
+
+(def (cmd-nmap-service app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmap: service detection")))
+
+(def (cmd-nmap-os app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmap: OS detection")))
+
+(def (cmd-nmap-script app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmap: script scan")))
+
+(def (cmd-nmap-vuln app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmap: vulnerability scan")))
+
+(def (cmd-netcat-listen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "netcat: listen mode")))
+
+(def (cmd-netcat-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "netcat: connect")))
+
+(def (cmd-netcat-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "netcat: port scan")))
+
+(def (cmd-netcat-proxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "netcat: proxy")))
+
+(def (cmd-netcat-transfer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "netcat: file transfer")))
+
+;; ── Round 463 — ss ext, ip ext, ethtool ext, NetworkManager ext ──
+
+(def (cmd-iperf-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iperf: server mode")))
+
+(def (cmd-iperf-client app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iperf: client mode")))
+
+(def (cmd-iperf-udp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iperf: UDP test")))
+
+(def (cmd-iperf-bandwidth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iperf: bandwidth test")))
+
+(def (cmd-iperf-parallel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iperf: parallel streams")))
+
+(def (cmd-mtr-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mtr: report mode")))
+
+(def (cmd-mtr-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mtr: JSON output")))
+
+(def (cmd-mtr-wide app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mtr: wide report")))
+
+(def (cmd-mtr-tcp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mtr: TCP mode")))
+
+(def (cmd-mtr-udp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "mtr: UDP mode")))

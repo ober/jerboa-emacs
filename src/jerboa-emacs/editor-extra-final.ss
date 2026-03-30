@@ -30580,3 +30580,291 @@
 (def (cmd-curl-verbose app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "curl: verbose output")))
+
+;; ── Round 462 — traceroute ext, dig ext ──
+
+(def (cmd-traceroute-icmp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "traceroute: ICMP mode")))
+
+(def (cmd-traceroute-tcp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "traceroute: TCP mode")))
+
+(def (cmd-traceroute-udp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "traceroute: UDP mode")))
+
+(def (cmd-traceroute-as app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "traceroute: AS lookup")))
+
+(def (cmd-traceroute-mtu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "traceroute: MTU discovery")))
+
+(def (cmd-dig-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dig: DNS query")))
+
+(def (cmd-dig-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dig: trace resolution")))
+
+(def (cmd-dig-axfr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dig: zone transfer")))
+
+(def (cmd-dig-reverse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dig: reverse lookup")))
+
+(def (cmd-dig-short app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "dig: short output")))
+
+;; ── Round 463 — ss ext, ip ext, ethtool ext, NetworkManager ext ──
+
+(def (cmd-ss-listen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ss: listening sockets")))
+
+(def (cmd-ss-established app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ss: established connections")))
+
+(def (cmd-ss-tcp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ss: TCP sockets")))
+
+(def (cmd-ss-udp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ss: UDP sockets")))
+
+(def (cmd-ss-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ss: socket summary")))
+
+(def (cmd-ip-addr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ip: address show")))
+
+(def (cmd-ip-route app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ip: routing table")))
+
+(def (cmd-ip-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ip: link management")))
+
+(def (cmd-ip-neigh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ip: neighbor table")))
+
+(def (cmd-ip-rule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ip: routing rules")))
+
+(def (cmd-ethtool-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ethtool: interface info")))
+
+(def (cmd-ethtool-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ethtool: statistics")))
+
+(def (cmd-ethtool-ring app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ethtool: ring buffer")))
+
+(def (cmd-ethtool-offload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ethtool: offload settings")))
+
+(def (cmd-ethtool-driver app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ethtool: driver info")))
+
+(def (cmd-nmcli-connection app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmcli: connections")))
+
+(def (cmd-nmcli-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmcli: devices")))
+
+(def (cmd-nmcli-wifi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmcli: WiFi")))
+
+(def (cmd-nmcli-general app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmcli: general status")))
+
+(def (cmd-nmcli-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nmcli: monitor events")))
+
+;; ── Round 464 — iptables ext, nftables ext, firewalld ext, ufw ext ──
+
+(def (cmd-iptables-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iptables: list rules")))
+
+(def (cmd-iptables-nat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iptables: NAT table")))
+
+(def (cmd-iptables-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iptables: filter table")))
+
+(def (cmd-iptables-mangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iptables: mangle table")))
+
+(def (cmd-iptables-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "iptables: save rules")))
+
+(def (cmd-nftables-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nftables: list ruleset")))
+
+(def (cmd-nftables-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nftables: add rule")))
+
+(def (cmd-nftables-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nftables: delete rule")))
+
+(def (cmd-nftables-flush app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nftables: flush ruleset")))
+
+(def (cmd-nftables-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "nftables: monitor events")))
+
+(def (cmd-firewalld-zones app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "firewalld: zones")))
+
+(def (cmd-firewalld-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "firewalld: services")))
+
+(def (cmd-firewalld-ports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "firewalld: ports")))
+
+(def (cmd-firewalld-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "firewalld: rich rules")))
+
+(def (cmd-firewalld-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "firewalld: reload")))
+
+(def (cmd-ufw-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ufw: status")))
+
+(def (cmd-ufw-allow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ufw: allow rule")))
+
+(def (cmd-ufw-deny app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ufw: deny rule")))
+
+(def (cmd-ufw-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ufw: delete rule")))
+
+(def (cmd-ufw-logging app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ufw: logging")))
+
+;; ── Round 465 — OpenVPN ext, WireGuard ext2, StrongSwan ext, Tailscale ext2 ──
+
+(def (cmd-openvpn-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: connect")))
+
+(def (cmd-openvpn-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: configuration")))
+
+(def (cmd-openvpn-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: status")))
+
+(def (cmd-openvpn-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: log")))
+
+(def (cmd-openvpn-kill app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: kill session")))
+
+(def (cmd-wireguard-peers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: list peers")))
+
+(def (cmd-wireguard-transfer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: transfer stats")))
+
+(def (cmd-wireguard-handshake app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: handshake info")))
+
+(def (cmd-wireguard-endpoints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: endpoints")))
+
+(def (cmd-wireguard-allowed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: allowed IPs")))
+
+(def (cmd-strongswan-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: status")))
+
+(def (cmd-strongswan-listcerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: list certificates")))
+
+(def (cmd-strongswan-listconns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: list connections")))
+
+(def (cmd-strongswan-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: bring up tunnel")))
+
+(def (cmd-strongswan-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: bring down tunnel")))
+
+(def (cmd-tailscale-peers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: list peers")))
+
+(def (cmd-tailscale-dns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: DNS config")))
+
+(def (cmd-tailscale-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: subnet routes")))
+
+(def (cmd-tailscale-acls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: ACL policy")))
+
+(def (cmd-tailscale-funnel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: funnel")))
