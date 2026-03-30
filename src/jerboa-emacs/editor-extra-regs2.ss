@@ -12832,4 +12832,35 @@
   ;; Round 550: Signal Processing
   (register-command! 'dsp-filter cmd-dsp-filter) (register-command! 'dsp-convolve cmd-dsp-convolve) (register-command! 'dsp-resample cmd-dsp-resample) (register-command! 'dsp-window cmd-dsp-window) (register-command! 'fft-compute cmd-fft-compute)
   (register-command! 'fft-inverse cmd-fft-inverse) (register-command! 'fft-spectrum cmd-fft-spectrum) (register-command! 'wavelet-decompose cmd-wavelet-decompose) (register-command! 'wavelet-reconstruct cmd-wavelet-reconstruct) (register-command! 'spectral-analyze cmd-spectral-analyze)
+
+  ;; Round 551: Control Systems
+  (register-command! 'pid-tune cmd-pid-tune) (register-command! 'pid-autotune cmd-pid-autotune) (register-command! 'pid-plot cmd-pid-plot) (register-command! 'pid-step cmd-pid-step) (register-command! 'pid-bode cmd-pid-bode)
+  (register-command! 'control-lqr cmd-control-lqr) (register-command! 'control-kalman cmd-control-kalman) (register-command! 'control-pole cmd-control-pole) (register-command! 'control-nyquist cmd-control-nyquist) (register-command! 'control-root-locus cmd-control-root-locus)
+  ;; Round 552: Cryptography Primitives
+  (register-command! 'aes-encrypt cmd-aes-encrypt) (register-command! 'aes-decrypt cmd-aes-decrypt) (register-command! 'rsa-keygen cmd-rsa-keygen) (register-command! 'rsa-sign cmd-rsa-sign) (register-command! 'rsa-verify cmd-rsa-verify)
+  (register-command! 'ecdsa-sign cmd-ecdsa-sign) (register-command! 'ecdsa-verify cmd-ecdsa-verify) (register-command! 'chacha-encrypt cmd-chacha-encrypt) (register-command! 'argon2-hash cmd-argon2-hash) (register-command! 'blake3-hash cmd-blake3-hash)
+  ;; Round 553: Network Protocols
+  (register-command! 'tcp-trace cmd-tcp-trace) (register-command! 'tcp-handshake cmd-tcp-handshake) (register-command! 'tcp-window cmd-tcp-window) (register-command! 'tcp-retransmit cmd-tcp-retransmit) (register-command! 'tcp-congestion cmd-tcp-congestion)
+  (register-command! 'udp-send cmd-udp-send) (register-command! 'udp-recv cmd-udp-recv) (register-command! 'dns-resolve cmd-dns-resolve) (register-command! 'dns-trace cmd-dns-trace) (register-command! 'dns-cache cmd-dns-cache)
+  ;; Round 554: Compiler Toolchain
+  (register-command! 'lexer-generate cmd-lexer-generate) (register-command! 'parser-generate cmd-parser-generate) (register-command! 'ast-dump cmd-ast-dump) (register-command! 'cfg-optimize cmd-cfg-optimize) (register-command! 'ir-emit cmd-ir-emit)
+  (register-command! 'codegen-x86 cmd-codegen-x86) (register-command! 'codegen-arm cmd-codegen-arm) (register-command! 'linker-resolve cmd-linker-resolve) (register-command! 'linker-reloc cmd-linker-reloc) (register-command! 'ssa-convert cmd-ssa-convert)
+  ;; Round 555: Database Internals
+  (register-command! 'btree-insert cmd-btree-insert) (register-command! 'btree-delete cmd-btree-delete) (register-command! 'btree-search cmd-btree-search) (register-command! 'btree-split cmd-btree-split) (register-command! 'btree-merge cmd-btree-merge)
+  (register-command! 'wal-write cmd-wal-write) (register-command! 'wal-replay cmd-wal-replay) (register-command! 'wal-checkpoint cmd-wal-checkpoint) (register-command! 'mvcc-begin cmd-mvcc-begin) (register-command! 'mvcc-commit cmd-mvcc-commit)
+  ;; Round 556: OS Kernel
+  (register-command! 'scheduler-cfs cmd-scheduler-cfs) (register-command! 'scheduler-deadline cmd-scheduler-deadline) (register-command! 'scheduler-migrate cmd-scheduler-migrate) (register-command! 'syscall-trace cmd-syscall-trace) (register-command! 'syscall-intercept cmd-syscall-intercept)
+  (register-command! 'vfs-mount cmd-vfs-mount) (register-command! 'vfs-lookup cmd-vfs-lookup) (register-command! 'vfs-inode cmd-vfs-inode) (register-command! 'page-fault cmd-page-fault) (register-command! 'page-table cmd-page-table)
+  ;; Round 557: Game Physics
+  (register-command! 'rigidbody-step cmd-rigidbody-step) (register-command! 'rigidbody-collide cmd-rigidbody-collide) (register-command! 'rigidbody-constraint cmd-rigidbody-constraint) (register-command! 'softbody-simulate cmd-softbody-simulate) (register-command! 'cloth-simulate cmd-cloth-simulate)
+  (register-command! 'fluid-simulate cmd-fluid-simulate) (register-command! 'particle-emit cmd-particle-emit) (register-command! 'particle-update cmd-particle-update) (register-command! 'ragdoll-setup cmd-ragdoll-setup) (register-command! 'ragdoll-step cmd-ragdoll-step)
+  ;; Round 558: Typography/Fonts
+  (register-command! 'font-hinting cmd-font-hinting) (register-command! 'font-kerning cmd-font-kerning) (register-command! 'font-subset cmd-font-subset) (register-command! 'font-metrics cmd-font-metrics) (register-command! 'font-opentype cmd-font-opentype)
+  (register-command! 'glyph-outline cmd-glyph-outline) (register-command! 'glyph-rasterize cmd-glyph-rasterize) (register-command! 'glyph-hint cmd-glyph-hint) (register-command! 'glyph-advance cmd-glyph-advance) (register-command! 'glyph-contour cmd-glyph-contour)
+  ;; Round 559: Color Science
+  (register-command! 'color-convert cmd-color-convert) (register-command! 'color-gamut cmd-color-gamut) (register-command! 'color-profile cmd-color-profile) (register-command! 'color-match cmd-color-match) (register-command! 'color-adapt cmd-color-adapt)
+  (register-command! 'chromatic-adapt cmd-chromatic-adapt) (register-command! 'white-balance cmd-white-balance) (register-command! 'deltaE-compute cmd-deltaE-compute) (register-command! 'spectral-render cmd-spectral-render) (register-command! 'color-blind-sim cmd-color-blind-sim)
+  ;; Round 560: Audio Synthesis
+  (register-command! 'synth-oscillator cmd-synth-oscillator) (register-command! 'synth-envelope cmd-synth-envelope) (register-command! 'synth-filter cmd-synth-filter) (register-command! 'synth-lfo cmd-synth-lfo) (register-command! 'synth-wavetable cmd-synth-wavetable)
+  (register-command! 'fm-synthesis cmd-fm-synthesis) (register-command! 'am-synthesis cmd-am-synthesis) (register-command! 'additive-synth cmd-additive-synth) (register-command! 'granular-synth cmd-granular-synth) (register-command! 'vocoder-process cmd-vocoder-process)
 )

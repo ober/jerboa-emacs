@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 551 — Control Systems (PID, LQR, Kalman)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pid-tune` | :orange_circle: Scaffold | PID tuning |
+| `pid-autotune` | :orange_circle: Scaffold | Auto-tune PID |
+| `pid-plot` | :orange_circle: Scaffold | Plot response |
+| `pid-step` | :orange_circle: Scaffold | Step response |
+| `pid-bode` | :orange_circle: Scaffold | Bode plot |
+| `control-lqr` | :orange_circle: Scaffold | LQR design |
+| `control-kalman` | :orange_circle: Scaffold | Kalman filter |
+| `control-pole` | :orange_circle: Scaffold | Pole placement |
+| `control-nyquist` | :orange_circle: Scaffold | Nyquist plot |
+| `control-root-locus` | :orange_circle: Scaffold | Root locus |
+
+### Round 552 — Cryptography Primitives (AES, RSA, ECDSA)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `aes-encrypt` | :orange_circle: Scaffold | AES encrypt |
+| `aes-decrypt` | :orange_circle: Scaffold | AES decrypt |
+| `rsa-keygen` | :orange_circle: Scaffold | RSA keypair |
+| `rsa-sign` | :orange_circle: Scaffold | RSA sign |
+| `rsa-verify` | :orange_circle: Scaffold | RSA verify |
+| `ecdsa-sign` | :orange_circle: Scaffold | ECDSA sign |
+| `ecdsa-verify` | :orange_circle: Scaffold | ECDSA verify |
+| `chacha-encrypt` | :orange_circle: Scaffold | ChaCha20 encrypt |
+| `argon2-hash` | :orange_circle: Scaffold | Argon2 hash |
+| `blake3-hash` | :orange_circle: Scaffold | BLAKE3 hash |
+
+### Round 553 — Network Protocols (TCP, UDP, DNS)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `tcp-trace` | :orange_circle: Scaffold | Trace TCP connection |
+| `tcp-handshake` | :orange_circle: Scaffold | Handshake debug |
+| `tcp-window` | :orange_circle: Scaffold | Window analysis |
+| `tcp-retransmit` | :orange_circle: Scaffold | Retransmit check |
+| `tcp-congestion` | :orange_circle: Scaffold | Congestion control |
+| `udp-send` | :orange_circle: Scaffold | Send UDP packet |
+| `udp-recv` | :orange_circle: Scaffold | Receive UDP packet |
+| `dns-resolve` | :orange_circle: Scaffold | Resolve name |
+| `dns-trace` | :orange_circle: Scaffold | Trace query |
+| `dns-cache` | :orange_circle: Scaffold | Cache inspect |
+
+### Round 554 — Compiler Toolchain (Lexer, Parser, Codegen)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lexer-generate` | :orange_circle: Scaffold | Generate lexer |
+| `parser-generate` | :orange_circle: Scaffold | Generate parser |
+| `ast-dump` | :orange_circle: Scaffold | Dump AST |
+| `cfg-optimize` | :orange_circle: Scaffold | Optimize CFG |
+| `ir-emit` | :orange_circle: Scaffold | Emit IR |
+| `codegen-x86` | :orange_circle: Scaffold | x86 codegen |
+| `codegen-arm` | :orange_circle: Scaffold | ARM codegen |
+| `linker-resolve` | :orange_circle: Scaffold | Resolve symbols |
+| `linker-reloc` | :orange_circle: Scaffold | Relocations |
+| `ssa-convert` | :orange_circle: Scaffold | SSA conversion |
+
+### Round 555 — Database Internals (B-tree, WAL, MVCC)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `btree-insert` | :orange_circle: Scaffold | B-tree insert |
+| `btree-delete` | :orange_circle: Scaffold | B-tree delete |
+| `btree-search` | :orange_circle: Scaffold | B-tree search |
+| `btree-split` | :orange_circle: Scaffold | B-tree split |
+| `btree-merge` | :orange_circle: Scaffold | B-tree merge |
+| `wal-write` | :orange_circle: Scaffold | WAL write |
+| `wal-replay` | :orange_circle: Scaffold | WAL replay |
+| `wal-checkpoint` | :orange_circle: Scaffold | WAL checkpoint |
+| `mvcc-begin` | :orange_circle: Scaffold | MVCC begin |
+| `mvcc-commit` | :orange_circle: Scaffold | MVCC commit |
+
+### Round 556 — OS Kernel (Scheduler, Syscall, VFS)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `scheduler-cfs` | :orange_circle: Scaffold | CFS scheduler |
+| `scheduler-deadline` | :orange_circle: Scaffold | Deadline scheduler |
+| `scheduler-migrate` | :orange_circle: Scaffold | Migrate task |
+| `syscall-trace` | :orange_circle: Scaffold | Trace syscall |
+| `syscall-intercept` | :orange_circle: Scaffold | Intercept syscall |
+| `vfs-mount` | :orange_circle: Scaffold | Mount filesystem |
+| `vfs-lookup` | :orange_circle: Scaffold | Lookup path |
+| `vfs-inode` | :orange_circle: Scaffold | Inspect inode |
+| `page-fault` | :orange_circle: Scaffold | Page fault handler |
+| `page-table` | :orange_circle: Scaffold | Page table walk |
+
+### Round 557 — Game Physics (Rigidbody, Softbody, Fluid)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `rigidbody-step` | :orange_circle: Scaffold | Rigidbody step |
+| `rigidbody-collide` | :orange_circle: Scaffold | Collision detect |
+| `rigidbody-constraint` | :orange_circle: Scaffold | Constraint solver |
+| `softbody-simulate` | :orange_circle: Scaffold | Softbody sim |
+| `cloth-simulate` | :orange_circle: Scaffold | Cloth sim |
+| `fluid-simulate` | :orange_circle: Scaffold | Fluid sim |
+| `particle-emit` | :orange_circle: Scaffold | Particle emitter |
+| `particle-update` | :orange_circle: Scaffold | Particle update |
+| `ragdoll-setup` | :orange_circle: Scaffold | Ragdoll setup |
+| `ragdoll-step` | :orange_circle: Scaffold | Ragdoll step |
+
+### Round 558 — Typography/Fonts (Hinting, Kerning, Glyph)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `font-hinting` | :orange_circle: Scaffold | Font hinting |
+| `font-kerning` | :orange_circle: Scaffold | Kerning |
+| `font-subset` | :orange_circle: Scaffold | Font subsetting |
+| `font-metrics` | :orange_circle: Scaffold | Font metrics |
+| `font-opentype` | :orange_circle: Scaffold | OpenType features |
+| `glyph-outline` | :orange_circle: Scaffold | Outline editor |
+| `glyph-rasterize` | :orange_circle: Scaffold | Rasterize glyph |
+| `glyph-hint` | :orange_circle: Scaffold | Hint glyph |
+| `glyph-advance` | :orange_circle: Scaffold | Advance width |
+| `glyph-contour` | :orange_circle: Scaffold | Contour edit |
+
+### Round 559 — Color Science (Colorimetry, Profiles)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `color-convert` | :orange_circle: Scaffold | Convert color space |
+| `color-gamut` | :orange_circle: Scaffold | Gamut mapping |
+| `color-profile` | :orange_circle: Scaffold | ICC profile |
+| `color-match` | :orange_circle: Scaffold | Color match |
+| `color-adapt` | :orange_circle: Scaffold | Color adaptation |
+| `chromatic-adapt` | :orange_circle: Scaffold | Chromatic adaptation |
+| `white-balance` | :orange_circle: Scaffold | White balance |
+| `deltaE-compute` | :orange_circle: Scaffold | Delta E compute |
+| `spectral-render` | :orange_circle: Scaffold | Spectral rendering |
+| `color-blind-sim` | :orange_circle: Scaffold | Color blindness sim |
+
+### Round 560 — Audio Synthesis (Oscillator, FM, Granular)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `synth-oscillator` | :orange_circle: Scaffold | Oscillator |
+| `synth-envelope` | :orange_circle: Scaffold | ADSR envelope |
+| `synth-filter` | :orange_circle: Scaffold | Filter |
+| `synth-lfo` | :orange_circle: Scaffold | LFO |
+| `synth-wavetable` | :orange_circle: Scaffold | Wavetable |
+| `fm-synthesis` | :orange_circle: Scaffold | FM synthesis |
+| `am-synthesis` | :orange_circle: Scaffold | AM synthesis |
+| `additive-synth` | :orange_circle: Scaffold | Additive synthesis |
+| `granular-synth` | :orange_circle: Scaffold | Granular synthesis |
+| `vocoder-process` | :orange_circle: Scaffold | Vocoder |
+
 ### Round 541 — PCB Design (KiCad)
 
 | Feature | Status | Notes |
