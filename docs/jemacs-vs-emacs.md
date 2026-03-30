@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 364 — MinIO ext, SeaweedFS ext, Ceph ext, GlusterFS ext, LongHorn ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| minio-ls | :orange_circle: | MinIO: list objects |
+| minio-cp | :orange_circle: | MinIO: copy objects |
+| minio-mb | :orange_circle: | MinIO: make bucket |
+| minio-admin | :orange_circle: | MinIO: admin info |
+| seaweedfs-master | :orange_circle: | SeaweedFS: master status |
+| seaweedfs-volume | :orange_circle: | SeaweedFS: list volumes |
+| seaweedfs-filer | :orange_circle: | SeaweedFS: filer status |
+| seaweedfs-mount | :orange_circle: | SeaweedFS: mount filesystem |
+| ceph-status | :orange_circle: | Ceph: cluster status |
+| ceph-osd | :orange_circle: | Ceph: list OSDs |
+| ceph-pool | :orange_circle: | Ceph: list pools |
+| ceph-health | :orange_circle: | Ceph: health detail |
+| glusterfs-volume | :orange_circle: | GlusterFS: list volumes |
+| glusterfs-peer | :orange_circle: | GlusterFS: list peers |
+| glusterfs-info | :orange_circle: | GlusterFS: volume info |
+| glusterfs-heal | :orange_circle: | GlusterFS: heal volume |
+| longhorn-volume | :orange_circle: | Longhorn: list volumes |
+| longhorn-backup | :orange_circle: | Longhorn: list backups |
+| longhorn-engine | :orange_circle: | Longhorn: engine status |
+| longhorn-replica | :orange_circle: | Longhorn: list replicas |
+
 ### Round 363 — Velero ext, Restic ext, Borgbackup ext, Duplicity ext, Rclone ext
 
 | Feature | Status | Notes |

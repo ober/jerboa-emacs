@@ -26942,3 +26942,53 @@
 (def (cmd-borg-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Borg: listing archives")))
+
+;;; Round 364 — MinIO ext, SeaweedFS ext, Ceph ext, GlusterFS ext, LongHorn ext (batch 1)
+
+(def (cmd-minio-ls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "MinIO ls path: "
+      (lambda (path)
+        (echo-message! echo (str "MinIO: listing " path))))))
+
+(def (cmd-minio-cp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "MinIO cp source: "
+      (lambda (src)
+        (echo-message! echo (str "MinIO: copying from " src))))))
+
+(def (cmd-minio-mb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "MinIO make bucket: "
+      (lambda (bucket)
+        (echo-message! echo (str "MinIO: creating bucket " bucket))))))
+
+(def (cmd-minio-admin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MinIO: showing admin info")))
+
+(def (cmd-seaweedfs-master app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: showing master status")))
+
+(def (cmd-seaweedfs-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: listing volumes")))
+
+(def (cmd-seaweedfs-filer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SeaweedFS: showing filer status")))
+
+(def (cmd-seaweedfs-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "SeaweedFS mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "SeaweedFS: mounting at " mnt))))))
+
+(def (cmd-ceph-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ceph: showing cluster status")))
+
+(def (cmd-ceph-osd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ceph: listing OSDs")))

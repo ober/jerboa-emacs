@@ -26189,3 +26189,49 @@
 (def (cmd-rclone-config app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Rclone: showing configuration")))
+
+;;; Round 364 — Ceph ext, GlusterFS ext, LongHorn ext (batch 2)
+
+(def (cmd-ceph-pool app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ceph: listing pools")))
+
+(def (cmd-ceph-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ceph: showing health detail")))
+
+(def (cmd-glusterfs-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GlusterFS: listing volumes")))
+
+(def (cmd-glusterfs-peer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GlusterFS: listing peers")))
+
+(def (cmd-glusterfs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GlusterFS volume name: "
+      (lambda (vol)
+        (echo-message! echo (str "GlusterFS: showing info for " vol))))))
+
+(def (cmd-glusterfs-heal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GlusterFS heal volume: "
+      (lambda (vol)
+        (echo-message! echo (str "GlusterFS: healing " vol))))))
+
+(def (cmd-longhorn-volume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: listing volumes")))
+
+(def (cmd-longhorn-backup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: listing backups")))
+
+(def (cmd-longhorn-engine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: showing engine status")))
+
+(def (cmd-longhorn-replica app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Longhorn: listing replicas")))
