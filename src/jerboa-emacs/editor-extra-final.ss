@@ -23146,3 +23146,53 @@
     (echo-read-string echo "Name: "
       (lambda (name)
         (echo-message! echo (str "Alternatives: configuring " name))))))
+
+;;; Round 304 — Udev ext, Tmpfiles ext, Sysfs ext (batch 2)
+
+(def (cmd-udev-trigger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Udev: triggering events")))
+
+(def (cmd-udev-settle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Udev: waiting for settle")))
+
+(def (cmd-udev-rule-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule file: "
+      (lambda (file)
+        (echo-message! echo (str "Udev: adding rule " file))))))
+
+(def (cmd-udev-rule-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule file: "
+      (lambda (file)
+        (echo-message! echo (str "Udev: removing rule " file))))))
+
+(def (cmd-tmpfiles-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tmpfiles: creating entries")))
+
+(def (cmd-tmpfiles-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tmpfiles: cleaning old files")))
+
+(def (cmd-tmpfiles-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tmpfiles: removing entries")))
+
+(def (cmd-tmpfiles-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tmpfiles: listing configuration")))
+
+(def (cmd-sysfs-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "/sys path: "
+      (lambda (path)
+        (echo-message! echo (str "Sysfs: reading " path))))))
+
+(def (cmd-sysfs-write app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "/sys path: "
+      (lambda (path)
+        (echo-message! echo (str "Sysfs: writing to " path))))))

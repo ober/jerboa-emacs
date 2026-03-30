@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 304 — Polkit ext, DBus ext, Udev ext, Tmpfiles ext, Sysfs ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| polkit-list | :orange_circle: | List polkit actions |
+| polkit-action | :orange_circle: | Show polkit action |
+| polkit-authority | :orange_circle: | Show authority |
+| polkit-check | :orange_circle: | Check authorization |
+| dbus-list | :orange_circle: | List DBus services |
+| dbus-monitor | :orange_circle: | Monitor DBus |
+| dbus-call | :orange_circle: | Call DBus method |
+| dbus-introspect | :orange_circle: | Introspect service |
+| udev-monitor | :orange_circle: | Monitor udev events |
+| udev-info | :orange_circle: | Show device info |
+| udev-trigger | :orange_circle: | Trigger udev events |
+| udev-settle | :orange_circle: | Wait for udev settle |
+| udev-rule-add | :orange_circle: | Add udev rule |
+| udev-rule-remove | :orange_circle: | Remove udev rule |
+| tmpfiles-create | :orange_circle: | Create tmpfiles |
+| tmpfiles-clean | :orange_circle: | Clean tmpfiles |
+| tmpfiles-remove | :orange_circle: | Remove tmpfiles |
+| tmpfiles-list | :orange_circle: | List tmpfiles config |
+| sysfs-read | :orange_circle: | Read /sys entry |
+| sysfs-write | :orange_circle: | Write /sys entry |
+
 ### Round 303 — XDG ext, Dconf ext, GSettings ext, GConf ext, Alternatives ext
 
 | Command | Status | Description |

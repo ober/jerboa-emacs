@@ -23866,3 +23866,55 @@
       (lambda (key)
         (echo-message! echo (str "Dconf: resetting " key))))))
 
+;;; Round 304 — Polkit ext, DBus ext, Udev ext (batch 1)
+
+(def (cmd-polkit-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Polkit: listing actions")))
+
+(def (cmd-polkit-action app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Action ID: "
+      (lambda (id)
+        (echo-message! echo (str "Polkit: action " id))))))
+
+(def (cmd-polkit-authority app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Polkit: showing authority")))
+
+(def (cmd-polkit-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Action ID: "
+      (lambda (id)
+        (echo-message! echo (str "Polkit: checking " id))))))
+
+(def (cmd-dbus-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DBus: listing services")))
+
+(def (cmd-dbus-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DBus: monitoring messages")))
+
+(def (cmd-dbus-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Method: "
+      (lambda (method)
+        (echo-message! echo (str "DBus: calling " method))))))
+
+(def (cmd-dbus-introspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service: "
+      (lambda (svc)
+        (echo-message! echo (str "DBus: introspecting " svc))))))
+
+(def (cmd-udev-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Udev: monitoring events")))
+
+(def (cmd-udev-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device path: "
+      (lambda (dev)
+        (echo-message! echo (str "Udev: info for " dev))))))
+
