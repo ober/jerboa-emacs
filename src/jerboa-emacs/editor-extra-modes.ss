@@ -28083,3 +28083,44 @@
 (def (cmd-coda-tables app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Coda: listing tables")))
+
+;; Round 390 batch 1 — Todoist ext, TickTick ext
+(def (cmd-todoist-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Todoist: listing tasks")))
+
+(def (cmd-todoist-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Todoist: listing projects")))
+
+(def (cmd-todoist-labels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Todoist: listing labels")))
+
+(def (cmd-todoist-filters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Todoist: listing filters")))
+
+(def (cmd-ticktick-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TickTick: listing tasks")))
+
+(def (cmd-ticktick-lists app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TickTick: listing task lists")))
+
+(def (cmd-ticktick-habits app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TickTick: listing habits")))
+
+(def (cmd-ticktick-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TickTick: listing tags")))
+
+(def (cmd-linear-issues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Linear: listing issues")))
+
+(def (cmd-linear-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Linear: listing projects")))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 390 — Todoist ext, TickTick ext, Linear ext, Asana/Monday ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Todoist tasks | — | `todoist-tasks` | :orange_circle: Scaffolded |
+| Todoist projects | — | `todoist-projects` | :orange_circle: Scaffolded |
+| Todoist labels | — | `todoist-labels` | :orange_circle: Scaffolded |
+| Todoist filters | — | `todoist-filters` | :orange_circle: Scaffolded |
+| TickTick tasks | — | `ticktick-tasks` | :orange_circle: Scaffolded |
+| TickTick lists | — | `ticktick-lists` | :orange_circle: Scaffolded |
+| TickTick habits | — | `ticktick-habits` | :orange_circle: Scaffolded |
+| TickTick tags | — | `ticktick-tags` | :orange_circle: Scaffolded |
+| Linear issues | — | `linear-issues` | :orange_circle: Scaffolded |
+| Linear projects | — | `linear-projects` | :orange_circle: Scaffolded |
+| Linear cycles | — | `linear-cycles` | :orange_circle: Scaffolded |
+| Linear views | — | `linear-views` | :orange_circle: Scaffolded |
+| Asana tasks | — | `asana-tasks` | :orange_circle: Scaffolded |
+| Asana projects | — | `asana-projects` | :orange_circle: Scaffolded |
+| Asana portfolios | — | `asana-portfolios` | :orange_circle: Scaffolded |
+| Asana goals | — | `asana-goals` | :orange_circle: Scaffolded |
+| Monday items | — | `monday-items` | :orange_circle: Scaffolded |
+| Monday boards | — | `monday-boards` | :orange_circle: Scaffolded |
+| Monday automations | — | `monday-automations` | :orange_circle: Scaffolded |
+| Monday dashboards | — | `monday-dashboards` | :orange_circle: Scaffolded |
+
 ### Round 389 — Notion ext, Airtable ext, Coda ext, Baserow/NocoDB ext
 
 | Feature | Emacs | jemacs | Status |

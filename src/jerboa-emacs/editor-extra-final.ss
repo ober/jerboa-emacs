@@ -27298,3 +27298,44 @@
 (def (cmd-nocodb-formulas app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "NocoDB: listing formulas")))
+
+;; Round 390 batch 2 — Linear ext, Asana/Monday ext
+(def (cmd-linear-cycles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Linear: listing cycles")))
+
+(def (cmd-linear-views app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Linear: listing views")))
+
+(def (cmd-asana-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Asana: listing tasks")))
+
+(def (cmd-asana-projects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Asana: listing projects")))
+
+(def (cmd-asana-portfolios app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Asana: listing portfolios")))
+
+(def (cmd-asana-goals app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Asana: listing goals")))
+
+(def (cmd-monday-items app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Monday: listing items")))
+
+(def (cmd-monday-boards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Monday: listing boards")))
+
+(def (cmd-monday-automations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Monday: listing automations")))
+
+(def (cmd-monday-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Monday: listing dashboards")))
