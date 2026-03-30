@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 277 — Redis ext, Memcached ext, Elasticsearch ext, MongoDB ext, Cassandra ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| redis-cli | :orange_circle: | Start Redis CLI |
+| redis-get | :orange_circle: | Redis GET key |
+| redis-set | :orange_circle: | Redis SET key |
+| redis-keys | :orange_circle: | Redis KEYS pattern |
+| memcached-get | :orange_circle: | Memcached get key |
+| memcached-set | :orange_circle: | Memcached set key |
+| memcached-stats | :orange_circle: | Show Memcached stats |
+| memcached-flush | :orange_circle: | Flush all Memcached data |
+| elasticsearch-index | :orange_circle: | Inspect Elasticsearch index |
+| elasticsearch-mappings | :orange_circle: | Show Elasticsearch mappings |
+| elasticsearch-cluster-health | :orange_circle: | Check Elasticsearch cluster health |
+| elasticsearch-cat-indices | :orange_circle: | List Elasticsearch indices |
+| mongodb-collections | :orange_circle: | List MongoDB collections |
+| mongodb-stats | :orange_circle: | Show MongoDB database stats |
+| mongodb-databases | :orange_circle: | List MongoDB databases |
+| mongodb-aggregate | :orange_circle: | Run MongoDB aggregation |
+| cassandra-query | :orange_circle: | Execute Cassandra CQL query |
+| cassandra-describe | :orange_circle: | Describe Cassandra keyspace |
+| cassandra-tables | :orange_circle: | List Cassandra tables |
+| cassandra-cluster-status | :orange_circle: | Show Cassandra cluster status |
+
 ### Round 276 — Arrow ext, HDF5 ext, NetCDF ext, FITS ext, SQLite ext
 
 | Command | Status | Description |

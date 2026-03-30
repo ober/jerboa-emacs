@@ -22366,3 +22366,57 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "NetCDF: listing variables")))
 
+;;; Round 277 — Redis ext, Memcached ext, Elasticsearch ext, MongoDB ext, Cassandra ext (batch 1)
+
+(def (cmd-redis-cli app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: starting CLI")))
+
+(def (cmd-redis-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Redis: GET " key))))))
+
+(def (cmd-redis-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Redis: SET " key))))))
+
+(def (cmd-redis-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "Redis: KEYS " pat))))))
+
+(def (cmd-memcached-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Memcached: get " key))))))
+
+(def (cmd-memcached-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Memcached: set " key))))))
+
+(def (cmd-memcached-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: showing stats")))
+
+(def (cmd-memcached-flush app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: flushing all")))
+
+(def (cmd-elasticsearch-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Index: "
+      (lambda (idx)
+        (echo-message! echo (str "Elasticsearch: inspecting index " idx))))))
+
+(def (cmd-elasticsearch-mappings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: showing mappings")))
+

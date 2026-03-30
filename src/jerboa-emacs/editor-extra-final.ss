@@ -21744,3 +21744,47 @@
 (def (cmd-sqlite-vacuum app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SQLite: vacuuming database")))
+
+;;; Round 277 — Elasticsearch ext, MongoDB ext, Cassandra ext (batch 2)
+
+(def (cmd-elasticsearch-cluster-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: checking cluster health")))
+
+(def (cmd-elasticsearch-cat-indices app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Elasticsearch: listing indices")))
+
+(def (cmd-mongodb-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MongoDB: listing collections")))
+
+(def (cmd-mongodb-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MongoDB: showing database stats")))
+
+(def (cmd-mongodb-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MongoDB: listing databases")))
+
+(def (cmd-mongodb-aggregate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MongoDB: running aggregation pipeline")))
+
+(def (cmd-cassandra-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "CQL: "
+      (lambda (cql)
+        (echo-message! echo (str "Cassandra: executing " cql))))))
+
+(def (cmd-cassandra-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: describing keyspace")))
+
+(def (cmd-cassandra-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: listing tables")))
+
+(def (cmd-cassandra-cluster-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cassandra: showing cluster status")))
