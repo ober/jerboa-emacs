@@ -4583,6 +4583,256 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 540 — Lean 4, Agda ext, Qiskit, Cirq
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lean4-theorem` | :orange_circle: Scaffolded | Lean 4: theorem |
+| `lean4-tactic` | :orange_circle: Scaffolded | Lean 4: tactic |
+| `lean4-structure` | :orange_circle: Scaffolded | Lean 4: structure |
+| `lean4-instance` | :orange_circle: Scaffolded | Lean 4: instance |
+| `lean4-simp` | :orange_circle: Scaffolded | Lean 4: simp tactic |
+| `agda-typecheck` | :orange_circle: Scaffolded | Agda: type check |
+| `agda-normalize` | :orange_circle: Scaffolded | Agda: normalize |
+| `agda-case` | :orange_circle: Scaffolded | Agda: case split |
+| `agda-goal` | :orange_circle: Scaffolded | Agda: goal type |
+| `agda-solve` | :orange_circle: Scaffolded | Agda: solve constraints |
+| `qiskit-circuit` | :orange_circle: Scaffolded | Qiskit: circuit |
+| `qiskit-backend` | :orange_circle: Scaffolded | Qiskit: backend |
+| `qiskit-transpile` | :orange_circle: Scaffolded | Qiskit: transpile |
+| `qiskit-execute` | :orange_circle: Scaffolded | Qiskit: execute |
+| `qiskit-noise` | :orange_circle: Scaffolded | Qiskit: noise model |
+| `cirq-circuit` | :orange_circle: Scaffolded | Cirq: circuit |
+| `cirq-simulate` | :orange_circle: Scaffolded | Cirq: simulate |
+| `cirq-optimize` | :orange_circle: Scaffolded | Cirq: optimize |
+| `cirq-measure` | :orange_circle: Scaffolded | Cirq: measure |
+| `cirq-noise` | :orange_circle: Scaffolded | Cirq: noise model |
+
+### Round 539 — Gaussian, ORCA, TOPCAT, Coq
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gaussian-input` | :orange_circle: Scaffolded | Gaussian: input file |
+| `gaussian-submit` | :orange_circle: Scaffolded | Gaussian: submit job |
+| `gaussian-output` | :orange_circle: Scaffolded | Gaussian: parse output |
+| `gaussian-freq` | :orange_circle: Scaffolded | Gaussian: frequency |
+| `gaussian-opt` | :orange_circle: Scaffolded | Gaussian: optimization |
+| `orca-input` | :orange_circle: Scaffolded | ORCA: input file |
+| `orca-submit` | :orange_circle: Scaffolded | ORCA: submit job |
+| `orca-output` | :orange_circle: Scaffolded | ORCA: parse output |
+| `orca-geometry` | :orange_circle: Scaffolded | ORCA: geometry |
+| `orca-property` | :orange_circle: Scaffolded | ORCA: properties |
+| `topcat-table` | :orange_circle: Scaffolded | TOPCAT: table viewer |
+| `topcat-match` | :orange_circle: Scaffolded | TOPCAT: cross-match |
+| `topcat-plot` | :orange_circle: Scaffolded | TOPCAT: plot |
+| `topcat-filter` | :orange_circle: Scaffolded | TOPCAT: filter rows |
+| `topcat-join` | :orange_circle: Scaffolded | TOPCAT: join tables |
+| `coq-proof` | :orange_circle: Scaffolded | Coq: proof mode |
+| `coq-tactic` | :orange_circle: Scaffolded | Coq: tactics |
+| `coq-lemma` | :orange_circle: Scaffolded | Coq: lemma |
+| `coq-definition` | :orange_circle: Scaffolded | Coq: definition |
+| `coq-inductive` | :orange_circle: Scaffolded | Coq: inductive type |
+
+### Round 538 — Astropy, Stellarium, DS9, Aladin
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `astropy-table` | :orange_circle: Scaffolded | Astropy: table operations |
+| `astropy-coords` | :orange_circle: Scaffolded | Astropy: coordinates |
+| `astropy-fits` | :orange_circle: Scaffolded | Astropy: FITS files |
+| `astropy-units` | :orange_circle: Scaffolded | Astropy: units |
+| `astropy-cosmology` | :orange_circle: Scaffolded | Astropy: cosmology |
+| `stellarium-search` | :orange_circle: Scaffolded | Stellarium: search objects |
+| `stellarium-script` | :orange_circle: Scaffolded | Stellarium: scripting |
+| `stellarium-plugin` | :orange_circle: Scaffolded | Stellarium: plugins |
+| `stellarium-landscape` | :orange_circle: Scaffolded | Stellarium: landscape |
+| `stellarium-projection` | :orange_circle: Scaffolded | Stellarium: projection |
+| `ds9-open` | :orange_circle: Scaffolded | DS9: open FITS |
+| `ds9-region` | :orange_circle: Scaffolded | DS9: regions |
+| `ds9-colormap` | :orange_circle: Scaffolded | DS9: colormap |
+| `ds9-contour` | :orange_circle: Scaffolded | DS9: contours |
+| `ds9-analysis` | :orange_circle: Scaffolded | DS9: analysis |
+| `aladin-survey` | :orange_circle: Scaffolded | Aladin: survey |
+| `aladin-catalog` | :orange_circle: Scaffolded | Aladin: catalog |
+| `aladin-overlay` | :orange_circle: Scaffolded | Aladin: overlay |
+| `aladin-filter` | :orange_circle: Scaffolded | Aladin: filter |
+| `aladin-script` | :orange_circle: Scaffolded | Aladin: scripting |
+
+### Round 537 — BWA, RDKit, Open Babel, Avogadro
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `bwa-mem` | :orange_circle: Scaffolded | BWA: mem alignment |
+| `bwa-index` | :orange_circle: Scaffolded | BWA: index reference |
+| `bwa-align` | :orange_circle: Scaffolded | BWA: align reads |
+| `bwa-sampe` | :orange_circle: Scaffolded | BWA: paired-end |
+| `bwa-aln` | :orange_circle: Scaffolded | BWA: aln mode |
+| `rdkit-molecule` | :orange_circle: Scaffolded | RDKit: molecule |
+| `rdkit-fingerprint` | :orange_circle: Scaffolded | RDKit: fingerprint |
+| `rdkit-descriptor` | :orange_circle: Scaffolded | RDKit: descriptors |
+| `rdkit-similarity` | :orange_circle: Scaffolded | RDKit: similarity |
+| `rdkit-scaffold` | :orange_circle: Scaffolded | RDKit: scaffold |
+| `openbabel-convert` | :orange_circle: Scaffolded | Open Babel: convert |
+| `openbabel-minimize` | :orange_circle: Scaffolded | Open Babel: minimize |
+| `openbabel-generate` | :orange_circle: Scaffolded | Open Babel: generate 3D |
+| `openbabel-filter` | :orange_circle: Scaffolded | Open Babel: filter |
+| `openbabel-align` | :orange_circle: Scaffolded | Open Babel: align |
+| `avogadro-build` | :orange_circle: Scaffolded | Avogadro: build molecule |
+| `avogadro-optimize` | :orange_circle: Scaffolded | Avogadro: optimize geometry |
+| `avogadro-measure` | :orange_circle: Scaffolded | Avogadro: measure |
+| `avogadro-render` | :orange_circle: Scaffolded | Avogadro: render |
+| `avogadro-surface` | :orange_circle: Scaffolded | Avogadro: surfaces |
+
+### Round 536 — SAMtools, BCFtools, BEDtools, BLAST
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `samtools-view` | :orange_circle: Scaffolded | SAMtools: view alignments |
+| `samtools-sort` | :orange_circle: Scaffolded | SAMtools: sort |
+| `samtools-index` | :orange_circle: Scaffolded | SAMtools: index |
+| `samtools-flagstat` | :orange_circle: Scaffolded | SAMtools: flagstat |
+| `samtools-depth` | :orange_circle: Scaffolded | SAMtools: depth |
+| `bcftools-call` | :orange_circle: Scaffolded | BCFtools: variant calling |
+| `bcftools-filter` | :orange_circle: Scaffolded | BCFtools: filter variants |
+| `bcftools-merge` | :orange_circle: Scaffolded | BCFtools: merge VCFs |
+| `bcftools-stats` | :orange_circle: Scaffolded | BCFtools: statistics |
+| `bcftools-annotate` | :orange_circle: Scaffolded | BCFtools: annotate |
+| `bedtools-intersect` | :orange_circle: Scaffolded | BEDtools: intersect |
+| `bedtools-merge` | :orange_circle: Scaffolded | BEDtools: merge |
+| `bedtools-coverage` | :orange_circle: Scaffolded | BEDtools: coverage |
+| `bedtools-closest` | :orange_circle: Scaffolded | BEDtools: closest |
+| `bedtools-subtract` | :orange_circle: Scaffolded | BEDtools: subtract |
+| `blast-search` | :orange_circle: Scaffolded | BLAST: search |
+| `blast-db` | :orange_circle: Scaffolded | BLAST: database |
+| `blast-format` | :orange_circle: Scaffolded | BLAST: format output |
+| `blast-align` | :orange_circle: Scaffolded | BLAST: alignment |
+| `blast-filter` | :orange_circle: Scaffolded | BLAST: filter results |
+
+### Round 535 — Gazebo, Webots, Isaac Sim, CARLA
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gazebo-world` | :orange_circle: Scaffolded | Gazebo: world editor |
+| `gazebo-model` | :orange_circle: Scaffolded | Gazebo: model editor |
+| `gazebo-plugin` | :orange_circle: Scaffolded | Gazebo: plugins |
+| `gazebo-sensor` | :orange_circle: Scaffolded | Gazebo: sensors |
+| `gazebo-physics` | :orange_circle: Scaffolded | Gazebo: physics engine |
+| `webots-world` | :orange_circle: Scaffolded | Webots: world |
+| `webots-controller` | :orange_circle: Scaffolded | Webots: controller |
+| `webots-supervisor` | :orange_circle: Scaffolded | Webots: supervisor |
+| `webots-field` | :orange_circle: Scaffolded | Webots: field access |
+| `webots-export` | :orange_circle: Scaffolded | Webots: export scene |
+| `isaac-sim` | :orange_circle: Scaffolded | Isaac Sim: simulation |
+| `isaac-gym` | :orange_circle: Scaffolded | Isaac Gym: RL training |
+| `isaac-orbit` | :orange_circle: Scaffolded | Isaac Orbit: framework |
+| `isaac-sensor` | :orange_circle: Scaffolded | Isaac: sensor sim |
+| `isaac-robot` | :orange_circle: Scaffolded | Isaac: robot model |
+| `carla-world` | :orange_circle: Scaffolded | CARLA: world settings |
+| `carla-vehicle` | :orange_circle: Scaffolded | CARLA: vehicle control |
+| `carla-sensor` | :orange_circle: Scaffolded | CARLA: sensor config |
+| `carla-weather` | :orange_circle: Scaffolded | CARLA: weather |
+| `carla-traffic` | :orange_circle: Scaffolded | CARLA: traffic manager |
+
+### Round 534 — LwM2M, OPC UA, Modbus, ROS 2
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lwm2m-register` | :orange_circle: Scaffolded | LwM2M: register device |
+| `lwm2m-discover` | :orange_circle: Scaffolded | LwM2M: discover resources |
+| `lwm2m-read` | :orange_circle: Scaffolded | LwM2M: read resource |
+| `lwm2m-write` | :orange_circle: Scaffolded | LwM2M: write resource |
+| `lwm2m-execute` | :orange_circle: Scaffolded | LwM2M: execute resource |
+| `opcua-browse` | :orange_circle: Scaffolded | OPC UA: browse nodes |
+| `opcua-read` | :orange_circle: Scaffolded | OPC UA: read value |
+| `opcua-write` | :orange_circle: Scaffolded | OPC UA: write value |
+| `opcua-subscribe` | :orange_circle: Scaffolded | OPC UA: subscribe |
+| `opcua-method` | :orange_circle: Scaffolded | OPC UA: call method |
+| `modbus-read` | :orange_circle: Scaffolded | Modbus: read registers |
+| `modbus-write` | :orange_circle: Scaffolded | Modbus: write registers |
+| `modbus-scan` | :orange_circle: Scaffolded | Modbus: scan devices |
+| `modbus-monitor` | :orange_circle: Scaffolded | Modbus: monitor traffic |
+| `modbus-simulate` | :orange_circle: Scaffolded | Modbus: simulator |
+| `ros2-topic` | :orange_circle: Scaffolded | ROS 2: topics |
+| `ros2-service` | :orange_circle: Scaffolded | ROS 2: services |
+| `ros2-action` | :orange_circle: Scaffolded | ROS 2: actions |
+| `ros2-param` | :orange_circle: Scaffolded | ROS 2: parameters |
+| `ros2-launch` | :orange_circle: Scaffolded | ROS 2: launch |
+
+### Round 533 — Move, Cairo, Mosquitto, CoAP
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `move-build` | :orange_circle: Scaffolded | Move: build |
+| `move-test` | :orange_circle: Scaffolded | Move: test |
+| `move-publish` | :orange_circle: Scaffolded | Move: publish |
+| `move-prove` | :orange_circle: Scaffolded | Move: prove |
+| `move-compile` | :orange_circle: Scaffolded | Move: compile |
+| `cairo-compile` | :orange_circle: Scaffolded | Cairo: compile |
+| `cairo-run` | :orange_circle: Scaffolded | Cairo: run |
+| `cairo-test` | :orange_circle: Scaffolded | Cairo: test |
+| `cairo-format` | :orange_circle: Scaffolded | Cairo: format |
+| `cairo-prove` | :orange_circle: Scaffolded | Cairo: prove |
+| `mosquitto-pub` | :orange_circle: Scaffolded | Mosquitto: publish |
+| `mosquitto-sub` | :orange_circle: Scaffolded | Mosquitto: subscribe |
+| `mosquitto-bridge` | :orange_circle: Scaffolded | Mosquitto: bridge |
+| `mosquitto-config` | :orange_circle: Scaffolded | Mosquitto: config |
+| `mosquitto-passwd` | :orange_circle: Scaffolded | Mosquitto: passwords |
+| `coap-get` | :orange_circle: Scaffolded | CoAP: GET request |
+| `coap-post` | :orange_circle: Scaffolded | CoAP: POST request |
+| `coap-put` | :orange_circle: Scaffolded | CoAP: PUT request |
+| `coap-delete` | :orange_circle: Scaffolded | CoAP: DELETE request |
+| `coap-observe` | :orange_circle: Scaffolded | CoAP: observe resource |
+
+### Round 532 — Brownie, Anchor, Substrate, CosmWasm
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `brownie-compile` | :orange_circle: Scaffolded | Brownie: compile |
+| `brownie-test` | :orange_circle: Scaffolded | Brownie: test |
+| `brownie-run` | :orange_circle: Scaffolded | Brownie: run script |
+| `brownie-console` | :orange_circle: Scaffolded | Brownie: console |
+| `brownie-network` | :orange_circle: Scaffolded | Brownie: network |
+| `anchor-build` | :orange_circle: Scaffolded | Anchor: build |
+| `anchor-test` | :orange_circle: Scaffolded | Anchor: test |
+| `anchor-deploy` | :orange_circle: Scaffolded | Anchor: deploy |
+| `anchor-init` | :orange_circle: Scaffolded | Anchor: init project |
+| `anchor-verify` | :orange_circle: Scaffolded | Anchor: verify |
+| `substrate-build` | :orange_circle: Scaffolded | Substrate: build |
+| `substrate-test` | :orange_circle: Scaffolded | Substrate: test |
+| `substrate-purge` | :orange_circle: Scaffolded | Substrate: purge chain |
+| `substrate-key` | :orange_circle: Scaffolded | Substrate: key management |
+| `substrate-benchmark` | :orange_circle: Scaffolded | Substrate: benchmark |
+| `cosmwasm-build` | :orange_circle: Scaffolded | CosmWasm: build |
+| `cosmwasm-test` | :orange_circle: Scaffolded | CosmWasm: test |
+| `cosmwasm-deploy` | :orange_circle: Scaffolded | CosmWasm: deploy |
+| `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
+| `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
+
+### Round 531 — Solidity, Hardhat, Foundry, Truffle
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `solidity-compile` | :orange_circle: Scaffolded | Solidity: compile contracts |
+| `solidity-test` | :orange_circle: Scaffolded | Solidity: run tests |
+| `solidity-deploy` | :orange_circle: Scaffolded | Solidity: deploy contract |
+| `solidity-verify` | :orange_circle: Scaffolded | Solidity: verify contract |
+| `solidity-flatten` | :orange_circle: Scaffolded | Solidity: flatten sources |
+| `hardhat-compile` | :orange_circle: Scaffolded | Hardhat: compile |
+| `hardhat-test` | :orange_circle: Scaffolded | Hardhat: test |
+| `hardhat-deploy` | :orange_circle: Scaffolded | Hardhat: deploy |
+| `hardhat-node` | :orange_circle: Scaffolded | Hardhat: local node |
+| `hardhat-verify` | :orange_circle: Scaffolded | Hardhat: verify |
+| `foundry-build` | :orange_circle: Scaffolded | Foundry: build |
+| `foundry-test` | :orange_circle: Scaffolded | Foundry: test |
+| `foundry-deploy` | :orange_circle: Scaffolded | Foundry: deploy |
+| `foundry-script` | :orange_circle: Scaffolded | Foundry: script |
+| `foundry-cast` | :orange_circle: Scaffolded | Foundry: cast |
+| `truffle-compile` | :orange_circle: Scaffolded | Truffle: compile |
+| `truffle-test` | :orange_circle: Scaffolded | Truffle: test |
+| `truffle-migrate` | :orange_circle: Scaffolded | Truffle: migrate |
+| `truffle-console` | :orange_circle: Scaffolded | Truffle: console |
+| `truffle-debug` | :orange_circle: Scaffolded | Truffle: debug |
+
 ### Round 530 — Consul KV ext, FoundationDB, CockroachDB, YugabyteDB
 
 | Feature | Status | Notes |
