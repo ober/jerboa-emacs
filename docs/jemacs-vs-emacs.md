@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 273 — SPARQL ext, GraphQL ext, gRPC ext, Protocol Buffers ext, Thrift ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| sparql-query | :orange_circle: | Execute SPARQL query |
+| sparql-describe | :orange_circle: | Describe SPARQL resource |
+| sparql-construct | :orange_circle: | Execute SPARQL CONSTRUCT |
+| sparql-endpoint | :orange_circle: | Set SPARQL endpoint |
+| graphql-query | :orange_circle: | Execute GraphQL query |
+| graphql-mutation | :orange_circle: | Execute GraphQL mutation |
+| graphql-introspect | :orange_circle: | Introspect GraphQL schema |
+| graphql-format | :orange_circle: | Format GraphQL query |
+| grpc-call | :orange_circle: | Call gRPC method |
+| grpc-list-services | :orange_circle: | List gRPC services |
+| grpc-describe-service | :orange_circle: | Describe gRPC service |
+| grpc-stream | :orange_circle: | Start gRPC stream |
+| protobuf-compile | :orange_circle: | Compile Protocol Buffers |
+| protobuf-lint | :orange_circle: | Lint Protocol Buffers |
+| protobuf-format | :orange_circle: | Format Protocol Buffers |
+| protobuf-validate | :orange_circle: | Validate Protobuf schema |
+| thrift-compile | :orange_circle: | Compile Thrift files |
+| thrift-lint | :orange_circle: | Lint Thrift files |
+| thrift-generate | :orange_circle: | Generate Thrift code |
+| thrift-validate | :orange_circle: | Validate Thrift schema |
+
 ### Round 272 — TLA+ ext, Alloy ext, Z3 ext, miniKanren ext, Datalog ext
 
 | Command | Status | Description |

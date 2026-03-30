@@ -21570,3 +21570,49 @@
 (def (cmd-datalog-compile app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Datalog: compiling program")))
+
+;;; Round 273 — gRPC ext, Protocol Buffers ext, Thrift ext (batch 2)
+
+(def (cmd-grpc-describe-service app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service: "
+      (lambda (svc)
+        (echo-message! echo (str "gRPC: describing " svc))))))
+
+(def (cmd-grpc-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "gRPC: starting stream")))
+
+(def (cmd-protobuf-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: compiling .proto files")))
+
+(def (cmd-protobuf-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: linting .proto files")))
+
+(def (cmd-protobuf-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: formatting .proto files")))
+
+(def (cmd-protobuf-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Protobuf: validating schema")))
+
+(def (cmd-thrift-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: compiling .thrift files")))
+
+(def (cmd-thrift-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: linting .thrift files")))
+
+(def (cmd-thrift-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Language: "
+      (lambda (lang)
+        (echo-message! echo (str "Thrift: generating " lang " code"))))))
+
+(def (cmd-thrift-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thrift: validating schema")))

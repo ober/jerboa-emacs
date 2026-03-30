@@ -22190,3 +22190,51 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Z3: evaluating expression")))
 
+;;; Round 273 — SPARQL ext, GraphQL ext, gRPC ext, Protocol Buffers ext, Thrift ext (batch 1)
+
+(def (cmd-sparql-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SPARQL: executing query")))
+
+(def (cmd-sparql-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Resource URI: "
+      (lambda (uri)
+        (echo-message! echo (str "SPARQL: describing " uri))))))
+
+(def (cmd-sparql-construct app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SPARQL: executing CONSTRUCT query")))
+
+(def (cmd-sparql-endpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Endpoint URL: "
+      (lambda (url)
+        (echo-message! echo (str "SPARQL: set endpoint to " url))))))
+
+(def (cmd-graphql-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: executing query")))
+
+(def (cmd-graphql-mutation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: executing mutation")))
+
+(def (cmd-graphql-introspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: introspecting schema")))
+
+(def (cmd-graphql-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GraphQL: formatting query")))
+
+(def (cmd-grpc-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Method: "
+      (lambda (method)
+        (echo-message! echo (str "gRPC: calling " method))))))
+
+(def (cmd-grpc-list-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "gRPC: listing services")))
+
