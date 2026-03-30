@@ -27134,3 +27134,44 @@
 (def (cmd-windmill-resources app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Windmill: listing resources")))
+
+;; Round 386 batch 2 — Cortex ext, OpsLevel/Compass ext
+(def (cmd-cortex-catalogs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cortex: browsing catalogs")))
+
+(def (cmd-cortex-initiatives app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cortex: listing initiatives")))
+
+(def (cmd-opslevel-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsLevel: listing services")))
+
+(def (cmd-opslevel-checks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsLevel: listing checks")))
+
+(def (cmd-opslevel-rubrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsLevel: listing rubrics")))
+
+(def (cmd-opslevel-maturity app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpsLevel: showing maturity report")))
+
+(def (cmd-compass-components app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compass: listing components")))
+
+(def (cmd-compass-scorecards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compass: listing scorecards")))
+
+(def (cmd-compass-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compass: showing metrics")))
+
+(def (cmd-compass-teams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compass: listing teams")))

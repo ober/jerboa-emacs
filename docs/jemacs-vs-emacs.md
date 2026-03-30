@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 386 — Backstage ext, Port ext, Cortex ext, OpsLevel/Compass ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Backstage catalog | — | `backstage-catalog` | :orange_circle: Scaffolded |
+| Backstage templates | — | `backstage-templates` | :orange_circle: Scaffolded |
+| Backstage APIs | — | `backstage-apis` | :orange_circle: Scaffolded |
+| Backstage TechDocs | — | `backstage-techdocs` | :orange_circle: Scaffolded |
+| Port entities | — | `port-entities` | :orange_circle: Scaffolded |
+| Port blueprints | — | `port-blueprints` | :orange_circle: Scaffolded |
+| Port self-service actions | — | `port-actions` | :orange_circle: Scaffolded |
+| Port scorecards | — | `port-scorecards` | :orange_circle: Scaffolded |
+| Cortex services | — | `cortex-services` | :orange_circle: Scaffolded |
+| Cortex scorecards | — | `cortex-scorecards` | :orange_circle: Scaffolded |
+| Cortex catalogs | — | `cortex-catalogs` | :orange_circle: Scaffolded |
+| Cortex initiatives | — | `cortex-initiatives` | :orange_circle: Scaffolded |
+| OpsLevel services | — | `opslevel-services` | :orange_circle: Scaffolded |
+| OpsLevel checks | — | `opslevel-checks` | :orange_circle: Scaffolded |
+| OpsLevel rubrics | — | `opslevel-rubrics` | :orange_circle: Scaffolded |
+| OpsLevel maturity | — | `opslevel-maturity` | :orange_circle: Scaffolded |
+| Compass components | — | `compass-components` | :orange_circle: Scaffolded |
+| Compass scorecards | — | `compass-scorecards` | :orange_circle: Scaffolded |
+| Compass metrics | — | `compass-metrics` | :orange_circle: Scaffolded |
+| Compass teams | — | `compass-teams` | :orange_circle: Scaffolded |
+
 ### Round 385 — Temporal ext, Cadence ext, Inngest ext, Trigger.dev/Windmill ext
 
 | Feature | Emacs | jemacs | Status |

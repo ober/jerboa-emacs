@@ -27917,3 +27917,44 @@
 (def (cmd-inngest-events app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Inngest: listing events")))
+
+;; Round 386 batch 1 — Backstage ext, Port ext
+(def (cmd-backstage-catalog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Backstage: browsing service catalog")))
+
+(def (cmd-backstage-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Backstage: listing software templates")))
+
+(def (cmd-backstage-apis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Backstage: listing API definitions")))
+
+(def (cmd-backstage-techdocs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Backstage: browsing TechDocs")))
+
+(def (cmd-port-entities app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Port: listing entities")))
+
+(def (cmd-port-blueprints app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Port: listing blueprints")))
+
+(def (cmd-port-actions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Port: listing self-service actions")))
+
+(def (cmd-port-scorecards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Port: listing scorecards")))
+
+(def (cmd-cortex-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cortex: listing services")))
+
+(def (cmd-cortex-scorecards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cortex: listing scorecards")))
