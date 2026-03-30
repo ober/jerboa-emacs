@@ -26276,3 +26276,51 @@
 (def (cmd-cilium-endpoint app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cilium: listing endpoints")))
+
+;;; Round 351 — ArgoCD ext, FluxCD ext, Tekton ext, Spinnaker ext, Jenkins ext (batch 1)
+
+(def (cmd-argocd-app-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ArgoCD: listing applications")))
+
+(def (cmd-argocd-app-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ArgoCD sync app: "
+      (lambda (name)
+        (echo-message! echo (str "ArgoCD: syncing " name))))))
+
+(def (cmd-argocd-app-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ArgoCD app name: "
+      (lambda (name)
+        (echo-message! echo (str "ArgoCD: showing app " name))))))
+
+(def (cmd-argocd-repo-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ArgoCD: listing repositories")))
+
+(def (cmd-fluxcd-sources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FluxCD: listing sources")))
+
+(def (cmd-fluxcd-kustomizations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FluxCD: listing kustomizations")))
+
+(def (cmd-fluxcd-helmreleases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FluxCD: listing helm releases")))
+
+(def (cmd-fluxcd-reconcile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "FluxCD reconcile resource: "
+      (lambda (res)
+        (echo-message! echo (str "FluxCD: reconciling " res))))))
+
+(def (cmd-tekton-pipelines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tekton: listing pipelines")))
+
+(def (cmd-tekton-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tekton: listing tasks")))

@@ -25557,3 +25557,55 @@
 (def (cmd-flannel-routes app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Flannel: showing routes")))
+
+;;; Round 351 — Tekton ext, Spinnaker ext, Jenkins ext (batch 2)
+
+(def (cmd-tekton-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tekton: listing pipeline runs")))
+
+(def (cmd-tekton-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tekton run name: "
+      (lambda (name)
+        (echo-message! echo (str "Tekton: showing logs for " name))))))
+
+(def (cmd-spinnaker-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spinnaker: listing applications")))
+
+(def (cmd-spinnaker-pipelines app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Spinnaker app name: "
+      (lambda (name)
+        (echo-message! echo (str "Spinnaker: listing pipelines for " name))))))
+
+(def (cmd-spinnaker-executions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spinnaker: listing pipeline executions")))
+
+(def (cmd-spinnaker-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Spinnaker deploy pipeline: "
+      (lambda (pipe)
+        (echo-message! echo (str "Spinnaker: deploying " pipe))))))
+
+(def (cmd-jenkins-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jenkins: listing jobs")))
+
+(def (cmd-jenkins-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jenkins build job: "
+      (lambda (job)
+        (echo-message! echo (str "Jenkins: building " job))))))
+
+(def (cmd-jenkins-console app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jenkins console job: "
+      (lambda (job)
+        (echo-message! echo (str "Jenkins: showing console for " job))))))
+
+(def (cmd-jenkins-queue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jenkins: showing build queue")))

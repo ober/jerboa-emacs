@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 351 — ArgoCD ext, FluxCD ext, Tekton ext, Spinnaker ext, Jenkins ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| argocd-app-list | :orange_circle: | ArgoCD: list applications |
+| argocd-app-sync | :orange_circle: | ArgoCD: sync application |
+| argocd-app-get | :orange_circle: | ArgoCD: show application |
+| argocd-repo-list | :orange_circle: | ArgoCD: list repositories |
+| fluxcd-sources | :orange_circle: | FluxCD: list sources |
+| fluxcd-kustomizations | :orange_circle: | FluxCD: list kustomizations |
+| fluxcd-helmreleases | :orange_circle: | FluxCD: list helm releases |
+| fluxcd-reconcile | :orange_circle: | FluxCD: reconcile resource |
+| tekton-pipelines | :orange_circle: | Tekton: list pipelines |
+| tekton-tasks | :orange_circle: | Tekton: list tasks |
+| tekton-runs | :orange_circle: | Tekton: list pipeline runs |
+| tekton-logs | :orange_circle: | Tekton: show run logs |
+| spinnaker-apps | :orange_circle: | Spinnaker: list applications |
+| spinnaker-pipelines | :orange_circle: | Spinnaker: list pipelines |
+| spinnaker-executions | :orange_circle: | Spinnaker: list executions |
+| spinnaker-deploy | :orange_circle: | Spinnaker: deploy pipeline |
+| jenkins-jobs | :orange_circle: | Jenkins: list jobs |
+| jenkins-build | :orange_circle: | Jenkins: build a job |
+| jenkins-console | :orange_circle: | Jenkins: show console output |
+| jenkins-queue | :orange_circle: | Jenkins: show build queue |
+
 ### Round 350 — Istio ext, Linkerd ext, Cilium ext, Calico ext, Flannel ext
 
 | Feature | Status | Notes |
