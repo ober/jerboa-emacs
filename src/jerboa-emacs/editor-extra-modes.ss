@@ -28290,3 +28290,44 @@
 (def (cmd-sanity-datasets app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Sanity: listing datasets")))
+
+;; Round 395 batch 1 — Segment ext, Mixpanel ext
+(def (cmd-segment-sources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Segment: listing sources")))
+
+(def (cmd-segment-destinations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Segment: listing destinations")))
+
+(def (cmd-segment-tracking app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Segment: tracking event")))
+
+(def (cmd-segment-audiences app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Segment: listing audiences")))
+
+(def (cmd-mixpanel-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mixpanel: listing events")))
+
+(def (cmd-mixpanel-funnels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mixpanel: listing funnels")))
+
+(def (cmd-mixpanel-cohorts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mixpanel: listing cohorts")))
+
+(def (cmd-mixpanel-reports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mixpanel: listing reports")))
+
+(def (cmd-amplitude-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Amplitude: listing events")))
+
+(def (cmd-amplitude-charts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Amplitude: listing charts")))

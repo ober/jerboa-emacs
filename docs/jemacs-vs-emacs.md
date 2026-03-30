@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 395 — Segment ext, Mixpanel ext, Amplitude ext, Heap/PostHog ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Segment sources | — | `segment-sources` | :orange_circle: Scaffolded |
+| Segment destinations | — | `segment-destinations` | :orange_circle: Scaffolded |
+| Segment tracking | — | `segment-tracking` | :orange_circle: Scaffolded |
+| Segment audiences | — | `segment-audiences` | :orange_circle: Scaffolded |
+| Mixpanel events | — | `mixpanel-events` | :orange_circle: Scaffolded |
+| Mixpanel funnels | — | `mixpanel-funnels` | :orange_circle: Scaffolded |
+| Mixpanel cohorts | — | `mixpanel-cohorts` | :orange_circle: Scaffolded |
+| Mixpanel reports | — | `mixpanel-reports` | :orange_circle: Scaffolded |
+| Amplitude events | — | `amplitude-events` | :orange_circle: Scaffolded |
+| Amplitude charts | — | `amplitude-charts` | :orange_circle: Scaffolded |
+| Amplitude cohorts | — | `amplitude-cohorts` | :orange_circle: Scaffolded |
+| Amplitude experiments | — | `amplitude-experiments` | :orange_circle: Scaffolded |
+| Heap events | — | `heap-events` | :orange_circle: Scaffolded |
+| Heap sessions | — | `heap-sessions` | :orange_circle: Scaffolded |
+| Heap funnels | — | `heap-funnels` | :orange_circle: Scaffolded |
+| Heap segments | — | `heap-segments` | :orange_circle: Scaffolded |
+| PostHog events | — | `posthog-events` | :orange_circle: Scaffolded |
+| PostHog insights | — | `posthog-insights` | :orange_circle: Scaffolded |
+| PostHog experiments | — | `posthog-experiments` | :orange_circle: Scaffolded |
+| PostHog feature flags | — | `posthog-flags` | :orange_circle: Scaffolded |
+
 ### Round 394 — Contentful ext, Strapi ext, Sanity ext, Directus/Payload ext
 
 | Feature | Emacs | jemacs | Status |

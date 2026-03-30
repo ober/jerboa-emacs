@@ -27503,3 +27503,44 @@
 (def (cmd-payload-users app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Payload: listing users")))
+
+;; Round 395 batch 2 — Amplitude ext, Heap/PostHog ext
+(def (cmd-amplitude-cohorts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Amplitude: listing cohorts")))
+
+(def (cmd-amplitude-experiments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Amplitude: listing experiments")))
+
+(def (cmd-heap-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Heap: listing events")))
+
+(def (cmd-heap-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Heap: listing sessions")))
+
+(def (cmd-heap-funnels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Heap: listing funnels")))
+
+(def (cmd-heap-segments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Heap: listing segments")))
+
+(def (cmd-posthog-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PostHog: listing events")))
+
+(def (cmd-posthog-insights app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PostHog: listing insights")))
+
+(def (cmd-posthog-experiments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PostHog: listing experiments")))
+
+(def (cmd-posthog-flags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PostHog: listing feature flags")))
