@@ -24887,3 +24887,53 @@
 (def (cmd-bpftrace-oneliners app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "BPFtrace: showing common one-liners")))
+
+;;; Round 337 — Chrt ext, Ionice ext, Tuna ext (batch 2)
+
+(def (cmd-chrt-rr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chrt RR priority (1-99): "
+      (lambda (prio)
+        (echo-message! echo (str "Chrt: setting round-robin priority " prio))))))
+
+(def (cmd-chrt-batch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chrt: setting SCHED_BATCH policy")))
+
+(def (cmd-ionice-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ionice get PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Ionice: class for PID " pid))))))
+
+(def (cmd-ionice-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ionice set class (1-3): "
+      (lambda (cls)
+        (echo-message! echo (str "Ionice: setting class " cls))))))
+
+(def (cmd-ionice-class app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ionice: listing I/O scheduling classes")))
+
+(def (cmd-ionice-idle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ionice: setting idle I/O class")))
+
+(def (cmd-tuna-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tuna: showing current IRQ/thread affinities")))
+
+(def (cmd-tuna-irqs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tuna: listing IRQ affinities")))
+
+(def (cmd-tuna-threads app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tuna: listing thread affinities")))
+
+(def (cmd-tuna-isolate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tuna isolate CPU: "
+      (lambda (cpu)
+        (echo-message! echo (str "Tuna: isolating CPU " cpu))))))

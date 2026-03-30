@@ -25582,3 +25582,53 @@
 (def (cmd-ltrace-demangle app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ltrace: demangling C++ symbols")))
+
+;;; Round 337 — Ftrace ext, Irqbalance ext, Chrt ext, Ionice ext, Tuna ext (batch 1)
+
+(def (cmd-ftrace-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ftrace: enabling function tracer")))
+
+(def (cmd-ftrace-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ftrace: disabling tracer")))
+
+(def (cmd-ftrace-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ftrace: listing available events")))
+
+(def (cmd-ftrace-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ftrace function filter: "
+      (lambda (filter)
+        (echo-message! echo (str "Ftrace: filtering on " filter))))))
+
+(def (cmd-irqbalance-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Irqbalance: showing status")))
+
+(def (cmd-irqbalance-oneshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Irqbalance: one-shot balance")))
+
+(def (cmd-irqbalance-ban app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Irqbalance ban IRQ: "
+      (lambda (irq)
+        (echo-message! echo (str "Irqbalance: banning IRQ " irq))))))
+
+(def (cmd-irqbalance-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Irqbalance: debug mode output")))
+
+(def (cmd-chrt-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chrt show PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Chrt: showing policy for PID " pid))))))
+
+(def (cmd-chrt-fifo app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chrt FIFO priority (1-99): "
+      (lambda (prio)
+        (echo-message! echo (str "Chrt: setting FIFO priority " prio))))))

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 337 — Ftrace ext, Irqbalance ext, Chrt ext, Ionice ext, Tuna ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| ftrace-enable | :orange_circle: | Ftrace: enable function tracer |
+| ftrace-disable | :orange_circle: | Ftrace: disable tracer |
+| ftrace-events | :orange_circle: | Ftrace: list available events |
+| ftrace-filter | :orange_circle: | Ftrace: set function filter |
+| irqbalance-status | :orange_circle: | Irqbalance: show status |
+| irqbalance-oneshot | :orange_circle: | Irqbalance: one-shot balance |
+| irqbalance-ban | :orange_circle: | Irqbalance: ban an IRQ |
+| irqbalance-debug | :orange_circle: | Irqbalance: debug mode output |
+| chrt-show | :orange_circle: | Chrt: show scheduling policy |
+| chrt-fifo | :orange_circle: | Chrt: set FIFO priority |
+| chrt-rr | :orange_circle: | Chrt: set round-robin priority |
+| chrt-batch | :orange_circle: | Chrt: set SCHED_BATCH policy |
+| ionice-get | :orange_circle: | Ionice: get I/O class for PID |
+| ionice-set | :orange_circle: | Ionice: set I/O class |
+| ionice-class | :orange_circle: | Ionice: list scheduling classes |
+| ionice-idle | :orange_circle: | Ionice: set idle I/O class |
+| tuna-show | :orange_circle: | Tuna: show IRQ/thread affinities |
+| tuna-irqs | :orange_circle: | Tuna: list IRQ affinities |
+| tuna-threads | :orange_circle: | Tuna: list thread affinities |
+| tuna-isolate | :orange_circle: | Tuna: isolate a CPU |
+
 ### Round 336 — Perf ext, Strace ext, Ltrace ext, Sysdig ext, Bpftrace ext
 
 | Feature | Status | Notes |
