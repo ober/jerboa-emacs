@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 359 — Poetry ext, UV ext, Rye ext, PDM ext, Hatch ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| poetry-install | :orange_circle: | Poetry: install dependencies |
+| poetry-add | :orange_circle: | Poetry: add package |
+| poetry-lock | :orange_circle: | Poetry: update lock file |
+| poetry-show | :orange_circle: | Poetry: show packages |
+| uv-pip-install | :orange_circle: | UV: pip install |
+| uv-pip-compile | :orange_circle: | UV: compile requirements |
+| uv-venv | :orange_circle: | UV: create virtual env |
+| uv-run | :orange_circle: | UV: run command |
+| rye-sync | :orange_circle: | Rye: sync dependencies |
+| rye-add | :orange_circle: | Rye: add package |
+| rye-pin | :orange_circle: | Rye: pin Python version |
+| rye-show | :orange_circle: | Rye: show project info |
+| pdm-install | :orange_circle: | PDM: install dependencies |
+| pdm-add | :orange_circle: | PDM: add package |
+| pdm-lock | :orange_circle: | PDM: update lock file |
+| pdm-run | :orange_circle: | PDM: run command |
+| hatch-build | :orange_circle: | Hatch: build project |
+| hatch-test | :orange_circle: | Hatch: run tests |
+| hatch-version | :orange_circle: | Hatch: show version |
+| hatch-env | :orange_circle: | Hatch: manage environments |
+
 ### Round 358 — Conan ext, Vcpkg ext, Cargo ext, GoMod ext, Pip ext
 
 | Feature | Status | Notes |

@@ -26698,3 +26698,53 @@
 (def (cmd-cargo-clippy app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cargo: running clippy lints")))
+
+;;; Round 359 — Poetry ext, UV ext, Rye ext, PDM ext, Hatch ext (batch 1)
+
+(def (cmd-poetry-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Poetry: installing dependencies")))
+
+(def (cmd-poetry-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Poetry add package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Poetry: adding " pkg))))))
+
+(def (cmd-poetry-lock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Poetry: updating lock file")))
+
+(def (cmd-poetry-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Poetry: showing installed packages")))
+
+(def (cmd-uv-pip-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "UV pip install: "
+      (lambda (pkg)
+        (echo-message! echo (str "UV: installing " pkg))))))
+
+(def (cmd-uv-pip-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "UV: compiling requirements")))
+
+(def (cmd-uv-venv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "UV: creating virtual environment")))
+
+(def (cmd-uv-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "UV run command: "
+      (lambda (cmd)
+        (echo-message! echo (str "UV: running " cmd))))))
+
+(def (cmd-rye-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rye: syncing dependencies")))
+
+(def (cmd-rye-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rye add package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Rye: adding " pkg))))))

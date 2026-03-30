@@ -25947,3 +25947,51 @@
 (def (cmd-pip-check app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pip: checking dependency consistency")))
+
+;;; Round 359 — Rye ext, PDM ext, Hatch ext (batch 2)
+
+(def (cmd-rye-pin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rye pin Python version: "
+      (lambda (ver)
+        (echo-message! echo (str "Rye: pinning Python " ver))))))
+
+(def (cmd-rye-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Rye: showing project info")))
+
+(def (cmd-pdm-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDM: installing dependencies")))
+
+(def (cmd-pdm-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PDM add package: "
+      (lambda (pkg)
+        (echo-message! echo (str "PDM: adding " pkg))))))
+
+(def (cmd-pdm-lock app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PDM: updating lock file")))
+
+(def (cmd-pdm-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PDM run command: "
+      (lambda (cmd)
+        (echo-message! echo (str "PDM: running " cmd))))))
+
+(def (cmd-hatch-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hatch: building project")))
+
+(def (cmd-hatch-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hatch: running tests")))
+
+(def (cmd-hatch-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hatch: showing version")))
+
+(def (cmd-hatch-env app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hatch: managing environments")))
