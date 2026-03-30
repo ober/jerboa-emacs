@@ -24078,3 +24078,55 @@
       (lambda (ssid)
         (echo-message! echo (str "WPA: connecting to " ssid))))))
 
+;;; Round 308 — CUPS ext, Lp ext, Avahi ext (batch 1)
+
+(def (cmd-cups-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUPS: listing printers")))
+
+(def (cmd-cups-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Printer URI: "
+      (lambda (uri)
+        (echo-message! echo (str "CUPS: adding printer " uri))))))
+
+(def (cmd-cups-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Printer: "
+      (lambda (ptr)
+        (echo-message! echo (str "CUPS: removing " ptr))))))
+
+(def (cmd-cups-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CUPS: showing status")))
+
+(def (cmd-lp-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Lp: printing " file))))))
+
+(def (cmd-lp-queue app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lp: showing print queue")))
+
+(def (cmd-lp-cancel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Job ID: "
+      (lambda (id)
+        (echo-message! echo (str "Lp: cancelling job " id))))))
+
+(def (cmd-lp-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lp: showing printer status")))
+
+(def (cmd-avahi-browse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avahi: browsing services")))
+
+(def (cmd-avahi-resolve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hostname: "
+      (lambda (host)
+        (echo-message! echo (str "Avahi: resolving " host))))))
+

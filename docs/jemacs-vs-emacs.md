@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 308 — CUPS ext, Lp ext, Avahi ext, Resolvectl ext, Ethtool ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| cups-list | :orange_circle: | List printers |
+| cups-add | :orange_circle: | Add printer |
+| cups-remove | :orange_circle: | Remove printer |
+| cups-status | :orange_circle: | Show CUPS status |
+| lp-print | :orange_circle: | Print file |
+| lp-queue | :orange_circle: | Show print queue |
+| lp-cancel | :orange_circle: | Cancel print job |
+| lp-status | :orange_circle: | Printer status |
+| avahi-browse | :orange_circle: | Browse mDNS services |
+| avahi-resolve | :orange_circle: | Resolve hostname |
+| avahi-publish | :orange_circle: | Publish service |
+| avahi-daemon | :orange_circle: | Daemon status |
+| resolvectl-status | :orange_circle: | DNS resolver status |
+| resolvectl-query | :orange_circle: | Query DNS |
+| resolvectl-flush | :orange_circle: | Flush DNS cache |
+| resolvectl-statistics | :orange_circle: | DNS statistics |
+| ethtool-info | :orange_circle: | Show NIC info |
+| ethtool-stats | :orange_circle: | Show NIC stats |
+| ethtool-speed | :orange_circle: | Show NIC speed |
+| ethtool-ring | :orange_circle: | Show ring params |
+
 ### Round 307 — NetworkManager ext, Nmcli ext, WPA Supplicant ext, Iw ext, Hostapd ext
 
 | Command | Status | Description |

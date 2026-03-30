@@ -23352,3 +23352,57 @@
 (def (cmd-hostapd-config app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Hostapd: viewing configuration")))
+
+;;; Round 308 — Avahi ext, Resolvectl ext, Ethtool ext (batch 2)
+
+(def (cmd-avahi-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service name: "
+      (lambda (svc)
+        (echo-message! echo (str "Avahi: publishing " svc))))))
+
+(def (cmd-avahi-daemon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Avahi: daemon status")))
+
+(def (cmd-resolvectl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Resolvectl: showing status")))
+
+(def (cmd-resolvectl-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hostname: "
+      (lambda (host)
+        (echo-message! echo (str "Resolvectl: querying " host))))))
+
+(def (cmd-resolvectl-flush app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Resolvectl: flushing DNS cache")))
+
+(def (cmd-resolvectl-statistics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Resolvectl: showing statistics")))
+
+(def (cmd-ethtool-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: info for " iface))))))
+
+(def (cmd-ethtool-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: stats for " iface))))))
+
+(def (cmd-ethtool-speed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: speed of " iface))))))
+
+(def (cmd-ethtool-ring app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: ring params of " iface))))))
