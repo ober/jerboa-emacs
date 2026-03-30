@@ -28372,3 +28372,44 @@
 (def (cmd-split-segments app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Split: listing segments")))
+
+;; Round 397 batch 1 — Cypress ext, Playwright ext
+(def (cmd-cypress-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cypress: running tests")))
+
+(def (cmd-cypress-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cypress: opening test runner")))
+
+(def (cmd-cypress-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cypress: listing test specs")))
+
+(def (cmd-cypress-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cypress: showing configuration")))
+
+(def (cmd-playwright-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Playwright: running tests")))
+
+(def (cmd-playwright-codegen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Playwright: starting code generator")))
+
+(def (cmd-playwright-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Playwright: listing test files")))
+
+(def (cmd-playwright-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Playwright: viewing trace")))
+
+(def (cmd-selenium-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Selenium: starting WebDriver")))
+
+(def (cmd-selenium-grid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Selenium: managing grid")))

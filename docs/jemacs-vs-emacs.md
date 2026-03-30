@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 397 — Cypress ext, Playwright ext, Selenium ext, Puppeteer/Appium ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Cypress run tests | — | `cypress-run` | :orange_circle: Scaffolded |
+| Cypress open runner | — | `cypress-open` | :orange_circle: Scaffolded |
+| Cypress list specs | — | `cypress-tests` | :orange_circle: Scaffolded |
+| Cypress config | — | `cypress-config` | :orange_circle: Scaffolded |
+| Playwright run tests | — | `playwright-run` | :orange_circle: Scaffolded |
+| Playwright codegen | — | `playwright-codegen` | :orange_circle: Scaffolded |
+| Playwright list tests | — | `playwright-tests` | :orange_circle: Scaffolded |
+| Playwright trace viewer | — | `playwright-trace` | :orange_circle: Scaffolded |
+| Selenium start driver | — | `selenium-start` | :orange_circle: Scaffolded |
+| Selenium grid | — | `selenium-grid` | :orange_circle: Scaffolded |
+| Selenium run tests | — | `selenium-tests` | :orange_circle: Scaffolded |
+| Selenium screenshots | — | `selenium-screenshots` | :orange_circle: Scaffolded |
+| Puppeteer launch | — | `puppeteer-launch` | :orange_circle: Scaffolded |
+| Puppeteer screenshot | — | `puppeteer-screenshot` | :orange_circle: Scaffolded |
+| Puppeteer PDF | — | `puppeteer-pdf` | :orange_circle: Scaffolded |
+| Puppeteer evaluate | — | `puppeteer-evaluate` | :orange_circle: Scaffolded |
+| Appium start server | — | `appium-start` | :orange_circle: Scaffolded |
+| Appium devices | — | `appium-devices` | :orange_circle: Scaffolded |
+| Appium sessions | — | `appium-sessions` | :orange_circle: Scaffolded |
+| Appium capabilities | — | `appium-caps` | :orange_circle: Scaffolded |
+
 ### Round 396 — LaunchDarkly ext, Unleash ext, Split ext, Flagsmith/Statsig ext
 
 | Feature | Emacs | jemacs | Status |

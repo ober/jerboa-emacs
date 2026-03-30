@@ -27585,3 +27585,44 @@
 (def (cmd-statsig-metrics app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Statsig: listing metrics")))
+
+;; Round 397 batch 2 — Selenium ext, Puppeteer/Appium ext
+(def (cmd-selenium-tests app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Selenium: running tests")))
+
+(def (cmd-selenium-screenshots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Selenium: capturing screenshots")))
+
+(def (cmd-puppeteer-launch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppeteer: launching browser")))
+
+(def (cmd-puppeteer-screenshot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppeteer: taking screenshot")))
+
+(def (cmd-puppeteer-pdf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppeteer: generating PDF")))
+
+(def (cmd-puppeteer-evaluate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Puppeteer: evaluating expression")))
+
+(def (cmd-appium-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appium: starting server")))
+
+(def (cmd-appium-devices app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appium: listing devices")))
+
+(def (cmd-appium-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appium: listing sessions")))
+
+(def (cmd-appium-caps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Appium: showing capabilities")))
