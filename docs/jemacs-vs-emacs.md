@@ -6158,6 +6158,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `tailwindcss-lookup` | :orange_circle: Scaffold | Lookup class |
 | `postcss-mode` | :orange_circle: Scaffold | PostCSS mode |
 | `sass-mode` | :orange_circle: Scaffold | Sass mode |
+
+### Round 731 — Jupyter/EIN Notebook ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ein-notebook-open` | :orange_circle: Scaffold | Open notebook |
+| `ein-notebook-close` | :orange_circle: Scaffold | Close notebook |
+| `ein-execute-all` | :orange_circle: Scaffold | Execute all cells |
+| `ein-insert-cell` | :orange_circle: Scaffold | Insert cell |
+| `ein-delete-cell` | :orange_circle: Scaffold | Delete cell |
+| `ein-move-cell-up` | :orange_circle: Scaffold | Move cell up |
+| `ein-toggle-output` | :orange_circle: Scaffold | Toggle output |
+| `ein-connect` | :orange_circle: Scaffold | Connect |
+| `ein-kernel-restart` | :orange_circle: Scaffold | Restart kernel |
+| `jupyter-inspect` | :orange_circle: Scaffold | Inspect |
+
+### Round 732 — Polymode, CSV & Math Modes
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `poly-r-mode` | :orange_circle: Scaffold | R polymode |
+| `poly-markdown-mode` | :orange_circle: Scaffold | Markdown polymode |
+| `poly-org-mode` | :orange_circle: Scaffold | Org polymode |
+| `csv-align-fields` | :orange_circle: Scaffold | Align fields |
+| `csv-sort-fields` | :orange_circle: Scaffold | Sort fields |
+| `csv-toggle-invisibility` | :orange_circle: Scaffold | Toggle invisibility |
+| `wolfram-mode` | :orange_circle: Scaffold | Wolfram mode |
+| `wolfram-send` | :orange_circle: Scaffold | Send region |
+| `maxima-mode` | :orange_circle: Scaffold | Maxima mode |
+| `maxima-send` | :orange_circle: Scaffold | Send region |
+
+### Round 733 — ESS, Code Cells & Jupyter ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `jupyter-restart-kernel` | :orange_circle: Scaffold | Restart kernel |
+| `ob-ipython-execute` | :orange_circle: Scaffold | Execute |
+| `code-cells-eval` | :orange_circle: Scaffold | Eval cell |
+| `code-cells-forward` | :orange_circle: Scaffold | Forward cell |
+| `code-cells-backward` | :orange_circle: Scaffold | Backward cell |
+| `code-cells-mark` | :orange_circle: Scaffold | Mark cell |
+| `ess-eval-line` | :orange_circle: Scaffold | Eval line |
+| `ess-r-mode` | :orange_circle: Scaffold | R mode |
+| `ess-julia-mode` | :orange_circle: Scaffold | Julia mode |
+| `ess-remote` | :orange_circle: Scaffold | Remote |
+
+### Round 734 — Octave, Sage, MATLAB & Stan
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `octave-mode` | :orange_circle: Scaffold | Octave mode |
+| `octave-send` | :orange_circle: Scaffold | Send region |
+| `sage-shell-mode` | :orange_circle: Scaffold | Sage shell |
+| `sage-send` | :orange_circle: Scaffold | Send buffer |
+| `gnuplot-inline` | :orange_circle: Scaffold | Inline plot |
+| `gnuplot-save-plot` | :orange_circle: Scaffold | Save plot |
+| `matlab-mode` | :orange_circle: Scaffold | MATLAB mode |
+| `matlab-send-region` | :orange_circle: Scaffold | Send region |
+| `stan-mode` | :orange_circle: Scaffold | Stan mode |
+| `stan-compile` | :orange_circle: Scaffold | Compile |
+
+### Round 735 — GitHub, GitLab & CircleCI ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gh-notify` | :orange_circle: Scaffold | Notifications |
+| `gh-search-repos` | :orange_circle: Scaffold | Search repos |
+| `gh-search-code` | :orange_circle: Scaffold | Search code |
+| `lab-browse` | :orange_circle: Scaffold | Browse |
+| `lab-mr-create` | :orange_circle: Scaffold | Create MR |
+| `lab-mr-list` | :orange_circle: Scaffold | List MRs |
+| `forge-dispatch` | :orange_circle: Scaffold | Dispatch |
+| `forge-toggle-display` | :orange_circle: Scaffold | Toggle display |
+| `circleci-status` | :orange_circle: Scaffold | Status |
+| `circleci-trigger` | :orange_circle: Scaffold | Trigger pipeline |
+
+### Round 736 — CI/CD (Jenkins, GitHub Actions, Drone)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `jenkins-view` | :orange_circle: Scaffold | View |
+| `jenkins-build` | :orange_circle: Scaffold | Build |
+| `github-actions-dispatch` | :orange_circle: Scaffold | Dispatch |
+| `github-actions-view` | :orange_circle: Scaffold | View run |
+| `gitlab-ci-lint` | :orange_circle: Scaffold | Lint |
+| `gitlab-ci-view` | :orange_circle: Scaffold | View pipeline |
+| `drone-ci-status` | :orange_circle: Scaffold | Status |
+| `drone-ci-trigger` | :orange_circle: Scaffold | Trigger |
+| `concourse-pipeline` | :orange_circle: Scaffold | Pipeline |
+| `concourse-trigger` | :orange_circle: Scaffold | Trigger |
+
+### Round 737 — Cloud (AWS, Azure, GCloud, Heroku)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `aws-mode` | :orange_circle: Scaffold | AWS mode |
+| `aws-s3-list` | :orange_circle: Scaffold | S3 list |
+| `aws-ec2-instances` | :orange_circle: Scaffold | EC2 instances |
+| `aws-lambda-list` | :orange_circle: Scaffold | Lambda list |
+| `azure-mode` | :orange_circle: Scaffold | Azure mode |
+| `azure-devops` | :orange_circle: Scaffold | DevOps |
+| `gcloud-mode` | :orange_circle: Scaffold | GCloud mode |
+| `gcloud-deploy` | :orange_circle: Scaffold | Deploy |
+| `heroku-deploy` | :orange_circle: Scaffold | Deploy |
+| `heroku-ps` | :orange_circle: Scaffold | Process status |
+
+### Round 738 — Serverless & PaaS (Vercel, Netlify, Fly, Railway)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vercel-deploy` | :orange_circle: Scaffold | Deploy |
+| `vercel-domains` | :orange_circle: Scaffold | Domains |
+| `netlify-deploy` | :orange_circle: Scaffold | Deploy |
+| `netlify-sites` | :orange_circle: Scaffold | Sites |
+| `fly-deploy` | :orange_circle: Scaffold | Deploy |
+| `fly-status` | :orange_circle: Scaffold | Status |
+| `fly-logs` | :orange_circle: Scaffold | Logs |
+| `railway-deploy` | :orange_circle: Scaffold | Deploy |
+| `railway-logs` | :orange_circle: Scaffold | Logs |
+| `render-deploy` | :orange_circle: Scaffold | Deploy |
+
+### Round 739 — Monitoring (Grafana, Datadog, Prometheus)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `grafana-dashboard` | :orange_circle: Scaffold | Dashboard |
+| `grafana-query` | :orange_circle: Scaffold | Query |
+| `datadog-dashboard` | :orange_circle: Scaffold | Dashboard |
+| `datadog-monitor` | :orange_circle: Scaffold | Monitor |
+| `pagerduty-ack` | :orange_circle: Scaffold | Acknowledge |
+| `opsgenie-ack` | :orange_circle: Scaffold | Acknowledge |
+| `statuspage-update` | :orange_circle: Scaffold | Update |
+| `statuspage-create` | :orange_circle: Scaffold | Create incident |
+| `prometheus-query` | :orange_circle: Scaffold | Query |
+| `prometheus-graph` | :orange_circle: Scaffold | Graph |
+
+### Round 740 — Cloud DB (Supabase, PlanetScale, Neon, Turso)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `render-services` | :orange_circle: Scaffold | Services |
+| `supabase-start` | :orange_circle: Scaffold | Start |
+| `supabase-db-push` | :orange_circle: Scaffold | DB push |
+| `supabase-functions` | :orange_circle: Scaffold | Functions |
+| `planetscale-connect` | :orange_circle: Scaffold | Connect |
+| `planetscale-branch` | :orange_circle: Scaffold | Branch |
+| `planetscale-deploy` | :orange_circle: Scaffold | Deploy |
+| `neon-connect` | :orange_circle: Scaffold | Connect |
+| `neon-branch` | :orange_circle: Scaffold | Branch |
+| `turso-connect` | :orange_circle: Scaffold | Connect |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |

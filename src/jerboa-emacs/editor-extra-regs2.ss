@@ -13390,4 +13390,35 @@
   ;; Round 730: Vitest, Storybook, Tailwind, CSS ext
   (register-command! 'vitest-run cmd-vitest-run) (register-command! 'vitest-watch cmd-vitest-watch) (register-command! 'vitest-run-file cmd-vitest-run-file) (register-command! 'storybook-start cmd-storybook-start) (register-command! 'storybook-build cmd-storybook-build)
   (register-command! 'tailwindcss-mode cmd-tailwindcss-mode) (register-command! 'tailwindcss-sort cmd-tailwindcss-sort) (register-command! 'tailwindcss-lookup cmd-tailwindcss-lookup) (register-command! 'postcss-mode cmd-postcss-mode) (register-command! 'sass-mode cmd-sass-mode)
+
+  ;; Round 731: Jupyter/EIN ext
+  (register-command! 'ein-notebook-open cmd-ein-notebook-open) (register-command! 'ein-notebook-close cmd-ein-notebook-close) (register-command! 'ein-execute-all cmd-ein-execute-all) (register-command! 'ein-insert-cell cmd-ein-insert-cell) (register-command! 'ein-delete-cell cmd-ein-delete-cell)
+  (register-command! 'ein-move-cell-up cmd-ein-move-cell-up) (register-command! 'ein-toggle-output cmd-ein-toggle-output) (register-command! 'ein-connect cmd-ein-connect) (register-command! 'ein-kernel-restart cmd-ein-kernel-restart) (register-command! 'jupyter-inspect cmd-jupyter-inspect)
+  ;; Round 732: Polymode, CSV, Math
+  (register-command! 'poly-r-mode cmd-poly-r-mode) (register-command! 'poly-markdown-mode cmd-poly-markdown-mode) (register-command! 'poly-org-mode cmd-poly-org-mode) (register-command! 'csv-align-fields cmd-csv-align-fields) (register-command! 'csv-sort-fields cmd-csv-sort-fields)
+  (register-command! 'csv-toggle-invisibility cmd-csv-toggle-invisibility) (register-command! 'wolfram-mode cmd-wolfram-mode) (register-command! 'wolfram-send cmd-wolfram-send) (register-command! 'maxima-mode cmd-maxima-mode) (register-command! 'maxima-send cmd-maxima-send)
+  ;; Round 733: ESS, Code Cells
+  (register-command! 'jupyter-restart-kernel cmd-jupyter-restart-kernel) (register-command! 'ob-ipython-execute cmd-ob-ipython-execute) (register-command! 'code-cells-eval cmd-code-cells-eval) (register-command! 'code-cells-forward cmd-code-cells-forward) (register-command! 'code-cells-backward cmd-code-cells-backward)
+  (register-command! 'code-cells-mark cmd-code-cells-mark) (register-command! 'ess-eval-line cmd-ess-eval-line) (register-command! 'ess-r-mode cmd-ess-r-mode) (register-command! 'ess-julia-mode cmd-ess-julia-mode) (register-command! 'ess-remote cmd-ess-remote)
+  ;; Round 734: Octave, Sage, Gnuplot, MATLAB, Stan
+  (register-command! 'octave-mode cmd-octave-mode) (register-command! 'octave-send cmd-octave-send) (register-command! 'sage-shell-mode cmd-sage-shell-mode) (register-command! 'sage-send cmd-sage-send) (register-command! 'gnuplot-inline cmd-gnuplot-inline)
+  (register-command! 'gnuplot-save-plot cmd-gnuplot-save-plot) (register-command! 'matlab-mode cmd-matlab-mode) (register-command! 'matlab-send-region cmd-matlab-send-region) (register-command! 'stan-mode cmd-stan-mode) (register-command! 'stan-compile cmd-stan-compile)
+  ;; Round 735: GitHub, GitLab ext
+  (register-command! 'gh-notify cmd-gh-notify) (register-command! 'gh-search-repos cmd-gh-search-repos) (register-command! 'gh-search-code cmd-gh-search-code) (register-command! 'lab-browse cmd-lab-browse) (register-command! 'lab-mr-create cmd-lab-mr-create)
+  (register-command! 'lab-mr-list cmd-lab-mr-list) (register-command! 'forge-dispatch cmd-forge-dispatch) (register-command! 'forge-toggle-display cmd-forge-toggle-display) (register-command! 'circleci-status cmd-circleci-status) (register-command! 'circleci-trigger cmd-circleci-trigger)
+  ;; Round 736: CI/CD
+  (register-command! 'jenkins-view cmd-jenkins-view) (register-command! 'jenkins-build cmd-jenkins-build) (register-command! 'github-actions-dispatch cmd-github-actions-dispatch) (register-command! 'github-actions-view cmd-github-actions-view) (register-command! 'gitlab-ci-lint cmd-gitlab-ci-lint)
+  (register-command! 'gitlab-ci-view cmd-gitlab-ci-view) (register-command! 'drone-ci-status cmd-drone-ci-status) (register-command! 'drone-ci-trigger cmd-drone-ci-trigger) (register-command! 'concourse-pipeline cmd-concourse-pipeline) (register-command! 'concourse-trigger cmd-concourse-trigger)
+  ;; Round 737: AWS, Azure, GCloud
+  (register-command! 'aws-mode cmd-aws-mode) (register-command! 'aws-s3-list cmd-aws-s3-list) (register-command! 'aws-ec2-instances cmd-aws-ec2-instances) (register-command! 'aws-lambda-list cmd-aws-lambda-list) (register-command! 'azure-mode cmd-azure-mode)
+  (register-command! 'azure-devops cmd-azure-devops) (register-command! 'gcloud-mode cmd-gcloud-mode) (register-command! 'gcloud-deploy cmd-gcloud-deploy) (register-command! 'heroku-deploy cmd-heroku-deploy) (register-command! 'heroku-ps cmd-heroku-ps)
+  ;; Round 738: Serverless & PaaS
+  (register-command! 'vercel-deploy cmd-vercel-deploy) (register-command! 'vercel-domains cmd-vercel-domains) (register-command! 'netlify-deploy cmd-netlify-deploy) (register-command! 'netlify-sites cmd-netlify-sites) (register-command! 'fly-deploy cmd-fly-deploy)
+  (register-command! 'fly-status cmd-fly-status) (register-command! 'fly-logs cmd-fly-logs) (register-command! 'railway-deploy cmd-railway-deploy) (register-command! 'railway-logs cmd-railway-logs) (register-command! 'render-deploy cmd-render-deploy)
+  ;; Round 739: Monitoring & Observability
+  (register-command! 'grafana-dashboard cmd-grafana-dashboard) (register-command! 'grafana-query cmd-grafana-query) (register-command! 'datadog-dashboard cmd-datadog-dashboard) (register-command! 'datadog-monitor cmd-datadog-monitor) (register-command! 'pagerduty-ack cmd-pagerduty-ack)
+  (register-command! 'opsgenie-ack cmd-opsgenie-ack) (register-command! 'statuspage-update cmd-statuspage-update) (register-command! 'statuspage-create cmd-statuspage-create) (register-command! 'prometheus-query cmd-prometheus-query) (register-command! 'prometheus-graph cmd-prometheus-graph)
+  ;; Round 740: Cloud DB (Supabase, PlanetScale, Neon, Turso)
+  (register-command! 'render-services cmd-render-services) (register-command! 'supabase-start cmd-supabase-start) (register-command! 'supabase-db-push cmd-supabase-db-push) (register-command! 'supabase-functions cmd-supabase-functions) (register-command! 'planetscale-connect cmd-planetscale-connect)
+  (register-command! 'planetscale-branch cmd-planetscale-branch) (register-command! 'planetscale-deploy cmd-planetscale-deploy) (register-command! 'neon-connect cmd-neon-connect) (register-command! 'neon-branch cmd-neon-branch) (register-command! 'turso-connect cmd-turso-connect)
 )
