@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 313 — Nftables ext, Iproute2 ext, Ethtool ext, Btrfs ext, Zfs ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `nft-list-ruleset` | :orange_circle: | List nftables ruleset |
+| `nft-add-rule` | :orange_circle: | Add nftables rule |
+| `nft-delete-rule` | :orange_circle: | Delete nftables rule |
+| `nft-flush-ruleset` | :orange_circle: | Flush nftables ruleset |
+| `ip-rule-show` | :orange_circle: | Show routing rules |
+| `ip-tunnel-show` | :orange_circle: | Show tunnels |
+| `ip-maddr-show` | :orange_circle: | Show multicast addresses |
+| `ip-neigh-show` | :orange_circle: | Show neighbor table |
+| `ethtool-show` | :orange_circle: | Show interface settings |
+| `ethtool-features` | :orange_circle: | Show interface features |
+| `ethtool-driver` | :orange_circle: | Show driver info |
+| `ethtool-pause` | :orange_circle: | Show pause parameters |
+| `btrfs-subvolume-list` | :orange_circle: | List btrfs subvolumes |
+| `btrfs-subvolume-create` | :orange_circle: | Create btrfs subvolume |
+| `btrfs-subvolume-delete` | :orange_circle: | Delete btrfs subvolume |
+| `btrfs-filesystem-show` | :orange_circle: | Show btrfs filesystem info |
+| `zfs-send` | :orange_circle: | Send ZFS snapshot |
+| `zfs-receive` | :orange_circle: | Receive ZFS dataset |
+| `zfs-get` | :orange_circle: | Get ZFS properties |
+| `zfs-set` | :orange_circle: | Set ZFS property |
+
 ### Round 312 — Resolvectl ext, Bootctl ext, Homectl ext, Oomctl ext, Systemd-analyze ext
 
 | Feature | Status | Notes |

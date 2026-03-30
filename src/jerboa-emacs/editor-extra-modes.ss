@@ -24332,3 +24332,53 @@
       (lambda (user)
         (echo-message! echo (str "Homectl: removing home for " user))))))
 
+;;; Round 313 — Nftables ext, Iproute2 ext, Ethtool ext, Btrfs ext, Zfs ext (batch 1)
+
+(def (cmd-nft-list-ruleset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nftables: listing ruleset")))
+
+(def (cmd-nft-add-rule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule spec: "
+      (lambda (rule)
+        (echo-message! echo (str "Nftables: adding rule " rule))))))
+
+(def (cmd-nft-delete-rule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rule handle: "
+      (lambda (handle)
+        (echo-message! echo (str "Nftables: deleting rule " handle))))))
+
+(def (cmd-nft-flush-ruleset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nftables: flushing ruleset")))
+
+(def (cmd-ip-rule-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iproute2: showing routing rules")))
+
+(def (cmd-ip-tunnel-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iproute2: showing tunnels")))
+
+(def (cmd-ip-maddr-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iproute2: showing multicast addresses")))
+
+(def (cmd-ip-neigh-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iproute2: showing neighbor table")))
+
+(def (cmd-ethtool-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: showing settings for " iface))))))
+
+(def (cmd-ethtool-features app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: showing features of " iface))))))
+

@@ -23612,3 +23612,63 @@
     (echo-read-string echo "Unit to verify: "
       (lambda (unit)
         (echo-message! echo (str "Systemd-analyze: verifying " unit))))))
+
+;;; Round 313 — Ethtool ext, Btrfs ext, Zfs ext (batch 2)
+
+(def (cmd-ethtool-driver app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: showing driver info for " iface))))))
+
+(def (cmd-ethtool-pause app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Ethtool: showing pause params for " iface))))))
+
+(def (cmd-btrfs-subvolume-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "Btrfs: listing subvolumes at " mnt))))))
+
+(def (cmd-btrfs-subvolume-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subvolume path: "
+      (lambda (path)
+        (echo-message! echo (str "Btrfs: creating subvolume " path))))))
+
+(def (cmd-btrfs-subvolume-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Subvolume path: "
+      (lambda (path)
+        (echo-message! echo (str "Btrfs: deleting subvolume " path))))))
+
+(def (cmd-btrfs-filesystem-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Btrfs: showing filesystem info")))
+
+(def (cmd-zfs-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Snapshot to send: "
+      (lambda (snap)
+        (echo-message! echo (str "ZFS: sending snapshot " snap))))))
+
+(def (cmd-zfs-receive app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dataset to receive into: "
+      (lambda (ds)
+        (echo-message! echo (str "ZFS: receiving into " ds))))))
+
+(def (cmd-zfs-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Dataset: "
+      (lambda (ds)
+        (echo-message! echo (str "ZFS: getting properties of " ds))))))
+
+(def (cmd-zfs-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Property=value dataset: "
+      (lambda (spec)
+        (echo-message! echo (str "ZFS: setting " spec))))))
