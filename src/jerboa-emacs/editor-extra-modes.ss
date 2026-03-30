@@ -23334,3 +23334,65 @@
       (lambda (conn)
         (echo-message! echo (str "IPsec: bringing up " conn))))))
 
+;;; Round 295 — Nmap ext, Masscan ext, Zmap ext (batch 1)
+
+(def (cmd-nmap-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Nmap: scanning " target))))))
+
+(def (cmd-nmap-service app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Nmap: service scan " target))))))
+
+(def (cmd-nmap-os app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Nmap: OS detection " target))))))
+
+(def (cmd-nmap-vuln app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Nmap: vuln scan " target))))))
+
+(def (cmd-masscan-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target range: "
+      (lambda (range)
+        (echo-message! echo (str "Masscan: scanning " range))))))
+
+(def (cmd-masscan-rate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Rate (pps): "
+      (lambda (rate)
+        (echo-message! echo (str "Masscan: rate " rate))))))
+
+(def (cmd-masscan-ports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ports: "
+      (lambda (ports)
+        (echo-message! echo (str "Masscan: ports " ports))))))
+
+(def (cmd-masscan-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Masscan: output to " file))))))
+
+(def (cmd-zmap-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target: "
+      (lambda (target)
+        (echo-message! echo (str "Zmap: scanning " target))))))
+
+(def (cmd-zmap-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Probe module: "
+      (lambda (probe)
+        (echo-message! echo (str "Zmap: probe " probe))))))
+

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 295 — Nmap ext, Masscan ext, Zmap ext, Netcat ext, Socat ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| nmap-scan | :orange_circle: | Nmap port scan |
+| nmap-service | :orange_circle: | Nmap service detection |
+| nmap-os | :orange_circle: | Nmap OS detection |
+| nmap-vuln | :orange_circle: | Nmap vulnerability scan |
+| masscan-scan | :orange_circle: | Masscan scan |
+| masscan-rate | :orange_circle: | Set Masscan rate |
+| masscan-ports | :orange_circle: | Set Masscan ports |
+| masscan-output | :orange_circle: | Set Masscan output |
+| zmap-scan | :orange_circle: | Zmap scan |
+| zmap-probe | :orange_circle: | Set Zmap probe |
+| zmap-output | :orange_circle: | Set Zmap output |
+| zmap-bandwidth | :orange_circle: | Set Zmap bandwidth |
+| netcat-listen | :orange_circle: | Netcat listen |
+| netcat-connect | :orange_circle: | Netcat connect |
+| netcat-scan | :orange_circle: | Netcat port scan |
+| netcat-transfer | :orange_circle: | Netcat file transfer |
+| socat-listen | :orange_circle: | Socat listen |
+| socat-connect | :orange_circle: | Socat connect |
+| socat-proxy | :orange_circle: | Socat proxy |
+| socat-relay | :orange_circle: | Socat relay |
+
 ### Round 294 — OpenVPN ext, StrongSwan ext, IPsec ext, PPTP ext, L2TP ext
 
 | Command | Status | Description |

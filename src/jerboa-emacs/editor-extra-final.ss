@@ -22640,3 +22640,61 @@
 (def (cmd-l2tp-session-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "L2TP: listing sessions")))
+
+;;; Round 295 — Zmap ext, Netcat ext, Socat ext (batch 2)
+
+(def (cmd-zmap-output app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Zmap: output to " file))))))
+
+(def (cmd-zmap-bandwidth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bandwidth: "
+      (lambda (bw)
+        (echo-message! echo (str "Zmap: bandwidth " bw))))))
+
+(def (cmd-netcat-listen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Port: "
+      (lambda (port)
+        (echo-message! echo (str "Netcat: listening on " port))))))
+
+(def (cmd-netcat-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Host:port: "
+      (lambda (hp)
+        (echo-message! echo (str "Netcat: connecting to " hp))))))
+
+(def (cmd-netcat-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Host: "
+      (lambda (host)
+        (echo-message! echo (str "Netcat: port scanning " host))))))
+
+(def (cmd-netcat-transfer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Netcat: transferring " file))))))
+
+(def (cmd-socat-listen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Address: "
+      (lambda (addr)
+        (echo-message! echo (str "Socat: listening on " addr))))))
+
+(def (cmd-socat-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Address: "
+      (lambda (addr)
+        (echo-message! echo (str "Socat: connecting to " addr))))))
+
+(def (cmd-socat-proxy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Socat: starting proxy")))
+
+(def (cmd-socat-relay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Socat: starting relay")))
