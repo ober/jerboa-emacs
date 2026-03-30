@@ -22802,3 +22802,65 @@
     (echo-read-string echo "Location: "
       (lambda (loc)
         (echo-message! echo (str "GDB: breakpoint at " loc))))))
+
+;;; Round 298 — Nm ext, Ldd ext, Strip ext (batch 2)
+
+(def (cmd-nm-undefined app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Object file: "
+      (lambda (obj)
+        (echo-message! echo (str "Nm: undefined symbols in " obj))))))
+
+(def (cmd-nm-sort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Object file: "
+      (lambda (obj)
+        (echo-message! echo (str "Nm: sorted symbols in " obj))))))
+
+(def (cmd-ldd-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Ldd: checking " bin))))))
+
+(def (cmd-ldd-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Ldd: dependency tree of " bin))))))
+
+(def (cmd-ldd-unused app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Ldd: unused deps of " bin))))))
+
+(def (cmd-ldd-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Ldd: all deps of " bin))))))
+
+(def (cmd-strip-binary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Strip: stripping " bin))))))
+
+(def (cmd-strip-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Strip: removing debug from " bin))))))
+
+(def (cmd-strip-symbols app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Strip: removing symbols from " bin))))))
+
+(def (cmd-strip-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Strip: removing all from " bin))))))

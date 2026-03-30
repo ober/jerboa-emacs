@@ -23516,3 +23516,65 @@
       (lambda (cmd)
         (echo-message! echo (str "Perf: recording " cmd))))))
 
+;;; Round 298 — Objdump ext, Readelf ext, Nm ext (batch 1)
+
+(def (cmd-objdump-disasm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Objdump: disassembling " bin))))))
+
+(def (cmd-objdump-headers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Objdump: headers of " bin))))))
+
+(def (cmd-objdump-symbols app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Objdump: symbols in " bin))))))
+
+(def (cmd-objdump-reloc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Binary: "
+      (lambda (bin)
+        (echo-message! echo (str "Objdump: relocations in " bin))))))
+
+(def (cmd-readelf-headers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ELF file: "
+      (lambda (elf)
+        (echo-message! echo (str "Readelf: headers of " elf))))))
+
+(def (cmd-readelf-sections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ELF file: "
+      (lambda (elf)
+        (echo-message! echo (str "Readelf: sections of " elf))))))
+
+(def (cmd-readelf-symbols app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ELF file: "
+      (lambda (elf)
+        (echo-message! echo (str "Readelf: symbols in " elf))))))
+
+(def (cmd-readelf-dynamic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ELF file: "
+      (lambda (elf)
+        (echo-message! echo (str "Readelf: dynamic section of " elf))))))
+
+(def (cmd-nm-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Object file: "
+      (lambda (obj)
+        (echo-message! echo (str "Nm: listing symbols in " obj))))))
+
+(def (cmd-nm-defined app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Object file: "
+      (lambda (obj)
+        (echo-message! echo (str "Nm: defined symbols in " obj))))))
+

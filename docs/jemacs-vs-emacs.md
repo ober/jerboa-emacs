@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 298 — Objdump ext, Readelf ext, Nm ext, Ldd ext, Strip ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| objdump-disasm | :orange_circle: | Disassemble binary |
+| objdump-headers | :orange_circle: | Show binary headers |
+| objdump-symbols | :orange_circle: | Show binary symbols |
+| objdump-reloc | :orange_circle: | Show relocations |
+| readelf-headers | :orange_circle: | Show ELF headers |
+| readelf-sections | :orange_circle: | Show ELF sections |
+| readelf-symbols | :orange_circle: | Show ELF symbols |
+| readelf-dynamic | :orange_circle: | Show dynamic section |
+| nm-list | :orange_circle: | List symbols |
+| nm-defined | :orange_circle: | Show defined symbols |
+| nm-undefined | :orange_circle: | Show undefined symbols |
+| nm-sort | :orange_circle: | Sort symbols by size |
+| ldd-check | :orange_circle: | Check shared libs |
+| ldd-tree | :orange_circle: | Show dependency tree |
+| ldd-unused | :orange_circle: | Find unused deps |
+| ldd-all | :orange_circle: | Show all deps |
+| strip-binary | :orange_circle: | Strip binary |
+| strip-debug | :orange_circle: | Strip debug info |
+| strip-symbols | :orange_circle: | Strip symbols |
+| strip-all | :orange_circle: | Strip everything |
+
 ### Round 297 — Strace ext, Ltrace ext, Perf ext, Valgrind ext, GDB ext
 
 | Command | Status | Description |
