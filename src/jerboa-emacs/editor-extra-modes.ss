@@ -27876,3 +27876,44 @@
 (def (cmd-tgi-health app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "TGI: checking health")))
+
+;; Round 385 batch 1 — Temporal ext, Cadence ext
+(def (cmd-temporal-workflows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: listing workflows")))
+
+(def (cmd-temporal-activities app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: listing activities")))
+
+(def (cmd-temporal-schedules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: listing schedules")))
+
+(def (cmd-temporal-namespaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Temporal: listing namespaces")))
+
+(def (cmd-cadence-workflows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cadence: listing workflows")))
+
+(def (cmd-cadence-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cadence: listing domains")))
+
+(def (cmd-cadence-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cadence: listing task lists")))
+
+(def (cmd-cadence-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cadence: showing workflow history")))
+
+(def (cmd-inngest-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: listing functions")))
+
+(def (cmd-inngest-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: listing events")))

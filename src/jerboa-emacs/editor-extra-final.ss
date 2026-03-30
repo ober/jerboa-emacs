@@ -27093,3 +27093,44 @@
 (def (cmd-replicate-collections app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Replicate: browsing collections")))
+
+;; Round 385 batch 2 — Inngest ext, Trigger.dev/Windmill ext
+(def (cmd-inngest-runs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: listing function runs")))
+
+(def (cmd-inngest-keys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Inngest: managing event keys")))
+
+(def (cmd-trigger-workflows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: listing workflows")))
+
+(def (cmd-trigger-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: listing jobs")))
+
+(def (cmd-trigger-schedules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: listing schedules")))
+
+(def (cmd-trigger-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Trigger.dev: listing events")))
+
+(def (cmd-windmill-scripts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmill: listing scripts")))
+
+(def (cmd-windmill-flows app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmill: listing flows")))
+
+(def (cmd-windmill-schedules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmill: listing schedules")))
+
+(def (cmd-windmill-resources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Windmill: listing resources")))

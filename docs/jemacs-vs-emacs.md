@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 385 — Temporal ext, Cadence ext, Inngest ext, Trigger.dev/Windmill ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Temporal workflows | — | `temporal-workflows` | :orange_circle: Scaffolded |
+| Temporal activities | — | `temporal-activities` | :orange_circle: Scaffolded |
+| Temporal schedules | — | `temporal-schedules` | :orange_circle: Scaffolded |
+| Temporal namespaces | — | `temporal-namespaces` | :orange_circle: Scaffolded |
+| Cadence workflows | — | `cadence-workflows` | :orange_circle: Scaffolded |
+| Cadence domains | — | `cadence-domains` | :orange_circle: Scaffolded |
+| Cadence task lists | — | `cadence-tasks` | :orange_circle: Scaffolded |
+| Cadence history | — | `cadence-history` | :orange_circle: Scaffolded |
+| Inngest functions | — | `inngest-functions` | :orange_circle: Scaffolded |
+| Inngest events | — | `inngest-events` | :orange_circle: Scaffolded |
+| Inngest runs | — | `inngest-runs` | :orange_circle: Scaffolded |
+| Inngest event keys | — | `inngest-keys` | :orange_circle: Scaffolded |
+| Trigger.dev workflows | — | `trigger-workflows` | :orange_circle: Scaffolded |
+| Trigger.dev jobs | — | `trigger-jobs` | :orange_circle: Scaffolded |
+| Trigger.dev schedules | — | `trigger-schedules` | :orange_circle: Scaffolded |
+| Trigger.dev events | — | `trigger-events` | :orange_circle: Scaffolded |
+| Windmill scripts | — | `windmill-scripts` | :orange_circle: Scaffolded |
+| Windmill flows | — | `windmill-flows` | :orange_circle: Scaffolded |
+| Windmill schedules | — | `windmill-schedules` | :orange_circle: Scaffolded |
+| Windmill resources | — | `windmill-resources` | :orange_circle: Scaffolded |
+
 ### Round 384 — Ollama ext, vLLM ext, TGI ext, LiteLLM/Replicate ext
 
 | Feature | Emacs | jemacs | Status |
