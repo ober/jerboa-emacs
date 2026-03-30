@@ -5858,6 +5858,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `ts-fold-open-all` | :orange_circle: Scaffold | Open all |
 | `ts-fold-close-all` | :orange_circle: Scaffold | Close all |
 | `ts-docstr-mode` | :orange_circle: Scaffold | Docstring mode |
+
+### Round 711 — Completion ext (Corfu, Kind Icon, IDO)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `corfu-scroll-up` | :orange_circle: Scaffold | Scroll up |
+| `corfu-scroll-down` | :orange_circle: Scaffold | Scroll down |
+| `corfu-history` | :orange_circle: Scaffold | History |
+| `kind-icon-mode` | :orange_circle: Scaffold | Kind icon |
+| `kind-icon-margin-mode` | :orange_circle: Scaffold | Margin mode |
+| `nerd-icons-corfu` | :orange_circle: Scaffold | Corfu icons |
+| `ido-everywhere` | :orange_circle: Scaffold | IDO everywhere |
+| `ido-find-file` | :orange_circle: Scaffold | Find file |
+| `ido-switch-buffer` | :orange_circle: Scaffold | Switch buffer |
+| `ido-vertical-mode` | :orange_circle: Scaffold | Vertical mode |
+
+### Round 712 — Text Enhancement & Fill ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `unfill-region` | :orange_circle: Scaffold | Unfill region |
+| `xterm-color-mode` | :orange_circle: Scaffold | XTerm color |
+| `highlight-indent-guides-mode` | :orange_circle: Scaffold | Indent guides |
+| `glasses-mode` | :orange_circle: Scaffold | Glasses mode |
+| `subword-transpose` | :orange_circle: Scaffold | Transpose subword |
+| `superword-transpose` | :orange_circle: Scaffold | Transpose superword |
+| `visual-fill-column-adjust` | :orange_circle: Scaffold | Adjust fill column |
+| `adaptive-wrap-extra-indent` | :orange_circle: Scaffold | Extra indent |
+| `display-fill-column-indicator-toggle` | :orange_circle: Scaffold | Toggle indicator |
+| `tildify-buffer` | :orange_circle: Scaffold | Tildify buffer |
+
+### Round 713 — Org Roam ext, Web Tools & Cliplink
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ido-completing-read-plus` | :orange_circle: Scaffold | Completing-read+ |
+| `vertico-repeat` | :orange_circle: Scaffold | Repeat |
+| `org-roam-dailies-find-date` | :orange_circle: Scaffold | Find date |
+| `org-roam-db-clear` | :orange_circle: Scaffold | Clear database |
+| `org-web-tools-insert-link` | :orange_circle: Scaffold | Insert link |
+| `org-web-tools-read-url` | :orange_circle: Scaffold | Read URL as org |
+| `org-cliplink` | :orange_circle: Scaffold | Paste link |
+| `org-cliplink-retrieve-title` | :orange_circle: Scaffold | Retrieve title |
+| `writeroom-increase-width` | :orange_circle: Scaffold | Increase width |
+| `writeroom-decrease-width` | :orange_circle: Scaffold | Decrease width |
+
+### Round 714 — Org MIME, Noter, Download & Transclusion
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-mime-edit-in-org` | :orange_circle: Scaffold | Edit in org |
+| `logos-page-extra` | :orange_circle: Scaffold | Page extra |
+| `org-noter-insert-note` | :orange_circle: Scaffold | Insert note |
+| `org-noter-sync-current` | :orange_circle: Scaffold | Sync current |
+| `org-download-screenshot` | :orange_circle: Scaffold | Screenshot |
+| `org-download-clipboard` | :orange_circle: Scaffold | Clipboard |
+| `org-transclusion-add` | :orange_circle: Scaffold | Add |
+| `org-transclusion-remove` | :orange_circle: Scaffold | Remove |
+| `org-transclusion-refresh` | :orange_circle: Scaffold | Refresh |
+| `org-transclusion-mode` | :orange_circle: Scaffold | Toggle mode |
+
+### Round 715 — Org Brain & Export ext (Hugo, Reveal, RST)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-brain-visualize` | :orange_circle: Scaffold | Visualize |
+| `org-brain-add-child` | :orange_circle: Scaffold | Add child |
+| `org-brain-add-parent` | :orange_circle: Scaffold | Add parent |
+| `org-brain-goto` | :orange_circle: Scaffold | Goto |
+| `org-brain-open` | :orange_circle: Scaffold | Open |
+| `ox-hugo-export-wim` | :orange_circle: Scaffold | Export WIM |
+| `ox-hugo-auto-export` | :orange_circle: Scaffold | Auto export |
+| `ox-reveal-export` | :orange_circle: Scaffold | Reveal export |
+| `ox-rst-export` | :orange_circle: Scaffold | RST export |
+| `org-mime-htmlize` | :orange_circle: Scaffold | HTMLize |
+
+### Round 716 — Speed Reading & Typing Practice
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `spray-start` | :orange_circle: Scaffold | Start speed reading |
+| `spray-stop` | :orange_circle: Scaffold | Stop |
+| `spray-backward` | :orange_circle: Scaffold | Backward |
+| `spray-forward` | :orange_circle: Scaffold | Forward |
+| `speed-type-region` | :orange_circle: Scaffold | Type region |
+| `speed-type-buffer` | :orange_circle: Scaffold | Type buffer |
+| `typit-basic-test` | :orange_circle: Scaffold | Basic test |
+| `typit-advanced-test` | :orange_circle: Scaffold | Advanced test |
+| `wttrin-query` | :orange_circle: Scaffold | Weather query |
+| `disk-usage-here` | :orange_circle: Scaffold | Disk usage here |
+
+### Round 717 — System, Hardware & Integration
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `system-packages-install` | :orange_circle: Scaffold | Install |
+| `system-packages-uninstall` | :orange_circle: Scaffold | Uninstall |
+| `system-packages-update` | :orange_circle: Scaffold | Update |
+| `bluetooth-list` | :orange_circle: Scaffold | List devices |
+| `xwidget-zoom-in` | :orange_circle: Scaffold | Zoom in |
+| `xwidget-zoom-out` | :orange_circle: Scaffold | Zoom out |
+| `emacs-everywhere` | :orange_circle: Scaffold | Edit anywhere |
+| `atomic-chrome-start-server` | :orange_circle: Scaffold | Start server |
+| `atomic-chrome-stop` | :orange_circle: Scaffold | Stop server |
+| `wttrin` | :orange_circle: Scaffold | Weather report |
+
+### Round 718 — Theme Collection (Catppuccin, Nord, Gruvbox)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `disk-usage` | :orange_circle: Scaffold | Disk usage |
+| `auto-dark-mode` | :orange_circle: Scaffold | Auto dark |
+| `circadian-mode` | :orange_circle: Scaffold | Circadian |
+| `heaven-and-hell-toggle` | :orange_circle: Scaffold | Toggle theme |
+| `color-theme-sanityinc` | :orange_circle: Scaffold | Tomorrow theme |
+| `nano-theme-toggle` | :orange_circle: Scaffold | Nano toggle |
+| `poet-theme` | :orange_circle: Scaffold | Poet theme |
+| `catppuccin-theme` | :orange_circle: Scaffold | Catppuccin |
+| `gruvbox-theme` | :orange_circle: Scaffold | Gruvbox |
+| `nord-theme` | :orange_circle: Scaffold | Nord |
+
+### Round 719 — Screenshots, Screencasts & Font Config
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gif-screencast` | :orange_circle: Scaffold | Start recording |
+| `gif-screencast-stop` | :orange_circle: Scaffold | Stop recording |
+| `screenshot-svg` | :orange_circle: Scaffold | SVG screenshot |
+| `screenshot-png` | :orange_circle: Scaffold | PNG screenshot |
+| `keycast-header-line` | :orange_circle: Scaffold | Header line |
+| `keycast-tab-bar` | :orange_circle: Scaffold | Tab bar |
+| `fontaine-set-face` | :orange_circle: Scaffold | Set face font |
+| `color-theme-approximate` | :orange_circle: Scaffold | Approximate |
+| `theme-magic-export` | :orange_circle: Scaffold | Export theme |
+| `tao-theme-toggle` | :orange_circle: Scaffold | Toggle Tao |
+
+### Round 720 — Language Modes ext (Zig, Odin, V, Nim)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `zig-build` | :orange_circle: Scaffold | Build |
+| `zig-test` | :orange_circle: Scaffold | Test |
+| `zig-fmt` | :orange_circle: Scaffold | Format |
+| `odin-build` | :orange_circle: Scaffold | Build |
+| `odin-test` | :orange_circle: Scaffold | Test |
+| `v-fmt` | :orange_circle: Scaffold | Format |
+| `v-build` | :orange_circle: Scaffold | Build |
+| `nim-compile` | :orange_circle: Scaffold | Compile |
+| `nim-run` | :orange_circle: Scaffold | Run |
+| `nim-suggest` | :orange_circle: Scaffold | Suggest |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
