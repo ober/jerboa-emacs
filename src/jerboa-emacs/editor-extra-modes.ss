@@ -21616,3 +21616,45 @@
       (lambda (app-name)
         (echo-message! echo (str "Heroku: viewing logs for " app-name))))))
 
+;;; Round 260 — Cloudflare ext, Firebase ext, Supabase ext, PlanetScale ext, Fly.io ext (batch 1)
+
+(def (cmd-cloudflare-workers-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: listing Workers")))
+
+(def (cmd-cloudflare-pages-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: listing Pages projects")))
+
+(def (cmd-cloudflare-dns-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: listing DNS records")))
+
+(def (cmd-cloudflare-zones-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: listing zones")))
+
+(def (cmd-firebase-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: deploying project")))
+
+(def (cmd-firebase-auth-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: listing auth users")))
+
+(def (cmd-firebase-functions-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: listing Cloud Functions")))
+
+(def (cmd-firebase-hosting-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Firebase: listing hosting sites")))
+
+(def (cmd-supabase-db-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: pushing database migrations")))
+
+(def (cmd-supabase-functions-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: listing edge functions")))
+

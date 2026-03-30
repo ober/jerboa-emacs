@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 260 — Cloudflare ext, Firebase ext, Supabase ext, PlanetScale ext, Fly.io ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| cloudflare-workers-list | :orange_circle: | List Cloudflare Workers |
+| cloudflare-pages-list | :orange_circle: | List Cloudflare Pages projects |
+| cloudflare-dns-list | :orange_circle: | List Cloudflare DNS records |
+| cloudflare-zones-list | :orange_circle: | List Cloudflare zones |
+| firebase-deploy | :orange_circle: | Deploy Firebase project |
+| firebase-auth-list | :orange_circle: | List Firebase auth users |
+| firebase-functions-list | :orange_circle: | List Firebase Cloud Functions |
+| firebase-hosting-list | :orange_circle: | List Firebase hosting sites |
+| supabase-db-push | :orange_circle: | Push Supabase database migrations |
+| supabase-functions-list | :orange_circle: | List Supabase edge functions |
+| supabase-migration-new | :orange_circle: | Create new Supabase migration |
+| supabase-status | :orange_circle: | Show Supabase project status |
+| planetscale-branch-list | :orange_circle: | List PlanetScale branches |
+| planetscale-deploy-request | :orange_circle: | Create PlanetScale deploy request |
+| planetscale-db-list | :orange_circle: | List PlanetScale databases |
+| planetscale-connect | :orange_circle: | Connect to PlanetScale database |
+| fly-deploy | :orange_circle: | Deploy to Fly.io |
+| fly-status | :orange_circle: | Show Fly.io app status |
+| fly-logs | :orange_circle: | View Fly.io logs |
+| fly-scale | :orange_circle: | Scale Fly.io instances |
+
 ### Round 259 — Azure ext, DigitalOcean, Heroku ext, Vercel ext, Netlify ext
 
 | Command | Status | Description |

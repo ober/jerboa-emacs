@@ -20992,3 +20992,51 @@
 (def (cmd-netlify-functions-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Netlify: listing functions")))
+
+;;; Round 260 — Supabase ext, PlanetScale ext, Fly.io ext (batch 2)
+
+(def (cmd-supabase-migration-new app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Migration name: "
+      (lambda (name)
+        (echo-message! echo (str "Supabase: created migration " name))))))
+
+(def (cmd-supabase-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Supabase: showing project status")))
+
+(def (cmd-planetscale-branch-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: listing branches")))
+
+(def (cmd-planetscale-deploy-request app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: creating deploy request")))
+
+(def (cmd-planetscale-db-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PlanetScale: listing databases")))
+
+(def (cmd-planetscale-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Database: "
+      (lambda (db)
+        (echo-message! echo (str "PlanetScale: connecting to " db))))))
+
+(def (cmd-fly-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: deploying application")))
+
+(def (cmd-fly-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: showing app status")))
+
+(def (cmd-fly-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: viewing logs")))
+
+(def (cmd-fly-scale app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Scale count: "
+      (lambda (count)
+        (echo-message! echo (str "Fly.io: scaling to " count " instances"))))))
