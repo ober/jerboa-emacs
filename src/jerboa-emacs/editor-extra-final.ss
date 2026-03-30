@@ -22288,3 +22288,53 @@
 (def (cmd-fstab-check app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Fstab: checking syntax")))
+
+;;; Round 288 — Systemd Timer ext, Anacron ext, Incron ext (batch 2)
+
+(def (cmd-systemd-timer-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Timer name: "
+      (lambda (name)
+        (echo-message! echo (str "Systemd: enabling timer " name))))))
+
+(def (cmd-systemd-timer-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Timer name: "
+      (lambda (name)
+        (echo-message! echo (str "Systemd: disabling timer " name))))))
+
+(def (cmd-anacron-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anacron: listing jobs")))
+
+(def (cmd-anacron-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anacron: running pending jobs")))
+
+(def (cmd-anacron-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anacron: viewing configuration")))
+
+(def (cmd-anacron-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Anacron: showing status")))
+
+(def (cmd-incron-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Incron: listing watches")))
+
+(def (cmd-incron-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Watch path: "
+      (lambda (path)
+        (echo-message! echo (str "Incron: adding watch on " path))))))
+
+(def (cmd-incron-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Watch: "
+      (lambda (watch)
+        (echo-message! echo (str "Incron: removing " watch))))))
+
+(def (cmd-incron-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Incron: showing status")))

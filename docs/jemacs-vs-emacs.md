@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 288 — Cron ext, At ext, Systemd Timer ext, Anacron ext, Incron ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| cron-list | :orange_circle: | List crontab entries |
+| cron-add | :orange_circle: | Add cron job |
+| cron-remove | :orange_circle: | Remove cron job |
+| cron-edit | :orange_circle: | Edit crontab |
+| at-schedule | :orange_circle: | Schedule at job |
+| at-list | :orange_circle: | List pending at jobs |
+| at-remove | :orange_circle: | Remove at job |
+| at-view | :orange_circle: | View at job details |
+| systemd-timer-list | :orange_circle: | List systemd timers |
+| systemd-timer-create | :orange_circle: | Create systemd timer |
+| systemd-timer-enable | :orange_circle: | Enable systemd timer |
+| systemd-timer-disable | :orange_circle: | Disable systemd timer |
+| anacron-list | :orange_circle: | List anacron jobs |
+| anacron-run | :orange_circle: | Run pending anacron jobs |
+| anacron-config | :orange_circle: | View anacron config |
+| anacron-status | :orange_circle: | Show anacron status |
+| incron-list | :orange_circle: | List incron watches |
+| incron-add | :orange_circle: | Add incron watch |
+| incron-remove | :orange_circle: | Remove incron watch |
+| incron-status | :orange_circle: | Show incron status |
+
 ### Round 287 — ACL ext, Xattr ext, Chattr ext, Quota ext, Fstab ext
 
 | Command | Status | Description |

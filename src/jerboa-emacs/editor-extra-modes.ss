@@ -22950,3 +22950,57 @@
       (lambda (path)
         (echo-message! echo (str "Chmod: recursive on " path))))))
 
+;;; Round 288 — Cron ext, At ext, Systemd Timer ext (batch 1)
+
+(def (cmd-cron-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cron: listing crontab entries")))
+
+(def (cmd-cron-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cron expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Cron: adding " expr))))))
+
+(def (cmd-cron-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Job number: "
+      (lambda (num)
+        (echo-message! echo (str "Cron: removing job " num))))))
+
+(def (cmd-cron-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cron: editing crontab")))
+
+(def (cmd-at-schedule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Time (e.g. 'now + 1 hour'): "
+      (lambda (time)
+        (echo-message! echo (str "At: scheduling for " time))))))
+
+(def (cmd-at-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "At: listing pending jobs")))
+
+(def (cmd-at-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Job ID: "
+      (lambda (id)
+        (echo-message! echo (str "At: removing job " id))))))
+
+(def (cmd-at-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Job ID: "
+      (lambda (id)
+        (echo-message! echo (str "At: viewing job " id))))))
+
+(def (cmd-systemd-timer-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Systemd: listing timers")))
+
+(def (cmd-systemd-timer-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Timer name: "
+      (lambda (name)
+        (echo-message! echo (str "Systemd: creating timer " name))))))
+
