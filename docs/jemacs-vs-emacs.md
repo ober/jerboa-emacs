@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 253 — PHP ext, Perl ext, Julia, Nim, Dart, Swift
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| php-mode-goto-definition | :orange_circle: | Go to PHP definition |
+| php-run-builtin-web-server | :orange_circle: | Start PHP built-in web server |
+| php-insert-doc-block | :orange_circle: | Insert PHP doc block |
+| cperl-perldoc | :orange_circle: | Show Perl documentation |
+| cperl-indent-command | :orange_circle: | Indent Perl code |
+| ess-display-help-on-object | :orange_circle: | Show R help on object |
+| julia-repl-send-region | :orange_circle: | Send region to Julia REPL |
+| julia-repl-send-buffer | :orange_circle: | Send buffer to Julia REPL |
+| julia-repl-send-line | :orange_circle: | Send line to Julia REPL |
+| julia-latexsub-or-indent | :orange_circle: | Julia LaTeX substitution |
+| julia-repl-doc | :orange_circle: | Show Julia documentation |
+| julia-repl-edit | :orange_circle: | Edit Julia function |
+| nim-suggest-def | :orange_circle: | Jump to Nim definition |
+| nim-eldoc-at-point | :orange_circle: | Show Nim eldoc at point |
+| dart-server-goto-definition | :orange_circle: | Go to Dart definition |
+| dart-server-find-references | :orange_circle: | Find Dart references |
+| dart-run-flutter | :orange_circle: | Run Flutter |
+| dart-server-edit-organize-directives | :orange_circle: | Organize Dart directives |
+| swift-mode-send-buffer | :orange_circle: | Send buffer to Swift REPL |
+| swift-mode-fill-paragraph | :orange_circle: | Fill Swift paragraph |
+
 ### Round 252 — Haskell ext, Elixir ext, CIDER ext, Ensime
 
 | Command | Status | Description |

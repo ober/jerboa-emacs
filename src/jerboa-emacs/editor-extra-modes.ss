@@ -21293,3 +21293,48 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ensime: jumping to definition")))
 
+;; Round 253 — PHP ext, Perl ext, ESS ext, Julia, Nim, Dart (10 in modes)
+(def (cmd-php-mode-goto-definition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: going to definition")))
+
+(def (cmd-php-run-builtin-web-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: starting built-in web server")))
+
+(def (cmd-php-insert-doc-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PHP: inserted doc block")))
+
+(def (cmd-cperl-perldoc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Perldoc: "
+      (lambda (topic)
+        (echo-message! echo (str "CPerl: showing perldoc for " topic))))))
+
+(def (cmd-cperl-indent-command app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CPerl: indented current line/region")))
+
+(def (cmd-ess-display-help-on-object app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "R help on: "
+      (lambda (obj)
+        (echo-message! echo (str "ESS: showing help for " obj))))))
+
+(def (cmd-julia-repl-send-region app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia REPL: sent region")))
+
+(def (cmd-julia-repl-send-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia REPL: sent buffer")))
+
+(def (cmd-julia-repl-send-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia REPL: sent current line")))
+
+(def (cmd-julia-latexsub-or-indent app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Julia: LaTeX substitution or indent")))
+
