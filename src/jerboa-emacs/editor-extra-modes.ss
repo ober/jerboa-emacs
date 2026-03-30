@@ -24744,3 +24744,59 @@
       (lambda (iface)
         (echo-message! echo (str "XDP: unloading from " iface))))))
 
+;;; Round 321 — Kmod ext, Modprobe ext, Dkms ext, Dracut ext, Mkinitcpio ext (batch 1)
+
+(def (cmd-kmod-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kmod: listing loaded modules")))
+
+(def (cmd-kmod-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module name: "
+      (lambda (mod)
+        (echo-message! echo (str "Kmod: info for " mod))))))
+
+(def (cmd-kmod-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module to load: "
+      (lambda (mod)
+        (echo-message! echo (str "Kmod: loading " mod))))))
+
+(def (cmd-kmod-unload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module to unload: "
+      (lambda (mod)
+        (echo-message! echo (str "Kmod: unloading " mod))))))
+
+(def (cmd-modprobe-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module: "
+      (lambda (mod)
+        (echo-message! echo (str "Modprobe: showing config for " mod))))))
+
+(def (cmd-modprobe-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Modprobe: showing configuration")))
+
+(def (cmd-modprobe-blacklist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module to blacklist: "
+      (lambda (mod)
+        (echo-message! echo (str "Modprobe: blacklisting " mod))))))
+
+(def (cmd-modprobe-dependencies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module: "
+      (lambda (mod)
+        (echo-message! echo (str "Modprobe: showing dependencies of " mod))))))
+
+(def (cmd-dkms-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DKMS: showing module status")))
+
+(def (cmd-dkms-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module source dir: "
+      (lambda (dir)
+        (echo-message! echo (str "DKMS: adding " dir))))))
+

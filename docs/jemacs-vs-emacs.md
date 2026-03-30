@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 321 — Kmod ext, Modprobe ext, Dkms ext, Dracut ext, Mkinitcpio ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `kmod-list` | :orange_circle: | List loaded modules |
+| `kmod-info` | :orange_circle: | Show module info |
+| `kmod-load` | :orange_circle: | Load kernel module |
+| `kmod-unload` | :orange_circle: | Unload kernel module |
+| `modprobe-show` | :orange_circle: | Show module config |
+| `modprobe-config` | :orange_circle: | Show modprobe configuration |
+| `modprobe-blacklist` | :orange_circle: | Blacklist module |
+| `modprobe-dependencies` | :orange_circle: | Show module dependencies |
+| `dkms-status` | :orange_circle: | Show DKMS status |
+| `dkms-add` | :orange_circle: | Add DKMS module |
+| `dkms-build` | :orange_circle: | Build DKMS module |
+| `dkms-install` | :orange_circle: | Install DKMS module |
+| `dracut-generate` | :orange_circle: | Generate initramfs |
+| `dracut-list` | :orange_circle: | List dracut modules |
+| `dracut-config` | :orange_circle: | Show dracut config |
+| `dracut-rebuild` | :orange_circle: | Rebuild initramfs |
+| `mkinitcpio-generate` | :orange_circle: | Generate initramfs |
+| `mkinitcpio-list` | :orange_circle: | List hooks |
+| `mkinitcpio-preset` | :orange_circle: | Use preset |
+| `mkinitcpio-hooks` | :orange_circle: | Show available hooks |
+
 ### Round 320 — Bpftool ext, Bpftrace ext, Xdp ext, Tc-bpf ext, Libbpf ext
 
 | Feature | Status | Notes |

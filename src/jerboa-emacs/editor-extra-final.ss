@@ -24056,3 +24056,53 @@
     (echo-read-string echo "Program: "
       (lambda (prog)
         (echo-message! echo (str "Libbpf: debugging " prog))))))
+
+;;; Round 321 — Dkms ext, Dracut ext, Mkinitcpio ext (batch 2)
+
+(def (cmd-dkms-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module/version: "
+      (lambda (mv)
+        (echo-message! echo (str "DKMS: building " mv))))))
+
+(def (cmd-dkms-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Module/version: "
+      (lambda (mv)
+        (echo-message! echo (str "DKMS: installing " mv))))))
+
+(def (cmd-dracut-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dracut: generating initramfs")))
+
+(def (cmd-dracut-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dracut: listing modules")))
+
+(def (cmd-dracut-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dracut: showing configuration")))
+
+(def (cmd-dracut-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kernel version: "
+      (lambda (ver)
+        (echo-message! echo (str "Dracut: rebuilding initramfs for " ver))))))
+
+(def (cmd-mkinitcpio-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mkinitcpio: generating initramfs")))
+
+(def (cmd-mkinitcpio-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mkinitcpio: listing hooks")))
+
+(def (cmd-mkinitcpio-preset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Preset: "
+      (lambda (preset)
+        (echo-message! echo (str "Mkinitcpio: using preset " preset))))))
+
+(def (cmd-mkinitcpio-hooks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mkinitcpio: showing available hooks")))
