@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 311 — Coredumpctl ext, Busctl ext, Networkctl ext, Portablectl ext, Userdbctl ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `coredumpctl-list` | :orange_circle: | List coredumps |
+| `coredumpctl-info` | :orange_circle: | Show coredump info |
+| `coredumpctl-dump` | :orange_circle: | Extract coredump |
+| `coredumpctl-gdb` | :orange_circle: | Debug coredump with GDB |
+| `busctl-list` | :orange_circle: | List D-Bus services |
+| `busctl-monitor` | :orange_circle: | Monitor D-Bus traffic |
+| `busctl-call` | :orange_circle: | Call D-Bus method |
+| `busctl-introspect` | :orange_circle: | Introspect D-Bus object |
+| `networkctl-list` | :orange_circle: | List network links |
+| `networkctl-status` | :orange_circle: | Show network status |
+| `networkctl-up` | :orange_circle: | Bring interface up |
+| `networkctl-down` | :orange_circle: | Bring interface down |
+| `portablectl-list` | :orange_circle: | List portable services |
+| `portablectl-attach` | :orange_circle: | Attach portable image |
+| `portablectl-detach` | :orange_circle: | Detach portable image |
+| `portablectl-inspect` | :orange_circle: | Inspect portable image |
+| `userdbctl-user` | :orange_circle: | Show user info |
+| `userdbctl-group` | :orange_circle: | Show group info |
+| `userdbctl-members` | :orange_circle: | List group members |
+| `userdbctl-services` | :orange_circle: | List userdb services |
+
 ### Round 310 — Loginctl ext, Machinectl ext, Hostnamectl ext, Timedatectl ext, Localectl ext
 
 | Command | Status | Description |

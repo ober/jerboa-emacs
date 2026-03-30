@@ -23502,3 +23502,61 @@
 (def (cmd-localectl-list-keymaps app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Localectl: listing keymaps")))
+
+;;; Round 311 — Networkctl ext, Portablectl ext, Userdbctl ext (batch 2)
+
+(def (cmd-networkctl-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface to bring up: "
+      (lambda (iface)
+        (echo-message! echo (str "Networkctl: bringing up " iface))))))
+
+(def (cmd-networkctl-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface to bring down: "
+      (lambda (iface)
+        (echo-message! echo (str "Networkctl: bringing down " iface))))))
+
+(def (cmd-portablectl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Portablectl: listing portable services")))
+
+(def (cmd-portablectl-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image to attach: "
+      (lambda (img)
+        (echo-message! echo (str "Portablectl: attaching " img))))))
+
+(def (cmd-portablectl-detach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image to detach: "
+      (lambda (img)
+        (echo-message! echo (str "Portablectl: detaching " img))))))
+
+(def (cmd-portablectl-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image to inspect: "
+      (lambda (img)
+        (echo-message! echo (str "Portablectl: inspecting " img))))))
+
+(def (cmd-userdbctl-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Username: "
+      (lambda (user)
+        (echo-message! echo (str "Userdbctl: showing user " user))))))
+
+(def (cmd-userdbctl-group app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Group name: "
+      (lambda (grp)
+        (echo-message! echo (str "Userdbctl: showing group " grp))))))
+
+(def (cmd-userdbctl-members app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Group for members: "
+      (lambda (grp)
+        (echo-message! echo (str "Userdbctl: listing members of " grp))))))
+
+(def (cmd-userdbctl-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Userdbctl: listing services")))

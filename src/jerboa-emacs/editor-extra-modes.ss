@@ -24230,3 +24230,57 @@
       (lambda (name)
         (echo-message! echo (str "Hostnamectl: setting " name))))))
 
+;;; Round 311 — Coredumpctl ext, Busctl ext, Networkctl ext (batch 1)
+
+(def (cmd-coredumpctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Coredumpctl: listing core dumps")))
+
+(def (cmd-coredumpctl-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID/match: "
+      (lambda (m)
+        (echo-message! echo (str "Coredumpctl: info for " m))))))
+
+(def (cmd-coredumpctl-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID/match: "
+      (lambda (m)
+        (echo-message! echo (str "Coredumpctl: dumping " m))))))
+
+(def (cmd-coredumpctl-gdb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID/match: "
+      (lambda (m)
+        (echo-message! echo (str "Coredumpctl: GDB for " m))))))
+
+(def (cmd-busctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Busctl: listing bus names")))
+
+(def (cmd-busctl-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Busctl: monitoring bus")))
+
+(def (cmd-busctl-call app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Method: "
+      (lambda (method)
+        (echo-message! echo (str "Busctl: calling " method))))))
+
+(def (cmd-busctl-introspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Service: "
+      (lambda (svc)
+        (echo-message! echo (str "Busctl: introspecting " svc))))))
+
+(def (cmd-networkctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Networkctl: listing links")))
+
+(def (cmd-networkctl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Networkctl: status of " iface))))))
+
