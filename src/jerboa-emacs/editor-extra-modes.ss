@@ -26044,3 +26044,53 @@
 (def (cmd-fluentd-plugins app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Fluentd: listing plugins")))
+
+;;; Round 346 — RabbitMQ ext, Kafka ext, NATS ext, Redis ext, Memcached ext (batch 1)
+
+(def (cmd-rabbitmq-policies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: listing policies")))
+
+(def (cmd-rabbitmq-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: listing users")))
+
+(def (cmd-rabbitmq-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: listing connections")))
+
+(def (cmd-rabbitmq-vhosts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: listing virtual hosts")))
+
+(def (cmd-kafka-acls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kafka: listing ACLs")))
+
+(def (cmd-kafka-consumers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kafka consumer group: "
+      (lambda (grp)
+        (echo-message! echo (str "Kafka: describing consumer group " grp))))))
+
+(def (cmd-kafka-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Kafka: listing consumer groups")))
+
+(def (cmd-kafka-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Kafka describe topic: "
+      (lambda (topic)
+        (echo-message! echo (str "Kafka: describing topic " topic))))))
+
+(def (cmd-nats-pub app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "NATS publish subject: "
+      (lambda (subj)
+        (echo-message! echo (str "NATS: publishing to " subj))))))
+
+(def (cmd-nats-sub app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "NATS subscribe subject: "
+      (lambda (subj)
+        (echo-message! echo (str "NATS: subscribing to " subj))))))

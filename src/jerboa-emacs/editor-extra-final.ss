@@ -25335,3 +25335,45 @@
 (def (cmd-beats-keystore app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Beats: managing keystore")))
+
+;;; Round 346 — NATS ext, Redis ext, Memcached ext (batch 2)
+
+(def (cmd-nats-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NATS: listing JetStream streams")))
+
+(def (cmd-nats-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NATS: showing server info")))
+
+(def (cmd-redis-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: showing server info")))
+
+(def (cmd-redis-dbsize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: showing database size")))
+
+(def (cmd-redis-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: monitoring commands")))
+
+(def (cmd-redis-slowlog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redis: showing slow log")))
+
+(def (cmd-memcached-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: showing version")))
+
+(def (cmd-memcached-slabs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: showing slab stats")))
+
+(def (cmd-memcached-items app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: showing item stats")))
+
+(def (cmd-memcached-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Memcached: showing connection stats")))

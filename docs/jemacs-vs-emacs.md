@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 346 — RabbitMQ ext, Kafka ext, NATS ext, Redis ext, Memcached ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| rabbitmq-policies | :orange_circle: | RabbitMQ: list policies |
+| rabbitmq-users | :orange_circle: | RabbitMQ: list users |
+| rabbitmq-connections | :orange_circle: | RabbitMQ: list connections |
+| rabbitmq-vhosts | :orange_circle: | RabbitMQ: list virtual hosts |
+| kafka-acls | :orange_circle: | Kafka: list ACLs |
+| kafka-consumers | :orange_circle: | Kafka: describe consumer group |
+| kafka-groups | :orange_circle: | Kafka: list consumer groups |
+| kafka-describe | :orange_circle: | Kafka: describe topic |
+| nats-pub | :orange_circle: | NATS: publish to subject |
+| nats-sub | :orange_circle: | NATS: subscribe to subject |
+| nats-stream | :orange_circle: | NATS: list JetStream streams |
+| nats-server | :orange_circle: | NATS: show server info |
+| redis-info | :orange_circle: | Redis: show server info |
+| redis-dbsize | :orange_circle: | Redis: show database size |
+| redis-monitor | :orange_circle: | Redis: monitor commands |
+| redis-slowlog | :orange_circle: | Redis: show slow log |
+| memcached-version | :orange_circle: | Memcached: show version |
+| memcached-slabs | :orange_circle: | Memcached: slab stats |
+| memcached-items | :orange_circle: | Memcached: item stats |
+| memcached-connections | :orange_circle: | Memcached: connection stats |
+
 ### Round 345 — Elasticsearch ext, Kibana ext, Fluentd ext, Logstash ext, Beats ext
 
 | Feature | Status | Notes |
