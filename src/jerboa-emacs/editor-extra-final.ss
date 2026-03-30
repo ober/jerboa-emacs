@@ -31158,3 +31158,291 @@
     (echo-message! echo "fscrypt: metadata")))
 
 ;; Milestone: Round 470 — 10,000+ commands!
+
+;; ── Round 472 — OSSEC ext, Tripwire ext ──
+
+(def (cmd-ossec-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OSSEC: status")))
+
+(def (cmd-ossec-agents app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OSSEC: agents")))
+
+(def (cmd-ossec-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OSSEC: alerts")))
+
+(def (cmd-ossec-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OSSEC: rules")))
+
+(def (cmd-ossec-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OSSEC: logs")))
+
+(def (cmd-tripwire-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tripwire: initialize")))
+
+(def (cmd-tripwire-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tripwire: integrity check")))
+
+(def (cmd-tripwire-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tripwire: update database")))
+
+(def (cmd-tripwire-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tripwire: report")))
+
+(def (cmd-tripwire-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tripwire: policy")))
+
+;; ── Round 473 — fail2ban ext, CrowdSec ext, SSHGuard ext, DenyHosts ext ──
+
+(def (cmd-fail2ban-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fail2ban: status")))
+
+(def (cmd-fail2ban-banned app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fail2ban: banned IPs")))
+
+(def (cmd-fail2ban-unban app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fail2ban: unban IP")))
+
+(def (cmd-fail2ban-jails app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fail2ban: jails")))
+
+(def (cmd-fail2ban-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "fail2ban: log")))
+
+(def (cmd-crowdsec-decisions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CrowdSec: decisions")))
+
+(def (cmd-crowdsec-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CrowdSec: alerts")))
+
+(def (cmd-crowdsec-bouncers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CrowdSec: bouncers")))
+
+(def (cmd-crowdsec-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CrowdSec: collections")))
+
+(def (cmd-crowdsec-hub app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CrowdSec: hub")))
+
+(def (cmd-sshguard-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHGuard: status")))
+
+(def (cmd-sshguard-whitelist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHGuard: whitelist")))
+
+(def (cmd-sshguard-blacklist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHGuard: blacklist")))
+
+(def (cmd-sshguard-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHGuard: log")))
+
+(def (cmd-sshguard-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSHGuard: configuration")))
+
+(def (cmd-denyhosts-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DenyHosts: status")))
+
+(def (cmd-denyhosts-purge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DenyHosts: purge")))
+
+(def (cmd-denyhosts-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DenyHosts: sync")))
+
+(def (cmd-denyhosts-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DenyHosts: report")))
+
+(def (cmd-denyhosts-whitelist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DenyHosts: whitelist")))
+
+;; ── Round 474 — Lynis ext, OpenSCAP ext, CIS-benchmark ext, Compliance ext ──
+
+(def (cmd-lynis-audit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lynis: system audit")))
+
+(def (cmd-lynis-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lynis: show details")))
+
+(def (cmd-lynis-upload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lynis: upload report")))
+
+(def (cmd-lynis-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lynis: update")))
+
+(def (cmd-lynis-pentest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lynis: pentest mode")))
+
+(def (cmd-openscap-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAP: scan")))
+
+(def (cmd-openscap-oval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAP: OVAL evaluation")))
+
+(def (cmd-openscap-xccdf app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAP: XCCDF evaluation")))
+
+(def (cmd-openscap-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAP: generate report")))
+
+(def (cmd-openscap-remediate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenSCAP: remediate")))
+
+(def (cmd-cis-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIS: benchmark scan")))
+
+(def (cmd-cis-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIS: report")))
+
+(def (cmd-cis-remediate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIS: remediate")))
+
+(def (cmd-cis-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIS: profile")))
+
+(def (cmd-cis-exceptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CIS: exceptions")))
+
+(def (cmd-compliance-scan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compliance: scan")))
+
+(def (cmd-compliance-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compliance: report")))
+
+(def (cmd-compliance-baseline app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compliance: baseline")))
+
+(def (cmd-compliance-exceptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compliance: exceptions")))
+
+(def (cmd-compliance-drift app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Compliance: drift detection")))
+
+;; ── Round 475 — Vault ext2, Conjur ext, HashiCorp Boundary ext, Teleport ext2 ──
+
+(def (cmd-vault-kv-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: KV list")))
+
+(def (cmd-vault-kv-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: KV get")))
+
+(def (cmd-vault-kv-put app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: KV put")))
+
+(def (cmd-vault-kv-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: KV delete")))
+
+(def (cmd-vault-kv-metadata app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vault: KV metadata")))
+
+(def (cmd-conjur-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Conjur: list resources")))
+
+(def (cmd-conjur-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Conjur: get secret")))
+
+(def (cmd-conjur-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Conjur: set secret")))
+
+(def (cmd-conjur-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Conjur: policy")))
+
+(def (cmd-conjur-rotate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Conjur: rotate secret")))
+
+(def (cmd-boundary-targets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: targets")))
+
+(def (cmd-boundary-sessions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: sessions")))
+
+(def (cmd-boundary-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: connect")))
+
+(def (cmd-boundary-hosts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: hosts")))
+
+(def (cmd-boundary-scopes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Boundary: scopes")))
+
+(def (cmd-teleport-nodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teleport: nodes")))
+
+(def (cmd-teleport-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teleport: applications")))
+
+(def (cmd-teleport-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teleport: databases")))
+
+(def (cmd-teleport-kube app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teleport: Kubernetes")))
+
+(def (cmd-teleport-access app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teleport: access requests")))

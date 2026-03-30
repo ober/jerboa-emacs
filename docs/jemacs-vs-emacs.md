@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 475 — Vault ext2, Conjur ext, Boundary ext, Teleport ext2
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Vault KV list | — | `vault-kv-list` | :orange_circle: Scaffolded |
+| Vault KV get | — | `vault-kv-get` | :orange_circle: Scaffolded |
+| Vault KV put | — | `vault-kv-put` | :orange_circle: Scaffolded |
+| Vault KV delete | — | `vault-kv-delete` | :orange_circle: Scaffolded |
+| Vault KV metadata | — | `vault-kv-metadata` | :orange_circle: Scaffolded |
+| Conjur list | — | `conjur-list` | :orange_circle: Scaffolded |
+| Conjur get | — | `conjur-get` | :orange_circle: Scaffolded |
+| Conjur set | — | `conjur-set` | :orange_circle: Scaffolded |
+| Conjur policy | — | `conjur-policy` | :orange_circle: Scaffolded |
+| Conjur rotate | — | `conjur-rotate` | :orange_circle: Scaffolded |
+| Boundary targets | — | `boundary-targets` | :orange_circle: Scaffolded |
+| Boundary sessions | — | `boundary-sessions` | :orange_circle: Scaffolded |
+| Boundary connect | — | `boundary-connect` | :orange_circle: Scaffolded |
+| Boundary hosts | — | `boundary-hosts` | :orange_circle: Scaffolded |
+| Boundary scopes | — | `boundary-scopes` | :orange_circle: Scaffolded |
+| Teleport nodes | — | `teleport-nodes` | :orange_circle: Scaffolded |
+| Teleport apps | — | `teleport-apps` | :orange_circle: Scaffolded |
+| Teleport databases | — | `teleport-databases` | :orange_circle: Scaffolded |
+| Teleport Kubernetes | — | `teleport-kube` | :orange_circle: Scaffolded |
+| Teleport access | — | `teleport-access` | :orange_circle: Scaffolded |
+
+### Round 474 — Lynis ext, OpenSCAP ext, CIS-benchmark ext, Compliance ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Lynis audit | — | `lynis-audit` | :orange_circle: Scaffolded |
+| Lynis show | — | `lynis-show` | :orange_circle: Scaffolded |
+| Lynis upload | — | `lynis-upload` | :orange_circle: Scaffolded |
+| Lynis update | — | `lynis-update` | :orange_circle: Scaffolded |
+| Lynis pentest | — | `lynis-pentest` | :orange_circle: Scaffolded |
+| OpenSCAP scan | — | `openscap-scan` | :orange_circle: Scaffolded |
+| OpenSCAP OVAL | — | `openscap-oval` | :orange_circle: Scaffolded |
+| OpenSCAP XCCDF | — | `openscap-xccdf` | :orange_circle: Scaffolded |
+| OpenSCAP report | — | `openscap-report` | :orange_circle: Scaffolded |
+| OpenSCAP remediate | — | `openscap-remediate` | :orange_circle: Scaffolded |
+| CIS scan | — | `cis-scan` | :orange_circle: Scaffolded |
+| CIS report | — | `cis-report` | :orange_circle: Scaffolded |
+| CIS remediate | — | `cis-remediate` | :orange_circle: Scaffolded |
+| CIS profile | — | `cis-profile` | :orange_circle: Scaffolded |
+| CIS exceptions | — | `cis-exceptions` | :orange_circle: Scaffolded |
+| Compliance scan | — | `compliance-scan` | :orange_circle: Scaffolded |
+| Compliance report | — | `compliance-report` | :orange_circle: Scaffolded |
+| Compliance baseline | — | `compliance-baseline` | :orange_circle: Scaffolded |
+| Compliance exceptions | — | `compliance-exceptions` | :orange_circle: Scaffolded |
+| Compliance drift | — | `compliance-drift` | :orange_circle: Scaffolded |
+
+### Round 473 — fail2ban ext, CrowdSec ext, SSHGuard ext, DenyHosts ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| fail2ban status | — | `fail2ban-status` | :orange_circle: Scaffolded |
+| fail2ban banned | — | `fail2ban-banned` | :orange_circle: Scaffolded |
+| fail2ban unban | — | `fail2ban-unban` | :orange_circle: Scaffolded |
+| fail2ban jails | — | `fail2ban-jails` | :orange_circle: Scaffolded |
+| fail2ban log | — | `fail2ban-log` | :orange_circle: Scaffolded |
+| CrowdSec decisions | — | `crowdsec-decisions` | :orange_circle: Scaffolded |
+| CrowdSec alerts | — | `crowdsec-alerts` | :orange_circle: Scaffolded |
+| CrowdSec bouncers | — | `crowdsec-bouncers` | :orange_circle: Scaffolded |
+| CrowdSec collections | — | `crowdsec-collections` | :orange_circle: Scaffolded |
+| CrowdSec hub | — | `crowdsec-hub` | :orange_circle: Scaffolded |
+| SSHGuard status | — | `sshguard-status` | :orange_circle: Scaffolded |
+| SSHGuard whitelist | — | `sshguard-whitelist` | :orange_circle: Scaffolded |
+| SSHGuard blacklist | — | `sshguard-blacklist` | :orange_circle: Scaffolded |
+| SSHGuard log | — | `sshguard-log` | :orange_circle: Scaffolded |
+| SSHGuard config | — | `sshguard-config` | :orange_circle: Scaffolded |
+| DenyHosts status | — | `denyhosts-status` | :orange_circle: Scaffolded |
+| DenyHosts purge | — | `denyhosts-purge` | :orange_circle: Scaffolded |
+| DenyHosts sync | — | `denyhosts-sync` | :orange_circle: Scaffolded |
+| DenyHosts report | — | `denyhosts-report` | :orange_circle: Scaffolded |
+| DenyHosts whitelist | — | `denyhosts-whitelist` | :orange_circle: Scaffolded |
+
+### Round 472 — auditd ext, AIDE ext, OSSEC ext, Tripwire ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| auditd rules | — | `auditd-rules` | :orange_circle: Scaffolded |
+| auditd status | — | `auditd-status` | :orange_circle: Scaffolded |
+| auditd search | — | `auditd-search` | :orange_circle: Scaffolded |
+| auditd report | — | `auditd-report` | :orange_circle: Scaffolded |
+| auditd log | — | `auditd-log` | :orange_circle: Scaffolded |
+| AIDE init | — | `aide-init` | :orange_circle: Scaffolded |
+| AIDE check | — | `aide-check` | :orange_circle: Scaffolded |
+| AIDE update | — | `aide-update` | :orange_circle: Scaffolded |
+| AIDE compare | — | `aide-compare` | :orange_circle: Scaffolded |
+| AIDE report | — | `aide-report` | :orange_circle: Scaffolded |
+| OSSEC status | — | `ossec-status` | :orange_circle: Scaffolded |
+| OSSEC agents | — | `ossec-agents` | :orange_circle: Scaffolded |
+| OSSEC alerts | — | `ossec-alerts` | :orange_circle: Scaffolded |
+| OSSEC rules | — | `ossec-rules` | :orange_circle: Scaffolded |
+| OSSEC logs | — | `ossec-logs` | :orange_circle: Scaffolded |
+| Tripwire init | — | `tripwire-init` | :orange_circle: Scaffolded |
+| Tripwire check | — | `tripwire-check` | :orange_circle: Scaffolded |
+| Tripwire update | — | `tripwire-update` | :orange_circle: Scaffolded |
+| Tripwire report | — | `tripwire-report` | :orange_circle: Scaffolded |
+| Tripwire policy | — | `tripwire-policy` | :orange_circle: Scaffolded |
+
+### Round 471 — SELinux ext, AppArmor ext, seccomp ext, capabilities ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| SELinux status | — | `selinux-status` | :orange_circle: Scaffolded |
+| SELinux context | — | `selinux-context` | :orange_circle: Scaffolded |
+| SELinux booleans | — | `selinux-boolean` | :orange_circle: Scaffolded |
+| SELinux modules | — | `selinux-module` | :orange_circle: Scaffolded |
+| SELinux audit | — | `selinux-audit` | :orange_circle: Scaffolded |
+| AppArmor status | — | `apparmor-status` | :orange_circle: Scaffolded |
+| AppArmor enforce | — | `apparmor-enforce` | :orange_circle: Scaffolded |
+| AppArmor complain | — | `apparmor-complain` | :orange_circle: Scaffolded |
+| AppArmor profile | — | `apparmor-profile` | :orange_circle: Scaffolded |
+| AppArmor logprof | — | `apparmor-logprof` | :orange_circle: Scaffolded |
+| seccomp profile | — | `seccomp-profile` | :orange_circle: Scaffolded |
+| seccomp list | — | `seccomp-list` | :orange_circle: Scaffolded |
+| seccomp trace | — | `seccomp-trace` | :orange_circle: Scaffolded |
+| seccomp whitelist | — | `seccomp-whitelist` | :orange_circle: Scaffolded |
+| seccomp test | — | `seccomp-test` | :orange_circle: Scaffolded |
+| capabilities list | — | `capabilities-list` | :orange_circle: Scaffolded |
+| capabilities get | — | `capabilities-get` | :orange_circle: Scaffolded |
+| capabilities set | — | `capabilities-set` | :orange_circle: Scaffolded |
+| capabilities drop | — | `capabilities-drop` | :orange_circle: Scaffolded |
+| capabilities ambient | — | `capabilities-ambient` | :orange_circle: Scaffolded |
+
 ### Round 470 — dm-crypt ext, cryptsetup ext, LUKS ext, fscrypt ext
 
 | Feature | Emacs | jemacs | Status |

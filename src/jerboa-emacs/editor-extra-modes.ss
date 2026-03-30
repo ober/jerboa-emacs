@@ -31030,3 +31030,129 @@
 (def (cmd-localectl-keymap app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "localectl: console keymap")))
+
+;; ── Round 471 — SELinux ext, AppArmor ext, seccomp ext, capabilities ext ──
+
+(def (cmd-selinux-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: status")))
+
+(def (cmd-selinux-context app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: security context")))
+
+(def (cmd-selinux-boolean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: booleans")))
+
+(def (cmd-selinux-module app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: modules")))
+
+(def (cmd-selinux-audit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SELinux: audit log")))
+
+(def (cmd-apparmor-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AppArmor: status")))
+
+(def (cmd-apparmor-enforce app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AppArmor: enforce profile")))
+
+(def (cmd-apparmor-complain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AppArmor: complain mode")))
+
+(def (cmd-apparmor-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AppArmor: profile")))
+
+(def (cmd-apparmor-logprof app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AppArmor: log profiler")))
+
+;; ── Round 472 — auditd ext, AIDE ext, OSSEC ext, Tripwire ext ──
+
+(def (cmd-seccomp-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "seccomp: profile")))
+
+(def (cmd-seccomp-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "seccomp: list syscalls")))
+
+(def (cmd-seccomp-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "seccomp: trace")))
+
+(def (cmd-seccomp-whitelist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "seccomp: whitelist")))
+
+(def (cmd-seccomp-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "seccomp: test profile")))
+
+(def (cmd-capabilities-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "capabilities: list")))
+
+(def (cmd-capabilities-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "capabilities: get")))
+
+(def (cmd-capabilities-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "capabilities: set")))
+
+(def (cmd-capabilities-drop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "capabilities: drop")))
+
+(def (cmd-capabilities-ambient app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "capabilities: ambient")))
+
+;; ── Round 473 — fail2ban ext, CrowdSec ext, SSHGuard ext, DenyHosts ext ──
+
+(def (cmd-auditd-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "auditd: rules")))
+
+(def (cmd-auditd-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "auditd: status")))
+
+(def (cmd-auditd-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "auditd: search events")))
+
+(def (cmd-auditd-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "auditd: report")))
+
+(def (cmd-auditd-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "auditd: audit log")))
+
+(def (cmd-aide-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AIDE: initialize database")))
+
+(def (cmd-aide-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AIDE: check integrity")))
+
+(def (cmd-aide-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AIDE: update database")))
+
+(def (cmd-aide-compare app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AIDE: compare databases")))
+
+(def (cmd-aide-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AIDE: report")))
