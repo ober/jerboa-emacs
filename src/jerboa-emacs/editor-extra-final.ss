@@ -25195,3 +25195,57 @@
 (def (cmd-cfengine-hub app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CFEngine: hub status")))
+
+;;; Round 343 — Alertmanager ext, Loki ext, Tempo ext (batch 2)
+
+(def (cmd-alertmanager-silence app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Alertmanager silence matcher: "
+      (lambda (matcher)
+        (echo-message! echo (str "Alertmanager: creating silence for " matcher))))))
+
+(def (cmd-alertmanager-receivers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alertmanager: listing receivers")))
+
+(def (cmd-loki-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Loki LogQL query: "
+      (lambda (q)
+        (echo-message! echo (str "Loki: querying " q))))))
+
+(def (cmd-loki-labels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loki: listing labels")))
+
+(def (cmd-loki-series app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Loki series matcher: "
+      (lambda (m)
+        (echo-message! echo (str "Loki: querying series " m))))))
+
+(def (cmd-loki-tail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Loki tail query: "
+      (lambda (q)
+        (echo-message! echo (str "Loki: tailing " q))))))
+
+(def (cmd-tempo-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tempo search tags: "
+      (lambda (tags)
+        (echo-message! echo (str "Tempo: searching traces " tags))))))
+
+(def (cmd-tempo-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Tempo trace ID: "
+      (lambda (id)
+        (echo-message! echo (str "Tempo: fetching trace " id))))))
+
+(def (cmd-tempo-tags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: listing tag names")))
+
+(def (cmd-tempo-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tempo: showing metrics summary")))

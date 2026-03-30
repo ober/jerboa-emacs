@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 343 — Thanos ext, Grafana ext, Alertmanager ext, Loki ext, Tempo ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| thanos-query | :orange_circle: | Thanos: PromQL query |
+| thanos-store | :orange_circle: | Thanos: store gateway status |
+| thanos-compact | :orange_circle: | Thanos: compactor status |
+| thanos-rule | :orange_circle: | Thanos: ruler rules |
+| grafana-dashboards | :orange_circle: | Grafana: list dashboards |
+| grafana-datasources | :orange_circle: | Grafana: list data sources |
+| grafana-annotations | :orange_circle: | Grafana: list annotations |
+| grafana-alerts | :orange_circle: | Grafana: list alert rules |
+| alertmanager-status | :orange_circle: | Alertmanager: show status |
+| alertmanager-alerts | :orange_circle: | Alertmanager: active alerts |
+| alertmanager-silence | :orange_circle: | Alertmanager: create silence |
+| alertmanager-receivers | :orange_circle: | Alertmanager: list receivers |
+| loki-query | :orange_circle: | Loki: LogQL query |
+| loki-labels | :orange_circle: | Loki: list labels |
+| loki-series | :orange_circle: | Loki: query series |
+| loki-tail | :orange_circle: | Loki: tail logs |
+| tempo-search | :orange_circle: | Tempo: search traces |
+| tempo-trace | :orange_circle: | Tempo: fetch trace by ID |
+| tempo-tags | :orange_circle: | Tempo: list tag names |
+| tempo-metrics | :orange_circle: | Tempo: metrics summary |
+
 ### Round 342 — Ansible ext, Salt ext, Chef ext, Puppet ext, CFEngine ext
 
 | Feature | Status | Notes |

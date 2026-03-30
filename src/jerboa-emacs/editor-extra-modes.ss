@@ -25904,3 +25904,47 @@
     (echo-read-string echo "Chef generate type (cookbook/recipe): "
       (lambda (type)
         (echo-message! echo (str "Chef: generating " type))))))
+
+;;; Round 343 — Thanos ext, Grafana ext, Alertmanager ext, Loki ext, Tempo ext (batch 1)
+
+(def (cmd-thanos-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Thanos PromQL query: "
+      (lambda (q)
+        (echo-message! echo (str "Thanos: querying " q))))))
+
+(def (cmd-thanos-store app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thanos: showing store gateway status")))
+
+(def (cmd-thanos-compact app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thanos: showing compactor status")))
+
+(def (cmd-thanos-rule app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thanos: listing ruler rules")))
+
+(def (cmd-grafana-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grafana: listing dashboards")))
+
+(def (cmd-grafana-datasources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grafana: listing data sources")))
+
+(def (cmd-grafana-annotations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grafana: listing annotations")))
+
+(def (cmd-grafana-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grafana: listing alert rules")))
+
+(def (cmd-alertmanager-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alertmanager: showing status")))
+
+(def (cmd-alertmanager-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alertmanager: listing active alerts")))
