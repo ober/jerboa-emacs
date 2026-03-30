@@ -24214,3 +24214,59 @@
 (def (cmd-fwupd-security app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Fwupd: showing security attributes")))
+
+;;; Round 324 — Gdisk ext, Sfdisk ext, Blkid ext (batch 2)
+
+(def (cmd-gdisk-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and partition: "
+      (lambda (spec)
+        (echo-message! echo (str "Gdisk: deleting partition " spec))))))
+
+(def (cmd-gdisk-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Gdisk: verifying GPT on " dev))))))
+
+(def (cmd-sfdisk-dump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Sfdisk: dumping partition table of " dev))))))
+
+(def (cmd-sfdisk-restore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and backup: "
+      (lambda (spec)
+        (echo-message! echo (str "Sfdisk: restoring " spec))))))
+
+(def (cmd-sfdisk-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sfdisk: listing partitions")))
+
+(def (cmd-sfdisk-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and partition: "
+      (lambda (spec)
+        (echo-message! echo (str "Sfdisk: deleting " spec))))))
+
+(def (cmd-blkid-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blkid: showing all block devices")))
+
+(def (cmd-blkid-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Blkid: probing " dev))))))
+
+(def (cmd-blkid-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Blkid: showing cache")))
+
+(def (cmd-blkid-uuid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "UUID: "
+      (lambda (uuid)
+        (echo-message! echo (str "Blkid: looking up UUID " uuid))))))

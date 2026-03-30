@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 324 — Parted ext, Fdisk ext, Gdisk ext, Sfdisk ext, Blkid ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `parted-print` | :orange_circle: | Print partition table |
+| `parted-mkpart` | :orange_circle: | Create partition |
+| `parted-rm` | :orange_circle: | Remove partition |
+| `parted-align` | :orange_circle: | Check alignment |
+| `fdisk-info` | :orange_circle: | Show disk info |
+| `fdisk-create` | :orange_circle: | Create partition |
+| `fdisk-delete` | :orange_circle: | Delete partition |
+| `fdisk-type` | :orange_circle: | Set partition type |
+| `gdisk-print` | :orange_circle: | Print GPT table |
+| `gdisk-create` | :orange_circle: | Create GPT partition |
+| `gdisk-delete` | :orange_circle: | Delete GPT partition |
+| `gdisk-verify` | :orange_circle: | Verify GPT |
+| `sfdisk-dump` | :orange_circle: | Dump partition table |
+| `sfdisk-restore` | :orange_circle: | Restore partition table |
+| `sfdisk-list` | :orange_circle: | List partitions |
+| `sfdisk-delete` | :orange_circle: | Delete partition |
+| `blkid-show` | :orange_circle: | Show block devices |
+| `blkid-probe` | :orange_circle: | Probe device |
+| `blkid-cache` | :orange_circle: | Show blkid cache |
+| `blkid-uuid` | :orange_circle: | Look up UUID |
+
 ### Round 323 — Grub ext, Efibootmgr ext, Mokutil ext, Sbsign ext, Fwupd ext
 
 | Feature | Status | Notes |

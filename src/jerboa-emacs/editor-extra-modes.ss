@@ -24908,3 +24908,65 @@
       (lambda (key)
         (echo-message! echo (str "MOK: importing " key))))))
 
+;;; Round 324 — Parted ext, Fdisk ext, Gdisk ext, Sfdisk ext, Blkid ext (batch 1)
+
+(def (cmd-parted-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Parted: printing partition table of " dev))))))
+
+(def (cmd-parted-mkpart app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and type: "
+      (lambda (spec)
+        (echo-message! echo (str "Parted: creating partition " spec))))))
+
+(def (cmd-parted-rm app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and partition number: "
+      (lambda (spec)
+        (echo-message! echo (str "Parted: removing partition " spec))))))
+
+(def (cmd-parted-align app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Parted: checking alignment on " dev))))))
+
+(def (cmd-fdisk-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fdisk: showing info for " dev))))))
+
+(def (cmd-fdisk-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fdisk: creating partition on " dev))))))
+
+(def (cmd-fdisk-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and partition: "
+      (lambda (spec)
+        (echo-message! echo (str "Fdisk: deleting partition " spec))))))
+
+(def (cmd-fdisk-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Partition and type: "
+      (lambda (spec)
+        (echo-message! echo (str "Fdisk: setting type " spec))))))
+
+(def (cmd-gdisk-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Gdisk: printing GPT table of " dev))))))
+
+(def (cmd-gdisk-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Gdisk: creating partition on " dev))))))
+
