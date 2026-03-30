@@ -12925,4 +12925,35 @@
   ;; Round 580: Container Runtimes
   (register-command! 'oci-build cmd-oci-build) (register-command! 'oci-inspect cmd-oci-inspect) (register-command! 'oci-manifest cmd-oci-manifest) (register-command! 'cgroup-create cmd-cgroup-create) (register-command! 'cgroup-limit cmd-cgroup-limit)
   (register-command! 'cgroup-stat cmd-cgroup-stat) (register-command! 'namespace-create cmd-namespace-create) (register-command! 'namespace-enter cmd-namespace-enter) (register-command! 'seccomp-profile cmd-seccomp-profile) (register-command! 'overlay-mount cmd-overlay-mount)
+
+  ;; Round 581: Finite Element Methods
+  (register-command! 'fem-mesh cmd-fem-mesh) (register-command! 'fem-solve cmd-fem-solve) (register-command! 'fem-refine cmd-fem-refine) (register-command! 'fem-boundary cmd-fem-boundary) (register-command! 'fem-assemble cmd-fem-assemble)
+  (register-command! 'fem-plot cmd-fem-plot) (register-command! 'fem-error cmd-fem-error) (register-command! 'fem-adaptive cmd-fem-adaptive) (register-command! 'fem-export cmd-fem-export) (register-command! 'fem-postprocess cmd-fem-postprocess)
+  ;; Round 582: Computational Geometry
+  (register-command! 'convex-hull cmd-convex-hull) (register-command! 'voronoi-diagram cmd-voronoi-diagram) (register-command! 'delaunay-triangulate cmd-delaunay-triangulate) (register-command! 'polygon-clip cmd-polygon-clip) (register-command! 'polygon-offset cmd-polygon-offset)
+  (register-command! 'line-intersect cmd-line-intersect) (register-command! 'point-in-polygon cmd-point-in-polygon) (register-command! 'polygon-area cmd-polygon-area) (register-command! 'polygon-centroid cmd-polygon-centroid) (register-command! 'boolean-union cmd-boolean-union)
+  ;; Round 583: Information Theory
+  (register-command! 'entropy-compute cmd-entropy-compute) (register-command! 'mutual-info cmd-mutual-info) (register-command! 'kl-divergence cmd-kl-divergence) (register-command! 'huffman-encode cmd-huffman-encode) (register-command! 'arithmetic-encode cmd-arithmetic-encode)
+  (register-command! 'lzw-compress cmd-lzw-compress) (register-command! 'reed-solomon cmd-reed-solomon) (register-command! 'hamming-encode cmd-hamming-encode) (register-command! 'channel-capacity cmd-channel-capacity) (register-command! 'source-code-theory cmd-source-code-theory)
+  ;; Round 584: Lambda Calculus
+  (register-command! 'lambda-reduce cmd-lambda-reduce) (register-command! 'lambda-substitute cmd-lambda-substitute) (register-command! 'lambda-church cmd-lambda-church) (register-command! 'lambda-scott cmd-lambda-scott) (register-command! 'lambda-cps cmd-lambda-cps)
+  (register-command! 'lambda-debruijn cmd-lambda-debruijn) (register-command! 'lambda-normalize cmd-lambda-normalize) (register-command! 'lambda-abstract cmd-lambda-abstract) (register-command! 'lambda-apply cmd-lambda-apply) (register-command! 'lambda-eta cmd-lambda-eta)
+  ;; Round 585: Proof Search
+  (register-command! 'proof-intro cmd-proof-intro) (register-command! 'proof-apply cmd-proof-apply) (register-command! 'proof-rewrite cmd-proof-rewrite) (register-command! 'proof-induction cmd-proof-induction) (register-command! 'proof-destruct cmd-proof-destruct)
+  (register-command! 'proof-auto cmd-proof-auto) (register-command! 'proof-split cmd-proof-split) (register-command! 'proof-exists cmd-proof-exists) (register-command! 'proof-absurd cmd-proof-absurd) (register-command! 'proof-unfold cmd-proof-unfold)
+  ;; Round 586: SAT Solvers
+  (register-command! 'sat-solve cmd-sat-solve) (register-command! 'sat-add-clause cmd-sat-add-clause) (register-command! 'sat-unit-propagate cmd-sat-unit-propagate) (register-command! 'sat-decide cmd-sat-decide) (register-command! 'sat-backjump cmd-sat-backjump)
+  (register-command! 'sat-learn cmd-sat-learn) (register-command! 'sat-restart cmd-sat-restart) (register-command! 'sat-simplify cmd-sat-simplify) (register-command! 'sat-certify cmd-sat-certify) (register-command! 'sat-incremental cmd-sat-incremental)
+  ;; Round 587: Model Checking
+  (register-command! 'modelcheck-ltl cmd-modelcheck-ltl) (register-command! 'modelcheck-ctl cmd-modelcheck-ctl) (register-command! 'modelcheck-buchi cmd-modelcheck-buchi) (register-command! 'modelcheck-fairness cmd-modelcheck-fairness) (register-command! 'modelcheck-counterexample cmd-modelcheck-counterexample)
+  (register-command! 'modelcheck-abstract cmd-modelcheck-abstract) (register-command! 'modelcheck-refine cmd-modelcheck-refine) (register-command! 'modelcheck-compose cmd-modelcheck-compose) (register-command! 'modelcheck-symmetry cmd-modelcheck-symmetry) (register-command! 'modelcheck-partial cmd-modelcheck-partial)
+  ;; Round 588: Abstract Interpretation
+  (register-command! 'absint-domain cmd-absint-domain) (register-command! 'absint-widen cmd-absint-widen) (register-command! 'absint-narrow cmd-absint-narrow) (register-command! 'absint-join cmd-absint-join) (register-command! 'absint-meet cmd-absint-meet)
+  (register-command! 'absint-transfer cmd-absint-transfer) (register-command! 'absint-fixpoint cmd-absint-fixpoint) (register-command! 'absint-trace cmd-absint-trace) (register-command! 'absint-refine cmd-absint-refine) (register-command! 'absint-concretize cmd-absint-concretize)
+  ;; Round 589: Program Analysis
+  (register-command! 'dataflow-reach cmd-dataflow-reach) (register-command! 'dataflow-liveness cmd-dataflow-liveness) (register-command! 'dataflow-available cmd-dataflow-available) (register-command! 'dataflow-dominator cmd-dataflow-dominator) (register-command! 'dataflow-ssa cmd-dataflow-ssa)
+  (register-command! 'callgraph-build cmd-callgraph-build) (register-command! 'callgraph-prune cmd-callgraph-prune) (register-command! 'callgraph-inline cmd-callgraph-inline) (register-command! 'callgraph-devirt cmd-callgraph-devirt) (register-command! 'callgraph-cycle cmd-callgraph-cycle)
+  ;; Round 590: Effect Systems
+  (register-command! 'effect-infer cmd-effect-infer) (register-command! 'effect-handle cmd-effect-handle) (register-command! 'effect-resume cmd-effect-resume) (register-command! 'effect-mask cmd-effect-mask) (register-command! 'effect-compose cmd-effect-compose)
+  (register-command! 'effect-lift cmd-effect-lift) (register-command! 'effect-row cmd-effect-row) (register-command! 'effect-polymorphic cmd-effect-polymorphic) (register-command! 'effect-check cmd-effect-check) (register-command! 'effect-elaborate cmd-effect-elaborate)
 )

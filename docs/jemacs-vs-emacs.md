@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 581 — Finite Element Methods
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `fem-mesh` | :orange_circle: Scaffold | Generate mesh |
+| `fem-solve` | :orange_circle: Scaffold | Solve system |
+| `fem-refine` | :orange_circle: Scaffold | Refine mesh |
+| `fem-boundary` | :orange_circle: Scaffold | Boundary conditions |
+| `fem-assemble` | :orange_circle: Scaffold | Assemble stiffness |
+| `fem-plot` | :orange_circle: Scaffold | Plot results |
+| `fem-error` | :orange_circle: Scaffold | Error estimate |
+| `fem-adaptive` | :orange_circle: Scaffold | Adaptive refine |
+| `fem-export` | :orange_circle: Scaffold | Export mesh |
+| `fem-postprocess` | :orange_circle: Scaffold | Post-process |
+
+### Round 582 — Computational Geometry
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `convex-hull` | :orange_circle: Scaffold | Convex hull |
+| `voronoi-diagram` | :orange_circle: Scaffold | Voronoi diagram |
+| `delaunay-triangulate` | :orange_circle: Scaffold | Delaunay triangulation |
+| `polygon-clip` | :orange_circle: Scaffold | Polygon clipping |
+| `polygon-offset` | :orange_circle: Scaffold | Polygon offset |
+| `line-intersect` | :orange_circle: Scaffold | Line intersection |
+| `point-in-polygon` | :orange_circle: Scaffold | Point in polygon |
+| `polygon-area` | :orange_circle: Scaffold | Polygon area |
+| `polygon-centroid` | :orange_circle: Scaffold | Centroid |
+| `boolean-union` | :orange_circle: Scaffold | Boolean union |
+
+### Round 583 — Information Theory
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `entropy-compute` | :orange_circle: Scaffold | Compute entropy |
+| `mutual-info` | :orange_circle: Scaffold | Mutual information |
+| `kl-divergence` | :orange_circle: Scaffold | KL divergence |
+| `huffman-encode` | :orange_circle: Scaffold | Huffman encoding |
+| `arithmetic-encode` | :orange_circle: Scaffold | Arithmetic coding |
+| `lzw-compress` | :orange_circle: Scaffold | LZW compression |
+| `reed-solomon` | :orange_circle: Scaffold | Reed-Solomon |
+| `hamming-encode` | :orange_circle: Scaffold | Hamming code |
+| `channel-capacity` | :orange_circle: Scaffold | Channel capacity |
+| `source-code-theory` | :orange_circle: Scaffold | Source coding |
+
+### Round 584 — Lambda Calculus
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lambda-reduce` | :orange_circle: Scaffold | Beta reduction |
+| `lambda-substitute` | :orange_circle: Scaffold | Substitution |
+| `lambda-church` | :orange_circle: Scaffold | Church numerals |
+| `lambda-scott` | :orange_circle: Scaffold | Scott encoding |
+| `lambda-cps` | :orange_circle: Scaffold | CPS transform |
+| `lambda-debruijn` | :orange_circle: Scaffold | De Bruijn indices |
+| `lambda-normalize` | :orange_circle: Scaffold | Normalize |
+| `lambda-abstract` | :orange_circle: Scaffold | Abstract |
+| `lambda-apply` | :orange_circle: Scaffold | Apply |
+| `lambda-eta` | :orange_circle: Scaffold | Eta reduction |
+
+### Round 585 — Proof Search (Tactics)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `proof-intro` | :orange_circle: Scaffold | Introduction |
+| `proof-apply` | :orange_circle: Scaffold | Apply lemma |
+| `proof-rewrite` | :orange_circle: Scaffold | Rewrite |
+| `proof-induction` | :orange_circle: Scaffold | Induction |
+| `proof-destruct` | :orange_circle: Scaffold | Destruct |
+| `proof-auto` | :orange_circle: Scaffold | Auto tactic |
+| `proof-split` | :orange_circle: Scaffold | Split goal |
+| `proof-exists` | :orange_circle: Scaffold | Exists witness |
+| `proof-absurd` | :orange_circle: Scaffold | Absurd |
+| `proof-unfold` | :orange_circle: Scaffold | Unfold definition |
+
+### Round 586 — SAT Solvers (DPLL, CDCL)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `sat-solve` | :orange_circle: Scaffold | Solve formula |
+| `sat-add-clause` | :orange_circle: Scaffold | Add clause |
+| `sat-unit-propagate` | :orange_circle: Scaffold | Unit propagation |
+| `sat-decide` | :orange_circle: Scaffold | Decide variable |
+| `sat-backjump` | :orange_circle: Scaffold | Backjump |
+| `sat-learn` | :orange_circle: Scaffold | Learn clause |
+| `sat-restart` | :orange_circle: Scaffold | Restart |
+| `sat-simplify` | :orange_circle: Scaffold | Simplify |
+| `sat-certify` | :orange_circle: Scaffold | Certify UNSAT |
+| `sat-incremental` | :orange_circle: Scaffold | Incremental solve |
+
+### Round 587 — Model Checking (LTL, CTL)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `modelcheck-ltl` | :orange_circle: Scaffold | LTL formula |
+| `modelcheck-ctl` | :orange_circle: Scaffold | CTL formula |
+| `modelcheck-buchi` | :orange_circle: Scaffold | Buchi automaton |
+| `modelcheck-fairness` | :orange_circle: Scaffold | Fairness |
+| `modelcheck-counterexample` | :orange_circle: Scaffold | Counterexample |
+| `modelcheck-abstract` | :orange_circle: Scaffold | Abstract |
+| `modelcheck-refine` | :orange_circle: Scaffold | Refine |
+| `modelcheck-compose` | :orange_circle: Scaffold | Compose |
+| `modelcheck-symmetry` | :orange_circle: Scaffold | Symmetry reduce |
+| `modelcheck-partial` | :orange_circle: Scaffold | Partial order |
+
+### Round 588 — Abstract Interpretation
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `absint-domain` | :orange_circle: Scaffold | Abstract domain |
+| `absint-widen` | :orange_circle: Scaffold | Widening |
+| `absint-narrow` | :orange_circle: Scaffold | Narrowing |
+| `absint-join` | :orange_circle: Scaffold | Join |
+| `absint-meet` | :orange_circle: Scaffold | Meet |
+| `absint-transfer` | :orange_circle: Scaffold | Transfer function |
+| `absint-fixpoint` | :orange_circle: Scaffold | Fixpoint |
+| `absint-trace` | :orange_circle: Scaffold | Trace |
+| `absint-refine` | :orange_circle: Scaffold | Refine |
+| `absint-concretize` | :orange_circle: Scaffold | Concretize |
+
+### Round 589 — Program Analysis (Dataflow)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `dataflow-reach` | :orange_circle: Scaffold | Reaching definitions |
+| `dataflow-liveness` | :orange_circle: Scaffold | Liveness analysis |
+| `dataflow-available` | :orange_circle: Scaffold | Available expressions |
+| `dataflow-dominator` | :orange_circle: Scaffold | Dominator tree |
+| `dataflow-ssa` | :orange_circle: Scaffold | SSA form |
+| `callgraph-build` | :orange_circle: Scaffold | Build call graph |
+| `callgraph-prune` | :orange_circle: Scaffold | Prune dead code |
+| `callgraph-inline` | :orange_circle: Scaffold | Inline decisions |
+| `callgraph-devirt` | :orange_circle: Scaffold | Devirtualize |
+| `callgraph-cycle` | :orange_circle: Scaffold | Detect cycles |
+
+### Round 590 — Effect Systems (Algebraic Effects)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `effect-infer` | :orange_circle: Scaffold | Infer effects |
+| `effect-handle` | :orange_circle: Scaffold | Handle effect |
+| `effect-resume` | :orange_circle: Scaffold | Resume |
+| `effect-mask` | :orange_circle: Scaffold | Mask effect |
+| `effect-compose` | :orange_circle: Scaffold | Compose |
+| `effect-lift` | :orange_circle: Scaffold | Lift |
+| `effect-row` | :orange_circle: Scaffold | Row type |
+| `effect-polymorphic` | :orange_circle: Scaffold | Polymorphic |
+| `effect-check` | :orange_circle: Scaffold | Check |
+| `effect-elaborate` | :orange_circle: Scaffold | Elaborate |
+
 ### Round 571 — ECS Game Engines
 
 | Feature | Status | Notes |
