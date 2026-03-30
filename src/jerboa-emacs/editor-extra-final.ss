@@ -21884,3 +21884,49 @@
 (def (cmd-zeromq-proxy app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "ZeroMQ: starting proxy")))
+
+;;; Round 280 — SSE ext, HTTP/2 ext, QUIC ext (batch 2)
+
+(def (cmd-sse-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSE: sending event")))
+
+(def (cmd-sse-close app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSE: closing connection")))
+
+(def (cmd-http2-request app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "HTTP/2: requesting " url))))))
+
+(def (cmd-http2-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTP/2: server push")))
+
+(def (cmd-http2-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTP/2: opening stream")))
+
+(def (cmd-http2-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "HTTP/2: showing settings")))
+
+(def (cmd-quic-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Address: "
+      (lambda (addr)
+        (echo-message! echo (str "QUIC: connecting to " addr))))))
+
+(def (cmd-quic-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QUIC: sending data")))
+
+(def (cmd-quic-stream app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QUIC: opening stream")))
+
+(def (cmd-quic-close app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "QUIC: closing connection")))

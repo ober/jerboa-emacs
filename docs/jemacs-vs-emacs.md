@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 280 — MQTT ext, WebSocket ext, SSE ext, HTTP/2 ext, QUIC ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| mqtt-publish | :orange_circle: | Publish to MQTT topic |
+| mqtt-subscribe | :orange_circle: | Subscribe to MQTT topic |
+| mqtt-topics | :orange_circle: | List MQTT topics |
+| mqtt-broker-status | :orange_circle: | Check MQTT broker status |
+| websocket-connect | :orange_circle: | Connect to WebSocket |
+| websocket-send | :orange_circle: | Send WebSocket message |
+| websocket-close | :orange_circle: | Close WebSocket connection |
+| websocket-listen | :orange_circle: | Listen for WebSocket messages |
+| sse-connect | :orange_circle: | Connect to SSE stream |
+| sse-subscribe | :orange_circle: | Subscribe to SSE events |
+| sse-send | :orange_circle: | Send SSE event |
+| sse-close | :orange_circle: | Close SSE connection |
+| http2-request | :orange_circle: | Make HTTP/2 request |
+| http2-push | :orange_circle: | HTTP/2 server push |
+| http2-stream | :orange_circle: | Open HTTP/2 stream |
+| http2-settings | :orange_circle: | Show HTTP/2 settings |
+| quic-connect | :orange_circle: | Connect via QUIC |
+| quic-send | :orange_circle: | Send QUIC data |
+| quic-stream | :orange_circle: | Open QUIC stream |
+| quic-close | :orange_circle: | Close QUIC connection |
+
 ### Round 279 — Kafka ext, RabbitMQ ext, NATS ext, Pulsar ext, ZeroMQ ext
 
 | Command | Status | Description |

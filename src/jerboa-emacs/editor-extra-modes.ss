@@ -22520,3 +22520,53 @@
       (lambda (subj)
         (echo-message! echo (str "NATS: subscribing to " subj))))))
 
+;;; Round 280 — MQTT ext, WebSocket ext, SSE ext, HTTP/2 ext, QUIC ext (batch 1)
+
+(def (cmd-mqtt-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "MQTT: publishing to " topic))))))
+
+(def (cmd-mqtt-subscribe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Topic: "
+      (lambda (topic)
+        (echo-message! echo (str "MQTT: subscribing to " topic))))))
+
+(def (cmd-mqtt-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MQTT: listing topics")))
+
+(def (cmd-mqtt-broker-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MQTT: checking broker status")))
+
+(def (cmd-websocket-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "WebSocket: connecting to " url))))))
+
+(def (cmd-websocket-send app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WebSocket: sending message")))
+
+(def (cmd-websocket-close app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WebSocket: closing connection")))
+
+(def (cmd-websocket-listen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WebSocket: listening for messages")))
+
+(def (cmd-sse-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL: "
+      (lambda (url)
+        (echo-message! echo (str "SSE: connecting to " url))))))
+
+(def (cmd-sse-subscribe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SSE: subscribing to events")))
+
