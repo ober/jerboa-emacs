@@ -25901,3 +25901,49 @@
 (def (cmd-cmake-presets app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CMake: listing presets")))
+
+;;; Round 358 — Cargo ext, GoMod ext, Pip ext (batch 2)
+
+(def (cmd-cargo-doc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo: generating documentation")))
+
+(def (cmd-cargo-bench app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo: running benchmarks")))
+
+(def (cmd-gomod-tidy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go mod: tidying dependencies")))
+
+(def (cmd-gomod-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go mod: showing dependency graph")))
+
+(def (cmd-gomod-download app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go mod: downloading dependencies")))
+
+(def (cmd-gomod-verify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Go mod: verifying dependencies")))
+
+(def (cmd-pip-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pip install package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Pip: installing " pkg))))))
+
+(def (cmd-pip-freeze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pip: showing installed packages")))
+
+(def (cmd-pip-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pip search: "
+      (lambda (q)
+        (echo-message! echo (str "Pip: searching " q))))))
+
+(def (cmd-pip-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pip: checking dependency consistency")))

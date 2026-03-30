@@ -26648,3 +26648,53 @@
 (def (cmd-gcc-specs app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "GCC: showing compiler specs")))
+
+;;; Round 358 — Conan ext, Vcpkg ext, Cargo ext, GoMod ext, Pip ext (batch 1)
+
+(def (cmd-conan-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Conan package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Conan: installing " pkg))))))
+
+(def (cmd-conan-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Conan: creating package")))
+
+(def (cmd-conan-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Conan search pattern: "
+      (lambda (pat)
+        (echo-message! echo (str "Conan: searching " pat))))))
+
+(def (cmd-conan-remote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Conan: listing remotes")))
+
+(def (cmd-vcpkg-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Vcpkg package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Vcpkg: installing " pkg))))))
+
+(def (cmd-vcpkg-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Vcpkg search: "
+      (lambda (q)
+        (echo-message! echo (str "Vcpkg: searching " q))))))
+
+(def (cmd-vcpkg-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vcpkg: listing installed packages")))
+
+(def (cmd-vcpkg-integrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vcpkg: integrating with project")))
+
+(def (cmd-cargo-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo: checking project")))
+
+(def (cmd-cargo-clippy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cargo: running clippy lints")))

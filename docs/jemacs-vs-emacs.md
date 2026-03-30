@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 358 — Conan ext, Vcpkg ext, Cargo ext, GoMod ext, Pip ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| conan-install | :orange_circle: | Conan: install package |
+| conan-create | :orange_circle: | Conan: create package |
+| conan-search | :orange_circle: | Conan: search packages |
+| conan-remote | :orange_circle: | Conan: list remotes |
+| vcpkg-install | :orange_circle: | Vcpkg: install package |
+| vcpkg-search | :orange_circle: | Vcpkg: search packages |
+| vcpkg-list | :orange_circle: | Vcpkg: list installed |
+| vcpkg-integrate | :orange_circle: | Vcpkg: integrate with project |
+| cargo-check | :orange_circle: | Cargo: check project |
+| cargo-clippy | :orange_circle: | Cargo: run clippy lints |
+| cargo-doc | :orange_circle: | Cargo: generate docs |
+| cargo-bench | :orange_circle: | Cargo: run benchmarks |
+| gomod-tidy | :orange_circle: | Go mod: tidy dependencies |
+| gomod-graph | :orange_circle: | Go mod: dependency graph |
+| gomod-download | :orange_circle: | Go mod: download deps |
+| gomod-verify | :orange_circle: | Go mod: verify deps |
+| pip-install | :orange_circle: | Pip: install package |
+| pip-freeze | :orange_circle: | Pip: show installed |
+| pip-search | :orange_circle: | Pip: search packages |
+| pip-check | :orange_circle: | Pip: check consistency |
+
 ### Round 357 — LLVM ext, Clang ext, GCC ext, Meson ext, CMake ext
 
 | Feature | Status | Notes |
