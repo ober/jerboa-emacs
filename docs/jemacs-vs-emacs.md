@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 303 — XDG ext, Dconf ext, GSettings ext, GConf ext, Alternatives ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| xdg-open | :orange_circle: | Open with default app |
+| xdg-mime | :orange_circle: | Query MIME type |
+| xdg-settings | :orange_circle: | Show XDG settings |
+| xdg-desktop | :orange_circle: | Show desktop dirs |
+| xdg-icon | :orange_circle: | Find icon |
+| xdg-menu | :orange_circle: | Show menu entries |
+| dconf-list | :orange_circle: | List dconf keys |
+| dconf-read | :orange_circle: | Read dconf value |
+| dconf-write | :orange_circle: | Write dconf value |
+| dconf-reset | :orange_circle: | Reset dconf key |
+| gsettings-list | :orange_circle: | List gsettings |
+| gsettings-get | :orange_circle: | Get gsettings value |
+| gsettings-set | :orange_circle: | Set gsettings value |
+| gsettings-reset | :orange_circle: | Reset gsettings |
+| gconf-list | :orange_circle: | List gconf keys |
+| gconf-get | :orange_circle: | Get gconf value |
+| gconf-set | :orange_circle: | Set gconf value |
+| gconf-unset | :orange_circle: | Unset gconf key |
+| update-alternatives-list | :orange_circle: | List alternatives |
+| update-alternatives-set | :orange_circle: | Set alternative |
+
 ### Round 302 — COPR ext, DNF ext, Zypper ext, Emerge ext, Portage ext
 
 | Command | Status | Description |

@@ -23810,3 +23810,59 @@
       (lambda (pkg)
         (echo-message! echo (str "Zypper: removing " pkg))))))
 
+;;; Round 303 — XDG ext, Dconf ext, GSettings ext (batch 1)
+
+(def (cmd-xdg-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "URL/file: "
+      (lambda (uri)
+        (echo-message! echo (str "XDG: opening " uri))))))
+
+(def (cmd-xdg-mime app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "XDG: MIME type of " file))))))
+
+(def (cmd-xdg-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "XDG: showing settings")))
+
+(def (cmd-xdg-desktop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "XDG: showing desktop dirs")))
+
+(def (cmd-xdg-icon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Icon name: "
+      (lambda (icon)
+        (echo-message! echo (str "XDG: finding icon " icon))))))
+
+(def (cmd-xdg-menu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "XDG: showing menu entries")))
+
+(def (cmd-dconf-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Path: "
+      (lambda (path)
+        (echo-message! echo (str "Dconf: listing " path))))))
+
+(def (cmd-dconf-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Dconf: reading " key))))))
+
+(def (cmd-dconf-write app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Dconf: writing " key))))))
+
+(def (cmd-dconf-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "Dconf: resetting " key))))))
+

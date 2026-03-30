@@ -23086,3 +23086,63 @@
 (def (cmd-portage-info app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Portage: showing system info")))
+
+;;; Round 303 — GSettings ext, GConf ext, Alternatives ext (batch 2)
+
+(def (cmd-gsettings-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Schema: "
+      (lambda (schema)
+        (echo-message! echo (str "GSettings: listing " schema))))))
+
+(def (cmd-gsettings-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Schema key: "
+      (lambda (key)
+        (echo-message! echo (str "GSettings: getting " key))))))
+
+(def (cmd-gsettings-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Schema key: "
+      (lambda (key)
+        (echo-message! echo (str "GSettings: setting " key))))))
+
+(def (cmd-gsettings-reset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Schema key: "
+      (lambda (key)
+        (echo-message! echo (str "GSettings: resetting " key))))))
+
+(def (cmd-gconf-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Path: "
+      (lambda (path)
+        (echo-message! echo (str "GConf: listing " path))))))
+
+(def (cmd-gconf-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "GConf: getting " key))))))
+
+(def (cmd-gconf-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "GConf: setting " key))))))
+
+(def (cmd-gconf-unset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Key: "
+      (lambda (key)
+        (echo-message! echo (str "GConf: unsetting " key))))))
+
+(def (cmd-update-alternatives-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alternatives: listing all")))
+
+(def (cmd-update-alternatives-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name: "
+      (lambda (name)
+        (echo-message! echo (str "Alternatives: configuring " name))))))
