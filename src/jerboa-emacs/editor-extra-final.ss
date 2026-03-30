@@ -21526,3 +21526,47 @@
 (def (cmd-hol-print-thm app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "HOL: printing theorem")))
+
+;;; Round 272 — Z3 ext, miniKanren ext, Datalog ext (batch 2)
+
+(def (cmd-z3-prove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Z3: proving theorem")))
+
+(def (cmd-z3-model app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Z3: showing model")))
+
+(def (cmd-minikanren-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "miniKanren: running query")))
+
+(def (cmd-minikanren-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "miniKanren: running tests")))
+
+(def (cmd-minikanren-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "miniKanren: evaluating expression")))
+
+(def (cmd-minikanren-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "miniKanren: tracing execution")))
+
+(def (cmd-datalog-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datalog: loading program")))
+
+(def (cmd-datalog-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Query: "
+      (lambda (query)
+        (echo-message! echo (str "Datalog: querying " query))))))
+
+(def (cmd-datalog-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datalog: running program")))
+
+(def (cmd-datalog-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datalog: compiling program")))

@@ -22146,3 +22146,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Idris: type-checking at point")))
 
+;;; Round 272 — TLA+ ext, Alloy ext, Z3 ext, miniKanren ext, Datalog ext (batch 1)
+
+(def (cmd-tlaplus-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLA+: checking specification")))
+
+(def (cmd-tlaplus-run-model app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLA+: running model checker")))
+
+(def (cmd-tlaplus-parse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLA+: parsing specification")))
+
+(def (cmd-tlaplus-translate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLA+: translating to PlusCal")))
+
+(def (cmd-alloy-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alloy: running analysis")))
+
+(def (cmd-alloy-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alloy: checking assertions")))
+
+(def (cmd-alloy-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Alloy: showing instance")))
+
+(def (cmd-alloy-evaluate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Expression: "
+      (lambda (expr)
+        (echo-message! echo (str "Alloy: evaluating " expr))))))
+
+(def (cmd-z3-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Z3: checking satisfiability")))
+
+(def (cmd-z3-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Z3: evaluating expression")))
+

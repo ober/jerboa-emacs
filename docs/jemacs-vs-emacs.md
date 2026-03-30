@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 272 — TLA+ ext, Alloy ext, Z3 ext, miniKanren ext, Datalog ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| tlaplus-check | :orange_circle: | Check TLA+ specification |
+| tlaplus-run-model | :orange_circle: | Run TLA+ model checker |
+| tlaplus-parse | :orange_circle: | Parse TLA+ specification |
+| tlaplus-translate | :orange_circle: | Translate TLA+ to PlusCal |
+| alloy-run | :orange_circle: | Run Alloy analysis |
+| alloy-check | :orange_circle: | Check Alloy assertions |
+| alloy-show | :orange_circle: | Show Alloy instance |
+| alloy-evaluate | :orange_circle: | Evaluate Alloy expression |
+| z3-check | :orange_circle: | Check Z3 satisfiability |
+| z3-eval | :orange_circle: | Evaluate Z3 expression |
+| z3-prove | :orange_circle: | Prove Z3 theorem |
+| z3-model | :orange_circle: | Show Z3 model |
+| minikanren-run | :orange_circle: | Run miniKanren query |
+| minikanren-test | :orange_circle: | Run miniKanren tests |
+| minikanren-eval | :orange_circle: | Evaluate miniKanren expression |
+| minikanren-trace | :orange_circle: | Trace miniKanren execution |
+| datalog-load | :orange_circle: | Load Datalog program |
+| datalog-query | :orange_circle: | Query Datalog |
+| datalog-run | :orange_circle: | Run Datalog program |
+| datalog-compile | :orange_circle: | Compile Datalog program |
+
 ### Round 271 — Lean ext, Agda ext, Idris ext, Isabelle ext, HOL ext
 
 | Command | Status | Description |
