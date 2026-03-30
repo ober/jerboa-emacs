@@ -25249,3 +25249,47 @@
 (def (cmd-tempo-metrics app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tempo: showing metrics summary")))
+
+;;; Round 344 — OpenTelemetry ext, Datadog ext, NewRelic ext (batch 2)
+
+(def (cmd-otel-receivers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTelemetry: listing receivers")))
+
+(def (cmd-otel-exporters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTelemetry: listing exporters")))
+
+(def (cmd-datadog-monitors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datadog: listing monitors")))
+
+(def (cmd-datadog-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datadog: listing dashboards")))
+
+(def (cmd-datadog-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Datadog: listing recent events")))
+
+(def (cmd-datadog-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Datadog metric query: "
+      (lambda (q)
+        (echo-message! echo (str "Datadog: querying metric " q))))))
+
+(def (cmd-newrelic-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NewRelic: listing applications")))
+
+(def (cmd-newrelic-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NewRelic: listing alert policies")))
+
+(def (cmd-newrelic-dashboards app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NewRelic: listing dashboards")))
+
+(def (cmd-newrelic-synthetics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NewRelic: listing synthetic monitors")))

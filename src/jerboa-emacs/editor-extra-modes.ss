@@ -25948,3 +25948,53 @@
 (def (cmd-alertmanager-alerts app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Alertmanager: listing active alerts")))
+
+;;; Round 344 — Jaeger ext, Zipkin ext, OpenTelemetry ext, Datadog ext, NewRelic ext (batch 1)
+
+(def (cmd-jaeger-traces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jaeger service: "
+      (lambda (svc)
+        (echo-message! echo (str "Jaeger: listing traces for " svc))))))
+
+(def (cmd-jaeger-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: listing services")))
+
+(def (cmd-jaeger-operations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Jaeger service for operations: "
+      (lambda (svc)
+        (echo-message! echo (str "Jaeger: listing operations for " svc))))))
+
+(def (cmd-jaeger-dependencies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Jaeger: showing service dependencies")))
+
+(def (cmd-zipkin-traces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Zipkin service: "
+      (lambda (svc)
+        (echo-message! echo (str "Zipkin: listing traces for " svc))))))
+
+(def (cmd-zipkin-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: listing services")))
+
+(def (cmd-zipkin-spans app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Zipkin trace ID: "
+      (lambda (id)
+        (echo-message! echo (str "Zipkin: showing spans for trace " id))))))
+
+(def (cmd-zipkin-dependencies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zipkin: showing service dependencies")))
+
+(def (cmd-otel-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTelemetry: collector status")))
+
+(def (cmd-otel-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenTelemetry: showing collector config")))

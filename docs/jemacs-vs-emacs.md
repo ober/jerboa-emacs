@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 344 — Jaeger ext, Zipkin ext, OpenTelemetry ext, Datadog ext, NewRelic ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| jaeger-traces | :orange_circle: | Jaeger: list traces for service |
+| jaeger-services | :orange_circle: | Jaeger: list services |
+| jaeger-operations | :orange_circle: | Jaeger: list operations |
+| jaeger-dependencies | :orange_circle: | Jaeger: service dependencies |
+| zipkin-traces | :orange_circle: | Zipkin: list traces |
+| zipkin-services | :orange_circle: | Zipkin: list services |
+| zipkin-spans | :orange_circle: | Zipkin: show spans |
+| zipkin-dependencies | :orange_circle: | Zipkin: service dependencies |
+| otel-status | :orange_circle: | OpenTelemetry: collector status |
+| otel-config | :orange_circle: | OpenTelemetry: collector config |
+| otel-receivers | :orange_circle: | OpenTelemetry: list receivers |
+| otel-exporters | :orange_circle: | OpenTelemetry: list exporters |
+| datadog-monitors | :orange_circle: | Datadog: list monitors |
+| datadog-dashboards | :orange_circle: | Datadog: list dashboards |
+| datadog-events | :orange_circle: | Datadog: list events |
+| datadog-metrics | :orange_circle: | Datadog: query metrics |
+| newrelic-apps | :orange_circle: | NewRelic: list applications |
+| newrelic-alerts | :orange_circle: | NewRelic: list alert policies |
+| newrelic-dashboards | :orange_circle: | NewRelic: list dashboards |
+| newrelic-synthetics | :orange_circle: | NewRelic: list synthetic monitors |
+
 ### Round 343 — Thanos ext, Grafana ext, Alertmanager ext, Loki ext, Tempo ext
 
 | Feature | Status | Notes |
