@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 326 — Mount ext, Umount ext, Findmnt ext, Lsblk ext, Losetup ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mount-device` | :orange_circle: | Mount device |
+| `mount-bind` | :orange_circle: | Bind mount |
+| `mount-tmpfs` | :orange_circle: | Mount tmpfs |
+| `mount-overlay` | :orange_circle: | Mount overlay |
+| `umount-device` | :orange_circle: | Unmount device |
+| `umount-lazy` | :orange_circle: | Lazy unmount |
+| `umount-force` | :orange_circle: | Force unmount |
+| `umount-all` | :orange_circle: | Unmount all |
+| `findmnt-show` | :orange_circle: | Show mount table |
+| `findmnt-source` | :orange_circle: | Find by source |
+| `findmnt-target` | :orange_circle: | Find by target |
+| `findmnt-type` | :orange_circle: | Find by type |
+| `lsblk-show` | :orange_circle: | Show block devices |
+| `lsblk-json` | :orange_circle: | Show as JSON |
+| `lsblk-paths` | :orange_circle: | Show full paths |
+| `lsblk-discard` | :orange_circle: | Show discard info |
+| `losetup-list` | :orange_circle: | List loop devices |
+| `losetup-attach` | :orange_circle: | Attach loop device |
+| `losetup-detach` | :orange_circle: | Detach loop device |
+| `losetup-info` | :orange_circle: | Show loop device info |
+
 ### Round 325 — Mkfs ext, Fsck ext, Tune2fs ext, Xfs-admin ext, Resize2fs ext
 
 | Feature | Status | Notes |

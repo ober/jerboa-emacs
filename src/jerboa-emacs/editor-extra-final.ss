@@ -24332,3 +24332,55 @@
     (echo-read-string echo "Device: "
       (lambda (dev)
         (echo-message! echo (str "Resize2fs: checking " dev))))))
+
+;;; Round 326 — Findmnt ext, Lsblk ext, Losetup ext (batch 2)
+
+(def (cmd-findmnt-target app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Target path: "
+      (lambda (path)
+        (echo-message! echo (str "Findmnt: finding mount at " path))))))
+
+(def (cmd-findmnt-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filesystem type: "
+      (lambda (fstype)
+        (echo-message! echo (str "Findmnt: finding " fstype " mounts"))))))
+
+(def (cmd-lsblk-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsblk: showing block devices")))
+
+(def (cmd-lsblk-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsblk: showing block devices (JSON)")))
+
+(def (cmd-lsblk-paths app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsblk: showing full device paths")))
+
+(def (cmd-lsblk-discard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsblk: showing discard capabilities")))
+
+(def (cmd-losetup-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Losetup: listing loop devices")))
+
+(def (cmd-losetup-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Image file: "
+      (lambda (img)
+        (echo-message! echo (str "Losetup: attaching " img))))))
+
+(def (cmd-losetup-detach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Loop device: "
+      (lambda (dev)
+        (echo-message! echo (str "Losetup: detaching " dev))))))
+
+(def (cmd-losetup-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Loop device: "
+      (lambda (dev)
+        (echo-message! echo (str "Losetup: info for " dev))))))

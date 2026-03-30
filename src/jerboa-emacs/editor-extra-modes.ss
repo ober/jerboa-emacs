@@ -25032,3 +25032,61 @@
       (lambda (spec)
         (echo-message! echo (str "Tune2fs: setting " spec))))))
 
+;;; Round 326 — Mount ext, Umount ext, Findmnt ext, Lsblk ext, Losetup ext (batch 1)
+
+(def (cmd-mount-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and mountpoint: "
+      (lambda (spec)
+        (echo-message! echo (str "Mount: mounting " spec))))))
+
+(def (cmd-mount-bind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Source and target: "
+      (lambda (spec)
+        (echo-message! echo (str "Mount: bind mounting " spec))))))
+
+(def (cmd-mount-tmpfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mountpoint: "
+      (lambda (mnt)
+        (echo-message! echo (str "Mount: tmpfs at " mnt))))))
+
+(def (cmd-mount-overlay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Lower:upper:work:target: "
+      (lambda (spec)
+        (echo-message! echo (str "Mount: overlay " spec))))))
+
+(def (cmd-umount-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mountpoint: "
+      (lambda (mnt)
+        (echo-message! echo (str "Umount: unmounting " mnt))))))
+
+(def (cmd-umount-lazy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mountpoint: "
+      (lambda (mnt)
+        (echo-message! echo (str "Umount: lazy unmounting " mnt))))))
+
+(def (cmd-umount-force app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mountpoint: "
+      (lambda (mnt)
+        (echo-message! echo (str "Umount: force unmounting " mnt))))))
+
+(def (cmd-umount-all app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Umount: unmounting all filesystems")))
+
+(def (cmd-findmnt-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Findmnt: showing mount table")))
+
+(def (cmd-findmnt-source app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Source device: "
+      (lambda (dev)
+        (echo-message! echo (str "Findmnt: finding mounts from " dev))))))
+
