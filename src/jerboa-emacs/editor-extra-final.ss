@@ -21930,3 +21930,47 @@
 (def (cmd-quic-close app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "QUIC: closing connection")))
+
+;;; Round 281 — SNMP ext, NTP ext, DHCP ext (batch 2)
+
+(def (cmd-snmp-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SNMP: setting value")))
+
+(def (cmd-snmp-trap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SNMP: sending trap")))
+
+(def (cmd-ntp-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Server: "
+      (lambda (srv)
+        (echo-message! echo (str "NTP: querying " srv))))))
+
+(def (cmd-ntp-peers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NTP: listing peers")))
+
+(def (cmd-ntp-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NTP: showing status")))
+
+(def (cmd-ntp-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NTP: synchronizing clock")))
+
+(def (cmd-dhcp-discover app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DHCP: sending discover")))
+
+(def (cmd-dhcp-lease-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DHCP: listing leases")))
+
+(def (cmd-dhcp-release app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DHCP: releasing lease")))
+
+(def (cmd-dhcp-renew app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DHCP: renewing lease")))

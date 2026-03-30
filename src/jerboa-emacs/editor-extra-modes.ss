@@ -22570,3 +22570,57 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "SSE: subscribing to events")))
 
+;;; Round 281 — DNS ext, LDAP ext, SNMP ext, NTP ext, DHCP ext (batch 1)
+
+(def (cmd-dns-lookup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hostname: "
+      (lambda (host)
+        (echo-message! echo (str "DNS: looking up " host))))))
+
+(def (cmd-dns-reverse app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "IP address: "
+      (lambda (ip)
+        (echo-message! echo (str "DNS: reverse lookup " ip))))))
+
+(def (cmd-dns-mx app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Domain: "
+      (lambda (domain)
+        (echo-message! echo (str "DNS: MX records for " domain))))))
+
+(def (cmd-dns-ns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Domain: "
+      (lambda (domain)
+        (echo-message! echo (str "DNS: NS records for " domain))))))
+
+(def (cmd-ldap-bind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: binding to server")))
+
+(def (cmd-ldap-modify app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: modifying entry")))
+
+(def (cmd-ldap-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: adding entry")))
+
+(def (cmd-ldap-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LDAP: deleting entry")))
+
+(def (cmd-snmp-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OID: "
+      (lambda (oid)
+        (echo-message! echo (str "SNMP: GET " oid))))))
+
+(def (cmd-snmp-walk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OID: "
+      (lambda (oid)
+        (echo-message! echo (str "SNMP: WALK " oid))))))
+

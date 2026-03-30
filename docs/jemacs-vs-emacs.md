@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 281 — DNS ext, LDAP ext, SNMP ext, NTP ext, DHCP ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| dns-lookup | :orange_circle: | DNS lookup for hostname |
+| dns-reverse | :orange_circle: | Reverse DNS lookup |
+| dns-mx | :orange_circle: | Query DNS MX records |
+| dns-ns | :orange_circle: | Query DNS NS records |
+| ldap-bind | :orange_circle: | Bind to LDAP server |
+| ldap-modify | :orange_circle: | Modify LDAP entry |
+| ldap-add | :orange_circle: | Add LDAP entry |
+| ldap-delete | :orange_circle: | Delete LDAP entry |
+| snmp-get | :orange_circle: | SNMP GET request |
+| snmp-walk | :orange_circle: | SNMP walk OID tree |
+| snmp-set | :orange_circle: | SNMP SET request |
+| snmp-trap | :orange_circle: | Send SNMP trap |
+| ntp-query | :orange_circle: | Query NTP server |
+| ntp-peers | :orange_circle: | Show NTP peers |
+| ntp-status | :orange_circle: | Show NTP status |
+| ntp-sync | :orange_circle: | Sync with NTP server |
+| dhcp-discover | :orange_circle: | DHCP discover broadcast |
+| dhcp-lease-list | :orange_circle: | List DHCP leases |
+| dhcp-release | :orange_circle: | Release DHCP lease |
+| dhcp-renew | :orange_circle: | Renew DHCP lease |
+
 ### Round 280 — MQTT ext, WebSocket ext, SSE ext, HTTP/2 ext, QUIC ext
 
 | Command | Status | Description |
