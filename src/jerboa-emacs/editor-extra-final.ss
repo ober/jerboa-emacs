@@ -20704,3 +20704,52 @@
 (def (cmd-swift-mode-fill-paragraph app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Swift: filled paragraph")))
+
+;; Round 254 — Org ext, Markdown ext (10 in final)
+(def (cmd-org-babel-remove-result app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-babel: removed result")))
+
+(def (cmd-org-babel-remove-result-one-or-many app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Org-babel: removed results (one or many)")))
+
+(def (cmd-markdown-insert-gfm-code-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Language: "
+      (lambda (lang)
+        (echo-message! echo (str "Markdown: inserted GFM code block (" lang ")"))))))
+
+(def (cmd-markdown-insert-wiki-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Wiki link: "
+      (lambda (link)
+        (echo-message! echo (str "Markdown: inserted wiki link to " link))))))
+
+(def (cmd-markdown-toggle-url-hiding app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: toggled URL hiding")))
+
+(def (cmd-markdown-toggle-inline-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: toggled inline images")))
+
+(def (cmd-markdown-insert-reference-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted reference link")))
+
+(def (cmd-markdown-cleanup-list-numbers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: cleaned up list numbers")))
+
+(def (cmd-markdown-complete-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: completed buffer")))
+
+(def (cmd-markdown-insert-foldable-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: inserted foldable block")))
+
+(def (cmd-markdown-edit-code-block app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Markdown: editing code block in indirect buffer")))

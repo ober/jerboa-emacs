@@ -4583,6 +4583,32 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 254 — LaTeX ext, SQL ext, Org ext, Markdown ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| latex-close-environment | :orange_circle: | Close LaTeX environment |
+| latex-insert-section | :orange_circle: | Insert LaTeX section |
+| latex-next-section | :orange_circle: | Next LaTeX section |
+| latex-previous-section | :orange_circle: | Previous LaTeX section |
+| latex-fill-paragraph | :orange_circle: | Fill LaTeX paragraph |
+| latex-indent-line | :orange_circle: | Indent LaTeX line |
+| latex-mark-environment | :orange_circle: | Mark LaTeX environment |
+| latex-narrow-to-environment | :orange_circle: | Narrow to LaTeX environment |
+| sql-send-region-and-keep | :orange_circle: | Send SQL region (keep active) |
+| ielm-change-working-buffer | :orange_circle: | Change IELM working buffer |
+| org-babel-remove-result | :orange_circle: | Remove org-babel result |
+| org-babel-remove-result-one-or-many | :orange_circle: | Remove one or many results |
+| markdown-insert-gfm-code-block | :orange_circle: | Insert GFM code block |
+| markdown-insert-wiki-link | :orange_circle: | Insert wiki link |
+| markdown-toggle-url-hiding | :orange_circle: | Toggle URL hiding |
+| markdown-toggle-inline-images | :orange_circle: | Toggle inline images |
+| markdown-insert-reference-link | :orange_circle: | Insert reference link |
+| markdown-cleanup-list-numbers | :orange_circle: | Clean up list numbers |
+| markdown-complete-buffer | :orange_circle: | Complete markdown buffer |
+| markdown-insert-foldable-block | :orange_circle: | Insert foldable block |
+| markdown-edit-code-block | :orange_circle: | Edit code block in indirect buffer |
+
 ### Round 253 — PHP ext, Perl ext, Julia, Nim, Dart, Swift
 
 | Command | Status | Description |

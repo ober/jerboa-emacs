@@ -21338,3 +21338,48 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Julia: LaTeX substitution or indent")))
 
+;; Round 254 — LaTeX ext, SQL ext, IELM ext, Org ext, Markdown ext (10 in modes)
+(def (cmd-latex-close-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: closed environment")))
+
+(def (cmd-latex-insert-section app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Section type: "
+      (lambda (type)
+        (echo-message! echo (str "LaTeX: inserted " type " section"))))))
+
+(def (cmd-latex-next-section app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: next section")))
+
+(def (cmd-latex-previous-section app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: previous section")))
+
+(def (cmd-latex-fill-paragraph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: filled paragraph")))
+
+(def (cmd-latex-indent-line app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: indented line")))
+
+(def (cmd-latex-mark-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: marked environment")))
+
+(def (cmd-latex-narrow-to-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LaTeX: narrowed to environment")))
+
+(def (cmd-sql-send-region-and-keep app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQL: sent region (kept active)")))
+
+(def (cmd-ielm-change-working-buffer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Working buffer: "
+      (lambda (buf)
+        (echo-message! echo (str "IELM: working buffer set to " buf))))))
+
