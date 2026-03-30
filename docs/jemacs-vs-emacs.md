@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 360 — Gleam ext, Roc ext, Haxe ext, Janet ext, Fennel ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| gleam-build | :orange_circle: | Gleam: build project |
+| gleam-test | :orange_circle: | Gleam: run tests |
+| gleam-run | :orange_circle: | Gleam: run project |
+| gleam-add | :orange_circle: | Gleam: add package |
+| roc-build | :orange_circle: | Roc: build file |
+| roc-run | :orange_circle: | Roc: run file |
+| roc-test | :orange_circle: | Roc: run tests |
+| roc-check | :orange_circle: | Roc: check file |
+| haxe-build | :orange_circle: | Haxe: build project |
+| haxe-run | :orange_circle: | Haxe: run project |
+| haxe-test | :orange_circle: | Haxe: run tests |
+| haxe-init | :orange_circle: | Haxe: initialize project |
+| janet-run | :orange_circle: | Janet: run file |
+| janet-build | :orange_circle: | Janet: build project |
+| janet-test | :orange_circle: | Janet: run tests |
+| janet-repl | :orange_circle: | Janet: start REPL |
+| fennel-compile | :orange_circle: | Fennel: compile file |
+| fennel-eval | :orange_circle: | Fennel: evaluate expression |
+| fennel-repl | :orange_circle: | Fennel: start REPL |
+| fennel-lint | :orange_circle: | Fennel: lint file |
+
 ### Round 359 — Poetry ext, UV ext, Rye ext, PDM ext, Hatch ext
 
 | Feature | Status | Notes |

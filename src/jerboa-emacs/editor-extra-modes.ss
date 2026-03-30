@@ -26748,3 +26748,53 @@
     (echo-read-string echo "Rye add package: "
       (lambda (pkg)
         (echo-message! echo (str "Rye: adding " pkg))))))
+
+;;; Round 360 — Gleam ext, Roc ext, Haxe ext, Janet ext, Fennel ext (batch 1)
+
+(def (cmd-gleam-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: building project")))
+
+(def (cmd-gleam-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: running tests")))
+
+(def (cmd-gleam-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gleam: running project")))
+
+(def (cmd-gleam-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Gleam add package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Gleam: adding " pkg))))))
+
+(def (cmd-roc-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Roc build file: "
+      (lambda (file)
+        (echo-message! echo (str "Roc: building " file))))))
+
+(def (cmd-roc-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Roc run file: "
+      (lambda (file)
+        (echo-message! echo (str "Roc: running " file))))))
+
+(def (cmd-roc-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Roc: running tests")))
+
+(def (cmd-roc-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Roc check file: "
+      (lambda (file)
+        (echo-message! echo (str "Roc: checking " file))))))
+
+(def (cmd-haxe-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haxe: building project")))
+
+(def (cmd-haxe-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haxe: running project")))

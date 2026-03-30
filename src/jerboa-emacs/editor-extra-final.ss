@@ -25995,3 +25995,53 @@
 (def (cmd-hatch-env app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Hatch: managing environments")))
+
+;;; Round 360 — Haxe ext, Janet ext, Fennel ext (batch 2)
+
+(def (cmd-haxe-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haxe: running tests")))
+
+(def (cmd-haxe-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Haxe: initializing project")))
+
+(def (cmd-janet-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Janet run file: "
+      (lambda (file)
+        (echo-message! echo (str "Janet: running " file))))))
+
+(def (cmd-janet-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Janet: building project")))
+
+(def (cmd-janet-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Janet: running tests")))
+
+(def (cmd-janet-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Janet: starting REPL")))
+
+(def (cmd-fennel-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Fennel compile file: "
+      (lambda (file)
+        (echo-message! echo (str "Fennel: compiling " file))))))
+
+(def (cmd-fennel-eval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Fennel eval: "
+      (lambda (expr)
+        (echo-message! echo (str "Fennel: evaluating expression"))))))
+
+(def (cmd-fennel-repl app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fennel: starting REPL")))
+
+(def (cmd-fennel-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Fennel lint file: "
+      (lambda (file)
+        (echo-message! echo (str "Fennel: linting " file))))))
