@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 349 — Wireguard ext, OpenVPN ext, StrongSwan ext, Tailscale ext, Nebula ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| wireguard-peers | :orange_circle: | Wireguard: list peers |
+| wireguard-transfer | :orange_circle: | Wireguard: transfer stats |
+| wireguard-allowedips | :orange_circle: | Wireguard: show allowed IPs |
+| wireguard-endpoint | :orange_circle: | Wireguard: show endpoints |
+| openvpn-connect | :orange_circle: | OpenVPN: connect |
+| openvpn-disconnect | :orange_circle: | OpenVPN: disconnect |
+| openvpn-log | :orange_circle: | OpenVPN: connection log |
+| openvpn-routes | :orange_circle: | OpenVPN: pushed routes |
+| strongswan-list | :orange_circle: | StrongSwan: list SAs |
+| strongswan-up | :orange_circle: | StrongSwan: bring up connection |
+| strongswan-down | :orange_circle: | StrongSwan: bring down connection |
+| strongswan-leases | :orange_circle: | StrongSwan: show IP leases |
+| tailscale-status | :orange_circle: | Tailscale: network status |
+| tailscale-peers | :orange_circle: | Tailscale: list peers |
+| tailscale-ip | :orange_circle: | Tailscale: show IP addresses |
+| tailscale-up | :orange_circle: | Tailscale: connect to network |
+| nebula-status | :orange_circle: | Nebula: overlay status |
+| nebula-peers | :orange_circle: | Nebula: list peers |
+| nebula-config | :orange_circle: | Nebula: show configuration |
+| nebula-cert | :orange_circle: | Nebula: certificate info |
+
 ### Round 348 — Nginx ext, HAProxy ext, Envoy ext, Traefik ext, Caddy ext
 
 | Feature | Status | Notes |

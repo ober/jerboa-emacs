@@ -26184,3 +26184,49 @@
 (def (cmd-envoy-listeners app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Envoy: listing listeners")))
+
+;;; Round 349 — Wireguard ext, OpenVPN ext, StrongSwan ext, Tailscale ext, Nebula ext (batch 1)
+
+(def (cmd-wireguard-peers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireguard: listing peers")))
+
+(def (cmd-wireguard-transfer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireguard: showing transfer stats")))
+
+(def (cmd-wireguard-allowedips app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireguard: showing allowed IPs")))
+
+(def (cmd-wireguard-endpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wireguard: showing endpoints")))
+
+(def (cmd-openvpn-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "OpenVPN config file: "
+      (lambda (cfg)
+        (echo-message! echo (str "OpenVPN: connecting with " cfg))))))
+
+(def (cmd-openvpn-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: disconnecting")))
+
+(def (cmd-openvpn-log app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: showing connection log")))
+
+(def (cmd-openvpn-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: showing pushed routes")))
+
+(def (cmd-strongswan-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: listing SAs")))
+
+(def (cmd-strongswan-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "StrongSwan connection name: "
+      (lambda (name)
+        (echo-message! echo (str "StrongSwan: bringing up " name))))))

@@ -25471,3 +25471,47 @@
 (def (cmd-caddy-adapt app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Caddy: adapting Caddyfile to JSON")))
+
+;;; Round 349 — StrongSwan ext, Tailscale ext, Nebula ext (batch 2)
+
+(def (cmd-strongswan-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "StrongSwan connection name: "
+      (lambda (name)
+        (echo-message! echo (str "StrongSwan: bringing down " name))))))
+
+(def (cmd-strongswan-leases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: showing IP leases")))
+
+(def (cmd-tailscale-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: showing network status")))
+
+(def (cmd-tailscale-peers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: listing peers")))
+
+(def (cmd-tailscale-ip app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: showing IP addresses")))
+
+(def (cmd-tailscale-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tailscale: connecting to network")))
+
+(def (cmd-nebula-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nebula: showing overlay status")))
+
+(def (cmd-nebula-peers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nebula: listing peers")))
+
+(def (cmd-nebula-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nebula: showing configuration")))
+
+(def (cmd-nebula-cert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nebula: showing certificate info")))
