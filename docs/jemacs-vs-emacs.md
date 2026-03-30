@@ -6308,6 +6308,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `neon-connect` | :orange_circle: Scaffold | Connect |
 | `neon-branch` | :orange_circle: Scaffold | Branch |
 | `turso-connect` | :orange_circle: Scaffold | Connect |
+
+### Round 741: Undo Tree, Undo Fu, Goto Chg (undo/redo ext)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `undo-tree-visualize` | :orange_circle: | `undo-tree-visualize` |
+| `undo-tree-switch-branch` | :orange_circle: | `undo-tree-switch-branch` |
+| `undo-tree-save-history` | :orange_circle: | `undo-tree-save-history` |
+| `undo-tree-load-history` | :orange_circle: | `undo-tree-load-history` |
+| `undo-fu-only-undo` | :orange_circle: | `undo-fu-only-undo` |
+| `undo-fu-only-redo` | :orange_circle: | `undo-fu-only-redo` |
+| `undo-fu-session-save` | :orange_circle: | `undo-fu-session-save` |
+| `undo-fu-session-recover` | :orange_circle: | `undo-fu-session-recover` |
+| `goto-last-change` | :orange_circle: | `goto-chg-undo` |
+| `goto-last-change-reverse` | :orange_circle: | `goto-chg-redo` |
+
+### Round 742: TRAMP ext, SSH Deploy, Detached, Pcmpl
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `tramp-cleanup-connection` | :orange_circle: | `tramp-cleanup-connection` |
+| `tramp-docker` | :orange_circle: | `tramp-docker` |
+| `ssh-deploy-diff-handler` | :orange_circle: | `ssh-deploy-diff-handler` |
+| `ssh-deploy-remote-changes-handler` | :orange_circle: | `ssh-deploy-remote-changes` |
+| `detached-compile` | :orange_circle: | `detached-compile-command` |
+| `inheritenv-add-advice` | :orange_circle: | `inheritenv-apply` |
+| `exec-path-from-shell-initialize` | :orange_circle: | `exec-path-from-shell` |
+| `pcmpl-git` | :orange_circle: | `pcmpl-git` |
+| `pcmpl-homebrew` | :orange_circle: | `pcmpl-homebrew` |
+| `pcmpl-args` | :orange_circle: | `pcmpl-args` |
+
+### Round 743: Kill Ring, Easy Kill, Change Inner
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `popup-kill-ring` | :orange_circle: | `popup-kill-ring` |
+| `browse-kill-ring-previous` | :orange_circle: | `browse-kill-ring-previous` |
+| `browse-kill-ring-next` | :orange_circle: | `browse-kill-ring-next` |
+| `easy-kill-on-buffer-file-name` | :orange_circle: | `easy-kill-on-buffer-file-name` |
+| `easy-mark` | :orange_circle: | `easy-mark` |
+| `change-inner` | :orange_circle: | `change-inner` |
+| `ci-change-inner` | :orange_circle: | `ci-change-inner` |
+| `co-change-outer` | :orange_circle: | `co-change-outer` |
+| `whole-line-or-region-kill-region` | :orange_circle: | `whole-line-or-region-kill-region` |
+| `whole-line-or-region-copy-region-as-kill` | :orange_circle: | `whole-line-or-region-copy-region` |
+
+### Round 744: Comint ext, Expreg, Color-rg, Deadgrep
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `comint-postoutput-scroll-to-bottom` | :orange_circle: | `comint-scroll-to-bottom` |
+| `comint-watch-for-password-prompt` | :orange_circle: | `comint-watch-for-password` |
+| `xterm-mouse-mode` | :orange_circle: | `xterm-mouse-mode` |
+| `back-button-local` | :orange_circle: | `back-button-local` |
+| `thing-at-point-url-at-point` | :orange_circle: | `thing-at-point-uri` |
+| `expreg-expand` | :orange_circle: | `expreg-expand` |
+| `expreg-contract` | :orange_circle: | `expreg-contract` |
+| `color-rg-search-project` | :orange_circle: | `color-rg-search-project` |
+| `color-rg-search-input` | :orange_circle: | `color-rg-search-input` |
+| `deadgrep-restart` | :orange_circle: | `deadgrep-restart` |
+
+### Round 745: Puni, Point History, MWIM, Back Button
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `puni-kill-line` | :orange_circle: | `puni-kill-line` |
+| `puni-forward-kill-word` | :orange_circle: | `puni-forward-kill-word` |
+| `puni-backward-kill-word` | :orange_circle: | `puni-backward-kill-word` |
+| `puni-splice` | :orange_circle: | `puni-splice` |
+| `point-history-show` | :orange_circle: | `point-history-show` |
+| `point-history-goto` | :orange_circle: | `point-history-goto` |
+| `mwim-beginning-of-code-or-line` | :orange_circle: | `mwim-beginning-of-code-or-line` |
+| `mwim-end-of-code-or-line` | :orange_circle: | `mwim-end-of-code-or-line` |
+| `back-button-push` | :orange_circle: | `back-button-push` |
+| `back-button-pop` | :orange_circle: | `back-button-pop` |
+
+### Round 746: Visual Regexp, Wgrep, Ctrlf, Phi Search, Anzu
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `vr/replace` | :orange_circle: | `visual-regexp-replace` |
+| `vr/mc-mark` | :orange_circle: | `visual-regexp-mc` |
+| `wgrep-save-all-buffers` | :orange_circle: | `wgrep-save-all-buffers` |
+| `wgrep-exit` | :orange_circle: | `wgrep-exit` |
+| `ctrlf-forward-default` | :orange_circle: | `ctrlf-forward` |
+| `ctrlf-backward-default` | :orange_circle: | `ctrlf-backward` |
+| `phi-search` | :orange_circle: | `phi-search-forward` |
+| `phi-search-backward` | :orange_circle: | `phi-search-backward` |
+| `anzu-mode` | :orange_circle: | `anzu-mode` |
+| `anzu-query-replace-at-cursor` | :orange_circle: | `anzu-query-replace-at-cursor` |
+
+### Round 747: Aweshell, Fish, Powershell, Zsh
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `aweshell-toggle` | :orange_circle: | `aweshell-toggle` |
+| `aweshell-new` | :orange_circle: | `aweshell-new` |
+| `aweshell-next` | :orange_circle: | `aweshell-next` |
+| `aweshell-prev` | :orange_circle: | `aweshell-prev` |
+| `fish-mode` | :orange_circle: | `fish-mode` |
+| `fish-completion` | :orange_circle: | `fish-completion` |
+| `powershell` | :orange_circle: | `powershell-mode` |
+| `powershell-send-command` | :orange_circle: | `powershell-send-command` |
+| `zsh-mode` | :orange_circle: | `zsh-mode` |
+| `eshell-toggle-fullscreen` | :orange_circle: | `eshell-toggle-fullscreen` |
+
+### Round 748: Multi-Term ext, Eshell-z, Vterm ext, Detached
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `multi-term-next` | :orange_circle: | `multi-term-next` |
+| `multi-term-prev` | :orange_circle: | `multi-term-prev` |
+| `multi-term-dedicated-toggle` | :orange_circle: | `multi-term-dedicated-toggle` |
+| `eshell-z` | :orange_circle: | `eshell-z` |
+| `vterm-copy-mode` | :orange_circle: | `vterm-copy-mode` |
+| `vterm-clear-scrollback` | :orange_circle: | `vterm-clear-scrollback` |
+| `vterm-send-C-c` | :orange_circle: | `vterm-send-ctrl-c` |
+| `vterm-send-C-d` | :orange_circle: | `vterm-send-ctrl-d` |
+| `detached-open-session` | :orange_circle: | `detached-open-session` |
+| `detached-view-session` | :orange_circle: | `detached-view-session` |
+
+### Round 749: Crux ext, Selected, Affe, Deadgrep Edit
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `crux-kill-other-buffers` | :orange_circle: | `crux-kill-other-buffers` |
+| `crux-eval-and-replace` | :orange_circle: | `crux-eval-and-replace` |
+| `crux-recompile-init` | :orange_circle: | `crux-recompile-init` |
+| `crux-insert-date` | :orange_circle: | `crux-insert-date` |
+| `selected-off` | :orange_circle: | `selected-off` |
+| `selected-on` | :orange_circle: | `selected-on` |
+| `affe-find` | :orange_circle: | `affe-find` |
+| `affe-grep` | :orange_circle: | `affe-grep` |
+| `deadgrep-edit-mode` | :orange_circle: | `deadgrep-edit` |
+| `thing-edit-symbol` | :orange_circle: | `thing-edit-symbol` |
+
+### Round 750: Git Gutter+, Sideline
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `git-gutter+-mode` | :orange_circle: | `git-gutter-plus-mode` |
+| `git-gutter+-next-hunk` | :orange_circle: | `git-gutter-plus-next-hunk` |
+| `git-gutter+-previous-hunk` | :orange_circle: | `git-gutter-plus-previous-hunk` |
+| `git-gutter+-revert-hunk` | :orange_circle: | `git-gutter-plus-revert-hunk` |
+| `git-gutter+-stage-hunk` | :orange_circle: | `git-gutter-plus-stage-hunk` |
+| `sideline-mode` | :orange_circle: | `sideline-mode` |
+| `sideline-blame` | :orange_circle: | `sideline-blame` |
+| `sideline-flymake` | :orange_circle: | `sideline-flymake` |
+| `sideline-flycheck` | :orange_circle: | `sideline-flycheck` |
+| `sideline-lsp` | :orange_circle: | `sideline-lsp` |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
