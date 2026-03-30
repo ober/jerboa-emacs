@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 591 — Cache Systems (LRU, LFU, TTL)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `cache-get` | :orange_circle: Scaffold | Get entry |
+| `cache-put` | :orange_circle: Scaffold | Put entry |
+| `cache-evict` | :orange_circle: Scaffold | Evict |
+| `cache-lru` | :orange_circle: Scaffold | LRU policy |
+| `cache-lfu` | :orange_circle: Scaffold | LFU policy |
+| `cache-ttl` | :orange_circle: Scaffold | TTL expire |
+| `cache-invalidate` | :orange_circle: Scaffold | Invalidate |
+| `cache-warm` | :orange_circle: Scaffold | Warm up |
+| `cache-stats` | :orange_circle: Scaffold | Statistics |
+| `cache-partition` | :orange_circle: Scaffold | Partition |
+
+### Round 592 — Lock-free Data Structures
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lockfree-queue` | :orange_circle: Scaffold | Lock-free queue |
+| `lockfree-stack` | :orange_circle: Scaffold | Lock-free stack |
+| `lockfree-list` | :orange_circle: Scaffold | Lock-free list |
+| `lockfree-hashmap` | :orange_circle: Scaffold | Lock-free hashmap |
+| `lockfree-counter` | :orange_circle: Scaffold | Atomic counter |
+| `lockfree-cas` | :orange_circle: Scaffold | CAS operation |
+| `lockfree-backoff` | :orange_circle: Scaffold | Exponential backoff |
+| `lockfree-hazard` | :orange_circle: Scaffold | Hazard pointers |
+| `lockfree-epoch` | :orange_circle: Scaffold | Epoch reclamation |
+| `lockfree-rcu` | :orange_circle: Scaffold | RCU |
+
+### Round 593 — Bloom Filters & Skip Lists
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `bloom-insert` | :orange_circle: Scaffold | Insert |
+| `bloom-query` | :orange_circle: Scaffold | Query |
+| `bloom-merge` | :orange_circle: Scaffold | Merge |
+| `bloom-count` | :orange_circle: Scaffold | Count estimate |
+| `bloom-optimal` | :orange_circle: Scaffold | Optimal params |
+| `skiplist-insert` | :orange_circle: Scaffold | Insert |
+| `skiplist-delete` | :orange_circle: Scaffold | Delete |
+| `skiplist-search` | :orange_circle: Scaffold | Search |
+| `skiplist-range` | :orange_circle: Scaffold | Range query |
+| `skiplist-level` | :orange_circle: Scaffold | Level info |
+
+### Round 594 — Tries (Radix, Patricia)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `trie-insert` | :orange_circle: Scaffold | Insert |
+| `trie-search` | :orange_circle: Scaffold | Search |
+| `trie-prefix` | :orange_circle: Scaffold | Prefix match |
+| `trie-delete` | :orange_circle: Scaffold | Delete |
+| `trie-autocomplete` | :orange_circle: Scaffold | Autocomplete |
+| `trie-compact` | :orange_circle: Scaffold | Compact |
+| `trie-radix` | :orange_circle: Scaffold | Radix tree |
+| `trie-patricia` | :orange_circle: Scaffold | Patricia tree |
+| `trie-count` | :orange_circle: Scaffold | Count entries |
+| `trie-traverse` | :orange_circle: Scaffold | Traverse |
+
+### Round 595 — CRDT (Conflict-free Replicated Data)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `crdt-counter` | :orange_circle: Scaffold | G-counter |
+| `crdt-set` | :orange_circle: Scaffold | OR-set |
+| `crdt-register` | :orange_circle: Scaffold | LWW-register |
+| `crdt-map` | :orange_circle: Scaffold | CRDT map |
+| `crdt-merge` | :orange_circle: Scaffold | Merge replicas |
+| `crdt-sequence` | :orange_circle: Scaffold | RGA sequence |
+| `crdt-graph` | :orange_circle: Scaffold | Add-remove graph |
+| `crdt-json` | :orange_circle: Scaffold | JSON document |
+| `crdt-delta` | :orange_circle: Scaffold | Delta state |
+| `crdt-state` | :orange_circle: Scaffold | State inspect |
+
+### Round 596 — Event Sourcing
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `eventsource-append` | :orange_circle: Scaffold | Append event |
+| `eventsource-replay` | :orange_circle: Scaffold | Replay |
+| `eventsource-snapshot` | :orange_circle: Scaffold | Snapshot |
+| `eventsource-project` | :orange_circle: Scaffold | Project |
+| `eventsource-subscribe` | :orange_circle: Scaffold | Subscribe |
+| `eventsource-compact` | :orange_circle: Scaffold | Compact |
+| `eventsource-version` | :orange_circle: Scaffold | Version |
+| `eventsource-schema` | :orange_circle: Scaffold | Schema evolve |
+| `eventsource-migrate` | :orange_circle: Scaffold | Migrate |
+| `eventsource-query` | :orange_circle: Scaffold | Query |
+
+### Round 597 — CQRS
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `cqrs-command` | :orange_circle: Scaffold | Dispatch command |
+| `cqrs-query` | :orange_circle: Scaffold | Execute query |
+| `cqrs-project` | :orange_circle: Scaffold | Project events |
+| `cqrs-handler` | :orange_circle: Scaffold | Command handler |
+| `cqrs-validate` | :orange_circle: Scaffold | Validate |
+| `cqrs-event` | :orange_circle: Scaffold | Emit event |
+| `cqrs-aggregate` | :orange_circle: Scaffold | Aggregate root |
+| `cqrs-read-model` | :orange_circle: Scaffold | Read model |
+| `cqrs-eventual` | :orange_circle: Scaffold | Eventual consistency |
+| `cqrs-snapshot` | :orange_circle: Scaffold | Snapshot |
+
+### Round 598 — Circuit Breakers & Resilience
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `circuit-open` | :orange_circle: Scaffold | Open breaker |
+| `circuit-close` | :orange_circle: Scaffold | Close breaker |
+| `circuit-half-open` | :orange_circle: Scaffold | Half-open |
+| `circuit-threshold` | :orange_circle: Scaffold | Set threshold |
+| `circuit-timeout` | :orange_circle: Scaffold | Timeout config |
+| `bulkhead-partition` | :orange_circle: Scaffold | Partition |
+| `bulkhead-limit` | :orange_circle: Scaffold | Limit |
+| `retry-exponential` | :orange_circle: Scaffold | Exponential backoff |
+| `retry-jitter` | :orange_circle: Scaffold | Jitter |
+| `fallback-default` | :orange_circle: Scaffold | Default value |
+
+### Round 599 — Saga Orchestration
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `saga-start` | :orange_circle: Scaffold | Start saga |
+| `saga-step` | :orange_circle: Scaffold | Next step |
+| `saga-compensate` | :orange_circle: Scaffold | Compensate |
+| `saga-abort` | :orange_circle: Scaffold | Abort |
+| `saga-complete` | :orange_circle: Scaffold | Complete |
+| `saga-timeout` | :orange_circle: Scaffold | Timeout |
+| `saga-retry` | :orange_circle: Scaffold | Retry |
+| `saga-state` | :orange_circle: Scaffold | Inspect state |
+| `saga-orchestrate` | :orange_circle: Scaffold | Orchestrate |
+| `saga-choreograph` | :orange_circle: Scaffold | Choreograph |
+
+### Round 600 — Rate Limiting & Load Shedding
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ratelimit-token` | :orange_circle: Scaffold | Token bucket |
+| `ratelimit-leaky` | :orange_circle: Scaffold | Leaky bucket |
+| `ratelimit-sliding` | :orange_circle: Scaffold | Sliding window |
+| `ratelimit-fixed` | :orange_circle: Scaffold | Fixed window |
+| `ratelimit-adaptive` | :orange_circle: Scaffold | Adaptive |
+| `loadshed-priority` | :orange_circle: Scaffold | Priority queue |
+| `loadshed-random` | :orange_circle: Scaffold | Random drop |
+| `loadshed-tail` | :orange_circle: Scaffold | Tail drop |
+| `backpressure-signal` | :orange_circle: Scaffold | Signal |
+| `backpressure-buffer` | :orange_circle: Scaffold | Buffer |
+
 ### Round 581 — Finite Element Methods
 
 | Feature | Status | Notes |

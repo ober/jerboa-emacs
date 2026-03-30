@@ -12956,4 +12956,35 @@
   ;; Round 590: Effect Systems
   (register-command! 'effect-infer cmd-effect-infer) (register-command! 'effect-handle cmd-effect-handle) (register-command! 'effect-resume cmd-effect-resume) (register-command! 'effect-mask cmd-effect-mask) (register-command! 'effect-compose cmd-effect-compose)
   (register-command! 'effect-lift cmd-effect-lift) (register-command! 'effect-row cmd-effect-row) (register-command! 'effect-polymorphic cmd-effect-polymorphic) (register-command! 'effect-check cmd-effect-check) (register-command! 'effect-elaborate cmd-effect-elaborate)
+
+  ;; Round 591: Cache Systems
+  (register-command! 'cache-get cmd-cache-get) (register-command! 'cache-put cmd-cache-put) (register-command! 'cache-evict cmd-cache-evict) (register-command! 'cache-lru cmd-cache-lru) (register-command! 'cache-lfu cmd-cache-lfu)
+  (register-command! 'cache-ttl cmd-cache-ttl) (register-command! 'cache-invalidate cmd-cache-invalidate) (register-command! 'cache-warm cmd-cache-warm) (register-command! 'cache-stats cmd-cache-stats) (register-command! 'cache-partition cmd-cache-partition)
+  ;; Round 592: Lock-free Data Structures
+  (register-command! 'lockfree-queue cmd-lockfree-queue) (register-command! 'lockfree-stack cmd-lockfree-stack) (register-command! 'lockfree-list cmd-lockfree-list) (register-command! 'lockfree-hashmap cmd-lockfree-hashmap) (register-command! 'lockfree-counter cmd-lockfree-counter)
+  (register-command! 'lockfree-cas cmd-lockfree-cas) (register-command! 'lockfree-backoff cmd-lockfree-backoff) (register-command! 'lockfree-hazard cmd-lockfree-hazard) (register-command! 'lockfree-epoch cmd-lockfree-epoch) (register-command! 'lockfree-rcu cmd-lockfree-rcu)
+  ;; Round 593: Bloom Filters & Skip Lists
+  (register-command! 'bloom-insert cmd-bloom-insert) (register-command! 'bloom-query cmd-bloom-query) (register-command! 'bloom-merge cmd-bloom-merge) (register-command! 'bloom-count cmd-bloom-count) (register-command! 'bloom-optimal cmd-bloom-optimal)
+  (register-command! 'skiplist-insert cmd-skiplist-insert) (register-command! 'skiplist-delete cmd-skiplist-delete) (register-command! 'skiplist-search cmd-skiplist-search) (register-command! 'skiplist-range cmd-skiplist-range) (register-command! 'skiplist-level cmd-skiplist-level)
+  ;; Round 594: Tries
+  (register-command! 'trie-insert cmd-trie-insert) (register-command! 'trie-search cmd-trie-search) (register-command! 'trie-prefix cmd-trie-prefix) (register-command! 'trie-delete cmd-trie-delete) (register-command! 'trie-autocomplete cmd-trie-autocomplete)
+  (register-command! 'trie-compact cmd-trie-compact) (register-command! 'trie-radix cmd-trie-radix) (register-command! 'trie-patricia cmd-trie-patricia) (register-command! 'trie-count cmd-trie-count) (register-command! 'trie-traverse cmd-trie-traverse)
+  ;; Round 595: CRDT
+  (register-command! 'crdt-counter cmd-crdt-counter) (register-command! 'crdt-set cmd-crdt-set) (register-command! 'crdt-register cmd-crdt-register) (register-command! 'crdt-map cmd-crdt-map) (register-command! 'crdt-merge cmd-crdt-merge)
+  (register-command! 'crdt-sequence cmd-crdt-sequence) (register-command! 'crdt-graph cmd-crdt-graph) (register-command! 'crdt-json cmd-crdt-json) (register-command! 'crdt-delta cmd-crdt-delta) (register-command! 'crdt-state cmd-crdt-state)
+  ;; Round 596: Event Sourcing
+  (register-command! 'eventsource-append cmd-eventsource-append) (register-command! 'eventsource-replay cmd-eventsource-replay) (register-command! 'eventsource-snapshot cmd-eventsource-snapshot) (register-command! 'eventsource-project cmd-eventsource-project) (register-command! 'eventsource-subscribe cmd-eventsource-subscribe)
+  (register-command! 'eventsource-compact cmd-eventsource-compact) (register-command! 'eventsource-version cmd-eventsource-version) (register-command! 'eventsource-schema cmd-eventsource-schema) (register-command! 'eventsource-migrate cmd-eventsource-migrate) (register-command! 'eventsource-query cmd-eventsource-query)
+  ;; Round 597: CQRS
+  (register-command! 'cqrs-command cmd-cqrs-command) (register-command! 'cqrs-query cmd-cqrs-query) (register-command! 'cqrs-project cmd-cqrs-project) (register-command! 'cqrs-handler cmd-cqrs-handler) (register-command! 'cqrs-validate cmd-cqrs-validate)
+  (register-command! 'cqrs-event cmd-cqrs-event) (register-command! 'cqrs-aggregate cmd-cqrs-aggregate) (register-command! 'cqrs-read-model cmd-cqrs-read-model) (register-command! 'cqrs-eventual cmd-cqrs-eventual) (register-command! 'cqrs-snapshot cmd-cqrs-snapshot)
+  ;; Round 598: Circuit Breakers & Resilience
+  (register-command! 'circuit-open cmd-circuit-open) (register-command! 'circuit-close cmd-circuit-close) (register-command! 'circuit-half-open cmd-circuit-half-open) (register-command! 'circuit-threshold cmd-circuit-threshold) (register-command! 'circuit-timeout cmd-circuit-timeout)
+  (register-command! 'bulkhead-partition cmd-bulkhead-partition) (register-command! 'bulkhead-limit cmd-bulkhead-limit) (register-command! 'retry-exponential cmd-retry-exponential) (register-command! 'retry-jitter cmd-retry-jitter) (register-command! 'fallback-default cmd-fallback-default)
+  ;; Round 599: Saga Orchestration
+  (register-command! 'saga-start cmd-saga-start) (register-command! 'saga-step cmd-saga-step) (register-command! 'saga-compensate cmd-saga-compensate) (register-command! 'saga-abort cmd-saga-abort) (register-command! 'saga-complete cmd-saga-complete)
+  (register-command! 'saga-timeout cmd-saga-timeout) (register-command! 'saga-retry cmd-saga-retry) (register-command! 'saga-state cmd-saga-state) (register-command! 'saga-orchestrate cmd-saga-orchestrate) (register-command! 'saga-choreograph cmd-saga-choreograph)
+  ;; Round 600: Rate Limiting & Load Shedding
+  (register-command! 'ratelimit-token cmd-ratelimit-token) (register-command! 'ratelimit-leaky cmd-ratelimit-leaky) (register-command! 'ratelimit-sliding cmd-ratelimit-sliding) (register-command! 'ratelimit-fixed cmd-ratelimit-fixed) (register-command! 'ratelimit-adaptive cmd-ratelimit-adaptive)
+  (register-command! 'loadshed-priority cmd-loadshed-priority) (register-command! 'loadshed-random cmd-loadshed-random) (register-command! 'loadshed-tail cmd-loadshed-tail) (register-command! 'backpressure-signal cmd-backpressure-signal) (register-command! 'backpressure-buffer cmd-backpressure-buffer)
 )
