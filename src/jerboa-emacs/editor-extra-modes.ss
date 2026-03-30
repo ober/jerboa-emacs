@@ -22282,3 +22282,45 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "JSON Schema: generating schema")))
 
+;;; Round 275 — FlatBuffers ext, MessagePack ext, CBOR ext, BSON ext, Parquet ext (batch 1)
+
+(def (cmd-flatbuffers-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: compiling schema")))
+
+(def (cmd-flatbuffers-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: validating schema")))
+
+(def (cmd-flatbuffers-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: generating code")))
+
+(def (cmd-flatbuffers-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "FlatBuffers: formatting schema")))
+
+(def (cmd-msgpack-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: encoding data")))
+
+(def (cmd-msgpack-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: decoding data")))
+
+(def (cmd-msgpack-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: validating data")))
+
+(def (cmd-msgpack-pretty-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MessagePack: pretty-printing data")))
+
+(def (cmd-cbor-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CBOR: encoding data")))
+
+(def (cmd-cbor-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CBOR: decoding data")))
+

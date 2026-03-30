@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 275 — FlatBuffers ext, MessagePack ext, CBOR ext, BSON ext, Parquet ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| flatbuffers-compile | :orange_circle: | Compile FlatBuffers schema |
+| flatbuffers-validate | :orange_circle: | Validate FlatBuffers schema |
+| flatbuffers-generate | :orange_circle: | Generate FlatBuffers code |
+| flatbuffers-format | :orange_circle: | Format FlatBuffers schema |
+| msgpack-encode | :orange_circle: | Encode MessagePack data |
+| msgpack-decode | :orange_circle: | Decode MessagePack data |
+| msgpack-validate | :orange_circle: | Validate MessagePack data |
+| msgpack-pretty-print | :orange_circle: | Pretty-print MessagePack data |
+| cbor-encode | :orange_circle: | Encode CBOR data |
+| cbor-decode | :orange_circle: | Decode CBOR data |
+| cbor-validate | :orange_circle: | Validate CBOR data |
+| cbor-inspect | :orange_circle: | Inspect CBOR structure |
+| bson-encode | :orange_circle: | Encode BSON data |
+| bson-decode | :orange_circle: | Decode BSON data |
+| bson-validate | :orange_circle: | Validate BSON data |
+| bson-pretty-print | :orange_circle: | Pretty-print BSON data |
+| parquet-inspect | :orange_circle: | Inspect Parquet file |
+| parquet-schema | :orange_circle: | Show Parquet schema |
+| parquet-to-json | :orange_circle: | Convert Parquet to JSON |
+| parquet-stats | :orange_circle: | Show Parquet statistics |
+
 ### Round 274 — OpenAPI ext, AsyncAPI ext, JSON Schema ext, Avro ext, Cap'n Proto ext
 
 | Command | Status | Description |

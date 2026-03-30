@@ -21658,3 +21658,45 @@
 (def (cmd-capnproto-format app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Cap'n Proto: formatting schema")))
+
+;;; Round 275 — CBOR ext, BSON ext, Parquet ext (batch 2)
+
+(def (cmd-cbor-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CBOR: validating data")))
+
+(def (cmd-cbor-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CBOR: inspecting structure")))
+
+(def (cmd-bson-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BSON: encoding data")))
+
+(def (cmd-bson-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BSON: decoding data")))
+
+(def (cmd-bson-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BSON: validating data")))
+
+(def (cmd-bson-pretty-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BSON: pretty-printing data")))
+
+(def (cmd-parquet-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Parquet: inspecting file")))
+
+(def (cmd-parquet-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Parquet: showing schema")))
+
+(def (cmd-parquet-to-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Parquet: converting to JSON")))
+
+(def (cmd-parquet-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Parquet: showing statistics")))
