@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 294 — OpenVPN ext, StrongSwan ext, IPsec ext, PPTP ext, L2TP ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| openvpn-start | :orange_circle: | Start OpenVPN |
+| openvpn-stop | :orange_circle: | Stop OpenVPN |
+| openvpn-status | :orange_circle: | Show OpenVPN status |
+| openvpn-config | :orange_circle: | View OpenVPN config |
+| strongswan-start | :orange_circle: | Start StrongSwan |
+| strongswan-stop | :orange_circle: | Stop StrongSwan |
+| strongswan-status | :orange_circle: | Show StrongSwan status |
+| strongswan-reload | :orange_circle: | Reload StrongSwan |
+| ipsec-status | :orange_circle: | Show IPsec status |
+| ipsec-up | :orange_circle: | Bring up IPsec conn |
+| ipsec-down | :orange_circle: | Bring down IPsec conn |
+| ipsec-list | :orange_circle: | List IPsec SAs |
+| pptp-connect | :orange_circle: | Connect PPTP |
+| pptp-disconnect | :orange_circle: | Disconnect PPTP |
+| pptp-status | :orange_circle: | Show PPTP status |
+| l2tp-connect | :orange_circle: | Connect L2TP |
+| l2tp-disconnect | :orange_circle: | Disconnect L2TP |
+| l2tp-status | :orange_circle: | Show L2TP status |
+| l2tp-tunnel-list | :orange_circle: | List L2TP tunnels |
+| l2tp-session-list | :orange_circle: | List L2TP sessions |
+
 ### Round 293 — VLAN ext, Bond ext, MacVLAN ext, VXLAN ext, WireGuard ext
 
 | Command | Status | Description |

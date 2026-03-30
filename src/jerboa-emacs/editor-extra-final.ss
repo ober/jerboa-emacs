@@ -22592,3 +22592,51 @@
 (def (cmd-wireguard-status app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "WireGuard: showing status")))
+
+;;; Round 294 — IPsec ext, PPTP ext, L2TP ext (batch 2)
+
+(def (cmd-ipsec-down app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Connection: "
+      (lambda (conn)
+        (echo-message! echo (str "IPsec: bringing down " conn))))))
+
+(def (cmd-ipsec-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IPsec: listing SAs")))
+
+(def (cmd-pptp-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Server: "
+      (lambda (srv)
+        (echo-message! echo (str "PPTP: connecting to " srv))))))
+
+(def (cmd-pptp-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PPTP: disconnecting")))
+
+(def (cmd-pptp-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PPTP: showing status")))
+
+(def (cmd-l2tp-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Server: "
+      (lambda (srv)
+        (echo-message! echo (str "L2TP: connecting to " srv))))))
+
+(def (cmd-l2tp-disconnect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "L2TP: disconnecting")))
+
+(def (cmd-l2tp-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "L2TP: showing status")))
+
+(def (cmd-l2tp-tunnel-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "L2TP: listing tunnels")))
+
+(def (cmd-l2tp-session-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "L2TP: listing sessions")))

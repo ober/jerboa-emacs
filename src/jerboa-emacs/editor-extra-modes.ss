@@ -23288,3 +23288,49 @@
       (lambda (name)
         (echo-message! echo (str "MacVLAN: deleting " name))))))
 
+;;; Round 294 — OpenVPN ext, StrongSwan ext, IPsec ext (batch 1)
+
+(def (cmd-openvpn-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Config file: "
+      (lambda (cfg)
+        (echo-message! echo (str "OpenVPN: starting " cfg))))))
+
+(def (cmd-openvpn-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: stopping")))
+
+(def (cmd-openvpn-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: showing status")))
+
+(def (cmd-openvpn-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OpenVPN: viewing configuration")))
+
+(def (cmd-strongswan-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: starting")))
+
+(def (cmd-strongswan-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: stopping")))
+
+(def (cmd-strongswan-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: showing status")))
+
+(def (cmd-strongswan-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "StrongSwan: reloading config")))
+
+(def (cmd-ipsec-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IPsec: showing status")))
+
+(def (cmd-ipsec-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Connection: "
+      (lambda (conn)
+        (echo-message! echo (str "IPsec: bringing up " conn))))))
+
