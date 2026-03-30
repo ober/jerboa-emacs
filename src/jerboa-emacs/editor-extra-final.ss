@@ -29708,3 +29708,295 @@
 (def (cmd-mimir-distributor app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mimir: distributor")))
+
+;; ── Round 446 — Argo Workflows ext, Argo Events ext ──
+
+(def (cmd-argo-workflow-submit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Workflows: submit")))
+
+(def (cmd-argo-workflow-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Workflows: list")))
+
+(def (cmd-argo-workflow-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Workflows: get details")))
+
+(def (cmd-argo-workflow-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Workflows: delete")))
+
+(def (cmd-argo-workflow-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Workflows: logs")))
+
+(def (cmd-argo-event-sources app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Events: event sources")))
+
+(def (cmd-argo-event-sensors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Events: sensors")))
+
+(def (cmd-argo-event-triggers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Events: triggers")))
+
+(def (cmd-argo-event-bus app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Events: event bus")))
+
+(def (cmd-argo-event-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Argo Events: logs")))
+
+;; ── Round 447 — Dapr ext2, Spin ext ──
+
+(def (cmd-dapr-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dapr: publish event")))
+
+(def (cmd-dapr-state app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dapr: state store")))
+
+(def (cmd-dapr-secrets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dapr: secrets")))
+
+(def (cmd-dapr-binding app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dapr: output binding")))
+
+(def (cmd-spin-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: build app")))
+
+(def (cmd-spin-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: deploy app")))
+
+(def (cmd-spin-watch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: watch mode")))
+
+(def (cmd-spin-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: registry")))
+
+(def (cmd-spin-plugins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: plugins")))
+
+(def (cmd-spin-template app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: template")))
+
+;; ── Round 448 — Wasmtime ext, WASI ext ──
+
+(def (cmd-wasmtime-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: run module")))
+
+(def (cmd-wasmtime-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: compile module")))
+
+(def (cmd-wasmtime-explore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: explore module")))
+
+(def (cmd-wasmtime-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: settings")))
+
+(def (cmd-wasmtime-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: configuration")))
+
+(def (cmd-wasi-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WASI: preview")))
+
+(def (cmd-wasi-adapters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WASI: adapters")))
+
+(def (cmd-wasi-http app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WASI: HTTP interface")))
+
+(def (cmd-wasi-filesystem app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WASI: filesystem")))
+
+(def (cmd-wasi-sockets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WASI: sockets")))
+
+;; ── Round 449 — Nix ext2, Guix ext, Homebrew ext2, Scoop ext ──
+
+(def (cmd-nix-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: search packages")))
+
+(def (cmd-nix-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: system info")))
+
+(def (cmd-nix-doctor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: doctor diagnostics")))
+
+(def (cmd-nix-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: flake registry")))
+
+(def (cmd-nix-store app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: store management")))
+
+(def (cmd-guix-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: package management")))
+
+(def (cmd-guix-system app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: system configuration")))
+
+(def (cmd-guix-environment app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: environment")))
+
+(def (cmd-guix-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: profile management")))
+
+(def (cmd-guix-gc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: garbage collection")))
+
+;; ── Round 449 — Homebrew ext2, Scoop ext ──
+
+(def (cmd-homebrew-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Homebrew: services")))
+
+(def (cmd-homebrew-tap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Homebrew: tap")))
+
+(def (cmd-homebrew-cask app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Homebrew: cask")))
+
+(def (cmd-homebrew-pin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Homebrew: pin package")))
+
+(def (cmd-homebrew-deps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Homebrew: dependencies")))
+
+(def (cmd-scoop-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scoop: install package")))
+
+(def (cmd-scoop-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scoop: search packages")))
+
+(def (cmd-scoop-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scoop: update packages")))
+
+(def (cmd-scoop-bucket app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scoop: bucket management")))
+
+(def (cmd-scoop-cleanup app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scoop: cleanup")))
+
+;; ── Round 450 — Chocolatey ext, WinGet ext, Snap ext, Flatpak ext ──
+
+(def (cmd-chocolatey-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chocolatey: install package")))
+
+(def (cmd-chocolatey-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chocolatey: search packages")))
+
+(def (cmd-chocolatey-upgrade app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chocolatey: upgrade package")))
+
+(def (cmd-chocolatey-pin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chocolatey: pin package")))
+
+(def (cmd-chocolatey-source app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chocolatey: source management")))
+
+(def (cmd-winget-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WinGet: install package")))
+
+(def (cmd-winget-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WinGet: search packages")))
+
+(def (cmd-winget-upgrade app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WinGet: upgrade package")))
+
+(def (cmd-winget-source app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WinGet: source management")))
+
+(def (cmd-winget-settings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WinGet: settings")))
+
+(def (cmd-snap-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: install package")))
+
+(def (cmd-snap-connections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: connections")))
+
+(def (cmd-snap-interfaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: interfaces")))
+
+(def (cmd-snap-refresh app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: refresh packages")))
+
+(def (cmd-snap-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: services")))
+
+(def (cmd-flatpak-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: install app")))
+
+(def (cmd-flatpak-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: search apps")))
+
+(def (cmd-flatpak-permissions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: permissions")))
+
+(def (cmd-flatpak-remotes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: remotes")))
+
+(def (cmd-flatpak-override app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: override permissions")))

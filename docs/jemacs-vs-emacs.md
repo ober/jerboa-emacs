@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 450 — Chocolatey ext, WinGet ext, Snap ext, Flatpak ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Chocolatey install | — | `chocolatey-install` | :orange_circle: Scaffolded |
+| Chocolatey search | — | `chocolatey-search` | :orange_circle: Scaffolded |
+| Chocolatey upgrade | — | `chocolatey-upgrade` | :orange_circle: Scaffolded |
+| Chocolatey pin | — | `chocolatey-pin` | :orange_circle: Scaffolded |
+| Chocolatey source | — | `chocolatey-source` | :orange_circle: Scaffolded |
+| WinGet install | — | `winget-install` | :orange_circle: Scaffolded |
+| WinGet search | — | `winget-search` | :orange_circle: Scaffolded |
+| WinGet upgrade | — | `winget-upgrade` | :orange_circle: Scaffolded |
+| WinGet source | — | `winget-source` | :orange_circle: Scaffolded |
+| WinGet settings | — | `winget-settings` | :orange_circle: Scaffolded |
+| Snap install | — | `snap-install` | :orange_circle: Scaffolded |
+| Snap connections | — | `snap-connections` | :orange_circle: Scaffolded |
+| Snap interfaces | — | `snap-interfaces` | :orange_circle: Scaffolded |
+| Snap refresh | — | `snap-refresh` | :orange_circle: Scaffolded |
+| Snap services | — | `snap-services` | :orange_circle: Scaffolded |
+| Flatpak install | — | `flatpak-install` | :orange_circle: Scaffolded |
+| Flatpak search | — | `flatpak-search` | :orange_circle: Scaffolded |
+| Flatpak permissions | — | `flatpak-permissions` | :orange_circle: Scaffolded |
+| Flatpak remotes | — | `flatpak-remotes` | :orange_circle: Scaffolded |
+| Flatpak override | — | `flatpak-override` | :orange_circle: Scaffolded |
+
+### Round 449 — Nix ext2, Guix ext, Homebrew ext2, Scoop ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Nix search | — | `nix-search` | :orange_circle: Scaffolded |
+| Nix info | — | `nix-info` | :orange_circle: Scaffolded |
+| Nix doctor | — | `nix-doctor` | :orange_circle: Scaffolded |
+| Nix registry | — | `nix-registry` | :orange_circle: Scaffolded |
+| Nix store | — | `nix-store` | :orange_circle: Scaffolded |
+| Guix package | — | `guix-package` | :orange_circle: Scaffolded |
+| Guix system | — | `guix-system` | :orange_circle: Scaffolded |
+| Guix environment | — | `guix-environment` | :orange_circle: Scaffolded |
+| Guix profile | — | `guix-profile` | :orange_circle: Scaffolded |
+| Guix GC | — | `guix-gc` | :orange_circle: Scaffolded |
+| Homebrew services | — | `homebrew-services` | :orange_circle: Scaffolded |
+| Homebrew tap | — | `homebrew-tap` | :orange_circle: Scaffolded |
+| Homebrew cask | — | `homebrew-cask` | :orange_circle: Scaffolded |
+| Homebrew pin | — | `homebrew-pin` | :orange_circle: Scaffolded |
+| Homebrew deps | — | `homebrew-deps` | :orange_circle: Scaffolded |
+| Scoop install | — | `scoop-install` | :orange_circle: Scaffolded |
+| Scoop search | — | `scoop-search` | :orange_circle: Scaffolded |
+| Scoop update | — | `scoop-update` | :orange_circle: Scaffolded |
+| Scoop bucket | — | `scoop-bucket` | :orange_circle: Scaffolded |
+| Scoop cleanup | — | `scoop-cleanup` | :orange_circle: Scaffolded |
+
+### Round 448 — Wasm ext, WasmEdge ext, Wasmtime ext, WASI ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Wasm validate | — | `wasm-validate` | :orange_circle: Scaffolded |
+| Wasm compile | — | `wasm-compile` | :orange_circle: Scaffolded |
+| Wasm optimize | — | `wasm-optimize` | :orange_circle: Scaffolded |
+| Wasm inspect | — | `wasm-inspect` | :orange_circle: Scaffolded |
+| Wasm strip | — | `wasm-strip` | :orange_circle: Scaffolded |
+| WasmEdge run | — | `wasmedge-run` | :orange_circle: Scaffolded |
+| WasmEdge compile | — | `wasmedge-compile` | :orange_circle: Scaffolded |
+| WasmEdge plugin | — | `wasmedge-plugin` | :orange_circle: Scaffolded |
+| WasmEdge config | — | `wasmedge-config` | :orange_circle: Scaffolded |
+| WasmEdge version | — | `wasmedge-version` | :orange_circle: Scaffolded |
+| Wasmtime run | — | `wasmtime-run` | :orange_circle: Scaffolded |
+| Wasmtime compile | — | `wasmtime-compile` | :orange_circle: Scaffolded |
+| Wasmtime explore | — | `wasmtime-explore` | :orange_circle: Scaffolded |
+| Wasmtime settings | — | `wasmtime-settings` | :orange_circle: Scaffolded |
+| Wasmtime config | — | `wasmtime-config` | :orange_circle: Scaffolded |
+| WASI preview | — | `wasi-preview` | :orange_circle: Scaffolded |
+| WASI adapters | — | `wasi-adapters` | :orange_circle: Scaffolded |
+| WASI HTTP | — | `wasi-http` | :orange_circle: Scaffolded |
+| WASI filesystem | — | `wasi-filesystem` | :orange_circle: Scaffolded |
+| WASI sockets | — | `wasi-sockets` | :orange_circle: Scaffolded |
+
+### Round 447 — Keda ext, Knative ext2, Dapr ext2, Spin ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| KEDA scaled object | — | `keda-scaledobject` | :orange_circle: Scaffolded |
+| KEDA trigger auth | — | `keda-triggerauth` | :orange_circle: Scaffolded |
+| KEDA scaled job | — | `keda-scaledjob` | :orange_circle: Scaffolded |
+| KEDA metrics | — | `keda-metrics` | :orange_circle: Scaffolded |
+| KEDA status | — | `keda-status` | :orange_circle: Scaffolded |
+| Knative revision | — | `knative-revision` | :orange_circle: Scaffolded |
+| Knative route | — | `knative-route` | :orange_circle: Scaffolded |
+| Knative domain mapping | — | `knative-domain` | :orange_circle: Scaffolded |
+| Knative traffic splitting | — | `knative-traffic` | :orange_circle: Scaffolded |
+| Dapr invoke service | — | `dapr-invoke` | :orange_circle: Scaffolded |
+| Dapr publish event | — | `dapr-publish` | :orange_circle: Scaffolded |
+| Dapr state store | — | `dapr-state` | :orange_circle: Scaffolded |
+| Dapr secrets | — | `dapr-secrets` | :orange_circle: Scaffolded |
+| Dapr output binding | — | `dapr-binding` | :orange_circle: Scaffolded |
+| Spin build | — | `spin-build` | :orange_circle: Scaffolded |
+| Spin deploy | — | `spin-deploy` | :orange_circle: Scaffolded |
+| Spin watch | — | `spin-watch` | :orange_circle: Scaffolded |
+| Spin registry | — | `spin-registry` | :orange_circle: Scaffolded |
+| Spin plugins | — | `spin-plugins` | :orange_circle: Scaffolded |
+| Spin template | — | `spin-template` | :orange_circle: Scaffolded |
+
+### Round 446 — Crossplane ext, KubeVela ext, Argo Workflows ext, Argo Events ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Crossplane XRD | — | `crossplane-xrd` | :orange_circle: Scaffolded |
+| Crossplane composition | — | `crossplane-composition` | :orange_circle: Scaffolded |
+| Crossplane claim | — | `crossplane-claim` | :orange_circle: Scaffolded |
+| Crossplane provider | — | `crossplane-provider` | :orange_circle: Scaffolded |
+| Crossplane config | — | `crossplane-config` | :orange_circle: Scaffolded |
+| KubeVela application | — | `kubevela-app` | :orange_circle: Scaffolded |
+| KubeVela component | — | `kubevela-component` | :orange_circle: Scaffolded |
+| KubeVela trait | — | `kubevela-trait` | :orange_circle: Scaffolded |
+| KubeVela workflow | — | `kubevela-workflow` | :orange_circle: Scaffolded |
+| KubeVela addon | — | `kubevela-addon` | :orange_circle: Scaffolded |
+| Argo Workflows submit | — | `argo-workflow-submit` | :orange_circle: Scaffolded |
+| Argo Workflows list | — | `argo-workflow-list` | :orange_circle: Scaffolded |
+| Argo Workflows get | — | `argo-workflow-get` | :orange_circle: Scaffolded |
+| Argo Workflows delete | — | `argo-workflow-delete` | :orange_circle: Scaffolded |
+| Argo Workflows logs | — | `argo-workflow-logs` | :orange_circle: Scaffolded |
+| Argo Events sources | — | `argo-event-sources` | :orange_circle: Scaffolded |
+| Argo Events sensors | — | `argo-event-sensors` | :orange_circle: Scaffolded |
+| Argo Events triggers | — | `argo-event-triggers` | :orange_circle: Scaffolded |
+| Argo Events bus | — | `argo-event-bus` | :orange_circle: Scaffolded |
+| Argo Events logs | — | `argo-event-logs` | :orange_circle: Scaffolded |
+
 ### Round 445 — Benthos ext, Vector ext, Fluentbit ext, Telegraf ext
 
 | Feature | Emacs | jemacs | Status |

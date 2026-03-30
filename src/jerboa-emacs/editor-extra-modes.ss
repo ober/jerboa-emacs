@@ -30400,3 +30400,129 @@
 (def (cmd-benthos-create app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Benthos: create pipeline")))
+
+;; ── Round 446 — Crossplane ext, KubeVela ext, Argo Workflows ext, Argo Events ext ──
+
+(def (cmd-crossplane-xrd app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: XRD definition")))
+
+(def (cmd-crossplane-composition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: composition")))
+
+(def (cmd-crossplane-claim app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: claim resource")))
+
+(def (cmd-crossplane-provider app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: provider config")))
+
+(def (cmd-crossplane-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Crossplane: configuration")))
+
+(def (cmd-kubevela-app app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KubeVela: application")))
+
+(def (cmd-kubevela-component app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KubeVela: component")))
+
+(def (cmd-kubevela-trait app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KubeVela: trait")))
+
+(def (cmd-kubevela-workflow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KubeVela: workflow")))
+
+(def (cmd-kubevela-addon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KubeVela: addon")))
+
+;; ── Round 447 — Keda ext, Knative ext2, Dapr ext2, Spin ext ──
+
+(def (cmd-keda-scaledobject app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: scaled object")))
+
+(def (cmd-keda-triggerauth app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: trigger authentication")))
+
+(def (cmd-keda-scaledjob app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: scaled job")))
+
+(def (cmd-keda-metrics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: metrics")))
+
+(def (cmd-keda-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "KEDA: status")))
+
+(def (cmd-knative-revision app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: revision")))
+
+(def (cmd-knative-route app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: route")))
+
+(def (cmd-knative-domain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: domain mapping")))
+
+(def (cmd-knative-traffic app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Knative: traffic splitting")))
+
+(def (cmd-dapr-invoke app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dapr: invoke service")))
+
+;; ── Round 448 — Wasm ext, WasmEdge ext, Wasmtime ext, WASI ext ──
+
+(def (cmd-wasm-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasm: validate module")))
+
+(def (cmd-wasm-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasm: compile module")))
+
+(def (cmd-wasm-optimize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasm: optimize module")))
+
+(def (cmd-wasm-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasm: inspect module")))
+
+(def (cmd-wasm-strip app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasm: strip debug info")))
+
+(def (cmd-wasmedge-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WasmEdge: run module")))
+
+(def (cmd-wasmedge-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WasmEdge: AOT compile")))
+
+(def (cmd-wasmedge-plugin app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WasmEdge: plugin management")))
+
+(def (cmd-wasmedge-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WasmEdge: configuration")))
+
+(def (cmd-wasmedge-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WasmEdge: version info")))
