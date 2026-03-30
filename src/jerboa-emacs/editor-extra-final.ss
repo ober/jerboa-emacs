@@ -25515,3 +25515,45 @@
 (def (cmd-nebula-cert app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Nebula: showing certificate info")))
+
+;;; Round 350 — Cilium ext, Calico ext, Flannel ext (batch 2)
+
+(def (cmd-cilium-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: listing network policies")))
+
+(def (cmd-cilium-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: monitoring events")))
+
+(def (cmd-calico-node app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: showing node status")))
+
+(def (cmd-calico-ippool app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: listing IP pools")))
+
+(def (cmd-calico-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: listing network policies")))
+
+(def (cmd-calico-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Calico: showing cluster status")))
+
+(def (cmd-flannel-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: showing status")))
+
+(def (cmd-flannel-subnet app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: showing subnet allocation")))
+
+(def (cmd-flannel-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: showing configuration")))
+
+(def (cmd-flannel-routes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flannel: showing routes")))

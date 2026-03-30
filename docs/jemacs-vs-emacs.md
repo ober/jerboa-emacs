@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 350 — Istio ext, Linkerd ext, Cilium ext, Calico ext, Flannel ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| istio-proxy-status | :orange_circle: | Istio: proxy sync status |
+| istio-analyze | :orange_circle: | Istio: analyze configuration |
+| istio-dashboard | :orange_circle: | Istio: open dashboard |
+| istio-version | :orange_circle: | Istio: show version info |
+| linkerd-check | :orange_circle: | Linkerd: health check |
+| linkerd-stat | :orange_circle: | Linkerd: show stats |
+| linkerd-tap | :orange_circle: | Linkerd: tap traffic |
+| linkerd-dashboard | :orange_circle: | Linkerd: open dashboard |
+| cilium-status | :orange_circle: | Cilium: agent status |
+| cilium-endpoint | :orange_circle: | Cilium: list endpoints |
+| cilium-policy | :orange_circle: | Cilium: list policies |
+| cilium-monitor | :orange_circle: | Cilium: monitor events |
+| calico-node | :orange_circle: | Calico: node status |
+| calico-ippool | :orange_circle: | Calico: list IP pools |
+| calico-policy | :orange_circle: | Calico: list policies |
+| calico-status | :orange_circle: | Calico: cluster status |
+| flannel-status | :orange_circle: | Flannel: show status |
+| flannel-subnet | :orange_circle: | Flannel: subnet allocation |
+| flannel-config | :orange_circle: | Flannel: show configuration |
+| flannel-routes | :orange_circle: | Flannel: show routes |
+
 ### Round 349 — Wireguard ext, OpenVPN ext, StrongSwan ext, Tailscale ext, Nebula ext
 
 | Feature | Status | Notes |

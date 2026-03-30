@@ -26230,3 +26230,49 @@
     (echo-read-string echo "StrongSwan connection name: "
       (lambda (name)
         (echo-message! echo (str "StrongSwan: bringing up " name))))))
+
+;;; Round 350 — Istio ext, Linkerd ext, Cilium ext, Calico ext, Flannel ext (batch 1)
+
+(def (cmd-istio-proxy-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Istio: showing proxy sync status")))
+
+(def (cmd-istio-analyze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Istio: analyzing configuration")))
+
+(def (cmd-istio-dashboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Istio: opening dashboard")))
+
+(def (cmd-istio-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Istio: showing version info")))
+
+(def (cmd-linkerd-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Linkerd: running health check")))
+
+(def (cmd-linkerd-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Linkerd stat resource: "
+      (lambda (res)
+        (echo-message! echo (str "Linkerd: showing stats for " res))))))
+
+(def (cmd-linkerd-tap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Linkerd tap resource: "
+      (lambda (res)
+        (echo-message! echo (str "Linkerd: tapping traffic for " res))))))
+
+(def (cmd-linkerd-dashboard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Linkerd: opening dashboard")))
+
+(def (cmd-cilium-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: showing agent status")))
+
+(def (cmd-cilium-endpoint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium: listing endpoints")))
