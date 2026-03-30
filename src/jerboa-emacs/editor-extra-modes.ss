@@ -27360,3 +27360,48 @@
 (def (cmd-sumo-collectors app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Sumo Logic: listing collectors")))
+
+;; Round 373 batch 1 — ClickHouse ext, BigQuery ext
+(def (cmd-clickhouse-merges app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: listing active merges")))
+
+(def (cmd-clickhouse-replicas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: listing replicas")))
+
+(def (cmd-clickhouse-mutations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: listing mutations")))
+
+(def (cmd-clickhouse-dictionaries app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ClickHouse: listing dictionaries")))
+
+(def (cmd-bigquery-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "BQ SQL: "
+      (lambda (sql)
+        (echo-message! echo (str "BigQuery: executing: " sql))))))
+
+(def (cmd-bigquery-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BigQuery: listing tables")))
+
+(def (cmd-bigquery-datasets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BigQuery: listing datasets")))
+
+(def (cmd-bigquery-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BigQuery: listing jobs")))
+
+(def (cmd-snowflake-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Snowflake SQL: "
+      (lambda (sql)
+        (echo-message! echo (str "Snowflake: executing: " sql))))))
+
+(def (cmd-snowflake-warehouses app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snowflake: listing warehouses")))

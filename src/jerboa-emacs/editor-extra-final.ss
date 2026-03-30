@@ -26583,3 +26583,48 @@
 (def (cmd-tempo-config app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Tempo: showing configuration")))
+
+;; Round 373 batch 2 — Snowflake ext, Redshift/DuckDB ext
+(def (cmd-snowflake-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snowflake: listing databases")))
+
+(def (cmd-snowflake-stages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snowflake: listing stages")))
+
+(def (cmd-redshift-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Redshift SQL: "
+      (lambda (sql)
+        (echo-message! echo (str "Redshift: executing: " sql))))))
+
+(def (cmd-redshift-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redshift: listing tables")))
+
+(def (cmd-redshift-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redshift: listing clusters")))
+
+(def (cmd-redshift-schemas app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Redshift: listing schemas")))
+
+(def (cmd-duckdb-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DuckDB SQL: "
+      (lambda (sql)
+        (echo-message! echo (str "DuckDB: executing: " sql))))))
+
+(def (cmd-duckdb-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DuckDB: listing tables")))
+
+(def (cmd-duckdb-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DuckDB: exporting data")))
+
+(def (cmd-duckdb-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DuckDB: importing data")))

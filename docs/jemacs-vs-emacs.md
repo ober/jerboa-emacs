@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 373 — ClickHouse ext, BigQuery ext, Snowflake ext, Redshift/DuckDB ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| ClickHouse merges | — | `clickhouse-merges` | :orange_circle: Scaffolded |
+| ClickHouse replicas | — | `clickhouse-replicas` | :orange_circle: Scaffolded |
+| ClickHouse mutations | — | `clickhouse-mutations` | :orange_circle: Scaffolded |
+| ClickHouse dictionaries | — | `clickhouse-dictionaries` | :orange_circle: Scaffolded |
+| BigQuery SQL query | — | `bigquery-query` | :orange_circle: Scaffolded |
+| BigQuery list tables | — | `bigquery-tables` | :orange_circle: Scaffolded |
+| BigQuery list datasets | — | `bigquery-datasets` | :orange_circle: Scaffolded |
+| BigQuery list jobs | — | `bigquery-jobs` | :orange_circle: Scaffolded |
+| Snowflake SQL query | — | `snowflake-query` | :orange_circle: Scaffolded |
+| Snowflake warehouses | — | `snowflake-warehouses` | :orange_circle: Scaffolded |
+| Snowflake databases | — | `snowflake-databases` | :orange_circle: Scaffolded |
+| Snowflake stages | — | `snowflake-stages` | :orange_circle: Scaffolded |
+| Redshift SQL query | — | `redshift-query` | :orange_circle: Scaffolded |
+| Redshift list tables | — | `redshift-tables` | :orange_circle: Scaffolded |
+| Redshift clusters | — | `redshift-clusters` | :orange_circle: Scaffolded |
+| Redshift schemas | — | `redshift-schemas` | :orange_circle: Scaffolded |
+| DuckDB SQL query | — | `duckdb-query` | :orange_circle: Scaffolded |
+| DuckDB list tables | — | `duckdb-tables` | :orange_circle: Scaffolded |
+| DuckDB export data | — | `duckdb-export` | :orange_circle: Scaffolded |
+| DuckDB import data | — | `duckdb-import` | :orange_circle: Scaffolded |
+
 ### Round 372 — Splunk ext, Elasticsearch ext, Sumo Logic ext, Loki/Tempo ext
 
 | Feature | Emacs | jemacs | Status |
