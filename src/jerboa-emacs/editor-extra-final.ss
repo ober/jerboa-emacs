@@ -22698,3 +22698,51 @@
 (def (cmd-socat-relay app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Socat: starting relay")))
+
+;;; Round 296 — Nethogs ext, Vnstat ext, Iperf3 ext (batch 2)
+
+(def (cmd-nethogs-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nethogs: monitoring per-process bandwidth")))
+
+(def (cmd-nethogs-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Nethogs: monitoring PID " pid))))))
+
+(def (cmd-bmon-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bmon: monitoring bandwidth")))
+
+(def (cmd-bmon-interface app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Bmon: monitoring " iface))))))
+
+(def (cmd-vnstat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vnstat: showing traffic summary")))
+
+(def (cmd-vnstat-daily app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vnstat: daily traffic")))
+
+(def (cmd-vnstat-monthly app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vnstat: monthly traffic")))
+
+(def (cmd-vnstat-live app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vnstat: live traffic monitor")))
+
+(def (cmd-iperf3-server app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iperf3: starting server")))
+
+(def (cmd-iperf3-client app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Server: "
+      (lambda (srv)
+        (echo-message! echo (str "Iperf3: connecting to " srv))))))

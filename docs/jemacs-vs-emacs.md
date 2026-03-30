@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 296 — Tcpdump ext, Tshark ext, Iftop ext, Nethogs ext, Vnstat ext, Iperf3 ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| tcpdump-capture | :orange_circle: | Tcpdump capture |
+| tcpdump-filter | :orange_circle: | Set tcpdump filter |
+| tcpdump-read | :orange_circle: | Read PCAP file |
+| tcpdump-write | :orange_circle: | Write PCAP file |
+| tshark-capture | :orange_circle: | Tshark capture |
+| tshark-filter | :orange_circle: | Set tshark filter |
+| tshark-decode | :orange_circle: | Decode PCAP |
+| tshark-stats | :orange_circle: | Show tshark stats |
+| iftop-monitor | :orange_circle: | Monitor bandwidth |
+| iftop-interface | :orange_circle: | Monitor interface |
+| nethogs-monitor | :orange_circle: | Per-process bandwidth |
+| nethogs-pid | :orange_circle: | Monitor PID bandwidth |
+| bmon-monitor | :orange_circle: | Bmon bandwidth monitor |
+| bmon-interface | :orange_circle: | Bmon interface monitor |
+| vnstat-show | :orange_circle: | Show traffic summary |
+| vnstat-daily | :orange_circle: | Daily traffic stats |
+| vnstat-monthly | :orange_circle: | Monthly traffic stats |
+| vnstat-live | :orange_circle: | Live traffic monitor |
+| iperf3-server | :orange_circle: | Start iperf3 server |
+| iperf3-client | :orange_circle: | Run iperf3 client |
+
 ### Round 295 — Nmap ext, Masscan ext, Zmap ext, Netcat ext, Socat ext
 
 | Command | Status | Description |

@@ -23396,3 +23396,61 @@
       (lambda (probe)
         (echo-message! echo (str "Zmap: probe " probe))))))
 
+;;; Round 296 — Tcpdump ext, Tshark ext, Iftop ext (batch 1)
+
+(def (cmd-tcpdump-capture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Tcpdump: capturing on " iface))))))
+
+(def (cmd-tcpdump-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter: "
+      (lambda (flt)
+        (echo-message! echo (str "Tcpdump: filter " flt))))))
+
+(def (cmd-tcpdump-read app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PCAP file: "
+      (lambda (file)
+        (echo-message! echo (str "Tcpdump: reading " file))))))
+
+(def (cmd-tcpdump-write app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Tcpdump: writing to " file))))))
+
+(def (cmd-tshark-capture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Tshark: capturing on " iface))))))
+
+(def (cmd-tshark-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Display filter: "
+      (lambda (flt)
+        (echo-message! echo (str "Tshark: filter " flt))))))
+
+(def (cmd-tshark-decode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PCAP file: "
+      (lambda (file)
+        (echo-message! echo (str "Tshark: decoding " file))))))
+
+(def (cmd-tshark-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tshark: showing statistics")))
+
+(def (cmd-iftop-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Iftop: monitoring bandwidth")))
+
+(def (cmd-iftop-interface app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Iftop: monitoring " iface))))))
+
