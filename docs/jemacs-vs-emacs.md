@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 398 — Gatling ext, k6 ext, Locust ext, Artillery/Vegeta ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Gatling run | — | `gatling-run` | :orange_circle: Scaffolded |
+| Gatling reports | — | `gatling-reports` | :orange_circle: Scaffolded |
+| Gatling simulations | — | `gatling-simulations` | :orange_circle: Scaffolded |
+| Gatling recorder | — | `gatling-recorder` | :orange_circle: Scaffolded |
+| k6 run test | — | `k6-run` | :orange_circle: Scaffolded |
+| k6 cloud test | — | `k6-cloud` | :orange_circle: Scaffolded |
+| k6 thresholds | — | `k6-thresholds` | :orange_circle: Scaffolded |
+| k6 scenarios | — | `k6-scenarios` | :orange_circle: Scaffolded |
+| Locust run | — | `locust-run` | :orange_circle: Scaffolded |
+| Locust workers | — | `locust-workers` | :orange_circle: Scaffolded |
+| Locust stats | — | `locust-stats` | :orange_circle: Scaffolded |
+| Locust shapes | — | `locust-shapes` | :orange_circle: Scaffolded |
+| Artillery run | — | `artillery-run` | :orange_circle: Scaffolded |
+| Artillery reports | — | `artillery-reports` | :orange_circle: Scaffolded |
+| Artillery scenarios | — | `artillery-scenarios` | :orange_circle: Scaffolded |
+| Artillery config | — | `artillery-config` | :orange_circle: Scaffolded |
+| Vegeta attack | — | `vegeta-attack` | :orange_circle: Scaffolded |
+| Vegeta report | — | `vegeta-report` | :orange_circle: Scaffolded |
+| Vegeta plot | — | `vegeta-plot` | :orange_circle: Scaffolded |
+| Vegeta encode | — | `vegeta-encode` | :orange_circle: Scaffolded |
+
 ### Round 397 — Cypress ext, Playwright ext, Selenium ext, Puppeteer/Appium ext
 
 | Feature | Emacs | jemacs | Status |

@@ -27626,3 +27626,44 @@
 (def (cmd-appium-caps app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Appium: showing capabilities")))
+
+;; Round 398 batch 2 — Locust ext, Artillery/Vegeta ext
+(def (cmd-locust-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Locust: showing statistics")))
+
+(def (cmd-locust-shapes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Locust: listing load shapes")))
+
+(def (cmd-artillery-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artillery: running test")))
+
+(def (cmd-artillery-reports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artillery: listing reports")))
+
+(def (cmd-artillery-scenarios app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artillery: listing scenarios")))
+
+(def (cmd-artillery-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Artillery: showing configuration")))
+
+(def (cmd-vegeta-attack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vegeta: running attack")))
+
+(def (cmd-vegeta-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vegeta: generating report")))
+
+(def (cmd-vegeta-plot app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vegeta: plotting results")))
+
+(def (cmd-vegeta-encode app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vegeta: encoding targets")))

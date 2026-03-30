@@ -28413,3 +28413,44 @@
 (def (cmd-selenium-grid app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Selenium: managing grid")))
+
+;; Round 398 batch 1 — Gatling ext, k6 ext
+(def (cmd-gatling-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gatling: running simulation")))
+
+(def (cmd-gatling-reports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gatling: listing reports")))
+
+(def (cmd-gatling-simulations app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gatling: listing simulations")))
+
+(def (cmd-gatling-recorder app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gatling: starting recorder")))
+
+(def (cmd-k6-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k6: running load test")))
+
+(def (cmd-k6-cloud app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k6: running cloud test")))
+
+(def (cmd-k6-thresholds app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k6: listing thresholds")))
+
+(def (cmd-k6-scenarios app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "k6: listing scenarios")))
+
+(def (cmd-locust-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Locust: starting load test")))
+
+(def (cmd-locust-workers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Locust: listing workers")))
