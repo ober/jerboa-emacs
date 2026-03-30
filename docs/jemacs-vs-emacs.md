@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 309 — Power Profiles ext, CPUFreq ext, Thermal ext, TLP ext, PowerTOP ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| power-profiles | :orange_circle: | List power profiles |
+| power-save | :orange_circle: | Switch to power-save |
+| power-balance | :orange_circle: | Switch to balanced |
+| power-performance | :orange_circle: | Switch to performance |
+| cpufreq-info | :orange_circle: | Show CPU freq info |
+| cpufreq-set | :orange_circle: | Set CPU frequency |
+| cpufreq-governor | :orange_circle: | Set CPU governor |
+| cpufreq-policy | :orange_circle: | Show CPU policy |
+| thermald-status | :orange_circle: | Show thermald status |
+| thermald-config | :orange_circle: | View thermald config |
+| thermal-zones | :orange_circle: | List thermal zones |
+| thermal-cooling | :orange_circle: | List cooling devices |
+| tlp-status | :orange_circle: | Show TLP status |
+| tlp-config | :orange_circle: | View TLP config |
+| tlp-stats | :orange_circle: | Show TLP stats |
+| tlp-bat | :orange_circle: | Battery info |
+| powertop-report | :orange_circle: | Generate report |
+| powertop-auto | :orange_circle: | Auto-tune power |
+| powertop-calibrate | :orange_circle: | Calibrate |
+| powertop-html | :orange_circle: | HTML report |
+
 ### Round 308 — CUPS ext, Lp ext, Avahi ext, Resolvectl ext, Ethtool ext
 
 | Command | Status | Description |

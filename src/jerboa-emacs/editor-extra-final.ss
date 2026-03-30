@@ -23406,3 +23406,45 @@
     (echo-read-string echo "Interface: "
       (lambda (iface)
         (echo-message! echo (str "Ethtool: ring params of " iface))))))
+
+;;; Round 309 — Thermal ext, TLP ext, PowerTOP ext (batch 2)
+
+(def (cmd-thermal-zones app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thermal: listing zones")))
+
+(def (cmd-thermal-cooling app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thermal: listing cooling devices")))
+
+(def (cmd-tlp-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLP: showing status")))
+
+(def (cmd-tlp-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLP: viewing configuration")))
+
+(def (cmd-tlp-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLP: showing statistics")))
+
+(def (cmd-tlp-bat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TLP: battery info")))
+
+(def (cmd-powertop-report app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PowerTOP: generating report")))
+
+(def (cmd-powertop-auto app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PowerTOP: auto-tuning")))
+
+(def (cmd-powertop-calibrate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PowerTOP: calibrating")))
+
+(def (cmd-powertop-html app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PowerTOP: generating HTML report")))

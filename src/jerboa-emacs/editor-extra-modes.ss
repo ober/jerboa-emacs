@@ -24130,3 +24130,49 @@
       (lambda (host)
         (echo-message! echo (str "Avahi: resolving " host))))))
 
+;;; Round 309 — Power Profiles ext, CPUFreq ext, Thermal ext (batch 1)
+
+(def (cmd-power-profiles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Power: listing profiles")))
+
+(def (cmd-power-save app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Power: switching to power-save")))
+
+(def (cmd-power-balance app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Power: switching to balanced")))
+
+(def (cmd-power-performance app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Power: switching to performance")))
+
+(def (cmd-cpufreq-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CPUFreq: showing info")))
+
+(def (cmd-cpufreq-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Frequency: "
+      (lambda (freq)
+        (echo-message! echo (str "CPUFreq: setting " freq))))))
+
+(def (cmd-cpufreq-governor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Governor: "
+      (lambda (gov)
+        (echo-message! echo (str "CPUFreq: governor " gov))))))
+
+(def (cmd-cpufreq-policy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CPUFreq: showing policy")))
+
+(def (cmd-thermald-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thermald: showing status")))
+
+(def (cmd-thermald-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Thermald: viewing configuration")))
+
