@@ -5408,6 +5408,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `ryo-modal-mode` | :orange_circle: Scaffold | Toggle RYO |
 | `fingers-mode` | :orange_circle: Scaffold | Toggle Fingers |
 | `devil-mode` | :orange_circle: Scaffold | Toggle Devil |
+
+### Round 681 — Dirvish, Ranger & Nerd Icons
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `dirvish-history-go` | :orange_circle: Scaffold | History go |
+| `dirvish-mark` | :orange_circle: Scaffold | Mark |
+| `ranger` | :orange_circle: Scaffold | File manager |
+| `deer` | :orange_circle: Scaffold | Minimal ranger |
+| `sunrise-commander` | :orange_circle: Scaffold | Dual pane |
+| `sunrise-cd` | :orange_circle: Scaffold | Change directory |
+| `nerd-icons-completion` | :orange_circle: Scaffold | Completion icons |
+| `nerd-icons-dired` | :orange_circle: Scaffold | Dired icons |
+| `nerd-icons-ibuffer` | :orange_circle: Scaffold | Ibuffer icons |
+| `all-the-icons-dired` | :orange_circle: Scaffold | Dired icons |
+
+### Round 682 — Icons, Tabs & Posframe ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `all-the-icons-ibuffer` | :orange_circle: Scaffold | Ibuffer icons |
+| `all-the-icons-completion` | :orange_circle: Scaffold | Completion icons |
+| `dashboard-open` | :orange_circle: Scaffold | Open dashboard |
+| `dashboard-refresh` | :orange_circle: Scaffold | Refresh dashboard |
+| `centaur-tabs-select-beg` | :orange_circle: Scaffold | Select beginning |
+| `centaur-tabs-select-end` | :orange_circle: Scaffold | Select end |
+| `awesome-tab-mode` | :orange_circle: Scaffold | Toggle mode |
+| `vertico-posframe-mode` | :orange_circle: Scaffold | Posframe mode |
+| `helm-posframe-mode` | :orange_circle: Scaffold | Posframe mode |
+| `popwin-close-all` | :orange_circle: Scaffold | Close all popups |
+
+### Round 683 — Git Timemachine, Messenger & Diff-hl
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `git-timemachine-toggle` | :orange_circle: Scaffold | Toggle |
+| `git-timemachine-show-next` | :orange_circle: Scaffold | Show next revision |
+| `git-timemachine-show-prev` | :orange_circle: Scaffold | Show previous revision |
+| `git-messenger-popup` | :orange_circle: Scaffold | Popup |
+| `git-messenger-toggle` | :orange_circle: Scaffold | Toggle |
+| `diff-hl-next-hunk` | :orange_circle: Scaffold | Next hunk |
+| `diff-hl-previous-hunk` | :orange_circle: Scaffold | Previous hunk |
+| `diff-hl-revert-hunk` | :orange_circle: Scaffold | Revert hunk |
+| `diff-hl-stage-hunk` | :orange_circle: Scaffold | Stage hunk |
+| `consult-git-log-grep` | :orange_circle: Scaffold | Git log grep |
+
+### Round 684 — Smerge, Ediff & VC ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `smerge-keep-mine` | :orange_circle: Scaffold | Keep mine |
+| `smerge-keep-other` | :orange_circle: Scaffold | Keep other |
+| `smerge-keep-all` | :orange_circle: Scaffold | Keep all |
+| `smerge-next` | :orange_circle: Scaffold | Next conflict |
+| `smerge-prev` | :orange_circle: Scaffold | Previous conflict |
+| `smerge-resolve-all` | :orange_circle: Scaffold | Resolve all |
+| `ediff-merge-files` | :orange_circle: Scaffold | Merge files |
+| `ediff-merge-buffers` | :orange_circle: Scaffold | Merge buffers |
+| `vc-annotate` | :orange_circle: Scaffold | Annotate |
+| `vc-revision-other-window` | :orange_circle: Scaffold | Revision other window |
+
+### Round 685 — Magit Blame, Ediff & Worktree ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `magit-blame-addition` | :orange_circle: Scaffold | Blame addition |
+| `magit-blame-removal` | :orange_circle: Scaffold | Blame removal |
+| `magit-blame-reverse` | :orange_circle: Scaffold | Blame reverse |
+| `magit-ediff-dwim` | :orange_circle: Scaffold | Ediff DWIM |
+| `magit-ediff-stage` | :orange_circle: Scaffold | Ediff stage |
+| `magit-worktree-move` | :orange_circle: Scaffold | Move worktree |
+| `magit-sparse-checkout-add` | :orange_circle: Scaffold | Sparse checkout add |
+| `magit-sparse-checkout-disable` | :orange_circle: Scaffold | Sparse checkout disable |
+| `forge-browse-topic` | :orange_circle: Scaffold | Browse topic |
+| `forge-checkout-pullreq` | :orange_circle: Scaffold | Checkout PR |
+
+### Round 686 — Git-link, Blamer & VC Log
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `git-link` | :orange_circle: Scaffold | Copy URL |
+| `git-link-commit` | :orange_circle: Scaffold | Commit URL |
+| `git-link-homepage` | :orange_circle: Scaffold | Homepage |
+| `magit-delta-mode` | :orange_circle: Scaffold | Delta mode |
+| `blamer-mode` | :orange_circle: Scaffold | Toggle blamer |
+| `blamer-show-posframe` | :orange_circle: Scaffold | Show posframe |
+| `vc-log-outgoing` | :orange_circle: Scaffold | Log outgoing |
+| `vc-log-incoming` | :orange_circle: Scaffold | Log incoming |
+| `page-break-lines-mode` | :orange_circle: Scaffold | Page break lines |
+| `mixed-pitch-mode` | :orange_circle: Scaffold | Mixed pitch |
+
+### Round 687 — VC Push/Pull, Code Review & Window ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vc-push` | :orange_circle: Scaffold | Push |
+| `vc-pull` | :orange_circle: Scaffold | Pull |
+| `browse-at-remote-kill` | :orange_circle: Scaffold | Kill URL |
+| `code-review-start` | :orange_circle: Scaffold | Start review |
+| `code-review-approve` | :orange_circle: Scaffold | Approve |
+| `code-review-submit` | :orange_circle: Scaffold | Submit |
+| `buffer-move-left` | :orange_circle: Scaffold | Move left |
+| `buffer-move-right` | :orange_circle: Scaffold | Move right |
+| `rotate-frame` | :orange_circle: Scaffold | Rotate frame |
+| `zoom-mode` | :orange_circle: Scaffold | Toggle zoom |
+
+### Round 688 — Denote & Citar
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `denote-open-or-create` | :orange_circle: Scaffold | Open or create |
+| `denote-link` | :orange_circle: Scaffold | Link |
+| `denote-backlinks` | :orange_circle: Scaffold | Backlinks |
+| `denote-rename-file` | :orange_circle: Scaffold | Rename file |
+| `denote-keywords-add` | :orange_circle: Scaffold | Add keywords |
+| `denote-keywords-remove` | :orange_circle: Scaffold | Remove keywords |
+| `denote-dired` | :orange_circle: Scaffold | Dired view |
+| `denote-journal-extras-new-entry` | :orange_circle: Scaffold | Journal entry |
+| `citar-open` | :orange_circle: Scaffold | Open reference |
+| `citar-insert-citation` | :orange_circle: Scaffold | Insert citation |
+
+### Round 689 — Visual Themes & Writing Modes ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `golden-ratio-mode` | :orange_circle: Scaffold | Golden ratio |
+| `writeroom-toggle-mode-line` | :orange_circle: Scaffold | Toggle mode line |
+| `darkroom-tentative-mode` | :orange_circle: Scaffold | Tentative mode |
+| `logos-narrow-dwim` | :orange_circle: Scaffold | Narrow DWIM |
+| `logos-forward-page-dwim` | :orange_circle: Scaffold | Forward page DWIM |
+| `solaire-global-mode` | :orange_circle: Scaffold | Global mode |
+| `standard-themes-toggle` | :orange_circle: Scaffold | Toggle themes |
+| `spacious-padding-mode` | :orange_circle: Scaffold | Spacious padding |
+| `lin-global-mode` | :orange_circle: Scaffold | Lin global |
+| `goggles-mode` | :orange_circle: Scaffold | Goggles mode |
+
+### Round 690 — Ef/Modus Themes, Pulsar, Dimmer & Beacon
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ef-themes-select` | :orange_circle: Scaffold | Select theme |
+| `ef-themes-toggle` | :orange_circle: Scaffold | Toggle theme |
+| `modus-themes-toggle` | :orange_circle: Scaffold | Toggle theme |
+| `modus-themes-select` | :orange_circle: Scaffold | Select theme |
+| `pulsar-pulse-line` | :orange_circle: Scaffold | Pulse line |
+| `pulsar-highlight-line` | :orange_circle: Scaffold | Highlight line |
+| `dimmer-mode` | :orange_circle: Scaffold | Toggle dimmer |
+| `beacon-mode` | :orange_circle: Scaffold | Toggle beacon |
+| `mini-frame-mode` | :orange_circle: Scaffold | Mini frame |
+| `citar-open-notes` | :orange_circle: Scaffold | Open notes |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
