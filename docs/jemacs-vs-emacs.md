@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 365 — ETCD ext, ZooKeeper ext, Patroni ext, Stolon ext, PGBouncer ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| etcd-get | :orange_circle: | ETCD: get key |
+| etcd-put | :orange_circle: | ETCD: put key |
+| etcd-members | :orange_circle: | ETCD: list members |
+| etcd-health | :orange_circle: | ETCD: check health |
+| zookeeper-stat | :orange_circle: | ZooKeeper: server stats |
+| zookeeper-ls | :orange_circle: | ZooKeeper: list path |
+| zookeeper-get | :orange_circle: | ZooKeeper: get node |
+| zookeeper-set | :orange_circle: | ZooKeeper: set node |
+| patroni-list | :orange_circle: | Patroni: list members |
+| patroni-switchover | :orange_circle: | Patroni: switchover |
+| patroni-failover | :orange_circle: | Patroni: failover |
+| patroni-history | :orange_circle: | Patroni: failover history |
+| stolon-status | :orange_circle: | Stolon: cluster status |
+| stolon-clusterdata | :orange_circle: | Stolon: cluster data |
+| stolon-update | :orange_circle: | Stolon: update spec |
+| stolon-init | :orange_circle: | Stolon: initialize cluster |
+| pgbouncer-show-pools | :orange_circle: | PGBouncer: connection pools |
+| pgbouncer-show-stats | :orange_circle: | PGBouncer: statistics |
+| pgbouncer-show-databases | :orange_circle: | PGBouncer: databases |
+| pgbouncer-reload | :orange_circle: | PGBouncer: reload config |
+
 ### Round 364 — MinIO ext, SeaweedFS ext, Ceph ext, GlusterFS ext, LongHorn ext
 
 | Feature | Status | Notes |

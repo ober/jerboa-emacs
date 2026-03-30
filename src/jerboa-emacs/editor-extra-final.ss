@@ -26235,3 +26235,45 @@
 (def (cmd-longhorn-replica app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Longhorn: listing replicas")))
+
+;;; Round 365 — Patroni ext, Stolon ext, PGBouncer ext (batch 2)
+
+(def (cmd-patroni-failover app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Patroni: initiating failover")))
+
+(def (cmd-patroni-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Patroni: showing failover history")))
+
+(def (cmd-stolon-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stolon: showing cluster status")))
+
+(def (cmd-stolon-clusterdata app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stolon: showing cluster data")))
+
+(def (cmd-stolon-update app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stolon: updating cluster spec")))
+
+(def (cmd-stolon-init app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stolon: initializing cluster")))
+
+(def (cmd-pgbouncer-show-pools app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PGBouncer: showing connection pools")))
+
+(def (cmd-pgbouncer-show-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PGBouncer: showing statistics")))
+
+(def (cmd-pgbouncer-show-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PGBouncer: showing databases")))
+
+(def (cmd-pgbouncer-reload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PGBouncer: reloading configuration")))

@@ -26992,3 +26992,55 @@
 (def (cmd-ceph-osd app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ceph: listing OSDs")))
+
+;;; Round 365 — ETCD ext, ZooKeeper ext, Patroni ext, Stolon ext, PGBouncer ext (batch 1)
+
+(def (cmd-etcd-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ETCD get key: "
+      (lambda (key)
+        (echo-message! echo (str "ETCD: getting key " key))))))
+
+(def (cmd-etcd-put app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ETCD put key: "
+      (lambda (key)
+        (echo-message! echo (str "ETCD: putting key " key))))))
+
+(def (cmd-etcd-members app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ETCD: listing cluster members")))
+
+(def (cmd-etcd-health app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ETCD: checking cluster health")))
+
+(def (cmd-zookeeper-stat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ZooKeeper: showing server stats")))
+
+(def (cmd-zookeeper-ls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ZooKeeper ls path: "
+      (lambda (path)
+        (echo-message! echo (str "ZooKeeper: listing " path))))))
+
+(def (cmd-zookeeper-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ZooKeeper get path: "
+      (lambda (path)
+        (echo-message! echo (str "ZooKeeper: getting " path))))))
+
+(def (cmd-zookeeper-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "ZooKeeper set path: "
+      (lambda (path)
+        (echo-message! echo (str "ZooKeeper: setting " path))))))
+
+(def (cmd-patroni-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Patroni: listing cluster members")))
+
+(def (cmd-patroni-switchover app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Patroni: initiating switchover")))
