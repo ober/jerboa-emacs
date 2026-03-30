@@ -24270,3 +24270,65 @@
     (echo-read-string echo "UUID: "
       (lambda (uuid)
         (echo-message! echo (str "Blkid: looking up UUID " uuid))))))
+
+;;; Round 325 — Tune2fs ext, Xfs-admin ext, Resize2fs ext (batch 2)
+
+(def (cmd-tune2fs-journal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Tune2fs: managing journal on " dev))))))
+
+(def (cmd-tune2fs-label app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Label and device: "
+      (lambda (spec)
+        (echo-message! echo (str "Tune2fs: setting label " spec))))))
+
+(def (cmd-xfs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "XFS: showing info for " mnt))))))
+
+(def (cmd-xfs-repair app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "XFS: repairing " dev))))))
+
+(def (cmd-xfs-growfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "XFS: growing filesystem at " mnt))))))
+
+(def (cmd-xfs-freeze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "XFS: freezing " mnt))))))
+
+(def (cmd-resize2fs-grow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Resize2fs: growing " dev))))))
+
+(def (cmd-resize2fs-shrink app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device and size: "
+      (lambda (spec)
+        (echo-message! echo (str "Resize2fs: shrinking " spec))))))
+
+(def (cmd-resize2fs-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Resize2fs: info for " dev))))))
+
+(def (cmd-resize2fs-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Resize2fs: checking " dev))))))

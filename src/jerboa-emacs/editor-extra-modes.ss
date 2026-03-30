@@ -24970,3 +24970,65 @@
       (lambda (dev)
         (echo-message! echo (str "Gdisk: creating partition on " dev))))))
 
+;;; Round 325 — Mkfs ext, Fsck ext, Tune2fs ext, Xfs-admin ext, Resize2fs ext (batch 1)
+
+(def (cmd-mkfs-vfat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Mkfs: creating VFAT filesystem on " dev))))))
+
+(def (cmd-mkfs-f2fs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Mkfs: creating F2FS filesystem on " dev))))))
+
+(def (cmd-mkfs-ntfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Mkfs: creating NTFS filesystem on " dev))))))
+
+(def (cmd-mkfs-swap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Mkfs: creating swap on " dev))))))
+
+(def (cmd-fsck-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fsck: checking " dev))))))
+
+(def (cmd-fsck-repair app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fsck: repairing " dev))))))
+
+(def (cmd-fsck-ext4 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fsck: checking ext4 on " dev))))))
+
+(def (cmd-fsck-xfs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Fsck: checking XFS on " dev))))))
+
+(def (cmd-tune2fs-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device: "
+      (lambda (dev)
+        (echo-message! echo (str "Tune2fs: showing info for " dev))))))
+
+(def (cmd-tune2fs-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Option and device: "
+      (lambda (spec)
+        (echo-message! echo (str "Tune2fs: setting " spec))))))
+

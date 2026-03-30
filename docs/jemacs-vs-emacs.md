@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 325 — Mkfs ext, Fsck ext, Tune2fs ext, Xfs-admin ext, Resize2fs ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mkfs-vfat` | :orange_circle: | Create VFAT filesystem |
+| `mkfs-f2fs` | :orange_circle: | Create F2FS filesystem |
+| `mkfs-ntfs` | :orange_circle: | Create NTFS filesystem |
+| `mkfs-swap` | :orange_circle: | Create swap space |
+| `fsck-check` | :orange_circle: | Check filesystem |
+| `fsck-repair` | :orange_circle: | Repair filesystem |
+| `fsck-ext4` | :orange_circle: | Check ext4 |
+| `fsck-xfs` | :orange_circle: | Check XFS |
+| `tune2fs-show` | :orange_circle: | Show ext2/3/4 info |
+| `tune2fs-set` | :orange_circle: | Set ext2/3/4 options |
+| `tune2fs-journal` | :orange_circle: | Manage journal |
+| `tune2fs-label` | :orange_circle: | Set filesystem label |
+| `xfs-info` | :orange_circle: | Show XFS info |
+| `xfs-repair` | :orange_circle: | Repair XFS |
+| `xfs-growfs` | :orange_circle: | Grow XFS filesystem |
+| `xfs-freeze` | :orange_circle: | Freeze XFS |
+| `resize2fs-grow` | :orange_circle: | Grow ext filesystem |
+| `resize2fs-shrink` | :orange_circle: | Shrink ext filesystem |
+| `resize2fs-info` | :orange_circle: | Show resize info |
+| `resize2fs-check` | :orange_circle: | Check before resize |
+
 ### Round 324 — Parted ext, Fdisk ext, Gdisk ext, Sfdisk ext, Blkid ext
 
 | Feature | Status | Notes |
