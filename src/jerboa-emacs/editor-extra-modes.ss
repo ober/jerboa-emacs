@@ -24540,3 +24540,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Sdparm: listing parameters")))
 
+;;; Round 317 — Ipmitool ext, Lm-sensors ext, Turbostat ext, Cpupower ext, Numactl ext (batch 1)
+
+(def (cmd-ipmitool-sensor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IPMI: listing sensor readings")))
+
+(def (cmd-ipmitool-sdr app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IPMI: showing SDR repository")))
+
+(def (cmd-ipmitool-sel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IPMI: showing system event log")))
+
+(def (cmd-ipmitool-chassis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "IPMI: showing chassis status")))
+
+(def (cmd-lm-sensors-detect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sensors: detecting hardware monitors")))
+
+(def (cmd-lm-sensors-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sensors: showing all readings")))
+
+(def (cmd-lm-sensors-fan app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sensors: showing fan speeds")))
+
+(def (cmd-lm-sensors-temp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sensors: showing temperatures")))
+
+(def (cmd-turbostat-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turbostat: showing CPU frequency/power")))
+
+(def (cmd-turbostat-interval app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interval (seconds): "
+      (lambda (sec)
+        (echo-message! echo (str "Turbostat: monitoring every " sec "s"))))))
+

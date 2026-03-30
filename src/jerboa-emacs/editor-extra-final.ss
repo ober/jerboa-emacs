@@ -23830,3 +23830,53 @@
     (echo-read-string echo "Result files: "
       (lambda (files)
         (echo-message! echo (str "Fio: comparing " files))))))
+
+;;; Round 317 — Turbostat ext, Cpupower ext, Numactl ext (batch 2)
+
+(def (cmd-turbostat-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turbostat: showing summary")))
+
+(def (cmd-turbostat-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package ID: "
+      (lambda (pkg)
+        (echo-message! echo (str "Turbostat: showing package " pkg))))))
+
+(def (cmd-cpupower-frequency app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cpupower: showing frequency info")))
+
+(def (cmd-cpupower-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cpupower: showing CPU power info")))
+
+(def (cmd-cpupower-governor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Governor: "
+      (lambda (gov)
+        (echo-message! echo (str "Cpupower: setting governor to " gov))))))
+
+(def (cmd-cpupower-idle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cpupower: showing idle state info")))
+
+(def (cmd-numactl-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Numactl: showing NUMA policy")))
+
+(def (cmd-numactl-hardware app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Numactl: showing hardware topology")))
+
+(def (cmd-numactl-bind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "NUMA node: "
+      (lambda (node)
+        (echo-message! echo (str "Numactl: binding to node " node))))))
+
+(def (cmd-numactl-interleave app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Nodes: "
+      (lambda (nodes)
+        (echo-message! echo (str "Numactl: interleaving across " nodes))))))

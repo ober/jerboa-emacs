@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 317 — Ipmitool ext, Lm-sensors ext, Turbostat ext, Cpupower ext, Numactl ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `ipmitool-sensor` | :orange_circle: | List IPMI sensor readings |
+| `ipmitool-sdr` | :orange_circle: | Show SDR repository |
+| `ipmitool-sel` | :orange_circle: | Show system event log |
+| `ipmitool-chassis` | :orange_circle: | Show chassis status |
+| `lm-sensors-detect` | :orange_circle: | Detect hardware monitors |
+| `lm-sensors-show` | :orange_circle: | Show all sensor readings |
+| `lm-sensors-fan` | :orange_circle: | Show fan speeds |
+| `lm-sensors-temp` | :orange_circle: | Show temperatures |
+| `turbostat-show` | :orange_circle: | Show CPU frequency/power |
+| `turbostat-interval` | :orange_circle: | Monitor at interval |
+| `turbostat-summary` | :orange_circle: | Show turbostat summary |
+| `turbostat-package` | :orange_circle: | Show package stats |
+| `cpupower-frequency` | :orange_circle: | Show frequency info |
+| `cpupower-info` | :orange_circle: | Show CPU power info |
+| `cpupower-governor` | :orange_circle: | Set CPU governor |
+| `cpupower-idle` | :orange_circle: | Show idle state info |
+| `numactl-show` | :orange_circle: | Show NUMA policy |
+| `numactl-hardware` | :orange_circle: | Show NUMA topology |
+| `numactl-bind` | :orange_circle: | Bind to NUMA node |
+| `numactl-interleave` | :orange_circle: | Interleave across nodes |
+
 ### Round 316 — Smartctl ext, Hdparm ext, Sdparm ext, Nvme ext, Fio ext
 
 | Feature | Status | Notes |
