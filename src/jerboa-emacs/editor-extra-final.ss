@@ -24836,3 +24836,54 @@
 (def (cmd-mcelog-triggers app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Mcelog: showing trigger scripts")))
+;;; Round 336 — Ltrace ext, Sysdig ext, Bpftrace ext (batch 2)
+
+(def (cmd-ltrace-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ltrace: showing library call summary")))
+
+(def (cmd-ltrace-count app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ltrace: counting library calls")))
+
+(def (cmd-sysdig-capture app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sysdig capture file: "
+      (lambda (file)
+        (echo-message! echo (str "Sysdig: capturing to " file))))))
+
+(def (cmd-sysdig-chisel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sysdig chisel name: "
+      (lambda (chisel)
+        (echo-message! echo (str "Sysdig: running chisel " chisel))))))
+
+(def (cmd-sysdig-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sysdig filter: "
+      (lambda (filter)
+        (echo-message! echo (str "Sysdig: applying filter " filter))))))
+
+(def (cmd-sysdig-live app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Sysdig: live system event stream")))
+
+(def (cmd-bpftrace-probe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "BPFtrace probe: "
+      (lambda (probe)
+        (echo-message! echo (str "BPFtrace: attaching probe " probe))))))
+
+(def (cmd-bpftrace-script app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "BPFtrace script file: "
+      (lambda (file)
+        (echo-message! echo (str "BPFtrace: running script " file))))))
+
+(def (cmd-bpftrace-histogram app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BPFtrace: generating histogram")))
+
+(def (cmd-bpftrace-oneliners app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "BPFtrace: showing common one-liners")))

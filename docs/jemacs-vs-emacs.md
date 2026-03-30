@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 336 — Perf ext, Strace ext, Ltrace ext, Sysdig ext, Bpftrace ext
+
+| Feature | Status | Notes |
+|---|---|---|
+| perf-annotate | :orange_circle: | Perf: annotate source with profiling data |
+| perf-diff | :orange_circle: | Perf: diff between perf.data files |
+| perf-script | :orange_circle: | Perf: script output from perf.data |
+| perf-bench | :orange_circle: | Perf: run benchmark suite |
+| strace-process | :orange_circle: | Strace: trace a process by PID |
+| strace-syscall | :orange_circle: | Strace: filter by syscall |
+| strace-summary | :orange_circle: | Strace: syscall summary |
+| strace-follow | :orange_circle: | Strace: follow child processes |
+| ltrace-process | :orange_circle: | Ltrace: trace a process |
+| ltrace-demangle | :orange_circle: | Ltrace: demangle C++ symbols |
+| ltrace-summary | :orange_circle: | Ltrace: library call summary |
+| ltrace-count | :orange_circle: | Ltrace: count library calls |
+| sysdig-capture | :orange_circle: | Sysdig: capture events to file |
+| sysdig-chisel | :orange_circle: | Sysdig: run a chisel |
+| sysdig-filter | :orange_circle: | Sysdig: apply event filter |
+| sysdig-live | :orange_circle: | Sysdig: live event stream |
+| bpftrace-probe | :orange_circle: | BPFtrace: attach a probe |
+| bpftrace-script | :orange_circle: | BPFtrace: run a script |
+| bpftrace-histogram | :orange_circle: | BPFtrace: generate histogram |
+| bpftrace-oneliners | :orange_circle: | BPFtrace: common one-liners |
+
 ### Round 335 — Hwinfo ext, Inxi ext, Lstopo ext, Likwid ext, Mcelog ext
 
 | Feature | Status | Notes |

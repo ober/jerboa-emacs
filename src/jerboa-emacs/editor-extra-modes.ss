@@ -25534,3 +25534,51 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Lstopo: text topology output")))
 
+
+;;; Round 336 — Perf ext, Strace ext, Ltrace ext, Sysdig ext, Bpftrace ext (batch 1)
+
+(def (cmd-perf-annotate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf: annotating source with profiling data")))
+
+(def (cmd-perf-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf: diff between two perf.data files")))
+
+(def (cmd-perf-script app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf: script output from perf.data")))
+
+(def (cmd-perf-bench app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Perf: running benchmark suite")))
+
+(def (cmd-strace-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Strace PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Strace: tracing process " pid))))))
+
+(def (cmd-strace-syscall app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Strace syscall filter: "
+      (lambda (filter)
+        (echo-message! echo (str "Strace: filtering syscall " filter))))))
+
+(def (cmd-strace-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Strace: showing syscall summary")))
+
+(def (cmd-strace-follow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Strace: following child processes")))
+
+(def (cmd-ltrace-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Ltrace PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Ltrace: tracing process " pid))))))
+
+(def (cmd-ltrace-demangle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ltrace: demangling C++ symbols")))
