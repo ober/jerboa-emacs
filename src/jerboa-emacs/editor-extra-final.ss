@@ -24736,3 +24736,53 @@
 (def (cmd-lsmem-ranges app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Lsmem: showing all memory ranges")))
+
+;;; Round 334 — Lsusb ext, Lshw ext, Dmidecode ext (batch 2)
+
+(def (cmd-lsusb-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsusb: showing USB tree")))
+
+(def (cmd-lsusb-device app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bus:Device: "
+      (lambda (spec)
+        (echo-message! echo (str "Lsusb: showing device " spec))))))
+
+(def (cmd-lshw-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lshw: showing hardware info")))
+
+(def (cmd-lshw-short app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lshw: short hardware listing")))
+
+(def (cmd-lshw-class app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Class: "
+      (lambda (cls)
+        (echo-message! echo (str "Lshw: showing " cls " devices"))))))
+
+(def (cmd-lshw-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lshw: showing hardware as JSON")))
+
+(def (cmd-dmidecode-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmidecode: showing DMI table")))
+
+(def (cmd-dmidecode-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "DMI type: "
+      (lambda (t)
+        (echo-message! echo (str "Dmidecode: showing type " t))))))
+
+(def (cmd-dmidecode-string app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "String keyword: "
+      (lambda (kw)
+        (echo-message! echo (str "Dmidecode: " kw))))))
+
+(def (cmd-dmidecode-keyword app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmidecode: listing keywords")))

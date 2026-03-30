@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 334 — Lscpu ext, Lspci ext, Lsusb ext, Lshw ext, Dmidecode ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lscpu-show` | :orange_circle: | Show CPU architecture |
+| `lscpu-json` | :orange_circle: | CPU info as JSON |
+| `lscpu-extended` | :orange_circle: | Extended CPU info |
+| `lscpu-caches` | :orange_circle: | CPU cache info |
+| `lspci-show` | :orange_circle: | List PCI devices |
+| `lspci-verbose` | :orange_circle: | Verbose PCI listing |
+| `lspci-kernel` | :orange_circle: | Show kernel drivers |
+| `lspci-tree` | :orange_circle: | PCI device tree |
+| `lsusb-show` | :orange_circle: | List USB devices |
+| `lsusb-verbose` | :orange_circle: | Verbose USB listing |
+| `lsusb-tree` | :orange_circle: | USB device tree |
+| `lsusb-device` | :orange_circle: | Show specific device |
+| `lshw-show` | :orange_circle: | Show hardware info |
+| `lshw-short` | :orange_circle: | Short hardware listing |
+| `lshw-class` | :orange_circle: | Filter by class |
+| `lshw-json` | :orange_circle: | Hardware as JSON |
+| `dmidecode-show` | :orange_circle: | Show DMI table |
+| `dmidecode-type` | :orange_circle: | Show by DMI type |
+| `dmidecode-string` | :orange_circle: | Show string keyword |
+| `dmidecode-keyword` | :orange_circle: | List keywords |
+
 ### Round 333 — Lsof-ext ext, Fuser ext, Lsns ext, Lsipc ext, Lsmem ext
 
 | Feature | Status | Notes |

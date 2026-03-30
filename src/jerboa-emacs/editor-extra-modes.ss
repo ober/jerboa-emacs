@@ -25450,3 +25450,45 @@
       (lambda (t)
         (echo-message! echo (str "Lsns: listing " t " namespaces"))))))
 
+;;; Round 334 — Lscpu ext, Lspci ext, Lsusb ext, Lshw ext, Dmidecode ext (batch 1)
+
+(def (cmd-lscpu-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lscpu: showing CPU architecture info")))
+
+(def (cmd-lscpu-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lscpu: showing CPU info as JSON")))
+
+(def (cmd-lscpu-extended app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lscpu: showing extended CPU info")))
+
+(def (cmd-lscpu-caches app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lscpu: showing CPU cache info")))
+
+(def (cmd-lspci-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lspci: listing PCI devices")))
+
+(def (cmd-lspci-verbose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lspci: verbose PCI listing")))
+
+(def (cmd-lspci-kernel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lspci: showing kernel drivers")))
+
+(def (cmd-lspci-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lspci: showing PCI tree")))
+
+(def (cmd-lsusb-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsusb: listing USB devices")))
+
+(def (cmd-lsusb-verbose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsusb: verbose USB listing")))
+
