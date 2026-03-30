@@ -13359,4 +13359,35 @@
   ;; Round 720: Language Modes ext (Zig, Odin, V, Nim)
   (register-command! 'zig-build cmd-zig-build) (register-command! 'zig-test cmd-zig-test) (register-command! 'zig-fmt cmd-zig-fmt) (register-command! 'odin-build cmd-odin-build) (register-command! 'odin-test cmd-odin-test)
   (register-command! 'v-fmt cmd-v-fmt) (register-command! 'v-build cmd-v-build) (register-command! 'nim-compile cmd-nim-compile) (register-command! 'nim-run cmd-nim-run) (register-command! 'nim-suggest cmd-nim-suggest)
+
+  ;; Round 721: New Lang (Mojo, Gleam, Crystal, Carbon, Roc)
+  (register-command! 'mojo-fmt cmd-mojo-fmt) (register-command! 'gleam-fmt cmd-gleam-fmt) (register-command! 'crystal-test cmd-crystal-test) (register-command! 'crystal-fmt cmd-crystal-fmt) (register-command! 'carbon-build cmd-carbon-build)
+  (register-command! 'carbon-fmt cmd-carbon-fmt) (register-command! 'roc-fmt cmd-roc-fmt) (register-command! 'vale-lint cmd-vale-lint) (register-command! 'vale-sync cmd-vale-sync) (register-command! 'just-build cmd-just-build)
+  ;; Round 722: Web Mode ext, Emmet
+  (register-command! 'web-mode-tag-beginning cmd-web-mode-tag-beginning) (register-command! 'web-mode-tag-end cmd-web-mode-tag-end) (register-command! 'web-mode-block-beginning cmd-web-mode-block-beginning) (register-command! 'web-mode-block-end cmd-web-mode-block-end) (register-command! 'web-mode-block-select cmd-web-mode-block-select)
+  (register-command! 'web-mode-navigate cmd-web-mode-navigate) (register-command! 'web-mode-dom-errors-show cmd-web-mode-dom-errors-show) (register-command! 'web-mode-whitespaces-show cmd-web-mode-whitespaces-show) (register-command! 'emmet-expand-yas cmd-emmet-expand-yas) (register-command! 'emmet-wrap-with-markup cmd-emmet-wrap-with-markup)
+  ;; Round 723: Build Tools ext
+  (register-command! 'just-list cmd-just-list) (register-command! 'just-choose cmd-just-choose) (register-command! 'earthfile-mode cmd-earthfile-mode) (register-command! 'meson-build cmd-meson-build) (register-command! 'meson-configure cmd-meson-configure)
+  (register-command! 'sbt-start cmd-sbt-start) (register-command! 'lein-compile cmd-lein-compile) (register-command! 'mix-format cmd-mix-format) (register-command! 'cargo-watch cmd-cargo-watch) (register-command! 'cargo-expand cmd-cargo-expand)
+  ;; Round 724: Skewer, Indium, HTTPD, Playwright
+  (register-command! 'httpd-start cmd-httpd-start) (register-command! 'httpd-stop cmd-httpd-stop) (register-command! 'skewer-eval-defun cmd-skewer-eval-defun) (register-command! 'skewer-eval-last cmd-skewer-eval-last) (register-command! 'skewer-html-eval cmd-skewer-html-eval)
+  (register-command! 'skewer-css-eval cmd-skewer-css-eval) (register-command! 'indium-connect cmd-indium-connect) (register-command! 'indium-eval-last cmd-indium-eval-last) (register-command! 'playwright-test cmd-playwright-test) (register-command! 'playwright-show-report cmd-playwright-show-report)
+  ;; Round 725: Python ext, Ruby ext
+  (register-command! 'go-playground cmd-go-playground) (register-command! 'go-playground-exec cmd-go-playground-exec) (register-command! 'python-black-buffer cmd-python-black-buffer) (register-command! 'python-black-region cmd-python-black-region) (register-command! 'ruff-format cmd-ruff-format)
+  (register-command! 'ruff-check cmd-ruff-check) (register-command! 'ruff-fix cmd-ruff-fix) (register-command! 'ruby-test-run cmd-ruby-test-run) (register-command! 'ruby-test-at-point cmd-ruby-test-at-point) (register-command! 'minitest-verify cmd-minitest-verify)
+  ;; Round 726: NPM, PNPM, Yarn, Deno
+  (register-command! 'npm-mode cmd-npm-mode) (register-command! 'npm-run cmd-npm-run) (register-command! 'npm-install cmd-npm-install) (register-command! 'pnpm-run cmd-pnpm-run) (register-command! 'pnpm-install cmd-pnpm-install)
+  (register-command! 'yarn-run cmd-yarn-run) (register-command! 'yarn-install cmd-yarn-install) (register-command! 'deno-run cmd-deno-run) (register-command! 'deno-fmt cmd-deno-fmt) (register-command! 'deno-lint cmd-deno-lint)
+  ;; Round 727: JS Testing ext
+  (register-command! 'minitest-verify-single cmd-minitest-verify-single) (register-command! 'minitest-verify-all cmd-minitest-verify-all) (register-command! 'jest-test-run cmd-jest-test-run) (register-command! 'jest-test-at-point cmd-jest-test-at-point) (register-command! 'jest-test-debug cmd-jest-test-debug)
+  (register-command! 'mocha-test-project cmd-mocha-test-project) (register-command! 'mocha-test-file cmd-mocha-test-file) (register-command! 'mocha-test-at-point cmd-mocha-test-at-point) (register-command! 'karma-start cmd-karma-start) (register-command! 'karma-run cmd-karma-run)
+  ;; Round 728: Bun, Turbo, Nx
+  (register-command! 'bun-run cmd-bun-run) (register-command! 'bun-install cmd-bun-install) (register-command! 'bun-test cmd-bun-test) (register-command! 'turbo-run cmd-turbo-run) (register-command! 'turbo-build cmd-turbo-build)
+  (register-command! 'nx-run cmd-nx-run) (register-command! 'nx-build cmd-nx-build) (register-command! 'nx-test cmd-nx-test) (register-command! 'nx-graph cmd-nx-graph) (register-command! 'nx-affected cmd-nx-affected)
+  ;; Round 729: JS Refactoring
+  (register-command! 'js2-refactor-mode cmd-js2-refactor-mode) (register-command! 'js2r-extract-function cmd-js2r-extract-function) (register-command! 'js2r-extract-var cmd-js2r-extract-var) (register-command! 'js2r-rename-var cmd-js2r-rename-var) (register-command! 'js2r-inline-temp cmd-js2r-inline-temp)
+  (register-command! 'tide-rename-symbol cmd-tide-rename-symbol) (register-command! 'tide-fix cmd-tide-fix) (register-command! 'tide-organize-imports cmd-tide-organize-imports) (register-command! 'tide-restart-server cmd-tide-restart-server) (register-command! 'add-node-modules-path cmd-add-node-modules-path)
+  ;; Round 730: Vitest, Storybook, Tailwind, CSS ext
+  (register-command! 'vitest-run cmd-vitest-run) (register-command! 'vitest-watch cmd-vitest-watch) (register-command! 'vitest-run-file cmd-vitest-run-file) (register-command! 'storybook-start cmd-storybook-start) (register-command! 'storybook-build cmd-storybook-build)
+  (register-command! 'tailwindcss-mode cmd-tailwindcss-mode) (register-command! 'tailwindcss-sort cmd-tailwindcss-sort) (register-command! 'tailwindcss-lookup cmd-tailwindcss-lookup) (register-command! 'postcss-mode cmd-postcss-mode) (register-command! 'sass-mode cmd-sass-mode)
 )

@@ -6008,6 +6008,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `nim-compile` | :orange_circle: Scaffold | Compile |
 | `nim-run` | :orange_circle: Scaffold | Run |
 | `nim-suggest` | :orange_circle: Scaffold | Suggest |
+
+### Round 721 — New Lang Modes (Mojo, Gleam, Crystal, Carbon, Roc)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mojo-fmt` | :orange_circle: Scaffold | Format |
+| `gleam-fmt` | :orange_circle: Scaffold | Format |
+| `crystal-test` | :orange_circle: Scaffold | Test |
+| `crystal-fmt` | :orange_circle: Scaffold | Format |
+| `carbon-build` | :orange_circle: Scaffold | Build |
+| `carbon-fmt` | :orange_circle: Scaffold | Format |
+| `roc-fmt` | :orange_circle: Scaffold | Format |
+| `vale-lint` | :orange_circle: Scaffold | Lint prose |
+| `vale-sync` | :orange_circle: Scaffold | Sync styles |
+| `just-build` | :orange_circle: Scaffold | Build |
+
+### Round 722 — Web Mode ext & Emmet
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `web-mode-tag-beginning` | :orange_circle: Scaffold | Tag beginning |
+| `web-mode-tag-end` | :orange_circle: Scaffold | Tag end |
+| `web-mode-block-beginning` | :orange_circle: Scaffold | Block beginning |
+| `web-mode-block-end` | :orange_circle: Scaffold | Block end |
+| `web-mode-block-select` | :orange_circle: Scaffold | Block select |
+| `web-mode-navigate` | :orange_circle: Scaffold | Navigate |
+| `web-mode-dom-errors-show` | :orange_circle: Scaffold | Show DOM errors |
+| `web-mode-whitespaces-show` | :orange_circle: Scaffold | Show whitespace |
+| `emmet-expand-yas` | :orange_circle: Scaffold | Expand with YAS |
+| `emmet-wrap-with-markup` | :orange_circle: Scaffold | Wrap with markup |
+
+### Round 723 — Build Tools (Just, Meson, SBT, Mix, Cargo ext)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `just-list` | :orange_circle: Scaffold | List recipes |
+| `just-choose` | :orange_circle: Scaffold | Choose recipe |
+| `earthfile-mode` | :orange_circle: Scaffold | Earthfile mode |
+| `meson-build` | :orange_circle: Scaffold | Build |
+| `meson-configure` | :orange_circle: Scaffold | Configure |
+| `sbt-start` | :orange_circle: Scaffold | Start |
+| `lein-compile` | :orange_circle: Scaffold | Compile |
+| `mix-format` | :orange_circle: Scaffold | Format |
+| `cargo-watch` | :orange_circle: Scaffold | Watch |
+| `cargo-expand` | :orange_circle: Scaffold | Expand macros |
+
+### Round 724 — Skewer, Indium, HTTPD & Playwright
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `httpd-start` | :orange_circle: Scaffold | Start server |
+| `httpd-stop` | :orange_circle: Scaffold | Stop server |
+| `skewer-eval-defun` | :orange_circle: Scaffold | Eval defun |
+| `skewer-eval-last` | :orange_circle: Scaffold | Eval last |
+| `skewer-html-eval` | :orange_circle: Scaffold | Eval HTML tag |
+| `skewer-css-eval` | :orange_circle: Scaffold | Eval CSS rule |
+| `indium-connect` | :orange_circle: Scaffold | Connect |
+| `indium-eval-last` | :orange_circle: Scaffold | Eval last |
+| `playwright-test` | :orange_circle: Scaffold | Test |
+| `playwright-show-report` | :orange_circle: Scaffold | Show report |
+
+### Round 725 — Python ext (Black, Ruff) & Ruby Testing
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `go-playground` | :orange_circle: Scaffold | Open playground |
+| `go-playground-exec` | :orange_circle: Scaffold | Execute |
+| `python-black-buffer` | :orange_circle: Scaffold | Format buffer |
+| `python-black-region` | :orange_circle: Scaffold | Format region |
+| `ruff-format` | :orange_circle: Scaffold | Format |
+| `ruff-check` | :orange_circle: Scaffold | Check |
+| `ruff-fix` | :orange_circle: Scaffold | Fix |
+| `ruby-test-run` | :orange_circle: Scaffold | Run tests |
+| `ruby-test-at-point` | :orange_circle: Scaffold | Test at point |
+| `minitest-verify` | :orange_circle: Scaffold | Verify |
+
+### Round 726 — NPM, PNPM, Yarn & Deno
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `npm-mode` | :orange_circle: Scaffold | Toggle mode |
+| `npm-run` | :orange_circle: Scaffold | Run script |
+| `npm-install` | :orange_circle: Scaffold | Install |
+| `pnpm-run` | :orange_circle: Scaffold | Run |
+| `pnpm-install` | :orange_circle: Scaffold | Install |
+| `yarn-run` | :orange_circle: Scaffold | Run |
+| `yarn-install` | :orange_circle: Scaffold | Install |
+| `deno-run` | :orange_circle: Scaffold | Run |
+| `deno-fmt` | :orange_circle: Scaffold | Format |
+| `deno-lint` | :orange_circle: Scaffold | Lint |
+
+### Round 727 — JS Testing (Jest, Mocha, Karma)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `minitest-verify-single` | :orange_circle: Scaffold | Verify single |
+| `minitest-verify-all` | :orange_circle: Scaffold | Verify all |
+| `jest-test-run` | :orange_circle: Scaffold | Run tests |
+| `jest-test-at-point` | :orange_circle: Scaffold | Test at point |
+| `jest-test-debug` | :orange_circle: Scaffold | Debug test |
+| `mocha-test-project` | :orange_circle: Scaffold | Test project |
+| `mocha-test-file` | :orange_circle: Scaffold | Test file |
+| `mocha-test-at-point` | :orange_circle: Scaffold | Test at point |
+| `karma-start` | :orange_circle: Scaffold | Start |
+| `karma-run` | :orange_circle: Scaffold | Run |
+
+### Round 728 — Bun, Turbo & Nx
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `bun-run` | :orange_circle: Scaffold | Run |
+| `bun-install` | :orange_circle: Scaffold | Install |
+| `bun-test` | :orange_circle: Scaffold | Test |
+| `turbo-run` | :orange_circle: Scaffold | Run |
+| `turbo-build` | :orange_circle: Scaffold | Build |
+| `nx-run` | :orange_circle: Scaffold | Run |
+| `nx-build` | :orange_circle: Scaffold | Build |
+| `nx-test` | :orange_circle: Scaffold | Test |
+| `nx-graph` | :orange_circle: Scaffold | Graph |
+| `nx-affected` | :orange_circle: Scaffold | Affected |
+
+### Round 729 — JS Refactoring (JS2R, Tide ext)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `js2-refactor-mode` | :orange_circle: Scaffold | Toggle mode |
+| `js2r-extract-function` | :orange_circle: Scaffold | Extract function |
+| `js2r-extract-var` | :orange_circle: Scaffold | Extract variable |
+| `js2r-rename-var` | :orange_circle: Scaffold | Rename variable |
+| `js2r-inline-temp` | :orange_circle: Scaffold | Inline temp |
+| `tide-rename-symbol` | :orange_circle: Scaffold | Rename symbol |
+| `tide-fix` | :orange_circle: Scaffold | Fix |
+| `tide-organize-imports` | :orange_circle: Scaffold | Organize imports |
+| `tide-restart-server` | :orange_circle: Scaffold | Restart server |
+| `add-node-modules-path` | :orange_circle: Scaffold | Add to path |
+
+### Round 730 — Vitest, Storybook, Tailwind & CSS ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vitest-run` | :orange_circle: Scaffold | Run |
+| `vitest-watch` | :orange_circle: Scaffold | Watch |
+| `vitest-run-file` | :orange_circle: Scaffold | Run file |
+| `storybook-start` | :orange_circle: Scaffold | Start |
+| `storybook-build` | :orange_circle: Scaffold | Build |
+| `tailwindcss-mode` | :orange_circle: Scaffold | Toggle mode |
+| `tailwindcss-sort` | :orange_circle: Scaffold | Sort classes |
+| `tailwindcss-lookup` | :orange_circle: Scaffold | Lookup class |
+| `postcss-mode` | :orange_circle: Scaffold | PostCSS mode |
+| `sass-mode` | :orange_circle: Scaffold | Sass mode |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
