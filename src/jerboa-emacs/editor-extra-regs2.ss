@@ -12987,4 +12987,35 @@
   ;; Round 600: Rate Limiting & Load Shedding
   (register-command! 'ratelimit-token cmd-ratelimit-token) (register-command! 'ratelimit-leaky cmd-ratelimit-leaky) (register-command! 'ratelimit-sliding cmd-ratelimit-sliding) (register-command! 'ratelimit-fixed cmd-ratelimit-fixed) (register-command! 'ratelimit-adaptive cmd-ratelimit-adaptive)
   (register-command! 'loadshed-priority cmd-loadshed-priority) (register-command! 'loadshed-random cmd-loadshed-random) (register-command! 'loadshed-tail cmd-loadshed-tail) (register-command! 'backpressure-signal cmd-backpressure-signal) (register-command! 'backpressure-buffer cmd-backpressure-buffer)
+
+  ;; Round 601: Consensus ext (VR, PBFT, ZAB)
+  (register-command! 'viewstamped-prepare cmd-viewstamped-prepare) (register-command! 'viewstamped-commit cmd-viewstamped-commit) (register-command! 'viewstamped-view-change cmd-viewstamped-view-change) (register-command! 'pbft-preprepare cmd-pbft-preprepare) (register-command! 'pbft-prepare cmd-pbft-prepare)
+  (register-command! 'pbft-commit cmd-pbft-commit) (register-command! 'pbft-view-change cmd-pbft-view-change) (register-command! 'pbft-checkpoint cmd-pbft-checkpoint) (register-command! 'zab-propose cmd-zab-propose) (register-command! 'zab-commit cmd-zab-commit)
+  ;; Round 602: Distributed Transactions
+  (register-command! 'twophase-prepare cmd-twophase-prepare) (register-command! 'twophase-commit cmd-twophase-commit) (register-command! 'twophase-abort cmd-twophase-abort) (register-command! 'twophase-recover cmd-twophase-recover) (register-command! 'twophase-timeout cmd-twophase-timeout)
+  (register-command! 'threephase-cancommit cmd-threephase-cancommit) (register-command! 'threephase-precommit cmd-threephase-precommit) (register-command! 'threephase-docommit cmd-threephase-docommit) (register-command! 'threephase-abort cmd-threephase-abort) (register-command! 'threephase-timeout cmd-threephase-timeout)
+  ;; Round 603: Vector Clocks & HLC
+  (register-command! 'vclock-increment cmd-vclock-increment) (register-command! 'vclock-merge cmd-vclock-merge) (register-command! 'vclock-compare cmd-vclock-compare) (register-command! 'vclock-concurrent cmd-vclock-concurrent) (register-command! 'vclock-happensbefore cmd-vclock-happensbefore)
+  (register-command! 'hlc-timestamp cmd-hlc-timestamp) (register-command! 'hlc-merge cmd-hlc-merge) (register-command! 'hlc-compare cmd-hlc-compare) (register-command! 'hlc-drift cmd-hlc-drift) (register-command! 'hlc-serialize cmd-hlc-serialize)
+  ;; Round 604: Gossip Protocols
+  (register-command! 'gossip-push cmd-gossip-push) (register-command! 'gossip-pull cmd-gossip-pull) (register-command! 'gossip-pushpull cmd-gossip-pushpull) (register-command! 'gossip-suspect cmd-gossip-suspect) (register-command! 'gossip-alive cmd-gossip-alive)
+  (register-command! 'gossip-dead cmd-gossip-dead) (register-command! 'gossip-protocol cmd-gossip-protocol) (register-command! 'gossip-fanout cmd-gossip-fanout) (register-command! 'gossip-interval cmd-gossip-interval) (register-command! 'gossip-state cmd-gossip-state)
+  ;; Round 605: Service Mesh
+  (register-command! 'envoy-filter cmd-envoy-filter) (register-command! 'envoy-health cmd-envoy-health) (register-command! 'envoy-retry cmd-envoy-retry) (register-command! 'envoy-circuit cmd-envoy-circuit) (register-command! 'envoy-ratelimit cmd-envoy-ratelimit)
+  (register-command! 'istio-inject cmd-istio-inject) (register-command! 'istio-gateway cmd-istio-gateway) (register-command! 'istio-virtualservice cmd-istio-virtualservice) (register-command! 'istio-destinationrule cmd-istio-destinationrule) (register-command! 'istio-policy cmd-istio-policy)
+  ;; Round 606: API Gateways
+  (register-command! 'apigateway-route cmd-apigateway-route) (register-command! 'apigateway-ratelimit cmd-apigateway-ratelimit) (register-command! 'apigateway-auth cmd-apigateway-auth) (register-command! 'apigateway-transform cmd-apigateway-transform) (register-command! 'apigateway-cors cmd-apigateway-cors)
+  (register-command! 'apigateway-cache cmd-apigateway-cache) (register-command! 'apigateway-circuit cmd-apigateway-circuit) (register-command! 'apigateway-log cmd-apigateway-log) (register-command! 'apigateway-monitor cmd-apigateway-monitor) (register-command! 'apigateway-plugin cmd-apigateway-plugin)
+  ;; Round 607: Message Queues
+  (register-command! 'mq-publish cmd-mq-publish) (register-command! 'mq-subscribe cmd-mq-subscribe) (register-command! 'mq-ack cmd-mq-ack) (register-command! 'mq-nack cmd-mq-nack) (register-command! 'mq-deadletter cmd-mq-deadletter)
+  (register-command! 'mq-retry cmd-mq-retry) (register-command! 'mq-priority cmd-mq-priority) (register-command! 'mq-delay cmd-mq-delay) (register-command! 'mq-partition cmd-mq-partition) (register-command! 'mq-compact cmd-mq-compact)
+  ;; Round 608: Stream Processing
+  (register-command! 'stream-window cmd-stream-window) (register-command! 'stream-tumbling cmd-stream-tumbling) (register-command! 'stream-sliding cmd-stream-sliding) (register-command! 'stream-session cmd-stream-session) (register-command! 'stream-watermark cmd-stream-watermark)
+  (register-command! 'stream-checkpoint cmd-stream-checkpoint) (register-command! 'stream-exactly-once cmd-stream-exactly-once) (register-command! 'stream-join cmd-stream-join) (register-command! 'stream-aggregate cmd-stream-aggregate) (register-command! 'stream-sink cmd-stream-sink)
+  ;; Round 609: Workflow Engines
+  (register-command! 'workflow-start cmd-workflow-start) (register-command! 'workflow-step cmd-workflow-step) (register-command! 'workflow-branch cmd-workflow-branch) (register-command! 'workflow-merge cmd-workflow-merge) (register-command! 'workflow-timeout cmd-workflow-timeout)
+  (register-command! 'workflow-retry cmd-workflow-retry) (register-command! 'workflow-compensate cmd-workflow-compensate) (register-command! 'workflow-signal cmd-workflow-signal) (register-command! 'workflow-query cmd-workflow-query) (register-command! 'workflow-terminate cmd-workflow-terminate)
+  ;; Round 610: State Machines
+  (register-command! 'statemachine-transition cmd-statemachine-transition) (register-command! 'statemachine-guard cmd-statemachine-guard) (register-command! 'statemachine-action cmd-statemachine-action) (register-command! 'statemachine-enter cmd-statemachine-enter) (register-command! 'statemachine-exit cmd-statemachine-exit)
+  (register-command! 'statemachine-initial cmd-statemachine-initial) (register-command! 'statemachine-final cmd-statemachine-final) (register-command! 'statemachine-parallel cmd-statemachine-parallel) (register-command! 'statemachine-history cmd-statemachine-history) (register-command! 'statemachine-event cmd-statemachine-event)
 )

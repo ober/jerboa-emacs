@@ -4808,6 +4808,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `cosmwasm-schema` | :orange_circle: Scaffolded | CosmWasm: schema |
 | `cosmwasm-optimize` | :orange_circle: Scaffolded | CosmWasm: optimize |
 
+### Round 601 — Consensus ext (VR, PBFT, ZAB)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `viewstamped-prepare` | :orange_circle: Scaffold | VR prepare |
+| `viewstamped-commit` | :orange_circle: Scaffold | VR commit |
+| `viewstamped-view-change` | :orange_circle: Scaffold | VR view change |
+| `pbft-preprepare` | :orange_circle: Scaffold | PBFT pre-prepare |
+| `pbft-prepare` | :orange_circle: Scaffold | PBFT prepare |
+| `pbft-commit` | :orange_circle: Scaffold | PBFT commit |
+| `pbft-view-change` | :orange_circle: Scaffold | PBFT view change |
+| `pbft-checkpoint` | :orange_circle: Scaffold | PBFT checkpoint |
+| `zab-propose` | :orange_circle: Scaffold | ZAB propose |
+| `zab-commit` | :orange_circle: Scaffold | ZAB commit |
+
+### Round 602 — Distributed Transactions (2PC, 3PC)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `twophase-prepare` | :orange_circle: Scaffold | 2PC prepare |
+| `twophase-commit` | :orange_circle: Scaffold | 2PC commit |
+| `twophase-abort` | :orange_circle: Scaffold | 2PC abort |
+| `twophase-recover` | :orange_circle: Scaffold | 2PC recover |
+| `twophase-timeout` | :orange_circle: Scaffold | 2PC timeout |
+| `threephase-cancommit` | :orange_circle: Scaffold | 3PC can-commit |
+| `threephase-precommit` | :orange_circle: Scaffold | 3PC pre-commit |
+| `threephase-docommit` | :orange_circle: Scaffold | 3PC do-commit |
+| `threephase-abort` | :orange_circle: Scaffold | 3PC abort |
+| `threephase-timeout` | :orange_circle: Scaffold | 3PC timeout |
+
+### Round 603 — Vector Clocks & HLC
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vclock-increment` | :orange_circle: Scaffold | Increment |
+| `vclock-merge` | :orange_circle: Scaffold | Merge |
+| `vclock-compare` | :orange_circle: Scaffold | Compare |
+| `vclock-concurrent` | :orange_circle: Scaffold | Concurrent check |
+| `vclock-happensbefore` | :orange_circle: Scaffold | Happens-before |
+| `hlc-timestamp` | :orange_circle: Scaffold | Timestamp |
+| `hlc-merge` | :orange_circle: Scaffold | Merge |
+| `hlc-compare` | :orange_circle: Scaffold | Compare |
+| `hlc-drift` | :orange_circle: Scaffold | Drift check |
+| `hlc-serialize` | :orange_circle: Scaffold | Serialize |
+
+### Round 604 — Gossip Protocols
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gossip-push` | :orange_circle: Scaffold | Push |
+| `gossip-pull` | :orange_circle: Scaffold | Pull |
+| `gossip-pushpull` | :orange_circle: Scaffold | Push-pull |
+| `gossip-suspect` | :orange_circle: Scaffold | Suspect node |
+| `gossip-alive` | :orange_circle: Scaffold | Alive |
+| `gossip-dead` | :orange_circle: Scaffold | Dead |
+| `gossip-protocol` | :orange_circle: Scaffold | Protocol config |
+| `gossip-fanout` | :orange_circle: Scaffold | Fanout |
+| `gossip-interval` | :orange_circle: Scaffold | Interval |
+| `gossip-state` | :orange_circle: Scaffold | State sync |
+
+### Round 605 — Service Mesh (Envoy, Istio)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `envoy-filter` | :orange_circle: Scaffold | Filter chain |
+| `envoy-health` | :orange_circle: Scaffold | Health check |
+| `envoy-retry` | :orange_circle: Scaffold | Retry policy |
+| `envoy-circuit` | :orange_circle: Scaffold | Circuit breaker |
+| `envoy-ratelimit` | :orange_circle: Scaffold | Rate limit |
+| `istio-inject` | :orange_circle: Scaffold | Sidecar inject |
+| `istio-gateway` | :orange_circle: Scaffold | Gateway |
+| `istio-virtualservice` | :orange_circle: Scaffold | Virtual service |
+| `istio-destinationrule` | :orange_circle: Scaffold | Destination rule |
+| `istio-policy` | :orange_circle: Scaffold | Policy |
+
+### Round 606 — API Gateways
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `apigateway-route` | :orange_circle: Scaffold | Route |
+| `apigateway-ratelimit` | :orange_circle: Scaffold | Rate limit |
+| `apigateway-auth` | :orange_circle: Scaffold | Auth |
+| `apigateway-transform` | :orange_circle: Scaffold | Transform |
+| `apigateway-cors` | :orange_circle: Scaffold | CORS |
+| `apigateway-cache` | :orange_circle: Scaffold | Cache |
+| `apigateway-circuit` | :orange_circle: Scaffold | Circuit breaker |
+| `apigateway-log` | :orange_circle: Scaffold | Logging |
+| `apigateway-monitor` | :orange_circle: Scaffold | Monitoring |
+| `apigateway-plugin` | :orange_circle: Scaffold | Plugin |
+
+### Round 607 — Message Queues
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mq-publish` | :orange_circle: Scaffold | Publish |
+| `mq-subscribe` | :orange_circle: Scaffold | Subscribe |
+| `mq-ack` | :orange_circle: Scaffold | Acknowledge |
+| `mq-nack` | :orange_circle: Scaffold | Negative ack |
+| `mq-deadletter` | :orange_circle: Scaffold | Dead letter |
+| `mq-retry` | :orange_circle: Scaffold | Retry |
+| `mq-priority` | :orange_circle: Scaffold | Priority |
+| `mq-delay` | :orange_circle: Scaffold | Delayed delivery |
+| `mq-partition` | :orange_circle: Scaffold | Partition |
+| `mq-compact` | :orange_circle: Scaffold | Compact log |
+
+### Round 608 — Stream Processing
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `stream-window` | :orange_circle: Scaffold | Window |
+| `stream-tumbling` | :orange_circle: Scaffold | Tumbling window |
+| `stream-sliding` | :orange_circle: Scaffold | Sliding window |
+| `stream-session` | :orange_circle: Scaffold | Session window |
+| `stream-watermark` | :orange_circle: Scaffold | Watermark |
+| `stream-checkpoint` | :orange_circle: Scaffold | Checkpoint |
+| `stream-exactly-once` | :orange_circle: Scaffold | Exactly-once |
+| `stream-join` | :orange_circle: Scaffold | Join |
+| `stream-aggregate` | :orange_circle: Scaffold | Aggregate |
+| `stream-sink` | :orange_circle: Scaffold | Sink |
+
+### Round 609 — Workflow Engines
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `workflow-start` | :orange_circle: Scaffold | Start |
+| `workflow-step` | :orange_circle: Scaffold | Next step |
+| `workflow-branch` | :orange_circle: Scaffold | Branch |
+| `workflow-merge` | :orange_circle: Scaffold | Merge |
+| `workflow-timeout` | :orange_circle: Scaffold | Timeout |
+| `workflow-retry` | :orange_circle: Scaffold | Retry |
+| `workflow-compensate` | :orange_circle: Scaffold | Compensate |
+| `workflow-signal` | :orange_circle: Scaffold | Signal |
+| `workflow-query` | :orange_circle: Scaffold | Query state |
+| `workflow-terminate` | :orange_circle: Scaffold | Terminate |
+
+### Round 610 — State Machines
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `statemachine-transition` | :orange_circle: Scaffold | Transition |
+| `statemachine-guard` | :orange_circle: Scaffold | Guard |
+| `statemachine-action` | :orange_circle: Scaffold | Action |
+| `statemachine-enter` | :orange_circle: Scaffold | Enter state |
+| `statemachine-exit` | :orange_circle: Scaffold | Exit state |
+| `statemachine-initial` | :orange_circle: Scaffold | Initial state |
+| `statemachine-final` | :orange_circle: Scaffold | Final state |
+| `statemachine-parallel` | :orange_circle: Scaffold | Parallel |
+| `statemachine-history` | :orange_circle: Scaffold | History |
+| `statemachine-event` | :orange_circle: Scaffold | Event |
+
 ### Round 591 — Cache Systems (LRU, LFU, TTL)
 
 | Feature | Status | Notes |
