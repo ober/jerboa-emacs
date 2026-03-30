@@ -6908,6 +6908,306 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `wallabag-show-starred` | :orange_circle: | `wallabag-starred-entries` |
 | `wallabag-show-archived` | :orange_circle: | `wallabag-archived-entries` |
 | `wallabag-export` | :orange_circle: | `wallabag-export-entry` |
+
+### Round 781: Plz ext 2 / Verb ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `plz-get` (sync) | :orange_circle: | `plz-get-sync` |
+| `plz-post` (JSON) | :orange_circle: | `plz-post-json` |
+| `plz-media-type` | :orange_circle: | `plz-media-type` |
+| `plz-request-abort` | :orange_circle: | `plz-request-abort` |
+| `plz-request-body-from-file` | :orange_circle: | `plz-request-body-from-file` |
+| `verb-send-request-on-point` | :orange_circle: | `verb-send-request` |
+| `verb-export-request-on-point` | :orange_circle: | `verb-export-request` |
+| `verb-kill-response-buffer` | :orange_circle: | `verb-kill-response` |
+| `verb-show-headers` | :orange_circle: | `verb-show-headers` |
+| `verb-headers-mode` | :orange_circle: | `verb-headers-mode` |
+
+### Round 782: Restclient ext 2 / Hurl
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `restclient-http-info` | :orange_circle: | `restclient-info-show` |
+| `restclient-jump-prev` | :orange_circle: | `restclient-jump-to-prev` |
+| `restclient-jump-next` | :orange_circle: | `restclient-jump-to-next` |
+| `restclient-outline` | :orange_circle: | `restclient-outline-show` |
+| `restclient-format-json` | :orange_circle: | `restclient-format-json` |
+| `hurl-mode` | :orange_circle: | `hurl-mode` |
+| `hurl-send-request` | :orange_circle: | `hurl-send-request` |
+| `hurl-send-all` | :orange_circle: | `hurl-send-all` |
+| `hurl-show-report` | :orange_circle: | `hurl-show-report` |
+| `hurl-format-buffer` | :orange_circle: | `hurl-format-buffer` |
+
+### Round 783: Osm (OpenStreetMap)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `osm-goto` | :orange_circle: | `osm-goto` |
+| `osm-search` | :orange_circle: | `osm-search` |
+| `osm-gpx-show` | :orange_circle: | `osm-gpx-show` |
+| `osm-bookmark-set` | :orange_circle: | `osm-bookmark-set` |
+| `osm-bookmark-jump` | :orange_circle: | `osm-bookmark-jump` |
+| `osm-zoom-in` | :orange_circle: | `osm-zoom-in` |
+| `osm-zoom-out` | :orange_circle: | `osm-zoom-out` |
+| `osm-center` | :orange_circle: | `osm-center` |
+| `osm-home` | :orange_circle: | `osm-home` |
+| `osm-server` | :orange_circle: | `osm-server-select` |
+
+### Round 784: Speed-type ext 2 / Typing
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `speed-type-text` | :orange_circle: | `speed-type-text` |
+| `speed-type-top-x` | :orange_circle: | `speed-type-top-x` |
+| `speed-type-top-100` | :orange_circle: | `speed-type-top-x-advanced` |
+| `typing-of-emacs` | :orange_circle: | `typing-of-emacs` |
+| `typing-practice` | :orange_circle: | `typing-practice-start` |
+| `typing-game` | :orange_circle: | `typing-game-mode` |
+| `typing-statistics` | :orange_circle: | `typing-stats-display` |
+| `typing-leaderboard` | :orange_circle: | `typing-leaderboard` |
+| `speed-type-code` | :orange_circle: | `speed-type-code-block` |
+| `speed-type-custom` | :orange_circle: | `speed-type-custom-text` |
+
+### Round 785: Keyfreq ext 2 / Command-log ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `keyfreq-reset` | :orange_circle: | `keyfreq-reset` |
+| `keyfreq-autosave-mode` | :orange_circle: | `keyfreq-autosave-mode` |
+| `keyfreq-html` | :orange_circle: | `keyfreq-html` |
+| `keyfreq-table` | :orange_circle: | `keyfreq-table` |
+| `keyfreq-file-save` | :orange_circle: | `keyfreq-file-save` |
+| `clm/open-command-log-buffer` | :orange_circle: | `command-log-open` |
+| `clm/save-command-log` | :orange_circle: | `command-log-save` |
+| `clm/clear-command-log` | :orange_circle: | `command-log-clear` |
+| `clm/close-command-log-buffer` | :orange_circle: | `command-log-close` |
+| `clm/toggle-command-log-buffer` | :orange_circle: | `command-log-toggle-logging` |
+
+### Round 786: Objed / Targets (text object selection)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `objed-activate` | :orange_circle: | `objed-activate` |
+| `objed-activate-object` | :orange_circle: | `objed-activate-object` |
+| `objed-expand-context` | :orange_circle: | `objed-expand-context` |
+| `objed-toggle-side` | :orange_circle: | `objed-toggle-side` |
+| `objed-current-or-next-context` | :orange_circle: | `objed-current-or-next` |
+| `targets-inner-text-object` | :orange_circle: | `targets-text-object` |
+| `targets-inner-pair` | :orange_circle: | `targets-pair` |
+| `targets-inner-quote` | :orange_circle: | `targets-quote` |
+| `targets-inner-separator` | :orange_circle: | `targets-separator` |
+| `targets-last-text-object` | :orange_circle: | `targets-last-text-object` |
+
+### Round 787: Symex (structural Lisp editing)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `symex-go-up` | :orange_circle: | `symex-go-up` |
+| `symex-go-down` | :orange_circle: | `symex-go-down` |
+| `symex-go-forward` | :orange_circle: | `symex-go-forward` |
+| `symex-go-backward` | :orange_circle: | `symex-go-backward` |
+| `symex-traverse-forward` | :orange_circle: | `symex-traverse-forward` |
+| `symex-traverse-backward` | :orange_circle: | `symex-traverse-backward` |
+| `symex-soar-forward` | :orange_circle: | `symex-soar-forward` |
+| `symex-soar-backward` | :orange_circle: | `symex-soar-backward` |
+| `symex-wrap` | :orange_circle: | `symex-wrap` |
+| `symex-yank-after` | :orange_circle: | `symex-yank-after` |
+
+### Round 788: Lispy ext 2 / Paredit ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `lispy-move-up` | :orange_circle: | `lispy-move-up` |
+| `lispy-move-down` | :orange_circle: | `lispy-move-down` |
+| `lispy-outline` | :orange_circle: | `lispy-outline` |
+| `lispy-clone` | :orange_circle: | `lispy-clone` |
+| `lispy-oneline` | :orange_circle: | `lispy-oneline` |
+| `paredit-convolute-sexp` | :orange_circle: | `paredit-convolute` |
+| `paredit-join-sexps` (next) | :orange_circle: | `paredit-join-with-next` |
+| `paredit-join-sexps` (prev) | :orange_circle: | `paredit-join-with-previous` |
+| `paredit-meta-doublequote-and-newline` | :orange_circle: | `paredit-meta-doublequote-and-newline` |
+| `paredit-reindent-defun` | :orange_circle: | `paredit-reindent-defun` |
+
+### Round 789: Tree-edit / Evil-textobj-tree-sitter
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `tree-edit-insert-sibling` | :orange_circle: | `tree-edit-insert-sibling` |
+| `tree-edit-delete` | :orange_circle: | `tree-edit-delete` |
+| `tree-edit-raise` | :orange_circle: | `tree-edit-raise` |
+| `tree-edit-wrap` | :orange_circle: | `tree-edit-wrap` |
+| `tree-edit-goto-parent` | :orange_circle: | `tree-edit-goto-parent` |
+| `evil-textobj-tree-sitter-select` | :orange_circle: | `evil-textobj-tree-sitter-select` |
+| `evil-textobj-tree-sitter-smart-select` | :orange_circle: | `evil-textobj-tree-sitter-smart` |
+| `evil-textobj-tree-sitter-swap-next` | :orange_circle: | `evil-textobj-tree-sitter-swap-next` |
+| `evil-textobj-tree-sitter-swap-prev` | :orange_circle: | `evil-textobj-tree-sitter-swap-prev` |
+| `evil-textobj-tree-sitter-function` | :orange_circle: | `evil-textobj-tree-sitter-function` |
+
+### Round 790: Combobulate ext 3 / Dogears ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `combobulate-cursor-open-node` | :orange_circle: | `combobulate-cursor-open` |
+| `combobulate-cursor-close-node` | :orange_circle: | `combobulate-cursor-close` |
+| `combobulate-highlight-dwim` | :orange_circle: | `combobulate-highlight-dwim` |
+| `combobulate-query-builder` | :orange_circle: | `combobulate-query-builder` |
+| `combobulate-highlight-query-node` | :orange_circle: | `combobulate-highlight-query` |
+| `dogears-list` | :orange_circle: | `dogears-list` |
+| `dogears-sidebar` | :orange_circle: | `dogears-sidebar` |
+| `dogears-mode` | :orange_circle: | `dogears-mode` |
+| `dogears-follow` | :orange_circle: | `dogears-follow` |
+| `dogears-search` | :orange_circle: | `dogears-search` |
+
+### Round 791: Eat ext 3 / Coterm ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `eat-project-other-window` | :orange_circle: | `eat-project-other-window` |
+| `eat-semi-char-mode` (toggle) | :orange_circle: | `eat-semi-char-toggle` |
+| `eat-input-line-mode` | :orange_circle: | `eat-input-line-mode` |
+| `eat-term-char-mode` | :orange_circle: | `eat-term-char-mode` |
+| `eat-trace-save` | :orange_circle: | `eat-trace-save` |
+| `coterm-char-mode-passthrough` | :orange_circle: | `coterm-char-mode-passthrough` |
+| `coterm-scroll-snap-mode` | :orange_circle: | `coterm-scroll-snap` |
+| `coterm-auto-char-lighter` | :orange_circle: | `coterm-auto-char-lighter` |
+| `coterm-filter-functions` | :orange_circle: | `coterm-filter-functions` |
+| `coterm-terminal-columns` | :orange_circle: | `coterm-terminal-columns` |
+
+### Round 792: Detached ext 2 / Inheritenv ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `detached-delete-session` | :orange_circle: | `detached-delete-sessions` |
+| `detached-tail-session` | :orange_circle: | `detached-tail-session` |
+| `detached-session-mode` | :orange_circle: | `detached-session-mode` |
+| `detached-shell-override-history` | :orange_circle: | `detached-shell-override` |
+| `detached-shell-send-input` | :orange_circle: | `detached-shell-send-input` |
+| `inheritenv-add-advice` | :orange_circle: | `inheritenv-add-advice` |
+| `inheritenv-remove-advice` | :orange_circle: | `inheritenv-remove-advice` |
+| `inheritenv-edit` | :orange_circle: | `inheritenv-edit-vars` |
+| `inheritenv-show` | :orange_circle: | `inheritenv-show` |
+| `inheritenv-save` | :orange_circle: | `inheritenv-save` |
+
+### Round 793: Org-super-links / Org-noter ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `org-super-links-store-link` | :orange_circle: | `org-super-links-store-link` |
+| `org-super-links-insert-link` | :orange_circle: | `org-super-links-insert-link` |
+| `org-super-links-quick-insert-inline-link` | :orange_circle: | `org-super-links-quick-insert` |
+| `org-super-links-delete-link` | :orange_circle: | `org-super-links-delete-link` |
+| `org-super-links-convert-link-to-super` | :orange_circle: | `org-super-links-convert-link-to-super` |
+| `org-noter-insert-precise-note` | :orange_circle: | `org-noter-insert-precise-note` |
+| `org-noter-toggle-notes-window-location` | :orange_circle: | `org-noter-toggle-notes-sidebar` |
+| `org-noter-set-start-location` | :orange_circle: | `org-noter-set-start-page` |
+| `org-noter-toggle-notes-window` | :orange_circle: | `org-noter-toggle-notes-window` |
+| `org-noter-create-session-from-document-multi` | :orange_circle: | `org-noter-create-multi-file` |
+
+### Round 794: Org-download ext 2 / Org-web-tools
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `org-download-rename-last-file` | :orange_circle: | `org-download-rename-last` |
+| `org-download-method` | :orange_circle: | `org-download-method-set` |
+| `org-download-annotate-default` | :orange_circle: | `org-download-annotate` |
+| `org-download-image-html-width` | :orange_circle: | `org-download-image-html` |
+| `org-download-rename-at-point` | :orange_circle: | `org-download-rename-at-point-with-time` |
+| `org-web-tools-insert-link-for-url` | :orange_circle: | `org-web-tools-insert-link-for-url` |
+| `org-web-tools-read-url-as-org` | :orange_circle: | `org-web-tools-read-url-as-org` |
+| `org-web-tools-convert-links-to-page-entries` | :orange_circle: | `org-web-tools-convert-links-to-page-entries` |
+| `org-web-tools-archive-view` | :orange_circle: | `org-web-tools-archive-view` |
+| `org-web-tools-archive-attach` | :orange_circle: | `org-web-tools-archive-attach` |
+
+### Round 795: Org-appear ext 2 / Org-modern ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `org-appear-mode` (toggle) | :orange_circle: | `org-appear-toggle` |
+| `org-appear-manual-mode` | :orange_circle: | `org-appear-manual` |
+| `org-appear-inside-latex` | :orange_circle: | `org-appear-inside-latex` |
+| `org-appear-autolinks` | :orange_circle: | `org-appear-autolinks` |
+| `org-appear-autosubmarkers` | :orange_circle: | `org-appear-autosubmarkers` |
+| `org-modern-indent-mode` | :orange_circle: | `org-modern-indent-mode` |
+| `org-modern-tag-mode` | :orange_circle: | `org-modern-tag-mode` |
+| `org-modern-table` | :orange_circle: | `org-modern-table` |
+| `org-modern-block-fringe` | :orange_circle: | `org-modern-block` |
+| `org-modern-keyword` | :orange_circle: | `org-modern-keyword` |
+
+### Round 796: Org-fragtog ext 2 / Org-latex-preview
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `org-fragtog-mode` (toggle) | :orange_circle: | `org-fragtog-toggle` |
+| `org-fragtog-preview-all` | :orange_circle: | `org-fragtog-preview-all` |
+| `org-fragtog-clear-all` | :orange_circle: | `org-fragtog-clear-all` |
+| `org-fragtog-update` | :orange_circle: | `org-fragtog-update` |
+| `org-fragtog-preview-region` | :orange_circle: | `org-fragtog-preview-region` |
+| `org-latex-preview` | :orange_circle: | `org-latex-preview-mode` |
+| `org-latex-preview-region` | :orange_circle: | `org-latex-preview-region` |
+| `org-latex-preview-clear-cache` | :orange_circle: | `org-latex-preview-clear-cache` |
+| `org-latex-preview-rebuild` | :orange_circle: | `org-latex-preview-rebuild` |
+| `org-latex-preview-preamble` | :orange_circle: | `org-latex-preview-preamble` |
+
+### Round 797: Codeium ext 2 / Tabnine
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `codeium-reject-completion` | :orange_circle: | `codeium-reject-completion` |
+| `codeium-toggle` | :orange_circle: | `codeium-toggle` |
+| `codeium-chat` | :orange_circle: | `codeium-chat` |
+| `codeium-explain` | :orange_circle: | `codeium-explain` |
+| `codeium-generate` | :orange_circle: | `codeium-generate` |
+| `tabnine-complete` | :orange_circle: | `tabnine-complete` |
+| `tabnine-accept-completion` | :orange_circle: | `tabnine-accept` |
+| `tabnine-next-completion` | :orange_circle: | `tabnine-next` |
+| `tabnine-previous-completion` | :orange_circle: | `tabnine-previous` |
+| `tabnine-chat` | :orange_circle: | `tabnine-chat` |
+
+### Round 798: Aider / Claude-shell
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `aider-run-aider` | :orange_circle: | `aider-run` |
+| `aider-send-line` | :orange_circle: | `aider-send-line` |
+| `aider-send-region` | :orange_circle: | `aider-send-region` |
+| `aider-architect-mode` | :orange_circle: | `aider-architect-mode` |
+| `aider-drop-file` | :orange_circle: | `aider-drop-file` |
+| `claude-shell-send-input` | :orange_circle: | `claude-shell-send` |
+| `claude-shell-clear` | :orange_circle: | `claude-shell-clear` |
+| `claude-shell-rename-buffer` | :orange_circle: | `claude-shell-rename` |
+| `claude-shell-abort` | :orange_circle: | `claude-shell-abort` |
+| `claude-shell-toggle` | :orange_circle: | `claude-shell-toggle` |
+
+### Round 799: Whisper / Speechd
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `whisper-run` | :orange_circle: | `whisper-run` |
+| `whisper-transcribe-buffer` | :orange_circle: | `whisper-transcribe-buffer` |
+| `whisper-select-model` | :orange_circle: | `whisper-select-model` |
+| `whisper-insert-transcription` | :orange_circle: | `whisper-insert-transcription` |
+| `whisper-abort` | :orange_circle: | `whisper-abort` |
+| `speechd-say-text` | :orange_circle: | `speechd-say` |
+| `speechd-cancel` | :orange_circle: | `speechd-cancel` |
+| `speechd-pause` | :orange_circle: | `speechd-pause` |
+| `speechd-resume` | :orange_circle: | `speechd-resume` |
+| `speechd-set-rate` | :orange_circle: | `speechd-set-rate` |
+
+### Round 800: Transient ext 2 / Hydra ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `transient-show-help` | :orange_circle: | `transient-show-help` |
+| `transient-show-common-commands` | :orange_circle: | `transient-show-common` |
+| `transient-toggle-debug` | :orange_circle: | `transient-toggle-debug` |
+| `transient-toggle-level-limit` | :orange_circle: | `transient-toggle-level-limits` |
+| `transient-insert-suffix` | :orange_circle: | `transient-insert-suffix` |
+| `hydra-toggle-body-visibility` | :orange_circle: | `hydra-toggle-body` |
+| `hydra-keyboard-escape` | :orange_circle: | `hydra-keyboard-escape` |
+| `hydra-repeat` | :orange_circle: | `hydra-repeat` |
+| `hydra-set-property` | :orange_circle: | `hydra-set-property` |
+| `hydra-idle-message` | :orange_circle: | `hydra-idle-message` |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
