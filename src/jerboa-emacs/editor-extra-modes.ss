@@ -28454,3 +28454,44 @@
 (def (cmd-locust-workers app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Locust: listing workers")))
+
+;; Round 399 batch 1 — Buf ext, Ko ext
+(def (cmd-buf-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf: linting protobuf files")))
+
+(def (cmd-buf-breaking app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf: checking for breaking changes")))
+
+(def (cmd-buf-generate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf: generating code")))
+
+(def (cmd-buf-push app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Buf: pushing to BSR")))
+
+(def (cmd-ko-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ko: building Go container image")))
+
+(def (cmd-ko-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ko: deploying to Kubernetes")))
+
+(def (cmd-ko-resolve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ko: resolving image references")))
+
+(def (cmd-ko-login app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ko: logging into registry")))
+
+(def (cmd-skaffold-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: deploying to cluster")))
+
+(def (cmd-skaffold-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: starting debug mode")))

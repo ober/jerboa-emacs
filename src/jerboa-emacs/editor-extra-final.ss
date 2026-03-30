@@ -27667,3 +27667,44 @@
 (def (cmd-vegeta-encode app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vegeta: encoding targets")))
+
+;; Round 399 batch 2 — Skaffold ext, Tilt/DevSpace ext
+(def (cmd-skaffold-diagnose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: diagnosing configuration")))
+
+(def (cmd-skaffold-fix app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Skaffold: fixing configuration")))
+
+(def (cmd-tilt-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tilt: viewing logs")))
+
+(def (cmd-tilt-disable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tilt: disabling resource")))
+
+(def (cmd-tilt-enable app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tilt: enabling resource")))
+
+(def (cmd-tilt-args app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Tilt: setting Tiltfile args")))
+
+(def (cmd-devspace-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: building images")))
+
+(def (cmd-devspace-enter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: entering container")))
+
+(def (cmd-devspace-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: syncing files")))
+
+(def (cmd-devspace-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DevSpace: opening in browser")))

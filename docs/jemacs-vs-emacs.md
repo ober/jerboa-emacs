@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 399 — Buf ext, Ko ext, Skaffold ext, Tilt/DevSpace ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Buf lint | — | `buf-lint` | :orange_circle: Scaffolded |
+| Buf breaking changes | — | `buf-breaking` | :orange_circle: Scaffolded |
+| Buf code generation | — | `buf-generate` | :orange_circle: Scaffolded |
+| Buf push to BSR | — | `buf-push` | :orange_circle: Scaffolded |
+| Ko build image | — | `ko-build` | :orange_circle: Scaffolded |
+| Ko deploy | — | `ko-deploy` | :orange_circle: Scaffolded |
+| Ko resolve refs | — | `ko-resolve` | :orange_circle: Scaffolded |
+| Ko registry login | — | `ko-login` | :orange_circle: Scaffolded |
+| Skaffold deploy | — | `skaffold-deploy` | :orange_circle: Scaffolded |
+| Skaffold debug | — | `skaffold-debug` | :orange_circle: Scaffolded |
+| Skaffold diagnose | — | `skaffold-diagnose` | :orange_circle: Scaffolded |
+| Skaffold fix config | — | `skaffold-fix` | :orange_circle: Scaffolded |
+| Tilt logs | — | `tilt-logs` | :orange_circle: Scaffolded |
+| Tilt disable resource | — | `tilt-disable` | :orange_circle: Scaffolded |
+| Tilt enable resource | — | `tilt-enable` | :orange_circle: Scaffolded |
+| Tilt args | — | `tilt-args` | :orange_circle: Scaffolded |
+| DevSpace build | — | `devspace-build` | :orange_circle: Scaffolded |
+| DevSpace enter | — | `devspace-enter` | :orange_circle: Scaffolded |
+| DevSpace sync | — | `devspace-sync` | :orange_circle: Scaffolded |
+| DevSpace open | — | `devspace-open` | :orange_circle: Scaffolded |
+
 ### Round 398 — Gatling ext, k6 ext, Locust ext, Artillery/Vegeta ext
 
 | Feature | Emacs | jemacs | Status |
