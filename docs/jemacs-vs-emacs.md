@@ -5558,6 +5558,156 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `beacon-mode` | :orange_circle: Scaffold | Toggle beacon |
 | `mini-frame-mode` | :orange_circle: Scaffold | Mini frame |
 | `citar-open-notes` | :orange_circle: Scaffold | Open notes |
+
+### Round 691 — Email Clients ext (mu4e, Gnus, MH-E)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mu4e-update` | :orange_circle: Scaffold | Update mail |
+| `mu4e-headers-mark-delete` | :orange_circle: Scaffold | Mark for delete |
+| `gnus-summary` | :orange_circle: Scaffold | Summary mode |
+| `gnus-topic` | :orange_circle: Scaffold | Topic mode |
+| `wl-draft` | :orange_circle: Scaffold | Wanderlust draft |
+| `mew-summary` | :orange_circle: Scaffold | Mew summary |
+| `vm-start` | :orange_circle: Scaffold | VM start |
+| `rmail-get-new` | :orange_circle: Scaffold | Get new mail |
+| `rmail-expunge` | :orange_circle: Scaffold | Expunge |
+| `mh-e` | :orange_circle: Scaffold | MH-E start |
+
+### Round 692 — Eshell, Eat & Shell ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `eshell-destroy-buffer` | :orange_circle: Scaffold | Destroy buffer |
+| `eshell-send-input` | :orange_circle: Scaffold | Send input |
+| `eshell-interrupt-process` | :orange_circle: Scaffold | Interrupt process |
+| `eshell-kill-process` | :orange_circle: Scaffold | Kill process |
+| `eat-self-input` | :orange_circle: Scaffold | Self input |
+| `eat-kill-process` | :orange_circle: Scaffold | Kill process |
+| `comint-clear-buffer` | :orange_circle: Scaffold | Clear buffer |
+| `comint-previous-matching-input` | :orange_circle: Scaffold | Previous matching |
+| `comint-next-matching-input` | :orange_circle: Scaffold | Next matching |
+| `comint-send-eof` | :orange_circle: Scaffold | Send EOF |
+
+### Round 693 — IRC & Chat ext (Circe, Telega, Slack)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `mh-rmail` | :orange_circle: Scaffold | Read mail |
+| `mh-smail` | :orange_circle: Scaffold | Send mail |
+| `message-mode` | :orange_circle: Scaffold | Compose mode |
+| `erc-part-from-channel` | :orange_circle: Scaffold | Part from channel |
+| `erc-quit-server` | :orange_circle: Scaffold | Quit server |
+| `circe` | :orange_circle: Scaffold | IRC client |
+| `circe-join` | :orange_circle: Scaffold | Join channel |
+| `circe-part` | :orange_circle: Scaffold | Part channel |
+| `telega` | :orange_circle: Scaffold | Telegram client |
+| `telega-send` | :orange_circle: Scaffold | Send message |
+
+### Round 694 — Copilot, GPTel & AI ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `copilot-panel` | :orange_circle: Scaffold | Panel |
+| `copilot-login` | :orange_circle: Scaffold | Login |
+| `copilot-logout` | :orange_circle: Scaffold | Logout |
+| `gptel-add-context` | :orange_circle: Scaffold | Add context |
+| `gptel-system-prompt` | :orange_circle: Scaffold | System prompt |
+| `gptel-set-model` | :orange_circle: Scaffold | Set model |
+| `chatgpt-explain` | :orange_circle: Scaffold | Explain code |
+| `chatgpt-refactor` | :orange_circle: Scaffold | Refactor code |
+| `codeium-mode` | :orange_circle: Scaffold | Toggle Codeium |
+| `codeium-complete` | :orange_circle: Scaffold | Complete |
+
+### Round 695 — Org Kanban, QL & Calendar ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-kanban` | :orange_circle: Scaffold | Kanban view |
+| `org-kanban-shift` | :orange_circle: Scaffold | Shift card |
+| `org-kanban-configure` | :orange_circle: Scaffold | Configure |
+| `org-ql-find` | :orange_circle: Scaffold | QL find |
+| `calfw` | :orange_circle: Scaffold | Calendar framework |
+| `calfw-org` | :orange_circle: Scaffold | Org calendar |
+| `calfw-ical` | :orange_circle: Scaffold | iCal calendar |
+| `org-caldav-sync` | :orange_circle: Scaffold | CalDAV sync |
+| `pomidor-reset` | :orange_circle: Scaffold | Reset pomodoro |
+| `org-pomodoro-start` | :orange_circle: Scaffold | Start pomodoro |
+
+### Round 696 — PDF ext, Doc-view & Nov ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `pdf-view-extract-region` | :orange_circle: Scaffold | Extract region |
+| `pdf-view-goto-page` | :orange_circle: Scaffold | Goto page |
+| `pdf-outline` | :orange_circle: Scaffold | Outline |
+| `pdf-sync-backward-search` | :orange_circle: Scaffold | Sync backward |
+| `pdf-annot-list-annotations` | :orange_circle: Scaffold | List annotations |
+| `nov-browse-url` | :orange_circle: Scaffold | Browse URL |
+| `nov-goto-toc` | :orange_circle: Scaffold | Goto TOC |
+| `doc-view-continuous` | :orange_circle: Scaffold | Continuous mode |
+| `doc-view-fit-height` | :orange_circle: Scaffold | Fit height |
+| `doc-view-open-text` | :orange_circle: Scaffold | Open as text |
+
+### Round 697 — Timers & Productivity Tracking
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `org-pomodoro-extend` | :orange_circle: Scaffold | Extend last clock |
+| `chronos-add-timer` | :orange_circle: Scaffold | Add timer |
+| `chronos-delete-timer` | :orange_circle: Scaffold | Delete timer |
+| `activity-watch-mode` | :orange_circle: Scaffold | Activity Watch |
+| `wakatime-mode` | :orange_circle: Scaffold | WakaTime |
+| `command-log-toggle` | :orange_circle: Scaffold | Command log toggle |
+| `interaction-log-mode` | :orange_circle: Scaffold | Interaction log |
+| `memory-usage` | :orange_circle: Scaffold | Memory usage |
+| `benchmark-deactivate` | :orange_circle: Scaffold | Deactivate benchmark |
+| `esup-child-run` | :orange_circle: Scaffold | ESUP child run |
+
+### Round 698 — LSP UI ext & DAP UI
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lsp-ui-sideline-toggle` | :orange_circle: Scaffold | Sideline toggle |
+| `lsp-ui-imenu` | :orange_circle: Scaffold | Imenu |
+| `lsp-ui-flycheck-list` | :orange_circle: Scaffold | Flycheck list |
+| `lsp-lens-mode` | :orange_circle: Scaffold | Lens mode |
+| `lsp-headerline-breadcrumb-mode` | :orange_circle: Scaffold | Breadcrumb mode |
+| `lsp-modeline-diagnostics-mode` | :orange_circle: Scaffold | Modeline diagnostics |
+| `dap-ui-mode` | :orange_circle: Scaffold | DAP UI mode |
+| `dap-ui-locals` | :orange_circle: Scaffold | Locals |
+| `dap-ui-repl` | :orange_circle: Scaffold | REPL |
+| `dap-tooltip-at-point` | :orange_circle: Scaffold | Tooltip |
+
+### Round 699 — Slack, Mastodon, Elfeed & Ement ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `slack-start` | :orange_circle: Scaffold | Start Slack |
+| `slack-channel-select` | :orange_circle: Scaffold | Select channel |
+| `slack-im-select` | :orange_circle: Scaffold | Select IM |
+| `elfeed-tube-mpv` | :orange_circle: Scaffold | Play in mpv |
+| `pocket-reader` | :orange_circle: Scaffold | Open reader |
+| `pocket-reader-add` | :orange_circle: Scaffold | Add to pocket |
+| `ement-room-send` | :orange_circle: Scaffold | Send message |
+| `ement-room-join` | :orange_circle: Scaffold | Join room |
+| `ement-room-leave` | :orange_circle: Scaffold | Leave room |
+| `mastodon-tl-notifications` | :orange_circle: Scaffold | Notifications |
+
+### Round 700 — Flycheck ext, Flymake ext & Mastodon ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `flycheck-posframe-mode` | :orange_circle: Scaffold | Posframe mode |
+| `flycheck-mode-line-status` | :orange_circle: Scaffold | Mode line status |
+| `flymake-proc-legacy` | :orange_circle: Scaffold | Proc legacy |
+| `flymake-disabled-backends` | :orange_circle: Scaffold | Disabled backends |
+| `ement-room-set-topic` | :orange_circle: Scaffold | Set topic |
+| `mastodon-tl-home` | :orange_circle: Scaffold | Home timeline |
+| `mastodon-tl-federated` | :orange_circle: Scaffold | Federated timeline |
+| `copilot-panel-complete` | :orange_circle: Scaffold | Panel complete |
+| `nov-reopen-as-kill` | :orange_circle: Scaffold | Reopen as kill |
+| `doc-view-open-text-mode` | :orange_circle: Scaffold | Open text mode |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |

@@ -13266,4 +13266,35 @@
   ;; Round 690: Ef-themes, Modus, Pulsar, Dimmer, Beacon, Citar
   (register-command! 'ef-themes-select cmd-ef-themes-select) (register-command! 'ef-themes-toggle cmd-ef-themes-toggle) (register-command! 'modus-themes-toggle cmd-modus-themes-toggle) (register-command! 'modus-themes-select cmd-modus-themes-select) (register-command! 'pulsar-pulse-line cmd-pulsar-pulse-line)
   (register-command! 'pulsar-highlight-line cmd-pulsar-highlight-line) (register-command! 'dimmer-mode cmd-dimmer-mode) (register-command! 'beacon-mode cmd-beacon-mode) (register-command! 'mini-frame-mode cmd-mini-frame-mode) (register-command! 'citar-open-notes cmd-citar-open-notes)
+
+  ;; Round 691: Email Clients ext
+  (register-command! 'mu4e-update cmd-mu4e-update) (register-command! 'mu4e-headers-mark-delete cmd-mu4e-headers-mark-delete) (register-command! 'gnus-summary cmd-gnus-summary) (register-command! 'gnus-topic cmd-gnus-topic) (register-command! 'wl-draft cmd-wl-draft)
+  (register-command! 'mew-summary cmd-mew-summary) (register-command! 'vm-start cmd-vm-start) (register-command! 'rmail-get-new cmd-rmail-get-new) (register-command! 'rmail-expunge cmd-rmail-expunge) (register-command! 'mh-e cmd-mh-e)
+  ;; Round 692: Eshell ext, Shell ext
+  (register-command! 'eshell-destroy-buffer cmd-eshell-destroy-buffer) (register-command! 'eshell-send-input cmd-eshell-send-input) (register-command! 'eshell-interrupt-process cmd-eshell-interrupt-process) (register-command! 'eshell-kill-process cmd-eshell-kill-process) (register-command! 'eat-self-input cmd-eat-self-input)
+  (register-command! 'eat-kill-process cmd-eat-kill-process) (register-command! 'comint-clear-buffer cmd-comint-clear-buffer) (register-command! 'comint-previous-matching-input cmd-comint-previous-matching-input) (register-command! 'comint-next-matching-input cmd-comint-next-matching-input) (register-command! 'comint-send-eof cmd-comint-send-eof)
+  ;; Round 693: IRC & Chat ext
+  (register-command! 'mh-rmail cmd-mh-rmail) (register-command! 'mh-smail cmd-mh-smail) (register-command! 'message-mode cmd-message-mode) (register-command! 'erc-part-from-channel cmd-erc-part-from-channel) (register-command! 'erc-quit-server cmd-erc-quit-server)
+  (register-command! 'circe cmd-circe) (register-command! 'circe-join cmd-circe-join) (register-command! 'circe-part cmd-circe-part) (register-command! 'telega cmd-telega) (register-command! 'telega-send cmd-telega-send)
+  ;; Round 694: Copilot ext, AI ext
+  (register-command! 'copilot-panel cmd-copilot-panel) (register-command! 'copilot-login cmd-copilot-login) (register-command! 'copilot-logout cmd-copilot-logout) (register-command! 'gptel-add-context cmd-gptel-add-context) (register-command! 'gptel-system-prompt cmd-gptel-system-prompt)
+  (register-command! 'gptel-set-model cmd-gptel-set-model) (register-command! 'chatgpt-explain cmd-chatgpt-explain) (register-command! 'chatgpt-refactor cmd-chatgpt-refactor) (register-command! 'codeium-mode cmd-codeium-mode) (register-command! 'codeium-complete cmd-codeium-complete)
+  ;; Round 695: Org Kanban, QL, Calendar ext
+  (register-command! 'org-kanban cmd-org-kanban) (register-command! 'org-kanban-shift cmd-org-kanban-shift) (register-command! 'org-kanban-configure cmd-org-kanban-configure) (register-command! 'org-ql-find cmd-org-ql-find) (register-command! 'calfw cmd-calfw)
+  (register-command! 'calfw-org cmd-calfw-org) (register-command! 'calfw-ical cmd-calfw-ical) (register-command! 'org-caldav-sync cmd-org-caldav-sync) (register-command! 'pomidor-reset cmd-pomidor-reset) (register-command! 'org-pomodoro-start cmd-org-pomodoro-start)
+  ;; Round 696: PDF ext, Doc-view ext
+  (register-command! 'pdf-view-extract-region cmd-pdf-view-extract-region) (register-command! 'pdf-view-goto-page cmd-pdf-view-goto-page) (register-command! 'pdf-outline cmd-pdf-outline) (register-command! 'pdf-sync-backward-search cmd-pdf-sync-backward-search) (register-command! 'pdf-annot-list-annotations cmd-pdf-annot-list-annotations)
+  (register-command! 'nov-browse-url cmd-nov-browse-url) (register-command! 'nov-goto-toc cmd-nov-goto-toc) (register-command! 'doc-view-continuous cmd-doc-view-continuous) (register-command! 'doc-view-fit-height cmd-doc-view-fit-height) (register-command! 'doc-view-open-text cmd-doc-view-open-text)
+  ;; Round 697: Timers & Productivity
+  (register-command! 'org-pomodoro-extend cmd-org-pomodoro-extend) (register-command! 'chronos-add-timer cmd-chronos-add-timer) (register-command! 'chronos-delete-timer cmd-chronos-delete-timer) (register-command! 'activity-watch-mode cmd-activity-watch-mode) (register-command! 'wakatime-mode cmd-wakatime-mode)
+  (register-command! 'command-log-toggle cmd-command-log-toggle) (register-command! 'interaction-log-mode cmd-interaction-log-mode) (register-command! 'memory-usage cmd-memory-usage) (register-command! 'benchmark-deactivate cmd-benchmark-deactivate) (register-command! 'esup-child-run cmd-esup-child-run)
+  ;; Round 698: LSP UI ext, DAP UI
+  (register-command! 'lsp-ui-sideline-toggle cmd-lsp-ui-sideline-toggle) (register-command! 'lsp-ui-imenu cmd-lsp-ui-imenu) (register-command! 'lsp-ui-flycheck-list cmd-lsp-ui-flycheck-list) (register-command! 'lsp-lens-mode cmd-lsp-lens-mode) (register-command! 'lsp-headerline-breadcrumb-mode cmd-lsp-headerline-breadcrumb-mode)
+  (register-command! 'lsp-modeline-diagnostics-mode cmd-lsp-modeline-diagnostics-mode) (register-command! 'dap-ui-mode cmd-dap-ui-mode) (register-command! 'dap-ui-locals cmd-dap-ui-locals) (register-command! 'dap-ui-repl cmd-dap-ui-repl) (register-command! 'dap-tooltip-at-point cmd-dap-tooltip-at-point)
+  ;; Round 699: Slack, Mastodon, Elfeed, Ement ext
+  (register-command! 'slack-start cmd-slack-start) (register-command! 'slack-channel-select cmd-slack-channel-select) (register-command! 'slack-im-select cmd-slack-im-select) (register-command! 'elfeed-tube-mpv cmd-elfeed-tube-mpv) (register-command! 'pocket-reader cmd-pocket-reader)
+  (register-command! 'pocket-reader-add cmd-pocket-reader-add) (register-command! 'ement-room-send cmd-ement-room-send) (register-command! 'ement-room-join cmd-ement-room-join) (register-command! 'ement-room-leave cmd-ement-room-leave) (register-command! 'mastodon-tl-notifications cmd-mastodon-tl-notifications)
+  ;; Round 700: Flycheck ext, Flymake ext, Mastodon ext
+  (register-command! 'flycheck-posframe-mode cmd-flycheck-posframe-mode) (register-command! 'flycheck-mode-line-status cmd-flycheck-mode-line-status) (register-command! 'flymake-proc-legacy cmd-flymake-proc-legacy) (register-command! 'flymake-disabled-backends cmd-flymake-disabled-backends) (register-command! 'ement-room-set-topic cmd-ement-room-set-topic)
+  (register-command! 'mastodon-tl-home cmd-mastodon-tl-home) (register-command! 'mastodon-tl-federated cmd-mastodon-tl-federated) (register-command! 'copilot-panel-complete cmd-copilot-panel) (register-command! 'nov-reopen-as-kill cmd-nov-browse-url) (register-command! 'doc-view-open-text-mode cmd-doc-view-open-text)
 )
