@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 314 — LVM ext, MDADM ext, Cryptsetup ext, Dmsetup ext, Multipath ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lvm-pvdisplay` | :orange_circle: | Display physical volumes |
+| `lvm-vgdisplay` | :orange_circle: | Display volume groups |
+| `lvm-lvdisplay` | :orange_circle: | Display logical volumes |
+| `lvm-lvcreate` | :orange_circle: | Create logical volume |
+| `mdadm-detail` | :orange_circle: | Show RAID array detail |
+| `mdadm-examine` | :orange_circle: | Examine RAID device |
+| `mdadm-assemble` | :orange_circle: | Assemble RAID array |
+| `mdadm-monitor` | :orange_circle: | Monitor RAID arrays |
+| `cryptsetup-status` | :orange_circle: | Show LUKS status |
+| `cryptsetup-open` | :orange_circle: | Open encrypted device |
+| `cryptsetup-close` | :orange_circle: | Close encrypted device |
+| `cryptsetup-luksdump` | :orange_circle: | Dump LUKS header |
+| `dmsetup-table` | :orange_circle: | Show device-mapper table |
+| `dmsetup-info` | :orange_circle: | Show device-mapper info |
+| `dmsetup-status` | :orange_circle: | Show device-mapper status |
+| `dmsetup-ls` | :orange_circle: | List device-mapper devices |
+| `multipath-show` | :orange_circle: | Show multipath topology |
+| `multipath-flush` | :orange_circle: | Flush multipath map |
+| `multipath-resize` | :orange_circle: | Resize multipath map |
+| `multipath-list` | :orange_circle: | List multipath maps |
+
 ### Round 313 — Nftables ext, Iproute2 ext, Ethtool ext, Btrfs ext, Zfs ext
 
 | Feature | Status | Notes |

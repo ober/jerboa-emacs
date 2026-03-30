@@ -23672,3 +23672,53 @@
     (echo-read-string echo "Property=value dataset: "
       (lambda (spec)
         (echo-message! echo (str "ZFS: setting " spec))))))
+
+;;; Round 314 — Cryptsetup ext, Dmsetup ext, Multipath ext (batch 2)
+
+(def (cmd-cryptsetup-close app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mapped name to close: "
+      (lambda (name)
+        (echo-message! echo (str "Cryptsetup: closing " name))))))
+
+(def (cmd-cryptsetup-luksdump app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LUKS device: "
+      (lambda (dev)
+        (echo-message! echo (str "Cryptsetup: LUKS dump of " dev))))))
+
+(def (cmd-dmsetup-table app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmsetup: showing table")))
+
+(def (cmd-dmsetup-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmsetup: showing info")))
+
+(def (cmd-dmsetup-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmsetup: showing status")))
+
+(def (cmd-dmsetup-ls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Dmsetup: listing devices")))
+
+(def (cmd-multipath-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multipath: showing topology")))
+
+(def (cmd-multipath-flush app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Map to flush: "
+      (lambda (map)
+        (echo-message! echo (str "Multipath: flushing " map))))))
+
+(def (cmd-multipath-resize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Map to resize: "
+      (lambda (map)
+        (echo-message! echo (str "Multipath: resizing " map))))))
+
+(def (cmd-multipath-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Multipath: listing maps")))

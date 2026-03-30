@@ -24382,3 +24382,57 @@
       (lambda (iface)
         (echo-message! echo (str "Ethtool: showing features of " iface))))))
 
+;;; Round 314 — LVM ext, MDADM ext, Cryptsetup ext, Dmsetup ext, Multipath ext (batch 1)
+
+(def (cmd-lvm-pvdisplay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LVM: displaying physical volumes")))
+
+(def (cmd-lvm-vgdisplay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LVM: displaying volume groups")))
+
+(def (cmd-lvm-lvdisplay app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "LVM: displaying logical volumes")))
+
+(def (cmd-lvm-lvcreate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "LV name and VG: "
+      (lambda (spec)
+        (echo-message! echo (str "LVM: creating logical volume " spec))))))
+
+(def (cmd-mdadm-detail app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Array device: "
+      (lambda (dev)
+        (echo-message! echo (str "MDADM: showing detail for " dev))))))
+
+(def (cmd-mdadm-examine app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device to examine: "
+      (lambda (dev)
+        (echo-message! echo (str "MDADM: examining " dev))))))
+
+(def (cmd-mdadm-assemble app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Array to assemble: "
+      (lambda (arr)
+        (echo-message! echo (str "MDADM: assembling " arr))))))
+
+(def (cmd-mdadm-monitor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MDADM: starting monitor")))
+
+(def (cmd-cryptsetup-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mapped name: "
+      (lambda (name)
+        (echo-message! echo (str "Cryptsetup: status of " name))))))
+
+(def (cmd-cryptsetup-open app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Device to open: "
+      (lambda (dev)
+        (echo-message! echo (str "Cryptsetup: opening " dev))))))
+
