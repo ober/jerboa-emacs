@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 320 — Bpftool ext, Bpftrace ext, Xdp ext, Tc-bpf ext, Libbpf ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `bpftool-prog-list` | :orange_circle: | List BPF programs |
+| `bpftool-map-list` | :orange_circle: | List BPF maps |
+| `bpftool-link-list` | :orange_circle: | List BPF links |
+| `bpftool-net-list` | :orange_circle: | List network BPF programs |
+| `bpftrace-list` | :orange_circle: | List available probes |
+| `bpftrace-run` | :orange_circle: | Run bpftrace script |
+| `bpftrace-oneliner` | :orange_circle: | Run bpftrace one-liner |
+| `bpftrace-attach` | :orange_circle: | Attach to probe |
+| `xdp-load` | :orange_circle: | Load XDP program |
+| `xdp-unload` | :orange_circle: | Unload XDP program |
+| `xdp-status` | :orange_circle: | Show XDP status |
+| `xdp-stats` | :orange_circle: | Show XDP statistics |
+| `tc-bpf-attach` | :orange_circle: | Attach TC BPF program |
+| `tc-bpf-detach` | :orange_circle: | Detach TC BPF program |
+| `tc-bpf-show` | :orange_circle: | Show TC BPF programs |
+| `tc-bpf-list` | :orange_circle: | List all TC BPF programs |
+| `libbpf-compile` | :orange_circle: | Compile BPF source |
+| `libbpf-load` | :orange_circle: | Load BPF object |
+| `libbpf-skeleton` | :orange_circle: | Generate BPF skeleton |
+| `libbpf-debug` | :orange_circle: | Debug BPF program |
+
 ### Round 319 — Unshare ext, Setns ext, Prlimit ext, Chroot ext, Pivot-root ext
 
 | Feature | Status | Notes |

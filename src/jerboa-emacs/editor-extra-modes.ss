@@ -24692,3 +24692,55 @@
       (lambda (spec)
         (echo-message! echo (str "Prlimit: setting " spec))))))
 
+;;; Round 320 — Bpftool ext, Bpftrace ext, Xdp ext, Tc-bpf ext, Libbpf ext (batch 1)
+
+(def (cmd-bpftool-prog-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bpftool: listing BPF programs")))
+
+(def (cmd-bpftool-map-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bpftool: listing BPF maps")))
+
+(def (cmd-bpftool-link-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bpftool: listing BPF links")))
+
+(def (cmd-bpftool-net-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bpftool: listing network BPF programs")))
+
+(def (cmd-bpftrace-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bpftrace: listing available probes")))
+
+(def (cmd-bpftrace-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Script file: "
+      (lambda (file)
+        (echo-message! echo (str "Bpftrace: running " file))))))
+
+(def (cmd-bpftrace-oneliner app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "One-liner: "
+      (lambda (expr)
+        (echo-message! echo (str "Bpftrace: " expr))))))
+
+(def (cmd-bpftrace-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Probe: "
+      (lambda (probe)
+        (echo-message! echo (str "Bpftrace: attaching to " probe))))))
+
+(def (cmd-xdp-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface and program: "
+      (lambda (spec)
+        (echo-message! echo (str "XDP: loading on " spec))))))
+
+(def (cmd-xdp-unload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "XDP: unloading from " iface))))))
+

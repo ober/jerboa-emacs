@@ -23996,3 +23996,63 @@
 (def (cmd-pivot-root-cleanup app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Pivot-root: cleaning up old root")))
+
+;;; Round 320 — Xdp ext, Tc-bpf ext, Libbpf ext (batch 2)
+
+(def (cmd-xdp-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "XDP: status of " iface))))))
+
+(def (cmd-xdp-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "XDP: statistics for " iface))))))
+
+(def (cmd-tc-bpf-attach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface and program: "
+      (lambda (spec)
+        (echo-message! echo (str "TC-BPF: attaching to " spec))))))
+
+(def (cmd-tc-bpf-detach app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "TC-BPF: detaching from " iface))))))
+
+(def (cmd-tc-bpf-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Interface: "
+      (lambda (iface)
+        (echo-message! echo (str "TC-BPF: showing programs on " iface))))))
+
+(def (cmd-tc-bpf-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "TC-BPF: listing all attached programs")))
+
+(def (cmd-libbpf-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Source file: "
+      (lambda (src)
+        (echo-message! echo (str "Libbpf: compiling " src))))))
+
+(def (cmd-libbpf-load app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Object file: "
+      (lambda (obj)
+        (echo-message! echo (str "Libbpf: loading " obj))))))
+
+(def (cmd-libbpf-skeleton app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Object file: "
+      (lambda (obj)
+        (echo-message! echo (str "Libbpf: generating skeleton for " obj))))))
+
+(def (cmd-libbpf-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Program: "
+      (lambda (prog)
+        (echo-message! echo (str "Libbpf: debugging " prog))))))
