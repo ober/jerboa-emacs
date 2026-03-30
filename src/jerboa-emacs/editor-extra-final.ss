@@ -23448,3 +23448,57 @@
 (def (cmd-powertop-html app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "PowerTOP: generating HTML report")))
+
+;;; Round 310 — Hostnamectl ext, Timedatectl ext, Localectl ext (batch 2)
+
+(def (cmd-hostnamectl-icon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Icon name: "
+      (lambda (icon)
+        (echo-message! echo (str "Hostnamectl: icon " icon))))))
+
+(def (cmd-hostnamectl-chassis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Chassis type: "
+      (lambda (chassis)
+        (echo-message! echo (str "Hostnamectl: chassis " chassis))))))
+
+(def (cmd-timedatectl-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timedatectl: showing time/date")))
+
+(def (cmd-timedatectl-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Time (YYYY-MM-DD HH:MM:SS): "
+      (lambda (time)
+        (echo-message! echo (str "Timedatectl: setting " time))))))
+
+(def (cmd-timedatectl-ntp app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timedatectl: toggling NTP")))
+
+(def (cmd-timedatectl-timezone app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Timezone: "
+      (lambda (tz)
+        (echo-message! echo (str "Timedatectl: setting timezone " tz))))))
+
+(def (cmd-localectl-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Localectl: showing status")))
+
+(def (cmd-localectl-set-locale app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Locale: "
+      (lambda (loc)
+        (echo-message! echo (str "Localectl: setting locale " loc))))))
+
+(def (cmd-localectl-set-keymap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Keymap: "
+      (lambda (km)
+        (echo-message! echo (str "Localectl: setting keymap " km))))))
+
+(def (cmd-localectl-list-keymaps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Localectl: listing keymaps")))

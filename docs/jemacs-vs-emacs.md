@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 310 — Loginctl ext, Machinectl ext, Hostnamectl ext, Timedatectl ext, Localectl ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| loginctl-list | :orange_circle: | List login sessions |
+| loginctl-user | :orange_circle: | Show user info |
+| loginctl-session | :orange_circle: | Show session info |
+| loginctl-seat | :orange_circle: | List seats |
+| machinectl-list | :orange_circle: | List machines |
+| machinectl-login | :orange_circle: | Login to machine |
+| machinectl-start | :orange_circle: | Start machine |
+| machinectl-stop | :orange_circle: | Stop machine |
+| hostnamectl-show | :orange_circle: | Show hostname info |
+| hostnamectl-set | :orange_circle: | Set hostname |
+| hostnamectl-icon | :orange_circle: | Set icon name |
+| hostnamectl-chassis | :orange_circle: | Set chassis type |
+| timedatectl-show | :orange_circle: | Show time/date |
+| timedatectl-set | :orange_circle: | Set time/date |
+| timedatectl-ntp | :orange_circle: | Toggle NTP |
+| timedatectl-timezone | :orange_circle: | Set timezone |
+| localectl-status | :orange_circle: | Show locale status |
+| localectl-set-locale | :orange_circle: | Set locale |
+| localectl-set-keymap | :orange_circle: | Set keymap |
+| localectl-list-keymaps | :orange_circle: | List keymaps |
+
 ### Round 309 — Power Profiles ext, CPUFreq ext, Thermal ext, TLP ext, PowerTOP ext
 
 | Command | Status | Description |

@@ -24176,3 +24176,57 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Thermald: viewing configuration")))
 
+;;; Round 310 — Loginctl ext, Machinectl ext, Hostnamectl ext (batch 1)
+
+(def (cmd-loginctl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loginctl: listing sessions")))
+
+(def (cmd-loginctl-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "User: "
+      (lambda (user)
+        (echo-message! echo (str "Loginctl: user " user))))))
+
+(def (cmd-loginctl-session app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Session ID: "
+      (lambda (sid)
+        (echo-message! echo (str "Loginctl: session " sid))))))
+
+(def (cmd-loginctl-seat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Loginctl: listing seats")))
+
+(def (cmd-machinectl-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Machinectl: listing machines")))
+
+(def (cmd-machinectl-login app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Machine: "
+      (lambda (m)
+        (echo-message! echo (str "Machinectl: logging into " m))))))
+
+(def (cmd-machinectl-start app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Machine: "
+      (lambda (m)
+        (echo-message! echo (str "Machinectl: starting " m))))))
+
+(def (cmd-machinectl-stop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Machine: "
+      (lambda (m)
+        (echo-message! echo (str "Machinectl: stopping " m))))))
+
+(def (cmd-hostnamectl-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hostnamectl: showing hostname info")))
+
+(def (cmd-hostnamectl-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Hostname: "
+      (lambda (name)
+        (echo-message! echo (str "Hostnamectl: setting " name))))))
+
