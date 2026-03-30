@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 299 — Ar ext, Pkg-config ext, Ldconfig ext, Locale ext, Timezone ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| ar-create | :orange_circle: | Create archive |
+| ar-extract | :orange_circle: | Extract archive |
+| ar-list | :orange_circle: | List archive contents |
+| ar-add | :orange_circle: | Add to archive |
+| ranlib-index | :orange_circle: | Index archive |
+| pkg-config-list | :orange_circle: | List packages |
+| pkg-config-cflags | :orange_circle: | Show cflags |
+| pkg-config-libs | :orange_circle: | Show libs |
+| pkg-config-modversion | :orange_circle: | Show version |
+| ldconfig-list | :orange_circle: | List libraries |
+| ldconfig-rebuild | :orange_circle: | Rebuild cache |
+| ldconfig-cache | :orange_circle: | Show cache |
+| ldconfig-print | :orange_circle: | Print library path |
+| locale-list | :orange_circle: | List locales |
+| locale-gen | :orange_circle: | Generate locale |
+| locale-set | :orange_circle: | Set locale |
+| locale-info | :orange_circle: | Show locale info |
+| timezone-list | :orange_circle: | List timezones |
+| timezone-set | :orange_circle: | Set timezone |
+| timezone-info | :orange_circle: | Show timezone info |
+
 ### Round 298 — Objdump ext, Readelf ext, Nm ext, Ldd ext, Strip ext
 
 | Command | Status | Description |

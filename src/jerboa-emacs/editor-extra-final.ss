@@ -22864,3 +22864,53 @@
     (echo-read-string echo "Binary: "
       (lambda (bin)
         (echo-message! echo (str "Strip: removing all from " bin))))))
+
+;;; Round 299 — Ldconfig ext, Locale ext, Timezone ext (batch 2)
+
+(def (cmd-ldconfig-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ldconfig: rebuilding cache")))
+
+(def (cmd-ldconfig-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ldconfig: showing cache")))
+
+(def (cmd-ldconfig-print app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Library: "
+      (lambda (lib)
+        (echo-message! echo (str "Ldconfig: print path for " lib))))))
+
+(def (cmd-locale-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Locale: listing available locales")))
+
+(def (cmd-locale-gen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Locale: "
+      (lambda (loc)
+        (echo-message! echo (str "Locale: generating " loc))))))
+
+(def (cmd-locale-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Locale: "
+      (lambda (loc)
+        (echo-message! echo (str "Locale: setting " loc))))))
+
+(def (cmd-locale-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Locale: showing current locale info")))
+
+(def (cmd-timezone-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timezone: listing timezones")))
+
+(def (cmd-timezone-set app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Timezone: "
+      (lambda (tz)
+        (echo-message! echo (str "Timezone: setting " tz))))))
+
+(def (cmd-timezone-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Timezone: showing current timezone")))

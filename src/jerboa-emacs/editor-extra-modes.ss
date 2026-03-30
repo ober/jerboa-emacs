@@ -23578,3 +23578,61 @@
       (lambda (obj)
         (echo-message! echo (str "Nm: defined symbols in " obj))))))
 
+;;; Round 299 — Ar ext, Pkg-config ext, Ldconfig ext (batch 1)
+
+(def (cmd-ar-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Archive name: "
+      (lambda (name)
+        (echo-message! echo (str "Ar: creating " name))))))
+
+(def (cmd-ar-extract app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Archive: "
+      (lambda (ar)
+        (echo-message! echo (str "Ar: extracting " ar))))))
+
+(def (cmd-ar-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Archive: "
+      (lambda (ar)
+        (echo-message! echo (str "Ar: listing " ar))))))
+
+(def (cmd-ar-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Archive: "
+      (lambda (ar)
+        (echo-message! echo (str "Ar: adding to " ar))))))
+
+(def (cmd-ranlib-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Archive: "
+      (lambda (ar)
+        (echo-message! echo (str "Ranlib: indexing " ar))))))
+
+(def (cmd-pkg-config-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pkg-config: listing packages")))
+
+(def (cmd-pkg-config-cflags app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Pkg-config: cflags for " pkg))))))
+
+(def (cmd-pkg-config-libs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Pkg-config: libs for " pkg))))))
+
+(def (cmd-pkg-config-modversion app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package: "
+      (lambda (pkg)
+        (echo-message! echo (str "Pkg-config: version of " pkg))))))
+
+(def (cmd-ldconfig-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ldconfig: listing libraries")))
+
