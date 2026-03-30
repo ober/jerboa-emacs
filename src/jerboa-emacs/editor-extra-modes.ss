@@ -28167,3 +28167,44 @@
 (def (cmd-google-docs-list app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Google Docs: listing documents")))
+
+;; Round 392 batch 1 — Zoom ext, Teams ext
+(def (cmd-zoom-meetings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zoom: listing meetings")))
+
+(def (cmd-zoom-recordings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zoom: listing recordings")))
+
+(def (cmd-zoom-webinars app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zoom: listing webinars")))
+
+(def (cmd-zoom-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Zoom: listing users")))
+
+(def (cmd-teams-channels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teams: listing channels")))
+
+(def (cmd-teams-messages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teams: listing messages")))
+
+(def (cmd-teams-meetings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teams: listing meetings")))
+
+(def (cmd-teams-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Teams: listing installed apps")))
+
+(def (cmd-webex-meetings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webex: listing meetings")))
+
+(def (cmd-webex-rooms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webex: listing rooms")))

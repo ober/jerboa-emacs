@@ -27380,3 +27380,44 @@
 (def (cmd-google-slides-present app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Google Slides: starting presentation mode")))
+
+;; Round 392 batch 2 — Webex ext, Discord/Matrix ext
+(def (cmd-webex-messages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webex: listing messages")))
+
+(def (cmd-webex-recordings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webex: listing recordings")))
+
+(def (cmd-discord-servers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Discord: listing servers")))
+
+(def (cmd-discord-channels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Discord: listing channels")))
+
+(def (cmd-discord-messages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Discord: listing messages")))
+
+(def (cmd-discord-bots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Discord: listing bots")))
+
+(def (cmd-matrix-rooms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matrix: listing rooms")))
+
+(def (cmd-matrix-messages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matrix: listing messages")))
+
+(def (cmd-matrix-spaces app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matrix: listing spaces")))
+
+(def (cmd-matrix-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Matrix: listing users")))

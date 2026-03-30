@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 392 — Zoom ext, Teams ext, Webex ext, Discord/Matrix ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Zoom meetings | — | `zoom-meetings` | :orange_circle: Scaffolded |
+| Zoom recordings | — | `zoom-recordings` | :orange_circle: Scaffolded |
+| Zoom webinars | — | `zoom-webinars` | :orange_circle: Scaffolded |
+| Zoom users | — | `zoom-users` | :orange_circle: Scaffolded |
+| Teams channels | — | `teams-channels` | :orange_circle: Scaffolded |
+| Teams messages | — | `teams-messages` | :orange_circle: Scaffolded |
+| Teams meetings | — | `teams-meetings` | :orange_circle: Scaffolded |
+| Teams apps | — | `teams-apps` | :orange_circle: Scaffolded |
+| Webex meetings | — | `webex-meetings` | :orange_circle: Scaffolded |
+| Webex rooms | — | `webex-rooms` | :orange_circle: Scaffolded |
+| Webex messages | — | `webex-messages` | :orange_circle: Scaffolded |
+| Webex recordings | — | `webex-recordings` | :orange_circle: Scaffolded |
+| Discord servers | — | `discord-servers` | :orange_circle: Scaffolded |
+| Discord channels | — | `discord-channels` | :orange_circle: Scaffolded |
+| Discord messages | — | `discord-messages` | :orange_circle: Scaffolded |
+| Discord bots | — | `discord-bots` | :orange_circle: Scaffolded |
+| Matrix rooms | — | `matrix-rooms` | :orange_circle: Scaffolded |
+| Matrix messages | — | `matrix-messages` | :orange_circle: Scaffolded |
+| Matrix spaces | — | `matrix-spaces` | :orange_circle: Scaffolded |
+| Matrix users | — | `matrix-users` | :orange_circle: Scaffolded |
+
 ### Round 391 — Confluence ext, SharePoint ext, Google Docs ext, Google Sheets/Slides ext
 
 | Feature | Emacs | jemacs | Status |
