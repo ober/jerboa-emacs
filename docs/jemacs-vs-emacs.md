@@ -7358,6 +7358,436 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | `sly-quicklisp-systems` | :orange_circle: | `sly-quicklisp-list` |
 | `sly-quicklisp-system-apropos` | :orange_circle: | `sly-quicklisp-search` |
 | `sly-quicklisp-uninstall-dist` | :orange_circle: | `sly-quicklisp-uninstall` |
+
+### Round 811: Geiser ext 2 (Scheme REPL)
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `geiser-expand-last-sexp` | :orange_circle: | `geiser-expand-last-sexp` |
+| `geiser-restart-repl` | :orange_circle: | `geiser-restart-repl` |
+| `geiser-edit-module` | :orange_circle: | `geiser-edit-module` |
+| `geiser-insert-lambda` | :orange_circle: | `geiser-insert-lambda` |
+| `geiser-log-clear` | :orange_circle: | `geiser-log-clear` |
+| `geiser-debug` | :orange_circle: | `geiser-debug` |
+| `geiser-mode-switch-to-repl` | :orange_circle: | `geiser-switch-to-repl` |
+| `geiser-load-current-buffer` | :orange_circle: | `geiser-load-current-buffer` |
+| `geiser-mode-switch-to-repl-and-enter` | :orange_circle: | `geiser-switch-to-repl-and-enter` |
+| `geiser-xref-callers` | :orange_circle: | `geiser-callers` |
+
+### Round 812: Racket-mode ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `racket-xp-mode` | :orange_circle: | `racket-check-syntax-mode` |
+| `racket-xp-describe` | :orange_circle: | `racket-xp-describe` |
+| `racket-xp-documentation` | :orange_circle: | `racket-xp-documentation` |
+| `racket-xp-visit-definition` | :orange_circle: | `racket-xp-visit-definition` |
+| `racket-smart-open-bracket-mode` | :orange_circle: | `racket-smart-open-bracket` |
+| `racket-unicode-input-method-enable` | :orange_circle: | `racket-unicode-input-method` |
+| `racket-cycle-paren-shapes` | :orange_circle: | `racket-cycle-paren-shapes` |
+| `racket-insert-closing` | :orange_circle: | `racket-insert-closing` |
+| `racket-align` | :orange_circle: | `racket-align` |
+| `racket-unalign` | :orange_circle: | `racket-unalign` |
+
+### Round 813: Guile ext 2 / Chez ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `geiser-guile-eval-last-sexp` | :orange_circle: | `guile-eval-last-sexp` |
+| `guile-set-module` | :orange_circle: | `guile-set-module` |
+| `guile-compile` | :orange_circle: | `guile-compile` |
+| `guile-show-documentation` | :orange_circle: | `guile-show-doc` |
+| `guile-find-module` | :orange_circle: | `guile-find-module` |
+| `geiser-chez-eval` | :orange_circle: | `chez-scheme-eval` |
+| `geiser-chez-eval-buffer` | :orange_circle: | `chez-scheme-eval-buffer` |
+| `geiser-chez-load` | :orange_circle: | `chez-scheme-load` |
+| `geiser-chez-interrupt` | :orange_circle: | `chez-scheme-interrupt` |
+| `geiser-chez-inspect` | :orange_circle: | `chez-scheme-inspect` |
+
+### Round 814: Prolog / Datalog ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `prolog-consult-file` | :orange_circle: | `prolog-consult-file` |
+| `prolog-consult-buffer` | :orange_circle: | `prolog-consult-buffer` |
+| `prolog-consult-region` | :orange_circle: | `prolog-consult-region` |
+| `run-prolog` | :orange_circle: | `prolog-run-query` |
+| `prolog-trace-on` | :orange_circle: | `prolog-trace-mode` |
+| `datalog-mode` | :orange_circle: | `datalog-mode` |
+| `datalog-eval` | :orange_circle: | `datalog-eval` |
+| `datalog-eval-buffer` | :orange_circle: | `datalog-eval-buffer` |
+| `datalog-format-buffer` | :orange_circle: | `datalog-format` |
+| `datalog-insert-rule` | :orange_circle: | `datalog-insert-rule` |
+
+### Round 815: Z3 / SMT ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `z3-mode` | :orange_circle: | `z3-mode` |
+| `z3-check-sat` | :orange_circle: | `z3-check-sat` |
+| `z3-get-model` | :orange_circle: | `z3-get-model` |
+| `z3-simplify` | :orange_circle: | `z3-simplify` |
+| `z3-eval-region` | :orange_circle: | `z3-eval-region` |
+| `smt-mode` | :orange_circle: | `smt-mode` |
+| `smt-get-proof` | :orange_circle: | `smt-get-proof` |
+| `smt-push` | :orange_circle: | `smt-push` |
+| `smt-pop` | :orange_circle: | `smt-pop` |
+| `smt-reset` | :orange_circle: | `smt-reset` |
+
+### Round 816: TLA+ / Alloy ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `tlaplus-mode` | :orange_circle: | `tlaplus-mode` |
+| `tlaplus-goto-definition` | :orange_circle: | `tlaplus-goto-definition` |
+| `tlaplus-format` | :orange_circle: | `tlaplus-format` |
+| `tlaplus-find-uses` | :orange_circle: | `tlaplus-find-uses` |
+| `tlaplus-insert-template` | :orange_circle: | `tlaplus-insert-template` |
+| `alloy-mode` | :orange_circle: | `alloy-mode` |
+| `alloy-show-instance` | :orange_circle: | `alloy-show-instance` |
+| `alloy-next-solution` | :orange_circle: | `alloy-next-solution` |
+| `alloy-prev-solution` | :orange_circle: | `alloy-prev-solution` |
+| `alloy-save-instance` | :orange_circle: | `alloy-save-instance` |
+
+### Round 817: Mermaid ext 2 / PlantUML ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `mermaid-mode-preview` | :orange_circle: | `mermaid-preview` |
+| `mermaid-insert-template` | :orange_circle: | `mermaid-insert-template` |
+| `mermaid-set-theme` | :orange_circle: | `mermaid-set-theme` |
+| `mermaid-export-png` | :orange_circle: | `mermaid-export-png` |
+| `mermaid-export-svg` | :orange_circle: | `mermaid-export-svg` |
+| `plantuml-complete-symbol` | :orange_circle: | `plantuml-completion-at-point` |
+| `plantuml-save-png` | :orange_circle: | `plantuml-save-as-png` |
+| `plantuml-insert-template` | :orange_circle: | `plantuml-insert-template` |
+| `plantuml-change-theme` | :orange_circle: | `plantuml-change-theme` |
+| `plantuml-auto-refresh-mode` | :orange_circle: | `plantuml-auto-refresh` |
+
+### Round 818: Graphviz ext 2 / D2 ext 2
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `graphviz-dot-set-layout` | :orange_circle: | `graphviz-set-engine` |
+| `graphviz-dot-view` | :orange_circle: | `graphviz-open-in-browser` |
+| `graphviz-insert-template` | :orange_circle: | `graphviz-insert-template` |
+| `graphviz-export-png` | :orange_circle: | `graphviz-export-png` |
+| `graphviz-export-svg` | :orange_circle: | `graphviz-export-svg` |
+| `d2-preview` | :orange_circle: | `d2-preview` |
+| `d2-watch` | :orange_circle: | `d2-watch` |
+| `d2-format` | :orange_circle: | `d2-format` |
+| `d2-insert-template` | :orange_circle: | `d2-insert-template` |
+| `d2-export-png` | :orange_circle: | `d2-export-png` |
+
+### Round 819: Typst / Quarto ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `typst-ts-mode` | :orange_circle: | `typst-mode` |
+| `typst-ts-compile` | :orange_circle: | `typst-compile-buffer` |
+| `typst-ts-preview` | :orange_circle: | `typst-preview` |
+| `typst-ts-format-buffer` | :orange_circle: | `typst-format` |
+| `typst-insert-template` | :orange_circle: | `typst-insert-template` |
+| `quarto-preview` | :orange_circle: | `quarto-preview` |
+| `quarto-render` | :orange_circle: | `quarto-render` |
+| `quarto-publish` | :orange_circle: | `quarto-publish` |
+| `quarto-insert-code-cell` | :orange_circle: | `quarto-insert-code-block` |
+| `quarto-set-engine` | :orange_circle: | `quarto-set-engine` |
+
+### Round 820: Markdown ext 2 / Grip ext
+
+| Emacs Feature | Status | jemacs Command |
+|---|---|---|
+| `markdown-outline-toggle` | :orange_circle: | `markdown-outline-toggle` |
+| `markdown-cycle-list-item` | :orange_circle: | `markdown-cycle-list-item` |
+| `markdown-backward-same-level` | :orange_circle: | `markdown-backward-same-level` |
+| `markdown-forward-paragraph` | :orange_circle: | `markdown-forward-paragraph` |
+| `markdown-toc-generate-toc` | :orange_circle: | `markdown-toc-generate` |
+| `grip-mode` | :orange_circle: | `grip-mode` |
+| `grip-start-preview` | :orange_circle: | `grip-start-preview` |
+| `grip-stop-preview` | :orange_circle: | `grip-stop-preview` |
+| `grip-restart-preview` | :orange_circle: | `grip-restart-preview` |
+| `grip-browse-preview` | :orange_circle: | `grip-browse-preview` |
+
+### Round 821: LSP-booster / LSP-bridge (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `lsp-booster-mode` | :orange_circle: | Enable LSP booster mode |
+| `lsp-booster-toggle` | :orange_circle: | Toggle LSP booster |
+| `lsp-booster-status` | :orange_circle: | Show LSP booster status |
+| `lsp-booster-restart` | :orange_circle: | Restart LSP booster |
+| `lsp-booster-configure` | :orange_circle: | Configure LSP booster settings |
+| `lsp-bridge-mode` | :orange_circle: | Enable LSP bridge mode |
+| `lsp-bridge-find-def` | :orange_circle: | Find definition via LSP bridge |
+| `lsp-bridge-find-ref` | :orange_circle: | Find references via LSP bridge |
+| `lsp-bridge-code-action` | :orange_circle: | LSP bridge code action |
+| `lsp-bridge-rename` | :orange_circle: | Rename symbol via LSP bridge |
+
+### Round 822: LSP-bridge ext / Citre (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `lsp-bridge-diagnostic-list` | :orange_circle: | List LSP bridge diagnostics |
+| `lsp-bridge-diagnostic-next` | :orange_circle: | Next LSP bridge diagnostic |
+| `lsp-bridge-diagnostic-prev` | :orange_circle: | Previous LSP bridge diagnostic |
+| `lsp-bridge-peek` | :orange_circle: | Peek definition via LSP bridge |
+| `lsp-bridge-popup-documentation` | :orange_circle: | Show LSP bridge documentation popup |
+| `citre-update-tags-file` | :orange_circle: | Update Citre tags file |
+| `citre-peek-through` | :orange_circle: | Peek through Citre tags |
+| `citre-peek-restore` | :orange_circle: | Restore Citre peek window |
+| `citre-global-tags` | :orange_circle: | Search global tags via Citre |
+| `citre-global-update` | :orange_circle: | Update Citre global tags |
+
+### Round 823: GNU-global / GGtags ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `ggtags-show-definition` | :orange_circle: | Show tag definition via GGtags |
+| `ggtags-find-other-symbol` | :orange_circle: | Find other symbol via GGtags |
+| `ggtags-find-file` | :orange_circle: | Find file via GGtags |
+| `ggtags-grep` | :orange_circle: | Grep via GGtags |
+| `ggtags-navigation-mode` | :orange_circle: | Toggle GGtags navigation mode |
+| `global-find-tag` | :orange_circle: | Find tag via GNU Global |
+| `global-find-symbol` | :orange_circle: | Find symbol via GNU Global |
+| `global-find-pattern` | :orange_circle: | Find pattern via GNU Global |
+| `global-show-tag-info` | :orange_circle: | Show tag info via GNU Global |
+| `global-update-tags` | :orange_circle: | Update GNU Global tags |
+
+### Round 824: Ctags / Cscope ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `ctags-create-tags-table` | :orange_circle: | Create ctags TAGS table |
+| `ctags-update-tags-table` | :orange_circle: | Update ctags TAGS table |
+| `ctags-find-tag-from-here` | :orange_circle: | Find tag at point via ctags |
+| `ctags-find-tag-regexp` | :orange_circle: | Find tag by regexp via ctags |
+| `ctags-pop-tag-mark` | :orange_circle: | Pop ctags tag mark stack |
+| `cscope-find-global-definition` | :orange_circle: | Find global definition via cscope |
+| `cscope-find-this-symbol` | :orange_circle: | Find symbol via cscope |
+| `cscope-find-functions-calling` | :orange_circle: | Find functions calling via cscope |
+| `cscope-find-called-functions` | :orange_circle: | Find called functions via cscope |
+| `cscope-find-text-string` | :orange_circle: | Find text string via cscope |
+
+### Round 825: Dape (Debug Adapter Protocol) (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `dape-start` | :orange_circle: | Start Dape debug session |
+| `dape-continue` | :orange_circle: | Continue Dape execution |
+| `dape-next` | :orange_circle: | Step over in Dape |
+| `dape-step-in` | :orange_circle: | Step into in Dape |
+| `dape-step-out` | :orange_circle: | Step out in Dape |
+| `dape-disconnect` | :orange_circle: | Disconnect Dape session |
+| `dape-eval-expression` | :orange_circle: | Evaluate expression in Dape |
+| `dape-breakpoint-remove-all` | :orange_circle: | Remove all Dape breakpoints |
+| `dape-watch-dwim` | :orange_circle: | Add/remove Dape watch expression |
+| `dape-info` | :orange_circle: | Show Dape session info |
+
+### Round 826: DAP-mode ext 2 / Realgud ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `dap-ui-local-toggle` | :orange_circle: | Toggle DAP local variables panel |
+| `dap-ui-sessions-toggle` | :orange_circle: | Toggle DAP sessions panel |
+| `dap-ui-breakpoints-toggle` | :orange_circle: | Toggle DAP breakpoints panel |
+| `dap-ui-repl-toggle` | :orange_circle: | Toggle DAP REPL panel |
+| `dap-ui-expressions-toggle` | :orange_circle: | Toggle DAP expressions panel |
+| `realgud-node-debug` | :orange_circle: | Start RealGUD Node.js debugger |
+| `realgud-ipdb` | :orange_circle: | Start RealGUD ipdb debugger |
+| `realgud-byebug` | :orange_circle: | Start RealGUD byebug debugger |
+| `realgud-rdebug` | :orange_circle: | Start RealGUD rdebug debugger |
+| `realgud-remake` | :orange_circle: | Start RealGUD remake debugger |
+
+### Round 827: Eat-Compile / Compile ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `eat-compile-mode` | :orange_circle: | Enable eat-compile mode |
+| `eat-compile-terminal` | :orange_circle: | Open eat-compile terminal |
+| `eat-compile-scroll-output` | :orange_circle: | Scroll eat-compile output |
+| `eat-compile-ansi-colors` | :orange_circle: | Toggle eat-compile ANSI colors |
+| `eat-compile-buffer-size` | :orange_circle: | Set eat-compile buffer size |
+| `compile-goto-error-next` | :orange_circle: | Go to next compilation error |
+| `compile-goto-error-previous` | :orange_circle: | Go to previous compilation error |
+| `compile-rerun` | :orange_circle: | Rerun last compilation |
+| `compile-kill-compilation` | :orange_circle: | Kill current compilation |
+| `compile-filter-hook` | :orange_circle: | Set compilation filter hook |
+
+### Round 828: Flymake-shellcheck / Flymake-ruff (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `flymake-shellcheck-mode` | :orange_circle: | Enable flymake-shellcheck mode |
+| `flymake-shellcheck-load` | :orange_circle: | Load flymake-shellcheck backend |
+| `flymake-shellcheck-exclude` | :orange_circle: | Exclude shellcheck rules |
+| `flymake-shellcheck-shell` | :orange_circle: | Set shellcheck shell dialect |
+| `flymake-shellcheck-severity` | :orange_circle: | Set shellcheck severity level |
+| `flymake-ruff-mode` | :orange_circle: | Enable flymake-ruff mode |
+| `flymake-ruff-load` | :orange_circle: | Load flymake-ruff backend |
+| `flymake-ruff-fix` | :orange_circle: | Auto-fix ruff violations |
+| `flymake-ruff-format` | :orange_circle: | Format buffer with ruff |
+| `flymake-ruff-exclude` | :orange_circle: | Exclude ruff rules |
+
+### Round 829: Apheleia / Format-all ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `apheleia-format-region` | :orange_circle: | Format region with Apheleia |
+| `apheleia-format-on-save` | :orange_circle: | Toggle Apheleia format on save |
+| `apheleia-format-after-save` | :orange_circle: | Toggle Apheleia format after save |
+| `apheleia-global-mode` | :orange_circle: | Enable Apheleia global mode |
+| `apheleia-mode-alist` | :orange_circle: | Configure Apheleia mode alist |
+| `format-all-ensure-formatter` | :orange_circle: | Ensure format-all formatter |
+| `format-all-buffer-silently` | :orange_circle: | Format buffer silently |
+| `format-all-default-formatters` | :orange_circle: | Show default formatters |
+| `format-all-mode-alist` | :orange_circle: | Configure format-all mode alist |
+| `format-all-update` | :orange_circle: | Update format-all formatters |
+
+### Round 830: Treesit-auto / Treesit-fold ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `treesit-auto-mode` | :orange_circle: | Enable treesit-auto mode |
+| `treesit-auto-install-all` | :orange_circle: | Install all treesit grammars |
+| `treesit-auto-add-to-auto-mode-alist` | :orange_circle: | Add treesit to auto-mode-alist |
+| `treesit-auto-recipe` | :orange_circle: | Show treesit-auto recipe |
+| `treesit-auto-langs` | :orange_circle: | List treesit-auto languages |
+| `treesit-fold-close-all-in-region` | :orange_circle: | Close all folds in region |
+| `treesit-fold-open-all-in-region` | :orange_circle: | Open all folds in region |
+| `treesit-fold-at-point` | :orange_circle: | Toggle fold at point |
+| `treesit-fold-mode-toggle` | :orange_circle: | Toggle treesit fold mode |
+| `treesit-fold-indicators` | :orange_circle: | Toggle fold indicators |
+
+### Round 831: Evil-nerd-commenter / Comment-dwim-2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `evilnc-comment-operator` | :orange_circle: | Evil nerd commenter operator |
+| `evilnc-comment-or-uncomment-paragraphs` | :orange_circle: | Comment/uncomment paragraphs |
+| `evilnc-copy-and-comment-lines` | :orange_circle: | Copy and comment lines |
+| `evilnc-inner-commenter` | :orange_circle: | Select inner comment text object |
+| `evilnc-outer-commenter` | :orange_circle: | Select outer comment text object |
+| `comment-dwim-2-inline` | :orange_circle: | Inline comment with comment-dwim-2 |
+| `comment-dwim-2-kill` | :orange_circle: | Kill comment with comment-dwim-2 |
+| `comment-dwim-2-reindent` | :orange_circle: | Reindent comment with comment-dwim-2 |
+| `comment-dwim-2-uncomment` | :orange_circle: | Uncomment with comment-dwim-2 |
+| `comment-dwim-2-region` | :orange_circle: | Comment region with comment-dwim-2 |
+
+### Round 832: Smartparens ext 2 / Electric-pair ext (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `sp-forward-barf-sexp` | :orange_circle: | Barf sexp forward |
+| `sp-backward-barf-sexp` | :orange_circle: | Barf sexp backward |
+| `sp-beginning-of-next-sexp` | :orange_circle: | Go to beginning of next sexp |
+| `sp-add-to-next-sexp` | :orange_circle: | Add to next sexp |
+| `sp-add-to-previous-sexp` | :orange_circle: | Add to previous sexp |
+| `electric-pair-post-self-insert` | :orange_circle: | Electric pair post self insert |
+| `electric-pair-open-newline-between-pairs` | :orange_circle: | Open newline between pairs |
+| `electric-pair-text-pairs` | :orange_circle: | Configure electric pair text pairs |
+| `electric-pair-skip-whitespace` | :orange_circle: | Toggle electric pair skip whitespace |
+| `electric-pair-delete-adjacent` | :orange_circle: | Delete adjacent electric pair |
+
+### Round 833: Evil-surround ext 2 / Embrace ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `evil-surround-region-with` | :orange_circle: | Surround region with pair |
+| `evil-surround-delete-pair` | :orange_circle: | Delete surrounding pair |
+| `evil-surround-change-inner` | :orange_circle: | Change inner surrounding |
+| `evil-surround-change-outer` | :orange_circle: | Change outer surrounding |
+| `evil-surround-yank` | :orange_circle: | Yank surrounding pair |
+| `embrace-add-pair` | :orange_circle: | Add embrace pair |
+| `embrace-delete-pair` | :orange_circle: | Delete embrace pair |
+| `embrace-change-pair` | :orange_circle: | Change embrace pair |
+| `embrace-with-tag` | :orange_circle: | Embrace with HTML tag |
+| `embrace-lazy-pair` | :orange_circle: | Add lazy embrace pair |
+
+### Round 834: Multiple-cursors ext 2 / Iedit ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `mc-edit-beginnings-of-lines` | :orange_circle: | Edit beginnings of lines |
+| `mc-edit-ends-of-lines` | :orange_circle: | Edit ends of lines |
+| `mc-cycle-forward` | :orange_circle: | Cycle cursors forward |
+| `mc-cycle-backward` | :orange_circle: | Cycle cursors backward |
+| `mc-mark-pop` | :orange_circle: | Pop last cursor mark |
+| `iedit-expand-up-to-occurrence` | :orange_circle: | Expand iedit up to occurrence |
+| `iedit-restrict-function` | :orange_circle: | Restrict iedit to function |
+| `iedit-restrict-current-line` | :orange_circle: | Restrict iedit to current line |
+| `iedit-toggle-unmatched-lines` | :orange_circle: | Toggle unmatched lines in iedit |
+| `iedit-apply-global` | :orange_circle: | Apply iedit changes globally |
+
+### Round 835: Winum / Ace-window ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `winum-select-window-by-number` | :orange_circle: | Select window by number |
+| `winum-select-window-0` | :orange_circle: | Select window 0 |
+| `winum-select-window-1` | :orange_circle: | Select window 1 |
+| `winum-select-window-2` | :orange_circle: | Select window 2 |
+| `winum-select-window-3` | :orange_circle: | Select window 3 |
+| `ace-window-swap` | :orange_circle: | Swap windows with ace-window |
+| `ace-window-delete-other` | :orange_circle: | Delete other windows via ace |
+| `ace-window-move` | :orange_circle: | Move buffer to ace window |
+| `ace-window-split-fair` | :orange_circle: | Fair split with ace-window |
+| `ace-window-maximize` | :orange_circle: | Maximize window via ace |
+
+### Round 836: Popper ext 2 / Shackle ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `popper-open-latest` | :orange_circle: | Open latest popup |
+| `popper-open-popup-in-direction` | :orange_circle: | Open popup in direction |
+| `popper-bury-latest` | :orange_circle: | Bury latest popup |
+| `popper-lower-to-popup` | :orange_circle: | Lower buffer to popup |
+| `popper-kill-latest` | :orange_circle: | Kill latest popup |
+| `shackle-rules-add` | :orange_circle: | Add shackle display rule |
+| `shackle-rules-remove` | :orange_circle: | Remove shackle display rule |
+| `shackle-display-next` | :orange_circle: | Display next shackle buffer |
+| `shackle-display-prev` | :orange_circle: | Display previous shackle buffer |
+| `shackle-last-buffer` | :orange_circle: | Switch to last shackle buffer |
+
+### Round 837: Tab-bar ext 2 / Tab-line ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `tab-bar-pin-tab` | :orange_circle: | Pin current tab |
+| `tab-bar-duplicate-tab` | :orange_circle: | Duplicate current tab |
+| `tab-bar-close-group-tabs` | :orange_circle: | Close tab group tabs |
+| `tab-bar-change-tab-group` | :orange_circle: | Change tab group |
+| `tab-bar-switch-to-last-tab` | :orange_circle: | Switch to last tab |
+| `tab-line-switch-to-next-tab` | :orange_circle: | Switch to next tab-line tab |
+| `tab-line-switch-to-prev-tab` | :orange_circle: | Switch to previous tab-line tab |
+| `tab-line-close-tab` | :orange_circle: | Close tab-line tab |
+| `tab-line-new-tab` | :orange_circle: | New tab-line tab |
+| `tab-line-mode-toggle` | :orange_circle: | Toggle tab-line mode |
+
+### Round 838: Windmove ext 2 / Framemove ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `windmove-display-in-direction-up` | :orange_circle: | Display buffer in window above |
+| `windmove-display-in-direction-down` | :orange_circle: | Display buffer in window below |
+| `windmove-display-in-direction-left` | :orange_circle: | Display buffer in window left |
+| `windmove-display-in-direction-right` | :orange_circle: | Display buffer in window right |
+| `windmove-default-keybindings-setup` | :orange_circle: | Setup windmove keybindings |
+| `framemove-up` | :orange_circle: | Move to frame above |
+| `framemove-down` | :orange_circle: | Move to frame below |
+| `framemove-left` | :orange_circle: | Move to frame left |
+| `framemove-right` | :orange_circle: | Move to frame right |
+| `framemove-default-keybindings` | :orange_circle: | Setup framemove keybindings |
+
+### Round 839: Transpose-frame / Window-layout (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `transpose-frame-vertically` | :orange_circle: | Transpose frame vertically |
+| `transpose-frame-horizontally` | :orange_circle: | Transpose frame horizontally |
+| `rotate-frame-toggle` | :orange_circle: | Toggle frame rotation |
+| `rotate-frame-180` | :orange_circle: | Rotate frame 180 degrees |
+| `window-layout-save` | :orange_circle: | Save window layout |
+| `window-swap-states-dir-up` | :orange_circle: | Swap window states up |
+| `window-swap-states-dir-down` | :orange_circle: | Swap window states down |
+| `window-swap-states-dir-left` | :orange_circle: | Swap window states left |
+| `window-swap-states-dir-right` | :orange_circle: | Swap window states right |
+| `buf-move-auto` | :orange_circle: | Auto buffer move |
+
+### Round 840: Winner ext 2 / Burly ext 2 (10 commands)
+| Command | Status | Description |
+|---------|--------|-------------|
+| `winner-redo-all` | :orange_circle: | Redo all winner configurations |
+| `winner-save-unconditionally` | :orange_circle: | Save winner state unconditionally |
+| `winner-boring-buffers` | :orange_circle: | List winner boring buffers |
+| `winner-boring-buffers-add` | :orange_circle: | Add to winner boring buffers |
+| `winner-ring-size` | :orange_circle: | Set winner ring size |
+| `burly-open-last-bookmark` | :orange_circle: | Open last Burly bookmark |
+| `burly-kill-frames` | :orange_circle: | Kill Burly frames |
+| `burly-tabs-mode` | :orange_circle: | Enable Burly tabs mode |
+| `burly-reset-tab` | :orange_circle: | Reset Burly tab |
+| `burly-open-url` | :orange_circle: | Open Burly URL |
 ### Round 631 — Process Calculi (Pi-calculus, CSP)
 
 | Feature | Status | Notes |
