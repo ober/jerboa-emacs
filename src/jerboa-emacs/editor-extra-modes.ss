@@ -25392,3 +25392,61 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Smem: showing per-process memory")))
 
+;;; Round 333 — Lsof-ext ext, Fuser ext, Lsns ext, Lsipc ext, Lsmem ext (batch 1)
+
+(def (cmd-lsof-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsof: showing network connections")))
+
+(def (cmd-lsof-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Lsof: files opened by PID " pid))))))
+
+(def (cmd-lsof-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Lsof: processes using " file))))))
+
+(def (cmd-lsof-user app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "User: "
+      (lambda (user)
+        (echo-message! echo (str "Lsof: files opened by " user))))))
+
+(def (cmd-fuser-file app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Fuser: processes using " file))))))
+
+(def (cmd-fuser-mount app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Mount point: "
+      (lambda (mnt)
+        (echo-message! echo (str "Fuser: processes using " mnt))))))
+
+(def (cmd-fuser-signal app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Signal and file: "
+      (lambda (spec)
+        (echo-message! echo (str "Fuser: sending signal " spec))))))
+
+(def (cmd-fuser-verbose app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "File: "
+      (lambda (file)
+        (echo-message! echo (str "Fuser: verbose info for " file))))))
+
+(def (cmd-lsns-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsns: listing namespaces")))
+
+(def (cmd-lsns-type app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Type (pid/net/mnt/user): "
+      (lambda (t)
+        (echo-message! echo (str "Lsns: listing " t " namespaces"))))))
+

@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 333 — Lsof-ext ext, Fuser ext, Lsns ext, Lsipc ext, Lsmem ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `lsof-network` | :orange_circle: | Show network connections |
+| `lsof-process` | :orange_circle: | Files by PID |
+| `lsof-file` | :orange_circle: | Processes using file |
+| `lsof-user` | :orange_circle: | Files by user |
+| `fuser-file` | :orange_circle: | Processes using file |
+| `fuser-mount` | :orange_circle: | Processes on mount |
+| `fuser-signal` | :orange_circle: | Signal processes |
+| `fuser-verbose` | :orange_circle: | Verbose file usage |
+| `lsns-show` | :orange_circle: | List namespaces |
+| `lsns-type` | :orange_circle: | List by type |
+| `lsns-pid` | :orange_circle: | Namespaces by PID |
+| `lsns-json` | :orange_circle: | JSON output |
+| `lsipc-show` | :orange_circle: | Show IPC facilities |
+| `lsipc-semaphore` | :orange_circle: | Show semaphores |
+| `lsipc-shared` | :orange_circle: | Show shared memory |
+| `lsipc-message` | :orange_circle: | Show message queues |
+| `lsmem-show` | :orange_circle: | Show memory ranges |
+| `lsmem-json` | :orange_circle: | JSON output |
+| `lsmem-summary` | :orange_circle: | Memory summary |
+| `lsmem-ranges` | :orange_circle: | All memory ranges |
+
 ### Round 332 — Slabtop ext, Pmap ext, Smem ext, Fincore ext, Lslocks ext
 
 | Feature | Status | Notes |

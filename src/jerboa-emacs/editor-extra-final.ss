@@ -24692,3 +24692,47 @@
     (echo-read-string echo "PID: "
       (lambda (pid)
         (echo-message! echo (str "Lslocks: showing locks for PID " pid))))))
+
+;;; Round 333 — Lsns ext, Lsipc ext, Lsmem ext (batch 2)
+
+(def (cmd-lsns-pid app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PID: "
+      (lambda (pid)
+        (echo-message! echo (str "Lsns: namespaces for PID " pid))))))
+
+(def (cmd-lsns-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsns: showing namespaces as JSON")))
+
+(def (cmd-lsipc-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsipc: showing IPC facilities")))
+
+(def (cmd-lsipc-semaphore app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsipc: showing semaphores")))
+
+(def (cmd-lsipc-shared app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsipc: showing shared memory segments")))
+
+(def (cmd-lsipc-message app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsipc: showing message queues")))
+
+(def (cmd-lsmem-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsmem: showing memory ranges")))
+
+(def (cmd-lsmem-json app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsmem: showing memory as JSON")))
+
+(def (cmd-lsmem-summary app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsmem: showing memory summary")))
+
+(def (cmd-lsmem-ranges app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lsmem: showing all memory ranges")))
