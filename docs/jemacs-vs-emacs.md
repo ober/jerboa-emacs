@@ -4583,6 +4583,256 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 500 — Vite ext, Webpack ext, Rollup ext, Parcel ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `vite-build` | :orange_circle: Scaffolded | Vite: build project |
+| `vite-preview` | :orange_circle: Scaffolded | Vite: preview build |
+| `vite-optimize` | :orange_circle: Scaffolded | Vite: optimize deps |
+| `vite-inspect` | :orange_circle: Scaffolded | Vite: inspect plugins |
+| `vite-config` | :orange_circle: Scaffolded | Vite: configuration |
+| `webpack-analyze` | :orange_circle: Scaffolded | Webpack: bundle analysis |
+| `webpack-profile` | :orange_circle: Scaffolded | Webpack: build profiling |
+| `webpack-stats` | :orange_circle: Scaffolded | Webpack: build stats |
+| `webpack-cache` | :orange_circle: Scaffolded | Webpack: cache management |
+| `webpack-progress` | :orange_circle: Scaffolded | Webpack: build progress |
+| `rollup-bundle` | :orange_circle: Scaffolded | Rollup: bundle |
+| `rollup-watch` | :orange_circle: Scaffolded | Rollup: watch mode |
+| `rollup-plugin` | :orange_circle: Scaffolded | Rollup: plugin info |
+| `rollup-treeshake` | :orange_circle: Scaffolded | Rollup: tree-shaking |
+| `rollup-output` | :orange_circle: Scaffolded | Rollup: output options |
+| `parcel-build` | :orange_circle: Scaffolded | Parcel: build |
+| `parcel-watch` | :orange_circle: Scaffolded | Parcel: watch mode |
+| `parcel-cache` | :orange_circle: Scaffolded | Parcel: cache management |
+| `parcel-profile` | :orange_circle: Scaffolded | Parcel: build profiling |
+| `parcel-reporter` | :orange_circle: Scaffolded | Parcel: reporter plugins |
+
+### Round 499 — Yarn ext, Bun ext, Deno ext, esbuild ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `yarn-plug` | :orange_circle: Scaffolded | Yarn: plug'n'play |
+| `yarn-dedupe` | :orange_circle: Scaffolded | Yarn: deduplicate |
+| `yarn-constraints` | :orange_circle: Scaffolded | Yarn: constraints |
+| `yarn-dlx` | :orange_circle: Scaffolded | Yarn: execute package |
+| `yarn-patch` | :orange_circle: Scaffolded | Yarn: patch package |
+| `bun-upgrade` | :orange_circle: Scaffolded | Bun: upgrade runtime |
+| `bun-x` | :orange_circle: Scaffolded | Bun: execute package |
+| `bun-completions` | :orange_circle: Scaffolded | Bun: shell completions |
+| `bun-repl` | :orange_circle: Scaffolded | Bun: REPL |
+| `bun-outdated` | :orange_circle: Scaffolded | Bun: outdated packages |
+| `deno-bench` | :orange_circle: Scaffolded | Deno: benchmarks |
+| `deno-check` | :orange_circle: Scaffolded | Deno: type check |
+| `deno-vendor` | :orange_circle: Scaffolded | Deno: vendor dependencies |
+| `deno-coverage` | :orange_circle: Scaffolded | Deno: coverage report |
+| `deno-doc` | :orange_circle: Scaffolded | Deno: generate docs |
+| `esbuild-bundle` | :orange_circle: Scaffolded | esbuild: bundle |
+| `esbuild-serve` | :orange_circle: Scaffolded | esbuild: serve |
+| `esbuild-analyze` | :orange_circle: Scaffolded | esbuild: analyze bundle |
+| `esbuild-watch` | :orange_circle: Scaffolded | esbuild: watch mode |
+| `esbuild-metafile` | :orange_circle: Scaffolded | esbuild: metafile output |
+
+### Round 498 — GN, Ninja ext, Lerna ext, pnpm ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `gn-gen` | :orange_circle: Scaffolded | GN: generate build files |
+| `gn-args` | :orange_circle: Scaffolded | GN: edit build arguments |
+| `gn-desc` | :orange_circle: Scaffolded | GN: describe target |
+| `gn-refs` | :orange_circle: Scaffolded | GN: find references |
+| `gn-check` | :orange_circle: Scaffolded | GN: check dependencies |
+| `ninja-build` | :orange_circle: Scaffolded | Ninja: build targets |
+| `ninja-clean` | :orange_circle: Scaffolded | Ninja: clean outputs |
+| `ninja-graph` | :orange_circle: Scaffolded | Ninja: dependency graph |
+| `ninja-targets` | :orange_circle: Scaffolded | Ninja: list targets |
+| `ninja-compdb` | :orange_circle: Scaffolded | Ninja: compilation database |
+| `lerna-publish` | :orange_circle: Scaffolded | Lerna: publish packages |
+| `lerna-version` | :orange_circle: Scaffolded | Lerna: version packages |
+| `lerna-changed` | :orange_circle: Scaffolded | Lerna: list changed |
+| `lerna-diff` | :orange_circle: Scaffolded | Lerna: diff packages |
+| `lerna-import` | :orange_circle: Scaffolded | Lerna: import package |
+| `pnpm-store` | :orange_circle: Scaffolded | pnpm: store management |
+| `pnpm-patch` | :orange_circle: Scaffolded | pnpm: patch package |
+| `pnpm-deploy` | :orange_circle: Scaffolded | pnpm: deploy project |
+| `pnpm-dlx` | :orange_circle: Scaffolded | pnpm: execute package |
+| `pnpm-rebuild` | :orange_circle: Scaffolded | pnpm: rebuild packages |
+
+### Round 497 — Conan ext, vcpkg ext, xmake, Premake
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `conan-profile` | :orange_circle: Scaffolded | Conan: manage profiles |
+| `conan-graph` | :orange_circle: Scaffolded | Conan: dependency graph |
+| `conan-lock` | :orange_circle: Scaffolded | Conan: lockfile management |
+| `conan-export` | :orange_circle: Scaffolded | Conan: export recipe |
+| `conan-inspect` | :orange_circle: Scaffolded | Conan: inspect package |
+| `vcpkg-export` | :orange_circle: Scaffolded | vcpkg: export packages |
+| `vcpkg-upgrade` | :orange_circle: Scaffolded | vcpkg: upgrade packages |
+| `vcpkg-edit` | :orange_circle: Scaffolded | vcpkg: edit portfile |
+| `vcpkg-format` | :orange_circle: Scaffolded | vcpkg: format manifest |
+| `vcpkg-depend` | :orange_circle: Scaffolded | vcpkg: dependency info |
+| `xmake-build` | :orange_circle: Scaffolded | xmake: build project |
+| `xmake-run` | :orange_circle: Scaffolded | xmake: run target |
+| `xmake-install` | :orange_circle: Scaffolded | xmake: install target |
+| `xmake-package` | :orange_circle: Scaffolded | xmake: create package |
+| `xmake-require` | :orange_circle: Scaffolded | xmake: manage requirements |
+| `premake-generate` | :orange_circle: Scaffolded | Premake: generate project |
+| `premake-clean` | :orange_circle: Scaffolded | Premake: clean outputs |
+| `premake-export` | :orange_circle: Scaffolded | Premake: export project |
+| `premake-action` | :orange_circle: Scaffolded | Premake: custom action |
+| `premake-embed` | :orange_circle: Scaffolded | Premake: embed scripts |
+
+### Round 496 — Maven ext, Ant ext, CMake ext, Meson ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `maven-archetype` | :orange_circle: Scaffolded | Maven: generate from archetype |
+| `maven-release` | :orange_circle: Scaffolded | Maven: release management |
+| `maven-site` | :orange_circle: Scaffolded | Maven: generate site |
+| `maven-versions` | :orange_circle: Scaffolded | Maven: manage versions |
+| `maven-enforcer` | :orange_circle: Scaffolded | Maven: enforcer rules |
+| `ant-taskdef` | :orange_circle: Scaffolded | Ant: define task |
+| `ant-property` | :orange_circle: Scaffolded | Ant: manage properties |
+| `ant-macrodef` | :orange_circle: Scaffolded | Ant: define macro |
+| `ant-import` | :orange_circle: Scaffolded | Ant: import build file |
+| `ant-condition` | :orange_circle: Scaffolded | Ant: conditional execution |
+| `cmake-preset` | :orange_circle: Scaffolded | CMake: manage presets |
+| `cmake-workflow` | :orange_circle: Scaffolded | CMake: workflow presets |
+| `cmake-pack` | :orange_circle: Scaffolded | CMake: CPack packaging |
+| `cmake-graphviz` | :orange_circle: Scaffolded | CMake: dependency graph |
+| `cmake-format` | :orange_circle: Scaffolded | CMake: format CMakeLists |
+| `meson-wrap` | :orange_circle: Scaffolded | Meson: wrap dependency |
+| `meson-dist` | :orange_circle: Scaffolded | Meson: create dist |
+| `meson-devenv` | :orange_circle: Scaffolded | Meson: developer environment |
+| `meson-rewrite` | :orange_circle: Scaffolded | Meson: rewrite build file |
+| `meson-introspect` | :orange_circle: Scaffolded | Meson: introspect project |
+
+### Round 495 — Turborepo, Nx ext, Gradle ext, SBT ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `turborepo-build` | :orange_circle: Scaffolded | Turborepo: build |
+| `turborepo-prune` | :orange_circle: Scaffolded | Turborepo: prune workspace |
+| `turborepo-link` | :orange_circle: Scaffolded | Turborepo: link remote cache |
+| `turborepo-daemon` | :orange_circle: Scaffolded | Turborepo: daemon status |
+| `turborepo-graph` | :orange_circle: Scaffolded | Turborepo: task graph |
+| `nx-build` | :orange_circle: Scaffolded | Nx: build project |
+| `nx-test` | :orange_circle: Scaffolded | Nx: test project |
+| `nx-lint` | :orange_circle: Scaffolded | Nx: lint project |
+| `nx-format` | :orange_circle: Scaffolded | Nx: format code |
+| `nx-workspace` | :orange_circle: Scaffolded | Nx: workspace management |
+| `gradle-tasks` | :orange_circle: Scaffolded | Gradle: list tasks |
+| `gradle-wrapper` | :orange_circle: Scaffolded | Gradle: wrapper management |
+| `gradle-init` | :orange_circle: Scaffolded | Gradle: initialize project |
+| `gradle-properties` | :orange_circle: Scaffolded | Gradle: show properties |
+| `gradle-scan` | :orange_circle: Scaffolded | Gradle: build scan |
+| `sbt-assembly` | :orange_circle: Scaffolded | SBT: assembly fat jar |
+| `sbt-deps` | :orange_circle: Scaffolded | SBT: dependency tree |
+| `sbt-console` | :orange_circle: Scaffolded | SBT: REPL console |
+| `sbt-package` | :orange_circle: Scaffolded | SBT: package artifact |
+| `sbt-reload` | :orange_circle: Scaffolded | SBT: reload build |
+
+### Round 494 — AppImage ext, Bazel ext, Buck2 ext, Please
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `appimage-mount` | :orange_circle: Scaffolded | AppImage: mount image |
+| `appimage-verify` | :orange_circle: Scaffolded | AppImage: verify signature |
+| `appimage-desktop` | :orange_circle: Scaffolded | AppImage: desktop integration |
+| `appimage-list` | :orange_circle: Scaffolded | AppImage: list installed |
+| `appimage-integrate` | :orange_circle: Scaffolded | AppImage: integrate into system |
+| `bazel-coverage` | :orange_circle: Scaffolded | Bazel: code coverage |
+| `bazel-fetch` | :orange_circle: Scaffolded | Bazel: fetch dependencies |
+| `bazel-analyze` | :orange_circle: Scaffolded | Bazel: analyze build |
+| `bazel-aquery` | :orange_circle: Scaffolded | Bazel: action query |
+| `bazel-cquery` | :orange_circle: Scaffolded | Bazel: configured query |
+| `buck2-query` | :orange_circle: Scaffolded | Buck2: query targets |
+| `buck2-audit` | :orange_circle: Scaffolded | Buck2: audit build |
+| `buck2-profile` | :orange_circle: Scaffolded | Buck2: profile build |
+| `buck2-clean` | :orange_circle: Scaffolded | Buck2: clean outputs |
+| `buck2-doctor` | :orange_circle: Scaffolded | Buck2: diagnose issues |
+| `please-build` | :orange_circle: Scaffolded | Please: build targets |
+| `please-test` | :orange_circle: Scaffolded | Please: run tests |
+| `please-query` | :orange_circle: Scaffolded | Please: query graph |
+| `please-run` | :orange_circle: Scaffolded | Please: run binary |
+| `please-cover` | :orange_circle: Scaffolded | Please: coverage report |
+
+### Round 493 — Cilium BPF, Guix ext, Flatpak ext, Snap ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `cilium-bpf-map` | :orange_circle: Scaffolded | Cilium BPF: list maps |
+| `cilium-bpf-prog` | :orange_circle: Scaffolded | Cilium BPF: list programs |
+| `cilium-bpf-nat` | :orange_circle: Scaffolded | Cilium BPF: NAT table |
+| `cilium-bpf-ct` | :orange_circle: Scaffolded | Cilium BPF: conntrack table |
+| `cilium-bpf-lb` | :orange_circle: Scaffolded | Cilium BPF: load balancer |
+| `guix-manifest` | :orange_circle: Scaffolded | Guix: manifest management |
+| `guix-style` | :orange_circle: Scaffolded | Guix: format package definitions |
+| `guix-weather` | :orange_circle: Scaffolded | Guix: substitute availability |
+| `guix-challenge` | :orange_circle: Scaffolded | Guix: challenge substitutes |
+| `guix-container` | :orange_circle: Scaffolded | Guix: container management |
+| `flatpak-run` | :orange_circle: Scaffolded | Flatpak: run application |
+| `flatpak-remote` | :orange_circle: Scaffolded | Flatpak: manage remotes |
+| `flatpak-repair` | :orange_circle: Scaffolded | Flatpak: repair installation |
+| `flatpak-history` | :orange_circle: Scaffolded | Flatpak: view history |
+| `flatpak-mask` | :orange_circle: Scaffolded | Flatpak: mask updates |
+| `snap-alias` | :orange_circle: Scaffolded | Snap: manage aliases |
+| `snap-quota` | :orange_circle: Scaffolded | Snap: quota groups |
+| `snap-model` | :orange_circle: Scaffolded | Snap: model assertion |
+| `snap-warnings` | :orange_circle: Scaffolded | Snap: view warnings |
+| `snap-debug` | :orange_circle: Scaffolded | Snap: debug mode |
+
+### Round 492 — Fermyon, Krustlet, bpftool, libbpf
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `fermyon-cloud` | :orange_circle: Scaffolded | Fermyon: cloud platform |
+| `fermyon-deploy` | :orange_circle: Scaffolded | Fermyon: deploy application |
+| `fermyon-logs` | :orange_circle: Scaffolded | Fermyon: view logs |
+| `fermyon-domains` | :orange_circle: Scaffolded | Fermyon: domain management |
+| `fermyon-variables` | :orange_circle: Scaffolded | Fermyon: manage variables |
+| `krustlet-nodes` | :orange_circle: Scaffolded | Krustlet: list nodes |
+| `krustlet-pods` | :orange_circle: Scaffolded | Krustlet: list pods |
+| `krustlet-logs` | :orange_circle: Scaffolded | Krustlet: view logs |
+| `krustlet-config` | :orange_circle: Scaffolded | Krustlet: configuration |
+| `krustlet-status` | :orange_circle: Scaffolded | Krustlet: node status |
+| `bpftool-prog` | :orange_circle: Scaffolded | bpftool: list programs |
+| `bpftool-map` | :orange_circle: Scaffolded | bpftool: list maps |
+| `bpftool-link` | :orange_circle: Scaffolded | bpftool: list links |
+| `bpftool-cgroup` | :orange_circle: Scaffolded | bpftool: cgroup programs |
+| `bpftool-perf` | :orange_circle: Scaffolded | bpftool: perf events |
+| `libbpf-attach` | :orange_circle: Scaffolded | libbpf: attach program |
+| `libbpf-map` | :orange_circle: Scaffolded | libbpf: map operations |
+| `libbpf-ring` | :orange_circle: Scaffolded | libbpf: ring buffer |
+| `libbpf-btf` | :orange_circle: Scaffolded | libbpf: BTF info |
+| `libbpf-prog` | :orange_circle: Scaffolded | libbpf: program info |
+
+### Round 491 — Wasmtime ext, Wasmer ext, Wazero, Spin ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `wasmtime-inspect` | :orange_circle: Scaffolded | Wasmtime: inspect module |
+| `wasmtime-cache` | :orange_circle: Scaffolded | Wasmtime: cache management |
+| `wasmtime-wasi` | :orange_circle: Scaffolded | Wasmtime: WASI configuration |
+| `wasmtime-component` | :orange_circle: Scaffolded | Wasmtime: component model |
+| `wasmtime-serve` | :orange_circle: Scaffolded | Wasmtime: serve HTTP |
+| `wasmer-publish` | :orange_circle: Scaffolded | Wasmer: publish package |
+| `wasmer-cache` | :orange_circle: Scaffolded | Wasmer: cache management |
+| `wasmer-validate` | :orange_circle: Scaffolded | Wasmer: validate module |
+| `wasmer-login` | :orange_circle: Scaffolded | Wasmer: login to registry |
+| `wasmer-deploy` | :orange_circle: Scaffolded | Wasmer: deploy app |
+| `wazero-run` | :orange_circle: Scaffolded | Wazero: run module |
+| `wazero-compile` | :orange_circle: Scaffolded | Wazero: compile module |
+| `wazero-inspect` | :orange_circle: Scaffolded | Wazero: inspect module |
+| `wazero-cache` | :orange_circle: Scaffolded | Wazero: cache management |
+| `wazero-config` | :orange_circle: Scaffolded | Wazero: configuration |
+| `spin-templates` | :orange_circle: Scaffolded | Spin: manage templates |
+| `spin-variables` | :orange_circle: Scaffolded | Spin: manage variables |
+| `spin-doctor` | :orange_circle: Scaffolded | Spin: diagnose issues |
+| `spin-trigger` | :orange_circle: Scaffolded | Spin: trigger management |
+| `spin-up` | :orange_circle: Scaffolded | Spin: start application |
+
 ### Round 490 — Rook ext, Longhorn ext, OpenEBS ext, Portworx ext
 
 | Feature | Status | Notes |

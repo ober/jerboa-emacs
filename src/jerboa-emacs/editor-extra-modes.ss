@@ -31534,3 +31534,409 @@
 (def (cmd-ds389-monitor app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "389DS: monitor")))
+
+;; Round 491: Wasmtime ext, Wasmer ext, Wazero, Spin ext (20 commands)
+(def (cmd-wasmtime-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: inspect module")))
+
+(def (cmd-wasmtime-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: cache management")))
+
+(def (cmd-wasmtime-wasi app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: WASI configuration")))
+
+(def (cmd-wasmtime-component app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: component model")))
+
+(def (cmd-wasmtime-serve app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmtime: serve HTTP")))
+
+(def (cmd-wasmer-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmer: publish package")))
+
+(def (cmd-wasmer-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmer: cache management")))
+
+(def (cmd-wasmer-validate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmer: validate module")))
+
+(def (cmd-wasmer-login app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmer: login to registry")))
+
+(def (cmd-wasmer-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wasmer: deploy app")))
+
+(def (cmd-wazero-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wazero: run module")))
+
+(def (cmd-wazero-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wazero: compile module")))
+
+(def (cmd-wazero-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wazero: inspect module")))
+
+(def (cmd-wazero-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wazero: cache management")))
+
+(def (cmd-wazero-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Wazero: configuration")))
+
+(def (cmd-spin-templates app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: manage templates")))
+
+(def (cmd-spin-variables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: manage variables")))
+
+(def (cmd-spin-doctor app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: diagnose issues")))
+
+(def (cmd-spin-trigger app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: trigger management")))
+
+(def (cmd-spin-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Spin: start application")))
+
+;; Round 493: Cilium BPF, Guix ext, Flatpak ext, Snap ext (20 commands)
+(def (cmd-cilium-bpf-map app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium BPF: list maps")))
+
+(def (cmd-cilium-bpf-prog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium BPF: list programs")))
+
+(def (cmd-cilium-bpf-nat app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium BPF: NAT table")))
+
+(def (cmd-cilium-bpf-ct app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium BPF: conntrack table")))
+
+(def (cmd-cilium-bpf-lb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cilium BPF: load balancer")))
+
+(def (cmd-guix-manifest app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: manifest management")))
+
+(def (cmd-guix-style app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: format package definitions")))
+
+(def (cmd-guix-weather app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: substitute availability")))
+
+(def (cmd-guix-challenge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: challenge substitutes")))
+
+(def (cmd-guix-container app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: container management")))
+
+(def (cmd-flatpak-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: run application")))
+
+(def (cmd-flatpak-remote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: manage remotes")))
+
+(def (cmd-flatpak-repair app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: repair installation")))
+
+(def (cmd-flatpak-history app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: view history")))
+
+(def (cmd-flatpak-mask app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Flatpak: mask updates")))
+
+(def (cmd-snap-alias app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: manage aliases")))
+
+(def (cmd-snap-quota app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: quota groups")))
+
+(def (cmd-snap-model app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: model assertion")))
+
+(def (cmd-snap-warnings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: view warnings")))
+
+(def (cmd-snap-debug app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Snap: debug mode")))
+
+;; Round 495 batch 1: Turborepo, Nx ext (10 commands)
+(def (cmd-turborepo-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turborepo: build")))
+
+(def (cmd-turborepo-prune app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turborepo: prune workspace")))
+
+(def (cmd-turborepo-link app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turborepo: link remote cache")))
+
+(def (cmd-turborepo-daemon app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turborepo: daemon status")))
+
+(def (cmd-turborepo-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Turborepo: task graph")))
+
+(def (cmd-nx-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: build project")))
+
+(def (cmd-nx-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: test project")))
+
+(def (cmd-nx-lint app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: lint project")))
+
+(def (cmd-nx-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: format code")))
+
+(def (cmd-nx-workspace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nx: workspace management")))
+
+;; Round 496: Maven ext, Ant ext, CMake ext, Meson ext (20 commands)
+(def (cmd-maven-archetype app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: generate from archetype")))
+
+(def (cmd-maven-release app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: release management")))
+
+(def (cmd-maven-site app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: generate site")))
+
+(def (cmd-maven-versions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: manage versions")))
+
+(def (cmd-maven-enforcer app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: enforcer rules")))
+
+(def (cmd-ant-taskdef app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ant: define task")))
+
+(def (cmd-ant-property app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ant: manage properties")))
+
+(def (cmd-ant-macrodef app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ant: define macro")))
+
+(def (cmd-ant-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ant: import build file")))
+
+(def (cmd-ant-condition app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ant: conditional execution")))
+
+(def (cmd-cmake-preset app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: manage presets")))
+
+(def (cmd-cmake-workflow app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: workflow presets")))
+
+(def (cmd-cmake-pack app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: CPack packaging")))
+
+(def (cmd-cmake-graphviz app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: dependency graph")))
+
+(def (cmd-cmake-format app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "CMake: format CMakeLists")))
+
+(def (cmd-meson-wrap app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: wrap dependency")))
+
+(def (cmd-meson-dist app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: create dist")))
+
+(def (cmd-meson-devenv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: developer environment")))
+
+(def (cmd-meson-rewrite app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: rewrite build file")))
+
+(def (cmd-meson-introspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Meson: introspect project")))
+
+;; Round 498: GN, Ninja ext, Lerna ext, pnpm ext (20 commands)
+(def (cmd-gn-gen app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GN: generate build files")))
+
+(def (cmd-gn-args app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GN: edit build arguments")))
+
+(def (cmd-gn-desc app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GN: describe target")))
+
+(def (cmd-gn-refs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GN: find references")))
+
+(def (cmd-gn-check app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GN: check dependencies")))
+
+(def (cmd-ninja-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ninja: build targets")))
+
+(def (cmd-ninja-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ninja: clean outputs")))
+
+(def (cmd-ninja-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ninja: dependency graph")))
+
+(def (cmd-ninja-targets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ninja: list targets")))
+
+(def (cmd-ninja-compdb app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Ninja: compilation database")))
+
+(def (cmd-lerna-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lerna: publish packages")))
+
+(def (cmd-lerna-version app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lerna: version packages")))
+
+(def (cmd-lerna-changed app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lerna: list changed")))
+
+(def (cmd-lerna-diff app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lerna: diff packages")))
+
+(def (cmd-lerna-import app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lerna: import package")))
+
+(def (cmd-pnpm-store app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "pnpm: store management")))
+
+(def (cmd-pnpm-patch app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "pnpm: patch package")))
+
+(def (cmd-pnpm-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "pnpm: deploy project")))
+
+(def (cmd-pnpm-dlx app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "pnpm: execute package")))
+
+(def (cmd-pnpm-rebuild app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "pnpm: rebuild packages")))
+
+;; Round 500 batch 1: Vite ext, Webpack ext (10 commands)
+(def (cmd-vite-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vite: build project")))
+
+(def (cmd-vite-preview app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vite: preview build")))
+
+(def (cmd-vite-optimize app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vite: optimize deps")))
+
+(def (cmd-vite-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vite: inspect plugins")))
+
+(def (cmd-vite-config app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vite: configuration")))
+
+(def (cmd-webpack-analyze app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webpack: bundle analysis")))
+
+(def (cmd-webpack-profile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webpack: build profiling")))
+
+(def (cmd-webpack-stats app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webpack: build stats")))
+
+(def (cmd-webpack-cache app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webpack: cache management")))
+
+(def (cmd-webpack-progress app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Webpack: build progress")))
