@@ -28746,3 +28746,213 @@
 (def (cmd-az-monitor app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Azure: Monitor")))
+
+;; Round 406 — Hetzner ext, Vultr ext, OVH ext, Scaleway ext (batch 1)
+
+(def (cmd-hetzner-servers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hetzner: managing servers")))
+
+(def (cmd-hetzner-volumes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hetzner: managing volumes")))
+
+(def (cmd-hetzner-networks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hetzner: managing networks")))
+
+(def (cmd-hetzner-firewalls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hetzner: managing firewalls")))
+
+(def (cmd-hetzner-images app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Hetzner: managing images")))
+
+(def (cmd-vultr-instances app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vultr: managing instances")))
+
+(def (cmd-vultr-kubernetes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vultr: Kubernetes clusters")))
+
+(def (cmd-vultr-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vultr: managed databases")))
+
+(def (cmd-vultr-block-storage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vultr: block storage")))
+
+(def (cmd-vultr-dns app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vultr: DNS management")))
+
+;; Round 407 — Fly.io ext, Railway ext, Render ext, Vercel ext (batch 1)
+
+(def (cmd-flyio-apps app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: listing apps")))
+
+(def (cmd-flyio-regions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: listing regions")))
+
+(def (cmd-flyio-wireguard app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: WireGuard tunnels")))
+
+(def (cmd-flyio-postgres app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: Postgres clusters")))
+
+(def (cmd-flyio-tokens app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: managing tokens")))
+
+(def (cmd-flyio-extensions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fly.io: managing extensions")))
+
+(def (cmd-railway-up app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: deploying project")))
+
+(def (cmd-railway-variables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: managing variables")))
+
+(def (cmd-railway-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: managing domains")))
+
+(def (cmd-railway-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: listing services")))
+
+;; Round 408 — Netlify ext, Cloudflare ext, Fastly ext, Akamai ext (batch 1)
+
+(def (cmd-netlify-deploys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: listing deploys")))
+
+(def (cmd-netlify-identity app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: identity management")))
+
+(def (cmd-netlify-build app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: build settings")))
+
+(def (cmd-netlify-hooks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Netlify: webhook management")))
+
+(def (cmd-cloudflare-zones app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: listing zones")))
+
+(def (cmd-cloudflare-tunnels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: managing tunnels")))
+
+(def (cmd-cloudflare-firewall app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: firewall rules")))
+
+(def (cmd-cloudflare-r2 app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: R2 storage")))
+
+(def (cmd-cloudflare-kv app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Cloudflare: KV namespaces")))
+
+(def (cmd-fastly-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fastly: listing services")))
+
+;; Round 409 — AWS S3 ext, AWS EC2 ext, AWS Lambda ext, AWS ECS ext (batch 1)
+
+(def (cmd-s3-sync app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "S3: syncing buckets")))
+
+(def (cmd-s3-presign app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "S3: presigning URL")))
+
+(def (cmd-s3-lifecycle app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "S3: lifecycle rules")))
+
+(def (cmd-s3-cors app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "S3: CORS configuration")))
+
+(def (cmd-s3-versioning app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "S3: versioning config")))
+
+(def (cmd-ec2-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EC2: describing instances")))
+
+(def (cmd-ec2-security-groups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EC2: security groups")))
+
+(def (cmd-ec2-key-pairs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EC2: key pairs")))
+
+(def (cmd-ec2-snapshots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EC2: EBS snapshots")))
+
+(def (cmd-ec2-amis app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "EC2: AMI management")))
+
+;; Round 410 — AWS RDS ext, AWS DynamoDB ext, AWS SQS ext, AWS SNS ext (batch 1)
+
+(def (cmd-rds-instances app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RDS: listing instances")))
+
+(def (cmd-rds-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RDS: Aurora clusters")))
+
+(def (cmd-rds-snapshots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RDS: managing snapshots")))
+
+(def (cmd-rds-parameters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RDS: parameter groups")))
+
+(def (cmd-rds-events app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RDS: recent events")))
+
+(def (cmd-dynamodb-indexes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: managing indexes")))
+
+(def (cmd-dynamodb-items app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: querying items")))
+
+(def (cmd-dynamodb-streams app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: stream management")))
+
+(def (cmd-dynamodb-backups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: backup management")))
+
+(def (cmd-dynamodb-global-tables app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "DynamoDB: global tables")))

@@ -4583,6 +4583,131 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 410 — AWS RDS ext, AWS DynamoDB ext, AWS SQS ext, AWS SNS ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| RDS instances | — | `rds-instances` | :orange_circle: Scaffolded |
+| RDS clusters | — | `rds-clusters` | :orange_circle: Scaffolded |
+| RDS snapshots | — | `rds-snapshots` | :orange_circle: Scaffolded |
+| RDS parameters | — | `rds-parameters` | :orange_circle: Scaffolded |
+| RDS events | — | `rds-events` | :orange_circle: Scaffolded |
+| DynamoDB indexes | — | `dynamodb-indexes` | :orange_circle: Scaffolded |
+| DynamoDB items | — | `dynamodb-items` | :orange_circle: Scaffolded |
+| DynamoDB streams | — | `dynamodb-streams` | :orange_circle: Scaffolded |
+| DynamoDB backups | — | `dynamodb-backups` | :orange_circle: Scaffolded |
+| DynamoDB global tables | — | `dynamodb-global-tables` | :orange_circle: Scaffolded |
+| SQS queues | — | `sqs-queues` | :orange_circle: Scaffolded |
+| SQS messages | — | `sqs-messages` | :orange_circle: Scaffolded |
+| SQS dead letter | — | `sqs-dead-letter` | :orange_circle: Scaffolded |
+| SQS attributes | — | `sqs-attributes` | :orange_circle: Scaffolded |
+| SQS purge | — | `sqs-purge` | :orange_circle: Scaffolded |
+| SNS topics | — | `sns-topics` | :orange_circle: Scaffolded |
+| SNS subscriptions | — | `sns-subscriptions` | :orange_circle: Scaffolded |
+| SNS publish | — | `sns-publish` | :orange_circle: Scaffolded |
+| SNS platforms | — | `sns-platforms` | :orange_circle: Scaffolded |
+| SNS attributes | — | `sns-attributes` | :orange_circle: Scaffolded |
+
+### Round 409 — AWS S3 ext, AWS EC2 ext, AWS Lambda ext, AWS ECS ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| S3 sync | — | `s3-sync` | :orange_circle: Scaffolded |
+| S3 presign | — | `s3-presign` | :orange_circle: Scaffolded |
+| S3 lifecycle | — | `s3-lifecycle` | :orange_circle: Scaffolded |
+| S3 CORS | — | `s3-cors` | :orange_circle: Scaffolded |
+| S3 versioning | — | `s3-versioning` | :orange_circle: Scaffolded |
+| EC2 describe | — | `ec2-describe` | :orange_circle: Scaffolded |
+| EC2 security groups | — | `ec2-security-groups` | :orange_circle: Scaffolded |
+| EC2 key pairs | — | `ec2-key-pairs` | :orange_circle: Scaffolded |
+| EC2 snapshots | — | `ec2-snapshots` | :orange_circle: Scaffolded |
+| EC2 AMIs | — | `ec2-amis` | :orange_circle: Scaffolded |
+| Lambda layers | — | `lambda-layers` | :orange_circle: Scaffolded |
+| Lambda aliases | — | `lambda-aliases` | :orange_circle: Scaffolded |
+| Lambda invoke | — | `lambda-invoke` | :orange_circle: Scaffolded |
+| Lambda versions | — | `lambda-versions` | :orange_circle: Scaffolded |
+| Lambda concurrency | — | `lambda-concurrency` | :orange_circle: Scaffolded |
+| ECS services | — | `ecs-services` | :orange_circle: Scaffolded |
+| ECS tasks | — | `ecs-tasks` | :orange_circle: Scaffolded |
+| ECS clusters | — | `ecs-clusters` | :orange_circle: Scaffolded |
+| ECS task definitions | — | `ecs-task-definitions` | :orange_circle: Scaffolded |
+| ECS capacity | — | `ecs-capacity` | :orange_circle: Scaffolded |
+
+### Round 408 — Netlify ext, Cloudflare ext, Fastly ext, Akamai ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Netlify deploys | — | `netlify-deploys` | :orange_circle: Scaffolded |
+| Netlify identity | — | `netlify-identity` | :orange_circle: Scaffolded |
+| Netlify build | — | `netlify-build` | :orange_circle: Scaffolded |
+| Netlify hooks | — | `netlify-hooks` | :orange_circle: Scaffolded |
+| Cloudflare zones | — | `cloudflare-zones` | :orange_circle: Scaffolded |
+| Cloudflare tunnels | — | `cloudflare-tunnels` | :orange_circle: Scaffolded |
+| Cloudflare firewall | — | `cloudflare-firewall` | :orange_circle: Scaffolded |
+| Cloudflare R2 | — | `cloudflare-r2` | :orange_circle: Scaffolded |
+| Cloudflare KV | — | `cloudflare-kv` | :orange_circle: Scaffolded |
+| Fastly services | — | `fastly-services` | :orange_circle: Scaffolded |
+| Fastly domains | — | `fastly-domains` | :orange_circle: Scaffolded |
+| Fastly backends | — | `fastly-backends` | :orange_circle: Scaffolded |
+| Fastly logging | — | `fastly-logging` | :orange_circle: Scaffolded |
+| Fastly ACLs | — | `fastly-acls` | :orange_circle: Scaffolded |
+| Akamai properties | — | `akamai-properties` | :orange_circle: Scaffolded |
+| Akamai CP codes | — | `akamai-cpcodes` | :orange_circle: Scaffolded |
+| Akamai origins | — | `akamai-origins` | :orange_circle: Scaffolded |
+| Akamai rules | — | `akamai-rules` | :orange_circle: Scaffolded |
+| Akamai diagnostics | — | `akamai-diagnostics` | :orange_circle: Scaffolded |
+| Vercel promote | — | `vercel-promote` | :orange_circle: Scaffolded |
+
+### Round 407 — Fly.io ext, Railway ext, Render ext, Vercel ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Fly.io apps | — | `flyio-apps` | :orange_circle: Scaffolded |
+| Fly.io regions | — | `flyio-regions` | :orange_circle: Scaffolded |
+| Fly.io WireGuard | — | `flyio-wireguard` | :orange_circle: Scaffolded |
+| Fly.io Postgres | — | `flyio-postgres` | :orange_circle: Scaffolded |
+| Fly.io tokens | — | `flyio-tokens` | :orange_circle: Scaffolded |
+| Fly.io extensions | — | `flyio-extensions` | :orange_circle: Scaffolded |
+| Railway up | — | `railway-up` | :orange_circle: Scaffolded |
+| Railway variables | — | `railway-variables` | :orange_circle: Scaffolded |
+| Railway domains | — | `railway-domains` | :orange_circle: Scaffolded |
+| Railway services | — | `railway-services` | :orange_circle: Scaffolded |
+| Railway connect | — | `railway-connect` | :orange_circle: Scaffolded |
+| Railway shell | — | `railway-shell` | :orange_circle: Scaffolded |
+| Render services | — | `render-services` | :orange_circle: Scaffolded |
+| Render deploys | — | `render-deploys` | :orange_circle: Scaffolded |
+| Render env groups | — | `render-envgroups` | :orange_circle: Scaffolded |
+| Render jobs | — | `render-jobs` | :orange_circle: Scaffolded |
+| Render databases | — | `render-databases` | :orange_circle: Scaffolded |
+| Vercel secrets | — | `vercel-secrets` | :orange_circle: Scaffolded |
+| Vercel certs | — | `vercel-certs` | :orange_circle: Scaffolded |
+| Vercel inspect | — | `vercel-inspect` | :orange_circle: Scaffolded |
+
+### Round 406 — Hetzner ext, Vultr ext, OVH ext, Scaleway ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Hetzner servers | — | `hetzner-servers` | :orange_circle: Scaffolded |
+| Hetzner volumes | — | `hetzner-volumes` | :orange_circle: Scaffolded |
+| Hetzner networks | — | `hetzner-networks` | :orange_circle: Scaffolded |
+| Hetzner firewalls | — | `hetzner-firewalls` | :orange_circle: Scaffolded |
+| Hetzner images | — | `hetzner-images` | :orange_circle: Scaffolded |
+| Vultr instances | — | `vultr-instances` | :orange_circle: Scaffolded |
+| Vultr Kubernetes | — | `vultr-kubernetes` | :orange_circle: Scaffolded |
+| Vultr databases | — | `vultr-databases` | :orange_circle: Scaffolded |
+| Vultr block storage | — | `vultr-block-storage` | :orange_circle: Scaffolded |
+| Vultr DNS | — | `vultr-dns` | :orange_circle: Scaffolded |
+| OVH instances | — | `ovh-instances` | :orange_circle: Scaffolded |
+| OVH domains | — | `ovh-domains` | :orange_circle: Scaffolded |
+| OVH databases | — | `ovh-databases` | :orange_circle: Scaffolded |
+| OVH storage | — | `ovh-storage` | :orange_circle: Scaffolded |
+| OVH networks | — | `ovh-networks` | :orange_circle: Scaffolded |
+| Scaleway instances | — | `scaleway-instances` | :orange_circle: Scaffolded |
+| Scaleway volumes | — | `scaleway-volumes` | :orange_circle: Scaffolded |
+| Scaleway K8s | — | `scaleway-k8s` | :orange_circle: Scaffolded |
+| Scaleway registry | — | `scaleway-registry` | :orange_circle: Scaffolded |
+| Scaleway functions | — | `scaleway-functions` | :orange_circle: Scaffolded |
+
 ### Round 405 — GCP ext, Azure CLI ext, DigitalOcean ext, Linode ext
 
 | Feature | Emacs | jemacs | Status |

@@ -27960,4 +27960,214 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Linode: StackScripts")))
 
+;; Round 406 — Hetzner ext, Vultr ext, OVH ext, Scaleway ext (batch 2)
+
+(def (cmd-ovh-instances app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OVH: managing instances")))
+
+(def (cmd-ovh-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OVH: domain management")))
+
+(def (cmd-ovh-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OVH: managed databases")))
+
+(def (cmd-ovh-storage app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OVH: object storage")))
+
+(def (cmd-ovh-networks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "OVH: network management")))
+
+(def (cmd-scaleway-instances app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scaleway: managing instances")))
+
+(def (cmd-scaleway-volumes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scaleway: managing volumes")))
+
+(def (cmd-scaleway-k8s app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scaleway: Kubernetes clusters")))
+
+(def (cmd-scaleway-registry app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scaleway: container registry")))
+
+(def (cmd-scaleway-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Scaleway: serverless functions")))
+
+;; Round 407 — Fly.io ext, Railway ext, Render ext, Vercel ext (batch 2)
+
+(def (cmd-railway-connect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: connecting to database")))
+
+(def (cmd-railway-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Railway: opening shell")))
+
+(def (cmd-render-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: listing services")))
+
+(def (cmd-render-deploys app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: listing deploys")))
+
+(def (cmd-render-envgroups app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: environment groups")))
+
+(def (cmd-render-jobs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: cron jobs")))
+
+(def (cmd-render-databases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Render: managed databases")))
+
+(def (cmd-vercel-secrets app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: managing secrets")))
+
+(def (cmd-vercel-certs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: SSL certificates")))
+
+(def (cmd-vercel-inspect app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: inspecting deployment")))
+
+;; Round 408 — Netlify ext, Cloudflare ext, Fastly ext, Akamai ext (batch 2)
+
+(def (cmd-fastly-domains app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fastly: managing domains")))
+
+(def (cmd-fastly-backends app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fastly: managing backends")))
+
+(def (cmd-fastly-logging app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fastly: logging endpoints")))
+
+(def (cmd-fastly-acls app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Fastly: access control lists")))
+
+(def (cmd-akamai-properties app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Akamai: managing properties")))
+
+(def (cmd-akamai-cpcodes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Akamai: CP codes")))
+
+(def (cmd-akamai-origins app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Akamai: origin servers")))
+
+(def (cmd-akamai-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Akamai: property rules")))
+
+(def (cmd-akamai-diagnostics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Akamai: diagnostics tools")))
+
+(def (cmd-vercel-promote app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Vercel: promoting deployment")))
+
+;; Round 409 — AWS S3 ext, AWS EC2 ext, AWS Lambda ext, AWS ECS ext (batch 2)
+
+(def (cmd-lambda-layers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lambda: managing layers")))
+
+(def (cmd-lambda-aliases app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lambda: managing aliases")))
+
+(def (cmd-lambda-invoke app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lambda: invoking function")))
+
+(def (cmd-lambda-versions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lambda: listing versions")))
+
+(def (cmd-lambda-concurrency app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Lambda: concurrency settings")))
+
+(def (cmd-ecs-services app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ECS: listing services")))
+
+(def (cmd-ecs-tasks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ECS: listing tasks")))
+
+(def (cmd-ecs-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ECS: listing clusters")))
+
+(def (cmd-ecs-task-definitions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ECS: task definitions")))
+
+(def (cmd-ecs-capacity app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ECS: capacity providers")))
+
+;; Round 410 — AWS RDS ext, AWS DynamoDB ext, AWS SQS ext, AWS SNS ext (batch 2)
+
+(def (cmd-sqs-queues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQS: listing queues")))
+
+(def (cmd-sqs-messages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQS: receiving messages")))
+
+(def (cmd-sqs-dead-letter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQS: dead letter queue")))
+
+(def (cmd-sqs-attributes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQS: queue attributes")))
+
+(def (cmd-sqs-purge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SQS: purging queue")))
+
+(def (cmd-sns-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SNS: listing topics")))
+
+(def (cmd-sns-subscriptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SNS: listing subscriptions")))
+
+(def (cmd-sns-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SNS: publishing message")))
+
+(def (cmd-sns-platforms app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SNS: platform applications")))
+
+(def (cmd-sns-attributes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "SNS: topic attributes")))
+
 ;; Milestone: Round 400 — 9,000+ commands in jemacs!
