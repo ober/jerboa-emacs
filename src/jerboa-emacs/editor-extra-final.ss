@@ -26751,3 +26751,44 @@
 (def (cmd-singer-state app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Singer: managing replication state")))
+
+;; Round 377 batch 2 — Braintree ext, Square/Adyen ext
+(def (cmd-braintree-plans app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Braintree: listing plans")))
+
+(def (cmd-braintree-disputes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Braintree: listing disputes")))
+
+(def (cmd-square-payments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Square: listing payments")))
+
+(def (cmd-square-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Square: listing customers")))
+
+(def (cmd-square-invoices app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Square: listing invoices")))
+
+(def (cmd-square-catalog app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Square: browsing catalog")))
+
+(def (cmd-adyen-payments app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Adyen: listing payments")))
+
+(def (cmd-adyen-refunds app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Adyen: listing refunds")))
+
+(def (cmd-adyen-payouts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Adyen: listing payouts")))
+
+(def (cmd-adyen-reports app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Adyen: listing reports")))

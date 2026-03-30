@@ -27530,3 +27530,44 @@
 (def (cmd-airbyte-sync app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Airbyte: triggering sync")))
+
+;; Round 377 batch 1 — Stripe ext, PayPal ext
+(def (cmd-stripe-charges app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stripe: listing charges")))
+
+(def (cmd-stripe-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stripe: listing customers")))
+
+(def (cmd-stripe-invoices app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stripe: listing invoices")))
+
+(def (cmd-stripe-subscriptions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Stripe: listing subscriptions")))
+
+(def (cmd-paypal-transactions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PayPal: listing transactions")))
+
+(def (cmd-paypal-invoices app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PayPal: listing invoices")))
+
+(def (cmd-paypal-disputes app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PayPal: listing disputes")))
+
+(def (cmd-paypal-payouts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "PayPal: listing payouts")))
+
+(def (cmd-braintree-transactions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Braintree: listing transactions")))
+
+(def (cmd-braintree-customers app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Braintree: listing customers")))

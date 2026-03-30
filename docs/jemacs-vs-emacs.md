@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 377 — Stripe ext, PayPal ext, Braintree ext, Square/Adyen ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Stripe charges | — | `stripe-charges` | :orange_circle: Scaffolded |
+| Stripe customers | — | `stripe-customers` | :orange_circle: Scaffolded |
+| Stripe invoices | — | `stripe-invoices` | :orange_circle: Scaffolded |
+| Stripe subscriptions | — | `stripe-subscriptions` | :orange_circle: Scaffolded |
+| PayPal transactions | — | `paypal-transactions` | :orange_circle: Scaffolded |
+| PayPal invoices | — | `paypal-invoices` | :orange_circle: Scaffolded |
+| PayPal disputes | — | `paypal-disputes` | :orange_circle: Scaffolded |
+| PayPal payouts | — | `paypal-payouts` | :orange_circle: Scaffolded |
+| Braintree transactions | — | `braintree-transactions` | :orange_circle: Scaffolded |
+| Braintree customers | — | `braintree-customers` | :orange_circle: Scaffolded |
+| Braintree plans | — | `braintree-plans` | :orange_circle: Scaffolded |
+| Braintree disputes | — | `braintree-disputes` | :orange_circle: Scaffolded |
+| Square payments | — | `square-payments` | :orange_circle: Scaffolded |
+| Square customers | — | `square-customers` | :orange_circle: Scaffolded |
+| Square invoices | — | `square-invoices` | :orange_circle: Scaffolded |
+| Square catalog | — | `square-catalog` | :orange_circle: Scaffolded |
+| Adyen payments | — | `adyen-payments` | :orange_circle: Scaffolded |
+| Adyen refunds | — | `adyen-refunds` | :orange_circle: Scaffolded |
+| Adyen payouts | — | `adyen-payouts` | :orange_circle: Scaffolded |
+| Adyen reports | — | `adyen-reports` | :orange_circle: Scaffolded |
+
 ### Round 376 — dbt ext, Fivetran ext, Airbyte ext, Stitch/Singer ext
 
 | Feature | Emacs | jemacs | Status |
