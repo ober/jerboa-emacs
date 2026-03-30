@@ -24594,3 +24594,55 @@
 (def (cmd-nmon-snapshot app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Nmon: taking system snapshot")))
+
+;;; Round 331 — Glances ext, Htop-ext ext, Btop ext (batch 2)
+
+(def (cmd-glances-web app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Glances: starting web interface")))
+
+(def (cmd-glances-alert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Glances: showing alerts")))
+
+(def (cmd-htop-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Htop: showing process list")))
+
+(def (cmd-htop-tree app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Htop: showing process tree")))
+
+(def (cmd-htop-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter: "
+      (lambda (flt)
+        (echo-message! echo (str "Htop: filtering by " flt))))))
+
+(def (cmd-htop-sort app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Sort by: "
+      (lambda (col)
+        (echo-message! echo (str "Htop: sorting by " col))))))
+
+(def (cmd-btop-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Btop: showing system monitor")))
+
+(def (cmd-btop-theme app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Theme: "
+      (lambda (theme)
+        (echo-message! echo (str "Btop: setting theme to " theme))))))
+
+(def (cmd-btop-filter app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Filter: "
+      (lambda (flt)
+        (echo-message! echo (str "Btop: filtering by " flt))))))
+
+(def (cmd-btop-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Output file: "
+      (lambda (file)
+        (echo-message! echo (str "Btop: exporting to " file))))))

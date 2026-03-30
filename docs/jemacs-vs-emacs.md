@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 331 — Collectl ext, Atop ext, Glances ext, Htop-ext ext, Btop ext
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `collectl-cpu` | :orange_circle: | CPU statistics |
+| `collectl-disk` | :orange_circle: | Disk statistics |
+| `collectl-network` | :orange_circle: | Network statistics |
+| `collectl-memory` | :orange_circle: | Memory statistics |
+| `atop-show` | :orange_circle: | System overview |
+| `atop-process` | :orange_circle: | Process view |
+| `atop-disk` | :orange_circle: | Disk view |
+| `atop-memory` | :orange_circle: | Memory view |
+| `glances-show` | :orange_circle: | System monitor |
+| `glances-export` | :orange_circle: | Export data |
+| `glances-web` | :orange_circle: | Web interface |
+| `glances-alert` | :orange_circle: | Show alerts |
+| `htop-process` | :orange_circle: | Process list |
+| `htop-tree` | :orange_circle: | Process tree |
+| `htop-filter` | :orange_circle: | Filter processes |
+| `htop-sort` | :orange_circle: | Sort processes |
+| `btop-show` | :orange_circle: | System monitor |
+| `btop-theme` | :orange_circle: | Set theme |
+| `btop-filter` | :orange_circle: | Filter view |
+| `btop-export` | :orange_circle: | Export data |
+
 ### Round 330 — Perf-sched ext, Numastat ext, Vmstat ext, Dstat ext, Nmon ext
 
 | Feature | Status | Notes |

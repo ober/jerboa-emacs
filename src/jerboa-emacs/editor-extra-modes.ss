@@ -25294,3 +25294,47 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vmstat: showing disk statistics")))
 
+;;; Round 331 — Collectl ext, Atop ext, Glances ext, Htop-ext ext, Btop ext (batch 1)
+
+(def (cmd-collectl-cpu app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Collectl: showing CPU statistics")))
+
+(def (cmd-collectl-disk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Collectl: showing disk statistics")))
+
+(def (cmd-collectl-network app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Collectl: showing network statistics")))
+
+(def (cmd-collectl-memory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Collectl: showing memory statistics")))
+
+(def (cmd-atop-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atop: showing system overview")))
+
+(def (cmd-atop-process app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atop: showing process view")))
+
+(def (cmd-atop-disk app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atop: showing disk view")))
+
+(def (cmd-atop-memory app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Atop: showing memory view")))
+
+(def (cmd-glances-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Glances: showing system monitor")))
+
+(def (cmd-glances-export app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Export format: "
+      (lambda (fmt)
+        (echo-message! echo (str "Glances: exporting as " fmt))))))
+
