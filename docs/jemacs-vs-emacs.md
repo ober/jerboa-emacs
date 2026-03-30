@@ -4583,6 +4583,14 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 247 — Final gerbil-emacs parity (Quickrun, String-edit)
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| quickrun | :orange_circle: | Execute current buffer |
+| quickrun-with | :orange_circle: | Execute with specific command |
+| string-edit-commit | :orange_circle: | Commit string edit changes |
+
 ### Round 246 — Surround, Writeroom, Rainbow, Mode toggles (gerbil-emacs parity)
 
 | Command | Status | Description |

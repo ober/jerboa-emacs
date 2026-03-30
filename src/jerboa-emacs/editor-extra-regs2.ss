@@ -6620,4 +6620,8 @@
   (register-command! 'page-break-lines-real cmd-page-break-lines-real)
   (register-command! 'pixel-scroll-precision-mode-real cmd-pixel-scroll-precision-mode-real)
   (register-command! 'save-place-mode-real cmd-save-place-mode-real)
+  ;; Round 247 — Final gerbil-emacs parity
+  (register-command! 'quickrun cmd-quickrun)
+  (register-command! 'quickrun-with cmd-quickrun-with)
+  (register-command! 'string-edit-commit cmd-string-edit-commit)
 )

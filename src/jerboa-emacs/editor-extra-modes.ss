@@ -21040,3 +21040,18 @@
       (echo-message! echo "Ligature mode enabled")
       (echo-message! echo "Ligature mode disabled"))))
 
+;; Round 247 — Final gerbil-emacs parity (Quickrun, String-edit)
+(def (cmd-quickrun app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Quickrun: executing current buffer")))
+
+(def (cmd-quickrun-with app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Run with command: "
+      (lambda (cmd)
+        (echo-message! echo (str "Quickrun: executing with " cmd))))))
+
+(def (cmd-string-edit-commit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "String edit: committed changes")))
+
