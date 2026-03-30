@@ -26372,3 +26372,46 @@
 (def (cmd-radius-status app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "RADIUS: checking server status")))
+
+;; Round 368 batch 2 — NSQ ext, RabbitMQ/ActiveMQ ext
+(def (cmd-nsq-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "NSQ topic: "
+      (lambda (topic)
+        (echo-message! echo (str "NSQ: publishing to " topic))))))
+
+(def (cmd-nsq-consume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NSQ: consuming messages")))
+
+(def (cmd-nsq-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NSQ: listing topics")))
+
+(def (cmd-nsq-channels app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "NSQ: listing channels")))
+
+(def (cmd-rabbitmq-bindings app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: listing bindings")))
+
+(def (cmd-rabbitmq-shovel app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: managing shovel")))
+
+(def (cmd-rabbitmq-federation app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: managing federation")))
+
+(def (cmd-rabbitmq-trace app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "RabbitMQ: enabling message tracing")))
+
+(def (cmd-activemq-queues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ActiveMQ: listing queues")))
+
+(def (cmd-activemq-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "ActiveMQ: listing topics")))

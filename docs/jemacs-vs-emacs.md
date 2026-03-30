@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 368 — MQTT ext, AMQP ext, NSQ ext, RabbitMQ/ActiveMQ ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| MQTT retained messages | — | `mqtt-retain` | :orange_circle: Scaffolded |
+| MQTT last will config | — | `mqtt-will` | :orange_circle: Scaffolded |
+| MQTT QoS level | — | `mqtt-qos` | :orange_circle: Scaffolded |
+| MQTT bridge config | — | `mqtt-bridge` | :orange_circle: Scaffolded |
+| AMQP publish | — | `amqp-publish` | :orange_circle: Scaffolded |
+| AMQP consume | — | `amqp-consume` | :orange_circle: Scaffolded |
+| AMQP declare queue | — | `amqp-declare` | :orange_circle: Scaffolded |
+| AMQP bind queue | — | `amqp-bind` | :orange_circle: Scaffolded |
+| Pulsar functions | — | `pulsar-functions` | :orange_circle: Scaffolded |
+| Pulsar sinks | — | `pulsar-sinks` | :orange_circle: Scaffolded |
+| NSQ publish | — | `nsq-publish` | :orange_circle: Scaffolded |
+| NSQ consume | — | `nsq-consume` | :orange_circle: Scaffolded |
+| NSQ list topics | — | `nsq-topics` | :orange_circle: Scaffolded |
+| NSQ list channels | — | `nsq-channels` | :orange_circle: Scaffolded |
+| RabbitMQ bindings | — | `rabbitmq-bindings` | :orange_circle: Scaffolded |
+| RabbitMQ shovel | — | `rabbitmq-shovel` | :orange_circle: Scaffolded |
+| RabbitMQ federation | — | `rabbitmq-federation` | :orange_circle: Scaffolded |
+| RabbitMQ tracing | — | `rabbitmq-trace` | :orange_circle: Scaffolded |
+| ActiveMQ queues | — | `activemq-queues` | :orange_circle: Scaffolded |
+| ActiveMQ topics | — | `activemq-topics` | :orange_circle: Scaffolded |
+
 ### Round 367 — OAuth ext, SAML ext, OIDC ext, Kerberos/PAM/NTLM ext
 
 | Feature | Emacs | jemacs | Status |

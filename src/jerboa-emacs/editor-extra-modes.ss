@@ -27135,3 +27135,48 @@
 (def (cmd-oidc-userinfo app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "OIDC: fetching userinfo")))
+
+;; Round 368 batch 1 — MQTT ext, AMQP ext
+(def (cmd-mqtt-retain app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MQTT: managing retained messages")))
+
+(def (cmd-mqtt-will app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MQTT: configuring last will and testament")))
+
+(def (cmd-mqtt-qos app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MQTT: setting QoS level")))
+
+(def (cmd-mqtt-bridge app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "MQTT: configuring bridge connection")))
+
+(def (cmd-amqp-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Exchange/routing-key: "
+      (lambda (target)
+        (echo-message! echo (str "AMQP: publishing to " target))))))
+
+(def (cmd-amqp-consume app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Queue name: "
+      (lambda (queue)
+        (echo-message! echo (str "AMQP: consuming from " queue))))))
+
+(def (cmd-amqp-declare app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AMQP: declaring queue/exchange")))
+
+(def (cmd-amqp-bind app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AMQP: binding queue to exchange")))
+
+(def (cmd-pulsar-functions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: listing functions")))
+
+(def (cmd-pulsar-sinks app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pulsar: listing sinks")))
