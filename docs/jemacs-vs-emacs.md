@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 257 — Chef ext, Salt ext, Nix ext, Guix ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| chef-apply | :orange_circle: | Apply current Chef recipe |
+| chef-run-recipe | :orange_circle: | Run a Chef recipe |
+| chef-knife-status | :orange_circle: | Show Chef knife status |
+| chef-cookbook-upload | :orange_circle: | Upload Chef cookbook |
+| chef-role-edit | :orange_circle: | Edit a Chef role |
+| salt-apply | :orange_circle: | Apply Salt state |
+| salt-ping | :orange_circle: | Ping Salt minions |
+| salt-highstate | :orange_circle: | Run Salt highstate |
+| salt-pillar-get | :orange_circle: | Get Salt pillar value |
+| salt-grains-items | :orange_circle: | List Salt grains |
+| nix-search-packages | :orange_circle: | Search Nix packages |
+| nix-derivation-show | :orange_circle: | Show Nix derivation |
+| nix-profile-list | :orange_circle: | List Nix profile packages |
+| nix-develop | :orange_circle: | Enter Nix develop shell |
+| guix-package-install | :orange_circle: | Install a Guix package |
+| guix-package-remove | :orange_circle: | Remove a Guix package |
+| guix-shell | :orange_circle: | Open Guix shell environment |
+| guix-system-shepherd-status | :orange_circle: | Show Shepherd service status |
+| guix-size | :orange_circle: | Show Guix package size |
+| guix-describe | :orange_circle: | Describe current Guix profile |
+
 ### Round 256 — Kubernetes ext, Vagrant ext, Puppet ext, systemd, Ansible ext
 
 | Command | Status | Description |

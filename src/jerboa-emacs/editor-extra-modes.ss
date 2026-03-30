@@ -21472,3 +21472,53 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Vagrant: listing available boxes")))
 
+;;; Round 257 — Chef ext, Salt ext, Nix ext, Guix ext (batch 1)
+
+(def (cmd-chef-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: applying current recipe")))
+
+(def (cmd-chef-run-recipe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Recipe: "
+      (lambda (recipe)
+        (echo-message! echo (str "Chef: running recipe " recipe))))))
+
+(def (cmd-chef-knife-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chef: knife status")))
+
+(def (cmd-chef-cookbook-upload app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Cookbook: "
+      (lambda (cb)
+        (echo-message! echo (str "Chef: uploading cookbook " cb))))))
+
+(def (cmd-chef-role-edit app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Role: "
+      (lambda (role)
+        (echo-message! echo (str "Chef: editing role " role))))))
+
+(def (cmd-salt-apply app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: applying state")))
+
+(def (cmd-salt-ping app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: pinging minions")))
+
+(def (cmd-salt-highstate app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: running highstate")))
+
+(def (cmd-salt-pillar-get app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Pillar key: "
+      (lambda (key)
+        (echo-message! echo (str "Salt: pillar " key))))))
+
+(def (cmd-salt-grains-items app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Salt: listing grains")))
+

@@ -20858,3 +20858,51 @@
 (def (cmd-ansible-vault-decrypt app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Ansible: decrypting vault file")))
+
+;;; Round 257 — Nix ext, Guix ext (batch 2)
+
+(def (cmd-nix-search-packages app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Search packages: "
+      (lambda (query)
+        (echo-message! echo (str "Nix: searching for " query))))))
+
+(def (cmd-nix-derivation-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: showing derivation")))
+
+(def (cmd-nix-profile-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: listing profile packages")))
+
+(def (cmd-nix-develop app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Nix: entering develop shell")))
+
+(def (cmd-guix-package-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package to install: "
+      (lambda (pkg)
+        (echo-message! echo (str "Guix: installing " pkg))))))
+
+(def (cmd-guix-package-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Package to remove: "
+      (lambda (pkg)
+        (echo-message! echo (str "Guix: removing " pkg))))))
+
+(def (cmd-guix-shell app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: opening shell environment")))
+
+(def (cmd-guix-system-shepherd-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: showing Shepherd service status")))
+
+(def (cmd-guix-size app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: showing package size")))
+
+(def (cmd-guix-describe app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Guix: describing current profile")))
