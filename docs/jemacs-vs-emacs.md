@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 258 — Prometheus ext, Grafana ext, AWS ext, GCP ext, Azure ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| prometheus-alerts | :orange_circle: | List active Prometheus alerts |
+| prometheus-rules | :orange_circle: | List Prometheus rules |
+| prometheus-graph | :orange_circle: | Graph a PromQL query |
+| grafana-panel-view | :orange_circle: | View a Grafana panel |
+| grafana-alert-rules | :orange_circle: | List Grafana alert rules |
+| grafana-datasource-list | :orange_circle: | List Grafana datasources |
+| grafana-annotation-add | :orange_circle: | Add a Grafana annotation |
+| aws-cloudwatch-logs | :orange_circle: | View AWS CloudWatch logs |
+| aws-iam-list-users | :orange_circle: | List AWS IAM users |
+| aws-sns-list-topics | :orange_circle: | List AWS SNS topics |
+| aws-sqs-list-queues | :orange_circle: | List AWS SQS queues |
+| aws-rds-list-instances | :orange_circle: | List AWS RDS instances |
+| aws-ecs-list-clusters | :orange_circle: | List AWS ECS clusters |
+| gcp-compute-list | :orange_circle: | List GCP compute instances |
+| gcp-storage-list | :orange_circle: | List GCP storage buckets |
+| gcp-pubsub-topics | :orange_circle: | List GCP Pub/Sub topics |
+| gcp-functions-list | :orange_circle: | List GCP Cloud Functions |
+| gcp-iam-roles | :orange_circle: | List GCP IAM roles |
+| azure-vm-list | :orange_circle: | List Azure virtual machines |
+| azure-storage-list | :orange_circle: | List Azure storage accounts |
+
 ### Round 257 — Chef ext, Salt ext, Nix ext, Guix ext
 
 | Command | Status | Description |

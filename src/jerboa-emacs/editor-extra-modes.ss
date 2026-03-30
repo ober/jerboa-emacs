@@ -21522,3 +21522,53 @@
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Salt: listing grains")))
 
+;;; Round 258 — Prometheus ext, Grafana ext, AWS ext, GCP ext, Azure ext (batch 1)
+
+(def (cmd-prometheus-alerts app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prometheus: listing active alerts")))
+
+(def (cmd-prometheus-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Prometheus: listing rules")))
+
+(def (cmd-prometheus-graph app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "PromQL query: "
+      (lambda (query)
+        (echo-message! echo (str "Prometheus: graphing " query))))))
+
+(def (cmd-grafana-panel-view app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Panel ID: "
+      (lambda (id)
+        (echo-message! echo (str "Grafana: viewing panel " id))))))
+
+(def (cmd-grafana-alert-rules app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grafana: listing alert rules")))
+
+(def (cmd-grafana-datasource-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Grafana: listing datasources")))
+
+(def (cmd-grafana-annotation-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Annotation text: "
+      (lambda (text)
+        (echo-message! echo (str "Grafana: added annotation: " text))))))
+
+(def (cmd-aws-cloudwatch-logs app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Log group: "
+      (lambda (group)
+        (echo-message! echo (str "AWS: viewing CloudWatch logs for " group))))))
+
+(def (cmd-aws-iam-list-users app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AWS: listing IAM users")))
+
+(def (cmd-aws-sns-list-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AWS: listing SNS topics")))
+

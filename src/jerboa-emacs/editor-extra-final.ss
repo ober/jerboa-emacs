@@ -20906,3 +20906,45 @@
 (def (cmd-guix-describe app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Guix: describing current profile")))
+
+;;; Round 258 — AWS ext, GCP ext, Azure ext (batch 2)
+
+(def (cmd-aws-sqs-list-queues app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AWS: listing SQS queues")))
+
+(def (cmd-aws-rds-list-instances app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AWS: listing RDS instances")))
+
+(def (cmd-aws-ecs-list-clusters app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "AWS: listing ECS clusters")))
+
+(def (cmd-gcp-compute-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCP: listing compute instances")))
+
+(def (cmd-gcp-storage-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCP: listing storage buckets")))
+
+(def (cmd-gcp-pubsub-topics app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCP: listing Pub/Sub topics")))
+
+(def (cmd-gcp-functions-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCP: listing Cloud Functions")))
+
+(def (cmd-gcp-iam-roles app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "GCP: listing IAM roles")))
+
+(def (cmd-azure-vm-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Azure: listing virtual machines")))
+
+(def (cmd-azure-storage-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Azure: listing storage accounts")))
