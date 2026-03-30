@@ -27741,3 +27741,46 @@
 (def (cmd-fauna-collections app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Fauna: listing collections")))
+
+;; Round 382 batch 1 — Pinecone ext, Weaviate ext
+(def (cmd-pinecone-index app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pinecone: listing indexes")))
+
+(def (cmd-pinecone-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pinecone: querying vectors")))
+
+(def (cmd-pinecone-upsert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pinecone: upserting vectors")))
+
+(def (cmd-pinecone-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Pinecone: listing collections")))
+
+(def (cmd-weaviate-schema app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weaviate: showing schema")))
+
+(def (cmd-weaviate-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "GraphQL query: "
+      (lambda (query)
+        (echo-message! echo (str "Weaviate: querying: " query))))))
+
+(def (cmd-weaviate-objects app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weaviate: listing objects")))
+
+(def (cmd-weaviate-tenants app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Weaviate: listing tenants")))
+
+(def (cmd-qdrant-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Qdrant: listing collections")))
+
+(def (cmd-qdrant-points app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Qdrant: browsing points")))

@@ -26964,3 +26964,44 @@
 (def (cmd-cosmos-throughput app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "CosmosDB: showing throughput metrics")))
+
+;; Round 382 batch 2 — Qdrant ext, Milvus/Chroma ext
+(def (cmd-qdrant-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Qdrant: searching vectors")))
+
+(def (cmd-qdrant-snapshots app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Qdrant: listing snapshots")))
+
+(def (cmd-milvus-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Milvus: listing collections")))
+
+(def (cmd-milvus-search app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Milvus: searching vectors")))
+
+(def (cmd-milvus-insert app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Milvus: inserting vectors")))
+
+(def (cmd-milvus-partitions app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Milvus: listing partitions")))
+
+(def (cmd-chroma-collections app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chroma: listing collections")))
+
+(def (cmd-chroma-query app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chroma: querying embeddings")))
+
+(def (cmd-chroma-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chroma: adding documents")))
+
+(def (cmd-chroma-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Chroma: deleting documents")))

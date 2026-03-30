@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 382 — Pinecone ext, Weaviate ext, Qdrant ext, Milvus/Chroma ext
+
+| Feature | Emacs | jemacs | Status |
+|---|---|---|---|
+| Pinecone indexes | — | `pinecone-index` | :orange_circle: Scaffolded |
+| Pinecone query | — | `pinecone-query` | :orange_circle: Scaffolded |
+| Pinecone upsert | — | `pinecone-upsert` | :orange_circle: Scaffolded |
+| Pinecone collections | — | `pinecone-collections` | :orange_circle: Scaffolded |
+| Weaviate schema | — | `weaviate-schema` | :orange_circle: Scaffolded |
+| Weaviate query | — | `weaviate-query` | :orange_circle: Scaffolded |
+| Weaviate objects | — | `weaviate-objects` | :orange_circle: Scaffolded |
+| Weaviate tenants | — | `weaviate-tenants` | :orange_circle: Scaffolded |
+| Qdrant collections | — | `qdrant-collections` | :orange_circle: Scaffolded |
+| Qdrant points | — | `qdrant-points` | :orange_circle: Scaffolded |
+| Qdrant search | — | `qdrant-search` | :orange_circle: Scaffolded |
+| Qdrant snapshots | — | `qdrant-snapshots` | :orange_circle: Scaffolded |
+| Milvus collections | — | `milvus-collections` | :orange_circle: Scaffolded |
+| Milvus search | — | `milvus-search` | :orange_circle: Scaffolded |
+| Milvus insert | — | `milvus-insert` | :orange_circle: Scaffolded |
+| Milvus partitions | — | `milvus-partitions` | :orange_circle: Scaffolded |
+| Chroma collections | — | `chroma-collections` | :orange_circle: Scaffolded |
+| Chroma query | — | `chroma-query` | :orange_circle: Scaffolded |
+| Chroma add docs | — | `chroma-add` | :orange_circle: Scaffolded |
+| Chroma delete docs | — | `chroma-delete` | :orange_circle: Scaffolded |
+
 ### Round 381 — Upstash ext, Turso ext, Fauna ext, DynamoDB/CosmosDB ext
 
 | Feature | Emacs | jemacs | Status |
