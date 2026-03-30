@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 293 — VLAN ext, Bond ext, MacVLAN ext, VXLAN ext, WireGuard ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| vlan-list | :orange_circle: | List VLANs |
+| vlan-add | :orange_circle: | Add VLAN |
+| vlan-remove | :orange_circle: | Remove VLAN |
+| vlan-info | :orange_circle: | Show VLAN info |
+| bond-list | :orange_circle: | List bond interfaces |
+| bond-create | :orange_circle: | Create bond |
+| bond-add-slave | :orange_circle: | Add bond slave |
+| bond-remove-slave | :orange_circle: | Remove bond slave |
+| macvlan-create | :orange_circle: | Create MacVLAN |
+| macvlan-delete | :orange_circle: | Delete MacVLAN |
+| ipvlan-create | :orange_circle: | Create IPVLAN |
+| ipvlan-delete | :orange_circle: | Delete IPVLAN |
+| vxlan-create | :orange_circle: | Create VXLAN tunnel |
+| vxlan-delete | :orange_circle: | Delete VXLAN tunnel |
+| vxlan-list | :orange_circle: | List VXLAN tunnels |
+| wireguard-genkey | :orange_circle: | Generate WireGuard key |
+| wireguard-show | :orange_circle: | Show WireGuard interfaces |
+| wireguard-peer-add | :orange_circle: | Add WireGuard peer |
+| wireguard-peer-remove | :orange_circle: | Remove WireGuard peer |
+| wireguard-status | :orange_circle: | Show WireGuard status |
+
 ### Round 292 — TC ext, IP Rule ext, IP Route ext, IP Link ext, Bridge ext
 
 | Command | Status | Description |

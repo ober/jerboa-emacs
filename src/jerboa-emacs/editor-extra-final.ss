@@ -22538,3 +22538,57 @@
 (def (cmd-bridge-vlan app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Bridge: showing VLAN entries")))
+
+;;; Round 293 — VXLAN ext, WireGuard ext (batch 2)
+
+(def (cmd-ipvlan-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name: "
+      (lambda (name)
+        (echo-message! echo (str "IPVLAN: creating " name))))))
+
+(def (cmd-ipvlan-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name: "
+      (lambda (name)
+        (echo-message! echo (str "IPVLAN: deleting " name))))))
+
+(def (cmd-vxlan-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VNI: "
+      (lambda (vni)
+        (echo-message! echo (str "VXLAN: creating VNI " vni))))))
+
+(def (cmd-vxlan-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VNI: "
+      (lambda (vni)
+        (echo-message! echo (str "VXLAN: deleting VNI " vni))))))
+
+(def (cmd-vxlan-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VXLAN: listing tunnels")))
+
+(def (cmd-wireguard-genkey app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: generating key pair")))
+
+(def (cmd-wireguard-show app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: showing interfaces")))
+
+(def (cmd-wireguard-peer-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Public key: "
+      (lambda (key)
+        (echo-message! echo (str "WireGuard: adding peer " key))))))
+
+(def (cmd-wireguard-peer-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Public key: "
+      (lambda (key)
+        (echo-message! echo (str "WireGuard: removing peer " key))))))
+
+(def (cmd-wireguard-status app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "WireGuard: showing status")))

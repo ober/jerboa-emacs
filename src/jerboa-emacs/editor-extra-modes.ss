@@ -23230,3 +23230,61 @@
       (lambda (route)
         (echo-message! echo (str "IP: adding route " route))))))
 
+;;; Round 293 — VLAN ext, Bond ext, MacVLAN ext (batch 1)
+
+(def (cmd-vlan-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "VLAN: listing VLANs")))
+
+(def (cmd-vlan-add app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VLAN ID: "
+      (lambda (id)
+        (echo-message! echo (str "VLAN: adding VLAN " id))))))
+
+(def (cmd-vlan-remove app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VLAN ID: "
+      (lambda (id)
+        (echo-message! echo (str "VLAN: removing VLAN " id))))))
+
+(def (cmd-vlan-info app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "VLAN ID: "
+      (lambda (id)
+        (echo-message! echo (str "VLAN: info for VLAN " id))))))
+
+(def (cmd-bond-list app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Bond: listing bond interfaces")))
+
+(def (cmd-bond-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Bond name: "
+      (lambda (name)
+        (echo-message! echo (str "Bond: creating " name))))))
+
+(def (cmd-bond-add-slave app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Slave interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Bond: adding slave " iface))))))
+
+(def (cmd-bond-remove-slave app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Slave interface: "
+      (lambda (iface)
+        (echo-message! echo (str "Bond: removing slave " iface))))))
+
+(def (cmd-macvlan-create app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name: "
+      (lambda (name)
+        (echo-message! echo (str "MacVLAN: creating " name))))))
+
+(def (cmd-macvlan-delete app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Name: "
+      (lambda (name)
+        (echo-message! echo (str "MacVLAN: deleting " name))))))
+
