@@ -4583,6 +4583,31 @@ No remaining Tier 1 gaps. All core editing, completion, and navigation features 
 | ebib-import-file | :orange_circle: | Import file into Ebib |
 | ebib-push-citation | :orange_circle: | Push Ebib citation to buffer |
 
+### Round 263 — Gradle ext, Maven ext, sbt ext, Mill ext, Leiningen ext
+
+| Command | Status | Description |
+|---------|--------|-------------|
+| gradle-run | :orange_circle: | Run Gradle task |
+| gradle-clean | :orange_circle: | Clean Gradle project |
+| gradle-dependencies | :orange_circle: | List Gradle dependencies |
+| gradle-publish | :orange_circle: | Publish Gradle artifacts |
+| maven-compile | :orange_circle: | Compile with Maven |
+| maven-test | :orange_circle: | Test with Maven |
+| maven-package | :orange_circle: | Package with Maven |
+| maven-install | :orange_circle: | Install to local Maven repo |
+| maven-deploy | :orange_circle: | Deploy Maven artifacts |
+| sbt-compile | :orange_circle: | Compile with sbt |
+| sbt-test | :orange_circle: | Test with sbt |
+| sbt-run | :orange_circle: | Run sbt main class |
+| sbt-clean | :orange_circle: | Clean sbt project |
+| sbt-publish | :orange_circle: | Publish sbt artifacts |
+| mill-compile | :orange_circle: | Compile with Mill |
+| mill-test | :orange_circle: | Test with Mill |
+| mill-run | :orange_circle: | Run Mill main class |
+| mill-clean | :orange_circle: | Clean Mill project |
+| lein-run | :orange_circle: | Run Leiningen project |
+| lein-test | :orange_circle: | Test with Leiningen |
+
 ### Round 262 — Turborepo ext, Nx ext, Buck2 ext, Pants ext, Gradle ext
 
 | Command | Status | Description |

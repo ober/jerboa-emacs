@@ -21752,3 +21752,47 @@
       (lambda (target)
         (echo-message! echo (str "Buck2: testing " target))))))
 
+;;; Round 263 — Gradle ext, Maven ext, sbt ext, Mill ext, Leiningen ext (batch 1)
+
+(def (cmd-gradle-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-read-string echo "Task: "
+      (lambda (task)
+        (echo-message! echo (str "Gradle: running " task))))))
+
+(def (cmd-gradle-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gradle: cleaning project")))
+
+(def (cmd-gradle-dependencies app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gradle: listing dependencies")))
+
+(def (cmd-gradle-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Gradle: publishing artifacts")))
+
+(def (cmd-maven-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: compiling project")))
+
+(def (cmd-maven-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: running tests")))
+
+(def (cmd-maven-package app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: packaging project")))
+
+(def (cmd-maven-install app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: installing to local repo")))
+
+(def (cmd-maven-deploy app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Maven: deploying artifacts")))
+
+(def (cmd-sbt-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "sbt: compiling project")))
+

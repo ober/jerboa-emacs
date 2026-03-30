@@ -21134,3 +21134,45 @@
 (def (cmd-gradle-test app)
   (let* ((echo (app-state-echo app)))
     (echo-message! echo "Gradle: running tests")))
+
+;;; Round 263 — sbt ext, Mill ext, Leiningen ext (batch 2)
+
+(def (cmd-sbt-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "sbt: running tests")))
+
+(def (cmd-sbt-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "sbt: running main class")))
+
+(def (cmd-sbt-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "sbt: cleaning project")))
+
+(def (cmd-sbt-publish app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "sbt: publishing artifacts")))
+
+(def (cmd-mill-compile app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mill: compiling project")))
+
+(def (cmd-mill-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mill: running tests")))
+
+(def (cmd-mill-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mill: running main class")))
+
+(def (cmd-mill-clean app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Mill: cleaning project")))
+
+(def (cmd-lein-run app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Leiningen: running project")))
+
+(def (cmd-lein-test app)
+  (let* ((echo (app-state-echo app)))
+    (echo-message! echo "Leiningen: running tests")))
