@@ -1032,11 +1032,8 @@
            (name (if space-pos (substring display-str 0 space-pos) display-str))
            (buf (buffer-by-name name)))
       (if buf
-        (let* ((size (string-length (or (buffer-text buf) "")))
-               (size-str (cond ((> size 1048576) (string-append (number->string (quotient size 1048576)) "M"))
-                               ((> size 1024) (string-append (number->string (quotient size 1024)) "K"))
-                               (else (string-append (number->string size) "B")))))
-          (string-append "  " size-str))
+        (let ((fp (buffer-file-path buf)))
+          (if fp (string-append "  " fp) ""))
         ""))))
 
 (marginalia-annotate! 'file

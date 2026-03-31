@@ -92,6 +92,7 @@
   (def *vterm-render-interval-ms* 33)
   (def *pty-batch-budget* 65536)
   (def *vterm-scrollback-limit* 100000)
+  (def *pty-poll-in-progress?* #f)
   (def *vterm-last-render-time* (make-hash-table-eq))
   (def *vterm-last-rendered* (make-hash-table-eq))
   (def *vterm-initialized* (make-hash-table-eq))
@@ -1761,143 +1762,169 @@
                                        ed))
                                    (loop (cdr wins)))))))))))
                (buffer-list))
-             (for-each
-               (lambda (buf)
-                 (when (shell-buffer? buf)
-                   (let ([ss (hash-get *shell-state* buf)])
-                     (when (and ss (shell-pty-busy? ss))
-                       (let drain ()
-                         (let ([msg (shell-poll-output ss)])
-                           (when msg
-                             (qt-poll-shell-pty-msg! fr buf ss msg)
-                             (when (eq? (car msg) 'data) (drain))))))))
-                 (when (terminal-buffer? buf)
-                   (let ([ts (hash-get *terminal-state* buf)])
-                     (when (and ts (terminal-pty-busy? ts))
-                       (let ([vt (terminal-state-vtscreen ts)])
-                         (when vt
-                           (let ed-loop ([wins (qt-frame-windows fr)])
-                             (when (pair? wins)
-                               (if (eq? (qt-edit-window-buffer (car wins))
-                                        buf)
-                                   (let* ([ed (qt-edit-window-editor
-                                                (car wins))]
-                                          [new-rows (max 2
-                                                         (sci-send
-                                                           ed
-                                                           2370
-                                                           0))]
-                                          [widget-w (qt-widget-width ed)]
-                                          [char-w (max 1
-                                                       (sci-send/string
-                                                         ed
-                                                         2275
-                                                         "0"
-                                                         0))]
-                                          [new-cols (max 20
-                                                         (quotient
-                                                           widget-w
-                                                           char-w))]
-                                          [old-rows (vtscreen-rows vt)]
-                                          [old-cols (vtscreen-cols vt)])
-                                     (when (or (not (= new-rows old-rows))
-                                               (not (= new-cols old-cols)))
-                                       (verbose-log! "PTY-RESIZE: "
-                                         (number->string old-rows) "x"
-                                         (number->string old-cols) " -> "
-                                         (number->string new-rows) "x"
-                                         (number->string new-cols))
-                                       (vtscreen-resize!
-                                         vt
-                                         new-rows
-                                         new-cols)
-                                       (terminal-resize!
-                                         ts
-                                         new-rows
-                                         new-cols)
-                                       (hash-remove! *vterm-row-cache* ts)
-                                       (hash-put!
-                                         *vterm-initialized*
-                                         ts
-                                         #f)))
-                                   (ed-loop (cdr wins))))))))
-                     (when (and ts (terminal-pty-busy? ts))
-                       (let drain ([chunks (list)] [bytes 0] [done-msg #f])
-                         (if (and (> bytes 0)
-                                  (>= bytes *pty-batch-budget*))
-                             (let ([combined (apply
-                                               string-append
-                                               (reverse chunks))])
-                               (verbose-log!
-                                 "PTY-BATCH-CAP: "
-                                 (number->string (string-length combined))
-                                 " bytes (capped)")
-                               (qt-poll-terminal-pty-batch!
-                                 fr
-                                 buf
-                                 ts
-                                 combined))
-                             (let ([msg (terminal-poll-output ts)])
-                               (cond
-                                 [(not msg)
-                                  (if (pair? chunks)
-                                      (let ([combined (apply
-                                                        string-append
-                                                        (reverse chunks))])
-                                        (verbose-log!
-                                          "PTY-BATCH: "
-                                          (number->string
-                                            (string-length combined))
-                                          " bytes")
-                                        (qt-poll-terminal-pty-batch!
+             (unless *pty-poll-in-progress?*
+               (dynamic-wind
+                 (lambda () (set! *pty-poll-in-progress?* #t))
+                 (lambda ()
+                   (for-each
+                     (lambda (buf)
+                       (when (shell-buffer? buf)
+                         (let ([ss (hash-get *shell-state* buf)])
+                           (when (and ss (shell-pty-busy? ss))
+                             (let drain ()
+                               (let ([msg (shell-poll-output ss)])
+                                 (when msg
+                                   (qt-poll-shell-pty-msg! fr buf ss msg)
+                                   (when (eq? (car msg) 'data)
+                                     (drain))))))))
+                       (when (terminal-buffer? buf)
+                         (let ([ts (hash-get *terminal-state* buf)])
+                           (when ts
+                             (let ([vt (terminal-state-vtscreen ts)])
+                               (when vt
+                                 (let ed-loop ([wins (qt-frame-windows
+                                                       fr)])
+                                   (when (pair? wins)
+                                     (if (eq? (qt-edit-window-buffer
+                                                (car wins))
+                                              buf)
+                                         (let* ([ed (qt-edit-window-editor
+                                                      (car wins))]
+                                                [new-rows (max 2
+                                                               (sci-send
+                                                                 ed
+                                                                 2370
+                                                                 0))]
+                                                [widget-w (qt-widget-width
+                                                            ed)]
+                                                [char-w (max 1
+                                                             (sci-send/string
+                                                               ed
+                                                               2275
+                                                               "0"
+                                                               0))]
+                                                [new-cols (max 20
+                                                               (quotient
+                                                                 widget-w
+                                                                 char-w))]
+                                                [old-rows (vtscreen-rows
+                                                            vt)]
+                                                [old-cols (vtscreen-cols
+                                                            vt)])
+                                           (when (or (not (= new-rows
+                                                             old-rows))
+                                                     (not (= new-cols
+                                                             old-cols)))
+                                             (verbose-log! "PTY-RESIZE: "
+                                               (number->string old-rows)
+                                               "x"
+                                               (number->string old-cols)
+                                               " -> "
+                                               (number->string new-rows)
+                                               "x"
+                                               (number->string new-cols))
+                                             (vtscreen-resize!
+                                               vt
+                                               new-rows
+                                               new-cols)
+                                             (when (terminal-pty-busy? ts)
+                                               (terminal-resize!
+                                                 ts
+                                                 new-rows
+                                                 new-cols))
+                                             (hash-remove!
+                                               *vterm-row-cache*
+                                               ts)
+                                             (hash-put!
+                                               *vterm-initialized*
+                                               ts
+                                               #f)))
+                                         (ed-loop (cdr wins))))))))
+                           (when (and ts (terminal-pty-busy? ts))
+                             (let drain ([chunks (list)]
+                                         [bytes 0]
+                                         [done-msg #f])
+                               (if (and (> bytes 0)
+                                        (>= bytes *pty-batch-budget*))
+                                   (let ([combined (apply
+                                                     string-append
+                                                     (reverse chunks))])
+                                     (verbose-log!
+                                       "PTY-BATCH-CAP: "
+                                       (number->string
+                                         (string-length combined))
+                                       " bytes (capped)")
+                                     (qt-poll-terminal-pty-batch!
+                                       fr
+                                       buf
+                                       ts
+                                       combined))
+                                   (let ([msg (terminal-poll-output ts)])
+                                     (cond
+                                       [(not msg)
+                                        (if (pair? chunks)
+                                            (let ([combined (apply
+                                                              string-append
+                                                              (reverse
+                                                                chunks))])
+                                              (verbose-log!
+                                                "PTY-BATCH: "
+                                                (number->string
+                                                  (string-length combined))
+                                                " bytes")
+                                              (qt-poll-terminal-pty-batch!
+                                                fr
+                                                buf
+                                                ts
+                                                combined))
+                                            (when (and (terminal-state-vtscreen
+                                                         ts)
+                                                       (hash-ref
+                                                         *vterm-initialized*
+                                                         ts
+                                                         #f)
+                                                       (vterm-render-due?
+                                                         ts))
+                                              (qt-poll-terminal-pty-batch!
+                                                fr
+                                                buf
+                                                ts
+                                                "")))
+                                        (when done-msg
+                                          (qt-poll-terminal-pty-msg!
+                                            fr
+                                            buf
+                                            ts
+                                            done-msg))]
+                                       [(eq? (car msg) 'data)
+                                        (drain
+                                          (cons (cdr msg) chunks)
+                                          (+ bytes
+                                             (string-length (cdr msg)))
+                                          done-msg)]
+                                       [else
+                                        (when (pair? chunks)
+                                          (let ([combined (apply
+                                                            string-append
+                                                            (reverse
+                                                              chunks))])
+                                            (verbose-log!
+                                              "PTY-BATCH+DONE: "
+                                              (number->string
+                                                (string-length combined))
+                                              " bytes")
+                                            (qt-poll-terminal-pty-batch!
+                                              fr
+                                              buf
+                                              ts
+                                              combined)))
+                                        (qt-poll-terminal-pty-msg!
                                           fr
                                           buf
                                           ts
-                                          combined))
-                                      (when (and (terminal-state-vtscreen
-                                                   ts)
-                                                 (hash-ref
-                                                   *vterm-initialized*
-                                                   ts
-                                                   #f)
-                                                 (vterm-render-due? ts))
-                                        (qt-poll-terminal-pty-batch!
-                                          fr
-                                          buf
-                                          ts
-                                          "")))
-                                  (when done-msg
-                                    (qt-poll-terminal-pty-msg!
-                                      fr
-                                      buf
-                                      ts
-                                      done-msg))]
-                                 [(eq? (car msg) 'data)
-                                  (drain
-                                    (cons (cdr msg) chunks)
-                                    (+ bytes (string-length (cdr msg)))
-                                    done-msg)]
-                                 [else
-                                  (when (pair? chunks)
-                                    (let ([combined (apply
-                                                      string-append
-                                                      (reverse chunks))])
-                                      (verbose-log!
-                                        "PTY-BATCH+DONE: "
-                                        (number->string
-                                          (string-length combined))
-                                        " bytes")
-                                      (qt-poll-terminal-pty-batch!
-                                        fr
-                                        buf
-                                        ts
-                                        combined)))
-                                  (qt-poll-terminal-pty-msg!
-                                    fr
-                                    buf
-                                    ts
-                                    msg)]))))))))
-               (buffer-list))
+                                          msg)]))))))))
+                     (buffer-list)))
+                 (lambda () (set! *pty-poll-in-progress?* #f))))
              (for-each
                (lambda (buf)
                  (when (chat-buffer? buf)

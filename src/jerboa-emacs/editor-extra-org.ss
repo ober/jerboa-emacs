@@ -17,6 +17,7 @@
         :jerboa-emacs/modeline
         :jerboa-emacs/echo
         :jerboa-emacs/editor-extra-helpers
+        (only-in :jerboa-emacs/editor-core *volatile-highlights*)
         (only-in :jerboa-emacs/persist buffer-local-set!
                  *which-key-mode* *which-key-delay*)
         (only-in :jerboa-emacs/org-parse org-heading-stars-of-line
@@ -1965,7 +1966,7 @@
 (def *midnight-mode* #f)
 (def *global-undo-tree* #f)
 (def *diff-hl-mode* #f)
-(def *volatile-highlights* #f)
+;; *volatile-highlights* is defined in editor-core.ss
 (def *vertico-mode* #f)
 (def *marginalia-mode* #f)
 

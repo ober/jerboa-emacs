@@ -456,6 +456,15 @@ echo OK"
       (display "Error: jsh ffi-shim.c compilation failed\n")
       (exit 1))))
 
+;; jsh libcoreutils (terminal width/height/raw-mode for ls, top patches)
+(when jemacs-static?
+  (let* ((jsh-root (path-parent jsh-dir))
+         (cmd (format "gcc -c -O2 -o jemacs-qt-jsh-coreutils.o ~a/libcoreutils.c -Wall 2>&1"
+                      jsh-root)))
+    (unless (= 0 (system cmd))
+      (display "Error: libcoreutils.c compilation failed\n")
+      (exit 1))))
+
 ;; jsh embed-crypto (pure C crypto for embed encryption — no external deps)
 (when jemacs-static?
   (let* ((jsh-root (path-parent jsh-dir))
@@ -554,16 +563,18 @@ echo OK"
                           ts-shim-obj ts-queries-obj ts-lib-dir ts-gram-dir))
          (crypto-stub (if (file-exists? "/tmp/jemacs-build/crypto_stub.o")
                        "/tmp/jemacs-build/crypto_stub.o" ""))
+         ;; jsh Rust coreutils static library (musl build, pre-compiled on host)
+         (jsh-coreutils-lib (or (getenv "JSH_COREUTILS_LIB") ""))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
-jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
+jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o jemacs-qt-jsh-coreutils.o \
 jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o ~a \
 jemacs-qt-pty-shim.o jemacs-qt-vterm-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
 qt_static_symbols.o \
-~a ~a ~a ~a ~a \
+~a ~a ~a ~a ~a ~a \
 -L~a -lkernel -llz4 -lz \
 -lvterm -lm -ldl -lpthread -luuid -lncurses -lstdc++ 2>&1"
                       crypto-stub
-                      libqt-shim qt-plugins ts-link qt-libs pcre2-libs
+                      libqt-shim qt-plugins ts-link qt-libs pcre2-libs jsh-coreutils-lib
                       chez-dir)))
     (printf "  ~a~n" cmd)
     (unless (= 0 (system cmd))
@@ -591,7 +602,7 @@ qt_static_symbols.o \
       "jemacs_qt_scheme_boot.h" "jemacs_qt_jemacs_qt_boot.h"
       "jemacs-qt-all.so" "qt-main.so" "qt-main.wpo" "jemacs-qt.boot")
     (if jemacs-static?
-        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-embed-crypto.o"
+        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-jsh-coreutils.o" "jemacs-qt-embed-crypto.o"
           "jemacs-qt-ssh-agent-stub.o" "jemacs-qt-ssh-agent-stub.c"
           "jemacs-qt-pty-shim.o" "jemacs-qt-vterm-shim.o"
           "jemacs-qt-jerboa-landlock.o"

@@ -22,7 +22,8 @@
         :jerboa-emacs/modeline
         :jerboa-emacs/echo
         :jerboa-emacs/editor-extra-helpers
-        (only-in :jerboa-emacs/editor-core winner-save-config!))
+        (only-in :jerboa-emacs/editor-core winner-save-config!
+                 *aggressive-indent-mode*))
 
 
 ;; EWW browser - text-mode web browser using litehtml for HTML rendering

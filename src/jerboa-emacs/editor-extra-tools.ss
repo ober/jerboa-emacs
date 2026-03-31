@@ -18,6 +18,8 @@
         :jerboa-emacs/echo
         :jerboa-emacs/highlight
         :jerboa-emacs/editor-extra-helpers
+        (only-in :jerboa-emacs/editor-core *electric-quote-mode*
+                 SCI_INDICSETALPHA)
         (only-in :jerboa-emacs/persist *which-key-mode*))
 
 ;; --- Task #47: xref, ibuffer, which-key, markdown, auto-insert, and more ---
@@ -1479,36 +1481,7 @@
 
 ;;; --- Toggle electric quote mode ---
 
-(def *electric-quote-mode* #f)
-
-(def (electric-quote-char ch ed)
-  "Return a curly-quote replacement string for CH at the current position in ED,
-   or #f if no replacement should be made.  Uses the character before point to
-   decide opening vs closing: after whitespace/BOL → opening, otherwise → closing."
-  (let* ((pos (editor-get-current-pos ed))
-         (prev-ch (if (> pos 0)
-                    (send-message ed SCI_GETCHARAT (- pos 1) 0)
-                    0))
-         (at-word-boundary? (or (= pos 0)
-                               (= prev-ch 32)    ; space
-                               (= prev-ch 10)    ; newline
-                               (= prev-ch 13)    ; CR
-                               (= prev-ch 9)     ; tab
-                               (= prev-ch 40)    ; (
-                               (= prev-ch 91)    ; [
-                               (= prev-ch 123)))) ; {
-    (cond
-      ;; Double quote → curly double quotes
-      ((= ch 34)  ; "
-       (if at-word-boundary?
-         "\x201C;"   ; left double quotation mark "
-         "\x201D;")) ; right double quotation mark "
-      ;; Single quote / apostrophe → curly single quotes
-      ((= ch 39)  ; '
-       (if at-word-boundary?
-         "\x2018;"   ; left single quotation mark '
-         "\x2019;")) ; right single quotation mark '
-      (else #f))))
+;; *electric-quote-mode* and electric-quote-char are defined in editor-core.ss
 
 (def (cmd-toggle-electric-quote app)
   "Toggle electric quote mode (auto-convert straight quotes to smart quotes)."

@@ -19,7 +19,9 @@
         :jerboa-emacs/modeline
         :jerboa-emacs/echo
         :jerboa-emacs/editor-extra-helpers
-        :jerboa-emacs/editor-extra-tools)
+        :jerboa-emacs/editor-extra-tools
+        (only-in :jerboa-emacs/editor-core string->alien/nul
+                 tui-rows tui-cols SCI_INDICSETALPHA))
 
 ;; Bookmark extras
 (def (cmd-bookmark-bmenu-list app)
@@ -2926,23 +2928,7 @@
 (def *erc-channel* "#emacs")
 (def *erc-log* '())
 
-(def (cmd-erc app)
-  "Open an IRC-style chat display buffer."
-  (let* ((echo (app-state-echo app))
-         (fr (app-state-frame app))
-         (win (current-window fr))
-         (ed (edit-window-editor win))
-         (buf (make-buffer (string-append "*erc:" *erc-channel* "*")))
-         (header (string-append "ERC - " *erc-channel* " [" *erc-nick* "]\n"
-                   (make-string 50 #\-) "\n"
-                   "  (This is a display-only IRC buffer placeholder)\n"
-                   "  Use M-x erc-send to type messages\n"
-                   (make-string 50 #\-) "\n")))
-    (buffer-attach! ed buf)
-    (set! (edit-window-buffer win) buf)
-    (editor-set-text ed header)
-    (editor-goto-pos ed (string-length header))
-    (echo-message! echo (string-append "ERC: " *erc-channel*))))
+;; cmd-erc already defined above (line ~1077)
 
 (def (cmd-erc-send app)
   "Send a message in the ERC buffer."
@@ -3126,7 +3112,7 @@
   (let* ((echo (app-state-echo app))
          (row (tui-rows)) (width (tui-cols))
          ;; Get all registered commands and sort by frequency
-         (all-cmds (map (lambda (p) (symbol->string (car p))) (command-alist)))
+         (all-cmds (map (lambda (p) (symbol->string (car p))) (hash->list *all-commands*)))
          (sorted (sort (lambda (a b)
                          (> (hash-ref *smex-frequency* (string->symbol a) 0)
                             (hash-ref *smex-frequency* (string->symbol b) 0)))
@@ -3211,26 +3197,7 @@
           (send-message ed SCI_GETLENGTH 0 0))
         (echo-message! echo "Bug reference mode: off")))))
 
-;; --- Feature 18: List Packages (list available features) ---
-
-(def (cmd-list-packages app)
-  "List all available commands/features."
-  (let* ((echo (app-state-echo app))
-         (fr (app-state-frame app))
-         (win (current-window fr))
-         (ed (edit-window-editor win))
-         (cmds (sort (lambda (a b) (string<? (symbol->string (car a)) (symbol->string (car b))))
-                     (command-alist)))
-         (lines (map (lambda (c) (string-append "  " (symbol->string (car c)))) cmds))
-         (content (string-append "Available Commands (" (number->string (length cmds)) " total)\n"
-                    (make-string 50 #\=) "\n"
-                    (string-join lines "\n") "\n"))
-         (buf (make-buffer "*packages*")))
-    (buffer-attach! ed buf)
-    (set! (edit-window-buffer win) buf)
-    (editor-set-text ed content)
-    (editor-goto-pos ed 0)
-    (echo-message! echo (string-append (number->string (length cmds)) " commands available"))))
+;; cmd-list-packages already defined above (line ~1772)
 
 ;; --- Feature 19: Link Hint (jump to URLs) ---
 

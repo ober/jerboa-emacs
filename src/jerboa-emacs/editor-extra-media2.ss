@@ -7,6 +7,7 @@
 (import :std/sugar
         :std/sort
         :std/srfi/13
+        :std/misc/ports
         (only-in :std/misc/process process-kill)
         (only-in :std/os/signal signal-names)
         :chez-scintilla/constants
@@ -14,7 +15,10 @@
         :chez-scintilla/tui
         :jerboa-emacs/core
         (only-in :jerboa-emacs/editor-core
-                 *auto-save-enabled* make-auto-save-path pulse-line!)
+                 *auto-save-enabled* make-auto-save-path pulse-line!
+                 string->alien/nul string->alien alien/nul->string
+                 bytevector->alien cons->alien tui-rows tui-cols
+                 SCI_GETTEXTRANGE SCI_INDICSETALPHA SCI_SETELEMENTCOLOUR)
         :jerboa-emacs/keymap
         :jerboa-emacs/buffer
         :jerboa-emacs/window

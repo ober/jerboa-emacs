@@ -8,6 +8,7 @@
         :std/sort
         :std/srfi/13
         :std/misc/string
+        :std/misc/ports
         :chez-scintilla/constants
         :chez-scintilla/scintilla
         :chez-scintilla/tui
@@ -18,7 +19,11 @@
         :jerboa-emacs/modeline
         :jerboa-emacs/echo
         :jerboa-emacs/editor-extra-helpers
-        (only-in :jerboa-emacs/editor-core *delete-selection-mode*))
+        (only-in :jerboa-emacs/editor-core *delete-selection-mode*
+                 string->alien/nul string->alien alien/nul->string
+                 bytevector->alien cons->alien tui-rows tui-cols
+                 SCI_GETTEXTRANGE SCI_GETMARGINLEFT
+                 SCI_SETMARGINLEFT SCI_SETMARGINRIGHT))
 
 ;; Additional VC commands
 (def (cmd-vc-register app)

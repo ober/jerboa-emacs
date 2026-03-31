@@ -31,12 +31,90 @@
         :jerboa-emacs/persist)
 
 ;;;============================================================================
+;;; Missing Scintilla constants (used by scaffold commands)
+;;;============================================================================
+
+(def SCI_GETTEXTRANGE 2162)
+(def SCI_DELETEBACK 2326)
+(def SCI_GETMARGINLEFT 2155)
+(def SCI_SETMARGINLEFT 2155)
+(def SCI_SETMARGINRIGHT 2157)
+;; SCI_INDICSETALPHA already defined below (line ~1599)
+(def SCI_MOVESELECTEDLINESUP 2620)
+(def SCI_MOVESELECTEDLINESDOWN 2621)
+(def SCI_SETELEMENTCOLOUR 2753)
+;; SCI_SETSTYLING and SCI_STARTSTYLING already come from terminal.ss
+
+;;;============================================================================
+;;; Utility: string->alien/nul (identity — Scintilla TUI accepts strings directly)
+;;;============================================================================
+
+(def (string->alien/nul s) s)
+(def (string->alien s) s)
+(def (alien/nul->string s) s)
+(def (bytevector->alien bv) bv)
+(def (cons->alien . args) 0)
+
+(def (tui-rows) 24)
+(def (tui-cols) 80)
+
+;;; Aliases for scaffold commands that use non-existent names
+(def (editor-cursor-position ed) (editor-get-current-pos ed))
+(def (editor-line-start ed line) (editor-position-from-line ed line))
+(def (editor-line-end ed line) (editor-get-line-end-position ed line))
+(def (editor-replace-range ed start end text)
+  (editor-delete-range ed start (- end start))
+  (editor-insert-text ed start text))
+
+;;; Global mode-state table (phantom field app-state-modes doesn't exist)
+(def *jemacs-mode-state* (make-hash-table))
+(def (app-state-modes app) *jemacs-mode-state*)
+
+;;; Indicator helpers (phantom functions in scaffold code)
+(def (editor-indicator-fill ed indicator-id start end)
+  (send-message ed SCI_SETINDICATORCURRENT indicator-id 0)
+  (send-message ed SCI_INDICATORFILLRANGE start (- end start)))
+(def (editor-indicator-clear ed indicator-id start len)
+  (send-message ed SCI_SETINDICATORCURRENT indicator-id 0)
+  (send-message ed SCI_INDICATORCLEARRANGE start len))
+
+;;;============================================================================
 ;;; Shared state (used across editor sub-modules)
 ;;;============================================================================
 (def *auto-pair-mode* #t)
 (def *auto-revert-mode* #f)
 (def *aggressive-indent-mode* #f)
 (def *delete-selection-mode* #t)  ;; default on, like Emacs
+(def *electric-quote-mode* #f)
+
+(def (electric-quote-char ch ed)
+  "Return a curly-quote replacement string for CH at the current position in ED,
+   or #f if no replacement should be made.  Uses the character before point to
+   decide opening vs closing: after whitespace/BOL → opening, otherwise → closing."
+  (let* ((pos (editor-get-current-pos ed))
+         (prev-ch (if (> pos 0)
+                    (send-message ed SCI_GETCHARAT (- pos 1) 0)
+                    0))
+         (at-word-boundary? (or (= pos 0)
+                               (= prev-ch 32)    ; space
+                               (= prev-ch 10)    ; newline
+                               (= prev-ch 13)    ; CR
+                               (= prev-ch 9)     ; tab
+                               (= prev-ch 40)    ; (
+                               (= prev-ch 91)    ; [
+                               (= prev-ch 123)))) ; {
+    (cond
+      ;; Double quote → curly double quotes
+      ((= ch 34)  ; "
+       (if at-word-boundary?
+         "\x201C;"   ; left double quotation mark
+         "\x201D;")) ; right double quotation mark
+      ;; Single quote / apostrophe → curly single quotes
+      ((= ch 39)  ; '
+       (if at-word-boundary?
+         "\x2018;"   ; left single quotation mark
+         "\x2019;")) ; right single quotation mark
+      (else #f))))
 
 ;;;============================================================================
 ;;; Pulse/flash highlight on jump (beacon-like)
@@ -84,6 +162,7 @@
 ;;;============================================================================
 ;;; Volatile highlights — flash changed regions (yank, undo)
 ;;;============================================================================
+(def *volatile-highlights* #f)
 (def *volatile-highlight-indicator* 2)
 (def *volatile-highlight-countdown* 0)
 (def *volatile-highlight-editor* #f)
@@ -580,7 +659,7 @@
           (let ((new-line (string-append target-indent trimmed)))
             (send-message ed SCI_SETTARGETSTART line-start 0)
             (send-message ed SCI_SETTARGETEND line-end 0)
-            (editor-replace-target ed new-line)
+            (send-message/string ed SCI_REPLACETARGET new-line)
             (let ((new-pos (+ line-start (string-length target-indent)
                              (max 0 (- pos line-start
                                        (string-length current-indent))))))

@@ -254,6 +254,7 @@ SCI_SRC      ?= $(HOME)/mine/chez-scintilla
 QT_SRC       ?= $(HOME)/mine/chez-qt
 QTSHIM_SRC   ?= $(HOME)/mine/gerbil-qt
 COREUTILS_SRC ?= $(HOME)/mine/jerboa-coreutils
+JSH_COREUTILS_LIB ?= $(JSH_SRC)/rust-coreutils/target/x86_64-unknown-linux-musl/release/libjsh_coreutils.a
 
 DEPS_IMAGE := jemacs-deps:$(ARCH)
 
@@ -297,6 +298,7 @@ build-jemacs-qt-static: check-root
 	cp /src/vendor/jerboa-shell/embed-crypto.c /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/embed-crypto.h /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/ffi-shim.c /deps/jsh/ 2>/dev/null; \
+	cp /src/vendor/jerboa-shell/libcoreutils.c /deps/jsh/ 2>/dev/null; \
 	if [ -f /src/vendor/jerboa-shell/crypto_stub.c ]; then \
 	  gcc -c -O2 /src/vendor/jerboa-shell/crypto_stub.c -o /tmp/jemacs-build/crypto_stub.o; \
 	fi; \
@@ -370,6 +372,7 @@ build-jemacs-qt-static: check-root
 	CHEZ_QT_DIR=/deps/chez-qt \
 	CHEZ_QT_SHIM_DIR=/deps/gerbil-qt/vendor \
 	COREUTILS_DIR=/deps/coreutils \
+	JSH_COREUTILS_LIB=/deps/jsh/libjsh_coreutils.a \
 	TREE_SITTER_INCLUDE=/opt/tree-sitter-include \
 	TREE_SITTER_LIB=/opt/tree-sitter-lib \
 	TREE_SITTER_GRAMMARS=/opt/tree-sitter-grammars \
@@ -389,8 +392,10 @@ linux-static-qt-docker:
 	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
 	  -v $(COREUTILS_SRC)/lib:/host-coreutils:ro \
 	  -v $(JSH_SRC)/src:/host-jsh-src:ro \
+	  -v $(JSH_COREUTILS_LIB):/host-jsh-coreutils.a:ro \
 	  $(DEPS_IMAGE) \
 	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
+	         cp /host-jsh-coreutils.a /deps/jsh/libjsh_coreutils.a; \
 	         cp -a /host-jsh-src/. /deps/jsh/src/; \
 	         cp -a /host-coreutils/. /deps/coreutils/; \
 	         find /deps/coreutils -name '*.sls' -exec sed -i 's/(load-shared-object #f)/(void)/g' {} +; \
