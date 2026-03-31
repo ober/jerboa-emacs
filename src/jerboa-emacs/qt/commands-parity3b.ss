@@ -14,6 +14,7 @@
         :std/text/json
         (only-in :std/misc/process process-kill)
         (only-in :std/os/signal signal-names)
+        (only-in :jerboa-emacs/async schedule-periodic! cancel-periodic!)
         :jerboa-emacs/qt/sci-shim
         :jerboa-emacs/core
         :jerboa-emacs/editor
@@ -78,27 +79,234 @@
         "Note: Full game requires event loop integration.\n"))
     (sci-send ed SCI_SETREADONLY 1)))
 
+;;;============================================================================
+;;; SNAKE — fully animated game with Unicode graphics and Scintilla colors
+;;;============================================================================
+
+(def *snake-active* #f)   ;; #t when game is running (used by app.ss key handler)
+(def *snake-game*   #f)   ;; current game state record or #f
+
+(def SNAKE-W 30)   ;; playfield width  (inner, excluding borders)
+(def SNAKE-H 14)   ;; playfield height (inner, excluding borders)
+
+;; Direction codes
+(def SNAKE-RIGHT 0)
+(def SNAKE-DOWN  1)
+(def SNAKE-LEFT  2)
+(def SNAKE-UP    3)
+
+;; Scintilla style IDs for snake rendering
+(def SNAKE-STYLE-BORDER 1)   ;; gray  — ╔═║╗╚╝
+(def SNAKE-STYLE-BODY   2)   ;; green — ●
+(def SNAKE-STYLE-HEAD   3)   ;; bright green — ▶▼◀▲
+(def SNAKE-STYLE-FOOD   4)   ;; orange-red — ◉
+(def SNAKE-STYLE-STATUS 5)   ;; dim — score/controls line
+(def SCI_STYLESETFORE-SNAKE 2051)
+(def SCI_STARTSTYLING-SNAKE 2032)
+(def SCI_SETSTYLING-SNAKE   2033)
+
+(def (char-utf8-len c)
+  ;; All box-drawing / block-element / arrow chars used here are U+2000–U+2FFF = 3 bytes.
+  ;; ASCII (space, newline, digits, letters) = 1 byte.
+  (let ((n (char->integer c)))
+    (cond ((< n #x80)    1)
+          ((< n #x800)   2)
+          ((< n #x10000) 3)
+          (else          4))))
+
+(def (snake-dir->head-char dir)
+  (case dir ((0) #\▶) ((1) #\▼) ((2) #\◀) (else #\▲)))
+
+(def (snake-pick-food snake W H)
+  "Return a random (row . col) not occupied by the snake."
+  (let loop ()
+    (let ((pos (cons (random H) (random W))))
+      (if (member pos snake) (loop) pos))))
+
+(def (snake-build-text state)
+  "Render game state to a string."
+  (let* ((snake (vector-ref state 0))
+         (dir   (vector-ref state 1))
+         (food  (vector-ref state 2))
+         (score (vector-ref state 3))
+         (over? (vector-ref state 4))
+         (W SNAKE-W) (H SNAKE-H)
+         (head  (car snake))
+         (body  (cdr snake))
+         ;; Build 2-D char grid
+         (grid (make-vector (* H W) #\space))
+         (_ (let ((fr (car food)) (fc (cdr food)))
+              (when (and (< fr H) (< fc W))
+                (vector-set! grid (+ (* fr W) fc) #\◉))))
+         (_ (for-each (lambda (p)
+                        (let ((r (car p)) (c (cdr p)))
+                          (when (and (< r H) (< c W))
+                            (vector-set! grid (+ (* r W) c) #\●))))
+                      body))
+         (_ (let ((r (car head)) (c (cdr head)))
+              (when (and (< r H) (< c W))
+                (vector-set! grid (+ (* r W) c) (snake-dir->head-char dir)))))
+         (top (string-append "╔" (make-string W #\═) "╗\n"))
+         (bot (string-append "╚" (make-string W #\═) "╝\n"))
+         (rows (let loop ((r 0) (acc '()))
+                 (if (= r H)
+                   (reverse acc)
+                   (loop (+ r 1)
+                     (cons (string-append "║"
+                             (list->string
+                               (map (lambda (c) (vector-ref grid (+ (* r W) c)))
+                                    (iota W)))
+                             "║\n")
+                           acc)))))
+         (status (cond
+                   (over?  (format "GAME OVER  Score:~a  Length:~a  [q or C-g to quit]"
+                                   score (length snake)))
+                   (else   (format "Score:~a  Length:~a  [arrows:move  p:pause  q:quit]"
+                                   score (length snake))))))
+    (string-append top
+                   (apply string-append rows)
+                   bot "\n"
+                   status "\n")))
+
+(def (snake-apply-styles! ed text)
+  "Walk TEXT and apply Scintilla color styles for border/body/head/food chars."
+  ;; Set up the palette
+  (sci-send ed SCI_STYLESETFORE-SNAKE SNAKE-STYLE-BORDER #x666666)
+  (sci-send ed SCI_STYLESETFORE-SNAKE SNAKE-STYLE-BODY   #x44cc44)
+  (sci-send ed SCI_STYLESETFORE-SNAKE SNAKE-STYLE-HEAD   #xaaffaa)
+  (sci-send ed SCI_STYLESETFORE-SNAKE SNAKE-STYLE-FOOD   #xff6633)
+  (sci-send ed SCI_STYLESETFORE-SNAKE SNAKE-STYLE-STATUS #x888888)
+  ;; Walk the UTF-8 byte stream, styling special chars
+  (let ((len (string-length text)))
+    (let loop ((i 0) (byte-pos 0))
+      (when (< i len)
+        (let* ((c    (string-ref text i))
+               (blen (char-utf8-len c))
+               (style (cond
+                        ((or (char=? c #\╔) (char=? c #\╗) (char=? c #\╚)
+                             (char=? c #\╝) (char=? c #\═) (char=? c #\║))
+                         SNAKE-STYLE-BORDER)
+                        ((char=? c #\●) SNAKE-STYLE-BODY)
+                        ((or (char=? c #\▶) (char=? c #\▼)
+                             (char=? c #\◀) (char=? c #\▲))
+                         SNAKE-STYLE-HEAD)
+                        ((char=? c #\◉) SNAKE-STYLE-FOOD)
+                        (else #f))))
+          (when style
+            (sci-send ed SCI_STARTSTYLING-SNAKE byte-pos 0)
+            (sci-send ed SCI_SETSTYLING-SNAKE blen style))
+          (loop (+ i 1) (+ byte-pos blen)))))))
+
+(def (snake-redraw! app)
+  (when *snake-game*
+    (let* ((ed  (current-qt-editor app))
+           (text (snake-build-text *snake-game*)))
+      (sci-send ed SCI_SETREADONLY 0)
+      (qt-plain-text-edit-set-text! ed text)
+      (snake-apply-styles! ed text)
+      (sci-send ed SCI_SETREADONLY 1))))
+
+(def (snake-tick! app)
+  "Advance the game by one step."
+  (when (and *snake-game*
+             (not (vector-ref *snake-game* 4))    ;; not game-over
+             (not (vector-ref *snake-game* 5)))   ;; not paused
+    (let* ((state  *snake-game*)
+           (snake  (vector-ref state 0))
+           (dir    (vector-ref state 1))
+           (food   (vector-ref state 2))
+           (score  (vector-ref state 3))
+           (W SNAKE-W) (H SNAKE-H)
+           (hr (caar snake)) (hc (cdar snake))
+           (new-head (case dir
+                       ((0) (cons hr (+ hc 1)))
+                       ((1) (cons (+ hr 1) hc))
+                       ((2) (cons hr (- hc 1)))
+                       (else (cons (- hr 1) hc))))
+           (nr (car new-head)) (nc (cdr new-head))
+           (wall?  (or (< nr 0) (>= nr H) (< nc 0) (>= nc W)))
+           ;; Self-collision: head hits any segment except the tail (which moves away)
+           (init-body (if (null? (cdr snake)) '() (reverse (cdr (reverse snake)))))
+           (self?  (and (not wall?) (member new-head init-body)))
+           (fed?   (equal? new-head food)))
+      (if (or wall? self?)
+        (vector-set! state 4 #t)                       ;; game over
+        (begin
+          (vector-set! state 0
+            (if fed?
+              (cons new-head snake)                     ;; grow
+              (cons new-head (reverse (cdr (reverse snake))))))  ;; slide
+          (when fed?
+            (vector-set! state 2 (snake-pick-food (vector-ref state 0) W H))
+            (vector-set! state 3 (+ score 10)))))
+      (snake-redraw! app))))
+
+(def (snake-handle-key! app code mods text)
+  "Handle a key press during snake game. Returns #t if consumed."
+  (cond
+    ((not *snake-game*) #f)
+    ;; Quit
+    ((or (and (string? text) (string=? text "q"))
+         (= code QT_KEY_ESCAPE))
+     (cancel-periodic! 'snake-tick)
+     (set! *snake-active* #f)
+     (set! *snake-game* #f)
+     #t)
+    ;; Arrow keys — change direction (can't reverse 180°)
+    ((= code QT_KEY_RIGHT)
+     (when (not (= (vector-ref *snake-game* 1) SNAKE-LEFT))
+       (vector-set! *snake-game* 1 SNAKE-RIGHT)
+       (vector-set! *snake-game* 5 #f))   ;; unpause
+     #t)
+    ((= code QT_KEY_LEFT)
+     (when (not (= (vector-ref *snake-game* 1) SNAKE-RIGHT))
+       (vector-set! *snake-game* 1 SNAKE-LEFT)
+       (vector-set! *snake-game* 5 #f))
+     #t)
+    ((= code QT_KEY_DOWN)
+     (when (not (= (vector-ref *snake-game* 1) SNAKE-UP))
+       (vector-set! *snake-game* 1 SNAKE-DOWN)
+       (vector-set! *snake-game* 5 #f))
+     #t)
+    ((= code QT_KEY_UP)
+     (when (not (= (vector-ref *snake-game* 1) SNAKE-DOWN))
+       (vector-set! *snake-game* 1 SNAKE-UP)
+       (vector-set! *snake-game* 5 #f))
+     #t)
+    ;; Pause toggle
+    ((and (string? text) (string=? text "p"))
+     (vector-set! *snake-game* 5 (not (vector-ref *snake-game* 5)))
+     (snake-redraw! app)
+     #t)
+    (else #f)))
+
 (def (cmd-snake app)
-  "Display a Snake game board."
-  (let* ((ed (current-qt-editor app)) (fr (app-state-frame app))
-         (buf (or (buffer-by-name "*Snake*") (qt-buffer-create! "*Snake*" ed #f))))
+  "Play Snake — animated game with Unicode graphics. Arrow keys to move, p to pause, q to quit."
+  ;; Stop any existing game
+  (when *snake-active*
+    (cancel-periodic! 'snake-tick)
+    (set! *snake-active* #f))
+  (let* ((ed  (current-qt-editor app))
+         (fr  (app-state-frame app))
+         (buf (or (buffer-by-name "*Snake*")
+                  (qt-buffer-create! "*Snake*" ed #f)))
+         (W   SNAKE-W)
+         (H   SNAKE-H)
+         (mid (quotient H 2))
+         ;; Initial snake: 4 cells, head at col 6, going right
+         (init-snake (list (cons mid 6) (cons mid 5)
+                            (cons mid 4) (cons mid 3)))
+         ;; state vector: #(snake dir food score game-over? paused?)
+         (state (vector init-snake SNAKE-RIGHT
+                        (snake-pick-food init-snake W H)
+                        0 #f #f)))
+    (set! *snake-game* state)
+    (set! *snake-active* #t)
     (qt-buffer-attach! ed buf)
     (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
-    (qt-plain-text-edit-set-text! ed
-      (string-append
-        "SNAKE\n\n"
-        "+--------------------+\n"
-        "|                    |\n"
-        "|   @@@@>            |\n"
-        "|                    |\n"
-        "|         *          |\n"
-        "|                    |\n"
-        "|                    |\n"
-        "+--------------------+\n\n"
-        "Score: 0  Length: 4\n\n"
-        "Controls: Arrow keys to change direction.\n"
-        "@ = snake body, > = head, * = food\n"))
-    (sci-send ed SCI_SETREADONLY 1)))
+    (snake-redraw! app)
+    (schedule-periodic! 'snake-tick 150
+      (lambda () (snake-tick! app)))))
 
 (def (cmd-hanoi app)
   "Show towers of Hanoi solution."

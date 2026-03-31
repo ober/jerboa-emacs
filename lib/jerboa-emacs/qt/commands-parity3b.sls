@@ -3,7 +3,14 @@
 ;;; Source: src/jerboa-emacs/qt/commands-parity3b.ss
 
 (library (jerboa-emacs qt commands-parity3b)
-  (export cmd-tetris cmd-snake cmd-hanoi cmd-life cmd-dunnet
+  (export cmd-tetris *snake-active* *snake-game* SNAKE-W
+   SNAKE-H SNAKE-RIGHT SNAKE-DOWN SNAKE-LEFT SNAKE-UP
+   SNAKE-STYLE-BORDER SNAKE-STYLE-BODY SNAKE-STYLE-HEAD
+   SNAKE-STYLE-FOOD SNAKE-STYLE-STATUS SCI_STYLESETFORE-SNAKE
+   SCI_STARTSTYLING-SNAKE SCI_SETSTYLING-SNAKE char-utf8-len
+   snake-dir->head-char snake-pick-food snake-build-text
+   snake-apply-styles! snake-redraw! snake-tick!
+   snake-handle-key! cmd-snake cmd-hanoi cmd-life cmd-dunnet
    *doctor-responses* cmd-doctor cmd-proced cmd-proced-filter
    cmd-proced-send-signal cmd-calculator cmd-calculator-inline
    cmd-calc-eval-region *calc-stack* calc-show-stack!
@@ -93,6 +100,10 @@
    (std misc string) (std misc ports) (std text json)
    (only (std misc process) process-kill)
    (only (std os signal) signal-names)
+   (only
+     (jerboa-emacs async)
+     schedule-periodic!
+     cancel-periodic!)
    (jerboa-emacs qt sci-shim) (jerboa-emacs core)
    (jerboa-emacs editor) (jerboa-emacs qt buffer)
    (jerboa-emacs qt window) (jerboa-emacs qt echo)
@@ -140,24 +151,261 @@
              "Controls: Use arrow keys to move pieces.\n"
              "Note: Full game requires event loop integration.\n"))
          (sci-send ed SCI_SETREADONLY 1)))
+  (define *snake-active*--cell (vector #f))
+  (define *snake-game*--cell (vector #f))
+  (def SNAKE-W 30)
+  (def SNAKE-H 14)
+  (def SNAKE-RIGHT 0)
+  (def SNAKE-DOWN 1)
+  (def SNAKE-LEFT 2)
+  (def SNAKE-UP 3)
+  (def SNAKE-STYLE-BORDER 1)
+  (def SNAKE-STYLE-BODY 2)
+  (def SNAKE-STYLE-HEAD 3)
+  (def SNAKE-STYLE-FOOD 4)
+  (def SNAKE-STYLE-STATUS 5)
+  (def SCI_STYLESETFORE-SNAKE 2051)
+  (def SCI_STARTSTYLING-SNAKE 2032)
+  (def SCI_SETSTYLING-SNAKE 2033)
+  (def (char-utf8-len c)
+       (let ([n (char->integer c)])
+         (cond
+           [(< n 128) 1]
+           [(< n 2048) 2]
+           [(< n 65536) 3]
+           [else 4])))
+  (def (snake-dir->head-char dir)
+       (case dir [(0) #\▶] [(1) #\▼] [(2) #\◀] [else #\▲]))
+  (def (snake-pick-food snake W H)
+       "Return a random (row . col) not occupied by the snake."
+       (let loop ()
+         (let ([pos (cons (random H) (random W))])
+           (if (member pos snake) (loop) pos))))
+  (def (snake-build-text state)
+       "Render game state to a string."
+       (let* ([snake (vector-ref state 0)]
+              [dir (vector-ref state 1)]
+              [food (vector-ref state 2)]
+              [score (vector-ref state 3)]
+              [over? (vector-ref state 4)]
+              [W SNAKE-W]
+              [H SNAKE-H]
+              [head (car snake)]
+              [body (cdr snake)]
+              [grid (make-vector (* H W) #\space)]
+              [_ (let ([fr (car food)] [fc (cdr food)])
+                   (when (and (< fr H) (< fc W))
+                     (vector-set! grid (+ (* fr W) fc) #\◉)))]
+              [_ (for-each
+                   (lambda (p)
+                     (let ([r (car p)] [c (cdr p)])
+                       (when (and (< r H) (< c W))
+                         (vector-set! grid (+ (* r W) c) #\●))))
+                   body)]
+              [_ (let ([r (car head)] [c (cdr head)])
+                   (when (and (< r H) (< c W))
+                     (vector-set!
+                       grid
+                       (+ (* r W) c)
+                       (snake-dir->head-char dir))))]
+              [top (string-append "╔" (make-string W #\═) "╗\n")]
+              [bot (string-append "╚" (make-string W #\═) "╝\n")]
+              [rows (let loop ([r 0] [acc '()])
+                      (if (= r H)
+                          (reverse acc)
+                          (loop
+                            (+ r 1)
+                            (cons
+                              (string-append
+                                "║"
+                                (list->string
+                                  (map (lambda (c)
+                                         (vector-ref grid (+ (* r W) c)))
+                                       (iota W)))
+                                "║\n")
+                              acc))))]
+              [status (cond
+                        [over?
+                         (format
+                           "GAME OVER  Score:~a  Length:~a  [q or C-g to quit]"
+                           score
+                           (length snake))]
+                        [else
+                         (format
+                           "Score:~a  Length:~a  [arrows:move  p:pause  q:quit]"
+                           score
+                           (length snake))])])
+         (string-append top (apply string-append rows) bot "\n"
+           status "\n")))
+  (def (snake-apply-styles! ed text)
+       "Walk TEXT and apply Scintilla color styles for border/body/head/food chars."
+       (sci-send
+         ed
+         SCI_STYLESETFORE-SNAKE
+         SNAKE-STYLE-BORDER
+         6710886)
+       (sci-send
+         ed
+         SCI_STYLESETFORE-SNAKE
+         SNAKE-STYLE-BODY
+         4508740)
+       (sci-send
+         ed
+         SCI_STYLESETFORE-SNAKE
+         SNAKE-STYLE-HEAD
+         11206570)
+       (sci-send
+         ed
+         SCI_STYLESETFORE-SNAKE
+         SNAKE-STYLE-FOOD
+         16737843)
+       (sci-send
+         ed
+         SCI_STYLESETFORE-SNAKE
+         SNAKE-STYLE-STATUS
+         8947848)
+       (let ([len (string-length text)])
+         (let loop ([i 0] [byte-pos 0])
+           (when (< i len)
+             (let* ([c (string-ref text i)]
+                    [blen (char-utf8-len c)]
+                    [style (cond
+                             [(or (char=? c #\╔)
+                                  (char=? c #\╗)
+                                  (char=? c #\╚)
+                                  (char=? c #\╝)
+                                  (char=? c #\═)
+                                  (char=? c #\║))
+                              SNAKE-STYLE-BORDER]
+                             [(char=? c #\●) SNAKE-STYLE-BODY]
+                             [(or (char=? c #\▶)
+                                  (char=? c #\▼)
+                                  (char=? c #\◀)
+                                  (char=? c #\▲))
+                              SNAKE-STYLE-HEAD]
+                             [(char=? c #\◉) SNAKE-STYLE-FOOD]
+                             [else #f])])
+               (when style
+                 (sci-send ed SCI_STARTSTYLING-SNAKE byte-pos 0)
+                 (sci-send ed SCI_SETSTYLING-SNAKE blen style))
+               (loop (+ i 1) (+ byte-pos blen)))))))
+  (def (snake-redraw! app)
+       (when *snake-game*
+         (let* ([ed (current-qt-editor app)]
+                [text (snake-build-text *snake-game*)])
+           (sci-send ed SCI_SETREADONLY 0)
+           (qt-plain-text-edit-set-text! ed text)
+           (snake-apply-styles! ed text)
+           (sci-send ed SCI_SETREADONLY 1))))
+  (def (snake-tick! app)
+       "Advance the game by one step."
+       (when (and *snake-game*
+                  (not (vector-ref *snake-game* 4))
+                  (not (vector-ref *snake-game* 5)))
+         (let* ([state *snake-game*]
+                [snake (vector-ref state 0)]
+                [dir (vector-ref state 1)]
+                [food (vector-ref state 2)]
+                [score (vector-ref state 3)]
+                [W SNAKE-W]
+                [H SNAKE-H]
+                [hr (caar snake)]
+                [hc (cdar snake)]
+                [new-head (case dir
+                            [(0) (cons hr (+ hc 1))]
+                            [(1) (cons (+ hr 1) hc)]
+                            [(2) (cons hr (- hc 1))]
+                            [else (cons (- hr 1) hc)])]
+                [nr (car new-head)]
+                [nc (cdr new-head)]
+                [wall? (or (< nr 0) (>= nr H) (< nc 0) (>= nc W))]
+                [init-body (if (null? (cdr snake))
+                               '()
+                               (reverse (cdr (reverse snake))))]
+                [self? (and (not wall?) (member new-head init-body))]
+                [fed? (equal? new-head food)])
+           (if (or wall? self?)
+               (vector-set! state 4 #t)
+               (begin
+                 (vector-set!
+                   state
+                   0
+                   (if fed?
+                       (cons new-head snake)
+                       (cons new-head (reverse (cdr (reverse snake))))))
+                 (when fed?
+                   (vector-set!
+                     state
+                     2
+                     (snake-pick-food (vector-ref state 0) W H))
+                   (vector-set! state 3 (+ score 10)))))
+           (snake-redraw! app))))
+  (def (snake-handle-key! app code mods text)
+       "Handle a key press during snake game. Returns #t if consumed."
+       (cond
+         [(not *snake-game*) #f]
+         [(or (and (string? text) (string=? text "q"))
+              (= code QT_KEY_ESCAPE))
+          (cancel-periodic! 'snake-tick)
+          (set! *snake-active* #f)
+          (set! *snake-game* #f)
+          #t]
+         [(= code QT_KEY_RIGHT)
+          (when (not (= (vector-ref *snake-game* 1) SNAKE-LEFT))
+            (vector-set! *snake-game* 1 SNAKE-RIGHT)
+            (vector-set! *snake-game* 5 #f))
+          #t]
+         [(= code QT_KEY_LEFT)
+          (when (not (= (vector-ref *snake-game* 1) SNAKE-RIGHT))
+            (vector-set! *snake-game* 1 SNAKE-LEFT)
+            (vector-set! *snake-game* 5 #f))
+          #t]
+         [(= code QT_KEY_DOWN)
+          (when (not (= (vector-ref *snake-game* 1) SNAKE-UP))
+            (vector-set! *snake-game* 1 SNAKE-DOWN)
+            (vector-set! *snake-game* 5 #f))
+          #t]
+         [(= code QT_KEY_UP)
+          (when (not (= (vector-ref *snake-game* 1) SNAKE-DOWN))
+            (vector-set! *snake-game* 1 SNAKE-UP)
+            (vector-set! *snake-game* 5 #f))
+          #t]
+         [(and (string? text) (string=? text "p"))
+          (vector-set!
+            *snake-game*
+            5
+            (not (vector-ref *snake-game* 5)))
+          (snake-redraw! app)
+          #t]
+         [else #f]))
   (def (cmd-snake app)
-       "Display a Snake game board."
+       "Play Snake — animated game with Unicode graphics. Arrow keys to move, p to pause, q to quit."
+       (when *snake-active*
+         (cancel-periodic! 'snake-tick)
+         (set! *snake-active* #f))
        (let* ([ed (current-qt-editor app)]
               [fr (app-state-frame app)]
               [buf (or (buffer-by-name "*Snake*")
-                       (qt-buffer-create! "*Snake*" ed #f))])
+                       (qt-buffer-create! "*Snake*" ed #f))]
+              [W SNAKE-W]
+              [H SNAKE-H]
+              [mid (quotient H 2)]
+              [init-snake (list
+                            (cons mid 6)
+                            (cons mid 5)
+                            (cons mid 4)
+                            (cons mid 3))]
+              [state (vector init-snake SNAKE-RIGHT
+                       (snake-pick-food init-snake W H) 0 #f #f)])
+         (set! *snake-game* state)
+         (set! *snake-active* #t)
          (qt-buffer-attach! ed buf)
          (qt-edit-window-buffer-set! (qt-current-window fr) buf)
-         (qt-plain-text-edit-set-text!
-           ed
-           (string-append "SNAKE\n\n" "+--------------------+\n"
-             "|                    |\n" "|   @@@@>            |\n"
-             "|                    |\n" "|         *          |\n"
-             "|                    |\n" "|                    |\n"
-             "+--------------------+\n\n" "Score: 0  Length: 4\n\n"
-             "Controls: Arrow keys to change direction.\n"
-             "@ = snake body, > = head, * = food\n"))
-         (sci-send ed SCI_SETREADONLY 1)))
+         (snake-redraw! app)
+         (schedule-periodic!
+           'snake-tick
+           150
+           (lambda () (snake-tick! app)))))
   (def (cmd-hanoi app)
        "Show towers of Hanoi solution."
        (let* ([n-str (qt-echo-read-string
@@ -2477,6 +2725,14 @@
           (cons 'sp-backward-slurp-sexp cmd-sp-backward-slurp-sexp)
           (cons 'sp-forward-barf-sexp cmd-sp-forward-barf-sexp)
           (cons 'sp-backward-barf-sexp cmd-sp-backward-barf-sexp))))
+  (define-syntax *snake-active*
+    (identifier-syntax
+      [id (vector-ref *snake-active*--cell 0)]
+      [(set! id val) (vector-set! *snake-active*--cell 0 val)]))
+  (define-syntax *snake-game*
+    (identifier-syntax
+      [id (vector-ref *snake-game*--cell 0)]
+      [(set! id val) (vector-set! *snake-game*--cell 0 val)]))
   (define-syntax *doctor-responses*
     (identifier-syntax
       [id (vector-ref *doctor-responses*--cell 0)]

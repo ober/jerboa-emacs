@@ -86,7 +86,10 @@
         qt-record-edit-position!
         *qt-desktop-save-mode*
         ;; Aggressive indent
-        qt-aggressive-indent-line!)
+        qt-aggressive-indent-line!
+        ;; Snake game
+        *snake-active*
+        snake-handle-key!)
 
 (import :std/sugar
         :chez-scintilla/constants

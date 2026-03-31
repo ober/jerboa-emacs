@@ -30,7 +30,8 @@
    *diff-hl-active* *qt-describe-key-pending*
    qt-describe-key-result! *qt-quoted-insert-pending*
    qt-quoted-insert-handle! qt-record-edit-position!
-   *qt-desktop-save-mode* qt-aggressive-indent-line!)
+   *qt-desktop-save-mode* qt-aggressive-indent-line!
+   *snake-active* snake-handle-key!)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex

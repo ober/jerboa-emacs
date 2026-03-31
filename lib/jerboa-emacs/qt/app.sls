@@ -876,6 +876,12 @@
                                      (qt-echo-draw!
                                        (app-state-echo app)
                                        echo-label)]
+                                    [*snake-active*
+                                     (snake-handle-key!
+                                       app
+                                       code
+                                       mods
+                                       text)]
                                     [else
                                      (letrec ([terminal-pty-intercept? (lambda (code
                                                                                 mods

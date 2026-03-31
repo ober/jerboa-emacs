@@ -923,6 +923,8 @@
                   (qreplace-handle-key! app code mods text)
                   (qt-modeline-update! app)
                   (qt-echo-draw! (app-state-echo app) echo-label))
+                 (*snake-active*
+                  (snake-handle-key! app code mods text))
                  (else
                 ;; Normal key processing — with chord detection
                 (letrec
