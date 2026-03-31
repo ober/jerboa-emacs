@@ -845,6 +845,14 @@
                (input (if (> end-pos prompt-pos)
                         (substring all-text prompt-pos end-pos)
                         "")))
+          ;; Compute actual terminal dimensions from editor widget
+          (let* ((rows (max 2 (sci-send ed 2370 0))) ; SCI_LINESONSCREEN
+                 (widget-w (qt-widget-width ed))
+                 (margin-w (sci-send ed SCI_GETMARGINWIDTHN 0))
+                 (text-w (- widget-w margin-w 16)) ; 16px for scrollbar
+                 (char-w (let ((w (sci-send/string ed 2276 "M" STYLE_DEFAULT)))
+                            (if (> w 0) w 8)))
+                 (cols (max 20 (quotient text-w char-w))))
           ;; Record in shell history
           (let ((trimmed-input (safe-string-trim-both input)))
             (when (> (string-length trimmed-input) 0)
@@ -852,7 +860,7 @@
           ;; Append newline after user input
           (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
           (qt-plain-text-edit-insert-text! ed "\n")
-          (let-values (((mode output new-cwd) (shell-execute-async! input ss)))
+          (let-values (((mode output new-cwd) (shell-execute-async! input ss rows cols)))
           (case mode
             ((sync)
              (when (and (string? output) (> (string-length output) 0))
@@ -893,7 +901,7 @@
                     (set! (qt-edit-window-buffer (qt-current-window fr)) other))
                   (hash-remove! *shell-state* buf)
                   (qt-buffer-kill! buf)
-                  (echo-message! (app-state-echo app) "Shell exited"))))))))))))
+                  (echo-message! (app-state-echo app) "Shell exited")))))))))))))
 ;;;============================================================================
 ;;; AI Chat commands (Claude CLI integration)
 ;;;============================================================================

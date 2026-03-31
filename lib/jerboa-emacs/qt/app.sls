@@ -1777,6 +1777,68 @@
                        (when (shell-buffer? buf)
                          (let ([ss (hash-get *shell-state* buf)])
                            (when (and ss (shell-pty-busy? ss))
+                             (let ([vt (shell-state-vtscreen ss)])
+                               (when vt
+                                 (let ed-loop ([wins (qt-frame-windows
+                                                       fr)])
+                                   (when (pair? wins)
+                                     (if (eq? (qt-edit-window-buffer
+                                                (car wins))
+                                              buf)
+                                         (let* ([ed (qt-edit-window-editor
+                                                      (car wins))]
+                                                [new-rows (max 2
+                                                               (sci-send
+                                                                 ed
+                                                                 2370
+                                                                 0))]
+                                                [widget-w (qt-widget-width
+                                                            ed)]
+                                                [margin-w (sci-send
+                                                            ed
+                                                            SCI_GETMARGINWIDTHN
+                                                            0)]
+                                                [text-w (- widget-w
+                                                           margin-w
+                                                           16)]
+                                                [char-w (let ([w (sci-send/string
+                                                                   ed
+                                                                   2276
+                                                                   "M"
+                                                                   STYLE_DEFAULT)])
+                                                          (if (> w 0)
+                                                              w
+                                                              8))]
+                                                [new-cols (max 20
+                                                               (quotient
+                                                                 text-w
+                                                                 char-w))]
+                                                [old-rows (vtscreen-rows
+                                                            vt)]
+                                                [old-cols (vtscreen-cols
+                                                            vt)])
+                                           (when (or (not (= new-rows
+                                                             old-rows))
+                                                     (not (= new-cols
+                                                             old-cols)))
+                                             (verbose-log! "SHELL-PTY-RESIZE: "
+                                               (number->string old-rows)
+                                               "x"
+                                               (number->string old-cols)
+                                               " -> "
+                                               (number->string new-rows)
+                                               "x"
+                                               (number->string new-cols))
+                                             (vtscreen-resize!
+                                               vt
+                                               new-rows
+                                               new-cols)
+                                             (shell-pty-resize!
+                                               ss
+                                               new-rows
+                                               new-cols)))
+                                         (ed-loop (cdr wins))))))))
+                           (when (and ss (shell-pty-busy? ss))
                              (let drain ()
                                (let ([msg (shell-poll-output ss)])
                                  (when msg
@@ -1803,15 +1865,24 @@
                                                                  0))]
                                                 [widget-w (qt-widget-width
                                                             ed)]
-                                                [char-w (max 1
-                                                             (sci-send/string
-                                                               ed
-                                                               2275
-                                                               "0"
-                                                               0))]
+                                                [margin-w (sci-send
+                                                            ed
+                                                            SCI_GETMARGINWIDTHN
+                                                            0)]
+                                                [text-w (- widget-w
+                                                           margin-w
+                                                           16)]
+                                                [char-w (let ([w (sci-send/string
+                                                                   ed
+                                                                   2276
+                                                                   "M"
+                                                                   STYLE_DEFAULT)])
+                                                          (if (> w 0)
+                                                              w
+                                                              8))]
                                                 [new-cols (max 20
                                                                (quotient
-                                                                 widget-w
+                                                                 text-w
                                                                  char-w))]
                                                 [old-rows (vtscreen-rows
                                                             vt)]

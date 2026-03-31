@@ -14,6 +14,7 @@
         shell-pty-busy?
         shell-interrupt!
         shell-send-input!
+        shell-pty-resize!
         shell-cleanup-pty!
         shell-stop!
         shell-prompt
@@ -266,7 +267,7 @@
                       (let ((status (shell-pty-waitpid-status pid #t)))
                         (channel-put ch (cons 'done status)))))))))))))))
 
-(def (shell-execute-async! input ss)
+(def (shell-execute-async! input ss (pty-rows 24) (pty-cols 80))
   "Execute command: builtins go through gsh-capture (sync),
    external commands go through PTY subprocess (async).
    Returns:
@@ -293,7 +294,7 @@
              (values 'sync output cwd))
            ;; External/compound: spawn PTY subprocess (async)
            (let* ((env-alist (env-exported-alist env))
-                  (rows 24) (cols 80))
+                  (rows pty-rows) (cols pty-cols))
              (let-values (((mfd pid) (with-catch
                                        (lambda (e)
                                          (jemacs-log! "PTY-SPAWN-ERROR: "
@@ -341,6 +342,12 @@
   (let ((mfd (shell-state-pty-master ss)))
     (when mfd
       (pty-write mfd str))))
+
+(def (shell-pty-resize! ss rows cols)
+  "Notify PTY child of window size change."
+  (let ((mfd (shell-state-pty-master ss)))
+    (when (and mfd (integer? mfd))
+      (pty-resize! mfd rows cols))))
 
 (def (shell-cleanup-pty! ss)
   "Clean up PTY state after command finishes or on stop."
