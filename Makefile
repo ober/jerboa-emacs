@@ -1,9 +1,8 @@
 SCHEME = scheme
 JERBOA    = $(HOME)/mine/jerboa
 JSH       = vendor/jerboa-shell/src
-COREUTILS = $(HOME)/mine/jerboa-coreutils/lib
 GHERKIN   = $(HOME)/mine/gherkin/src
-LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(COREUTILS):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
+LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
 export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
@@ -253,7 +252,6 @@ PCRE2_SRC    ?= $(HOME)/mine/chez-pcre2
 SCI_SRC      ?= $(HOME)/mine/chez-scintilla
 QT_SRC       ?= $(HOME)/mine/chez-qt
 QTSHIM_SRC   ?= $(HOME)/mine/gerbil-qt
-COREUTILS_SRC ?= $(HOME)/mine/jerboa-coreutils
 JSH_COREUTILS_LIB ?= $(JSH_SRC)/rust-coreutils/target/x86_64-unknown-linux-musl/release/libjsh_coreutils.a
 
 DEPS_IMAGE := jemacs-deps:$(ARCH)
@@ -371,7 +369,6 @@ build-jemacs-qt-static: check-root
 	CHEZ_SCINTILLA_DIR=/deps/chez-scintilla/src \
 	CHEZ_QT_DIR=/deps/chez-qt \
 	CHEZ_QT_SHIM_DIR=/deps/gerbil-qt/vendor \
-	COREUTILS_DIR=/deps/coreutils \
 	JSH_COREUTILS_LIB=/deps/jsh/libjsh_coreutils.a \
 	TREE_SITTER_INCLUDE=/opt/tree-sitter-include \
 	TREE_SITTER_LIB=/opt/tree-sitter-lib \
@@ -380,7 +377,7 @@ build-jemacs-qt-static: check-root
 	TREE_SITTER_QUERIES_OBJ=/tmp/jemacs-build/treesitter_queries.o \
 	PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig \
 	/opt/chez/bin/scheme \
-	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/deps/coreutils:/deps/gherkin/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
+	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/deps/gherkin/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
 	  --script build-binary-qt.ss
 
 linux-static-qt-docker:
@@ -390,15 +387,12 @@ linux-static-qt-docker:
 	  --ulimit nofile=8192:8192 \
 	  -v $(CURDIR):/src:z \
 	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
-	  -v $(COREUTILS_SRC)/lib:/host-coreutils:ro \
 	  -v $(JSH_SRC)/src:/host-jsh-src:ro \
 	  -v $(JSH_COREUTILS_LIB):/host-jsh-coreutils.a:ro \
 	  $(DEPS_IMAGE) \
 	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
 	         cp /host-jsh-coreutils.a /deps/jsh/libjsh_coreutils.a; \
 	         cp -a /host-jsh-src/. /deps/jsh/src/; \
-	         cp -a /host-coreutils/. /deps/coreutils/; \
-	         find /deps/coreutils -name '*.sls' -exec sed -i 's/(load-shared-object #f)/(void)/g' {} +; \
 	         for f in \
 	           misc/atom.sls misc/channel.sls misc/completion.sls misc/list.sls \
 	           misc/memo.sls misc/number.sls misc/ports.sls misc/process.sls \

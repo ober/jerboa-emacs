@@ -15,7 +15,6 @@
         (only-in :jerboa-emacs/vtscreen new-vtscreen)
         (only-in :jerboa-emacs/async schedule-periodic! cancel-periodic!)
         (only-in :jsh/registry builtin-lookup builtin-register!)
-        (rename-in :jerboa-coreutils/top (main cu-top-main))
         (only-in :jerboa-emacs/persist theme-settings-save! theme-settings-load!
                  mx-history-save! mx-history-load!
                  *auto-fill-mode* *fill-column*
@@ -1856,20 +1855,19 @@ SPC = page down, DEL = page up, q = quit view-mode."
 (def *top-active* #f)  ;; the app when top is running, or #f
 
 (def (top-capture-output)
-  "Run coreutils top in batch mode (-b -n 1) and capture output as a string.
-   Calls cu-top-main directly (imported from jerboa-coreutils/top)."
-  (with-output-to-string
+  "Run system top in batch mode (-b -n 1) and capture output as a string."
+  (with-catch
+    (lambda (e)
+      (string-append "top: error: "
+        (with-output-to-string (lambda () (display-condition e))) "\n"))
     (lambda ()
-      (with-catch
-        (lambda (e)
-          (display "top: error: ")
-          (display (with-output-to-string (lambda () (display-condition e))))
-          (newline))
-        (lambda ()
-          (call/cc
-            (lambda (k)
-              (parameterize ((exit-handler (lambda (code) (k (void)))))
-                (cu-top-main "-b" "-n" "1")))))))))
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports "top -b -n 1" 'block (native-transcoder))))
+        (close-port p-stdin)
+        (let ((output (get-string-all p-stdout)))
+          (close-port p-stdout)
+          (close-port p-stderr)
+          (if (eof-object? output) "" output))))))
 
 (def (top-refresh! app)
   "Refresh the *top* buffer with current coreutils top output."

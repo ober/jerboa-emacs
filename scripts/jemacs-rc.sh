@@ -78,7 +78,7 @@ jemacs-start() {
   else
     # Interpreted mode: use offscreen platform (dynamically loaded)
     QT_QPA_PLATFORM=offscreen LD_PRELOAD=./qt_chez_shim.so \
-      scheme --libdirs "lib:$HOME/mine/jerboa/lib:$HOME/mine/jerboa-shell/src:$HOME/mine/jerboa-coreutils:$HOME/mine/chez-gherkin:$HOME/mine/chez-pcre2:$HOME/mine/chez-scintilla/src:$HOME/mine/chez-qt" \
+      scheme --libdirs "lib:$HOME/mine/jerboa/lib:$HOME/mine/jerboa-shell/src:$HOME/mine/chez-gherkin:$HOME/mine/chez-pcre2:$HOME/mine/chez-scintilla/src:$HOME/mine/chez-qt" \
       --script qt-main.ss --repl 0 &
     _JEMACS_PID=$!
   fi
