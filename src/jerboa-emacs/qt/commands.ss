@@ -165,6 +165,7 @@
         :jerboa-emacs/qt/commands-parity5
         :jerboa-emacs/qt/commands-aliases
         :jerboa-emacs/qt/commands-aliases2
+        :jerboa-emacs/qt/commands-aws
         (except-in :jerboa-emacs/helm-commands cmd-helm-buffers-list cmd-helm-occur)
         :jerboa-emacs/qt/helm-commands)
 
@@ -1963,6 +1964,16 @@
   (qt-register-parity4-toggles!)
   ;; Parity5: remaining mode toggles, stubs, aliases, functional
   (qt-register-parity5-commands!)
+  ;; AWS EC2 SSH mode
+  (aws-ec2-ssh-setup-mode!)
+  (register-command! 'aws-ec2-ssh cmd-aws-ec2-ssh)
+  (register-command! 'aws-ec2-ssh-connect cmd-aws-ec2-ssh-connect)
+  (register-command! 'aws-ec2-ssh-refresh cmd-aws-ec2-ssh-refresh)
+  (register-command! 'aws-ec2-ssh-force-refresh cmd-aws-ec2-ssh-force-refresh)
+  (register-command! 'aws-ec2-ssh-filter cmd-aws-ec2-ssh-filter)
+  (register-command! 'aws-ec2-ssh-clear-filter cmd-aws-ec2-ssh-clear-filter)
+  (register-command! 'aws-ec2-ssh-sort-name cmd-aws-ec2-ssh-sort-name)
+  (register-command! 'aws-ec2-ssh-sort-region cmd-aws-ec2-ssh-sort-region)
   ;; Wire modeline providers
   (set-box! *modeline-overwrite-provider* (lambda () *overwrite-mode*))
   (set-box! *modeline-narrow-provider*

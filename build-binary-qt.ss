@@ -170,6 +170,9 @@
         "std/misc/terminal"
         "std/misc/trie"
         "std/misc/lru-cache"
+        "std/misc/ports"
+        "std/srfi/srfi-13"
+        "std/text/json"
         "std/actor/mpsc"
         "std/actor/core"
         "std/actor/transport"
@@ -178,9 +181,13 @@
         "std/os/sandbox"
         "std/os/landlock"
         "std/security/capsicum"))
-    ;; Jerboa core + sugar + repl
+    ;; Jerboa core + sugar + repl + dependencies
+    ;; std/typed: jerboa/core imports it
+    ;; std/result: std/sugar imports it
     (map (lambda (m) (format "~a/~a.so" jerboa-dir m))
-      '("jerboa/core"
+      '("std/result"
+        "std/typed"
+        "jerboa/core"
         "std/sugar"
         "std/repl"))
     ;; std/net/tcp and std/net/uri (compiled by step 1)
@@ -409,7 +416,8 @@ sort -u | grep -v '^$' | grep -v '^_NSGetExecutablePath$' | grep -v '^io_uring_'
 grep -v '^jerboa_' | grep -v '^SSL_' | grep -v '^TLS_' | grep -v '^EVP_' | \
 grep -v '^CRYPTO_' | grep -v '^PKCS5_' | grep -v '^RAND_' | \
 grep -v '^QRcode_' | grep -v '^embed_encrypt$' | grep -v '^embed_random_bytes$' | \
-grep -v '^kqueue$' | grep -v '^kevent$' | grep -v '^sandbox_' > /tmp/ffi_syms.txt && \
+grep -v '^kqueue$' | grep -v '^kevent$' | grep -v '^sandbox_' | \
+grep -v '^__error$' > /tmp/ffi_syms.txt && \
 awk '\
 BEGIN{ print \"/* Auto-generated — do not edit */\"; \
        print \"#include \\\"scheme.h\\\"\"; print \"\"; } \

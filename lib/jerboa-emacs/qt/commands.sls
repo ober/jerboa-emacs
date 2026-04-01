@@ -95,6 +95,7 @@
    (jerboa-emacs qt commands-parity5)
    (jerboa-emacs qt commands-aliases)
    (jerboa-emacs qt commands-aliases2)
+   (jerboa-emacs qt commands-aws)
    (except
      (jerboa-emacs helm-commands)
      cmd-helm-buffers-list
@@ -2217,7 +2218,29 @@
    (qt-register-parity3-toggles!)
    (qt-register-parity4-commands!)
    (qt-register-parity4-toggles!)
-   (qt-register-parity5-commands!)
+   (qt-register-parity5-commands!) (aws-ec2-ssh-setup-mode!)
+   (register-command! 'aws-ec2-ssh cmd-aws-ec2-ssh)
+   (register-command!
+     'aws-ec2-ssh-connect
+     cmd-aws-ec2-ssh-connect)
+   (register-command!
+     'aws-ec2-ssh-refresh
+     cmd-aws-ec2-ssh-refresh)
+   (register-command!
+     'aws-ec2-ssh-force-refresh
+     cmd-aws-ec2-ssh-force-refresh)
+   (register-command!
+     'aws-ec2-ssh-filter
+     cmd-aws-ec2-ssh-filter)
+   (register-command!
+     'aws-ec2-ssh-clear-filter
+     cmd-aws-ec2-ssh-clear-filter)
+   (register-command!
+     'aws-ec2-ssh-sort-name
+     cmd-aws-ec2-ssh-sort-name)
+   (register-command!
+     'aws-ec2-ssh-sort-region
+     cmd-aws-ec2-ssh-sort-region)
    (set-box!
      *modeline-overwrite-provider*
      (lambda () *overwrite-mode*))

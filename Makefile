@@ -293,6 +293,7 @@ CHEZ_MT ?= ta6le
 CHEZ_MUSL_DIR ?= $(shell ls -d /opt/chez/lib/csv*/$(CHEZ_MT) 2>/dev/null | head -1)
 
 build-jemacs-qt-static: check-root
+	rm -f /src/src/.jerbuild-hashes; \
 	cp /src/vendor/jerboa-shell/embed-crypto.c /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/embed-crypto.h /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/ffi-shim.c /deps/jsh/ 2>/dev/null; \
@@ -387,42 +388,24 @@ linux-static-qt-docker:
 	  --ulimit nofile=8192:8192 \
 	  -v $(CURDIR):/src:z \
 	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
+	  -v $(JERBOA)/lib/jerboa:/host-jerboa-core:ro \
 	  -v $(JSH_SRC)/src:/host-jsh-src:ro \
 	  -v $(JSH_COREUTILS_LIB):/host-jsh-coreutils.a:ro \
 	  $(DEPS_IMAGE) \
 	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
 	         cp /host-jsh-coreutils.a /deps/jsh/libjsh_coreutils.a; \
 	         cp -a /host-jsh-src/. /deps/jsh/src/; \
-	         for f in \
-	           misc/atom.sls misc/channel.sls misc/completion.sls misc/list.sls \
-	           misc/memo.sls misc/number.sls misc/ports.sls misc/process.sls \
-	           misc/rwlock.sls misc/shuffle.sls misc/string.sls misc/terminal.sls \
-	           cli/getopt.sls \
-	           net/request.sls net/uri.sls \
-	           os/fdio.sls os/signal.sls os/tty.sls os/sandbox.sls \
-	           text/base64.sls text/diff.sls text/glob.sls text/hex.sls text/json.sls \
-	           crypto/digest.sls \
-	           engine.sls fiber.sls guardian.sls select.sls stm.sls task.sls \
-	           amb.sls \
-	           misc/thread.sls misc/wg.sls misc/pqueue.sls misc/lru-cache.sls \
-	           misc/channel.sls misc/atom.sls misc/rbtree.sls \
-	           misc/rwlock.sls misc/completion.sls misc/barrier.sls \
-	           result.sls misc/result.sls misc/fmt.sls \
-	           misc/custodian.sls misc/config.sls misc/memoize.sls \
-	           misc/terminal.sls misc/trie.sls \
-	           actor/mpsc.sls actor/core.sls actor/transport.sls \
-	           crypto/random.sls \
-	           format.sls iter.sls pregexp.sls sort.sls sugar.sls \
-	           srfi/srfi-1.sls srfi/srfi-13.sls srfi/srfi-19.sls; do \
-	           if [ -f /host-jerboa-std/\$$f ]; then \
-	             mkdir -p /deps/jerboa/lib/std/$$(dirname \$$f); \
-	             cp /host-jerboa-std/\$$f /deps/jerboa/lib/std/\$$f; \
-	             rm -f /deps/jerboa/lib/std/\$${f%.sls}.so /deps/jerboa/lib/std/\$${f%.sls}.wpo; \
-	             echo SYNC: \$$f; \
-	           else \
-	             echo SKIP: \$$f not found on host; \
-	           fi; \
-	         done; \
+	         echo 'SYNC: bulk-copying host jerboa std/ and jerboa/ into container...'; \
+	         cp -a /host-jerboa-std/. /deps/jerboa/lib/std/ && \
+	         cp -a /host-jerboa-core/. /deps/jerboa/lib/jerboa/ && \
+	         find /deps/jerboa/lib -name '*.so' -delete && \
+	         find /deps/jerboa/lib -name '*.wpo' -delete && \
+	         echo '(import (chezscheme)) (compile-imported-libraries #t) (import (jerboa core)) (import (jerboa prelude))' \
+	           > /tmp/compile-jerboa-core.ss && \
+	         cd /deps/jerboa/lib && /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	           -q --script /tmp/compile-jerboa-core.ss && \
+	         rm -f /deps/jerboa/lib/jerboa/*.wpo && \
+	         echo 'COMPILED: jerboa core + prelude'; \
 	         chmod 755 /root && \
 	         chown -R $(UID):$(GID) /opt/ /deps && \
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \
