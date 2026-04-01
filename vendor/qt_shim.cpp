@@ -188,6 +188,230 @@ static void vlog_bqc_exit(const char* fn) {
     vlog_write("BQC-EXIT  ", fn);
 }
 
+// ============================================================
+// Crash reporter — FFI call ring buffer + SIGSEGV handler
+// ============================================================
+
+#include <fcntl.h>
+#include <unistd.h>
+
+// execinfo.h (backtrace) is not available on musl (Alpine static builds).
+// Guard with __GLIBC__ so the crash reporter still works without backtraces.
+#ifdef __GLIBC__
+#include <execinfo.h>
+#define HAVE_BACKTRACE 1
+#else
+#define HAVE_BACKTRACE 0
+#endif
+
+#define CRASH_RING_SIZE 64
+
+static struct crash_ring_entry {
+    const char* func_name;
+    int         entering;  // 1 = enter, 0 = exit
+    uint64_t    timestamp_ns;
+} s_crash_ring[CRASH_RING_SIZE];
+
+static std::atomic<int> s_crash_ring_idx{0};
+
+static inline uint64_t crash_now_ns() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (uint64_t)ts.tv_sec * 1000000000ULL + (uint64_t)ts.tv_nsec;
+}
+
+static inline void crash_ring_push(const char* fn, int entering) {
+    int idx = s_crash_ring_idx.fetch_add(1, std::memory_order_relaxed) % CRASH_RING_SIZE;
+    s_crash_ring[idx].func_name    = fn;
+    s_crash_ring[idx].entering     = entering;
+    s_crash_ring[idx].timestamp_ns = crash_now_ns();
+}
+
+// Async-signal-safe integer-to-string (decimal).
+// Returns number of chars written (not including NUL).
+static int safe_itoa(char* buf, int buflen, long val) {
+    if (buflen <= 0) return 0;
+    char tmp[24];
+    int neg = 0, len = 0;
+    unsigned long uval;
+    if (val < 0) { neg = 1; uval = (unsigned long)(-(val + 1)) + 1; }
+    else         { uval = (unsigned long)val; }
+    if (uval == 0) { tmp[len++] = '0'; }
+    else { while (uval > 0 && len < (int)sizeof(tmp)) { tmp[len++] = '0' + (char)(uval % 10); uval /= 10; } }
+    int total = neg + len;
+    if (total >= buflen) total = buflen - 1;
+    int pos = 0;
+    if (neg && pos < total) buf[pos++] = '-';
+    for (int i = len - 1; i >= 0 && pos < total; i--) buf[pos++] = tmp[i];
+    buf[pos] = '\0';
+    return pos;
+}
+
+// Async-signal-safe hex formatter (no "0x" prefix).
+static int safe_hex(char* buf, int buflen, unsigned long val) {
+    if (buflen <= 0) return 0;
+    static const char hexchars[] = "0123456789abcdef";
+    char tmp[20];
+    int len = 0;
+    if (val == 0) { tmp[len++] = '0'; }
+    else { while (val > 0 && len < (int)sizeof(tmp)) { tmp[len++] = hexchars[val & 0xf]; val >>= 4; } }
+    int total = (len < buflen - 1) ? len : buflen - 1;
+    int pos = 0;
+    for (int i = len - 1; i >= 0 && pos < total; i--) buf[pos++] = tmp[i];
+    buf[pos] = '\0';
+    return pos;
+}
+
+// Cached crash log path — set once at install time (not in signal handler).
+static char s_crash_log_path[512] = "";
+
+// Async-signal-safe helper: write a C string to fd.
+static inline void safe_write_str(int fd, const char* s) {
+    if (!s) return;
+    int len = 0;
+    while (s[len]) len++;
+    (void)write(fd, s, len);
+}
+
+static void crash_write_report(int sig, siginfo_t* si) {
+    char numbuf[32];
+
+    // Write to crash log file
+    int fd = open(s_crash_log_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd < 0) fd = STDERR_FILENO;  // fallback to stderr
+
+    safe_write_str(fd, "=== JEMACS CRASH REPORT ===\n");
+    safe_write_str(fd, "Signal: ");
+    safe_itoa(numbuf, sizeof(numbuf), (long)sig);
+    safe_write_str(fd, numbuf);
+    if (sig == SIGSEGV) safe_write_str(fd, " (SIGSEGV)");
+    else if (sig == SIGBUS) safe_write_str(fd, " (SIGBUS)");
+    else if (sig == SIGABRT) safe_write_str(fd, " (SIGABRT)");
+    safe_write_str(fd, "\n");
+
+    if (si) {
+        safe_write_str(fd, "Faulting address: 0x");
+        safe_hex(numbuf, sizeof(numbuf), (unsigned long)si->si_addr);
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, "\n");
+        safe_write_str(fd, "Signal code: ");
+        safe_itoa(numbuf, sizeof(numbuf), (long)si->si_code);
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, "\n");
+    }
+
+    safe_write_str(fd, "\n--- FFI Call Ring Buffer (oldest → newest) ---\n");
+    int head = s_crash_ring_idx.load(std::memory_order_relaxed);
+    int count = (head < CRASH_RING_SIZE) ? head : CRASH_RING_SIZE;
+    int start = (head < CRASH_RING_SIZE) ? 0 : (head % CRASH_RING_SIZE);
+    for (int i = 0; i < count; i++) {
+        int idx = (start + i) % CRASH_RING_SIZE;
+        const struct crash_ring_entry* e = &s_crash_ring[idx];
+        if (!e->func_name) continue;
+
+        safe_write_str(fd, "  [");
+        safe_itoa(numbuf, sizeof(numbuf), (long)i);
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, "] ");
+        safe_write_str(fd, e->entering ? "ENTER " : "EXIT  ");
+        safe_write_str(fd, e->func_name);
+        safe_write_str(fd, " @");
+        // Write timestamp in seconds.nanoseconds
+        uint64_t ts = e->timestamp_ns;
+        safe_itoa(numbuf, sizeof(numbuf), (long)(ts / 1000000000ULL));
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, ".");
+        // Pad nanoseconds to 9 digits
+        long ns = (long)(ts % 1000000000ULL);
+        char nsbuf[16];
+        safe_itoa(nsbuf, sizeof(nsbuf), ns);
+        int nslen = 0; while (nsbuf[nslen]) nslen++;
+        for (int p = 0; p < 9 - nslen; p++) safe_write_str(fd, "0");
+        safe_write_str(fd, nsbuf);
+        safe_write_str(fd, "\n");
+    }
+
+    safe_write_str(fd, "\n--- Backtrace ---\n");
+#if HAVE_BACKTRACE
+    void* bt_frames[64];
+    int bt_size = backtrace(bt_frames, 64);
+    backtrace_symbols_fd(bt_frames, bt_size, fd);
+#else
+    safe_write_str(fd, "(backtrace not available — musl build)\n");
+#endif
+    safe_write_str(fd, "\n=== END CRASH REPORT ===\n");
+
+    // Also dump to stderr if we wrote to a file
+    if (fd != STDERR_FILENO) {
+        close(fd);
+        safe_write_str(STDERR_FILENO, "\n[jemacs] CRASH — report written to ");
+        safe_write_str(STDERR_FILENO, s_crash_log_path);
+        safe_write_str(STDERR_FILENO, "\n");
+
+        safe_write_str(STDERR_FILENO, "--- Backtrace ---\n");
+#if HAVE_BACKTRACE
+        backtrace_symbols_fd(bt_frames, bt_size, STDERR_FILENO);
+#else
+        safe_write_str(STDERR_FILENO, "(backtrace not available — musl build)\n");
+#endif
+    }
+}
+
+static void segv_handler(int sig, siginfo_t* si, void* ctx) {
+    (void)ctx;
+    crash_write_report(sig, si);
+    // Re-raise with default handler for core dump / gdb attach
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = SIG_DFL;
+    sigaction(sig, &sa, nullptr);
+    raise(sig);
+}
+
+static void crash_reporter_install() {
+    // Cache crash log path (HOME may not be available in signal handler context)
+    const char* home = getenv("HOME");
+    if (home) {
+        int pos = 0;
+        while (home[pos] && pos < (int)sizeof(s_crash_log_path) - 24) {
+            s_crash_log_path[pos] = home[pos];
+            pos++;
+        }
+        const char* suffix = "/.jemacs-crash.log";
+        for (int i = 0; suffix[i] && pos < (int)sizeof(s_crash_log_path) - 1; i++)
+            s_crash_log_path[pos++] = suffix[i];
+        s_crash_log_path[pos] = '\0';
+    } else {
+        // Fallback: write to /tmp
+        const char* fallback = "/tmp/jemacs-crash.log";
+        int pos = 0;
+        while (fallback[pos] && pos < (int)sizeof(s_crash_log_path) - 1) {
+            s_crash_log_path[pos] = fallback[pos];
+            pos++;
+        }
+        s_crash_log_path[pos] = '\0';
+    }
+
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_sigaction = segv_handler;
+    sa.sa_flags = SA_SIGINFO | SA_RESETHAND;  // one-shot
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIGSEGV, &sa, nullptr);
+    sigaction(SIGBUS,  &sa, nullptr);
+    sigaction(SIGABRT, &sa, nullptr);
+}
+
+// Exported accessor for crash log path.
+extern "C" const char* qt_crash_log_path(void) {
+    return s_crash_log_path;
+}
+
+// Exported installer (also called internally from qt_application_create).
+extern "C" void qt_crash_reporter_install(void) {
+    crash_reporter_install();
+}
+
 // Null-pointer guard macros (H1): return safely instead of crashing on nullptr.
 // Use QT_NULL_CHECK_VOID for void functions, QT_NULL_CHECK_RET for returning ones.
 #define QT_NULL_CHECK_VOID(ptr) do { if (!(ptr)) return; } while(0)
@@ -249,6 +473,7 @@ static inline bool is_qt_main_thread() {
 // Otherwise: marshals via BlockingQueuedConnection with verbose logging.
 #ifdef JEMACS_CHEZ_SMP
 #define QT_VOID(...) do {                                           \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) { __VA_ARGS__; }                      \
     else {                                                          \
         vlog_bqc_enter(__func__);                                   \
@@ -260,9 +485,11 @@ static inline bool is_qt_main_thread() {
         Sactivate_thread();                                         \
         vlog_bqc_exit(__func__);                                    \
     }                                                               \
+    crash_ring_push(__func__, 0);                                   \
 } while(0)
 #else
 #define QT_VOID(...) do {                                           \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) { __VA_ARGS__; }                      \
     else {                                                          \
         vlog_bqc_enter(__func__);                                   \
@@ -272,13 +499,19 @@ static inline bool is_qt_main_thread() {
             Qt::BlockingQueuedConnection);                          \
         vlog_bqc_exit(__func__);                                    \
     }                                                               \
+    crash_ring_push(__func__, 0);                                   \
 } while(0)
 #endif
 
 // Dispatch a function returning a value.
 #ifdef JEMACS_CHEZ_SMP
 #define QT_RETURN(type, expr) do {                                  \
-    if (is_qt_main_thread()) { return (expr); }                    \
+    crash_ring_push(__func__, 1);                                   \
+    if (is_qt_main_thread()) {                                      \
+        type _r = (expr);                                           \
+        crash_ring_push(__func__, 0);                               \
+        return _r;                                                  \
+    }                                                               \
     vlog_bqc_enter(__func__);                                       \
     type _result{};                                                 \
     Sdeactivate_thread();                                           \
@@ -288,11 +521,17 @@ static inline bool is_qt_main_thread() {
         Qt::BlockingQueuedConnection);                              \
     Sactivate_thread();                                             \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return _result;                                                 \
 } while(0)
 #else
 #define QT_RETURN(type, expr) do {                                  \
-    if (is_qt_main_thread()) { return (expr); }                    \
+    crash_ring_push(__func__, 1);                                   \
+    if (is_qt_main_thread()) {                                      \
+        type _r = (expr);                                           \
+        crash_ring_push(__func__, 0);                               \
+        return _r;                                                  \
+    }                                                               \
     vlog_bqc_enter(__func__);                                       \
     type _result{};                                                 \
     QMetaObject::invokeMethod(                                      \
@@ -300,6 +539,7 @@ static inline bool is_qt_main_thread() {
         [&]() { _result = (expr); },                               \
         Qt::BlockingQueuedConnection);                              \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return _result;                                                 \
 } while(0)
 #endif
@@ -307,8 +547,10 @@ static inline bool is_qt_main_thread() {
 // Dispatch a function returning const char* via s_return_buf.
 #ifdef JEMACS_CHEZ_SMP
 #define QT_RETURN_STRING(expr) do {                                 \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) {                                      \
         s_return_buf = (expr);                                      \
+        crash_ring_push(__func__, 0);                               \
         return s_return_buf.c_str();                                \
     }                                                               \
     vlog_bqc_enter(__func__);                                       \
@@ -321,12 +563,15 @@ static inline bool is_qt_main_thread() {
     Sactivate_thread();                                             \
     s_return_buf = std::move(_str_result);                         \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return s_return_buf.c_str();                                    \
 } while(0)
 #else
 #define QT_RETURN_STRING(expr) do {                                 \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) {                                      \
         s_return_buf = (expr);                                      \
+        crash_ring_push(__func__, 0);                               \
         return s_return_buf.c_str();                                \
     }                                                               \
     vlog_bqc_enter(__func__);                                       \
@@ -337,6 +582,7 @@ static inline bool is_qt_main_thread() {
         Qt::BlockingQueuedConnection);                              \
     s_return_buf = std::move(_str_result);                         \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return s_return_buf.c_str();                                    \
 } while(0)
 #endif
@@ -461,6 +707,8 @@ static void* qt_thread_main(void* arg) {
 
 extern "C" qt_application_t qt_application_create(int argc, char** argv) {
     (void)argc; (void)argv;
+    // Install SIGSEGV/SIGBUS/SIGABRT crash reporter before anything else.
+    crash_reporter_install();
     // Initialize the ready semaphore.
     sem_init(&g_qt_ready_sem, 0, 0);
     // Start the dedicated Qt thread.

@@ -15,7 +15,8 @@ export CHEZ_QT_SHIM_DIR := .
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
         test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary binary-qt \
         test-pty test-emacs test-functional test-term-hang \
-        docker-deps static-qt clean-docker check-root build-jemacs-qt-static
+        docker-deps static-qt clean-docker check-root build-jemacs-qt-static \
+        stress-run stress-run-static stress-test stress-burn stress-burn-static
 
 all: build test
 
@@ -411,6 +412,88 @@ linux-static-qt-docker:
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \
 	         exec su-exec $(UID):$(GID) env HOME=/tmp/jemacs-build sh -c '\
 	           cd /src && make build-jemacs-qt-static'"
+
+# =============================================================================
+# Stress testing targets
+# =============================================================================
+
+STRESS_PORT ?= 9999
+
+# Launch jemacs-qt (interpreted) headless with REPL for manual stress testing
+stress-run: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	xvfb-run -a env LD_PRELOAD=./qt_chez_shim.so \
+	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl $(STRESS_PORT)
+
+# Launch jemacs-qt (static binary) under gdb with REPL for crash diagnosis
+stress-run-static:
+	xvfb-run -a gdb -batch \
+	  -ex 'handle SIGALRM nostop noprint' \
+	  -ex 'handle SIG34 nostop noprint' \
+	  -ex run \
+	  -ex 'bt full' \
+	  -ex 'thread apply all bt full' \
+	  -ex 'info registers' \
+	  --args ./jemacs-qt --repl $(STRESS_PORT)
+
+# Run the stress test driver against an already-running jemacs-qt REPL
+stress-test:
+	$(SCHEME) $(LIBDIRS) --script tests/stress-test.ss --port $(STRESS_PORT)
+
+# All-in-one: launch interpreted jemacs-qt + run stress test driver
+stress-burn: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	@echo "=== Starting jemacs-qt stress burn-in ==="
+	@rm -f $(HOME)/.jerboa-repl-port stress-test.log
+	@xvfb-run -a env LD_PRELOAD=./qt_chez_shim.so \
+	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl 0 &
+	@for i in $$(seq 1 30); do \
+	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
+	  sleep 0.5; \
+	done
+	@if [ ! -f $(HOME)/.jerboa-repl-port ]; then \
+	  echo "ERROR: jemacs-qt failed to start (no REPL port file after 15s)"; exit 1; \
+	fi
+	@PORT=$$(grep -oP '\d+' $(HOME)/.jerboa-repl-port); \
+	echo "jemacs-qt running on REPL port $$PORT"; \
+	$(SCHEME) $(LIBDIRS) --script tests/stress-test.ss --port $$PORT; \
+	echo ""; \
+	echo "=== Stress test ended ==="; \
+	if [ -f $(HOME)/.jemacs-crash.log ]; then \
+	  echo "=== CRASH LOG ==="; \
+	  cat $(HOME)/.jemacs-crash.log; \
+	fi; \
+	echo "=== STRESS LOG (last 50 lines) ==="; \
+	tail -50 stress-test.log 2>/dev/null
+
+# All-in-one: launch static jemacs-qt under gdb + run stress test driver
+stress-burn-static:
+	@echo "=== Starting jemacs-qt (static) stress burn-in under gdb ==="
+	@rm -f $(HOME)/.jerboa-repl-port stress-test.log
+	@xvfb-run -a gdb -batch \
+	  -ex 'handle SIGALRM nostop noprint' \
+	  -ex 'handle SIG34 nostop noprint' \
+	  -ex run \
+	  -ex 'bt full' \
+	  -ex 'thread apply all bt full' \
+	  -ex 'info registers' \
+	  --args ./jemacs-qt --repl 0 &
+	@for i in $$(seq 1 30); do \
+	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
+	  sleep 0.5; \
+	done
+	@if [ ! -f $(HOME)/.jerboa-repl-port ]; then \
+	  echo "ERROR: jemacs-qt failed to start (no REPL port file after 15s)"; exit 1; \
+	fi
+	@PORT=$$(grep -oP '\d+' $(HOME)/.jerboa-repl-port); \
+	echo "jemacs-qt (static) running under gdb on REPL port $$PORT"; \
+	$(SCHEME) $(LIBDIRS) --script tests/stress-test.ss --port $$PORT; \
+	echo ""; \
+	echo "=== Stress test ended ==="; \
+	if [ -f $(HOME)/.jemacs-crash.log ]; then \
+	  echo "=== CRASH LOG ==="; \
+	  cat $(HOME)/.jemacs-crash.log; \
+	fi; \
+	echo "=== STRESS LOG (last 50 lines) ==="; \
+	tail -50 stress-test.log 2>/dev/null
 
 clean:
 	find lib -name '*.so' -delete 2>/dev/null; true
