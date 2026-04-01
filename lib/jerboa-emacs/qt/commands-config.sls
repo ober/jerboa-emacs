@@ -19,10 +19,10 @@
    *profiler-data* cmd-profiler-start cmd-profiler-stop
    cmd-show-tab-count cmd-show-trailing-whitespace-count
    *SCI_SETCODEPAGE* *SC_CP_UTF8* qt-insert-prompt!
-   terminal-buffer-counter *terminal-widget-map* cmd-term
-   cmd-terminal-send cmd-term-interrupt cmd-term-send-eof
-   cmd-term-send-tab cmd-multi-vterm *terminal-copy-mode*
-   cmd-vterm-copy-mode cmd-vterm-copy-done get-terminal-buffers
+   terminal-buffer-counter cmd-term cmd-terminal-send
+   cmd-term-interrupt cmd-term-send-eof cmd-term-send-tab
+   cmd-multi-vterm *terminal-copy-mode* cmd-vterm-copy-mode
+   cmd-vterm-copy-done get-terminal-buffers
    qt-switch-to-terminal! cmd-term-list cmd-term-next
    cmd-term-prev cmd-ediff-files cmd-comment-dwim)
   (import
@@ -223,6 +223,13 @@
                    (loop (+ i 1))))
                (restore-margin-colors! ed)))
            (qt-frame-windows fr)))
+       (hash-for-each
+         (lambda (_buf term)
+           (qt-terminal-set-font!
+             term
+             *default-font-family*
+             *default-font-size*))
+         *terminal-widget-map*)
        (when *qt-app-ptr*
          (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))
   (def (cmd-set-frame-font app)
@@ -893,8 +900,6 @@
                    (sci-send ed SCI_SETSTYLING text-len style))
                  (loop (cdr segs) (+ pos text-len)))))))
   (define terminal-buffer-counter--cell (vector 0))
-  (define *terminal-widget-map*--cell
-    (vector (make-hash-table-eq)))
   (def (cmd-term app)
        "Open a QTerminalWidget-backed terminal buffer.\n   Uses libvterm for proper VT100 terminal emulation with full color support."
        (verbose-log! "cmd-term: begin (QTerminalWidget)")
@@ -933,6 +938,7 @@
                             (qt-terminal-widget term))])
                  (qt-stacked-widget-set-current-index! container idx))
                (hash-put! *terminal-widget-map* buf term)
+               ((app-state-key-handler app) (qt-terminal-widget term))
                (qt-terminal-spawn! term "")
                (qt-terminal-focus! term)
                (verbose-log! "cmd-term: QTerminalWidget spawned")
@@ -1408,13 +1414,6 @@
       [id (vector-ref terminal-buffer-counter--cell 0)]
       [(set! id val) (vector-set!
                        terminal-buffer-counter--cell
-                       0
-                       val)]))
-  (define-syntax *terminal-widget-map*
-    (identifier-syntax
-      [id (vector-ref *terminal-widget-map*--cell 0)]
-      [(set! id val) (vector-set!
-                       *terminal-widget-map*--cell
                        0
                        val)]))
   (define-syntax *terminal-copy-mode*

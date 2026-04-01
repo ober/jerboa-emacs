@@ -3,30 +3,31 @@
 ;;; Source: src/jerboa-emacs/qt/commands-shell.ss
 
 (library (jerboa-emacs qt commands-shell)
-  (export directory-exists? apply-font-size-to-all-editors!
-   cmd-increase-font-size cmd-decrease-font-size
-   cmd-reset-font-size cmd-goto-first-non-blank
-   cmd-goto-last-non-blank cmd-move-to-window-top
-   cmd-move-to-window-middle cmd-move-to-window-bottom
-   cmd-scroll-left cmd-scroll-right cmd-insert-let
-   cmd-insert-lambda cmd-insert-defun cmd-insert-cond
-   cmd-insert-when cmd-insert-unless cmd-insert-match
-   cmd-insert-import cmd-insert-export cmd-insert-include
-   cmd-insert-file-header cmd-insert-header-guard
-   cmd-insert-box-comment cmd-insert-file-contents
-   cmd-insert-register-string *auto-indent* *backup-files*
-   *version-control* *debug-mode* *debug-on-quit*
-   *visible-bell* *transient-mark* *electric-indent*
-   cmd-toggle-auto-indent cmd-toggle-backup-files
-   cmd-toggle-version-control cmd-toggle-debug-mode
-   cmd-toggle-debug-on-quit cmd-toggle-visible-bell
-   cmd-toggle-transient-mark cmd-toggle-electric-indent
-   cmd-toggle-auto-revert cmd-toggle-auto-revert-global
-   cmd-auto-revert-tail-mode *view-mode-buffers* cmd-view-mode
-   *so-long-threshold* *so-long-buffers* check-so-long!
-   cmd-so-long-mode *follow-mode* cmd-follow-mode
-   *command-history-file* savehist-save! savehist-load!
-   auto-fill-check! qt-aggressive-indent-line!
+  (export directory-exists? *terminal-widget-map*
+   apply-font-size-to-all-editors! cmd-increase-font-size
+   cmd-decrease-font-size cmd-reset-font-size
+   cmd-goto-first-non-blank cmd-goto-last-non-blank
+   cmd-move-to-window-top cmd-move-to-window-middle
+   cmd-move-to-window-bottom cmd-scroll-left cmd-scroll-right
+   cmd-insert-let cmd-insert-lambda cmd-insert-defun
+   cmd-insert-cond cmd-insert-when cmd-insert-unless
+   cmd-insert-match cmd-insert-import cmd-insert-export
+   cmd-insert-include cmd-insert-file-header
+   cmd-insert-header-guard cmd-insert-box-comment
+   cmd-insert-file-contents cmd-insert-register-string
+   *auto-indent* *backup-files* *version-control* *debug-mode*
+   *debug-on-quit* *visible-bell* *transient-mark*
+   *electric-indent* cmd-toggle-auto-indent
+   cmd-toggle-backup-files cmd-toggle-version-control
+   cmd-toggle-debug-mode cmd-toggle-debug-on-quit
+   cmd-toggle-visible-bell cmd-toggle-transient-mark
+   cmd-toggle-electric-indent cmd-toggle-auto-revert
+   cmd-toggle-auto-revert-global cmd-auto-revert-tail-mode
+   *view-mode-buffers* cmd-view-mode *so-long-threshold*
+   *so-long-buffers* check-so-long! cmd-so-long-mode
+   *follow-mode* cmd-follow-mode *command-history-file*
+   savehist-save! savehist-load! auto-fill-check!
+   qt-aggressive-indent-line!
    cmd-toggle-delete-trailing-whitespace-on-save
    uniquify-parent-suffix uniquify-buffer-name!
    cmd-recentf-open-files cmd-toggle-frame-fullscreen
@@ -115,6 +116,8 @@
    (jerboa runtime))
   (def (directory-exists? path)
        (and (file-exists? path) (file-directory? path)))
+  (define *terminal-widget-map*--cell
+    (vector (make-hash-table-eq)))
   (def (apply-font-size-to-all-editors! app)
        "Apply the current global font size to all open editors."
        (let ([fr (app-state-frame app)]
@@ -131,6 +134,13 @@
                (sci-send ed SCI_SETMARGINWIDTHN 0 margin-w)
                (qt-apply-editor-theme! ed)))
            (qt-frame-windows fr)))
+       (hash-for-each
+         (lambda (_buf term)
+           (qt-terminal-set-font!
+             term
+             *default-font-family*
+             *default-font-size*))
+         *terminal-widget-map*)
        (when *qt-app-ptr*
          (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))
   (def (cmd-increase-font-size app)
@@ -2263,6 +2273,13 @@
                 (or (char=? (string-ref str i) #\q)
                     (char=? (string-ref str i) (integer->char 3))
                     (scan (+ i 1)))))))
+  (define-syntax *terminal-widget-map*
+    (identifier-syntax
+      [id (vector-ref *terminal-widget-map*--cell 0)]
+      [(set! id val) (vector-set!
+                       *terminal-widget-map*--cell
+                       0
+                       val)]))
   (define-syntax *auto-indent*
     (identifier-syntax
       [id (vector-ref *auto-indent*--cell 0)]

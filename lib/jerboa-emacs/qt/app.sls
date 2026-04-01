@@ -752,7 +752,8 @@
            "commands registered: "
            (number->string (hash-length *all-commands*))
            " total")
-         (let ([image-key-installed (make-hash-table-eq)])
+         (let ([image-key-installed (make-hash-table-eq)]
+               [terminal-key-installed (make-hash-table-eq)])
            (add-hook!
              'post-buffer-attach-hook
              (lambda (editor buf)
@@ -771,11 +772,15 @@
                             (let* ([container (qt-edit-window-container
                                                 win)]
                                    [count (qt-stacked-widget-count
-                                            container)])
+                                            container)]
+                                   [tw (qt-terminal-widget term)])
                               (qt-stacked-widget-set-current-index!
                                 container
                                 (- count 1))
-                              (qt-terminal-focus! term)))))]
+                              (unless (hash-get terminal-key-installed tw)
+                                ((app-state-key-handler app) tw)
+                                (hash-put! terminal-key-installed tw #t))
+                              (qt-widget-set-focus! tw)))))]
                      [(image-buffer? buf)
                       (qt-show-image-buffer! editor buf)
                       (let ([win (hash-get *editor-window-map* editor)])

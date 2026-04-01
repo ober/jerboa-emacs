@@ -194,6 +194,11 @@
           ;; Restore margin and default colors (font loop may have corrupted them)
           (restore-margin-colors! ed)))
       (qt-frame-windows fr)))
+  ;; Apply font to QTerminalWidget buffers
+  (hash-for-each
+    (lambda (_buf term)
+      (qt-terminal-set-font! term *default-font-family* *default-font-size*))
+    *terminal-widget-map*)
   ;; Update Qt stylesheet so chrome widgets match
   (when *qt-app-ptr*
     (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))
@@ -749,8 +754,7 @@ modified so the next save uses the new encoding."
 
 (def terminal-buffer-counter 0)
 
-;; Map buffer → QTerminalWidget pointer for the libvterm-based terminal
-(def *terminal-widget-map* (make-hash-table-eq))
+;; *terminal-widget-map* is defined in commands-shell (which this module imports)
 
 (def (cmd-term app)
   "Open a QTerminalWidget-backed terminal buffer.
@@ -791,6 +795,10 @@ modified so the next save uses the new encoding."
             (qt-stacked-widget-set-current-index! container idx))
           ;; Store widget mapping for key forwarding and buffer switching
           (hash-put! *terminal-widget-map* buf term)
+          ;; Install consuming key filter so all keys go through Scheme first
+          ;; (same pattern as image scroll widgets — without this, Qt sends keys
+          ;; directly to QTerminalWidget::keyPressEvent, bypassing jemacs entirely)
+          ((app-state-key-handler app) (qt-terminal-widget term))
           ;; Spawn the user's shell
           (qt-terminal-spawn! term "")
           ;; Focus the terminal widget

@@ -60,6 +60,11 @@
 ;;; Batch 8: Remaining missing commands
 ;;;============================================================================
 
+;; Map buffer → QTerminalWidget pointer for the libvterm-based terminal
+;; Defined here (commands-shell) because commands-config imports commands-shell,
+;; so moving it here makes it visible to both without circular dependency.
+(def *terminal-widget-map* (make-hash-table-eq))
+
 ;; --- Font size ---
 ;; Note: Font size state is now in face.ss (*default-font-size*)
 
@@ -77,6 +82,11 @@
           ;; Re-apply theme (STYLECLEARALL resets colors)
           (qt-apply-editor-theme! ed)))
       (qt-frame-windows fr)))
+  ;; Apply font size to QTerminalWidget buffers
+  (hash-for-each
+    (lambda (_buf term)
+      (qt-terminal-set-font! term *default-font-family* *default-font-size*))
+    *terminal-widget-map*)
   ;; Update Qt stylesheet so chrome widgets match
   (when *qt-app-ptr*
     (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))
