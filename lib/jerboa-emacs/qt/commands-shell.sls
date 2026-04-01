@@ -1440,7 +1440,7 @@
                             (app-state-echo app)
                             (string-join shown "  ")))]))))))))
   (def (cmd-completion-at-point app)
-       "Smart completion at point. For Gerbil buffers, combines buffer words\n   with known Gerbil standard library symbols."
+       "Smart completion at point. For Jerboa buffers, combines buffer words\n   with known Jerboa standard library symbols."
        (let* ([ed (current-qt-editor app)]
               [buf (current-qt-buffer app)]
               [lang (buffer-lexer-lang buf)]
@@ -1570,10 +1570,10 @@
        "Show Emacs manual via Info."
        (info-read-topic! app "emacs"))
   (def (cmd-info-elisp-manual app)
-       "Show Gerbil documentation."
+       "Show Jerboa documentation."
        (echo-message!
          (app-state-echo app)
-         "Gerbil Scheme documentation at https://cons.io"))
+         "Jerboa Scheme documentation at https://jerboa-lang.org"))
   (def (cmd-report-bug app)
        "Report a bug."
        (echo-message!

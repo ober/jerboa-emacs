@@ -741,7 +741,7 @@
                (qt-edit-window-buffer-set! (qt-current-window fr) buf)
                (gsh-eshell-init-buffer! buf)
                (let ([welcome (string-append
-                                "gsh — Gerbil Shell\n"
+                                "gsh — Jerboa Shell\n"
                                 "Type commands or 'exit' to close.\n\n"
                                 (gsh-eshell-get-prompt buf))])
                  (qt-plain-text-edit-set-text! ed welcome)

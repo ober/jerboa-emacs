@@ -935,7 +935,7 @@
 (def *loaded-modules* '())
 
 (def (cmd-load-module app)
-  "Load a compiled Gerbil module (.so or .ss) at runtime."
+  "Load a compiled Jerboa module (.so or .ss) at runtime."
   (let* ((echo (app-state-echo app))
          (fr (app-state-frame app))
          (row (- (frame-height fr) 1))

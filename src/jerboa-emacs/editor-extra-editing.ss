@@ -1122,7 +1122,7 @@
 ;; Encoding detection
 (def (cmd-describe-coding-system app)
   "Describe current coding system."
-  (echo-message! (app-state-echo app) "Coding system: utf-8 (Gerbil uses UTF-8 internally)"))
+  (echo-message! (app-state-echo app) "Coding system: utf-8 (Jerboa uses UTF-8 internally)"))
 
 (def (cmd-set-terminal-coding-system app)
   "Set terminal coding system."

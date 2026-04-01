@@ -52,7 +52,7 @@
     (if (not path)
       (echo-error! echo "Buffer has no file")
       (if (not (member (path-extension path) '(".ss" ".scm")))
-        (echo-message! echo "Not a Gerbil/Scheme source file")
+        (echo-message! echo "Not a Jerboa/Scheme source file")
         (begin
           (echo-message! echo (string-append "Compiling " (path-strip-directory path) "..."))
           (let* ((fr (app-state-frame app))

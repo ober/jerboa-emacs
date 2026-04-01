@@ -46,7 +46,7 @@ libqt_shim.so: vendor/qt_shim.cpp
 	  -I$(QT_SHIM_H) -I$(QT_INC) -I$(QT_INC)/QtCore -I$(QT_INC)/QtGui -I$(QT_INC)/QtWidgets -I$(QT_INC)/Qsci \
 	  vendor/qt_shim.cpp \
 	  -o libqt_shim.so \
-	  -lQt6Core -lQt6Gui -lQt6Widgets -lqscintilla2_qt6
+	  -lQt6Core -lQt6Gui -lQt6Widgets -lqscintilla2_qt6 -lvterm -lutil
 
 qt_chez_shim.so: vendor/qt_chez_shim.c vendor/qt_shim.h
 	gcc -shared -fPIC -O2 -o qt_chez_shim.so vendor/qt_chez_shim.c -Ivendor -Wall

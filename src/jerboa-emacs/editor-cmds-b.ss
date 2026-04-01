@@ -800,7 +800,7 @@
     (editor-goto-pos ed (+ pos (string-length text) 2))))
 
 (def (cmd-eval-and-insert app)
-  "Eval a Gerbil expression and insert the result at point."
+  "Eval a Jerboa expression and insert the result at point."
   (let* ((fr (app-state-frame app))
          (ed (edit-window-editor (current-window fr)))
          (echo (app-state-echo app))
@@ -1653,7 +1653,7 @@
         (editor-goto-pos ed (+ pos (string-length line)))))))
 
 (def (cmd-insert-import app)
-  "Insert a Gerbil (import ...) statement."
+  "Insert a Jerboa (import ...) statement."
   (let* ((fr (app-state-frame app))
          (ed (edit-window-editor (current-window fr)))
          (echo (app-state-echo app))
@@ -1667,7 +1667,7 @@
         (editor-goto-pos ed (+ pos (string-length line)))))))
 
 (def (cmd-insert-export app)
-  "Insert a Gerbil (export ...) statement."
+  "Insert a Jerboa (export ...) statement."
   (let* ((fr (app-state-frame app))
          (ed (edit-window-editor (current-window fr)))
          (echo (app-state-echo app))
@@ -1681,7 +1681,7 @@
         (editor-goto-pos ed (+ pos (string-length line)))))))
 
 (def (cmd-insert-defun app)
-  "Insert a Gerbil (def (name ...) ...) template."
+  "Insert a Jerboa (def (name ...) ...) template."
   (let* ((fr (app-state-frame app))
          (ed (edit-window-editor (current-window fr)))
          (echo (app-state-echo app))
@@ -2151,7 +2151,7 @@
 (def *loaded-plugins* '())
 
 (def (cmd-load-plugin app)
-  "Load a Gerbil Scheme plugin file."
+  "Load a Jerboa Scheme plugin file."
   (let* ((echo (app-state-echo app))
          (fr (app-state-frame app))
          (row (- (frame-height fr) 1))

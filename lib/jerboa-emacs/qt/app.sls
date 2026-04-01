@@ -763,24 +763,32 @@
                      (with-output-to-string
                        (lambda () (display-exception e)))))
                  (lambda ()
-                   (if (image-buffer? buf)
-                       (begin
-                         (qt-show-image-buffer! editor buf)
-                         (let ([win (hash-get *editor-window-map* editor)])
-                           (when (and win
-                                      (qt-edit-window-image-scroll win))
-                             (let ([scroll (qt-edit-window-image-scroll
-                                             win)])
-                               (unless (hash-get
-                                         image-key-installed
-                                         scroll)
-                                 ((app-state-key-handler app) scroll)
-                                 (hash-put! image-key-installed scroll #t))
-                               (qt-widget-set-focus! scroll)))))
-                       (begin
-                         (qt-hide-image-buffer! editor)
-                         (qt-reapply-highlighting! editor buf)
-                         (qt-widget-set-focus! editor))))))))
+                   (cond
+                     [(hash-get *terminal-widget-map* buf) =>
+                      (lambda (term)
+                        (let ([win (hash-get *editor-window-map* editor)])
+                          (when win
+                            (let* ([container (qt-edit-window-container
+                                                win)]
+                                   [count (qt-stacked-widget-count
+                                            container)])
+                              (qt-stacked-widget-set-current-index!
+                                container
+                                (- count 1))
+                              (qt-terminal-focus! term)))))]
+                     [(image-buffer? buf)
+                      (qt-show-image-buffer! editor buf)
+                      (let ([win (hash-get *editor-window-map* editor)])
+                        (when (and win (qt-edit-window-image-scroll win))
+                          (let ([scroll (qt-edit-window-image-scroll win)])
+                            (unless (hash-get image-key-installed scroll)
+                              ((app-state-key-handler app) scroll)
+                              (hash-put! image-key-installed scroll #t))
+                            (qt-widget-set-focus! scroll))))]
+                     [else
+                      (qt-hide-image-buffer! editor)
+                      (qt-reapply-highlighting! editor buf)
+                      (qt-widget-set-focus! editor)]))))))
          (recent-files-load!)
          (bookmarks-load! app)
          (custom-keys-load!)
@@ -803,7 +811,7 @@
                             ";;   C-x 2     Split window      C-x o     Other window\n"
                             ";;   C-h f     Describe command   C-h k     Describe key\n"
                             ";;\n"
-                            ";; This buffer is for Gerbil Scheme evaluation.\n"
+                            ";; This buffer is for Jerboa Scheme evaluation.\n"
                             ";; Type expressions and use M-x eval-buffer to evaluate.\n\n"))])
            (qt-plain-text-edit-set-text! ed text)
            (qt-text-document-set-modified!
@@ -1531,203 +1539,259 @@
                                                                                 (app-state-echo
                                                                                   app)
                                                                                 echo-label)))))))])
-                                       (let ([is-printable (and (= (string-length
-                                                                     text)
-                                                                   1)
-                                                                (> (char->integer
-                                                                     (string-ref
-                                                                       text
-                                                                       0))
-                                                                   31))]
-                                             [no-ctrl (zero?
-                                                        (bitwise-and
-                                                          mods
-                                                          QT_MOD_CTRL))]
-                                             [no-alt (zero?
-                                                       (bitwise-and
+                                       (let* ([qt-buf (qt-current-buffer
+                                                        (app-state-frame
+                                                          app))]
+                                              [qt-term (and qt-buf
+                                                            (hash-get
+                                                              *terminal-widget-map*
+                                                              qt-buf))])
+                                         (if (and qt-term
+                                                  (null?
+                                                    (key-state-prefix-keys
+                                                      (app-state-key-state
+                                                        app)))
+                                                  (not (and (not (zero?
+                                                                   (bitwise-and
+                                                                     mods
+                                                                     QT_MOD_CTRL)))
+                                                            (zero?
+                                                              (bitwise-and
+                                                                mods
+                                                                QT_MOD_ALT))
+                                                            (= code
+                                                               (+ QT_KEY_A
+                                                                  23))))
+                                                  (not (and (not (zero?
+                                                                   (bitwise-and
+                                                                     mods
+                                                                     QT_MOD_ALT)))
+                                                            (zero?
+                                                              (bitwise-and
+                                                                mods
+                                                                QT_MOD_CTRL))
+                                                            (= code
+                                                               (+ QT_KEY_A
+                                                                  23)))))
+                                             (qt-terminal-send-key-event!
+                                               qt-term
+                                               code
+                                               mods
+                                               (or text ""))
+                                             (let ([is-printable (and (= (string-length
+                                                                           text)
+                                                                         1)
+                                                                      (> (char->integer
+                                                                           (string-ref
+                                                                             text
+                                                                             0))
+                                                                         31))]
+                                                   [no-ctrl (zero?
+                                                              (bitwise-and
+                                                                mods
+                                                                QT_MOD_CTRL))]
+                                                   [no-alt (zero?
+                                                             (bitwise-and
+                                                               mods
+                                                               QT_MOD_ALT))])
+                                               (verbose-log! "CHORD-CHECK pending="
+                                                 (if *chord-pending-char*
+                                                     (string
+                                                       *chord-pending-char*)
+                                                     "#f")
+                                                 " key="
+                                                 (if (and is-printable
+                                                          no-ctrl
+                                                          no-alt)
+                                                     text
+                                                     "non-printable")
+                                                 " chord-start?="
+                                                 (if (and is-printable
+                                                          no-ctrl
+                                                          no-alt)
+                                                     (if (chord-start-char?
+                                                           (string-ref
+                                                             text
+                                                             0))
+                                                         "Y"
+                                                         "N")
+                                                     "N/A")
+                                                 " autorepeat="
+                                                 (if autorepeat? "Y" "N")
+                                                 " prefix="
+                                                 (if (null?
+                                                       (key-state-prefix-keys
+                                                         (app-state-key-state
+                                                           app)))
+                                                     "none"
+                                                     "active"))
+                                               (cond
+                                                 [(and *chord-pending-char*
+                                                       (not *chord-timer-fired*))
+                                                  (let* ([ch1 *chord-pending-char*]
+                                                         [saved-code *chord-pending-code*]
+                                                         [saved-mods *chord-pending-mods*]
+                                                         [saved-text *chord-pending-text*]
+                                                         [ch2 (and (= (string-length
+                                                                        text)
+                                                                      1)
+                                                                   (> (char->integer
+                                                                        (string-ref
+                                                                          text
+                                                                          0))
+                                                                      31)
+                                                                   (zero?
+                                                                     (bitwise-and
+                                                                       mods
+                                                                       QT_MOD_CTRL))
+                                                                   (zero?
+                                                                     (bitwise-and
+                                                                       mods
+                                                                       QT_MOD_ALT))
+                                                                   (string-ref
+                                                                     text
+                                                                     0))])
+                                                    (cond
+                                                      [autorepeat?
+                                                       (verbose-log!
+                                                         "CHORD-AUTOREPEAT ignored ch="
+                                                         (string ch1))
+                                                       (void)]
+                                                      [(and (not ch2)
+                                                            (or (and (>= code
+                                                                         16777248)
+                                                                     (<= code
+                                                                         16777253))
+                                                                (= code
+                                                                   16777299)
+                                                                (= code
+                                                                   16777300)
+                                                                (= code
+                                                                   16781571)))
+                                                       (verbose-log!
+                                                         "CHORD-IGNORE-MODIFIER pending="
+                                                         (string ch1)
+                                                         " code="
+                                                         (number->string
+                                                           code))
+                                                       (void)]
+                                                      [(not ch2)
+                                                       (verbose-log!
+                                                         "CHORD-CANCEL-NONCHORD pending="
+                                                         (string ch1)
+                                                         " code="
+                                                         (number->string
+                                                           code))
+                                                       (qt-timer-stop!
+                                                         *chord-timer*)
+                                                       (set! *chord-pending-char*
+                                                         #f)
+                                                       (do-normal-key!
+                                                         saved-code
+                                                         saved-mods
+                                                         saved-text)
+                                                       (do-normal-key!
+                                                         code
                                                          mods
-                                                         QT_MOD_ALT))])
-                                         (verbose-log! "CHORD-CHECK pending="
-                                           (if *chord-pending-char*
-                                               (string
-                                                 *chord-pending-char*)
-                                               "#f")
-                                           " key="
-                                           (if (and is-printable
-                                                    no-ctrl
-                                                    no-alt)
-                                               text
-                                               "non-printable")
-                                           " chord-start?="
-                                           (if (and is-printable
-                                                    no-ctrl
-                                                    no-alt)
-                                               (if (chord-start-char?
-                                                     (string-ref text 0))
-                                                   "Y"
-                                                   "N")
-                                               "N/A")
-                                           " autorepeat="
-                                           (if autorepeat? "Y" "N")
-                                           " prefix="
-                                           (if (null?
-                                                 (key-state-prefix-keys
-                                                   (app-state-key-state
-                                                     app)))
-                                               "none"
-                                               "active"))
-                                         (cond
-                                           [(and *chord-pending-char*
-                                                 (not *chord-timer-fired*))
-                                            (let* ([ch1 *chord-pending-char*]
-                                                   [saved-code *chord-pending-code*]
-                                                   [saved-mods *chord-pending-mods*]
-                                                   [saved-text *chord-pending-text*]
-                                                   [ch2 (and (= (string-length
-                                                                  text)
-                                                                1)
-                                                             (> (char->integer
-                                                                  (string-ref
-                                                                    text
-                                                                    0))
-                                                                31)
-                                                             (zero?
-                                                               (bitwise-and
+                                                         text)]
+                                                      [else
+                                                       (let ([chord-cmd (chord-lookup
+                                                                          ch1
+                                                                          ch2)])
+                                                         (verbose-log!
+                                                           "CHORD-RESOLVE ch1="
+                                                           (string ch1)
+                                                           " ch2="
+                                                           (string ch2)
+                                                           " cmd="
+                                                           (if chord-cmd
+                                                               (symbol->string
+                                                                 chord-cmd)
+                                                               "#f"))
+                                                         (qt-timer-stop!
+                                                           *chord-timer*)
+                                                         (set! *chord-pending-char*
+                                                           #f)
+                                                         (if chord-cmd
+                                                             (begin
+                                                               (execute-command!
+                                                                 app
+                                                                 chord-cmd)
+                                                               (qt-update-visual-decorations!
+                                                                 (qt-current-editor
+                                                                   (app-state-frame
+                                                                     app)))
+                                                               (qt-update-mark-selection!
+                                                                 app)
+                                                               (qt-modeline-update!
+                                                                 app)
+                                                               (qt-tabbar-update!
+                                                                 app)
+                                                               (qt-update-frame-title!
+                                                                 app)
+                                                               (qt-echo-draw!
+                                                                 (app-state-echo
+                                                                   app)
+                                                                 echo-label))
+                                                             (begin
+                                                               (do-normal-key!
+                                                                 saved-code
+                                                                 saved-mods
+                                                                 saved-text)
+                                                               (do-normal-key!
+                                                                 code
                                                                  mods
-                                                                 QT_MOD_CTRL))
-                                                             (zero?
-                                                               (bitwise-and
-                                                                 mods
-                                                                 QT_MOD_ALT))
-                                                             (string-ref
-                                                               text
-                                                               0))])
-                                              (cond
-                                                [autorepeat?
-                                                 (verbose-log!
-                                                   "CHORD-AUTOREPEAT ignored ch="
-                                                   (string ch1))
-                                                 (void)]
-                                                [(and (not ch2)
-                                                      (or (and (>= code
-                                                                   16777248)
-                                                               (<= code
-                                                                   16777253))
-                                                          (= code 16777299)
-                                                          (= code 16777300)
-                                                          (= code
-                                                             16781571)))
-                                                 (verbose-log!
-                                                   "CHORD-IGNORE-MODIFIER pending="
-                                                   (string ch1)
-                                                   " code="
-                                                   (number->string code))
-                                                 (void)]
-                                                [(not ch2)
-                                                 (verbose-log!
-                                                   "CHORD-CANCEL-NONCHORD pending="
-                                                   (string ch1)
-                                                   " code="
-                                                   (number->string code))
-                                                 (qt-timer-stop!
-                                                   *chord-timer*)
-                                                 (set! *chord-pending-char*
-                                                   #f)
-                                                 (do-normal-key!
-                                                   saved-code
-                                                   saved-mods
-                                                   saved-text)
-                                                 (do-normal-key!
-                                                   code
-                                                   mods
-                                                   text)]
-                                                [else
-                                                 (let ([chord-cmd (chord-lookup
-                                                                    ch1
-                                                                    ch2)])
-                                                   (verbose-log! "CHORD-RESOLVE ch1="
-                                                     (string ch1) " ch2="
-                                                     (string ch2) " cmd="
-                                                     (if chord-cmd
-                                                         (symbol->string
-                                                           chord-cmd)
-                                                         "#f"))
-                                                   (qt-timer-stop!
-                                                     *chord-timer*)
-                                                   (set! *chord-pending-char*
-                                                     #f)
-                                                   (if chord-cmd
-                                                       (begin
-                                                         (execute-command!
-                                                           app
-                                                           chord-cmd)
-                                                         (qt-update-visual-decorations!
-                                                           (qt-current-editor
-                                                             (app-state-frame
-                                                               app)))
-                                                         (qt-update-mark-selection!
-                                                           app)
-                                                         (qt-modeline-update!
-                                                           app)
-                                                         (qt-tabbar-update!
-                                                           app)
-                                                         (qt-update-frame-title!
-                                                           app)
-                                                         (qt-echo-draw!
-                                                           (app-state-echo
-                                                             app)
-                                                           echo-label))
-                                                       (begin
-                                                         (do-normal-key!
-                                                           saved-code
-                                                           saved-mods
-                                                           saved-text)
-                                                         (do-normal-key!
-                                                           code
+                                                                 text))))]))]
+                                                 [(and (not autorepeat?)
+                                                       (= (string-length
+                                                            text)
+                                                          1)
+                                                       (> (char->integer
+                                                            (string-ref
+                                                              text
+                                                              0))
+                                                          31)
+                                                       (zero?
+                                                         (bitwise-and
                                                            mods
-                                                           text))))]))]
-                                           [(and (not autorepeat?)
-                                                 (= (string-length text) 1)
-                                                 (> (char->integer
+                                                           QT_MOD_CTRL))
+                                                       (zero?
+                                                         (bitwise-and
+                                                           mods
+                                                           QT_MOD_ALT))
+                                                       (null?
+                                                         (key-state-prefix-keys
+                                                           (app-state-key-state
+                                                             app)))
+                                                       (chord-start-char?
+                                                         (string-ref
+                                                           text
+                                                           0)))
+                                                  (verbose-log! "CHORD-PENDING ch="
+                                                    (string
                                                       (string-ref text 0))
-                                                    31)
-                                                 (zero?
-                                                   (bitwise-and
-                                                     mods
-                                                     QT_MOD_CTRL))
-                                                 (zero?
-                                                   (bitwise-and
-                                                     mods
-                                                     QT_MOD_ALT))
-                                                 (null?
-                                                   (key-state-prefix-keys
-                                                     (app-state-key-state
-                                                       app)))
-                                                 (chord-start-char?
-                                                   (string-ref text 0)))
-                                            (verbose-log! "CHORD-PENDING ch="
-                                              (string (string-ref text 0))
-                                              " timeout="
-                                              (number->string
-                                                *chord-timeout*)
-                                              "ms")
-                                            (set! *chord-pending-char*
-                                              (string-ref text 0))
-                                            (set! *chord-pending-code*
-                                              code)
-                                            (set! *chord-pending-mods*
-                                              mods)
-                                            (set! *chord-pending-text*
-                                              text)
-                                            (set! *chord-timer-fired* #f)
-                                            (qt-timer-start!
-                                              *chord-timer*
-                                              *chord-timeout*)]
-                                           [else
-                                            (do-normal-key!
-                                              code
-                                              mods
-                                              text)])))]))))])
+                                                    " timeout="
+                                                    (number->string
+                                                      *chord-timeout*)
+                                                    "ms")
+                                                  (set! *chord-pending-char*
+                                                    (string-ref text 0))
+                                                  (set! *chord-pending-code*
+                                                    code)
+                                                  (set! *chord-pending-mods*
+                                                    mods)
+                                                  (set! *chord-pending-text*
+                                                    text)
+                                                  (set! *chord-timer-fired*
+                                                    #f)
+                                                  (qt-timer-start!
+                                                    *chord-timer*
+                                                    *chord-timeout*)]
+                                                 [else
+                                                  (do-normal-key!
+                                                    code
+                                                    mods
+                                                    text)])))))]))))])
            (qt-on-key-press-consuming!
              (qt-current-editor fr)
              key-handler)

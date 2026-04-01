@@ -823,17 +823,31 @@
                 (verbose-log! "post-buffer-attach-hook ERROR: "
                   (with-output-to-string (lambda () (display-exception e)))))
               (lambda ()
-                (if (image-buffer? buf)
-                  (begin
-                    (qt-show-image-buffer! editor buf)
-                    (let ((win (hash-get *editor-window-map* editor)))
-                      (when (and win (qt-edit-window-image-scroll win))
-                        (let ((scroll (qt-edit-window-image-scroll win)))
-                          (unless (hash-get image-key-installed scroll)
-                            ((app-state-key-handler app) scroll)
-                            (hash-put! image-key-installed scroll #t))
-                          (qt-widget-set-focus! scroll)))))
-                  (begin
+                (cond
+                  ;; QTerminalWidget buffers: switch stacked to terminal view
+                  ((hash-get *terminal-widget-map* buf)
+                   => (lambda (term)
+                        (let ((win (hash-get *editor-window-map* editor)))
+                          (when win
+                            (let* ((container (qt-edit-window-container win))
+                                   ;; Find the terminal widget's index in the stacked widget
+                                   ;; It was added after the editor (0) and possibly image (1)
+                                   (count (qt-stacked-widget-count container)))
+                              ;; Switch to the last index (terminal)
+                              (qt-stacked-widget-set-current-index! container (- count 1))
+                              (qt-terminal-focus! term))))))
+                  ;; Image buffers
+                  ((image-buffer? buf)
+                   (qt-show-image-buffer! editor buf)
+                   (let ((win (hash-get *editor-window-map* editor)))
+                     (when (and win (qt-edit-window-image-scroll win))
+                       (let ((scroll (qt-edit-window-image-scroll win)))
+                         (unless (hash-get image-key-installed scroll)
+                           ((app-state-key-handler app) scroll)
+                           (hash-put! image-key-installed scroll #t))
+                         (qt-widget-set-focus! scroll)))))
+                  ;; Normal text buffers
+                  (else
                     (qt-hide-image-buffer! editor)
                     ;; Re-apply syntax highlighting to this editor widget.
                     ;; QScintilla lexers are per-widget, so splits need re-setup.
@@ -869,7 +883,7 @@
                         ";;   C-x 2     Split window      C-x o     Other window\n"
                         ";;   C-h f     Describe command   C-h k     Describe key\n"
                         ";;\n"
-                        ";; This buffer is for Gerbil Scheme evaluation.\n"
+                        ";; This buffer is for Jerboa Scheme evaluation.\n"
                         ";; Type expressions and use M-x eval-buffer to evaluate.\n\n"))))
         (qt-plain-text-edit-set-text! ed text)
         (qt-text-document-set-modified! (buffer-doc-pointer
@@ -1229,7 +1243,25 @@
                        (qt-tabbar-update! app)
                        (qt-update-frame-title! app)
                        (qt-echo-draw! (app-state-echo app) echo-label)))))))))  ;; extra parens close begin + repeat-map if + prefix-autorepeat if/let + pty-intercept if
-                  ;; Chord detection logic
+                  ;; QTerminalWidget key forwarding: send non-command keys directly
+                  ;; to the terminal widget, bypassing chord detection and self-insert.
+                  ;; C-x prefix and M-x pass through to jemacs keymap.
+                  (let* ((qt-buf (qt-current-buffer (app-state-frame app)))
+                         (qt-term (and qt-buf (hash-get *terminal-widget-map* qt-buf))))
+                    (if (and qt-term
+                             ;; Not in a prefix key state (e.g. after C-x)
+                             (null? (key-state-prefix-keys (app-state-key-state app)))
+                             ;; Allow C-x to pass through to jemacs
+                             (not (and (not (zero? (bitwise-and mods QT_MOD_CTRL)))
+                                       (zero? (bitwise-and mods QT_MOD_ALT))
+                                       (= code (+ QT_KEY_A 23))))  ;; C-x
+                             ;; Allow M-x to pass through to jemacs
+                             (not (and (not (zero? (bitwise-and mods QT_MOD_ALT)))
+                                       (zero? (bitwise-and mods QT_MOD_CTRL))
+                                       (= code (+ QT_KEY_A 23))))) ;; M-x
+                      ;; Forward to terminal widget
+                      (qt-terminal-send-key-event! qt-term code mods (or text ""))
+                  ;; Normal: chord detection logic
                   (let ((is-printable (and (= (string-length text) 1)
                                            (> (char->integer (string-ref text 0)) 31)))
                         (no-ctrl (zero? (bitwise-and mods QT_MOD_CTRL)))
@@ -1329,7 +1361,7 @@
 
                     ;; Case 3: Normal key — no chord involvement
                     (else
-                     (do-normal-key! code mods text))))))))))))  ; extra paren closes let + minibuffer-active? when
+                     (do-normal-key! code mods text))))))))))))))  ; extra parens close let + if + let* (terminal) + minibuffer-active? when
 
         ;; Install on the initial editor (consuming — editor doesn't see keys)
         (qt-on-key-press-consuming! (qt-current-editor fr) key-handler)

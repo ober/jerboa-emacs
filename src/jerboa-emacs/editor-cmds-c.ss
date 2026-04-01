@@ -704,7 +704,7 @@
   (let ((coding (app-read-string app "Coding system (utf-8): ")))
     (when (and coding (not (string-empty? coding)))
       (echo-message! (app-state-echo app)
-                     (string-append "Coding system: " coding " (note: Gerbil uses UTF-8 natively)")))))
+                     (string-append "Coding system: " coding " (note: Jerboa uses UTF-8 natively)")))))
 
 (def (cmd-convert-line-endings-unix app)
   "Convert line endings to Unix (LF)."
@@ -1565,7 +1565,7 @@
 ;; --- Encoding/display ---
 
 (def (cmd-set-language-environment app)
-  "Set language environment (Gerbil uses UTF-8 natively)."
+  "Set language environment (Jerboa uses UTF-8 natively)."
   (let ((lang (app-read-string app "Language environment (UTF-8): ")))
     (when (and lang (not (string-empty? lang)))
       (echo-message! (app-state-echo app)

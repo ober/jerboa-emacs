@@ -28,8 +28,9 @@
         terminal-insert-styled!
         color-to-style
         (struct-out text-segment)
-        ;; Terminal style base
+        ;; Terminal style base and color table
         *term-style-base*
+        *term-colors*
         ;; Terminal history navigation
         terminal-history-prev
         terminal-history-next
@@ -339,6 +340,7 @@
 (def (terminal-prompt ts)
   "Return the expanded PS1 prompt string (ANSI stripped)."
   (strip-ansi-codes (terminal-prompt-raw ts)))
+
 
 (def (strip-ansi-codes str)
   "Remove ANSI escape sequences from a string."

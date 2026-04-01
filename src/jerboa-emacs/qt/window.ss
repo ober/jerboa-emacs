@@ -548,11 +548,17 @@
               (if grandparent
                 (split-tree-replace-child! grandparent parent only-child)
                 (set! (qt-frame-root fr) only-child))
-              ;; Destroy the now-redundant sub-splitter (not root-spl)
+              ;; Destroy the now-redundant sub-splitter (not root-spl).
+              ;; IMPORTANT: after reparenting only-qt-w to dest-spl, container is
+              ;; the only remaining child of parent-spl. Qt parent-child ownership
+              ;; means destroying parent-spl also destroys container. Track this
+              ;; to avoid the double-free in the explicit container destroy below.
               (when (and parent-spl (not (eq? parent-spl (qt-frame-splitter fr))))
+                (set! container #f)   ;; cleared — Qt will destroy it via parent-spl
                 (qt-widget-destroy! parent-spl))))))
 
-      ;; Destroy the deleted window's Qt container
+      ;; Destroy the deleted window's Qt container.
+      ;; Skipped when container was set to #f above (already destroyed via parent-spl).
       (when container
         (qt-widget-hide! container)
         (qt-widget-destroy! container))

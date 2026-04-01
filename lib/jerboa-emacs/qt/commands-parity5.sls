@@ -1181,7 +1181,7 @@
                      (sci-send ed SCI_SETREADONLY 1)
                      (qt-plain-text-edit-set-cursor-position! ed 0))))))))
   (def (cmd-package-list-packages app)
-       "List installed Gerbil packages."
+       "List installed Jerboa packages."
        (let* ([output (qt-run-gerbil-pkg '("list"))]
               [fr (app-state-frame app)]
               [win (qt-current-window fr)]
@@ -1191,11 +1191,11 @@
          (qt-edit-window-buffer-set! win buf)
          (qt-plain-text-edit-set-text!
            ed
-           (string-append "Installed Gerbil Packages\n\n" output "\n"))
+           (string-append "Installed Jerboa Packages\n\n" output "\n"))
          (sci-send ed SCI_SETREADONLY 1)
          (qt-plain-text-edit-set-cursor-position! ed 0)))
   (def (cmd-package-install app)
-       "Install a Gerbil package by name."
+       "Install a Jerboa package by name."
        (let ([pkg (qt-echo-read-string
                     app
                     "Package to install: ")])
@@ -1208,7 +1208,7 @@
                (app-state-echo app)
                (string-append "Install: " result))))))
   (def (cmd-package-delete app)
-       "Uninstall a Gerbil package."
+       "Uninstall a Jerboa package."
        (let ([pkg (qt-echo-read-string app "Package to remove: ")])
          (when (and pkg (> (string-length pkg) 0))
            (let ([result (qt-run-gerbil-pkg (list "uninstall" pkg))])
@@ -1216,7 +1216,7 @@
                (app-state-echo app)
                (string-append "Uninstall: " result))))))
   (def (cmd-package-refresh-contents app)
-       "Refresh Gerbil package list."
+       "Refresh Jerboa package list."
        (echo-message! (app-state-echo app) "Updating packages...")
        (let ([result (qt-run-gerbil-pkg '("update"))])
          (echo-message!
@@ -1229,7 +1229,7 @@
               [ed (qt-edit-window-editor win)]
               [buf (qt-buffer-create! "*Package Archives*" ed #f)]
               [text (string-append "Package Archives\n" (make-string 40 #\=) "\n\n"
-                      "Gerbil packages are managed via gerbil pkg.\n\n"
+                      "Jerboa packages are managed via gerbil pkg.\n\n"
                       "Commands:\n"
                       "  M-x package-install          Install a package\n"
                       "  M-x package-delete           Remove a package\n"

@@ -699,11 +699,63 @@ modified so the next save uses the new encoding."
 ;;; Terminal commands (gsh-backed)
 ;;;============================================================================
 
+;;;============================================================================
+;;; Qt-native colored prompt insertion
+;;;============================================================================
+
+;; SCI_SETCODEPAGE = 2037, SC_CP_UTF8 = 65001
+;; Not in chez-scintilla/constants so defined here as literals.
+(def *SCI_SETCODEPAGE* 2037)
+(def *SC_CP_UTF8* 65001)
+
+(def (qt-insert-prompt! ed ts)
+  "Insert PS1 prompt with ANSI colors using Qt Scintilla APIs.
+   Uses sci-send/SCI_APPENDTEXT (not TUI editor-append-text).
+   Returns character count of document after insertion (for prompt-pos tracking).
+   NOTE: must return CHARACTERS (not bytes) — prompt-pos is compared against
+   string-length which is char-based. UTF-8 multi-byte chars (like PS1 arrows)
+   make byte-offset != char-count."
+  (let* ((raw (terminal-prompt-raw ts))
+         ;; Strip readline RL_PROMPT_START/END_IGNORE markers (\x01, \x02)
+         (clean (list->string (filter (lambda (c)
+                                        (not (or (char=? c (integer->char 1))
+                                                 (char=? c (integer->char 2)))))
+                                      (string->list raw))))
+         (segments (parse-ansi-segments clean)))
+    (let loop ((segs segments) (pos (sci-send ed SCI_GETLENGTH)))
+      (if (null? segs)
+        ;; Return character count (not byte count) — callers compare against string-length
+        (string-length (qt-plain-text-edit-text ed))
+        (let* ((seg  (car segs))
+               (text (text-segment-text seg))
+               (fg   (text-segment-fg-color seg))
+               (bold? (text-segment-bold? seg))
+               (style (color-to-style fg bold?))
+               ;; UTF-8 encode: Chez FFI uses Latin-1 (low 8 bits), so multi-byte
+               ;; Unicode chars (like PS1 arrow ➜ U+279C) must be pre-encoded as
+               ;; individual bytes in a Latin-1 string.
+               (utf8-bv  (string->utf8 text))
+               (text-len (bytevector-length utf8-bv))
+               (utf8-str (let loop2 ((i (- text-len 1)) (acc '()))
+                           (if (< i 0) (list->string acc)
+                             (loop2 (- i 1)
+                                    (cons (integer->char (bytevector-u8-ref utf8-bv i))
+                                          acc))))))
+          (sci-send/string ed SCI_APPENDTEXT utf8-str text-len)
+          (when (> style 0)
+            (sci-send ed SCI_STARTSTYLING pos 0)
+            (sci-send ed SCI_SETSTYLING text-len style))
+          (loop (cdr segs) (+ pos text-len)))))))
+
 (def terminal-buffer-counter 0)
 
+;; Map buffer → QTerminalWidget pointer for the libvterm-based terminal
+(def *terminal-widget-map* (make-hash-table-eq))
+
 (def (cmd-term app)
-  "Open a new gsh-backed terminal buffer."
-  (verbose-log! "cmd-term: begin")
+  "Open a QTerminalWidget-backed terminal buffer.
+   Uses libvterm for proper VT100 terminal emulation with full color support."
+  (verbose-log! "cmd-term: begin (QTerminalWidget)")
   (let* ((fr (app-state-frame app))
          (ed (current-qt-editor app))
          (name (begin
@@ -715,36 +767,37 @@ modified so the next save uses the new encoding."
          (buf (qt-buffer-create! name ed #f)))
     ;; Mark as terminal buffer
     (set! (buffer-lexer-lang buf) 'terminal)
-    ;; Terminal: disable line wrap — each vtscreen row must be one visual line
-    (qt-plain-text-edit-set-line-wrap! ed #f)
-    ;; Attach buffer to editor
-    (verbose-log! "cmd-term: qt-buffer-attach! begin")
+    ;; Attach buffer to editor (sets up document etc.)
     (qt-buffer-attach! ed buf)
-    (verbose-log! "cmd-term: qt-buffer-attach! done")
     (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
-    ;; Initialize gsh-backed terminal
+    ;; Create QTerminalWidget inside the QStackedWidget container
     (with-catch
       (lambda (e)
-        (let ((msg (with-output-to-string(lambda () (display-exception e)))))
-          (jemacs-log! "cmd-term: gsh init failed: " msg)
-          (verbose-log! "cmd-term: gsh init FAILED: " msg)
+        (let ((msg (with-output-to-string (lambda () (display-exception e)))))
+          (jemacs-log! "cmd-term: QTerminalWidget failed: " msg)
+          (verbose-log! "cmd-term: QTerminalWidget FAILED: " msg)
           (echo-error! (app-state-echo app)
             (string-append "Terminal failed: " msg))))
       (lambda ()
-        (verbose-log! "cmd-term: terminal-start! begin")
-        (let ((ts (terminal-start!)))
-          (verbose-log! "cmd-term: terminal-start! done")
-          (hash-put! *terminal-state* buf ts)
-          ;; Show initial prompt
-          (let ((prompt (terminal-prompt ts)))
-            (verbose-log! "cmd-term: qt-plain-text-edit-set-text! begin prompt-len="
-                          (number->string (string-length prompt)))
-            (qt-plain-text-edit-set-text! ed prompt)
-            (verbose-log! "cmd-term: qt-plain-text-edit-set-text! done")
-            (set! (terminal-state-prompt-pos ts) (string-length prompt))
-            (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)))
-        (verbose-log! "cmd-term: done, terminal started")
-        (echo-message! (app-state-echo app) (string-append name " started"))))))
+        (let* ((win (qt-current-window fr))
+               (container (qt-edit-window-container win))
+               (term (qt-terminal-create container)))
+          ;; Set monospace font
+          (qt-terminal-set-font! term "DejaVu Sans Mono" 11)
+          ;; Set colors: light gray on dark background
+          (qt-terminal-set-colors! term #xbbc2cf #x282c34)
+          ;; Add terminal widget to QStackedWidget and switch to it
+          (let ((idx (qt-stacked-widget-add-widget! container (qt-terminal-widget term))))
+            (qt-stacked-widget-set-current-index! container idx))
+          ;; Store widget mapping for key forwarding and buffer switching
+          (hash-put! *terminal-widget-map* buf term)
+          ;; Spawn the user's shell
+          (qt-terminal-spawn! term "")
+          ;; Focus the terminal widget
+          (qt-terminal-focus! term)
+          (verbose-log! "cmd-term: QTerminalWidget spawned")
+          (echo-message! (app-state-echo app)
+            (string-append name " started")))))))
 
 (def (cmd-terminal-send app)
   "Execute the current input line in the terminal via gsh.
@@ -808,14 +861,11 @@ modified so the next save uses the new encoding."
                (qt-plain-text-edit-insert-text! ed output)
                (unless (char=? (string-ref output (- (string-length output) 1)) #\newline)
                  (qt-plain-text-edit-insert-text! ed "\n")))
-             ;; Display prompt after sync command
+             ;; Display prompt after sync command (with ANSI colors)
              (when (hash-get *terminal-state* buf)
-               (let ((prompt (terminal-prompt ts)))
-                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
-                 (qt-plain-text-edit-insert-text! ed prompt)
-                 (set! (terminal-state-prompt-pos ts)
-                   (string-length (qt-plain-text-edit-text ed)))
-                 (qt-plain-text-edit-ensure-cursor-visible! ed))))
+               (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+               (set! (terminal-state-prompt-pos ts) (qt-insert-prompt! ed ts))
+               (qt-plain-text-edit-ensure-cursor-visible! ed)))
             ((async)
              ;; Command dispatched to PTY — output arrives via timer polling
              (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
@@ -824,11 +874,8 @@ modified so the next save uses the new encoding."
              (cond
                ((eq? output 'clear)
                 (qt-plain-text-edit-set-text! ed "")
-                (let ((prompt (terminal-prompt ts)))
-                  (qt-plain-text-edit-insert-text! ed prompt)
-                  (set! (terminal-state-prompt-pos ts)
-                    (string-length (qt-plain-text-edit-text ed)))
-                  (qt-plain-text-edit-ensure-cursor-visible! ed)))
+                (set! (terminal-state-prompt-pos ts) (qt-insert-prompt! ed ts))
+                (qt-plain-text-edit-ensure-cursor-visible! ed))
                ((eq? output 'exit)
                 (terminal-stop! ts)
                 (let* ((fr (app-state-frame app))
@@ -869,13 +916,10 @@ modified so the next save uses the new encoding."
          (qt-plain-text-edit-ensure-cursor-visible! ed)))
       (else
        ;; No PTY running — just cancel current input line
-       (let* ((ed (current-qt-editor app))
-              (prompt (terminal-prompt ts)))
+       (let ((ed (current-qt-editor app)))
          (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
          (qt-plain-text-edit-insert-text! ed "^C\n")
-         (qt-plain-text-edit-insert-text! ed prompt)
-         (set! (terminal-state-prompt-pos ts)
-           (string-length (qt-plain-text-edit-text ed)))
+         (set! (terminal-state-prompt-pos ts) (qt-insert-prompt! ed ts))
          (qt-plain-text-edit-ensure-cursor-visible! ed))))))
 
 (def (cmd-term-send-eof app)

@@ -419,7 +419,7 @@ extern "C" void qt_crash_reporter_install(void) {
 
 // Storage for argc/argv (Qt requires stable pointers for QApplication lifetime)
 static int    s_argc = 1;
-static char   s_arg0[] = "gerbil-qt";
+static char   s_arg0[] = "jerboa-qt";
 static char*  s_argv[] = { s_arg0, nullptr };
 
 // ============================================================
@@ -7050,6 +7050,13 @@ extern "C" const char* qt_scintilla_receive_string(qt_scintilla_t sci, unsigned 
     return s_return_buf.c_str();
 }
 
+// Set UTF-8 mode on a QsciScintilla widget using setUtf8() — the authoritative
+// QsciScintilla API for encoding, as opposed to raw SCI_SETCODEPAGE.
+extern "C" void qt_scintilla_set_utf8(qt_scintilla_t sci, int enable) {
+    QT_NULL_CHECK_VOID(sci);
+    QT_VOID(static_cast<QsciScintilla*>(sci)->setUtf8(enable != 0));
+}
+
 extern "C" void qt_scintilla_set_text(qt_scintilla_t sci, const char* text) {
     QT_NULL_CHECK_VOID(sci);
     QT_VOID(
@@ -7388,3 +7395,604 @@ extern "C" void qt_scintilla_on_modified(qt_scintilla_t sci,
 }
 
 #endif /* QT_SCINTILLA_AVAILABLE */
+
+// ============================================================================
+// QTerminalWidget — proper VT100 terminal emulator using libvterm + QPainter
+//
+// A self-contained terminal widget that:
+//   - Owns a PTY (via forkpty) and spawns a child shell/command
+//   - Uses libvterm for VT100/xterm-256color terminal emulation
+//   - Renders cell-by-cell with QPainter (proper fg/bg colors, bold, etc.)
+//   - Handles keyboard input internally (keyPressEvent → libvterm → PTY)
+//   - Polls PTY output via QTimer → libvterm → damage → repaint
+//   - Resizes terminal on widget resize (TIOCSWINSZ + vterm_set_size)
+// ============================================================================
+
+#include <vterm.h>
+#include <pty.h>
+#include <termios.h>
+#include <sys/ioctl.h>
+
+// Forward declaration for VTermScreenCallbacks (C++17 doesn't allow
+// designated initializers, so we initialize fields explicitly).
+static VTermScreenCallbacks s_term_screen_cbs;
+static bool s_term_cbs_initialized = false;
+
+class QTerminalWidget : public QWidget {
+public:
+    VTerm*        m_vt         = nullptr;
+    VTermScreen*  m_screen     = nullptr;
+    int           m_master_fd  = -1;
+    pid_t         m_child_pid  = -1;
+    int           m_rows       = 24;
+    int           m_cols       = 80;
+    int           m_cursor_row = 0;
+    int           m_cursor_col = 0;
+    bool          m_cursor_visible = true;
+    bool          m_running    = false;
+    QFont         m_font;
+    int           m_cell_w     = 8;
+    int           m_cell_h     = 16;
+    int           m_cell_asc   = 13;
+    QTimer*       m_timer      = nullptr;
+    QColor        m_default_fg;
+    QColor        m_default_bg;
+
+    // ── VTerm screen callbacks (static — use void* user to find widget) ────
+
+    static int cb_damage(VTermRect rect, void* user) {
+        auto* w = static_cast<QTerminalWidget*>(user);
+        int x  = rect.start_col * w->m_cell_w;
+        int y  = rect.start_row * w->m_cell_h;
+        int rw = (rect.end_col - rect.start_col) * w->m_cell_w;
+        int rh = (rect.end_row - rect.start_row) * w->m_cell_h;
+        w->update(x, y, rw, rh);
+        return 0;
+    }
+
+    static int cb_movecursor(VTermPos pos, VTermPos oldpos, int visible, void* user) {
+        auto* w = static_cast<QTerminalWidget*>(user);
+        w->m_cursor_row = pos.row;
+        w->m_cursor_col = pos.col;
+        w->m_cursor_visible = visible;
+        w->update(oldpos.col * w->m_cell_w, oldpos.row * w->m_cell_h,
+                  w->m_cell_w, w->m_cell_h);
+        w->update(pos.col * w->m_cell_w, pos.row * w->m_cell_h,
+                  w->m_cell_w, w->m_cell_h);
+        return 0;
+    }
+
+    static int cb_bell(void* user) { (void)user; return 0; }
+
+    static int cb_resize(int rows, int cols, void* user) {
+        (void)rows; (void)cols; (void)user; return 1;
+    }
+
+    static int cb_settermprop(VTermProp prop, VTermValue* val, void* user) {
+        (void)prop; (void)val; (void)user; return 1;
+    }
+
+    static int cb_sb_pushline(int cols, const VTermScreenCell* cells, void* user) {
+        (void)cols; (void)cells; (void)user; return 0; // discard scrollback for now
+    }
+
+    static int cb_sb_popline(int cols, VTermScreenCell* cells, void* user) {
+        (void)cols; (void)cells; (void)user; return 0;
+    }
+
+    // ── Constructor / Destructor ───────────────────────────────────────────
+
+    explicit QTerminalWidget(QWidget* parent = nullptr)
+        : QWidget(parent)
+        , m_default_fg(0xC0, 0xC0, 0xC0)
+        , m_default_bg(0x18, 0x18, 0x18)
+    {
+        setFocusPolicy(Qt::StrongFocus);
+        setAttribute(Qt::WA_OpaquePaintEvent, true);
+
+        m_font = QFont("DejaVu Sans Mono", 11);
+        m_font.setStyleHint(QFont::Monospace);
+        computeCellSize();
+
+        initVterm();
+
+        m_timer = new QTimer(this);
+        QObject::connect(m_timer, &QTimer::timeout, [this]() { pollPty(); });
+    }
+
+    ~QTerminalWidget() override {
+        if (m_timer) m_timer->stop();
+        cleanupPty();
+        if (m_vt) { vterm_free(m_vt); m_vt = nullptr; }
+    }
+
+    // ── libvterm initialization ────────────────────────────────────────────
+
+    void initVterm() {
+        if (m_vt) vterm_free(m_vt);
+
+        m_vt = vterm_new(m_rows, m_cols);
+        vterm_set_utf8(m_vt, 1);
+        m_screen = vterm_obtain_screen(m_vt);
+
+        // Initialize callbacks struct once
+        if (!s_term_cbs_initialized) {
+            memset(&s_term_screen_cbs, 0, sizeof(s_term_screen_cbs));
+            s_term_screen_cbs.damage      = cb_damage;
+            s_term_screen_cbs.movecursor  = cb_movecursor;
+            s_term_screen_cbs.settermprop = cb_settermprop;
+            s_term_screen_cbs.bell        = cb_bell;
+            s_term_screen_cbs.resize      = cb_resize;
+            s_term_screen_cbs.sb_pushline = cb_sb_pushline;
+            s_term_screen_cbs.sb_popline  = cb_sb_popline;
+            s_term_cbs_initialized = true;
+        }
+
+        vterm_screen_set_callbacks(m_screen, &s_term_screen_cbs, this);
+        vterm_screen_enable_altscreen(m_screen, 1);
+        vterm_screen_set_damage_merge(m_screen, VTERM_DAMAGE_SCROLL);
+        vterm_screen_reset(m_screen, 1);
+    }
+
+    // ── Font / cell metrics ────────────────────────────────────────────────
+
+    void computeCellSize() {
+        QFontMetrics fm(m_font);
+        m_cell_w   = fm.horizontalAdvance('M');
+        m_cell_h   = fm.height();
+        m_cell_asc = fm.ascent();
+        if (m_cell_w <= 0) m_cell_w = 8;
+        if (m_cell_h <= 0) m_cell_h = 16;
+    }
+
+    void setTermFont(const char* family, int size) {
+        m_font = QFont(QString::fromUtf8(family), size);
+        m_font.setStyleHint(QFont::Monospace);
+        computeCellSize();
+        updateTermSize();
+        update();
+    }
+
+    // ── PTY spawn / cleanup ────────────────────────────────────────────────
+
+    void spawnShell(const char* cmd) {
+        if (m_running) return;
+
+        struct winsize ws;
+        ws.ws_row    = m_rows;
+        ws.ws_col    = m_cols;
+        ws.ws_xpixel = m_cols * m_cell_w;
+        ws.ws_ypixel = m_rows * m_cell_h;
+
+        int master_fd = -1;
+        pid_t pid = forkpty(&master_fd, nullptr, nullptr, &ws);
+        if (pid < 0) return;
+
+        if (pid == 0) {
+            // ── Child process ──
+            setenv("TERM", "xterm-256color", 1);
+            setenv("COLORTERM", "truecolor", 1);
+
+            if (cmd && cmd[0]) {
+                execl("/bin/sh", "sh", "-c", cmd, nullptr);
+            } else {
+                const char* shell = getenv("SHELL");
+                if (!shell) shell = "/bin/sh";
+                execl(shell, shell, "-l", nullptr);
+            }
+            _exit(127);
+        }
+
+        // ── Parent ──
+        m_master_fd = master_fd;
+        m_child_pid = pid;
+        m_running   = true;
+
+        // Non-blocking reads
+        int flags = fcntl(m_master_fd, F_GETFL, 0);
+        fcntl(m_master_fd, F_SETFL, flags | O_NONBLOCK);
+
+        m_timer->start(10); // poll every 10ms
+    }
+
+    void cleanupPty() {
+        if (m_timer) m_timer->stop();
+        if (m_child_pid > 0) {
+            kill(m_child_pid, SIGTERM);
+            int status;
+            waitpid(m_child_pid, &status, 0);
+            m_child_pid = -1;
+        }
+        if (m_master_fd >= 0) {
+            ::close(m_master_fd);
+            m_master_fd = -1;
+        }
+        m_running = false;
+    }
+
+    // ── Input to PTY ───────────────────────────────────────────────────────
+
+    void sendInput(const char* data, int len) {
+        if (m_master_fd >= 0 && len > 0) {
+            ::write(m_master_fd, data, len);
+        }
+    }
+
+    void interruptChild() {
+        if (m_master_fd >= 0 && m_child_pid > 0) {
+            kill(m_child_pid, SIGINT);
+        }
+    }
+
+    bool isRunning() const { return m_running; }
+
+protected:
+    // ── Painting ───────────────────────────────────────────────────────────
+
+    void paintEvent(QPaintEvent* ev) override {
+        QPainter p(this);
+        p.setFont(m_font);
+
+        QRect r = ev->rect();
+        int start_row = r.top()    / m_cell_h;
+        int end_row   = std::min(m_rows, r.bottom()  / m_cell_h + 1);
+        int start_col = r.left()   / m_cell_w;
+        int end_col   = std::min(m_cols, r.right()   / m_cell_w + 1);
+
+        for (int row = start_row; row < end_row; row++) {
+            for (int col = start_col; col < end_col; col++) {
+                VTermPos pos = { row, col };
+                VTermScreenCell cell;
+                vterm_screen_get_cell(m_screen, pos, &cell);
+
+                // Resolve colors
+                QColor fg = m_default_fg, bg = m_default_bg;
+
+                if (!VTERM_COLOR_IS_DEFAULT_FG(&cell.fg)) {
+                    VTermColor c = cell.fg;
+                    if (VTERM_COLOR_IS_INDEXED(&c))
+                        vterm_screen_convert_color_to_rgb(m_screen, &c);
+                    fg = QColor(c.rgb.red, c.rgb.green, c.rgb.blue);
+                }
+                if (!VTERM_COLOR_IS_DEFAULT_BG(&cell.bg)) {
+                    VTermColor c = cell.bg;
+                    if (VTERM_COLOR_IS_INDEXED(&c))
+                        vterm_screen_convert_color_to_rgb(m_screen, &c);
+                    bg = QColor(c.rgb.red, c.rgb.green, c.rgb.blue);
+                }
+
+                if (cell.attrs.reverse) std::swap(fg, bg);
+                if (cell.attrs.bold)    fg = fg.lighter(150);
+
+                int x = col * m_cell_w;
+                int y = row * m_cell_h;
+                int cw = m_cell_w * (cell.width > 0 ? cell.width : 1);
+
+                // Background
+                p.fillRect(x, y, cw, m_cell_h, bg);
+
+                // Character
+                if (cell.chars[0] != 0) {
+                    QFont df = m_font;
+                    if (cell.attrs.bold)   df.setBold(true);
+                    if (cell.attrs.italic) df.setItalic(true);
+                    if (cell.attrs.bold || cell.attrs.italic) p.setFont(df);
+                    p.setPen(fg);
+
+                    QString ch = QString::fromUcs4(&cell.chars[0], 1);
+                    p.drawText(x, y + m_cell_asc, ch);
+
+                    if (cell.attrs.bold || cell.attrs.italic) p.setFont(m_font);
+                }
+
+                // Underline
+                if (cell.attrs.underline) {
+                    p.setPen(fg);
+                    p.drawLine(x, y + m_cell_h - 1, x + cw - 1, y + m_cell_h - 1);
+                }
+
+                // Strikethrough
+                if (cell.attrs.strike) {
+                    p.setPen(fg);
+                    p.drawLine(x, y + m_cell_h / 2, x + cw - 1, y + m_cell_h / 2);
+                }
+
+                // Skip right half of wide characters
+                if (cell.width > 1) col += cell.width - 1;
+            }
+        }
+
+        // Cursor
+        if (m_cursor_visible && m_cursor_row >= start_row && m_cursor_row < end_row
+            && m_cursor_col >= start_col && m_cursor_col < end_col) {
+            int cx = m_cursor_col * m_cell_w;
+            int cy = m_cursor_row * m_cell_h;
+            if (hasFocus()) {
+                p.setCompositionMode(QPainter::CompositionMode_Difference);
+                p.fillRect(cx, cy, m_cell_w, m_cell_h, Qt::white);
+                p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+            } else {
+                p.setPen(m_default_fg);
+                p.drawRect(cx, cy, m_cell_w - 1, m_cell_h - 1);
+            }
+        }
+
+        // Fill unused area beyond terminal grid
+        int term_w = m_cols * m_cell_w;
+        int term_h = m_rows * m_cell_h;
+        if (width() > term_w)
+            p.fillRect(term_w, 0, width() - term_w, height(), m_default_bg);
+        if (height() > term_h)
+            p.fillRect(0, term_h, width(), height() - term_h, m_default_bg);
+    }
+
+public:
+    // ── Public key forwarding ────────────────────────────────────────────
+    //
+    // Called from qt_terminal_send_key_event() when the jemacs key handler
+    // forwards a non-command key to the terminal widget.
+
+    void handleKeyEvent(int key, int modifiers, const QString& text) {
+        QKeyEvent ev(QEvent::KeyPress,
+                     static_cast<Qt::Key>(key),
+                     static_cast<Qt::KeyboardModifiers>(modifiers),
+                     text);
+        keyPressEvent(&ev);
+    }
+
+protected:
+    // ── Keyboard input ─────────────────────────────────────────────────────
+
+    void keyPressEvent(QKeyEvent* ev) override {
+        if (!m_vt || m_master_fd < 0) return;
+
+        VTermModifier mod = VTERM_MOD_NONE;
+        if (ev->modifiers() & Qt::ShiftModifier)   mod = (VTermModifier)(mod | VTERM_MOD_SHIFT);
+        if (ev->modifiers() & Qt::AltModifier)     mod = (VTermModifier)(mod | VTERM_MOD_ALT);
+        if (ev->modifiers() & Qt::ControlModifier) mod = (VTermModifier)(mod | VTERM_MOD_CTRL);
+
+        VTermKey vtkey = VTERM_KEY_NONE;
+        switch (ev->key()) {
+            case Qt::Key_Return:    case Qt::Key_Enter: vtkey = VTERM_KEY_ENTER;     break;
+            case Qt::Key_Backspace:                     vtkey = VTERM_KEY_BACKSPACE;  break;
+            case Qt::Key_Escape:                        vtkey = VTERM_KEY_ESCAPE;     break;
+            case Qt::Key_Tab:                           vtkey = VTERM_KEY_TAB;        break;
+            case Qt::Key_Up:                            vtkey = VTERM_KEY_UP;         break;
+            case Qt::Key_Down:                          vtkey = VTERM_KEY_DOWN;       break;
+            case Qt::Key_Left:                          vtkey = VTERM_KEY_LEFT;       break;
+            case Qt::Key_Right:                         vtkey = VTERM_KEY_RIGHT;      break;
+            case Qt::Key_Insert:                        vtkey = VTERM_KEY_INS;        break;
+            case Qt::Key_Delete:                        vtkey = VTERM_KEY_DEL;        break;
+            case Qt::Key_Home:                          vtkey = VTERM_KEY_HOME;       break;
+            case Qt::Key_End:                           vtkey = VTERM_KEY_END;        break;
+            case Qt::Key_PageUp:                        vtkey = VTERM_KEY_PAGEUP;     break;
+            case Qt::Key_PageDown:                      vtkey = VTERM_KEY_PAGEDOWN;   break;
+            case Qt::Key_F1:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  1); break;
+            case Qt::Key_F2:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  2); break;
+            case Qt::Key_F3:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  3); break;
+            case Qt::Key_F4:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  4); break;
+            case Qt::Key_F5:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  5); break;
+            case Qt::Key_F6:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  6); break;
+            case Qt::Key_F7:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  7); break;
+            case Qt::Key_F8:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  8); break;
+            case Qt::Key_F9:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  9); break;
+            case Qt::Key_F10: vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 + 10); break;
+            case Qt::Key_F11: vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 + 11); break;
+            case Qt::Key_F12: vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 + 12); break;
+            default: break;
+        }
+
+        bool handled = false;
+        if (vtkey != VTERM_KEY_NONE) {
+            vterm_keyboard_key(m_vt, vtkey, mod);
+            handled = true;
+        } else if (!ev->text().isEmpty()) {
+            QString text = ev->text();
+            for (int i = 0; i < text.size(); i++) {
+                uint32_t cp = text.at(i).unicode();
+                if (QChar::isHighSurrogate(cp) && i + 1 < text.size()) {
+                    uint32_t lo = text.at(i + 1).unicode();
+                    if (QChar::isLowSurrogate(lo)) {
+                        cp = QChar::surrogateToUcs4(cp, lo);
+                        i++;
+                    }
+                }
+                vterm_keyboard_unichar(m_vt, cp, mod);
+            }
+            handled = true;
+        }
+
+        if (handled) {
+            flushVtermOutput();
+            ev->accept();
+        } else {
+            QWidget::keyPressEvent(ev);
+        }
+    }
+
+    // ── Resize ─────────────────────────────────────────────────────────────
+
+    void resizeEvent(QResizeEvent* ev) override {
+        QWidget::resizeEvent(ev);
+        updateTermSize();
+    }
+
+    void focusInEvent(QFocusEvent* ev) override {
+        QWidget::focusInEvent(ev);
+        update();
+    }
+
+    void focusOutEvent(QFocusEvent* ev) override {
+        QWidget::focusOutEvent(ev);
+        update();
+    }
+
+private:
+    void flushVtermOutput() {
+        char buf[4096];
+        size_t len;
+        while ((len = vterm_output_read(m_vt, buf, sizeof(buf))) > 0) {
+            if (m_master_fd >= 0) {
+                ssize_t written = 0;
+                while (written < (ssize_t)len) {
+                    ssize_t n = ::write(m_master_fd, buf + written, len - written);
+                    if (n < 0) {
+                        if (errno == EAGAIN || errno == EINTR) continue;
+                        break;
+                    }
+                    written += n;
+                }
+            }
+        }
+    }
+
+    void updateTermSize() {
+        int new_cols = std::max(2, width()  / m_cell_w);
+        int new_rows = std::max(1, height() / m_cell_h);
+
+        if (new_cols != m_cols || new_rows != m_rows) {
+            m_rows = new_rows;
+            m_cols = new_cols;
+
+            if (m_vt) vterm_set_size(m_vt, m_rows, m_cols);
+
+            if (m_master_fd >= 0) {
+                struct winsize ws;
+                ws.ws_row    = m_rows;
+                ws.ws_col    = m_cols;
+                ws.ws_xpixel = width();
+                ws.ws_ypixel = height();
+                ioctl(m_master_fd, TIOCSWINSZ, &ws);
+            }
+
+            update();
+        }
+    }
+
+    void pollPty() {
+        if (m_master_fd < 0) return;
+
+        char buf[8192];
+        ssize_t n;
+        bool got_data = false;
+
+        while ((n = ::read(m_master_fd, buf, sizeof(buf))) > 0) {
+            vterm_input_write(m_vt, buf, (size_t)n);
+            got_data = true;
+        }
+
+        if (n == 0 || (n < 0 && errno != EAGAIN && errno != EINTR)) {
+            checkChildExit();
+        }
+
+        if (got_data) {
+            vterm_screen_flush_damage(m_screen);
+        }
+    }
+
+    void checkChildExit() {
+        if (m_child_pid > 0) {
+            int status;
+            pid_t result = waitpid(m_child_pid, &status, WNOHANG);
+            if (result == m_child_pid || result < 0) {
+                m_running = false;
+                m_timer->stop();
+                ::close(m_master_fd);
+                m_master_fd  = -1;
+                m_child_pid  = -1;
+                update();
+            }
+        }
+    }
+};
+
+// ── C FFI for QTerminalWidget ──────────────────────────────────────────────
+
+typedef void* qt_terminal_t;
+
+extern "C" qt_terminal_t qt_terminal_create(qt_widget_t parent) {
+    QT_RETURN(QTerminalWidget*,
+        new QTerminalWidget(parent ? static_cast<QWidget*>(parent) : nullptr)
+    );
+}
+
+extern "C" void qt_terminal_spawn(qt_terminal_t term, const char* cmd) {
+    QT_NULL_CHECK_VOID(term);
+    std::string cmd_str(cmd ? cmd : "");
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->spawnShell(cmd_str.c_str())
+    );
+}
+
+extern "C" void qt_terminal_send_input(qt_terminal_t term, const char* data, int len) {
+    QT_NULL_CHECK_VOID(term);
+    // Copy data before crossing thread boundary
+    std::string data_copy(data, len);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->sendInput(data_copy.c_str(), data_copy.size())
+    );
+}
+
+// Send a synthetic key event to the terminal widget's keyPressEvent.
+// Called from the Scheme key handler to forward non-command keys.
+extern "C" void qt_terminal_send_key_event(qt_terminal_t term,
+                                            int key, int modifiers,
+                                            const char* text) {
+    QT_NULL_CHECK_VOID(term);
+    std::string text_str(text ? text : "");
+    QT_VOID(
+        auto* w = static_cast<QTerminalWidget*>(term);
+        w->handleKeyEvent(key, modifiers, QString::fromStdString(text_str))
+    );
+}
+
+extern "C" void qt_terminal_interrupt(qt_terminal_t term) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->interruptChild()
+    );
+}
+
+extern "C" int qt_terminal_is_running(qt_terminal_t term) {
+    QT_NULL_CHECK_RET(term, 0);
+    QT_RETURN(int,
+        static_cast<QTerminalWidget*>(term)->isRunning() ? 1 : 0
+    );
+}
+
+// QTerminalWidget IS a QWidget — return it as-is for QStackedWidget::addWidget
+extern "C" qt_widget_t qt_terminal_widget(qt_terminal_t term) {
+    return static_cast<qt_widget_t>(term);
+}
+
+extern "C" void qt_terminal_set_font(qt_terminal_t term, const char* family, int size) {
+    QT_NULL_CHECK_VOID(term);
+    std::string fam(family ? family : "DejaVu Sans Mono");
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->setTermFont(fam.c_str(), size)
+    );
+}
+
+extern "C" void qt_terminal_set_colors(qt_terminal_t term, int fg_rgb, int bg_rgb) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        auto* w = static_cast<QTerminalWidget*>(term);
+        w->m_default_fg = QColor((fg_rgb >> 16) & 0xFF, (fg_rgb >> 8) & 0xFF, fg_rgb & 0xFF);
+        w->m_default_bg = QColor((bg_rgb >> 16) & 0xFF, (bg_rgb >> 8) & 0xFF, bg_rgb & 0xFF);
+        w->update()
+    );
+}
+
+extern "C" void qt_terminal_focus(qt_terminal_t term) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->setFocus()
+    );
+}
+
+extern "C" void qt_terminal_destroy(qt_terminal_t term) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        delete static_cast<QTerminalWidget*>(term)
+    );
+}

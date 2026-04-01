@@ -6,6 +6,7 @@
         dired-open-directory!
         qt-open-image-inline!
         *qt-app-ptr*
+        *terminal-widget-map*
         qt-kill-ring-push!
         *isearch-active*
         isearch-handle-key!
@@ -637,6 +638,42 @@
               (echo-message! echo (string-append "Killed " target-name)))))
           (echo-error! echo (string-append "No buffer: " target-name)))))))
 
+(def (cmd-kill-buffer-force app)
+  "Kill current buffer immediately, no prompts. Switches to another buffer first.
+   Used by stress tests and automation where echo-area interaction is not possible."
+  (let* ((echo (app-state-echo app))
+         (buf  (current-qt-buffer app))
+         (name (buffer-name buf)))
+    (if (<= (length (buffer-list)) 1)
+      (echo-message! echo "Can't kill last buffer")
+      (let* ((fr    (app-state-frame app))
+             (ed    (current-qt-editor app))
+             (other (let loop ((bs (buffer-list)))
+                      (cond ((null? bs) #f)
+                            ((eq? (car bs) buf) (loop (cdr bs)))
+                            (else (car bs))))))
+        (when other
+          (qt-buffer-attach! ed other)
+          (set! (qt-edit-window-buffer (qt-current-window fr)) other))
+        (qt-remember-killed-buffer! buf)
+        (run-hooks! 'kill-buffer-hook app buf)
+        (qt-remove-highlighting! buf)
+        (hash-remove! *dired-entries* buf)
+        (hash-remove! *dired-marks* buf)
+        (let ((rs (hash-get *repl-state* buf)))
+          (when rs (repl-stop! rs) (hash-remove! *repl-state* buf)))
+        (let ((ss (hash-get *shell-state* buf)))
+          (when ss (shell-stop! ss) (hash-remove! *shell-state* buf)))
+        (let ((ts (hash-get *terminal-state* buf)))
+          (when ts (terminal-stop! ts) (hash-remove! *terminal-state* buf)))
+        (let ((cs (hash-get *chat-state* buf)))
+          (when cs (chat-stop! cs) (hash-remove! *chat-state* buf)))
+        (set! *buffer-recent*
+          (filter (lambda (n) (not (string=? n name))) *buffer-recent*))
+        (lsp-hook-did-close! app buf)
+        (qt-buffer-kill! buf)
+        (echo-message! echo (string-append "Killed " name))))))
+
 (def (cmd-kill-buffer-and-window app)
   (let ((fr (app-state-frame app)))
     (if (> (length (qt-frame-windows fr)) 1)
@@ -1243,6 +1280,7 @@
   (register-command! 'switch-buffer cmd-switch-buffer)
   (register-command! 'helm-buffers-list cmd-helm-buffers-list)
   (register-command! 'kill-buffer-cmd cmd-kill-buffer-cmd)
+  (register-command! 'kill-buffer-force cmd-kill-buffer-force)
   (register-command! 'list-buffers cmd-list-buffers)
   ;; Window
   (register-command! 'split-window cmd-split-window)
@@ -2369,7 +2407,7 @@
 (def *qt-loaded-plugins* [])
 
 (def (cmd-load-plugin app)
-  "Load a Gerbil Scheme plugin file (Qt)."
+  "Load a Jerboa Scheme plugin file (Qt)."
   (let* ((echo (app-state-echo app))
          (path (qt-echo-read-string app "Load plugin file: ")))
     (when (and path (> (string-length path) 0))
@@ -3366,7 +3404,7 @@
     (if (not file)
       (echo-message! echo "Buffer has no file")
       (if (not (member (path-extension file) '(".ss" ".scm")))
-        (echo-message! echo "Not a Gerbil/Scheme source file")
+        (echo-message! echo "Not a Jerboa/Scheme source file")
         (begin
           (echo-message! echo (string-append "Compiling " (path-strip-directory file) "..."))
           (compilation-run-command! app
@@ -3380,7 +3418,7 @@
     (if (not file)
       (echo-message! echo "Buffer has no file")
       (if (not (string-suffix? ".ss" file))
-        (echo-message! echo "Not a Gerbil source file")
+        (echo-message! echo "Not a Jerboa source file")
         (begin
           (echo-message! echo (string-append "Compiling " (path-strip-directory file) "..."))
           (compilation-run-command! app

@@ -15,6 +15,23 @@
 (import (jerboa prelude))
 
 ;;;============================================================================
+;;; Compat: thread-sleep!
+;;; The prelude shadows Chez's make-time with a datetime version, so we
+;;; capture the original via a local (chezscheme) import, same technique used
+;;; in chez-srfis/srfi/srfi-18.sls.
+;;;============================================================================
+
+(def chez:make-time-for-sleep
+  (let () (import (only (chezscheme) make-time)) make-time))
+
+(def (thread-sleep! secs)
+  "Sleep for SECS seconds (real number). Works in standalone Jerboa scripts."
+  (let* ((diff (max 0 secs))
+         (s (exact (floor diff)))
+         (ns (exact (floor (* (- diff s) 1000000000)))))
+    (sleep (chez:make-time-for-sleep 'time-duration ns s))))
+
+;;;============================================================================
 ;;; Configuration
 ;;;============================================================================
 
@@ -25,7 +42,16 @@
 (def *errors-caught* 0)
 
 ;;;============================================================================
-;;; TCP connection via nc subprocess
+;;; TCP connection via nc subprocess (s-expression protocol)
+;;;
+;;; We use the REPL's s-expression protocol rather than text mode.
+;;; Every request:  (N eval "EXPR-STRING")\n
+;;; Every response: (N :ok (:value "RESULT" :stdout "OUT"))\n
+;;;              or (N :error "MESSAGE")\n
+;;;
+;;; In s-expr mode the REPL never sends unprompted lines, so get-line
+;;; always works correctly (unlike text mode, which sends "jerboa> "
+;;; without a trailing newline).
 ;;;============================================================================
 
 (def *nc-stdin* #f)
@@ -33,6 +59,11 @@
 (def *nc-stderr* #f)
 (def *nc-pid* #f)
 (def *log-port* #f)
+(def *req-id* 0)
+
+(def (next-req-id!)
+  (set! *req-id* (+ *req-id* 1))
+  *req-id*)
 
 (def (read-repl-port-file)
   "Read the REPL port from ~/.jerboa-repl-port. Returns port number or #f."
@@ -52,7 +83,7 @@
       #f)))
 
 (def (connect! port)
-  "Connect to the debug REPL via nc subprocess."
+  "Connect to the debug REPL via nc subprocess, switch to s-expr protocol."
   (let-values (((stdin stdout stderr pid)
                 (open-process-ports
                   (str "nc 127.0.0.1 " port)
@@ -61,8 +92,10 @@
     (set! *nc-stdout* stdout)
     (set! *nc-stderr* stderr)
     (set! *nc-pid* pid)
-    ;; Read the initial prompt "jemacs> " — consume it
-    (consume-prompt!)))
+    ;; Wait 300ms for the REPL to send its text-mode banner + "jerboa> " prompt,
+    ;; then drain whatever arrived (banner line + partial prompt with no newline).
+    (thread-sleep! 0.3)
+    (drain-input!)))
 
 (def (disconnect!)
   "Close the nc subprocess."
@@ -76,15 +109,13 @@
   (set! *nc-stderr* #f)
   (set! *nc-pid* #f))
 
-(def (consume-prompt!)
-  "Read and discard bytes until we see the prompt or a newline.
-   The text-mode REPL sends 'jemacs> ' as a prompt."
-  ;; Read character by character until we get '> ' or timeout
+(def (drain-input!)
+  "Read and discard all currently available bytes from the REPL stdout."
   (with-catch
     (lambda (e) #f)
     (lambda ()
       (let loop ((count 0))
-        (when (and (< count 1000) (char-ready? *nc-stdout*))
+        (when (and (< count 4096) (char-ready? *nc-stdout*))
           (read-char *nc-stdout*)
           (loop (+ count 1)))))))
 
@@ -110,60 +141,48 @@
       (flush-output-port *log-port*))))
 
 ;;;============================================================================
-;;; REPL communication
+;;; REPL communication (s-expression protocol)
 ;;;============================================================================
 
 (def (send-eval! expr-str)
-  "Send an expression string to the text-mode REPL.
-   Returns the response string, or triggers exit on connection loss."
+  "Send an expression to the REPL using the s-expression protocol.
+   The first s-expr request also switches the REPL from text to sexpr mode.
+   Returns the response string, or exits on connection loss."
   (set! *commands-sent* (+ *commands-sent* 1))
   (log! (str "SEND [" *commands-sent* "]: " expr-str))
-  ;; Send the expression
-  (display expr-str *nc-stdin*)
-  (newline *nc-stdin*)
-  (flush-output-port *nc-stdin*)
-  ;; Read response lines until we see the next prompt or eof.
-  ;; The text REPL prints the result, then "jemacs> ".
-  ;; We read until we find char '>' followed by ' ' at start of a line,
-  ;; or we get eof.
-  (let ((resp (read-response!)))
-    (log! (str "RECV: " resp))
-    resp))
+  (let ((id (next-req-id!))
+        ;; Write expr as a Scheme string literal so the REPL receives it intact.
+        (expr-literal (with-output-to-string (lambda () (write expr-str)))))
+    ;; Format: (N eval "EXPR-STRING")\n
+    (display (str "(" id " eval " expr-literal ")") *nc-stdin*)
+    (newline *nc-stdin*)
+    (flush-output-port *nc-stdin*)
+    (let ((resp (read-sexpr-response!)))
+      (log! (str "RECV: " resp))
+      resp)))
 
-(def (read-response!)
-  "Read lines from the REPL until we get a prompt or eof.
-   Returns the concatenated response text."
-  (let loop ((acc '())
-             (timeout-chars 0))
-    ;; Give the REPL up to 10 seconds to respond
-    (let wait-loop ((waited 0))
-      (cond
-        ((char-ready? *nc-stdout*)
-         ;; Read a full line if available
-         (let ((line (get-line *nc-stdout*)))
-           (cond
-             ((eof-object? line)
-              (log! "CONNECTION LOST — jemacs-qt likely crashed!")
-              (log! (str "Stats: " *commands-sent* " commands sent, "
-                         *errors-caught* " errors caught"))
-              (disconnect!)
-              (exit 1))
-             ;; Check if this line is the prompt "jemacs> "
-             ((and (>= (string-length line) 7)
-                   (string-prefix? "jemacs>" line))
-              ;; This is the prompt — we're done
-              (string-join (reverse acc) "\n"))
-             (else
-              (loop (cons line acc) 0)))))
-        ((> waited 100)
-         ;; 10 seconds with no data — assume response is complete
-         ;; Try to consume any partial prompt
-         (consume-prompt!)
-         (string-join (reverse acc) "\n"))
-        (else
-         ;; Wait 100ms and try again
-         (thread-sleep! 0.1)
-         (wait-loop (+ waited 1)))))))
+(def (read-sexpr-response!)
+  "Wait for and read one newline-terminated response line from the s-expr REPL.
+   Returns the raw response string, or calls exit on connection loss."
+  ;; Give the REPL up to 10 seconds to respond (100 × 100ms polls).
+  (let wait-loop ((waited 0))
+    (cond
+      ((char-ready? *nc-stdout*)
+       (let ((line (get-line *nc-stdout*)))
+         (cond
+           ((eof-object? line)
+            (log! "CONNECTION LOST — jemacs-qt likely crashed!")
+            (log! (str "Stats: " *commands-sent* " commands sent, "
+                       *errors-caught* " errors caught"))
+            (disconnect!)
+            (exit 1))
+           (else line))))
+      ((> waited 100)
+       ;; Timeout — no response in 10 seconds.
+       "")
+      (else
+       (thread-sleep! 0.1)
+       (wait-loop (+ waited 1))))))
 
 (def (stress-cmd! cmd-name)
   "Execute a named command via the dispatch chain."
@@ -188,6 +207,18 @@
 (def (short-delay!)
   "Fixed short delay (100-300ms)."
   (thread-sleep! (/ (+ 100 (random 200)) 1000.0)))
+
+(def (stress-kill-buffer!)
+  "Kill the current buffer without prompting via kill-buffer-force command.
+   kill-buffer-cmd blocks on echo-area input so cannot be used in stress tests."
+  (stress-cmd! 'kill-buffer-force))
+
+(def (stress-write-file! path content)
+  "Write CONTENT to PATH, replacing if it exists.
+   Uses with-output-to-file with 'replace — available in interaction-environment."
+  (let ((escaped-path (with-output-to-string (lambda () (write path))))
+        (escaped-content (with-output-to-string (lambda () (write content)))))
+    (stress-eval! (str "(with-output-to-file " escaped-path " (lambda () (display " escaped-content ")) 'replace)"))))
 
 (def (with-phase-error-handler phase-name thunk)
   "Run thunk, catching any Scheme-level exceptions and logging them."
@@ -236,7 +267,7 @@
   (dotimes (_ (random 3))
     (with-phase-error-handler "vterm-close"
       (lambda ()
-        (stress-cmd! 'kill-buffer-cmd)
+        (stress-kill-buffer!)
         (maybe-delay!)))))
 
 ;;;============================================================================
@@ -252,11 +283,8 @@
               ;; Generate content of varying sizes
               (content (make-string (+ 100 (random 5000)) #\x)))
           ;; Create file on disk and open it in the editor
-          (stress-eval!
-            (str "(begin"
-                 " (write-file-string \"" path "\" "
-                 "\"" (make-string (min 200 (string-length content)) #\A) "\")"
-                 " (qt-open-file! *app* \"" path "\"))"))
+          (stress-write-file! path (make-string (min 200 (string-length content)) #\A))
+          (stress-eval! (str "(qt-open-file! *app* \"" path "\")"))
           (short-delay!)
           ;; Do some editing operations
           (stress-cmd! 'beginning-of-buffer)
@@ -277,7 +305,8 @@
           (maybe-delay!)
           ;; Maybe kill the buffer
           (when (zero? (random 3))
-            (stress-cmd! 'kill-buffer-cmd)))))))
+            (stress-kill-buffer!)))))))
+
 
 ;;;============================================================================
 ;;; Phase 4: Navigation Stress
@@ -297,23 +326,21 @@
             recenter)))))))
 
 ;;;============================================================================
-;;; Phase 5: EWW (web browser)
+;;; Phase 5: Scratch Buffer (formerly EWW — disabled: eww prompts for URL)
 ;;;============================================================================
 
 (def (phase-eww!)
-  (log! "=== PHASE: EWW ===")
-  (with-phase-error-handler "eww"
+  (log! "=== PHASE: Scratch Buffer ===")
+  ;; Replaced eww (needs URL prompt) with scratch buffer navigation
+  (with-phase-error-handler "scratch-nav"
     (lambda ()
-      ;; Open eww
-      (stress-cmd! 'eww)
-      (thread-sleep! 1.0)
-      ;; Navigate around
+      (stress-eval! "(qt-open-file! *app* \"*scratch*\")")
       (dotimes (_ (+ 3 (random 10)))
         (stress-cmd! (random-choice
           '(scroll-up scroll-down forward-char next-line
-            previous-line backward-char beginning-of-buffer)))
+            previous-line backward-char beginning-of-buffer
+            end-of-buffer recenter)))
         (maybe-delay!))
-      ;; Switch away
       (stress-cmd! 'other-window))))
 
 ;;;============================================================================
@@ -326,11 +353,8 @@
   (with-phase-error-handler "edit-storm-setup"
     (lambda ()
       (let ((path "/tmp/jemacs-stress-edit.txt"))
-        (stress-eval!
-          (str "(begin"
-               " (write-file-string \"" path
-               "\" (make-string 2000 #\\newline))"
-               " (qt-open-file! *app* \"" path "\"))"))
+        (stress-write-file! path (make-string 2000 #\newline))
+        (stress-eval! (str "(qt-open-file! *app* \"" path "\")"))
         (short-delay!))))
   ;; Rapid editing operations
   (dotimes (_ (+ 30 (random 50)))
@@ -355,23 +379,21 @@
     (with-phase-error-handler "buffer-open"
       (lambda ()
         (let ((path (str "/tmp/jemacs-stress-buf-" i ".txt")))
-          (stress-eval!
-            (str "(begin"
-                 " (write-file-string \"" path "\" \"buffer " i "\")"
-                 " (qt-open-file! *app* \"" path "\"))"))
+          (stress-write-file! path (str "buffer " i))
+          (stress-eval! (str "(qt-open-file! *app* \"" path "\")"))
           (maybe-delay!)))))
-  ;; Switch between them rapidly
+  ;; Switch between them rapidly (avoid switch-buffer/list-buffers — they prompt)
   (dotimes (_ (+ 10 (random 20)))
     (with-phase-error-handler "buffer-switch"
       (lambda ()
         (stress-cmd! (random-choice
-          '(switch-buffer other-window list-buffers)))
+          '(other-window next-buffer previous-buffer)))
         (maybe-delay!))))
   ;; Kill some
   (dotimes (_ (+ 1 (random 4)))
     (with-phase-error-handler "buffer-kill"
       (lambda ()
-        (stress-cmd! 'kill-buffer-cmd)
+        (stress-kill-buffer!)
         (maybe-delay!)))))
 
 ;;;============================================================================
@@ -402,9 +424,10 @@
                '(kill-line yank undo redo open-line delete-char
                  backward-delete-char duplicate-line transpose-chars))))
             ((< action 9)
-             ;; Buffer operations
-             (stress-cmd! (random-choice
-               '(other-window list-buffers kill-buffer-cmd))))
+             ;; Buffer operations (no prompting commands)
+             (if (zero? (random 3))
+               (stress-kill-buffer!)
+               (stress-cmd! (random-choice '(other-window next-buffer previous-buffer)))))
             (else
              ;; Meta operations
              (stress-cmd! (random-choice
@@ -443,11 +466,8 @@
   (with-phase-error-handler "search-setup"
     (lambda ()
       (let ((path "/tmp/jemacs-stress-search.txt"))
-        (stress-eval!
-          (str "(begin"
-               " (write-file-string \"" path
-               "\" \"hello world\\nfoo bar baz\\nline three\\nfour five six\\n\")"
-               " (qt-open-file! *app* \"" path "\"))"))
+        (stress-write-file! path "hello world\nfoo bar baz\nline three\nfour five six\n")
+        (stress-eval! (str "(qt-open-file! *app* \"" path "\")"))
         (short-delay!))))
   ;; Navigate with word motions (search-like behavior)
   (dotimes (_ (+ 10 (random 20)))

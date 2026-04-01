@@ -1285,8 +1285,8 @@ SPC = page down, DEL = page up, q = quit view-mode."
                      (string-join shown "  "))))))))))))
 
 (def (cmd-completion-at-point app)
-  "Smart completion at point. For Gerbil buffers, combines buffer words
-   with known Gerbil standard library symbols."
+  "Smart completion at point. For Jerboa buffers, combines buffer words
+   with known Jerboa standard library symbols."
   (let* ((ed (current-qt-editor app))
          (buf (current-qt-buffer app))
          (lang (buffer-lexer-lang buf))
@@ -1391,8 +1391,8 @@ SPC = page down, DEL = page up, q = quit view-mode."
   (info-read-topic! app "emacs"))
 
 (def (cmd-info-elisp-manual app)
-  "Show Gerbil documentation."
-  (echo-message! (app-state-echo app) "Gerbil Scheme documentation at https://cons.io"))
+  "Show Jerboa documentation."
+  (echo-message! (app-state-echo app) "Jerboa Scheme documentation at https://jerboa-lang.org"))
 
 (def (cmd-report-bug app)
   "Report a bug."

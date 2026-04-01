@@ -621,7 +621,7 @@
        (eshell-execute-command-with-redirect trimmed cwd)))))
 
 (def (eshell-eval-expression expr cwd)
-  "Evaluate a Gerbil expression and return the result."
+  "Evaluate a Jerboa expression and return the result."
   (with-catch
     (lambda (e)
       (values (string-append "Error: "

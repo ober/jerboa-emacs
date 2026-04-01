@@ -230,7 +230,7 @@
             ";;   C-s       Search forward    M-%       Query replace\n"
             ";;   C-x 2     Split window      C-x o     Other window\n"
             ";;\n"
-            ";; This buffer is for Gerbil Scheme evaluation.\n\n"))))
+            ";; This buffer is for Jerboa Scheme evaluation.\n\n"))))
       (editor-set-save-point ed)
       (editor-goto-pos ed 0))
 

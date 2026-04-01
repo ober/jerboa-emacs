@@ -384,7 +384,7 @@ When enabled, typing while region is active replaces the selected text."
 (def (cmd-eldoc-mode app)
   "Toggle eldoc mode — shows function signatures in echo area on idle.
 When enabled, displays the signature of the enclosing function for
-Scheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
+Scheme/Jerboa/Lisp buffers. Also used by LSP for hover information."
   (set! *eldoc-mode* (not *eldoc-mode*))
   (echo-message! (app-state-echo app)
     (if *eldoc-mode* "Eldoc mode enabled" "Eldoc mode disabled")))

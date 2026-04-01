@@ -1837,7 +1837,7 @@
         ;; Initialize gsh environment for this buffer
         (gsh-eshell-init-buffer! buf)
         ;; Insert welcome message and prompt
-        (let ((welcome (string-append "gsh — Gerbil Shell\n"
+        (let ((welcome (string-append "gsh — Jerboa Shell\n"
                                        "Type commands or 'exit' to close.\n\n"
                                        (gsh-eshell-get-prompt buf))))
           (editor-set-text ed welcome)
@@ -2603,7 +2603,7 @@
       "Configuration\n"
       "=============\n\n"
       "Init file: ~/.jemacs-init\n"
-      "  Gerbil Scheme expressions evaluated at startup.\n\n"
+      "  Jerboa Scheme expressions evaluated at startup.\n\n"
       "Config: ~/.jemacs-config\n"
       "  Directory-local settings (per-project).\n\n"
       "Bookmarks: ~/.jemacs-bookmarks\n"

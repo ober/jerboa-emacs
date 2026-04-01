@@ -543,6 +543,7 @@
                    (when (and parent-spl
                               (not (eq? parent-spl
                                         (qt-frame-splitter fr))))
+                     (set! container #f)
                      (qt-widget-destroy! parent-spl))))))
            (when container
              (qt-widget-hide! container)

@@ -146,12 +146,12 @@
     (echo-message! (app-state-echo app) "Scheme mode")))
 
 (def (cmd-gerbil-mode app)
-  "Switch to Gerbil mode — sets Gerbil lexer."
+  "Switch to Jerboa mode — sets Jerboa lexer."
   (let* ((fr (app-state-frame app))
          (win (current-window fr))
          (buf (edit-window-buffer win)))
     (when buf (set! (buffer-lexer-lang buf) 'gerbil))
-    (echo-message! (app-state-echo app) "Gerbil mode")))
+    (echo-message! (app-state-echo app) "Jerboa mode")))
 
 (def (cmd-run-scheme app)
   "Run Scheme REPL — opens Chez Scheme REPL."

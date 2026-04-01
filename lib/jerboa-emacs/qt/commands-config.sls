@@ -18,10 +18,11 @@
    *qt-profiler-running* *qt-profiler-start-stats*
    *profiler-data* cmd-profiler-start cmd-profiler-stop
    cmd-show-tab-count cmd-show-trailing-whitespace-count
-   terminal-buffer-counter cmd-term cmd-terminal-send
-   cmd-term-interrupt cmd-term-send-eof cmd-term-send-tab
-   cmd-multi-vterm *terminal-copy-mode* cmd-vterm-copy-mode
-   cmd-vterm-copy-done get-terminal-buffers
+   *SCI_SETCODEPAGE* *SC_CP_UTF8* qt-insert-prompt!
+   terminal-buffer-counter *terminal-widget-map* cmd-term
+   cmd-terminal-send cmd-term-interrupt cmd-term-send-eof
+   cmd-term-send-tab cmd-multi-vterm *terminal-copy-mode*
+   cmd-vterm-copy-mode cmd-vterm-copy-done get-terminal-buffers
    qt-switch-to-terminal! cmd-term-list cmd-term-next
    cmd-term-prev cmd-ediff-files cmd-comment-dwim)
   (import
@@ -854,10 +855,49 @@
            (string-append
              (number->string count)
              " lines with trailing whitespace"))))
+  (define *SCI_SETCODEPAGE*--cell (vector 2037))
+  (define *SC_CP_UTF8*--cell (vector 65001))
+  (def (qt-insert-prompt! ed ts)
+       "Insert PS1 prompt with ANSI colors using Qt Scintilla APIs.\n   Uses sci-send/SCI_APPENDTEXT (not TUI editor-append-text).\n   Returns character count of document after insertion (for prompt-pos tracking).\n   NOTE: must return CHARACTERS (not bytes) — prompt-pos is compared against\n   string-length which is char-based. UTF-8 multi-byte chars (like PS1 arrows)\n   make byte-offset != char-count."
+       (let* ([raw (terminal-prompt-raw ts)]
+              [clean (list->string
+                       (filter
+                         (lambda (c)
+                           (not (or (char=? c (integer->char 1))
+                                    (char=? c (integer->char 2)))))
+                         (string->list raw)))]
+              [segments (parse-ansi-segments clean)])
+         (let loop ([segs segments]
+                    [pos (sci-send ed SCI_GETLENGTH)])
+           (if (null? segs)
+               (string-length (qt-plain-text-edit-text ed))
+               (let* ([seg (car segs)]
+                      [text (text-segment-text seg)]
+                      [fg (text-segment-fg-color seg)]
+                      [bold? (text-segment-bold? seg)]
+                      [style (color-to-style fg bold?)]
+                      [utf8-bv (string->utf8 text)]
+                      [text-len (bytevector-length utf8-bv)]
+                      [utf8-str (let loop2 ([i (- text-len 1)] [acc '()])
+                                  (if (< i 0)
+                                      (list->string acc)
+                                      (loop2
+                                        (- i 1)
+                                        (cons
+                                          (integer->char
+                                            (bytevector-u8-ref utf8-bv i))
+                                          acc))))])
+                 (sci-send/string ed SCI_APPENDTEXT utf8-str text-len)
+                 (when (> style 0)
+                   (sci-send ed SCI_STARTSTYLING pos 0)
+                   (sci-send ed SCI_SETSTYLING text-len style))
+                 (loop (cdr segs) (+ pos text-len)))))))
   (define terminal-buffer-counter--cell (vector 0))
+  (define *terminal-widget-map*--cell
+    (vector (make-hash-table-eq)))
   (def (cmd-term app)
-       "Open a new gsh-backed terminal buffer."
-       (verbose-log! "cmd-term: begin")
+       "Open a QTerminalWidget-backed terminal buffer.\n   Uses libvterm for proper VT100 terminal emulation with full color support."
+       (verbose-log! "cmd-term: begin (QTerminalWidget)")
        (let* ([fr (app-state-frame app)]
               [ed (current-qt-editor app)]
               [name (begin
@@ -871,38 +911,34 @@
                             "*")))]
               [buf (qt-buffer-create! name ed #f)])
          (buffer-lexer-lang-set! buf 'terminal)
-         (qt-plain-text-edit-set-line-wrap! ed #f)
-         (verbose-log! "cmd-term: qt-buffer-attach! begin")
          (qt-buffer-attach! ed buf)
-         (verbose-log! "cmd-term: qt-buffer-attach! done")
          (qt-edit-window-buffer-set! (qt-current-window fr) buf)
          (with-catch
            (lambda (e)
              (let ([msg (with-output-to-string
                           (lambda () (display-exception e)))])
-               (jemacs-log! "cmd-term: gsh init failed: " msg)
-               (verbose-log! "cmd-term: gsh init FAILED: " msg)
+               (jemacs-log! "cmd-term: QTerminalWidget failed: " msg)
+               (verbose-log! "cmd-term: QTerminalWidget FAILED: " msg)
                (echo-error!
                  (app-state-echo app)
                  (string-append "Terminal failed: " msg))))
            (lambda ()
-             (verbose-log! "cmd-term: terminal-start! begin")
-             (let ([ts (terminal-start!)])
-               (verbose-log! "cmd-term: terminal-start! done")
-               (hash-put! *terminal-state* buf ts)
-               (let ([prompt (terminal-prompt ts)])
-                 (verbose-log!
-                   "cmd-term: qt-plain-text-edit-set-text! begin prompt-len="
-                   (number->string (string-length prompt)))
-                 (qt-plain-text-edit-set-text! ed prompt)
-                 (verbose-log!
-                   "cmd-term: qt-plain-text-edit-set-text! done")
-                 (terminal-state-prompt-pos-set! ts (string-length prompt))
-                 (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)))
-             (verbose-log! "cmd-term: done, terminal started")
-             (echo-message!
-               (app-state-echo app)
-               (string-append name " started"))))))
+             (let* ([win (qt-current-window fr)]
+                    [container (qt-edit-window-container win)]
+                    [term (qt-terminal-create container)])
+               (qt-terminal-set-font! term "DejaVu Sans Mono" 11)
+               (qt-terminal-set-colors! term 12305103 2632756)
+               (let ([idx (qt-stacked-widget-add-widget!
+                            container
+                            (qt-terminal-widget term))])
+                 (qt-stacked-widget-set-current-index! container idx))
+               (hash-put! *terminal-widget-map* buf term)
+               (qt-terminal-spawn! term "")
+               (qt-terminal-focus! term)
+               (verbose-log! "cmd-term: QTerminalWidget spawned")
+               (echo-message!
+                 (app-state-echo app)
+                 (string-append name " started")))))))
   (def (cmd-terminal-send app)
        "Execute the current input line in the terminal via gsh.\n   Builtins run synchronously, external commands run async via PTY.\n   When PTY is busy (e.g. sudo password prompt), sends newline to PTY."
        (let* ([buf (current-qt-buffer app)]
@@ -978,15 +1014,11 @@
                                   #\newline)
                           (qt-plain-text-edit-insert-text! ed "\n")))
                       (when (hash-get *terminal-state* buf)
-                        (let ([prompt (terminal-prompt ts)])
-                          (qt-plain-text-edit-move-cursor!
-                            ed
-                            QT_CURSOR_END)
-                          (qt-plain-text-edit-insert-text! ed prompt)
-                          (terminal-state-prompt-pos-set!
-                            ts
-                            (string-length (qt-plain-text-edit-text ed)))
-                          (qt-plain-text-edit-ensure-cursor-visible! ed)))]
+                        (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
+                        (terminal-state-prompt-pos-set!
+                          ts
+                          (qt-insert-prompt! ed ts))
+                        (qt-plain-text-edit-ensure-cursor-visible! ed))]
                      [(async)
                       (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
                       (qt-plain-text-edit-ensure-cursor-visible! ed)]
@@ -994,12 +1026,10 @@
                       (cond
                         [(eq? output 'clear)
                          (qt-plain-text-edit-set-text! ed "")
-                         (let ([prompt (terminal-prompt ts)])
-                           (qt-plain-text-edit-insert-text! ed prompt)
-                           (terminal-state-prompt-pos-set!
-                             ts
-                             (string-length (qt-plain-text-edit-text ed)))
-                           (qt-plain-text-edit-ensure-cursor-visible! ed))]
+                         (terminal-state-prompt-pos-set!
+                           ts
+                           (qt-insert-prompt! ed ts))
+                         (qt-plain-text-edit-ensure-cursor-visible! ed)]
                         [(eq? output 'exit)
                          (terminal-stop! ts)
                          (let* ([fr (app-state-frame app)]
@@ -1048,14 +1078,12 @@
               (qt-plain-text-edit-insert-text! ed "^C\n")
               (qt-plain-text-edit-ensure-cursor-visible! ed))]
            [else
-            (let* ([ed (current-qt-editor app)]
-                   [prompt (terminal-prompt ts)])
+            (let ([ed (current-qt-editor app)])
               (qt-plain-text-edit-move-cursor! ed QT_CURSOR_END)
               (qt-plain-text-edit-insert-text! ed "^C\n")
-              (qt-plain-text-edit-insert-text! ed prompt)
               (terminal-state-prompt-pos-set!
                 ts
-                (string-length (qt-plain-text-edit-text ed)))
+                (qt-insert-prompt! ed ts))
               (qt-plain-text-edit-ensure-cursor-visible! ed))])))
   (def (cmd-term-send-eof app)
        "Close the terminal/shell/eshell buffer (Ctrl-D).\n   Only exits if the current input line is empty (standard shell behavior)."
@@ -1364,11 +1392,29 @@
     (identifier-syntax
       [id (vector-ref *profiler-data*--cell 0)]
       [(set! id val) (vector-set! *profiler-data*--cell 0 val)]))
+  (define-syntax *SCI_SETCODEPAGE*
+    (identifier-syntax
+      [id (vector-ref *SCI_SETCODEPAGE*--cell 0)]
+      [(set! id val) (vector-set!
+                       *SCI_SETCODEPAGE*--cell
+                       0
+                       val)]))
+  (define-syntax *SC_CP_UTF8*
+    (identifier-syntax
+      [id (vector-ref *SC_CP_UTF8*--cell 0)]
+      [(set! id val) (vector-set! *SC_CP_UTF8*--cell 0 val)]))
   (define-syntax terminal-buffer-counter
     (identifier-syntax
       [id (vector-ref terminal-buffer-counter--cell 0)]
       [(set! id val) (vector-set!
                        terminal-buffer-counter--cell
+                       0
+                       val)]))
+  (define-syntax *terminal-widget-map*
+    (identifier-syntax
+      [id (vector-ref *terminal-widget-map*--cell 0)]
+      [(set! id val) (vector-set!
+                       *terminal-widget-map*--cell
                        0
                        val)]))
   (define-syntax *terminal-copy-mode*

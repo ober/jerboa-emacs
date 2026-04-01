@@ -654,7 +654,7 @@
         (or out "")))))
 
 (def (cmd-package-list-packages app)
-  "List installed Gerbil packages."
+  "List installed Jerboa packages."
   (let* ((output (run-gerbil-pkg '("list")))
          (fr (app-state-frame app))
          (win (current-window fr))
@@ -667,7 +667,7 @@
     (editor-set-read-only ed #t)))
 
 (def (cmd-package-install app)
-  "Install a Gerbil package by name."
+  "Install a Jerboa package by name."
   (let ((pkg (app-read-string app "Package to install: ")))
     (when (and pkg (not (string-empty? pkg)))
       (echo-message! (app-state-echo app) (string-append "Installing " pkg "..."))
@@ -675,7 +675,7 @@
         (echo-message! (app-state-echo app) (string-append "Install: " result))))))
 
 (def (cmd-package-delete app)
-  "Uninstall a Gerbil package."
+  "Uninstall a Jerboa package."
   (let ((pkg (app-read-string app "Package to remove: ")))
     (when (and pkg (not (string-empty? pkg)))
       (let ((result (run-gerbil-pkg (list "uninstall" pkg))))
@@ -988,7 +988,7 @@
                       ((and mode (or (string=? mode "python") (string=? mode "py")))
                        "# Python scratch buffer\n\n")
                       ((and mode (or (string=? mode "scheme") (string=? mode "gerbil")))
-                       ";; Gerbil Scheme scratch buffer\n\n")
+                       ";; Jerboa Scheme scratch buffer\n\n")
                       ((and mode (or (string=? mode "js") (string=? mode "javascript")))
                        "// JavaScript scratch buffer\n\n")
                       ((and mode (or (string=? mode "c") (string=? mode "cpp")))
