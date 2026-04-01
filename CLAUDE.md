@@ -59,6 +59,61 @@ After modifying `.ss` files, always rebuild before testing:
 make build && make test-functional
 ```
 
+## Stress Testing & Crash Reporting
+
+The editor has automated stress testing infrastructure for finding segfaults. See `docs/stress-test.md` for the full design.
+
+### Crash Reporter
+
+`vendor/qt_shim.cpp` includes a SIGSEGV/SIGBUS/SIGABRT crash reporter that:
+- Records the last 64 FFI calls in a lock-free ring buffer
+- On crash, writes a diagnostic report to `~/.jemacs-crash.log` with the FFI ring buffer and native backtrace
+- Re-raises the signal so gdb/core dumps still work
+
+The crash reporter is automatically installed when `qt_application_create()` is called. No configuration needed.
+
+### Stress Test Commands
+
+```bash
+make stress-run              # Launch interpreted jemacs-qt headless with REPL (port 9999)
+make stress-run-static       # Launch static binary under gdb with REPL
+make stress-test             # Run stress driver against already-running REPL
+make stress-burn             # All-in-one: launch interpreted + run stress driver
+make stress-burn-static      # All-in-one: launch static under gdb + run stress driver
+```
+
+Override the REPL port: `make stress-test STRESS_PORT=8888`
+
+### Stress Test Driver (`tests/stress-test.ss`)
+
+Connects to jemacs-qt's `--repl` TCP interface via `nc` subprocess and drives random editor commands in a continuous loop until the editor crashes (connection drops). Runs 10 stress phases per cycle:
+
+1. **Window Chaos** — split/delete/balance windows randomly
+2. **Vterm Storm** — open multiple vterm buffers
+3. **File Churn** — create/open/edit/kill temp files, copy/paste between buffers
+4. **Navigation Stress** — rapid cursor movement and scrolling
+5. **EWW** — web browser buffer
+6. **Edit Storm** — insert/delete/undo/redo
+7. **Buffer Management** — open many buffers, rapid switching
+8. **Combined Chaos** — random mix of all operations
+9. **Window Thrash** — rapid split-then-delete cycles
+10. **Search Operations** — word-motion navigation
+
+All commands are logged to `stress-test.log` with timestamps. When a crash occurs:
+- `~/.jemacs-crash.log` shows the FFI call ring buffer and backtrace
+- `stress-test.log` shows the exact command sequence that triggered it
+- gdb (in `stress-burn-static`) shows the native stack trace
+
+### Typical Debugging Workflow
+
+```bash
+make stress-burn-static      # Run until crash
+# Examine: ~/.jemacs-crash.log, stress-test.log, gdb output
+# Fix the bug
+make static-qt               # Rebuild
+make stress-burn-static      # Run again
+```
+
 ## jsh Shell Library
 
 The jerboa-shell (jsh) library is a separate project at `~/mine/jerboa-shell`. After modifying any file in `~/mine/jerboa-shell/src/jsh/`, recompile:
