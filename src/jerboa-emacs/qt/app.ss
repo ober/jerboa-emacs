@@ -833,14 +833,18 @@
                             (let* ((container (qt-edit-window-container win))
                                    (count (qt-stacked-widget-count container))
                                    (tw (qt-terminal-widget term)))
-                              ;; Switch to the last index (terminal)
-                              (qt-stacked-widget-set-current-index! container (- count 1))
-                              ;; Install consuming key filter on terminal widget if not yet done
-                              ;; (guards against double-install which would double-fire events)
+                              ;; Always install consuming key filter (idempotent via guard)
                               (unless (hash-get terminal-key-installed tw)
                                 ((app-state-key-handler app) tw)
                                 (hash-put! terminal-key-installed tw #t))
-                              (qt-widget-set-focus! tw))))))
+                              (if (> count 1)
+                                ;; Terminal widget lives in THIS container — show and focus it
+                                (begin
+                                  (qt-stacked-widget-set-current-index! container (- count 1))
+                                  (qt-widget-set-focus! tw))
+                                ;; Terminal widget is in another window (e.g. after C-x 2).
+                                ;; Just show the editor in this window — don't steal focus.
+                                (qt-widget-set-focus! editor)))))))
                   ;; Image buffers
                   ((image-buffer? buf)
                    (qt-show-image-buffer! editor buf)

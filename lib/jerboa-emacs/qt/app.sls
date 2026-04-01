@@ -774,13 +774,16 @@
                                    [count (qt-stacked-widget-count
                                             container)]
                                    [tw (qt-terminal-widget term)])
-                              (qt-stacked-widget-set-current-index!
-                                container
-                                (- count 1))
                               (unless (hash-get terminal-key-installed tw)
                                 ((app-state-key-handler app) tw)
                                 (hash-put! terminal-key-installed tw #t))
-                              (qt-widget-set-focus! tw)))))]
+                              (if (> count 1)
+                                  (begin
+                                    (qt-stacked-widget-set-current-index!
+                                      container
+                                      (- count 1))
+                                    (qt-widget-set-focus! tw))
+                                  (qt-widget-set-focus! editor))))))]
                      [(image-buffer? buf)
                       (qt-show-image-buffer! editor buf)
                       (let ([win (hash-get *editor-window-map* editor)])
