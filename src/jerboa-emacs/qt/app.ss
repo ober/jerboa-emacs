@@ -1935,7 +1935,18 @@
                                   (lambda () (qt-terminal-destroy! term)))
                                 (hash-remove! *terminal-widget-map* buf))))
                           term-bufs))
-                      'ok))))))
+                      'ok))
+              ;; Set current editor text directly (bypasses undo — for test isolation)
+              (cons 'test-clear-buffer!
+                    (lambda ()
+                      (let* ((fr (app-state-frame app))
+                             (ed (qt-current-editor fr)))
+                        (when ed (qt-plain-text-edit-set-text! ed ""))
+                        'ok)))
+              ;; Current window index (0-based, matches test-window-buffers/texts order)
+              (cons 'test-window-idx
+                    (lambda ()
+                      (qt-frame-current-idx (app-state-frame app))))))))
       ;; Tree-sitter debounced re-highlight — re-parse when buffer content changes.
       ;; Tracks last-known text length per buffer to detect modifications.
       (schedule-periodic! 'treesitter-reparse 150

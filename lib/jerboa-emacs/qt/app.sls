@@ -2535,7 +2535,18 @@
                                 (lambda () (qt-terminal-destroy! term)))
                               (hash-remove! *terminal-widget-map* buf))))
                         term-bufs))
-                    'ok))))))
+                    'ok))
+                (cons
+                  'test-clear-buffer!
+                  (lambda ()
+                    (let* ([fr (app-state-frame app)]
+                           [ed (qt-current-editor fr)])
+                      (when ed (qt-plain-text-edit-set-text! ed ""))
+                      'ok)))
+                (cons
+                  'test-window-idx
+                  (lambda ()
+                    (qt-frame-current-idx (app-state-frame app))))))))
          (schedule-periodic!
            'treesitter-reparse
            150
