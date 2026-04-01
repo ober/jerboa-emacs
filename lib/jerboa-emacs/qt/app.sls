@@ -2484,7 +2484,58 @@
                       app
                       (lambda (state)
                         (let ([mb (cdr (assq 'minibuffer state))]) mb))
-                      ms)))))))
+                      ms)))
+                (cons
+                  'test-window-count
+                  (lambda ()
+                    (length (qt-frame-windows (app-state-frame app)))))
+                (cons
+                  'test-window-buffers
+                  (lambda ()
+                    (map (lambda (win)
+                           (let ([buf (qt-edit-window-buffer win)])
+                             (if buf (buffer-name buf) "#<none>")))
+                         (qt-frame-windows (app-state-frame app)))))
+                (cons
+                  'test-window-texts
+                  (lambda ()
+                    (map (lambda (win)
+                           (let ([ed (qt-edit-window-editor win)])
+                             (if ed (qt-plain-text-edit-text ed) "")))
+                         (qt-frame-windows (app-state-frame app)))))
+                (cons
+                  'test-prefix-active?
+                  (lambda ()
+                    (not (null?
+                           (key-state-prefix-keys
+                             (app-state-key-state app))))))
+                (cons
+                  'test-terminal-running?
+                  (lambda ()
+                    (let* ([fr (app-state-frame app)]
+                           [buf (qt-current-buffer fr)])
+                      (and buf (hash-key? *terminal-widget-map* buf) #t))))
+                (cons
+                  'test-reset!
+                  (lambda ()
+                    (app-state-key-state-set! app (make-initial-key-state))
+                    (when (> (length
+                               (qt-frame-windows (app-state-frame app)))
+                             1)
+                      (execute-command! app 'delete-other-windows))
+                    (let ([term-bufs (hash-keys *terminal-widget-map*)])
+                      (for-each
+                        (lambda (buf)
+                          (let ([term (hash-get
+                                        *terminal-widget-map*
+                                        buf)])
+                            (when term
+                              (with-catch
+                                (lambda (e) #f)
+                                (lambda () (qt-terminal-destroy! term)))
+                              (hash-remove! *terminal-widget-map* buf))))
+                        term-bufs))
+                    'ok))))))
          (schedule-periodic!
            'treesitter-reparse
            150

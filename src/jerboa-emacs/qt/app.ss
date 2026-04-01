@@ -1886,7 +1886,56 @@
                         (lambda (state)
                           (let ((mb (cdr (assq 'minibuffer state))))
                             mb))
-                        ms)))))))
+                        ms)))
+              ;; ---- Test-infrastructure helpers (test-behavioral.ss) ----
+              ;; Number of open windows
+              (cons 'test-window-count
+                    (lambda ()
+                      (length (qt-frame-windows (app-state-frame app)))))
+              ;; Buffer name for each open window, in order
+              (cons 'test-window-buffers
+                    (lambda ()
+                      (map (lambda (win)
+                             (let ((buf (qt-edit-window-buffer win)))
+                               (if buf (buffer-name buf) "#<none>")))
+                           (qt-frame-windows (app-state-frame app)))))
+              ;; Editor text for each open window, in order (empty string for terminals)
+              (cons 'test-window-texts
+                    (lambda ()
+                      (map (lambda (win)
+                             (let ((ed (qt-edit-window-editor win)))
+                               (if ed (qt-plain-text-edit-text ed) "")))
+                           (qt-frame-windows (app-state-frame app)))))
+              ;; Is a C-x / prefix key currently pending?
+              (cons 'test-prefix-active?
+                    (lambda ()
+                      (not (null? (key-state-prefix-keys (app-state-key-state app))))))
+              ;; Is the current buffer a QTerminalWidget terminal?
+              (cons 'test-terminal-running?
+                    (lambda ()
+                      (let* ((fr (app-state-frame app))
+                             (buf (qt-current-buffer fr)))
+                        (and buf (hash-key? *terminal-widget-map* buf) #t))))
+              ;; Reset editor to a clean single-window state between tests.
+              ;; Clears key prefix state, collapses to one window, destroys terminals.
+              (cons 'test-reset!
+                    (lambda ()
+                      ;; Clear any pending prefix key (e.g. C-x)
+                      (set! (app-state-key-state app) (make-initial-key-state))
+                      ;; Collapse to single window
+                      (when (> (length (qt-frame-windows (app-state-frame app))) 1)
+                        (execute-command! app 'delete-other-windows))
+                      ;; Destroy all QTerminalWidget instances
+                      (let ((term-bufs (hash-keys *terminal-widget-map*)))
+                        (for-each
+                          (lambda (buf)
+                            (let ((term (hash-get *terminal-widget-map* buf)))
+                              (when term
+                                (with-catch (lambda (e) #f)
+                                  (lambda () (qt-terminal-destroy! term)))
+                                (hash-remove! *terminal-widget-map* buf))))
+                          term-bufs))
+                      'ok))))))
       ;; Tree-sitter debounced re-highlight — re-parse when buffer content changes.
       ;; Tracks last-known text length per buffer to detect modifications.
       (schedule-periodic! 'treesitter-reparse 150

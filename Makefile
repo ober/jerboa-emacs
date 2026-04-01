@@ -16,7 +16,8 @@ export CHEZ_QT_SHIM_DIR := .
         test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary binary-qt \
         test-pty test-emacs test-functional test-term-hang \
         docker-deps static-qt clean-docker check-root build-jemacs-qt-static \
-        stress-run stress-run-static stress-test stress-burn stress-burn-static
+        stress-run stress-run-static stress-test stress-burn stress-burn-static \
+        test-behavioral
 
 all: build test
 
@@ -494,6 +495,28 @@ stress-burn-static:
 	fi; \
 	echo "=== STRESS LOG (last 50 lines) ==="; \
 	tail -50 stress-test.log 2>/dev/null
+
+# Behavioral regression tests: headless jemacs-qt + deterministic REPL test driver
+# Tests key routing, window splitting, terminal focus, and related invariants.
+test-behavioral: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	@echo "=== Starting jemacs-qt behavioral tests ==="
+	@rm -f $(HOME)/.jerboa-repl-port
+	@xvfb-run -a env LD_PRELOAD=./qt_chez_shim.so \
+	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl 0 &
+	@for i in $$(seq 1 30); do \
+	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
+	  sleep 0.5; \
+	done
+	@if [ ! -f $(HOME)/.jerboa-repl-port ]; then \
+	  echo "ERROR: jemacs-qt failed to start (no REPL port file after 15s)"; exit 1; \
+	fi
+	@PORT=$$(grep -oP '\d+' $(HOME)/.jerboa-repl-port); \
+	echo "jemacs-qt running on REPL port $$PORT"; \
+	$(SCHEME) $(LIBDIRS) --script tests/test-behavioral.ss --port $$PORT; \
+	STATUS=$$?; \
+	pkill -f "qt-main.ss.*--repl" 2>/dev/null; true; \
+	echo "=== Behavioral tests done ==="; \
+	exit $$STATUS
 
 clean:
 	find lib -name '*.so' -delete 2>/dev/null; true
