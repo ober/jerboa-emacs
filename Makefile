@@ -256,7 +256,9 @@ PCRE2_SRC    ?= $(HOME)/mine/chez-pcre2
 SCI_SRC      ?= $(HOME)/mine/chez-scintilla
 QT_SRC       ?= $(CURDIR)/vendor/chez-qt
 QTSHIM_SRC   ?= $(HOME)/mine/gerbil-qt
-JSH_COREUTILS_LIB ?= $(JSH_SRC)/rust-coreutils/target/x86_64-unknown-linux-musl/release/libjsh_coreutils.a
+# Use stub if the Rust musl build hasn't been compiled yet (regular file check)
+_RUST_COREUTILS := $(JSH_SRC)/rust-coreutils/target/x86_64-unknown-linux-musl/release/libjsh_coreutils.a
+JSH_COREUTILS_LIB ?= $(shell test -f $(_RUST_COREUTILS) && echo $(_RUST_COREUTILS) || echo $(CURDIR)/vendor/libjsh_coreutils_stub.a)
 
 DEPS_IMAGE := jemacs-deps:$(ARCH)
 
@@ -320,6 +322,9 @@ build-jemacs-qt-static: check-root
 	  ar rcs /deps/gerbil-qt/vendor/libqt_shim.a \
 	    /deps/gerbil-qt/vendor/qt_shim_static.o; \
 	fi && \
+	cp -a /src/vendor/chez-qt/. /deps/chez-qt/ && \
+	find /deps/chez-qt -name '*.so' -delete && \
+	find /deps/chez-qt -name '*.wpo' -delete && \
 	/opt/chez/bin/scheme --libdirs /deps/chez-qt \
 	  --compile-imported-libraries --script /deps/chez-qt/compile-libs.ss && \
 	rm -f /deps/chez-qt/chez-qt/*.wpo && \

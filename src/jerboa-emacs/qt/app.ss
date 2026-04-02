@@ -1378,7 +1378,20 @@
         ;; Store installer so split-window can install on new editors
         (set! (app-state-key-handler app)
               (lambda (editor)
-                (qt-on-key-press-consuming! editor key-handler))))
+                (qt-on-key-press-consuming! editor key-handler)))
+
+        ;; Tell automation which widget to target for key events.
+        ;; When a terminal buffer is active, the QTerminalWidget is the visible
+        ;; focused widget; the QScintilla editor is hidden behind it in the
+        ;; QStackedWidget. Sending sendEvent to a non-current QStackedWidget
+        ;; page is unreliable — use the visible QTerminalWidget instead.
+        (automation-set-key-target-fn!
+          (lambda (fr)
+            (let* ((buf (qt-current-buffer fr))
+                   (term (and buf (hash-get *terminal-widget-map* buf))))
+              (if term
+                (qt-terminal-widget term)
+                (qt-current-editor fr))))))
 
       ;; ================================================================
       ;; Periodic tasks — registered with schedule-periodic!, driven

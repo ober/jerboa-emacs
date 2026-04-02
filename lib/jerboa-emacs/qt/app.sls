@@ -1806,7 +1806,15 @@
            (app-state-key-handler-set!
              app
              (lambda (editor)
-               (qt-on-key-press-consuming! editor key-handler))))
+               (qt-on-key-press-consuming! editor key-handler)))
+           (automation-set-key-target-fn!
+             (lambda (fr)
+               (let* ([buf (qt-current-buffer fr)]
+                      [term (and buf
+                                 (hash-get *terminal-widget-map* buf))])
+                 (if term
+                     (qt-terminal-widget term)
+                     (qt-current-editor fr))))))
          (schedule-periodic!
            'repl-poll
            50
