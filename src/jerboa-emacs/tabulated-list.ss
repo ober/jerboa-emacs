@@ -37,8 +37,7 @@
 ;;; Column definition
 (defstruct tl-column
   (name     ;; string: column header
-   width)   ;; integer: column width in characters
-  transparent: #t)
+   width))  ;; integer: column width in characters
 
 ;;; Per-buffer tabulated list state
 (defstruct tl-state
@@ -48,8 +47,7 @@
    sort-col   ;; integer or #f: column index to sort by
    sort-asc?  ;; boolean: ascending sort
    filter-str ;; string or #f: current filter
-   padding)   ;; integer: padding between columns
-  transparent: #t)
+   padding))  ;; integer: padding between columns
 
 ;; Maps buffer -> tl-state
 (def *tabulated-list-state* (make-hash-table))
@@ -59,13 +57,13 @@
 (def (tabulated-list-init! buf columns (padding 2))
   "Initialize tabulated list state for BUF with COLUMNS."
   (let ((state (make-tl-state
-                 columns: columns
-                 entries: '()
-                 filtered: '()
-                 sort-col: #f
-                 sort-asc?: #t
-                 filter-str: #f
-                 padding: padding)))
+                 columns  ;; columns
+                 '()      ;; entries
+                 '()      ;; filtered
+                 #f       ;; sort-col
+                 #t       ;; sort-asc?
+                 #f       ;; filter-str
+                 padding)))
     (hash-put! *tabulated-list-state* buf state)
     state))
 
