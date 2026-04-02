@@ -662,6 +662,7 @@
                            (when ts
                              (terminal-stop! ts)
                              (hash-remove! *terminal-state* buf)))
+                         (jsh-pty-stop! buf)
                          (let ([cs (hash-get *chat-state* buf)])
                            (when cs
                              (chat-stop! cs)
@@ -710,6 +711,7 @@
                  (when ts
                    (terminal-stop! ts)
                    (hash-remove! *terminal-state* buf)))
+               (jsh-pty-stop! buf)
                (let ([cs (hash-get *chat-state* buf)])
                  (when cs (chat-stop! cs) (hash-remove! *chat-state* buf)))
                (set! *buffer-recent*

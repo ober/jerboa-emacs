@@ -110,6 +110,7 @@
   qt-splitter-set-sizes! qt-splitter-size-at
   ;; Stacked widget
   qt-stacked-widget-add-widget! qt-stacked-widget-count qt-stacked-widget-create qt-stacked-widget-set-current-index!
+  qt-stacked-widget-set-current-widget!
   ;; Timer
   qt-timer-create qt-timer-set-single-shot! qt-timer-start! qt-timer-stop!
   ;; Toolbar
@@ -138,6 +139,7 @@
   QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD
   ;; QTerminalWidget (libvterm-based terminal emulator)
   qt-terminal-create qt-terminal-destroy! qt-terminal-spawn!
+  qt-terminal-connect-fd!
   qt-terminal-send-key-event! qt-terminal-send-input!
   qt-terminal-is-running? qt-terminal-interrupt!
   qt-terminal-set-font! qt-terminal-set-colors!
@@ -578,6 +580,11 @@
   "Spawn a shell/command in the terminal widget's PTY.
    CMD is a command string; empty string means default $SHELL."
   ((foreign-procedure "qt_terminal_spawn" (void* string) void) term cmd))
+
+(def (qt-terminal-connect-fd! term master-fd)
+  "Connect QTerminalWidget to an already-open PTY master fd.
+   No fork or exec — for in-process jsh integration."
+  ((foreign-procedure "qt_terminal_connect_fd" (void* int) void) term master-fd))
 
 (def (qt-terminal-send-key-event! term key mods text)
   "Send a synthetic key event to the terminal widget.

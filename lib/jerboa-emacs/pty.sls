@@ -6,6 +6,7 @@
 
 (library (jerboa-emacs pty)
   (export pty-spawn
+          pty-openpty
           pty-read
           pty-last-errno
           pty-write
@@ -65,10 +66,22 @@
     (foreign-procedure "pty_get_wait_status" () int))
   (define ffi-pty-last-errno
     (foreign-procedure "pty_last_errno" () int))
+  (define ffi-pty-openpty
+    (foreign-procedure "pty_openpty" (int int) int))
+  (define ffi-pty-get-open-slave-fd
+    (foreign-procedure "pty_get_open_slave_fd" () int))
 
   ;;; ========================================================================
   ;;; Scheme-level API
   ;;; ========================================================================
+
+  (def (pty-openpty rows cols)
+    "Create a PTY pair without spawning a child process.
+     Returns (values master-fd slave-fd) on success, (values #f #f) on failure."
+    (let ((master-fd (ffi-pty-openpty rows cols)))
+      (if (>= master-fd 0)
+        (values master-fd (ffi-pty-get-open-slave-fd))
+        (values #f #f))))
 
   (def (pty-spawn cmd env-alist rows cols)
     (let* ((env-str (env-alist->string env-alist))

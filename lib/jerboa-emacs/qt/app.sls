@@ -798,9 +798,9 @@
                                 (hash-put! terminal-key-installed tw #t))
                               (if (> count 1)
                                   (begin
-                                    (qt-stacked-widget-set-current-index!
+                                    (qt-stacked-widget-set-current-widget!
                                       container
-                                      (- count 1))
+                                      tw)
                                     (qt-widget-set-focus! tw))
                                   (qt-widget-set-focus! editor))))))]
                      [(image-buffer? buf)

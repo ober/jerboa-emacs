@@ -110,7 +110,8 @@
    qt-splitter-set-orientation! qt-splitter-set-sizes!
    qt-splitter-size-at qt-stacked-widget-add-widget!
    qt-stacked-widget-count qt-stacked-widget-create
-   qt-stacked-widget-set-current-index! qt-timer-create
+   qt-stacked-widget-set-current-index!
+   qt-stacked-widget-set-current-widget! qt-timer-create
    qt-timer-set-single-shot! qt-timer-start! qt-timer-stop!
    qt-toolbar-add-action! qt-toolbar-add-separator!
    qt-toolbar-create qt-toolbar-set-movable! qt-widget-close!
@@ -137,10 +138,11 @@
    QT_CURSOR_NEXT_CHAR QT_CURSOR_NEXT_WORD
    QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD
    qt-terminal-create qt-terminal-destroy! qt-terminal-spawn!
-   qt-terminal-send-key-event! qt-terminal-send-input!
-   qt-terminal-is-running? qt-terminal-interrupt!
-   qt-terminal-set-font! qt-terminal-set-colors!
-   qt-terminal-focus! qt-terminal-widget)
+   qt-terminal-connect-fd! qt-terminal-send-key-event!
+   qt-terminal-send-input! qt-terminal-is-running?
+   qt-terminal-interrupt! qt-terminal-set-font!
+   qt-terminal-set-colors! qt-terminal-focus!
+   qt-terminal-widget)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -580,6 +582,13 @@
        ((foreign-procedure "qt_terminal_spawn" (void* string) void)
          term
          cmd))
+  (def (qt-terminal-connect-fd! term master-fd)
+       "Connect QTerminalWidget to an already-open PTY master fd.\n   No fork or exec — for in-process jsh integration."
+       ((foreign-procedure "qt_terminal_connect_fd"
+          (void* int)
+          void)
+         term
+         master-fd))
   (def (qt-terminal-send-key-event! term key mods text)
        "Send a synthetic key event to the terminal widget.\n   KEY is the Qt key code, MODS the Qt modifier flags, TEXT the key text."
        ((foreign-procedure "qt_terminal_send_key_event"

@@ -27,7 +27,8 @@
         :jerboa-emacs/shell
         :jerboa-emacs/shell-history
         :jerboa-emacs/terminal
-        (only-in :jsh/environment env-get)
+        :jerboa-emacs/pty
+        (only-in :jsh/environment env-get env-set!)
         :jerboa-emacs/qt/buffer
         :jerboa-emacs/qt/window
         :jerboa-emacs/qt/echo
@@ -754,12 +755,81 @@ modified so the next save uses the new encoding."
 
 (def terminal-buffer-counter 0)
 
-;; *terminal-widget-map* is defined in commands-shell (which this module imports)
+;; *terminal-widget-map* and *jsh-pty-map* are defined in commands-shell
+;; (which this module imports)
+
+(def (jsh-pty-drain-channel! slave-fd ts)
+  "Block-poll the terminal's PTY channel until subprocess exits, writing output to slave-fd."
+  (let loop ()
+    (let ((msg (terminal-poll-output ts)))
+      (cond
+        ((not msg)
+         ;; No message yet — sleep 10ms and keep polling
+         (thread-sleep! 0.010)
+         (loop))
+        ((eq? (car msg) 'data)
+         (pty-write slave-fd (cdr msg))
+         (loop))
+        ;; 'done — subprocess exited; clean up PTY state
+        (else
+         (terminal-cleanup-pty! ts))))))
+
+(def (jsh-pty-loop! slave-fd ts)
+  "Run in-process jsh loop connected to slave-fd.
+   Reads lines from slave-fd (via PTY line discipline), executes via jsh,
+   writes output back to slave-fd so QTerminalWidget can render it."
+  (let* ((in-port (open-fd-input-port slave-fd (buffer-mode block) (native-transcoder))))
+    ;; Write initial prompt to slave (appears in QTerminalWidget via master fd)
+    (pty-write slave-fd (terminal-prompt ts))
+    (let loop ()
+      (let ((line (with-catch (lambda (e) #f)
+                    (lambda () (get-line in-port)))))
+        (cond
+          ((or (not line) (eof-object? line))
+           ;; EOF or error: slave closed, exit loop
+           (void))
+          (else
+           (let ((trimmed (safe-string-trim-both line)))
+             (cond
+               ((string=? trimmed "")
+                ;; Empty line: re-prompt
+                (pty-write slave-fd (terminal-prompt ts))
+                (loop))
+               ((string=? trimmed "exit")
+                ;; Exit: close slave fd (causes QTerminalWidget master to see EOF)
+                (pty-close! slave-fd #f))
+               (else
+                ;; Execute command via jsh
+                (let-values (((mode output new-cwd)
+                              (terminal-execute-async! trimmed ts 24 80)))
+                  (case mode
+                    ((sync)
+                     (when (and (string? output) (> (string-length output) 0))
+                       (pty-write slave-fd output)
+                       (unless (string-suffix? "\n" output)
+                         (pty-write slave-fd "\n")))
+                     (pty-write slave-fd (terminal-prompt ts))
+                     (loop))
+                    ((async)
+                     ;; Subprocess running: drain channel, writing output to slave fd
+                     (jsh-pty-drain-channel! slave-fd ts)
+                     (pty-write slave-fd (terminal-prompt ts))
+                     (loop))
+                    ((special)
+                     (cond
+                       ((eq? output 'clear)
+                        ;; Send VT100 clear sequence (ESC[2J ESC[H)
+                        (pty-write slave-fd "\x1b;[2J\x1b;[H"))
+                       ;; Other specials: ignore for now
+                       (else (void)))
+                     (pty-write slave-fd (terminal-prompt ts))
+                     (loop)))))))))))))
 
 (def (cmd-term app)
-  "Open a QTerminalWidget-backed terminal buffer.
-   Uses libvterm for proper VT100 terminal emulation with full color support."
-  (verbose-log! "cmd-term: begin (QTerminalWidget)")
+  "Open a QTerminalWidget-backed terminal with in-process jsh.
+   Creates a PTY pair: jsh runs in a Chez thread on the slave side,
+   QTerminalWidget reads from the master side for VT100 rendering."
+  (verbose-log! "cmd-term: begin (QTerminalWidget + in-process jsh)")
   (let* ((fr (app-state-frame app))
          (ed (current-qt-editor app))
          (name (begin
@@ -774,41 +844,59 @@ modified so the next save uses the new encoding."
     ;; Attach buffer to editor (sets up document etc.)
     (qt-buffer-attach! ed buf)
     (set! (qt-edit-window-buffer (qt-current-window fr)) buf)
-    ;; Create QTerminalWidget inside the QStackedWidget container
     (with-catch
       (lambda (e)
         (let ((msg (with-output-to-string (lambda () (display-exception e)))))
-          (jemacs-log! "cmd-term: QTerminalWidget failed: " msg)
-          (verbose-log! "cmd-term: QTerminalWidget FAILED: " msg)
+          (jemacs-log! "cmd-term: failed: " msg)
+          (verbose-log! "cmd-term: FAILED: " msg)
           (echo-error! (app-state-echo app)
             (string-append "Terminal failed: " msg))))
       (lambda ()
-        (let* ((win (qt-current-window fr))
-               (container (qt-edit-window-container win))
-               (term (qt-terminal-create container)))
-          ;; Set monospace font
-          (qt-terminal-set-font! term *default-font-family* *default-font-size*)
-          ;; Set colors: light gray on dark background
-          (qt-terminal-set-colors! term #xbbc2cf #x282c34)
-          ;; Add terminal widget to QStackedWidget and switch to it
-          (let ((idx (qt-stacked-widget-add-widget! container (qt-terminal-widget term))))
-            (qt-stacked-widget-set-current-index! container idx))
-          ;; Store widget mapping for key forwarding and buffer switching
-          (hash-put! *terminal-widget-map* buf term)
-          ;; Track which container this terminal lives in so the pre-destroy
-          ;; hook can detach it before the container is freed
-          (hash-put! *terminal-container-map* buf container)
-          ;; Install consuming key filter so all keys go through Scheme first
-          ;; (same pattern as image scroll widgets — without this, Qt sends keys
-          ;; directly to QTerminalWidget::keyPressEvent, bypassing jemacs entirely)
-          ((app-state-key-handler app) (qt-terminal-widget term))
-          ;; Spawn the user's shell
-          (qt-terminal-spawn! term "")
-          ;; Focus the terminal widget
-          (qt-terminal-focus! term)
-          (verbose-log! "cmd-term: QTerminalWidget spawned")
-          (echo-message! (app-state-echo app)
-            (string-append name " started")))))))
+        ;; Create PTY pair without forking: master → QTerminalWidget, slave → jsh
+        (let-values (((master-fd slave-fd) (pty-openpty 24 80)))
+          (unless master-fd
+            (error 'cmd-term "pty-openpty failed"))
+          (let* ((win (qt-current-window fr))
+                 (container (qt-edit-window-container win))
+                 (term (qt-terminal-create container)))
+            ;; Configure font and colors
+            (qt-terminal-set-font! term *default-font-family* *default-font-size*)
+            (qt-terminal-set-colors! term #xbbc2cf #x282c34)
+            ;; Add terminal widget to QStackedWidget and switch to it
+            (qt-stacked-widget-add-widget! container (qt-terminal-widget term))
+            (qt-stacked-widget-set-current-widget! container (qt-terminal-widget term))
+            ;; Connect QTerminalWidget to our PTY master fd (no fork/exec)
+            (qt-terminal-connect-fd! term master-fd)
+            ;; Store mappings for key forwarding, buffer switching, and cleanup
+            (hash-put! *terminal-widget-map* buf term)
+            (hash-put! *terminal-container-map* buf container)
+            ;; Install consuming key filter (same as before)
+            ((app-state-key-handler app) (qt-terminal-widget term))
+            ;; Focus the terminal widget
+            (qt-terminal-focus! term)
+            ;; Initialize in-process jsh environment
+            (let ((ts (terminal-start!)))
+              ;; Set TERM so jsh and subprocesses know terminal capabilities
+              (env-set! (terminal-state-env ts) "TERM" "xterm-256color")
+              ;; Store in jsh-pty-map for cleanup (not *terminal-state* so
+              ;; the old Scintilla poll timer ignores this buffer)
+              (hash-put! *jsh-pty-map* buf (cons ts slave-fd))
+              ;; Start jsh in a background thread reading from slave fd
+              (spawn (lambda () (jsh-pty-loop! slave-fd ts)))
+              (verbose-log! "cmd-term: jsh-pty started on slave-fd=" (number->string slave-fd))
+              (echo-message! (app-state-echo app) (string-append name " started")))))))))
+
+;; Close slave fd for a jsh-pty terminal (causes jsh thread to exit via EOF)
+(def (jsh-pty-stop! buf)
+  "Stop a jsh-pty terminal: close slave fd (jsh thread exits), clean up map."
+  (let ((entry (hash-get *jsh-pty-map* buf)))
+    (when entry
+      (let ((ts (car entry))
+            (slave-fd (cdr entry)))
+        (with-catch (lambda (e) (void))
+          (lambda () (pty-close! slave-fd #f)))
+        (terminal-stop! ts)
+        (hash-remove! *jsh-pty-map* buf)))))
 
 (def (cmd-terminal-send app)
   "Execute the current input line in the terminal via gsh.

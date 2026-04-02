@@ -2907,6 +2907,14 @@ extern "C" int qt_stacked_widget_count(qt_stacked_widget_t sw) {
     QT_RETURN(int, static_cast<QStackedWidget*>(sw)->count());
 }
 
+extern "C" void qt_stacked_widget_set_current_widget(qt_stacked_widget_t sw,
+                                                      qt_widget_t widget) {
+    QT_NULL_CHECK_VOID(sw);
+    QT_NULL_CHECK_VOID(widget);
+    QT_VOID(static_cast<QStackedWidget*>(sw)->setCurrentWidget(
+                static_cast<QWidget*>(widget)));
+}
+
 extern "C" void qt_stacked_widget_on_current_changed(qt_stacked_widget_t sw,
                                                       qt_callback_int callback,
                                                       long callback_id) {
@@ -7523,6 +7531,18 @@ public:
     // the widget is actually deleted (via deleteLater).
     void cleanupPtyPublic() { cleanupPty(); }
 
+    // Connect to an already-open PTY master fd (no fork, no exec).
+    // Used by the in-process jsh integration: Scheme creates the PTY pair,
+    // runs jsh in a thread on the slave side, and calls this to wire
+    // QTerminalWidget to the master side for VT100 rendering.
+    void connectMasterFd(int master_fd) {
+        if (m_running) return;
+        m_master_fd = master_fd;
+        m_child_pid = -1;   // no child process to wait on
+        m_running   = true;
+        m_timer->start(10);
+    }
+
     // ── libvterm initialization ────────────────────────────────────────────
 
     void initVterm() {
@@ -7965,6 +7985,15 @@ extern "C" void qt_terminal_spawn(qt_terminal_t term, const char* cmd) {
     std::string cmd_str(cmd ? cmd : "");
     QT_VOID(
         static_cast<QTerminalWidget*>(term)->spawnShell(cmd_str.c_str())
+    );
+}
+
+// Connect QTerminalWidget to an already-open PTY master fd.
+// No fork or exec — used for in-process jsh integration.
+extern "C" void qt_terminal_connect_fd(qt_terminal_t term, int master_fd) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->connectMasterFd(master_fd)
     );
 }
 

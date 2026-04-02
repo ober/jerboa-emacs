@@ -847,7 +847,7 @@
                               (if (> count 1)
                                 ;; Terminal widget lives in THIS container — show and focus it
                                 (begin
-                                  (qt-stacked-widget-set-current-index! container (- count 1))
+                                  (qt-stacked-widget-set-current-widget! container tw)
                                   (qt-widget-set-focus! tw))
                                 ;; Terminal widget is in another window (e.g. after C-x 2).
                                 ;; Just show the editor in this window — don't steal focus.

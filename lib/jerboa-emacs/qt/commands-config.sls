@@ -19,12 +19,13 @@
    *profiler-data* cmd-profiler-start cmd-profiler-stop
    cmd-show-tab-count cmd-show-trailing-whitespace-count
    *SCI_SETCODEPAGE* *SC_CP_UTF8* qt-insert-prompt!
-   terminal-buffer-counter cmd-term cmd-terminal-send
-   cmd-term-interrupt cmd-term-send-eof cmd-term-send-tab
-   cmd-multi-vterm *terminal-copy-mode* cmd-vterm-copy-mode
-   cmd-vterm-copy-done get-terminal-buffers
-   qt-switch-to-terminal! cmd-term-list cmd-term-next
-   cmd-term-prev cmd-ediff-files cmd-comment-dwim)
+   terminal-buffer-counter jsh-pty-drain-channel! jsh-pty-loop!
+   cmd-term jsh-pty-stop! cmd-terminal-send cmd-term-interrupt
+   cmd-term-send-eof cmd-term-send-tab cmd-multi-vterm
+   *terminal-copy-mode* cmd-vterm-copy-mode cmd-vterm-copy-done
+   get-terminal-buffers qt-switch-to-terminal! cmd-term-list
+   cmd-term-next cmd-term-prev cmd-ediff-files
+   cmd-comment-dwim)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -39,7 +40,8 @@
    (jerboa-emacs editor) (jerboa-emacs repl)
    (jerboa-emacs eshell) (jerboa-emacs gsh-eshell)
    (jerboa-emacs shell) (jerboa-emacs shell-history)
-   (jerboa-emacs terminal) (only (jsh environment) env-get)
+   (jerboa-emacs terminal) (jerboa-emacs pty)
+   (only (jsh environment) env-get env-set!)
    (jerboa-emacs qt buffer) (jerboa-emacs qt window)
    (jerboa-emacs qt echo) (jerboa-emacs qt highlight)
    (jerboa-emacs qt modeline) (jerboa-emacs qt commands-core)
@@ -900,9 +902,67 @@
                    (sci-send ed SCI_SETSTYLING text-len style))
                  (loop (cdr segs) (+ pos text-len)))))))
   (define terminal-buffer-counter--cell (vector 0))
+  (def (jsh-pty-drain-channel! slave-fd ts)
+       "Block-poll the terminal's PTY channel until subprocess exits, writing output to slave-fd."
+       (let loop ()
+         (let ([msg (terminal-poll-output ts)])
+           (cond
+             [(not msg) (thread-sleep! 0.01) (loop)]
+             [(eq? (car msg) 'data)
+              (pty-write slave-fd (cdr msg))
+              (loop)]
+             [else (terminal-cleanup-pty! ts)]))))
+  (def (jsh-pty-loop! slave-fd ts)
+       "Run in-process jsh loop connected to slave-fd.\n   Reads lines from slave-fd (via PTY line discipline), executes via jsh,\n   writes output back to slave-fd so QTerminalWidget can render it."
+       (let* ([in-port (open-fd-input-port
+                         slave-fd
+                         (buffer-mode block)
+                         (native-transcoder))])
+         (pty-write slave-fd (terminal-prompt ts))
+         (let loop ()
+           (let ([line (with-catch
+                         (lambda (e) #f)
+                         (lambda () (get-line in-port)))])
+             (cond
+               [(or (not line) (eof-object? line)) (void)]
+               [else
+                (let ([trimmed (safe-string-trim-both line)])
+                  (cond
+                    [(string=? trimmed "")
+                     (pty-write slave-fd (terminal-prompt ts))
+                     (loop)]
+                    [(string=? trimmed "exit") (pty-close! slave-fd #f)]
+                    [else
+                     (let-values ([(mode output new-cwd)
+                                   (terminal-execute-async!
+                                     trimmed
+                                     ts
+                                     24
+                                     80)])
+                       (case mode
+                         [(sync)
+                          (when (and (string? output)
+                                     (> (string-length output) 0))
+                            (pty-write slave-fd output)
+                            (unless (string-suffix? "\n" output)
+                              (pty-write slave-fd "\n")))
+                          (pty-write slave-fd (terminal-prompt ts))
+                          (loop)]
+                         [(async)
+                          (jsh-pty-drain-channel! slave-fd ts)
+                          (pty-write slave-fd (terminal-prompt ts))
+                          (loop)]
+                         [(special)
+                          (cond
+                            [(eq? output 'clear)
+                             (pty-write slave-fd "\x1B;[2J\x1B;[H")]
+                            [else (void)])
+                          (pty-write slave-fd (terminal-prompt ts))
+                          (loop)]))]))])))))
   (def (cmd-term app)
-       "Open a QTerminalWidget-backed terminal buffer.\n   Uses libvterm for proper VT100 terminal emulation with full color support."
-       (verbose-log! "cmd-term: begin (QTerminalWidget)")
+       "Open a QTerminalWidget-backed terminal with in-process jsh.\n   Creates a PTY pair: jsh runs in a Chez thread on the slave side,\n   QTerminalWidget reads from the master side for VT100 rendering."
+       (verbose-log!
+         "cmd-term: begin (QTerminalWidget + in-process jsh)")
        (let* ([fr (app-state-frame app)]
               [ed (current-qt-editor app)]
               [name (begin
@@ -922,33 +982,56 @@
            (lambda (e)
              (let ([msg (with-output-to-string
                           (lambda () (display-exception e)))])
-               (jemacs-log! "cmd-term: QTerminalWidget failed: " msg)
-               (verbose-log! "cmd-term: QTerminalWidget FAILED: " msg)
+               (jemacs-log! "cmd-term: failed: " msg)
+               (verbose-log! "cmd-term: FAILED: " msg)
                (echo-error!
                  (app-state-echo app)
                  (string-append "Terminal failed: " msg))))
            (lambda ()
-             (let* ([win (qt-current-window fr)]
-                    [container (qt-edit-window-container win)]
-                    [term (qt-terminal-create container)])
-               (qt-terminal-set-font!
-                 term
-                 *default-font-family*
-                 *default-font-size*)
-               (qt-terminal-set-colors! term 12305103 2632756)
-               (let ([idx (qt-stacked-widget-add-widget!
-                            container
-                            (qt-terminal-widget term))])
-                 (qt-stacked-widget-set-current-index! container idx))
-               (hash-put! *terminal-widget-map* buf term)
-               (hash-put! *terminal-container-map* buf container)
-               ((app-state-key-handler app) (qt-terminal-widget term))
-               (qt-terminal-spawn! term "")
-               (qt-terminal-focus! term)
-               (verbose-log! "cmd-term: QTerminalWidget spawned")
-               (echo-message!
-                 (app-state-echo app)
-                 (string-append name " started")))))))
+             (let-values ([(master-fd slave-fd) (pty-openpty 24 80)])
+               (unless master-fd (error 'cmd-term "pty-openpty failed"))
+               (let* ([win (qt-current-window fr)]
+                      [container (qt-edit-window-container win)]
+                      [term (qt-terminal-create container)])
+                 (qt-terminal-set-font!
+                   term
+                   *default-font-family*
+                   *default-font-size*)
+                 (qt-terminal-set-colors! term 12305103 2632756)
+                 (qt-stacked-widget-add-widget!
+                   container
+                   (qt-terminal-widget term))
+                 (qt-stacked-widget-set-current-widget!
+                   container
+                   (qt-terminal-widget term))
+                 (qt-terminal-connect-fd! term master-fd)
+                 (hash-put! *terminal-widget-map* buf term)
+                 (hash-put! *terminal-container-map* buf container)
+                 ((app-state-key-handler app) (qt-terminal-widget term))
+                 (qt-terminal-focus! term)
+                 (let ([ts (terminal-start!)])
+                   (env-set!
+                     (terminal-state-env ts)
+                     "TERM"
+                     "xterm-256color")
+                   (hash-put! *jsh-pty-map* buf (cons ts slave-fd))
+                   (spawn (lambda () (jsh-pty-loop! slave-fd ts)))
+                   (verbose-log!
+                     "cmd-term: jsh-pty started on slave-fd="
+                     (number->string slave-fd))
+                   (echo-message!
+                     (app-state-echo app)
+                     (string-append name " started")))))))))
+  (def (jsh-pty-stop! buf)
+       "Stop a jsh-pty terminal: close slave fd (jsh thread exits), clean up map."
+       (let ([entry (hash-get *jsh-pty-map* buf)])
+         (when entry
+           (let ([ts (car entry)] [slave-fd (cdr entry)])
+             (with-catch
+               (lambda (e) (void))
+               (lambda () (pty-close! slave-fd #f)))
+             (terminal-stop! ts)
+             (hash-remove! *jsh-pty-map* buf)))))
   (def (cmd-terminal-send app)
        "Execute the current input line in the terminal via gsh.\n   Builtins run synchronously, external commands run async via PTY.\n   When PTY is busy (e.g. sudo password prompt), sends newline to PTY."
        (let* ([buf (current-qt-buffer app)]

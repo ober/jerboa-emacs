@@ -261,6 +261,7 @@
     qt-stacked-widget-create qt-stacked-widget-add-widget!
     qt-stacked-widget-set-current-index! qt-stacked-widget-current-index
     qt-stacked-widget-count qt-on-stacked-current-changed!
+    qt-stacked-widget-set-current-widget!
 
     ;; Dock Widget
     qt-dock-widget-create qt-dock-widget-set-widget! qt-dock-widget-widget
@@ -1730,6 +1731,7 @@
   (define (qt-stacked-widget-set-current-index! sw idx) (ffi-qt-stacked-widget-set-current-index sw idx))
   (define (qt-stacked-widget-current-index sw) (ffi-qt-stacked-widget-current-index sw))
   (define (qt-stacked-widget-count sw) (ffi-qt-stacked-widget-count sw))
+  (define (qt-stacked-widget-set-current-widget! sw widget) (ffi-qt-stacked-widget-set-current-widget sw widget))
 
   (define (qt-on-stacked-current-changed! sw handler)
     (let ([id (register-int-handler! handler)])
