@@ -31,7 +31,6 @@
 
 (import
   (std sugar)
-  (std sort)
   (except (std srfi srfi-13) string-pad-right))
 
 ;;; Column definition
