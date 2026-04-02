@@ -70,12 +70,6 @@
 ;; that is about to be destroyed, so it can detach/destroy the terminal first.
 (def *terminal-container-map* (make-hash-table-eq))
 
-;; Map buffer → (terminal-state . slave-fd) for in-process jsh terminals.
-;; Used by the jsh-pty integration: jsh runs in a Chez thread connected to
-;; the slave fd, QTerminalWidget reads from the master fd for VT100 rendering.
-;; Distinct from *terminal-state* so the old Scintilla poll timer ignores these.
-(def *jsh-pty-map* (make-hash-table-eq))
-
 ;; --- Font size ---
 ;; Note: Font size state is now in face.ss (*default-font-size*)
 

@@ -624,8 +624,6 @@
                 (when ts
                   (terminal-stop! ts)
                   (hash-remove! *terminal-state* buf)))
-              ;; Clean up jsh-pty terminal if applicable
-              (jsh-pty-stop! buf)
               ;; Clean up chat state if applicable
               (let ((cs (hash-get *chat-state* buf)))
                 (when cs
@@ -669,7 +667,6 @@
           (when ss (shell-stop! ss) (hash-remove! *shell-state* buf)))
         (let ((ts (hash-get *terminal-state* buf)))
           (when ts (terminal-stop! ts) (hash-remove! *terminal-state* buf)))
-        (jsh-pty-stop! buf)
         (let ((cs (hash-get *chat-state* buf)))
           (when cs (chat-stop! cs) (hash-remove! *chat-state* buf)))
         (set! *buffer-recent*
