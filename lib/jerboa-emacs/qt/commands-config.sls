@@ -931,7 +931,10 @@
              (let* ([win (qt-current-window fr)]
                     [container (qt-edit-window-container win)]
                     [term (qt-terminal-create container)])
-               (qt-terminal-set-font! term "DejaVu Sans Mono" 11)
+               (qt-terminal-set-font!
+                 term
+                 *default-font-family*
+                 *default-font-size*)
                (qt-terminal-set-colors! term 12305103 2632756)
                (let ([idx (qt-stacked-widget-add-widget!
                             container

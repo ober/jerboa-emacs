@@ -787,7 +787,7 @@ modified so the next save uses the new encoding."
                (container (qt-edit-window-container win))
                (term (qt-terminal-create container)))
           ;; Set monospace font
-          (qt-terminal-set-font! term "DejaVu Sans Mono" 11)
+          (qt-terminal-set-font! term *default-font-family* *default-font-size*)
           ;; Set colors: light gray on dark background
           (qt-terminal-set-colors! term #xbbc2cf #x282c34)
           ;; Add terminal widget to QStackedWidget and switch to it
