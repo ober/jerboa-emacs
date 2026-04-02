@@ -252,12 +252,14 @@ COPY --from=pcre2-src . /deps/chez-pcre2
 COPY --from=sci-src . /deps/chez-scintilla
 COPY --from=qt-src . /deps/chez-qt
 COPY --from=qtshim-src . /deps/gerbil-qt
+# qt_chez_shim.c is maintained in vendor/ (not in chez-qt) — copy it in
+COPY vendor/qt_chez_shim.c vendor/qt_shim.h /deps/chez-qt/
 
 # Pre-compile all Chez library dependencies.
 # These .so files are baked into the image so jemacs builds only
 # need to compile jemacs-specific modules.
 RUN /opt/chez/bin/scheme \
-      --libdirs /deps/jerboa/lib:/deps/gherkin/src:/deps/jsh/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
+      --libdirs /deps/jerboa/lib:/deps/gherkin:/deps/jsh/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
       --compile-imported-libraries \
       --script /dev/stdin <<'EOF'
 #!chezscheme

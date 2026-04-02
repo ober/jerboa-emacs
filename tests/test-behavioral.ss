@@ -177,7 +177,7 @@
     (lambda (e)
       (set! *phase-fail* (+ *phase-fail* 1))
       (displayln "FAIL: "
-                 (with-output-to-string (lambda () (display-exception e)))))
+                 (with-output-to-string (lambda () (display-condition e)))))
     (lambda ()
       (thunk)
       (set! *phase-pass* (+ *phase-pass* 1))
@@ -1438,7 +1438,7 @@
 
   (with-catch
     (lambda (e)
-      (displayln "FATAL: " (with-output-to-string (lambda () (display-exception e))))
+      (displayln "FATAL: " (with-output-to-string (lambda () (display-condition e))))
       (disconnect!)
       (exit 1))
     (lambda ()

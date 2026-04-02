@@ -1,13 +1,14 @@
 SCHEME = scheme
 JERBOA    = $(HOME)/mine/jerboa
 JSH       = vendor/jerboa-shell/src
-GHERKIN   = $(HOME)/mine/gherkin/src
-LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
+GHERKIN   = vendor/gherkin-runtime
+CHEZ_QT   = vendor/chez-qt
+LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(CHEZ_QT)
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
-export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
-export CHEZ_QT_LIB := $(HOME)/mine/chez-qt
+export CHEZ_QT_LIB := $(CURDIR)
 export CHEZ_QT_SHIM_DIR := .
 
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
@@ -49,8 +50,9 @@ libqt_shim.so: vendor/qt_shim.cpp
 	  -o libqt_shim.so \
 	  -lQt6Core -lQt6Gui -lQt6Widgets -lqscintilla2_qt6 -lvterm -lutil
 
-qt_chez_shim.so: vendor/qt_chez_shim.c vendor/qt_shim.h
-	gcc -shared -fPIC -O2 -o qt_chez_shim.so vendor/qt_chez_shim.c -Ivendor -Wall
+qt_chez_shim.so: vendor/qt_chez_shim.c vendor/qt_shim.h libqt_shim.so
+	gcc -shared -fPIC -O2 -o qt_chez_shim.so vendor/qt_chez_shim.c -Ivendor -Wall \
+	  -DQT_SCINTILLA_AVAILABLE -L. -lqt_shim -Wl,-rpath,'$$ORIGIN'
 
 run-qt: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
 	LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script qt-main.ss
@@ -248,11 +250,11 @@ GID     := $(shell id -g)
 
 # Dependency source directories (all ~/mine/* local checkouts)
 JERBOA_SRC   ?= $(HOME)/mine/jerboa
-GHERKIN_SRC  ?= $(HOME)/mine/gherkin
+GHERKIN_SRC  ?= $(CURDIR)/vendor/gherkin-runtime
 JSH_SRC      ?= $(HOME)/mine/jerboa-shell
 PCRE2_SRC    ?= $(HOME)/mine/chez-pcre2
 SCI_SRC      ?= $(HOME)/mine/chez-scintilla
-QT_SRC       ?= $(HOME)/mine/chez-qt
+QT_SRC       ?= $(CURDIR)/vendor/chez-qt
 QTSHIM_SRC   ?= $(HOME)/mine/gerbil-qt
 JSH_COREUTILS_LIB ?= $(JSH_SRC)/rust-coreutils/target/x86_64-unknown-linux-musl/release/libjsh_coreutils.a
 
@@ -318,8 +320,6 @@ build-jemacs-qt-static: check-root
 	  ar rcs /deps/gerbil-qt/vendor/libqt_shim.a \
 	    /deps/gerbil-qt/vendor/qt_shim_static.o; \
 	fi && \
-	cp /src/vendor/chez-qt-ffi-static.ss /deps/chez-qt/chez-qt/ffi.ss && \
-	cp /src/vendor/chez-qt-qt.ss /deps/chez-qt/chez-qt/qt.ss && \
 	/opt/chez/bin/scheme --libdirs /deps/chez-qt \
 	  --compile-imported-libraries --script /deps/chez-qt/compile-libs.ss && \
 	rm -f /deps/chez-qt/chez-qt/*.wpo && \
@@ -367,7 +367,7 @@ build-jemacs-qt-static: check-root
 	CHEZ_DIR=$(CHEZ_MUSL_DIR) \
 	JERBOA_DIR=/deps/jerboa/lib \
 	JSH_DIR=/deps/jsh/src \
-	GHERKIN_DIR=/deps/gherkin/src \
+	GHERKIN_DIR=/src/vendor/gherkin-runtime \
 	CHEZ_PCRE2_DIR=/deps/chez-pcre2 \
 	CHEZ_SCINTILLA_DIR=/deps/chez-scintilla/src \
 	CHEZ_QT_DIR=/deps/chez-qt \
@@ -380,7 +380,7 @@ build-jemacs-qt-static: check-root
 	TREE_SITTER_QUERIES_OBJ=/tmp/jemacs-build/treesitter_queries.o \
 	PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig \
 	/opt/chez/bin/scheme \
-	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/deps/gherkin/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
+	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/src/vendor/gherkin-runtime:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
 	  --script build-binary-qt.ss
 
 linux-static-qt-docker:
@@ -444,8 +444,8 @@ stress-test:
 stress-burn: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
 	@echo "=== Starting jemacs-qt stress burn-in ==="
 	@rm -f $(HOME)/.jerboa-repl-port stress-test.log
-	@xvfb-run -a env LD_PRELOAD=./qt_chez_shim.so \
-	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl 0 &
+	@xvfb-run -a env CHEZ_QT_SHIM_DIR=$(CURDIR) \
+	  $(SCHEME) $(LIBDIRS) --script $(CURDIR)/qt-main.ss --repl 0 &
 	@for i in $$(seq 1 30); do \
 	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
 	  sleep 0.5; \
@@ -501,8 +501,8 @@ stress-burn-static:
 test-behavioral: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
 	@echo "=== Starting jemacs-qt behavioral tests ==="
 	@rm -f $(HOME)/.jerboa-repl-port
-	@xvfb-run -a env LD_PRELOAD=./qt_chez_shim.so \
-	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl 0 &
+	@xvfb-run -a env CHEZ_QT_SHIM_DIR=$(CURDIR) \
+	  $(SCHEME) $(LIBDIRS) --script $(CURDIR)/qt-main.ss --repl 0 &
 	@for i in $$(seq 1 30); do \
 	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
 	  sleep 0.5; \

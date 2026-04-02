@@ -37,7 +37,7 @@ Common pitfalls when step 3 fails:
 - **`library (std ...) not found`**: The Docker image has a stale jerboa `std/` tree. New modules must be added to the sync list in the `linux-static-qt-docker` Makefile target AND compiled into the WPO step in `build-binary-qt.ss`.
 - **`Dynamic loading not supported`**: Any `load-shared-object` call must be guarded with the `JEMACS_STATIC` env var check (the binary sets `JEMACS_STATIC=1`).
 - **`final:` or other unsupported keywords**: jerbuild doesn't support all Gerbil `defstruct` keywords — remove them.
-- **Dependencies not in gerbil-qt**: This project uses `~/mine/chez-qt`, NOT `~/mine/gerbil-qt`. The `CHEZ_QT_SHIM_DIR` must point to `.` (local project root) for runtime, and `vendor/` for the build header.
+- **Dependencies not in gerbil-qt**: This project uses `vendor/chez-qt` (vendored from `github.com/ober/chez-qt`), NOT `~/mine/gerbil-qt`. The `CHEZ_QT_SHIM_DIR` must point to `.` (local project root) for runtime, and `vendor/` for the build header.
 
 Do NOT rely on `make run-qt` (interpreted mode) as proof the binary works — the static binary has different constraints (no `load-shared-object`, all libraries must be compiled in).
 
