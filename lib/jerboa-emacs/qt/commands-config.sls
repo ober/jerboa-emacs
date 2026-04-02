@@ -19,13 +19,13 @@
    *profiler-data* cmd-profiler-start cmd-profiler-stop
    cmd-show-tab-count cmd-show-trailing-whitespace-count
    *SCI_SETCODEPAGE* *SC_CP_UTF8* qt-insert-prompt!
-   terminal-buffer-counter jsh-pty-drain-channel! jsh-pty-loop!
-   cmd-term jsh-pty-stop! cmd-terminal-send cmd-term-interrupt
-   cmd-term-send-eof cmd-term-send-tab cmd-multi-vterm
-   *terminal-copy-mode* cmd-vterm-copy-mode cmd-vterm-copy-done
-   get-terminal-buffers qt-switch-to-terminal! cmd-term-list
-   cmd-term-next cmd-term-prev cmd-ediff-files
-   cmd-comment-dwim)
+   terminal-buffer-counter pty-prompt jsh-pty-drain-channel!
+   jsh-pty-loop! cmd-term jsh-pty-stop! cmd-terminal-send
+   cmd-term-interrupt cmd-term-send-eof cmd-term-send-tab
+   cmd-multi-vterm *terminal-copy-mode* cmd-vterm-copy-mode
+   cmd-vterm-copy-done get-terminal-buffers
+   qt-switch-to-terminal! cmd-term-list cmd-term-next
+   cmd-term-prev cmd-ediff-files cmd-comment-dwim)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -902,6 +902,17 @@
                    (sci-send ed SCI_SETSTYLING text-len style))
                  (loop (cdr segs) (+ pos text-len)))))))
   (define terminal-buffer-counter--cell (vector 0))
+  (def (pty-prompt ts)
+       "Return the expanded PS1 prompt with ANSI colors intact but readline\n   non-printing markers (\\001/\\002) stripped. Safe to write directly to a PTY."
+       (let ([raw (terminal-prompt-raw ts)])
+         (let loop ([i 0] [acc '()])
+           (if (>= i (string-length raw))
+               (list->string (reverse acc))
+               (let ([ch (string-ref raw i)])
+                 (if (or (char=? ch (integer->char 1))
+                         (char=? ch (integer->char 2)))
+                     (loop (+ i 1) acc)
+                     (loop (+ i 1) (cons ch acc))))))))
   (def (jsh-pty-drain-channel! slave-fd ts)
        "Block-poll the terminal's PTY channel until subprocess exits, writing output to slave-fd."
        (let loop ()
@@ -918,7 +929,7 @@
                          slave-fd
                          (buffer-mode block)
                          (native-transcoder))])
-         (pty-write slave-fd (terminal-prompt ts))
+         (pty-write slave-fd (pty-prompt ts))
          (let loop ()
            (let ([line (with-catch
                          (lambda (e) #f)
@@ -929,7 +940,7 @@
                 (let ([trimmed (safe-string-trim-both line)])
                   (cond
                     [(string=? trimmed "")
-                     (pty-write slave-fd (terminal-prompt ts))
+                     (pty-write slave-fd (pty-prompt ts))
                      (loop)]
                     [(string=? trimmed "exit") (pty-close! slave-fd #f)]
                     [else
@@ -946,18 +957,18 @@
                             (pty-write slave-fd output)
                             (unless (string-suffix? "\n" output)
                               (pty-write slave-fd "\n")))
-                          (pty-write slave-fd (terminal-prompt ts))
+                          (pty-write slave-fd (pty-prompt ts))
                           (loop)]
                          [(async)
                           (jsh-pty-drain-channel! slave-fd ts)
-                          (pty-write slave-fd (terminal-prompt ts))
+                          (pty-write slave-fd (pty-prompt ts))
                           (loop)]
                          [(special)
                           (cond
                             [(eq? output 'clear)
                              (pty-write slave-fd "\x1B;[2J\x1B;[H")]
                             [else (void)])
-                          (pty-write slave-fd (terminal-prompt ts))
+                          (pty-write slave-fd (pty-prompt ts))
                           (loop)]))]))])))))
   (def (cmd-term app)
        "Open a QTerminalWidget-backed terminal with in-process jsh.\n   Creates a PTY pair: jsh runs in a Chez thread on the slave side,\n   QTerminalWidget reads from the master side for VT100 rendering."

@@ -758,6 +758,20 @@ modified so the next save uses the new encoding."
 ;; *terminal-widget-map* and *jsh-pty-map* are defined in commands-shell
 ;; (which this module imports)
 
+(def (pty-prompt ts)
+  "Return the expanded PS1 prompt with ANSI colors intact but readline
+   non-printing markers (\\001/\\002) stripped. Safe to write directly to a PTY."
+  (let ((raw (terminal-prompt-raw ts)))
+    (let loop ((i 0) (acc '()))
+      (if (>= i (string-length raw))
+        (list->string (reverse acc))
+        (let ((ch (string-ref raw i)))
+          ;; Strip RL_PROMPT_START_IGNORE (\\001) and RL_PROMPT_END_IGNORE (\\002)
+          (if (or (char=? ch (integer->char 1))
+                  (char=? ch (integer->char 2)))
+            (loop (+ i 1) acc)
+            (loop (+ i 1) (cons ch acc))))))))
+
 (def (jsh-pty-drain-channel! slave-fd ts)
   "Block-poll the terminal's PTY channel until subprocess exits, writing output to slave-fd."
   (let loop ()
@@ -780,7 +794,7 @@ modified so the next save uses the new encoding."
    writes output back to slave-fd so QTerminalWidget can render it."
   (let* ((in-port (open-fd-input-port slave-fd (buffer-mode block) (native-transcoder))))
     ;; Write initial prompt to slave (appears in QTerminalWidget via master fd)
-    (pty-write slave-fd (terminal-prompt ts))
+    (pty-write slave-fd (pty-prompt ts))
     (let loop ()
       (let ((line (with-catch (lambda (e) #f)
                     (lambda () (get-line in-port)))))
@@ -793,7 +807,7 @@ modified so the next save uses the new encoding."
              (cond
                ((string=? trimmed "")
                 ;; Empty line: re-prompt
-                (pty-write slave-fd (terminal-prompt ts))
+                (pty-write slave-fd (pty-prompt ts))
                 (loop))
                ((string=? trimmed "exit")
                 ;; Exit: close slave fd (causes QTerminalWidget master to see EOF)
@@ -808,12 +822,12 @@ modified so the next save uses the new encoding."
                        (pty-write slave-fd output)
                        (unless (string-suffix? "\n" output)
                          (pty-write slave-fd "\n")))
-                     (pty-write slave-fd (terminal-prompt ts))
+                     (pty-write slave-fd (pty-prompt ts))
                      (loop))
                     ((async)
                      ;; Subprocess running: drain channel, writing output to slave fd
                      (jsh-pty-drain-channel! slave-fd ts)
-                     (pty-write slave-fd (terminal-prompt ts))
+                     (pty-write slave-fd (pty-prompt ts))
                      (loop))
                     ((special)
                      (cond
@@ -822,7 +836,7 @@ modified so the next save uses the new encoding."
                         (pty-write slave-fd "\x1b;[2J\x1b;[H"))
                        ;; Other specials: ignore for now
                        (else (void)))
-                     (pty-write slave-fd (terminal-prompt ts))
+                     (pty-write slave-fd (pty-prompt ts))
                      (loop)))))))))))))
 
 (def (cmd-term app)
