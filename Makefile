@@ -3,9 +3,12 @@ JERBOA    = $(HOME)/mine/jerboa
 JSH       = vendor/jerboa-shell/src
 GHERKIN   = vendor/gherkin-runtime
 CHEZ_QT   = vendor/chez-qt
-LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(CHEZ_QT)
+JAWS      = vendor/jerboa-aws
+CSSL      = vendor/chez-ssl/src
+CHTTPS    = vendor/chez-https/src
+LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(CHEZ_QT):$(JAWS):$(CSSL):$(CHTTPS)
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
-export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:vendor/jerboa-shell:$(HOME)/mine/chez-ssl:$(LD_LIBRARY_PATH)
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
 export CHEZ_QT_LIB := $(CURDIR)
@@ -256,6 +259,9 @@ PCRE2_SRC    ?= $(HOME)/mine/chez-pcre2
 SCI_SRC      ?= $(HOME)/mine/chez-scintilla
 QT_SRC       ?= $(CURDIR)/vendor/chez-qt
 QTSHIM_SRC   ?= $(HOME)/mine/gerbil-qt
+JAWS_SRC     ?= $(HOME)/mine/jerboa-aws/lib
+CSSL_SRC     ?= $(HOME)/mine/chez-ssl
+CHTTPS_SRC   ?= $(HOME)/mine/chez-https
 # Use stub if the Rust musl build hasn't been compiled yet (regular file check)
 _RUST_COREUTILS := $(JSH_SRC)/rust-coreutils/target/x86_64-unknown-linux-musl/release/libjsh_coreutils.a
 JSH_COREUTILS_LIB ?= $(shell test -f $(_RUST_COREUTILS) && echo $(_RUST_COREUTILS) || echo $(CURDIR)/vendor/libjsh_coreutils_stub.a)
@@ -277,6 +283,9 @@ docker-deps:
 	  --build-context sci-src=$(SCI_SRC) \
 	  --build-context qt-src=$(QT_SRC) \
 	  --build-context qtshim-src=$(QTSHIM_SRC) \
+	  --build-context jaws-src=$(JAWS_SRC) \
+	  --build-context chez-ssl-src=$(CSSL_SRC) \
+	  --build-context chez-https-src=$(CHTTPS_SRC) \
 	  -t $(DEPS_IMAGE) \
 	  $(CURDIR)
 
@@ -370,6 +379,23 @@ build-jemacs-qt-static: check-root
 	    /src/support/treesitter_shim.c -Wall && \
 	gcc -c -O2 -o /tmp/jemacs-build/treesitter_queries.o \
 	    /src/support/treesitter_queries.c -Wall && \
+	cp /src/vendor/chez-ssl-static.sls /deps/chez-ssl/src/chez-ssl.sls && \
+	cp /src/vendor/jerboa-aws-crypto-native.sls /deps/jerboa-aws/jerboa-aws/crypto.sls && \
+	find /deps/chez-ssl -name '*.so' -delete && find /deps/chez-ssl -name '*.wpo' -delete && \
+	find /deps/chez-https -name '*.so' -delete && find /deps/chez-https -name '*.wpo' -delete && \
+	find /deps/jerboa-aws -name '*.so' -delete && find /deps/jerboa-aws -name '*.wpo' -delete && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme \
+	  --libdirs /deps/chez-ssl/src:/deps/jerboa/lib \
+	  --compile-imported-libraries -q --script /src/vendor/chez-ssl-compile-libs.ss && \
+	find /deps/chez-ssl -name '*.wpo' -delete && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme \
+	  --libdirs /deps/chez-https/src:/deps/chez-ssl/src \
+	  --compile-imported-libraries -q --script /src/vendor/chez-https-compile-libs.ss && \
+	find /deps/chez-https -name '*.wpo' -delete && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme \
+	  --libdirs /deps/jerboa-aws:/deps/chez-https/src:/deps/chez-ssl/src:/deps/jerboa/lib \
+	  --compile-imported-libraries -q --script /src/vendor/jerboa-aws-compile-libs.ss && \
+	find /deps/jerboa-aws -name '*.wpo' -delete && \
 	JEMACS_STATIC=1 \
 	CHEZ_DIR=$(CHEZ_MUSL_DIR) \
 	JERBOA_DIR=/deps/jerboa/lib \
@@ -380,6 +406,9 @@ build-jemacs-qt-static: check-root
 	CHEZ_QT_DIR=/deps/chez-qt \
 	CHEZ_QT_SHIM_DIR=/deps/gerbil-qt/vendor \
 	JSH_COREUTILS_LIB=/deps/jsh/libjsh_coreutils.a \
+	JAWS_DIR=/deps/jerboa-aws \
+	CHEZ_SSL_DIR=/deps/chez-ssl \
+	CHEZ_HTTPS_DIR=/deps/chez-https/src \
 	TREE_SITTER_INCLUDE=/opt/tree-sitter-include \
 	TREE_SITTER_LIB=/opt/tree-sitter-lib \
 	TREE_SITTER_GRAMMARS=/opt/tree-sitter-grammars \
@@ -387,7 +416,7 @@ build-jemacs-qt-static: check-root
 	TREE_SITTER_QUERIES_OBJ=/tmp/jemacs-build/treesitter_queries.o \
 	PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig \
 	/opt/chez/bin/scheme \
-	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/src/vendor/gherkin-runtime:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
+	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/src/vendor/gherkin-runtime:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt:/deps/jerboa-aws:/deps/chez-ssl/src:/deps/chez-https/src \
 	  --script build-binary-qt.ss
 
 linux-static-qt-docker:
@@ -400,8 +429,19 @@ linux-static-qt-docker:
 	  -v $(JERBOA)/lib/jerboa:/host-jerboa-core:ro \
 	  -v $(JSH_SRC)/src:/host-jsh-src:ro \
 	  -v $(JSH_COREUTILS_LIB):/host-jsh-coreutils.a:ro \
+	  -v $(JAWS_SRC):/host-jaws:ro \
+	  -v $(CSSL_SRC):/host-chez-ssl:ro \
+	  -v $(CHTTPS_SRC):/host-chez-https:ro \
 	  $(DEPS_IMAGE) \
-	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
+	  sh -c "apk add --no-cache libvterm-dev libvterm-static openssl-dev; \
+	         if [ ! -f /usr/lib/libssl.a ]; then \
+	           echo 'Building static OpenSSL (one-time)...' && \
+	           cd /tmp && wget -q https://www.openssl.org/source/openssl-3.3.2.tar.gz && \
+	           tar xf openssl-3.3.2.tar.gz && cd openssl-3.3.2 && \
+	           ./Configure linux-x86_64 no-shared no-tests no-apps -O2 --prefix=/usr && \
+	           make -j$(nproc) && cp libssl.a libcrypto.a /usr/lib/ && \
+	           cd / && rm -rf /tmp/openssl-3.3.2*; \
+	         fi; \
 	         cp /host-jsh-coreutils.a /deps/jsh/libjsh_coreutils.a; \
 	         cp -a /host-jsh-src/. /deps/jsh/src/; \
 	         echo 'SYNC: bulk-copying host jerboa std/ and jerboa/ into container...'; \
@@ -415,6 +455,11 @@ linux-static-qt-docker:
 	           -q --script /tmp/compile-jerboa-core.ss && \
 	         rm -f /deps/jerboa/lib/jerboa/*.wpo && \
 	         echo 'COMPILED: jerboa core + prelude'; \
+	         mkdir -p /deps/jerboa-aws /deps/chez-ssl/src /deps/chez-https/src && \
+	         cp -a /host-jaws/. /deps/jerboa-aws/ && \
+	         cp -a /host-chez-ssl/. /deps/chez-ssl/ && \
+	         cp -a /host-chez-https/. /deps/chez-https/ && \
+	         echo 'SYNC: jerboa-aws, chez-ssl, chez-https copied'; \
 	         chmod 755 /root && \
 	         chown -R $(UID):$(GID) /opt/ /deps && \
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \

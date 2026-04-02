@@ -4,6 +4,8 @@
 ;;; Emacs-like tabulated-list mode: browse EC2 instances across regions,
 ;;; filter/sort, and SSH into them via a terminal buffer.
 ;;;
+;;; Uses the native jerboa-aws library for HTTPS API calls — no aws CLI needed.
+;;;
 ;;; M-x aws-ec2-ssh     — Open the instance list
 ;;;
 ;;; Key bindings (in *AWS EC2 SSH* buffer):
@@ -34,7 +36,6 @@
   :std/srfi/13
   (only-in :std/misc/string string-empty?)
   (only-in :std/misc/ports read-file-lines)
-  :std/text/json
   :chez-scintilla/constants
   :jerboa-emacs/core
   :jerboa-emacs/buffer
@@ -46,7 +47,9 @@
   :jerboa-emacs/qt/window
   :jerboa-emacs/qt/sci-shim
   :jerboa-emacs/qt/echo
-  :jerboa-emacs/qt/commands-core)
+  :jerboa-emacs/qt/commands-core
+  (jerboa-aws ec2 api)
+  (jerboa-aws ec2 instances))
 
 ;;; ============================================================================
 ;;; Configuration
@@ -67,7 +70,7 @@
 ;;; ============================================================================
 
 (def *aws-region-domain-map* '())  ;; alist: region -> domain
-(def *aws-cache* #f)               ;; cached instance list
+(def *aws-cache* #f)               ;; cached instance list (list of (region . native-hash))
 (def *aws-cache-expiry* 0)         ;; epoch seconds
 
 ;; Columns for the tabulated list
@@ -134,63 +137,74 @@
   (set! *aws-cache-expiry* 0))
 
 ;;; ============================================================================
-;;; AWS CLI — fetch instances from one region
+;;; Native EC2 response parsing
+;;; Instance data: (cons region native-chez-hashtable)
+;;; Keys in native hashtable are symbols matching EC2 XML element names.
 ;;; ============================================================================
 
-(def (aws-fetch-region-cmd region)
-  "Build aws CLI command string for a region."
-  (string-append "aws ec2 describe-instances --region " region
-                 " --output json --no-cli-pager 2>/dev/null"))
+(def (native-ht-ref ht key default)
+  "Hashtable-ref for native Chez symbol-keyed hashtables from jerboa-aws."
+  (if (hashtable? ht)
+    (hashtable-ref ht key default)
+    default))
 
-(def (aws-parse-instances json-str region)
-  "Parse AWS JSON output into a list of instance alists.
-   Each instance gets an extra '_region' key."
+(def (native-instance-state inst)
+  "Get state name (running, stopped, etc.) from native instance hash."
+  (let ((state (native-ht-ref inst 'instanceState #f)))
+    (if state
+      (or (native-ht-ref state 'name #f) "-")
+      "-")))
+
+(def (native-instance-name inst)
+  "Get Name tag value from native instance hash."
+  (let ((tags (native-ht-ref inst 'tagSet '())))
+    (if (list? tags)
+      (let loop ((ts tags))
+        (if (null? ts) ""
+          (let ((tag (car ts)))
+            (if (and (hashtable? tag)
+                     (equal? (native-ht-ref tag 'key #f) "Name"))
+              (or (native-ht-ref tag 'value #f) "")
+              (loop (cdr ts))))))
+      "")))
+
+(def (native-parse-instances response region)
+  "Parse describe-instances response hash into list of (cons region instance-hash).
+   Only returns running instances."
   (with-catch
     (lambda (e) '())
     (lambda ()
-      (let* ((data (string->json-object json-str))
-             (reservations (or (hash-ref data "Reservations" #f) '())))
+      (let ((reservations (or (native-ht-ref response 'reservationSet #f) '())))
         (apply append
-          (map (lambda (r)
-                 (let ((instances (or (hash-ref r "Instances" #f) '())))
-                   (map (lambda (inst)
-                          (hash-put! inst "_region" region)
-                          inst)
-                        instances)))
-               reservations))))))
+          (map (lambda (reservation)
+                 (if (hashtable? reservation)
+                   (let ((instances (or (native-ht-ref reservation 'instancesSet #f) '())))
+                     (if (list? instances)
+                       (filter-map
+                         (lambda (inst)
+                           (and (hashtable? inst)
+                                (string=? (native-instance-state inst) "running")
+                                (cons region inst)))
+                         instances)
+                       '()))
+                   '()))
+               (if (list? reservations) reservations '())))))))
 
-(def (aws-instance-name inst)
-  "Get the Name tag from an instance hash, or empty string."
-  (let ((tags (or (hash-ref inst "Tags" #f) '())))
-    (let loop ((ts tags))
-      (if (null? ts) ""
-        (let ((tag (car ts)))
-          (if (and (hash-ref tag "Key" #f)
-                   (string=? (hash-ref tag "Key" "") "Name"))
-            (or (hash-ref tag "Value" #f) "")
-            (loop (cdr ts))))))))
-
-(def (aws-instance-state inst)
-  "Get the state name (running, stopped, etc.)."
-  (let ((state (hash-ref inst "State" #f)))
-    (if state (or (hash-ref state "Name" #f) "-") "-")))
-
-(def (aws-instance->entry inst)
-  "Convert an AWS instance hash to a tabulated-list entry: (cons id (vector ...))."
-  (let* ((id (or (hash-ref inst "InstanceId" #f) ""))
-         (name (aws-instance-name inst))
-         (state (aws-instance-state inst))
-         (type (or (hash-ref inst "InstanceType" #f) "-"))
-         (ip (or (hash-ref inst "PrivateIpAddress" #f) "-"))
-         (region (or (hash-ref inst "_region" #f) "-"))
-         (domain (aws-get-domain region))
+(def (native-instance->entry region inst)
+  "Convert native instance hash + region to a tabulated-list entry."
+  (let* ((id      (or (native-ht-ref inst 'instanceId #f) ""))
+         (name    (native-instance-name inst))
+         (state   (native-instance-state inst))
+         (type    (or (native-ht-ref inst 'instanceType #f) "-"))
+         (ip      (or (native-ht-ref inst 'privateIpAddress #f) "-"))
+         (domain  (aws-get-domain region))
          (ssh-target (if (and (> (string-length name) 0) domain)
                        (string-append name "." domain)
                        "-")))
     (cons id (vector name state type ip region ssh-target))))
 
 ;;; ============================================================================
-;;; Multi-region async fetch
+;;; Multi-region async fetch via native jerboa-aws
 ;;; ============================================================================
 
 (def *aws-pending-regions* 0)
@@ -199,8 +213,8 @@
 (def *aws-pending-callback* #f)
 
 (def (aws-fetch-all-regions! callback)
-  "Fetch instances from all configured regions asynchronously.
-   Calls CALLBACK with the merged instance list when all regions complete."
+  "Fetch instances from all configured regions asynchronously via native API.
+   Spawns one worker thread per region; results are merged on the UI thread."
   (let ((regions *aws-ec2-ssh-common-regions*))
     (set! *aws-pending-regions* (length regions))
     (set! *aws-pending-instances* '())
@@ -208,29 +222,29 @@
     (set! *aws-pending-callback* callback)
     (for-each
       (lambda (region)
-        (async-process!
-          (aws-fetch-region-cmd region)
-          callback:
-            (lambda (output)
-              (let ((instances (aws-parse-instances output region)))
-                ;; Filter to running only
-                (let ((running (filter
-                                 (lambda (inst)
-                                   (string=? (aws-instance-state inst) "running"))
-                                 instances)))
-                  (set! *aws-pending-instances*
-                    (append *aws-pending-instances* running))))
-              (set! *aws-pending-regions* (- *aws-pending-regions* 1))
-              (aws-check-fetch-complete!))
-          on-error:
-            (lambda (e)
-              (set! *aws-pending-errors* (+ *aws-pending-errors* 1))
-              (set! *aws-pending-regions* (- *aws-pending-regions* 1))
-              (aws-check-fetch-complete!))))
-      regions)))
+        (spawn-worker 'aws-fetch-region
+          (lambda ()
+            (with-catch
+              (lambda (e)
+                (ui-queue-push!
+                  (lambda ()
+                    (set! *aws-pending-errors* (+ *aws-pending-errors* 1))
+                    (set! *aws-pending-regions* (- *aws-pending-regions* 1))
+                    (aws-check-fetch-complete!))))
+              (lambda ()
+                (let* ((client (EC2Client 'region: region))
+                       (result (describe-instances client))
+                       (running (native-parse-instances result region)))
+                  (ui-queue-push!
+                    (lambda ()
+                      (set! *aws-pending-instances*
+                        (append *aws-pending-instances* running))
+                      (set! *aws-pending-regions* (- *aws-pending-regions* 1))
+                      (aws-check-fetch-complete!))))))))
+      regions))))
 
 (def (aws-check-fetch-complete!)
-  "Check if all region fetches are done."
+  "Check if all region fetches are done; fire callback when complete."
   (when (= *aws-pending-regions* 0)
     (let ((instances *aws-pending-instances*)
           (cb *aws-pending-callback*))
@@ -243,9 +257,7 @@
 
 (def (aws-ec2-ssh-setup-mode!)
   "Register the AWS EC2 SSH mode keymap and buffer-name mapping."
-  ;; Register buffer name -> mode mapping
   (hash-put! *buffer-name-mode-map* "*AWS EC2 SSH*" 'aws-ec2-ssh)
-  ;; Create and register mode keymap
   (let ((km (make-keymap)))
     (for-each (lambda (p) (keymap-bind! km (car p) (cdr p)))
       '(("n"   . next-line)
@@ -265,29 +277,28 @@
 ;;; ============================================================================
 
 (def (aws-refresh-buffer! app instances)
-  "Populate the *AWS EC2 SSH* buffer with instance data."
+  "Populate the *AWS EC2 SSH* buffer with instance data.
+   INSTANCES is a list of (cons region native-hash)."
   (let* ((buf (buffer-by-name "*AWS EC2 SSH*"))
          (ed (current-qt-editor app))
          (fr (app-state-frame app)))
     (when buf
-      ;; Convert instances to tabulated-list entries, sorted by name
-      (let* ((entries (map aws-instance->entry instances))
+      (let* ((entries (map (lambda (pair)
+                             (native-instance->entry (car pair) (cdr pair)))
+                           instances))
              (sorted (sort (lambda (a b)
                              (string<? (vector-ref (cdr a) 0)
                                        (vector-ref (cdr b) 0)))
                            entries)))
         (tabulated-list-set-entries! buf sorted)
-        ;; Render
         (let ((text (tabulated-list-refresh! buf)))
           (when text
             (sci-send ed SCI_SETREADONLY 0)
             (qt-plain-text-edit-set-text! ed text)
             (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
             (sci-send ed SCI_SETREADONLY 1)
-            ;; Position cursor on first data line
             (let ((pos (sci-send ed SCI_POSITIONFROMLINE tabulated-list-header-lines 0)))
               (qt-plain-text-edit-set-cursor-position! ed pos))
-            ;; Brighter caret line for row selection
             (sci-send ed SCI_SETCARETLINEBACK (rgb->sci #x2a #x2a #x4a))))))))
 
 (def (aws-re-render! app)
@@ -302,7 +313,6 @@
           (qt-plain-text-edit-set-text! ed text)
           (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
           (sci-send ed SCI_SETREADONLY 1)
-          ;; Restore cursor, clamped to valid range
           (let* ((count (tabulated-list-entry-count buf))
                  (max-line (+ tabulated-list-header-lines (max 0 (- count 1))))
                  (target (min line max-line))
@@ -414,10 +424,8 @@ Opens a terminal buffer and types the SSH command, then executes it."
                     (term-buf (current-qt-buffer app))
                     (ts (and term-buf (hash-get *terminal-state* term-buf))))
                (when ts
-                 ;; Insert the SSH command text at current position (end of prompt)
                  (qt-plain-text-edit-move-cursor! term-ed QT_CURSOR_END)
                  (qt-plain-text-edit-insert-text! term-ed ssh-cmd)
-                 ;; Execute it by dispatching terminal-send
                  (execute-command! app 'terminal-send)
                  (echo-message! echo (string-append "SSH: " ssh-target)))))))))))
 

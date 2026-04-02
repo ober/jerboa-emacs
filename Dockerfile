@@ -53,6 +53,19 @@ RUN cd /tmp && \
     make -j$(nproc) && make install && \
     cd / && rm -rf /tmp/xcb-util-0.4.1*
 
+# Build static OpenSSL (needed by chez-ssl for AWS API calls)
+# Alpine's openssl-dev only ships shared libs; we need .a files for the static binary.
+RUN apk add --no-cache openssl-dev perl && \
+    OPENSSL_VER=$(apk info openssl 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "3.3.2") && \
+    wget -q https://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz || \
+    wget -q https://www.openssl.org/source/openssl-3.3.2.tar.gz && \
+    tar xf openssl-*.tar.gz && \
+    cd openssl-*/ && \
+    ./Configure linux-x86_64 no-shared no-tests no-apps -O2 --prefix=/usr && \
+    make -j$(nproc) && \
+    cp libssl.a libcrypto.a /usr/lib/ && \
+    cd / && rm -rf openssl-*/  openssl-*.tar.gz
+
 # ── Phase 2: Build Qt6 qtbase static ────────────────────────────────────
 ARG QT6_VERSION=6.8.3
 RUN wget -q https://download.qt.io/official_releases/qt/6.8/${QT6_VERSION}/submodules/qtbase-everywhere-src-${QT6_VERSION}.tar.xz && \
