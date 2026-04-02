@@ -5,10 +5,10 @@
 (library (jerboa-emacs qt commands)
   (export qt-register-all-commands! dired-open-directory!
    qt-open-image-inline! *qt-app-ptr* *terminal-widget-map*
-   qt-kill-ring-push! *isearch-active* isearch-handle-key!
-   *qreplace-active* qreplace-handle-key! recent-files-add!
-   recent-files-load! bookmarks-load! session-save!
-   session-restore-files *tab-bar-visible*
+   *terminal-container-map* qt-kill-ring-push! *isearch-active*
+   isearch-handle-key! *qreplace-active* qreplace-handle-key!
+   recent-files-add! recent-files-load! bookmarks-load!
+   session-save! session-restore-files *tab-bar-visible*
    *auto-revert-tail-buffers* *file-mtimes* file-mtime-record!
    file-mtime-changed? *eldoc-mode* eldoc-display!
    *current-theme* *themes* theme-stylesheet load-theme!

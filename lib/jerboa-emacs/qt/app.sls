@@ -1553,8 +1553,15 @@
                                               [qt-term (and qt-buf
                                                             (hash-get
                                                               *terminal-widget-map*
-                                                              qt-buf))])
+                                                              qt-buf))]
+                                              [key-src-widget (qt-last-key-widget)]
+                                              [key-from-terminal? (and qt-term
+                                                                       (equal?
+                                                                         key-src-widget
+                                                                         (qt-terminal-widget
+                                                                           qt-term)))])
                                          (if (and qt-term
+                                                  key-from-terminal?
                                                   (null?
                                                     (key-state-prefix-keys
                                                       (app-state-key-state
@@ -1814,7 +1821,25 @@
                                  (hash-get *terminal-widget-map* buf))])
                  (if term
                      (qt-terminal-widget term)
-                     (qt-current-editor fr))))))
+                     (qt-current-editor fr)))))
+           (qt-window-set-pre-container-destroy-fn!
+             (lambda (container)
+               (let ([bufs-to-remove '()])
+                 (hash-for-each
+                   (lambda (buf stored-container)
+                     (when (equal? stored-container container)
+                       (let ([term (hash-get *terminal-widget-map* buf)])
+                         (when term
+                           (with-catch
+                             (lambda (e) #f)
+                             (lambda () (qt-terminal-destroy! term)))))
+                       (set! bufs-to-remove (cons buf bufs-to-remove))))
+                   *terminal-container-map*)
+                 (for-each
+                   (lambda (buf)
+                     (hash-remove! *terminal-widget-map* buf)
+                     (hash-remove! *terminal-container-map* buf))
+                   bufs-to-remove)))))
          (schedule-periodic!
            'repl-poll
            50
@@ -2521,16 +2546,25 @@
                   'test-terminal-running?
                   (lambda ()
                     (let* ([fr (app-state-frame app)]
-                           [buf (qt-current-buffer fr)])
-                      (and buf (hash-key? *terminal-widget-map* buf) #t))))
+                           [win (qt-current-window fr)]
+                           [buf (qt-edit-window-buffer win)]
+                           [term (and buf
+                                      (hash-get
+                                        *terminal-widget-map*
+                                        buf))])
+                      (and term
+                           (let* ([container (qt-edit-window-container
+                                               win)]
+                                  [count (qt-stacked-widget-count
+                                           container)])
+                             (and (> count 1)
+                                  (> (qt-stacked-widget-current-index
+                                       container)
+                                     0)))))))
                 (cons
                   'test-reset!
                   (lambda ()
                     (app-state-key-state-set! app (make-initial-key-state))
-                    (when (> (length
-                               (qt-frame-windows (app-state-frame app)))
-                             1)
-                      (execute-command! app 'delete-other-windows))
                     (let ([term-bufs (hash-keys *terminal-widget-map*)])
                       (for-each
                         (lambda (buf)
@@ -2541,8 +2575,15 @@
                               (with-catch
                                 (lambda (e) #f)
                                 (lambda () (qt-terminal-destroy! term)))
-                              (hash-remove! *terminal-widget-map* buf))))
+                              (hash-remove! *terminal-widget-map* buf)
+                              (hash-remove!
+                                *terminal-container-map*
+                                buf))))
                         term-bufs))
+                    (when (> (length
+                               (qt-frame-windows (app-state-frame app)))
+                             1)
+                      (execute-command! app 'delete-other-windows))
                     'ok))
                 (cons
                   'test-clear-buffer!

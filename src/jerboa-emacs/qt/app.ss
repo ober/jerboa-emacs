@@ -1255,9 +1255,20 @@
                   ;; QTerminalWidget key forwarding: send non-command keys directly
                   ;; to the terminal widget, bypassing chord detection and self-insert.
                   ;; C-x prefix and M-x pass through to jemacs keymap.
+                  ;;
+                  ;; FOCUS GUARD: only forward to the terminal if the key event came
+                  ;; FROM the QTerminalWidget itself. If the user clicked a different
+                  ;; window (so the key came from that window's QScintilla), we must
+                  ;; NOT forward to the terminal even if qt-current-buffer is still
+                  ;; a terminal buffer (Chez state may lag the Qt focus change).
                   (let* ((qt-buf (qt-current-buffer (app-state-frame app)))
-                         (qt-term (and qt-buf (hash-get *terminal-widget-map* qt-buf))))
+                         (qt-term (and qt-buf (hash-get *terminal-widget-map* qt-buf)))
+                         (key-src-widget (qt-last-key-widget))
+                         (key-from-terminal? (and qt-term
+                                                   (equal? key-src-widget
+                                                           (qt-terminal-widget qt-term)))))
                     (if (and qt-term
+                             key-from-terminal?  ;; key must come FROM this terminal widget
                              ;; Not in a prefix key state (e.g. after C-x)
                              (null? (key-state-prefix-keys (app-state-key-state app)))
                              ;; Allow C-x to pass through to jemacs
@@ -1391,7 +1402,30 @@
                    (term (and buf (hash-get *terminal-widget-map* buf))))
               (if term
                 (qt-terminal-widget term)
-                (qt-current-editor fr))))))
+                (qt-current-editor fr)))))
+
+        ;; Install pre-container-destroy hook so that when any window container
+        ;; (QStackedWidget) is about to be destroyed (by delete-other-windows,
+        ;; C-x 0, kill-terminal-buffer, etc.), any terminal living inside it
+        ;; is detached and destroyed first — preventing the double-free crash
+        ;; that occurs when Qt auto-deletes the terminal as a child.
+        (qt-window-set-pre-container-destroy-fn!
+          (lambda (container)
+            (let ((bufs-to-remove '()))
+              (hash-for-each
+                (lambda (buf stored-container)
+                  (when (equal? stored-container container)
+                    (let ((term (hash-get *terminal-widget-map* buf)))
+                      (when term
+                        (with-catch (lambda (e) #f)
+                          (lambda () (qt-terminal-destroy! term)))))
+                    (set! bufs-to-remove (cons buf bufs-to-remove))))
+                *terminal-container-map*)
+              (for-each
+                (lambda (buf)
+                  (hash-remove! *terminal-widget-map* buf)
+                  (hash-remove! *terminal-container-map* buf))
+                bufs-to-remove)))))
 
       ;; ================================================================
       ;; Periodic tasks — registered with schedule-periodic!, driven
@@ -1925,20 +1959,31 @@
                       (not (null? (key-state-prefix-keys (app-state-key-state app))))))
               ;; Is the current buffer a QTerminalWidget terminal?
               (cons 'test-terminal-running?
+                    ;; True only if the current window's QStackedWidget is actually
+                    ;; showing the QTerminalWidget page (not just the buffer being a
+                    ;; terminal buffer — after C-x 2, new window shows editor page).
                     (lambda ()
-                      (let* ((fr (app-state-frame app))
-                             (buf (qt-current-buffer fr)))
-                        (and buf (hash-key? *terminal-widget-map* buf) #t))))
+                      (let* ((fr  (app-state-frame app))
+                             (win (qt-current-window fr))
+                             (buf (qt-edit-window-buffer win))
+                             (term (and buf (hash-get *terminal-widget-map* buf))))
+                        (and term
+                             (let* ((container (qt-edit-window-container win))
+                                    (count (qt-stacked-widget-count container)))
+                               ;; Terminal widget was added as the last page (index count-1).
+                               ;; If count > 1 and current index > 0, terminal is visible.
+                               (and (> count 1)
+                                    (> (qt-stacked-widget-current-index container) 0)))))))
               ;; Reset editor to a clean single-window state between tests.
               ;; Clears key prefix state, collapses to one window, destroys terminals.
               (cons 'test-reset!
                     (lambda ()
                       ;; Clear any pending prefix key (e.g. C-x)
                       (set! (app-state-key-state app) (make-initial-key-state))
-                      ;; Collapse to single window
-                      (when (> (length (qt-frame-windows (app-state-frame app))) 1)
-                        (execute-command! app 'delete-other-windows))
-                      ;; Destroy all QTerminalWidget instances
+                      ;; Destroy terminals BEFORE delete-other-windows: qt-terminal-destroy!
+                      ;; detaches the widget from its parent QStackedWidget, preventing the
+                      ;; double-free that occurs when delete-other-windows destroys the
+                      ;; container and Qt auto-deletes its children.
                       (let ((term-bufs (hash-keys *terminal-widget-map*)))
                         (for-each
                           (lambda (buf)
@@ -1946,8 +1991,12 @@
                               (when term
                                 (with-catch (lambda (e) #f)
                                   (lambda () (qt-terminal-destroy! term)))
-                                (hash-remove! *terminal-widget-map* buf))))
+                                (hash-remove! *terminal-widget-map* buf)
+                                (hash-remove! *terminal-container-map* buf))))
                           term-bufs))
+                      ;; Collapse to single window (safe now: terminals detached from containers)
+                      (when (> (length (qt-frame-windows (app-state-frame app))) 1)
+                        (execute-command! app 'delete-other-windows))
                       'ok))
               ;; Set current editor text directly (bypasses undo — for test isolation)
               (cons 'test-clear-buffer!

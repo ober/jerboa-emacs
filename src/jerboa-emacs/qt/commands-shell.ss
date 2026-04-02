@@ -65,6 +65,11 @@
 ;; so moving it here makes it visible to both without circular dependency.
 (def *terminal-widget-map* (make-hash-table-eq))
 
+;; Map buffer → QStackedWidget container for the terminal's host window.
+;; Lets the pre-container-destroy hook identify which terminal is in a container
+;; that is about to be destroyed, so it can detach/destroy the terminal first.
+(def *terminal-container-map* (make-hash-table-eq))
+
 ;; --- Font size ---
 ;; Note: Font size state is now in face.ss (*default-font-size*)
 

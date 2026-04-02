@@ -39,7 +39,9 @@
         split-tree-find-leaf
         split-tree-collect-sub-splitters
         ;; App pointer for process-events during splits
-        qt-window-set-app-ptr!)
+        qt-window-set-app-ptr!
+        ;; Hook called before any window container is destroyed
+        qt-window-set-pre-container-destroy-fn!)
 
 (import :std/sugar
         :chez-scintilla/constants
@@ -57,6 +59,17 @@
 
 (def (qt-window-set-app-ptr! app)
   (set! *qt-app-for-events* app))
+
+;; Called with (container) before qt-widget-destroy! on any window container.
+;; Registered by terminal code to detach QTerminalWidgets before parent is freed.
+(def *pre-container-destroy-fn* #f)
+
+(def (qt-window-set-pre-container-destroy-fn! fn)
+  (set! *pre-container-destroy-fn* fn))
+
+(def (qt-window-pre-container-destroy! container)
+  (when *pre-container-destroy-fn*
+    (*pre-container-destroy-fn* container)))
 
 (def (qt-window-process-events!)
   "Process pending Qt events if app pointer is available."
@@ -560,6 +573,7 @@
       ;; Destroy the deleted window's Qt container.
       ;; Skipped when container was set to #f above (already destroyed via parent-spl).
       (when container
+        (qt-window-pre-container-destroy! container)
         (qt-widget-hide! container)
         (qt-widget-destroy! container))
 
@@ -587,6 +601,7 @@
                   (let ((ed        (qt-edit-window-editor win))
                         (container (qt-edit-window-container win)))
                     (hash-remove! *editor-window-map* ed)
+                    (qt-window-pre-container-destroy! container)
                     (qt-widget-hide! container)
                     (qt-widget-destroy! container))))
               all-wins)

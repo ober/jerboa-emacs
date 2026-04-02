@@ -938,6 +938,7 @@
                             (qt-terminal-widget term))])
                  (qt-stacked-widget-set-current-index! container idx))
                (hash-put! *terminal-widget-map* buf term)
+               (hash-put! *terminal-container-map* buf container)
                ((app-state-key-handler app) (qt-terminal-widget term))
                (qt-terminal-spawn! term "")
                (qt-terminal-focus! term)

@@ -77,13 +77,14 @@
    qt-label-set-alignment! qt-label-set-pixmap!
    qt-label-set-text! qt-label-text qt-last-key-code
    qt-last-key-modifiers qt-last-key-text
-   qt-last-key-autorepeat? qt-line-edit-create
-   qt-line-edit-set-completer! qt-line-edit-set-text!
-   qt-line-edit-text qt-list-widget-add-item!
-   qt-list-widget-clear! qt-list-widget-create
-   qt-list-widget-current-row qt-list-widget-set-current-row!
-   qt-main-window-add-toolbar! qt-main-window-create
-   qt-main-window-menu-bar qt-main-window-set-central-widget!
+   qt-last-key-autorepeat? qt-last-key-widget
+   qt-line-edit-create qt-line-edit-set-completer!
+   qt-line-edit-set-text! qt-line-edit-text
+   qt-list-widget-add-item! qt-list-widget-clear!
+   qt-list-widget-create qt-list-widget-current-row
+   qt-list-widget-set-current-row! qt-main-window-add-toolbar!
+   qt-main-window-create qt-main-window-menu-bar
+   qt-main-window-set-central-widget!
    qt-main-window-set-status-bar-text!
    qt-main-window-set-title! qt-menu-add-action!
    qt-menu-add-separator! qt-menu-bar-add-menu qt-on-clicked!

@@ -212,7 +212,7 @@
     ;; Keyboard Events
     qt-on-key-press! qt-on-key-press-consuming!
     qt-last-key-code qt-last-key-modifiers qt-last-key-text
-    qt-last-key-autorepeat?
+    qt-last-key-autorepeat? qt-last-key-widget
     qt-send-key-press! qt-send-key-release!
 
     ;; Pixmap
@@ -1565,6 +1565,7 @@
   (define (qt-last-key-modifiers) (ffi-qt-last-key-modifiers))
   (define (qt-last-key-text) (ffi-qt-last-key-text))
   (define (qt-last-key-autorepeat?) (not (zero? (ffi-qt-last-key-autorepeat))))
+  (define (qt-last-key-widget) (ffi-qt-last-key-widget))
 
   (define (qt-send-key-press! w key mods text)
     (ffi-qt-send-key-event w 0 key mods text))

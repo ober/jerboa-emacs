@@ -28,7 +28,8 @@
    qt-frame-other-window! qt-apply-editor-theme!
    split-tree-flatten split-tree-find-parent
    split-tree-find-leaf split-tree-collect-sub-splitters
-   qt-window-set-app-ptr!)
+   qt-window-set-app-ptr!
+   qt-window-set-pre-container-destroy-fn!)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -40,6 +41,12 @@
   (def *qt-app-for-events* #f)
   (def (qt-window-set-app-ptr! app)
        (set! *qt-app-for-events* app))
+  (def *pre-container-destroy-fn* #f)
+  (def (qt-window-set-pre-container-destroy-fn! fn)
+       (set! *pre-container-destroy-fn* fn))
+  (def (qt-window-pre-container-destroy! container)
+       (when *pre-container-destroy-fn*
+         (*pre-container-destroy-fn* container)))
   (def (qt-window-process-events!)
        "Process pending Qt events if app pointer is available."
        (let ([app *qt-app-for-events*])
@@ -546,6 +553,7 @@
                      (set! container #f)
                      (qt-widget-destroy! parent-spl))))))
            (when container
+             (qt-window-pre-container-destroy! container)
              (qt-widget-hide! container)
              (qt-widget-destroy! container))
            (qt-frame-windows-set!
@@ -578,6 +586,7 @@
                (let ([ed (qt-edit-window-editor win)]
                      [container (qt-edit-window-container win)])
                  (hash-remove! *editor-window-map* ed)
+                 (qt-window-pre-container-destroy! container)
                  (qt-widget-hide! container)
                  (qt-widget-destroy! container))))
            all-wins)

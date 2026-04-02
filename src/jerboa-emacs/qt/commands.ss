@@ -7,6 +7,7 @@
         qt-open-image-inline!
         *qt-app-ptr*
         *terminal-widget-map*
+        *terminal-container-map*
         qt-kill-ring-push!
         *isearch-active*
         isearch-handle-key!

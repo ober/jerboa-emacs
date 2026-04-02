@@ -795,6 +795,9 @@ modified so the next save uses the new encoding."
             (qt-stacked-widget-set-current-index! container idx))
           ;; Store widget mapping for key forwarding and buffer switching
           (hash-put! *terminal-widget-map* buf term)
+          ;; Track which container this terminal lives in so the pre-destroy
+          ;; hook can detach it before the container is freed
+          (hash-put! *terminal-container-map* buf container)
           ;; Install consuming key filter so all keys go through Scheme first
           ;; (same pattern as image scroll widgets — without this, Qt sends keys
           ;; directly to QTerminalWidget::keyPressEvent, bypassing jemacs entirely)

@@ -601,6 +601,7 @@ static int s_last_key_code = 0;
 static int s_last_key_modifiers = 0;
 static std::string s_last_key_text;
 static int s_last_key_autorepeat = 0;
+static QObject* s_last_key_widget = nullptr;  // which widget fired the last key event
 
 // Storage for QInputDialog ok/cancel flag
 static bool s_last_input_ok = false;
@@ -624,6 +625,7 @@ public:
             s_last_key_modifiers = static_cast<int>(ke->modifiers());
             s_last_key_text = ke->text().toUtf8().toStdString();
             s_last_key_autorepeat = ke->isAutoRepeat() ? 1 : 0;
+            s_last_key_widget = obj;
             m_callback(m_callback_id);
         }
         return QObject::eventFilter(obj, event);
@@ -649,6 +651,7 @@ public:
             s_last_key_modifiers = static_cast<int>(ke->modifiers());
             s_last_key_text = ke->text().toUtf8().toStdString();
             s_last_key_autorepeat = ke->isAutoRepeat() ? 1 : 0;
+            s_last_key_widget = obj;
             m_callback(m_callback_id);
             return true;  // consume the event — widget does NOT see it
         }
@@ -2468,6 +2471,12 @@ extern "C" const char* qt_last_key_text(void) {
 
 extern "C" int qt_last_key_autorepeat(void) {
     QT_RETURN(int, s_last_key_autorepeat);
+}
+
+// Returns the QObject* (widget pointer) that fired the last key event.
+// Lets Chez determine whether a key came from a terminal widget or an editor.
+extern "C" void* qt_last_key_widget(void) {
+    return s_last_key_widget;
 }
 
 extern "C" void qt_send_key_event(qt_widget_t w, int type, int key, int modifiers, const char* text) {
@@ -7510,6 +7519,10 @@ public:
         if (m_vt) { vterm_free(m_vt); m_vt = nullptr; }
     }
 
+    // Public alias so qt_terminal_destroy can call PTY cleanup before
+    // the widget is actually deleted (via deleteLater).
+    void cleanupPtyPublic() { cleanupPty(); }
+
     // ── libvterm initialization ────────────────────────────────────────────
 
     void initVterm() {
@@ -7602,9 +7615,30 @@ public:
     void cleanupPty() {
         if (m_timer) m_timer->stop();
         if (m_child_pid > 0) {
-            kill(m_child_pid, SIGTERM);
+            // Close master fd first — this sends SIGHUP to the child, which
+            // is gentler than SIGTERM and causes most shells to exit.
+            if (m_master_fd >= 0) {
+                ::close(m_master_fd);
+                m_master_fd = -1;
+            }
+            // Non-blocking check — child may have already exited on SIGHUP.
             int status;
-            waitpid(m_child_pid, &status, 0);
+            pid_t result = waitpid(m_child_pid, &status, WNOHANG);
+            if (result != m_child_pid) {
+                // Child still alive — escalate to SIGTERM then SIGKILL.
+                kill(m_child_pid, SIGTERM);
+                // Poll for up to 200ms with WNOHANG before giving up.
+                for (int i = 0; i < 20 && result != m_child_pid; ++i) {
+                    struct timespec ts = {0, 10000000}; // 10ms
+                    nanosleep(&ts, nullptr);
+                    result = waitpid(m_child_pid, &status, WNOHANG);
+                }
+                if (result != m_child_pid) {
+                    kill(m_child_pid, SIGKILL);
+                    // One final non-blocking reap; orphan if still alive.
+                    waitpid(m_child_pid, &status, WNOHANG);
+                }
+            }
             m_child_pid = -1;
         }
         if (m_master_fd >= 0) {
@@ -7877,11 +7911,17 @@ private:
         if (m_master_fd < 0) return;
 
         char buf[8192];
-        ssize_t n;
+        ssize_t n = 0;
         bool got_data = false;
+        // Cap reads per poll to ~64KB so high-output commands (find / -ls, etc.)
+        // don't monopolise the Qt event loop and block M-x / other key events.
+        static const size_t MAX_BYTES_PER_POLL = 65536;
+        size_t total = 0;
 
-        while ((n = ::read(m_master_fd, buf, sizeof(buf))) > 0) {
+        while (total < MAX_BYTES_PER_POLL &&
+               (n = ::read(m_master_fd, buf, sizeof(buf))) > 0) {
             vterm_input_write(m_vt, buf, (size_t)n);
+            total += (size_t)n;
             got_data = true;
         }
 
@@ -7996,7 +8036,18 @@ extern "C" void qt_terminal_focus(qt_terminal_t term) {
 
 extern "C" void qt_terminal_destroy(qt_terminal_t term) {
     QT_NULL_CHECK_VOID(term);
+    // 1. Detach from parent (QStackedWidget) so delete-other-windows cannot
+    //    double-free the widget when it later destroys the container.
+    // 2. Schedule deletion via the event loop (deleteLater) to avoid
+    //    "shared QObject deleted directly" crash from pending Qt events.
+    //    The destructor calls cleanupPty() which uses WNOHANG — no blocking.
     QT_VOID(
-        delete static_cast<QTerminalWidget*>(term)
+        auto* tw = static_cast<QTerminalWidget*>(term);
+        if (QWidget* p = tw->parentWidget()) {
+            if (auto* stacked = qobject_cast<QStackedWidget*>(p))
+                stacked->removeWidget(tw);
+            tw->setParent(nullptr);
+        }
+        tw->deleteLater()
     );
 }
