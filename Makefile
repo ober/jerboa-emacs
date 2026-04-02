@@ -308,6 +308,8 @@ build-jemacs-qt-static: check-root
 	  gcc -c -O2 /src/vendor/jerboa-shell/crypto_stub.c -o /tmp/jemacs-build/crypto_stub.o; \
 	fi; \
 	cd /src && find lib -name '*.so' -o -name '*.wpo' | xargs rm -f 2>/dev/null; \
+	find /src/src/jerboa-emacs -name '*.ss' | sed 's|/src/src/|/src/lib/|; s|\.ss$$|.sls|' | xargs rm -f 2>/dev/null; \
+	rm -f /src/src/.jerbuild-hashes 2>/dev/null; \
 	cd /src && make build SCHEME=/opt/chez/bin/scheme JERBOA=/deps/jerboa && \
 	if [ -f /src/vendor/qt_shim.cpp ]; then \
 	  echo "Rebuilding libqt_shim.a from updated qt_shim.cpp..." && \
