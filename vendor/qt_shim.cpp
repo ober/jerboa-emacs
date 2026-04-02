@@ -907,8 +907,12 @@ static void qt_cleanup_extra_selections(void* w);
 extern "C" void qt_widget_destroy(qt_widget_t w) {
     QT_NULL_CHECK_VOID(w);  // H1: null guard
     QT_VOID(
+        QWidget* widget = static_cast<QWidget*>(w);
         qt_cleanup_extra_selections(w);  // L1: clean up extra selections
-        delete static_cast<QWidget*>(w)
+        // Use deleteLater() instead of delete to avoid use-after-free:
+        // pending Qt events (resize, paint, focus) may still reference this
+        // widget and will crash if processed after synchronous deletion.
+        widget->deleteLater()
     );
 }
 

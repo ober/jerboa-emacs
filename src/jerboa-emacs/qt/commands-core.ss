@@ -1187,8 +1187,15 @@ Returns (path . line) or #f. Handles file:line format."
 ;;;============================================================================
 
 (def (cmd-select-all app)
-  (qt-plain-text-edit-select-all! (current-qt-editor app))
-  (echo-message! (app-state-echo app) "Mark set (whole buffer)"))
+  (let* ((ed  (current-qt-editor app))
+         (buf (current-qt-buffer app))
+         (len (qt-plain-text-edit-text-length ed)))
+    ;; SCI_SELECTALL sets caret=0, anchor=length (caret at start).
+    ;; Use set-selection! to place anchor=0, caret=len (caret at end)
+    ;; so that kill-region/copy-region see mark=0 and pos=len correctly.
+    (qt-plain-text-edit-set-selection! ed 0 len)
+    (set! (buffer-mark buf) 0)
+    (echo-message! (app-state-echo app) "Mark set (whole buffer)")))
 
 ;;;============================================================================
 ;;; Goto line

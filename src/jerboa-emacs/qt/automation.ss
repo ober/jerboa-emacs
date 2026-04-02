@@ -206,13 +206,20 @@
 (def (send-one-key! app key-str drain?)
   (let-values (((code mods text) (emacs-key->qt-event key-str)))
     (let* ((fr (app-state-frame app))
-           (target (if *minibuffer-active?*
-                     (and *mb-input* *mb-input*)
-                     (qt-current-editor fr))))
+           (get-target (lambda ()
+                         (if *minibuffer-active?*
+                           (and *mb-input* *mb-input*)
+                           (qt-current-editor fr))))
+           (target (get-target)))
       (when target
         (qt-send-key-press! target code mods text)
         (when drain? (qt-drain-pending-callbacks!))
-        (qt-send-key-release! target code mods text)
+        ;; Re-fetch target after drain: the key handler may have destroyed the
+        ;; pressed window (e.g. C-x 0). Sending key release to a destroyed
+        ;; widget causes a segfault via Qt's sendPostedEvents / event dispatch.
+        (let ((release-target (get-target)))
+          (when release-target
+            (qt-send-key-release! release-target code mods text)))
         (when drain? (qt-drain-pending-callbacks!))))))
 
 ;;;============================================================================
