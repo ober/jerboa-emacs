@@ -215,20 +215,28 @@
              [else (count-dirty (+ r 1) n)]))))
   (def *vterm-next-style* 80)
   (def *vterm-color-to-style* (make-hash-table))
-  (def *vterm-max-styles* 128)
-  (def (vterm-get-or-alloc-style! ed packed-rgb)
-       "Get or allocate a Scintilla style for a packed 0x00RRGGBB color.\n   Returns style index, or 0 if we've run out of style slots."
-       (or (hash-ref *vterm-color-to-style* packed-rgb #f)
-           (if (>= *vterm-next-style* *vterm-max-styles*)
-               0
-               (let ([style *vterm-next-style*])
-                 (set! *vterm-next-style* (+ style 1))
-                 (sci-send ed SCI_STYLESETFORE style packed-rgb)
-                 (sci-send ed SCI_STYLESETBACK style 1579032)
-                 (hash-put! *vterm-color-to-style* packed-rgb style)
-                 style))))
+  (def *vterm-max-styles* 250)
+  (def *term-default-bg* 1579032)
+  (def *term-default-fg* 12961990)
+  (def (vterm-get-or-alloc-style! ed fg bg)
+       "Get or allocate a Scintilla style for a (fg, bg) color pair.\n   fg and bg are packed 0x00RRGGBB or -1 for default.\n   Returns style index, or 0 if out of style slots."
+       (let ([key (cons fg bg)])
+         (or (hash-ref *vterm-color-to-style* key #f)
+             (if (>= *vterm-next-style* *vterm-max-styles*)
+                 0
+                 (let ([style *vterm-next-style*])
+                   (set! *vterm-next-style* (+ style 1))
+                   (when (not (= fg -1))
+                     (sci-send ed SCI_STYLESETFORE style fg))
+                   (sci-send
+                     ed
+                     SCI_STYLESETBACK
+                     style
+                     (if (= bg -1) *term-default-bg* bg))
+                   (hash-put! *vterm-color-to-style* key style)
+                   style)))))
   (def (vterm-apply-row-colors! ed vt row doc-line)
-       "Apply per-cell foreground colors to a row using Scintilla styling.\n   Handles bold attribute by shifting color index +8 for indexed colors."
+       "Apply per-cell fg/bg colors and reverse-video to a row using Scintilla styling."
        (let* ([cols (vtscreen-cols vt)]
               [line-start (sci-send ed SCI_POSITIONFROMLINE doc-line)]
               [line-end (sci-send ed SCI_GETLINEENDPOSITION doc-line)]
@@ -244,13 +252,24 @@
                      0)
                    (sci-send ed SCI_SETSTYLING (- c run-start) run-style))
                  (let* ([fg (vtscreen-cell-fg vt row c)]
+                        [bg (vtscreen-cell-bg vt row c)]
                         [attrs (vtscreen-cell-attrs vt row c)]
                         [bold? (not (= 0 (bitwise-and attrs 1)))]
+                        [reverse? (not (= 0 (bitwise-and attrs 16)))]
+                        [eff-fg (if reverse?
+                                    (if (= bg -1) *term-default-bg* bg)
+                                    fg)]
+                        [eff-bg (if reverse?
+                                    (if (= fg -1) *term-default-fg* fg)
+                                    bg)]
                         [style (cond
-                                 [(= fg -1)
+                                 [(and (= eff-fg -1) (= eff-bg -1))
                                   (if bold? (+ *term-style-base* 15) 0)]
                                  [else
-                                  (vterm-get-or-alloc-style! ed fg)])])
+                                  (vterm-get-or-alloc-style!
+                                    ed
+                                    eff-fg
+                                    eff-bg)])])
                    (if (eqv? style run-style)
                        (loop (+ c 1) run-start run-style)
                        (begin

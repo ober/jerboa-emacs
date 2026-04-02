@@ -256,53 +256,60 @@
 
 ;; Extended styles for 256-color/RGB: we allocate Scintilla styles on demand
 ;; Style 64-79 = standard 16 ANSI colors (already set up in terminal.ss)
-;; Style 80-127 = dynamically allocated for additional fg colors
+;; Style 80-249 = dynamically allocated for (fg, bg) color pairs (170 slots)
 (def *vterm-next-style* 80)
-(def *vterm-color-to-style* (make-hash-table))  ;; packed-rgb -> style-id
-(def *vterm-max-styles* 128)  ;; Scintilla supports styles 0-255
+(def *vterm-color-to-style* (make-hash-table))  ;; (fg . bg) -> style-id
+(def *vterm-max-styles* 250)  ;; Scintilla supports styles 0-255; keep 250-255 as reserve
+(def *term-default-bg* #x181818)  ;; terminal background color
+(def *term-default-fg* #xc5c8c6)  ;; terminal default foreground (for reverse-video substitution)
 
-(def (vterm-get-or-alloc-style! ed packed-rgb)
-  "Get or allocate a Scintilla style for a packed 0x00RRGGBB color.
-   Returns style index, or 0 if we've run out of style slots."
-  (or (hash-ref *vterm-color-to-style* packed-rgb #f)
-      (if (>= *vterm-next-style* *vterm-max-styles*)
-        0  ;; out of style slots, use default
-        (let ((style *vterm-next-style*))
-          (set! *vterm-next-style* (+ style 1))
-          ;; Configure this style
-          (sci-send ed SCI_STYLESETFORE style packed-rgb)
-          (sci-send ed SCI_STYLESETBACK style #x181818)
-          (hash-put! *vterm-color-to-style* packed-rgb style)
-          style))))
+(def (vterm-get-or-alloc-style! ed fg bg)
+  "Get or allocate a Scintilla style for a (fg, bg) color pair.
+   fg and bg are packed 0x00RRGGBB or -1 for default.
+   Returns style index, or 0 if out of style slots."
+  (let ((key (cons fg bg)))
+    (or (hash-ref *vterm-color-to-style* key #f)
+        (if (>= *vterm-next-style* *vterm-max-styles*)
+          0  ;; out of style slots, use default
+          (let ((style *vterm-next-style*))
+            (set! *vterm-next-style* (+ style 1))
+            (when (not (= fg -1))
+              (sci-send ed SCI_STYLESETFORE style fg))
+            (sci-send ed SCI_STYLESETBACK style
+                      (if (= bg -1) *term-default-bg* bg))
+            (hash-put! *vterm-color-to-style* key style)
+            style)))))
 
 (def (vterm-apply-row-colors! ed vt row doc-line)
-  "Apply per-cell foreground colors to a row using Scintilla styling.
-   Handles bold attribute by shifting color index +8 for indexed colors."
+  "Apply per-cell fg/bg colors and reverse-video to a row using Scintilla styling."
   (let* ((cols (vtscreen-cols vt))
          (line-start (sci-send ed SCI_POSITIONFROMLINE doc-line))
          (line-end   (sci-send ed SCI_GETLINEENDPOSITION doc-line))
          (line-len   (min (- line-end line-start) cols)))
     (when (> line-len 0)
-      ;; Walk the row and apply styles in runs of same color
+      ;; Walk the row and apply styles in runs of same (fg, bg)
       (let loop ((c 0) (run-start 0) (run-style #f))
         (if (>= c line-len)
           ;; Flush final run
           (when (and run-style (> c run-start))
             (sci-send ed SCI_STARTSTYLING (+ line-start run-start) 0)
             (sci-send ed SCI_SETSTYLING (- c run-start) run-style))
-          (let* ((fg (vtscreen-cell-fg vt row c))
+          (let* ((fg    (vtscreen-cell-fg vt row c))
+                 (bg    (vtscreen-cell-bg vt row c))
                  (attrs (vtscreen-cell-attrs vt row c))
-                 (bold? (not (= 0 (bitwise-and attrs 1))))
+                 (bold?    (not (= 0 (bitwise-and attrs 1))))
+                 (reverse? (not (= 0 (bitwise-and attrs 16))))
+                 ;; Reverse video: swap fg/bg, substituting defaults with concrete colors
+                 (eff-fg (if reverse? (if (= bg -1) *term-default-bg* bg) fg))
+                 (eff-bg (if reverse? (if (= fg -1) *term-default-fg* fg) bg))
                  (style
                   (cond
-                    ;; Default fg — use style 0 (no special color)
-                    ((= fg -1)
-                     (if bold?
-                       (+ *term-style-base* 15)  ;; bright white for bold default
-                       0))
-                    ;; Standard 16 ANSI color (check if it's a known palette color)
+                    ;; Both default — use style 0 or bold variant
+                    ((and (= eff-fg -1) (= eff-bg -1))
+                     (if bold? (+ *term-style-base* 15) 0))
+                    ;; At least one explicit color
                     (else
-                     (vterm-get-or-alloc-style! ed fg)))))
+                     (vterm-get-or-alloc-style! ed eff-fg eff-bg)))))
             ;; If style changed, flush previous run
             (if (eqv? style run-style)
               (loop (+ c 1) run-start run-style)
