@@ -28,6 +28,8 @@
         :jerboa-emacs/shell-history
         :jerboa-emacs/terminal
         (only-in :jsh/environment env-get)
+        (only-in :jsh/lib jsh-init! jsh-run-interactive!)
+        :jerboa-emacs/pty
         :jerboa-emacs/qt/buffer
         :jerboa-emacs/qt/window
         :jerboa-emacs/qt/echo
@@ -780,19 +782,31 @@ modified so the next save uses the new encoding."
       (lambda ()
         (let* ((win (qt-current-window fr))
                (container (qt-edit-window-container win))
-               (term (qt-terminal-create container))
-               (jsh-path (or (getenv "JSH") "/usr/local/bin/jsh")))
+               (term (qt-terminal-create container)))
           (qt-terminal-set-font! term *default-font-family* *default-font-size*)
           (qt-terminal-set-colors! term #xbbc2cf #x282c34)
           (qt-stacked-widget-add-widget! container (qt-terminal-widget term))
           (qt-stacked-widget-set-current-widget! container (qt-terminal-widget term))
-          (qt-terminal-spawn! term jsh-path)
-          (hash-put! *terminal-widget-map* buf term)
-          (hash-put! *terminal-container-map* buf container)
-          ((app-state-key-handler app) (qt-terminal-widget term))
-          (qt-terminal-focus! term)
-          (verbose-log! "cmd-term: spawned jsh=" jsh-path)
-          (echo-message! (app-state-echo app) (string-append name " started")))))))
+          ;; In-process jsh: open a PTY pair and run the REPL in a thread
+          (let-values (((master-fd slave-fd) (pty-openpty 24 80)))
+            (if (not master-fd)
+              (error 'cmd-term "pty-openpty failed")
+              (let* ((slave-in  (transcoded-port
+                                  (open-fd-input-port slave-fd (buffer-mode none))
+                                  (native-transcoder)))
+                     (slave-out (transcoded-port
+                                  (open-fd-output-port slave-fd (buffer-mode none))
+                                  (native-transcoder)))
+                     (env       (jsh-init! #t)))
+                (qt-terminal-connect-fd! term master-fd)
+                (spawn-worker 'jsh-repl
+                  (lambda () (jsh-run-interactive! env slave-fd slave-in slave-out)))
+                (hash-put! *terminal-widget-map* buf term)
+                (hash-put! *terminal-container-map* buf container)
+                ((app-state-key-handler app) (qt-terminal-widget term))
+                (qt-terminal-focus! term)
+                (verbose-log! "cmd-term: in-process jsh started")
+                (echo-message! (app-state-echo app) (string-append name " started"))))))))))
 
 (def (cmd-terminal-send app)
   "Execute the current input line in the terminal via gsh.
