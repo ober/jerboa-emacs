@@ -1,30 +1,27 @@
 /*
  * jemacs-qt-main.c — Custom entry point for jemacs-qt (jerboa-emacs Qt frontend).
  *
- * Same threading workaround as jemacs-main.c:
  *   - Boot file contains only libraries (no program)
- *   - Program is loaded via Sscheme_script on a memfd
+ *   - Program is loaded via Sscheme_script from an in-memory file
+ *     (memfd on Linux, temp file on macOS)
  *
- * The Qt event loop runs on its own pthread (created by qt-app-create in
- * qt_shim.cpp). That pthread registers via Sactivate_thread/Sdeactivate_thread
- * (implemented in qt_chez_shim.c) before invoking Chez foreign-callable
- * trampolines.  No special handling is needed here.
- *
- * The CHEZ_QT_LIB env var points qt_chez_shim to where qt_chez_shim.so
- * lives (for load-shared-object). We point it at the binary's own directory
- * since qt_chez_shim is compiled into the binary itself — but we still need
- * the libqt_shim.so (gerbil-qt vendor shim) to be loadable.
- * Set CHEZ_QT_SHIM_DIR to where libqt_shim.so lives (same dir as binary,
- * or let the rpath handle it).
+ * On macOS, Qt runs on the main thread (Cocoa requirement). The event loop
+ * is driven by repeated processEvents() calls from the Scheme polling loop.
  */
 
+#ifdef __APPLE__
+#include <mach-o/dyld.h>
+#else
 #define _GNU_SOURCE
+#include <sys/mman.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <libgen.h>
-#include <sys/mman.h>
+#include <fcntl.h>
 #include "scheme.h"
 #include "jemacs_qt_program.h"         /* jemacs_qt_program_data[], jemacs_qt_program_size */
 #include "jemacs_qt_petite_boot.h"     /* petite_boot_data[], petite_boot_size */
@@ -35,16 +32,27 @@ int main(int argc, char *argv[]) {
     /* Resolve real executable path */
     char exe_buf[4096];
     char exe_dir[4096];
+    int got_exe = 0;
+
+#ifdef __APPLE__
+    uint32_t exe_size = sizeof(exe_buf);
+    if (_NSGetExecutablePath(exe_buf, &exe_size) == 0) {
+        got_exe = 1;
+    }
+#else
     ssize_t len = readlink("/proc/self/exe", exe_buf, sizeof(exe_buf) - 1);
     if (len > 0) {
         exe_buf[len] = '\0';
+        got_exe = 1;
+    }
+#endif
+
+    if (got_exe) {
         setenv("JEMACS_EXE", exe_buf, 1);
         strncpy(exe_dir, exe_buf, sizeof(exe_dir) - 1);
         exe_dir[sizeof(exe_dir) - 1] = '\0';
         char *dir = dirname(exe_dir);
-        /* Point FFI shim loaders at the binary's directory.
-         * The shims (qt_chez_shim, pcre2_shim) are compiled into the binary,
-         * and libqt_shim.so must be alongside the binary (rpath or LD_LIBRARY_PATH). */
+        /* Point FFI shim loaders at the binary's directory */
         if (!getenv("CHEZ_QT_LIB"))
             setenv("CHEZ_QT_LIB", dir, 0);
         if (!getenv("CHEZ_QT_SHIM_DIR"))
@@ -55,20 +63,52 @@ int main(int argc, char *argv[]) {
             setenv("CHEZ_SCINTILLA_LIB", dir, 0);
     }
 
-    /* Create memfd for embedded program .so */
-    int fd = memfd_create("jemacs-qt-program", MFD_CLOEXEC);
+    /* Write embedded program .so to a file Chez can dlopen */
+    char prog_path[256];
+    int fd;
+
+#ifdef __APPLE__
+    /* macOS: no memfd — write to a temp file */
+    snprintf(prog_path, sizeof(prog_path), "/tmp/jemacs-qt-program.XXXXXX");
+    fd = mkstemp(prog_path);
+    if (fd < 0) {
+        perror("mkstemp");
+        return 1;
+    }
+    /* Rename to add .so extension so dlopen recognises it as a shared lib */
+    char prog_path_so[256];
+    snprintf(prog_path_so, sizeof(prog_path_so), "%s.so", prog_path);
+    if (rename(prog_path, prog_path_so) != 0) {
+        perror("rename");
+        close(fd);
+        return 1;
+    }
+    close(fd);
+    fd = open(prog_path_so, O_WRONLY | O_CREAT | O_TRUNC, 0700);
+    if (fd < 0) {
+        perror("open prog_path_so");
+        return 1;
+    }
+    strncpy(prog_path, prog_path_so, sizeof(prog_path) - 1);
+#else
+    /* Linux: memfd — anonymous in-memory file */
+    fd = memfd_create("jemacs-qt-program", MFD_CLOEXEC);
     if (fd < 0) {
         perror("memfd_create");
         return 1;
     }
+    snprintf(prog_path, sizeof(prog_path), "/proc/self/fd/%d", fd);
+#endif
+
     if (write(fd, jemacs_qt_program_data, jemacs_qt_program_size)
             != (ssize_t)jemacs_qt_program_size) {
-        perror("write memfd");
+        perror("write prog");
         close(fd);
         return 1;
     }
-    char prog_path[64];
-    snprintf(prog_path, sizeof(prog_path), "/proc/self/fd/%d", fd);
+#ifdef __APPLE__
+    close(fd);  /* file is on disk — close write fd before dlopen */
+#endif
 
     /* Initialize Chez Scheme */
     Sscheme_init(NULL);
@@ -79,30 +119,24 @@ int main(int argc, char *argv[]) {
     Sregister_boot_file_bytes("jemacs-qt", (void*)jemacs_qt_boot_data,  jemacs_qt_boot_size);
 
 #ifdef JEMACS_STATIC_BUILD
-    /* Tell Scheme libraries they are in a static build so they skip
-     * load-shared-object calls (dlopen("file.so") fails in musl static).
-     * Must be set before Sbuild_heap so library bodies see it. */
     setenv("JEMACS_STATIC", "1", 1);
 #endif
 
     /* Build heap from libraries only — no program */
     Sbuild_heap(NULL, NULL);
 
-#ifdef JEMACS_STATIC_BUILD
-    /* Register all FFI symbols after heap is built.
-     * Sforeign_symbol requires an initialized Scheme heap.
-     * foreign-procedure in library bodies uses dlsym(RTLD_DEFAULT) first;
-     * this call supplements that for any symbols missed by dlsym. */
+#if defined(JEMACS_STATIC_BUILD) || defined(__APPLE__)
     extern void register_static_foreign_symbols(void);
     register_static_foreign_symbols();
 #endif
 
-    /* Run via Sscheme_script so fork-thread works.
-     * Pass full argv so argv[0]=binary name and argv[1..]=user args.
-     * (command-line-arguments) returns ("./jemacs-qt" args...) — member checks work. */
     int status = Sscheme_script(prog_path, argc, (const char **)argv);
 
+#ifdef __APPLE__
+    unlink(prog_path);  /* clean up temp file */
+#else
     close(fd);
+#endif
     Sscheme_deinit();
     return status;
 }

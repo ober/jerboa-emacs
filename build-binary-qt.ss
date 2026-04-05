@@ -92,6 +92,13 @@
   (let ((v (getenv "JEMACS_STATIC")))
     (and v (not (string=? v "0")) (not (string=? v "")))))
 
+;; Platform detection
+(define macos-build?
+  (let ((mt (symbol->string (machine-type))))
+    (and (>= (string-length mt) 3)
+         (string=? (substring mt (- (string-length mt) 3) (string-length mt)) "osx"))))
+(define shlib-ext (if macos-build? "dylib" "so"))
+
 ;; Check critical dependencies
 ;; For static builds, skip checks on .o files that this script compiles in step 5
 ;; (jemacs-qt-chez-shim.o, pcre2_shim.o). Only check pre-existing external deps.
@@ -101,15 +108,18 @@
       (printf "Error: ~a not found at ~a~n" label path)
       (exit 1)))
   (if jemacs-static?
+    ;; Static: need pre-compiled jerboa core and libqt_shim.a
     (list (format "~a/jerboa/core.so" jerboa-dir)
           (format "~a/libqt_shim.a" qt-shim-dir))
-    (list (format "~a/jerboa/core.so" jerboa-dir)
-          "qt_chez_shim.so"
-          (format "~a/pcre2_shim.so" pcre2-dir)
-          (format "~a/libqt_shim.so" qt-shim-dir)))
+    ;; Dynamic: only check shim files — Scheme libs are compiled by step 1
+    (list (format "qt_chez_shim.~a" shlib-ext)
+          (format "~a/pcre2_shim.~a" pcre2-dir shlib-ext)
+          (format "libqt_shim.~a" shlib-ext)))
   (if jemacs-static?
     (list "jerboa core.so" "libqt_shim.a")
-    (list "jerboa core.so" "qt_chez_shim.so" "pcre2_shim.so" "libqt_shim.so")))
+    (list (format "qt_chez_shim.~a" shlib-ext)
+          (format "pcre2_shim.~a" shlib-ext)
+          (format "libqt_shim.~a" shlib-ext))))
 
 (printf "Chez dir:      ~a~n" chez-dir)
 (printf "Jerboa dir:    ~a~n" jerboa-dir)
@@ -377,12 +387,15 @@
     (unless (= 0 (system cmd))
       (display "Error: qt_chez_shim compilation failed\n")
       (exit 1)))
-  ;; Shared .so for dynamic builds
+  ;; Shared library for dynamic builds (platform-appropriate flags + extension)
   (unless jemacs-static?
-    (let ((cmd (format "gcc -shared -fPIC -O2 -DQT_SCINTILLA_AVAILABLE -o qt_chez_shim.so vendor/qt_chez_shim.c -I~a ~a -Wall 2>&1"
-                       qt-shim-dir qt-cflags)))
+    (let* ((shlib-flags (if macos-build?
+                            "-dynamiclib -Wl,-undefined,dynamic_lookup"
+                            "-shared -fPIC"))
+           (cmd (format "gcc ~a -O2 -DQT_SCINTILLA_AVAILABLE -o qt_chez_shim.~a vendor/qt_chez_shim.c -I~a ~a -Wall 2>&1"
+                        shlib-flags shlib-ext qt-shim-dir qt-cflags)))
       (unless (= 0 (system cmd))
-        (display "Error: qt_chez_shim.so compilation failed\n")
+        (display "Error: qt_chez_shim shlib compilation failed\n")
         (exit 1)))))
 
 ;; Static: generate + compile foreign symbol registration table
@@ -446,9 +459,9 @@ echo OK"
         (display "Error: qt_static_symbols.c compilation failed\n")
         (exit 1)))))
 
-;; jsh FFI shim (needed for static builds so ffi_* symbols are in the binary)
+;; jsh FFI shim (needed for static builds and macOS dynamic builds so ffi_* symbols are in the binary)
 ;; ffi-shim.c lives in the jsh root (parent of jsh-dir which is the src/ subdir)
-(when jemacs-static?
+(when (or jemacs-static? macos-build?)
   (let* ((jsh-root (path-parent jsh-dir))
          (cmd (format "gcc -c -O2 -o jemacs-qt-jsh-ffi.o ~a/ffi-shim.c -Wall 2>&1"
                       jsh-root)))
@@ -457,7 +470,7 @@ echo OK"
       (exit 1))))
 
 ;; jsh embed-crypto (pure C crypto for embed encryption — no external deps)
-(when jemacs-static?
+(when (or jemacs-static? macos-build?)
   (let* ((jsh-root (path-parent jsh-dir))
          (cmd (format "gcc -c -O2 -o jemacs-qt-embed-crypto.o ~a/embed-crypto.c -I~a -Wall 2>&1"
                       jsh-root jsh-root)))
@@ -466,7 +479,7 @@ echo OK"
       (exit 1))))
 
 ;; jsh ssh-agent stub (chez_ssh_agent_stop referenced in main.sls but not needed for jemacs)
-(when jemacs-static?
+(when (or jemacs-static? macos-build?)
   (let ((stub-file "jemacs-qt-ssh-agent-stub.c"))
     (call-with-output-file stub-file
       (lambda (out)
@@ -516,6 +529,88 @@ echo OK"
     (unless (= 0 (system cmd))
       (display "Error: landlock-shim.c compilation failed\n")
       (exit 1))))
+
+;; macOS: generate symbol registration table.
+;; Two-part: (1) custom symbols from .o files via nm (exact, no undefined refs)
+;;           (2) system/POSIX symbols via dlsym(RTLD_DEFAULT, name) at runtime
+;;               (covers open, close, fork, etc. that live in libSystem.dylib)
+(when (and macos-build? (not jemacs-static?))
+  (let* ((include-dir chez-dir)
+         ;; Part 1: extract custom symbol names from linked .o files
+         (nm-cmd
+           "nm -gU jemacs-qt-jsh-ffi.o jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o jemacs-qt-chez-shim.o 2>/dev/null | \
+awk '$2 == \"T\" || $2 == \"t\" { print $NF }' | sed 's/^_//' | sort -u | \
+grep -v '^$' | grep -v '^register_static_foreign_symbols$'")
+         (custom-syms
+           (let* ((tmpf "/tmp/macos_nm_syms.txt")
+                  (_ (system (format "~a > ~a 2>/dev/null" nm-cmd tmpf)))
+                  (p (if (file-exists? tmpf) (open-input-file tmpf) #f))
+                  (lines (if p
+                             (let loop ((acc '()))
+                               (let ((line (get-line p)))
+                                 (if (eof-object? line)
+                                     (begin (close-port p) (delete-file tmpf) (reverse acc))
+                                     (loop (if (> (string-length line) 0)
+                                               (cons line acc) acc)))))
+                             '())))
+             lines))
+         ;; Part 2: POSIX/system symbol names to register via RTLD_DEFAULT
+         (system-syms
+           '("_exit" "__error"
+             "accept" "access" "bind" "chdir" "chmod" "chown" "chroot"
+             "close" "connect" "dup" "dup2" "execve" "execvp"
+             "fcntl" "fdopen" "flock" "fork"
+             "freeaddrinfo" "fstat" "ftruncate"
+             "getaddrinfo" "getegid" "geteuid" "getgid" "getgrnam"
+             "getpagesize" "getpgid" "getpid" "getppid"
+             "getpwnam" "getrlimit" "getsockname" "getuid"
+             "htons" "inet_ntop" "inet_pton" "ioctl" "isatty"
+             "kevent" "kill" "kqueue" "listen" "localtime"
+             "lseek" "lstat" "madvise" "mkdir" "mkdtemp"
+             "mkfifo" "mkstemp" "mmap" "msync" "munmap"
+             "ntohs" "open" "pipe" "read" "readlink" "realpath"
+             "recvfrom" "rmdir" "sandbox_init" "sandbox_free_error"
+             "sendto" "setegid" "setenv" "seteuid" "setgid"
+             "setpgid" "setrlimit" "setsid" "setsockopt" "setuid"
+             "sigaddset" "sigdelset" "sigemptyset" "sigfillset"
+             "sigismember" "sigprocmask" "sigwait"
+             "socket" "stat" "strerror" "strftime"
+             "syscall" "sysconf" "tcgetattr" "tcgetpgrp"
+             "tcsetattr" "tcsetpgrp"
+             "umask" "unlink" "unsetenv" "waitpid" "write")))
+    ;; Write qt_static_symbols.c
+    (call-with-output-file "qt_static_symbols.c"
+      (lambda (out)
+        (fprintf out "/* Auto-generated (macOS) — do not edit */\n")
+        (fprintf out "#include \"scheme.h\"\n")
+        (fprintf out "#include <dlfcn.h>\n\n")
+        ;; Forward declare custom symbols
+        (for-each (lambda (sym)
+                    (fprintf out "extern void ~a(void);\n" sym))
+                  custom-syms)
+        (fprintf out "\nvoid register_static_foreign_symbols(void) {\n")
+        ;; Register custom symbols
+        (for-each (lambda (sym)
+                    (fprintf out "    Sforeign_symbol(\"~a\", (void*)~a);\n" sym sym))
+                  custom-syms)
+        ;; Register system symbols via RTLD_DEFAULT
+        (fprintf out "    /* System/POSIX symbols via RTLD_DEFAULT */\n")
+        (fprintf out "    { void *_s;\n")
+        (for-each (lambda (sym)
+                    (fprintf out "    if ((_s = dlsym(RTLD_DEFAULT, \"~a\"))) Sforeign_symbol(\"~a\", _s);\n"
+                             sym sym))
+                  system-syms)
+        (fprintf out "    }\n")
+        (fprintf out "}\n"))
+      'replace)
+    (let ((total (+ (length custom-syms) (length system-syms))))
+      (printf "  Generated qt_static_symbols.c with ~a symbol registrations (~a custom + ~a system)~n"
+              total (length custom-syms) (length system-syms)))
+    (let* ((cmd (format "gcc -c -O2 -o qt_static_symbols.o qt_static_symbols.c -I~a -Wall 2>&1"
+                        include-dir)))
+      (unless (= 0 (system cmd))
+        (display "Error: qt_static_symbols.c (macOS) compilation failed\n")
+        (exit 1)))))
 
 ;; jemacs-qt-main.c
 (let* ((static-flag (if jemacs-static? "-DJEMACS_STATIC_BUILD" ""))
@@ -570,12 +665,37 @@ qt_static_symbols.o \
       (display "Error: Static link failed\n")
       (exit 1)))
   ;; ─── Dynamic link (default local build) ────────────────────────────────
-  (let* ((pcre2-libs (shell-output "pkg-config --libs libpcre2-8" "-lpcre2-8"))
+  (let* ((macos? (string=? "Darwin" (shell-output "uname -s" "Linux")))
+         (pcre2-libs (shell-output "pkg-config --libs libpcre2-8" "-lpcre2-8"))
          (qt-libs    (shell-output "pkg-config --libs Qt6Widgets" "-lQt6Widgets -lQt6Gui -lQt6Core"))
-         ;; Link against ./libqt_shim.so (local copy with JEMACS_CHEZ_SMP)
-         ;; rather than qt-shim-dir (gerbil-qt vendor — no Sdeactivate)
-         (cmd (format "g++ -rdynamic -o jemacs-qt jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o ~a ~a -L~a -lkernel -llz4 -lz -lm -ldl -lpthread -luuid -lncurses -lstdc++ -L. -lqt_shim -lqscintilla2_qt6 -lvterm -Wl,-rpath,~a -Wl,-rpath,'$ORIGIN' 2>&1"
-                      pcre2-libs qt-libs chez-dir chez-dir)))
+         (qsci-dir   (shell-output "brew --prefix qscintilla2 2>/dev/null" ""))
+         (vterm-dir  (shell-output "brew --prefix libvterm 2>/dev/null" ""))
+         (ncurses-dir (shell-output "brew --prefix ncurses 2>/dev/null" ""))
+         ;; Link against ./libqt_shim.dylib/.so (local copy with JEMACS_CHEZ_SMP)
+         (cmd
+           (if macos?
+             ;; macOS: frameworks, no -rdynamic/-uuid, use @executable_path rpath
+             (format "g++ -o jemacs-qt \
+jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o qt_static_symbols.o \
+~a ~a \
+-L~a -lkernel -llz4 -lz -lm -ldl -lpthread -liconv -lstdc++ \
+-L. -lqt_shim \
+-L~a/lib -lqscintilla2_qt6 \
+-L~a/lib -lvterm \
+-L~a/lib -lncurses \
+-Wl,-rpath,~a -Wl,-rpath,@executable_path 2>&1"
+                     pcre2-libs qt-libs
+                     chez-dir
+                     qsci-dir vterm-dir ncurses-dir
+                     chez-dir)
+             ;; Linux: standard dynamic link
+             (format "g++ -rdynamic -o jemacs-qt \
+jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o \
+~a ~a \
+-L~a -lkernel -llz4 -lz -lm -ldl -lpthread -luuid -lncurses -lstdc++ \
+-L. -lqt_shim -lqscintilla2_qt6 -lvterm \
+-Wl,-rpath,~a -Wl,-rpath,'$ORIGIN' 2>&1"
+                     pcre2-libs qt-libs chez-dir chez-dir))))
     (printf "  ~a~n" cmd)
     (unless (= 0 (system cmd))
       (display "Error: Link failed\n")
@@ -611,15 +731,14 @@ qt_static_symbols.o \
     (printf "~nInstall:~n")
     (printf "  cp jemacs-qt /usr/local/bin/~n"))
   (begin
-    ;; Copy shim .so files alongside binary for dynamic builds
-    (system (format "cp ~a/libqt_shim.so . 2>/dev/null; true" qt-shim-dir))
-    ;; qt_chez_shim.so already built locally from vendor/qt_chez_shim.c
-    (system (format "cp ~a/pcre2_shim.so . 2>/dev/null; true" pcre2-dir))
+    ;; Copy shim files alongside binary for dynamic builds
+    ;; (libqt_shim is already built locally; pcre2_shim may need copying)
+    (system (format "cp ~a/pcre2_shim.~a . 2>/dev/null; true" pcre2-dir shlib-ext))
     (printf "~nBundle (keep these together):~n")
     (printf "  ./jemacs-qt~n")
-    (printf "  ./libqt_shim.so~n")
-    (printf "  ./qt_chez_shim.so~n")
-    (printf "  ./pcre2_shim.so~n")
+    (printf "  ./libqt_shim.~a~n" shlib-ext)
+    (printf "  ./qt_chez_shim.~a~n" shlib-ext)
+    (printf "  ./pcre2_shim.~a~n" shlib-ext)
     (printf "  ./vterm_shim.so~n")
     (printf "~nRun:~n")
     (printf "  ./jemacs-qt                # launch Qt editor~n")

@@ -41,13 +41,16 @@ export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
 export JSH_FFI_LIB := $(HOME)/mine/jerboa-shell
 export CHEZ_QT_LIB := .
 export CHEZ_QT_SHIM_DIR := .
+ifeq ($(UNAME_S),Darwin)
+  export CHEZ_DIR := $(shell ls -d /opt/homebrew/lib/csv*/tarm64osx 2>/dev/null | head -1)
+endif
 
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
         test-org-duration test-org-element test-org-fold test-org-footnote \
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
         test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary binary-qt \
         test-pty test-emacs test-functional test-term-hang \
-        docker-deps static-qt clean-docker check-root build-jemacs-qt-static
+        docker-deps static-qt clean-docker check-root build-jemacs-qt-static macos
 
 all: build test
 
@@ -151,6 +154,12 @@ libqt_shim.$(SHLIB_EXT): vendor/qt_shim.cpp
 
 qt_chez_shim.$(SHLIB_EXT): vendor/qt_chez_shim.c vendor/qt_shim.h
 	gcc $(SHLIB_FLAGS) -O2 -o qt_chez_shim.$(SHLIB_EXT) vendor/qt_chez_shim.c -Ivendor -DQT_SCINTILLA_AVAILABLE -Wall
+
+# macOS native binary — compile all modules + link jemacs-qt binary
+macos: build libqt_shim.$(SHLIB_EXT) qt_chez_shim.$(SHLIB_EXT) repl_shim.$(SHLIB_EXT) vterm_shim.$(SHLIB_EXT)
+	cd $(HOME)/mine/chez-pcre2 && make
+	JSH_DIR=$(JSH) $(PRELOAD_ENV) $(SCHEME) $(LIBDIRS) --script build-binary-qt.ss
+	./jemacs-qt --version
 
 run-qt: build repl_shim.$(SHLIB_EXT) libqt_shim.$(SHLIB_EXT) vterm_shim.$(SHLIB_EXT) qt_chez_shim.$(SHLIB_EXT)
 	$(PRELOAD_ENV) $(SCHEME) $(LIBDIRS) --script qt-main.ss
