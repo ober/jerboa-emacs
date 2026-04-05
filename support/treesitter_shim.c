@@ -20,6 +20,9 @@
 /* ========================================================================
  * Language registry — extern declarations for statically linked grammars.
  * Each grammar archive exports a single tree_sitter_<lang>() function.
+ *
+ * On macOS, all grammar symbols are declared weak so the dylib links even
+ * when only a subset of grammars is installed.  Missing grammars return NULL.
  * ======================================================================== */
 
 extern const TSLanguage *tree_sitter_c(void);

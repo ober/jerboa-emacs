@@ -46,6 +46,13 @@
 ;;; FFI: load vterm_shim.so and bind C functions
 ;;;============================================================================
 
+(def shlib-ext
+  (let ((mt (symbol->string (machine-type))))
+    (if (and (>= (string-length mt) 3)
+             (string=? (substring mt (- (string-length mt) 3) (string-length mt)) "osx"))
+        "dylib"
+        "so")))
+
 (def vterm-shim-loaded
   (let ((static? (let ((v (getenv "JEMACS_STATIC")))
                    (and v (not (string=? v "")) (not (string=? v "0"))))))
@@ -53,7 +60,7 @@
       #f  ; symbols already linked into the binary
       (let ((dir (or (getenv "JERBOA_EMACS_SUPPORT")
                      (string-append (or (getenv "HOME") ".") "/mine/jerboa-emacs"))))
-        (load-shared-object (string-append dir "/vterm_shim.so"))))))
+        (load-shared-object (string-append dir "/vterm_shim." shlib-ext))))))
 
 ;; Core lifecycle
 (def ffi-jvt-new       (foreign-procedure "jvt_new" (int int) void*))

@@ -57,6 +57,13 @@
   (let ((v (getenv "JEMACS_STATIC")))
     (and v (not (string=? v "")) (not (string=? v "0")))))
 
+(define shlib-ext
+  (let ((mt (symbol->string (machine-type))))
+    (if (and (>= (string-length mt) 3)
+             (string=? (substring mt (- (string-length mt) 3) (string-length mt)) "osx"))
+        "dylib"
+        "so")))
+
 (define ts-shim-loaded
   (if static-build?
     #f  ;; symbols already linked in via Sforeign_symbol registration
@@ -66,7 +73,7 @@
         (load-shared-object
           (let ((dir (or (getenv "JERBOA_EMACS_SUPPORT")
                          (string-append (or (getenv "HOME") ".") "/mine/jerboa-emacs/support"))))
-            (string-append dir "/treesitter_shim.so")))))))
+            (string-append dir "/treesitter_shim." shlib-ext)))))))
 
 ;;;============================================================================
 ;;; FFI bindings

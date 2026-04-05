@@ -461,6 +461,26 @@ static void* qt_thread_main(void* arg) {
 
 extern "C" qt_application_t qt_application_create(int argc, char** argv) {
     (void)argc; (void)argv;
+#ifdef __APPLE__
+    // macOS/Cocoa requires QApplication to be created on the main thread.
+    // The calling thread IS the main thread (Chez primordial thread), so we
+    // create QApplication here directly — no pthread needed.
+    // The event loop is driven by repeated qt_application_process_events() calls
+    // from the Scheme polling loop in qt-app-exec! (every 50ms).
+    // Since g_qt_main_thread == QThread::currentThread() for ALL Qt calls
+    // from Scheme, QT_VOID/QT_RETURN always take the direct path — no
+    // BlockingQueuedConnection marshaling needed.
+    if (!getenv("QT_QPA_PLATFORM")) {
+        setenv("QT_QPA_PLATFORM", "cocoa", 0);
+    }
+    g_qt_main_thread = QThread::currentThread();
+    auto* app = new QApplication(s_argc, s_argv);
+    QAccessible::setActive(false);
+    qt_verbose_log_note_qt_thread();
+    g_event_loop_running.store(true, std::memory_order_release);
+    return app;
+#else
+    // Linux: spawn a dedicated Qt pthread so QApplication runs on its own thread.
     // Initialize the ready semaphore.
     sem_init(&g_qt_ready_sem, 0, 0);
     // Start the dedicated Qt thread.
@@ -472,6 +492,7 @@ extern "C" qt_application_t qt_application_create(int argc, char** argv) {
     sem_wait(&g_qt_ready_sem);
     sem_destroy(&g_qt_ready_sem);
     return QCoreApplication::instance();
+#endif
 }
 
 extern "C" int qt_application_exec(qt_application_t app) {
@@ -495,23 +516,42 @@ extern "C" int qt_application_is_running(void) {
 }
 
 extern "C" void qt_application_quit(qt_application_t app) {
-    // QCoreApplication::quit() posts a QuitEvent — thread-safe.
     (void)app;
+#ifdef __APPLE__
+    // On macOS, Qt runs via processEvents() — no exec() event loop.
+    // Just clear the running flag so the Scheme polling loop exits.
+    g_event_loop_running.store(false, std::memory_order_release);
+    QCoreApplication::processEvents(); // drain any pending events
+#else
+    // QCoreApplication::quit() posts a QuitEvent — thread-safe.
     QCoreApplication::quit();
+#endif
 }
 
 extern "C" void qt_application_process_events(qt_application_t app) {
+#ifdef __APPLE__
+    // On macOS, we ARE the Qt main thread — call directly.
+    (void)app;
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
+#else
     // Must run on Qt thread — use dispatch.
     QT_VOID((void)app; QCoreApplication::processEvents());
+#endif
 }
 
 extern "C" void qt_application_destroy(qt_application_t app) {
+#ifdef __APPLE__
+    // On macOS, QApplication was created on the calling thread (no pthread).
+    // Delete it here directly.
+    delete static_cast<QApplication*>(app);
+#else
     // Qt thread owns the QApplication and deletes it in qt_thread_main.
     // By the time we are called, qt_application_is_running() has returned false
     // (the Scheme polling loop exited), so the Qt thread is finishing cleanup.
     // pthread_join waits for it to fully exit and frees thread resources.
     (void)app;
     pthread_join(g_qt_thread, nullptr);
+#endif
 }
 
 // Expose is_qt_main_thread() to C code (for use by Gerbil trampolines in libqt.ss).

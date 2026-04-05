@@ -2,10 +2,15 @@
  * pty_shim.c — PTY (pseudo-terminal) subprocess support via forkpty(3).
  *
  * Extracted from gerbil-emacs/pty.ss begin-ffi block.
- * Compile: cc -shared -fPIC -o pty_shim.so pty_shim.c -lutil
+ * Linux:  cc -shared -fPIC -o pty_shim.so pty_shim.c -lutil
+ * macOS:  cc -dynamiclib -o pty_shim.dylib pty_shim.c
  */
 
+#ifdef __APPLE__
+#include <util.h>
+#else
 #include <pty.h>
+#endif
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -52,7 +57,21 @@ int pty_spawn(const char *cmd, const char *envp, int rows, int cols) {
         }
 
         if (envp && envp[0]) {
+#ifdef __APPLE__
+            /* macOS lacks clearenv(); clear via unsetenv on each key */
+            {
+                extern char **environ;
+                while (environ && environ[0]) {
+                    char *key = strdup(environ[0]);
+                    char *eq = strchr(key, '=');
+                    if (eq) *eq = '\0';
+                    unsetenv(key);
+                    free(key);
+                }
+            }
+#else
             clearenv();
+#endif
             const char *p = envp;
             while (*p) {
                 const char *nl = strchr(p, '\n');

@@ -53,15 +53,19 @@
           #f  ; static build: symbols registered via Sforeign_symbol
           (begin
             (load-shared-object #f)
-            ;; Load repl_shim.so for GC-safe subprocess/file I/O helpers.
+            ;; Load repl_shim.so/.dylib for GC-safe subprocess/file I/O helpers.
             ;; Try CWD paths, then next to the binary via /proc/self/exe.
-            (let* ([exe-dir (_exe-dir)]
+            (let* ([mt (symbol->string (machine-type))]
+                   [ext (if (and (>= (string-length mt) 3)
+                                 (string=? (substring mt (- (string-length mt) 3) (string-length mt)) "osx"))
+                             "dylib" "so")]
+                   [exe-dir (_exe-dir)]
                    [paths (append
-                            (list "repl_shim.so"
-                                  "./repl_shim.so"
-                                  "support/repl_shim.so")
+                            (list (string-append "repl_shim." ext)
+                                  (string-append "./repl_shim." ext)
+                                  (string-append "support/repl_shim." ext))
                             (if exe-dir
-                              (list (string-append exe-dir "repl_shim.so"))
+                              (list (string-append exe-dir "repl_shim." ext))
                               '()))])
               (let try ((ps paths))
                 (if (null? ps)
@@ -94,10 +98,16 @@
   (define c-deactivate (foreign-procedure "repl_deactivate_thread" () void))
   (define c-activate   (foreign-procedure "repl_activate_thread" () int))
 
-  ;; errno
-  (define c-errno-location (foreign-procedure "__errno_location" () void*))
+  ;; errno — use __error on macOS/FreeBSD, __errno_location on Linux
+  (define c-errno-location
+    (let ((mt (symbol->string (machine-type))))
+      (if (or (memq (machine-type) '(a6fb ta6fb i3fb ti3fb arm64fb))
+              (and (>= (string-length mt) 3)
+                   (string=? (substring mt (- (string-length mt) 3) (string-length mt)) "osx")))
+        (foreign-procedure "__error" () void*)
+        (foreign-procedure "__errno_location" () void*))))
   (define (get-errno) (foreign-ref 'int (c-errno-location) 0))
-  (define EAGAIN 11)
+  (define EAGAIN (if (memq (machine-type) '(tarm64osx ta6osx a6osx arm64osx)) 35 11))
   (define EINTR 4)
 
   ;; Constants

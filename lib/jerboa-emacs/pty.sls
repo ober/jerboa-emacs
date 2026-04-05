@@ -31,13 +31,16 @@
     (let ((v (getenv "JEMACS_STATIC")))
       (and v (not (string=? v "")) (not (string=? v "0")))))
 
+  (define shlib-ext
+    (if (string-contains (symbol->string (machine-type)) "osx") "dylib" "so"))
+
   (define pty-shim-loaded
     (if static-build?
         #f  ; symbols already linked in via Sforeign_symbol registration
         (load-shared-object
           (let ((dir (or (getenv "JERBOA_EMACS_SUPPORT")
                          (string-append (or (getenv "HOME") ".") "/mine/jerboa-emacs/support"))))
-            (string-append dir "/pty_shim.so")))))
+            (string-append dir "/pty_shim." shlib-ext)))))
 
   ;;; ========================================================================
   ;;; FFI bindings

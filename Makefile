@@ -1,14 +1,45 @@
 SCHEME = scheme
 JERBOA    = $(HOME)/mine/jerboa
-JSH       = vendor/jerboa-shell/src
-COREUTILS = $(HOME)/mine/jerboa-coreutils/lib
+JSH       = $(if $(wildcard vendor/jerboa-shell/src/jsh),vendor/jerboa-shell/src,$(HOME)/mine/jerboa-shell/src)
+COREUTILS = $(if $(wildcard $(HOME)/mine/jerboa-coreutils/lib),$(HOME)/mine/jerboa-coreutils/lib,$(HOME)/mine/jerboa-shell/vendor/jerboa-coreutils/lib)
 GHERKIN   = $(HOME)/mine/gherkin/src
 LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(COREUTILS):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
-export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
+
+# --- Platform detection -------------------------------------------------------
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+  SHLIB_EXT   := dylib
+  # -undefined dynamic_lookup: allow symbols resolved at load time from the host process
+  SHLIB_FLAGS := -dynamiclib -Wl,-undefined,dynamic_lookup
+  PRELOAD_VAR := DYLD_INSERT_LIBRARIES
+  export DYLD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:$(HOME)/mine/jerboa-shell:vendor/jerboa-shell:$(DYLD_LIBRARY_PATH)
+  PTY_LINK    :=
+  XVFB_RUN   :=
+  export QT_QPA_PLATFORM := cocoa
+  QT_INC_FALLBACK := /opt/homebrew/opt/qt/include
+  QSCI_EXTRA_INC  := $(shell brew --prefix qscintilla2 2>/dev/null)/include
+  TS_INC      := $(shell brew --prefix tree-sitter 2>/dev/null)/include
+  TS_LIB_DIR  := $(shell brew --prefix tree-sitter 2>/dev/null)/lib
+else
+  SHLIB_EXT   := so
+  SHLIB_FLAGS := -shared -fPIC
+  PRELOAD_VAR := LD_PRELOAD
+  export LD_LIBRARY_PATH := .:$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla:$(HOME)/mine/chez-qt:vendor/jerboa-shell:$(LD_LIBRARY_PATH)
+  PTY_LINK    := -lutil
+  XVFB_RUN   := xvfb-run -a
+  QT_INC_FALLBACK := /usr/include/x86_64-linux-gnu/qt6
+  QSCI_EXTRA_INC  :=
+  TS_INC      := /opt/tree-sitter-include
+  TS_LIB_DIR  := /opt/tree-sitter-lib
+endif
+PRELOAD_ENV := $(PRELOAD_VAR)=./qt_chez_shim.$(SHLIB_EXT)
+# -----------------------------------------------------------------------------
+
 export CHEZ_SCINTILLA_LIB := $(HOME)/mine/chez-scintilla
 export CHEZ_PCRE2_LIB := $(HOME)/mine/chez-pcre2
-export CHEZ_QT_LIB := $(HOME)/mine/chez-qt
+export JSH_FFI_LIB := $(HOME)/mine/jerboa-shell
+export CHEZ_QT_LIB := .
 export CHEZ_QT_SHIM_DIR := .
 
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
@@ -31,47 +62,117 @@ rebuild:
 run: build
 	$(SCHEME) $(LIBDIRS) --script main.ss
 
-repl_shim.so: support/repl_shim.c
-	gcc -shared -fPIC -O2 -o repl_shim.so support/repl_shim.c -Wall
+repl_shim.$(SHLIB_EXT): support/repl_shim.c
+	gcc $(SHLIB_FLAGS) -O2 -o repl_shim.$(SHLIB_EXT) support/repl_shim.c -Wall
 
-vterm_shim.so: support/vterm_shim.c
-	gcc -shared -fPIC -O2 -o vterm_shim.so support/vterm_shim.c -lvterm -Wall
+VTERM_CFLAGS := $(shell pkg-config --cflags vterm 2>/dev/null)
+VTERM_LIBS   := $(shell pkg-config --libs vterm 2>/dev/null || echo -lvterm)
 
-QT_INC := $(shell qmake6 -query QT_INSTALL_HEADERS 2>/dev/null || echo /usr/include/x86_64-linux-gnu/qt6)
+vterm_shim.$(SHLIB_EXT): support/vterm_shim.c
+	gcc $(SHLIB_FLAGS) -O2 $(VTERM_CFLAGS) -o vterm_shim.$(SHLIB_EXT) support/vterm_shim.c $(VTERM_LIBS) -Wall
+
+support/pty_shim.$(SHLIB_EXT): support/pty_shim.c
+	gcc $(SHLIB_FLAGS) -O2 -o support/pty_shim.$(SHLIB_EXT) support/pty_shim.c $(PTY_LINK) -Wall
+
+ifeq ($(UNAME_S),Darwin)
+# On macOS, grammars are compiled as object files (each with its own bundled
+# parser.h), then linked into the shim.  ABI-15 grammars use the shared
+# include dir; ABI-14 grammars use their own bundled tree_sitter/ subdir.
+TS_GRAMMAR_LIBS := \
+  -L/opt/homebrew/opt/tree-sitter-go/lib     -ltree-sitter-go \
+  -L/opt/homebrew/opt/tree-sitter-python/lib -ltree-sitter-python \
+  -L/opt/homebrew/opt/tree-sitter-ruby/lib   -ltree-sitter-ruby
+
+# Compile each grammar object with the correct include path.
+# ABI15 grammars (use shared include):
+TS_ABI15 := c cpp bash javascript rust css
+# ABI14 grammars (use bundled parser.h from their own tree_sitter/ subdir):
+TS_ABI14 := json java html lua scheme
+
+TS_GRAMMAR_OBJS := $(foreach l,$(TS_ABI15),support/grammars/$(l)/parser.o) \
+                   $(foreach l,$(TS_ABI14),support/grammars/$(l)/parser.o) \
+                   support/grammars/cpp/scanner.o \
+                   support/grammars/bash/scanner.o \
+                   support/grammars/javascript/scanner.o \
+                   support/grammars/rust/scanner.o \
+                   support/grammars/css/scanner.o \
+                   support/grammars/html/scanner.o \
+                   support/grammars/lua/scanner.o
+
+# Pattern rules for ABI15 grammars
+$(foreach l,$(TS_ABI15),support/grammars/$(l)/parser.o): support/grammars/%/parser.o: support/grammars/%/parser.c
+	gcc -c -O2 -I$(TS_INC) -Isupport/grammars/include -o $@ $<
+
+$(foreach l,$(TS_ABI15),support/grammars/$(l)/scanner.o): support/grammars/%/scanner.o: support/grammars/%/scanner.c
+	gcc -c -O2 -I$(TS_INC) -Isupport/grammars/include -o $@ $<
+
+# Pattern rules for ABI14 grammars (use bundled tree_sitter/ inside grammar dir)
+$(foreach l,$(TS_ABI14),support/grammars/$(l)/parser.o): support/grammars/%/parser.o: support/grammars/%/parser.c
+	gcc -c -O2 -I$(TS_INC) -Isupport/grammars/$* -o $@ $<
+
+$(foreach l,$(TS_ABI14),support/grammars/$(l)/scanner.o): support/grammars/%/scanner.o: support/grammars/%/scanner.c
+	gcc -c -O2 -I$(TS_INC) -Isupport/grammars/$* -o $@ $<
+
+else
+TS_GRAMMAR_LIBS :=
+TS_GRAMMAR_OBJS :=
+endif
+
+support/treesitter_shim.$(SHLIB_EXT): support/treesitter_shim.c support/treesitter_queries.c $(TS_GRAMMAR_OBJS)
+	gcc $(SHLIB_FLAGS) -O2 -I$(TS_INC) -Isupport/grammars/include \
+	  -o support/treesitter_shim.$(SHLIB_EXT) \
+	  support/treesitter_shim.c support/treesitter_queries.c \
+	  $(TS_GRAMMAR_OBJS) \
+	  -L$(TS_LIB_DIR) -ltree-sitter $(TS_GRAMMAR_LIBS) -Wall
+
+QT_INC := $(shell qmake6 -query QT_INSTALL_HEADERS 2>/dev/null || echo $(QT_INC_FALLBACK))
 QT_SHIM_H := vendor
 
-libqt_shim.so: vendor/qt_shim.cpp
-	g++ -shared -fPIC -std=c++17 -O2 \
+ifeq ($(UNAME_S),Darwin)
+QT_CFLAGS := $(shell pkg-config --cflags Qt6Widgets Qt6Gui Qt6Core 2>/dev/null)
+QT_LIBS   := $(shell pkg-config --libs   Qt6Widgets Qt6Gui Qt6Core 2>/dev/null)
+QSCI_CFLAGS := -I$(QSCI_EXTRA_INC)
+QSCI_LIBS   := -L/opt/homebrew/lib -lqscintilla2_qt6
+else
+QT_CFLAGS := -I$(QT_INC) -I$(QT_INC)/QtCore -I$(QT_INC)/QtGui -I$(QT_INC)/QtWidgets -I$(QT_INC)/Qsci
+QT_LIBS   := -lQt6Core -lQt6Gui -lQt6Widgets
+QSCI_CFLAGS :=
+QSCI_LIBS   := -lqscintilla2_qt6
+endif
+
+libqt_shim.$(SHLIB_EXT): vendor/qt_shim.cpp
+	g++ $(SHLIB_FLAGS) -std=c++17 -O2 \
 	  -DJEMACS_CHEZ_SMP -DQT_SCINTILLA_AVAILABLE \
-	  -I$(QT_SHIM_H) -I$(QT_INC) -I$(QT_INC)/QtCore -I$(QT_INC)/QtGui -I$(QT_INC)/QtWidgets -I$(QT_INC)/Qsci \
+	  -I$(QT_SHIM_H) $(QT_CFLAGS) $(QSCI_CFLAGS) \
+	  -I$(QT_INC)/Qsci \
 	  vendor/qt_shim.cpp \
-	  -o libqt_shim.so \
-	  -lQt6Core -lQt6Gui -lQt6Widgets -lqscintilla2_qt6
+	  -o libqt_shim.$(SHLIB_EXT) \
+	  $(QT_LIBS) $(QSCI_LIBS)
 
-qt_chez_shim.so: vendor/qt_chez_shim.c vendor/qt_shim.h
-	gcc -shared -fPIC -O2 -o qt_chez_shim.so vendor/qt_chez_shim.c -Ivendor -Wall
+qt_chez_shim.$(SHLIB_EXT): vendor/qt_chez_shim.c vendor/qt_shim.h
+	gcc $(SHLIB_FLAGS) -O2 -o qt_chez_shim.$(SHLIB_EXT) vendor/qt_chez_shim.c -Ivendor -DQT_SCINTILLA_AVAILABLE -Wall
 
-run-qt: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
-	LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script qt-main.ss
+run-qt: build repl_shim.$(SHLIB_EXT) libqt_shim.$(SHLIB_EXT) vterm_shim.$(SHLIB_EXT) qt_chez_shim.$(SHLIB_EXT)
+	$(PRELOAD_ENV) $(SCHEME) $(LIBDIRS) --script qt-main.ss
 
 # Headless Qt with automation REPL (for Claude).  Uses xvfb-run for
-# virtual display (static binary needs xcb).  Auto-assigned REPL port.
-run-qt-test: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+# virtual display on Linux (static binary needs xcb).  Auto-assigned REPL port.
+run-qt-test: build repl_shim.$(SHLIB_EXT) libqt_shim.$(SHLIB_EXT) vterm_shim.$(SHLIB_EXT) qt_chez_shim.$(SHLIB_EXT)
 	@rm -f $(HOME)/.jerboa-repl-port
-	xvfb-run -a LD_PRELOAD=./qt_chez_shim.so \
+	$(XVFB_RUN) $(PRELOAD_ENV) \
 	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl 0 &
 	@for i in $$(seq 1 20); do \
 	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
 	  sleep 0.3; \
 	done
 	@if [ -f $(HOME)/.jerboa-repl-port ]; then \
-	  echo "jemacs-qt running (headless). REPL port: $$(grep -oP '\\d+' $(HOME)/.jerboa-repl-port)"; \
+	  echo "jemacs-qt running (headless). REPL port: $$(grep -oE '[0-9]+' $(HOME)/.jerboa-repl-port | head -1)"; \
 	else \
 	  echo "ERROR: REPL port file not created after 6s"; exit 1; \
 	fi
 
 stop-qt-test:
-	@PORT=$$(grep -oP '\\d+' $(HOME)/.jerboa-repl-port 2>/dev/null); \
+	@PORT=$$(grep -oE '[0-9]+' $(HOME)/.jerboa-repl-port 2>/dev/null | head -1); \
 	if [ -n "$$PORT" ]; then \
 	  PID=$$(lsof -ti :$$PORT 2>/dev/null | head -1); \
 	  [ -n "$$PID" ] && kill $$PID && echo "Killed jemacs-qt (PID $$PID)" || echo "No running jemacs-qt found"; \
@@ -212,8 +313,8 @@ test-debug-repl:
 	$(SCHEME) $(LIBDIRS) --program tests/test-debug-repl.ss
 
 test-qt: build
-	QT_QPA_PLATFORM=offscreen LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script tests/test-qt.ss
-	QT_QPA_PLATFORM=offscreen LD_PRELOAD=./qt_chez_shim.so $(SCHEME) $(LIBDIRS) --script tests/test-qt-part2.ss
+	QT_QPA_PLATFORM=offscreen $(PRELOAD_ENV) $(SCHEME) $(LIBDIRS) --script tests/test-qt.ss
+	QT_QPA_PLATFORM=offscreen $(PRELOAD_ENV) $(SCHEME) $(LIBDIRS) --script tests/test-qt-part2.ss
 
 # End-to-end Qt tests: Xvfb + xdotool + IPC REPL (requires xvfb, xdotool, nc)
 test-qt-e2e:
