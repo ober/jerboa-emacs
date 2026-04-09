@@ -423,6 +423,7 @@ build-jemacs-qt-static: check-root
 	cp /src/vendor/jerboa-shell/embed-crypto.c /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/embed-crypto.h /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/ffi-shim.c /deps/jsh/ 2>/dev/null; \
+	cp /src/vendor/jerboa-shell/libcoreutils.c /deps/jsh/ 2>/dev/null; \
 	if [ -f /src/vendor/jerboa-shell/crypto_stub.c ]; then \
 	  gcc -c -O2 /src/vendor/jerboa-shell/crypto_stub.c -o /tmp/jemacs-build/crypto_stub.o; \
 	fi; \

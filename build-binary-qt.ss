@@ -425,7 +425,8 @@ find ~a -name '*.sls' -o -name '*.ss' | \
 sort -u | grep -v '^$' | grep -v '^_NSGetExecutablePath$' | grep -v '^io_uring_' | \
 grep -v '^jerboa_' | grep -v '^SSL_' | grep -v '^TLS_' | grep -v '^EVP_' | \
 grep -v '^CRYPTO_' | grep -v '^PKCS5_' | grep -v '^RAND_' | \
-grep -v '^QRcode_' | grep -v '^embed_encrypt$' | grep -v '^embed_random_bytes$' > /tmp/ffi_syms.txt && \
+grep -v '^QRcode_' | grep -v '^embed_encrypt$' | grep -v '^embed_random_bytes$' | \
+grep -v '^__error$' > /tmp/ffi_syms.txt && \
 awk '\
 BEGIN{ print \"/* Auto-generated — do not edit */\"; \
        print \"#include \\\"scheme.h\\\"\"; print \"\"; } \
@@ -467,6 +468,25 @@ echo OK"
                       jsh-root)))
     (unless (= 0 (system cmd))
       (display "Error: jsh ffi-shim.c compilation failed\n")
+      (exit 1))))
+
+;; libcoreutils.c (coreutils_raw_mode_*, coreutils_terminal_*, etc.)
+;; Needed for static builds — provides C symbols referenced by jerboa-coreutils FFI
+(when jemacs-static?
+  (let* ((jsh-root (path-parent jsh-dir))
+         (cmd (format "gcc -c -O2 -o jemacs-qt-libcoreutils.o ~a/libcoreutils.c -Wall 2>&1"
+                      jsh-root)))
+    (unless (= 0 (system cmd))
+      (display "Error: libcoreutils.c compilation failed\n")
+      (exit 1))))
+
+;; jsh coreutils stubs (jsh_* Rust uutils symbols — stubs for static binary)
+;; The Rust libjsh_coreutils.a is not in the Docker image; these stubs allow linking.
+;; At runtime, in-process coreutils commands return an error; vterm PTY is unaffected.
+(when jemacs-static?
+  (let* ((cmd "gcc -c -O2 -o jemacs-qt-jsh-coreutils-stubs.o support/jsh_coreutils_stubs.c -Wall 2>&1"))
+    (unless (= 0 (system cmd))
+      (display "Error: jsh_coreutils_stubs.c compilation failed\n")
       (exit 1))))
 
 ;; jsh embed-crypto (pure C crypto for embed encryption — no external deps)
@@ -651,6 +671,7 @@ grep -v '^$' | grep -v '^register_static_foreign_symbols$'")
                        "/tmp/jemacs-build/crypto_stub.o" ""))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
 jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
+jemacs-qt-libcoreutils.o jemacs-qt-jsh-coreutils-stubs.o \
 jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o ~a \
 jemacs-qt-pty-shim.o jemacs-qt-vterm-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
 qt_static_symbols.o \
@@ -711,7 +732,9 @@ jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o \
       "jemacs_qt_scheme_boot.h" "jemacs_qt_jemacs_qt_boot.h"
       "jemacs-qt-all.so" "qt-main.so" "qt-main.wpo" "jemacs-qt.boot")
     (if jemacs-static?
-        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-embed-crypto.o"
+        '("jemacs-qt-jsh-ffi.o" "jemacs-qt-libcoreutils.o"
+          "jemacs-qt-jsh-coreutils-stubs.o"
+          "jemacs-qt-embed-crypto.o"
           "jemacs-qt-ssh-agent-stub.o" "jemacs-qt-ssh-agent-stub.c"
           "jemacs-qt-pty-shim.o" "jemacs-qt-vterm-shim.o"
           "jemacs-qt-jerboa-landlock.o"
