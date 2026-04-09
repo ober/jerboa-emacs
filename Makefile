@@ -83,7 +83,7 @@ build:
 rebuild:
 	$(JERBUILD) src/ lib/ --force
 
-run: build
+run: build vterm_shim.$(SHLIB_EXT)
 	$(SCHEME) $(LIBDIRS) --script main.ss
 
 repl_shim.$(SHLIB_EXT): support/repl_shim.c
