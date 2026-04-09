@@ -368,9 +368,36 @@ test-term-hang:
 binary-qt: build
 	$(SCHEME) $(LIBDIRS) --script build-binary-qt.ss
 
+# chez-scintilla shim — built from ~/mine/chez-scintilla (requires Scintilla/Lexilla/termbox archives)
+SCI_DIR ?= $(HOME)/mine/chez-scintilla
+GERBIL_SCI_VENDOR ?= $(HOME)/mine/gerbil-emacs/.gerbil/pkg/github.com/ober/gerbil-scintilla/vendor
+
+chez_scintilla_shim.$(SHLIB_EXT): $(SCI_DIR)/chez_scintilla_shim.c
+	gcc $(SHLIB_FLAGS) -O2 \
+	  -I$(GERBIL_SCI_VENDOR)/scintilla/include \
+	  -I$(GERBIL_SCI_VENDOR)/scintilla/src \
+	  -I$(GERBIL_SCI_VENDOR)/scintilla/termbox \
+	  -I$(GERBIL_SCI_VENDOR)/scintilla/termbox/termbox_next/src \
+	  -I$(GERBIL_SCI_VENDOR)/lexilla/include \
+	  -o chez_scintilla_shim.$(SHLIB_EXT) \
+	  $(SCI_DIR)/chez_scintilla_shim.c \
+	  -Wl,--whole-archive \
+	  $(GERBIL_SCI_VENDOR)/scintilla/bin/scintilla.a \
+	  $(GERBIL_SCI_VENDOR)/lexilla/bin/liblexilla.a \
+	  $(GERBIL_SCI_VENDOR)/scintilla/termbox/termbox_next/bin/termbox.a \
+	  -Wl,--no-whole-archive \
+	  -lstdc++ -lpthread -Wall
+
+# pcre2 shim — copied from chez-pcre2 (already built there)
+PCRE2_DIR ?= $(HOME)/mine/chez-pcre2
+
+pcre2_shim.$(SHLIB_EXT): $(PCRE2_DIR)/pcre2_shim.$(SHLIB_EXT)
+	cp $< $@
+
 # TUI binary: embeds all Scheme code, links dynamically against system libs.
-# Requires: chez-scintilla shim, pcre2, ncurses at runtime (found via CHEZ_SCINTILLA_LIB etc.)
-binary: build vterm_shim.$(SHLIB_EXT)
+# Shims must be in the same directory as the binary (jemacs-main.c sets CHEZ_SCINTILLA_LIB
+# and CHEZ_PCRE2_LIB to dirname(binary) when not already set in environment).
+binary: build vterm_shim.$(SHLIB_EXT) chez_scintilla_shim.$(SHLIB_EXT) pcre2_shim.$(SHLIB_EXT)
 	find vendor/jerboa-shell -name '*.wpo' -delete 2>/dev/null; true
 	$(SCHEME) $(LIBDIRS) --script build-binary.ss
 
