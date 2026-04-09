@@ -53,7 +53,8 @@ endif
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
         test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary-qt \
         test-pty test-emacs test-functional test-term-hang \
-        docker-deps static-qt clean-docker check-root build-jemacs-qt-static macos \
+        docker-deps static-qt static-tui clean-docker check-root \
+        build-jemacs-qt-static build-jemacs-tui-static binary macos \
         stress-run stress-run-static stress-test stress-burn stress-burn-static \
         test-behavioral
 
@@ -63,6 +64,8 @@ all:
 	@echo "  rebuild        Force full retranslation"
 	@echo "  run            Build and run TUI editor"
 	@echo "  run-qt         Build and run Qt editor"
+	@echo "  binary         Build TUI binary (./jemacs) — embeds Scheme, links system libs"
+	@echo "  static-tui     Build fully static TUI binary via Docker (./jemacs)"
 	@echo "  static-qt      Build static jemacs-qt binary via Docker"
 	@echo "  macos          Build native jemacs-qt binary for macOS"
 	@echo "  test           Full test suite (all tiers + org)"
@@ -365,6 +368,12 @@ test-term-hang:
 binary-qt: build
 	$(SCHEME) $(LIBDIRS) --script build-binary-qt.ss
 
+# TUI binary: embeds all Scheme code, links dynamically against system libs.
+# Requires: chez-scintilla shim, pcre2, ncurses at runtime (found via CHEZ_SCINTILLA_LIB etc.)
+binary: build vterm_shim.$(SHLIB_EXT)
+	find vendor/jerboa-shell -name '*.wpo' -delete 2>/dev/null; true
+	$(SCHEME) $(LIBDIRS) --script build-binary.ss
+
 # =============================================================================
 # Static binary builds (Docker-based, Alpine musl)
 # =============================================================================
@@ -587,6 +596,114 @@ linux-static-qt-docker:
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \
 	         exec su-exec $(UID):$(GID) env HOME=/tmp/jemacs-build sh -c '\
 	           cd /src && make build-jemacs-qt-static'"
+
+# =============================================================================
+# Static TUI binary (Docker-based, Alpine musl)
+# =============================================================================
+
+# gerbil-scintilla vendor source: Scintilla/termbox/Lexilla C/C++ source + headers
+# Used to build static archives inside the Alpine container
+SCI_VENDOR_SRC ?= $(HOME)/mine/gerbil-emacs/.gerbil/pkg/github.com/ober/gerbil-scintilla/vendor
+
+# Fast static TUI binary via Docker (requires deps image from `make docker-deps`).
+# Builds Scintilla+termbox+Lexilla from source, then ./jemacs (~5-10 min).
+static-tui: linux-static-tui-docker
+
+# In-container build target for TUI static binary (called by linux-static-tui-docker)
+build-jemacs-tui-static: check-root
+	rm -f /src/src/.jerbuild-hashes; \
+	cp /src/vendor/jerboa-shell/embed-crypto.c /deps/jsh/ 2>/dev/null; \
+	cp /src/vendor/jerboa-shell/embed-crypto.h /deps/jsh/ 2>/dev/null; \
+	cp /src/vendor/jerboa-shell/ffi-shim.c /deps/jsh/ 2>/dev/null; \
+	cp /src/vendor/jerboa-shell/libcoreutils.c /deps/jsh/ 2>/dev/null; \
+	cd /src && find lib -name '*.so' -o -name '*.wpo' | xargs rm -f 2>/dev/null; \
+	find /src/src/jerboa-emacs -name '*.ss' | sed 's|/src/src/|/src/lib/|; s|\.ss$$|.sls|' | xargs rm -f 2>/dev/null; \
+	cd /src && make build SCHEME=/opt/chez/bin/scheme JERBOA=/deps/jerboa && \
+	cp /src/vendor/chez-pcre2-ffi-static.ss /deps/chez-pcre2/chez-pcre2/ffi.ss && \
+	/opt/chez/bin/scheme --libdirs /deps/chez-pcre2 \
+	  --compile-imported-libraries --script /src/vendor/chez-pcre2-compile-libs.ss && \
+	rm -f /deps/chez-pcre2/chez-pcre2/*.wpo && \
+	cp /src/vendor/chez-scintilla-ffi-static.sls /deps/chez-scintilla/src/chez-scintilla/ffi.sls && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/chez-scintilla/src \
+	  --compile-imported-libraries --script /src/vendor/chez-scintilla-compile-libs.ss && \
+	rm -f /deps/chez-scintilla/src/chez-scintilla/*.wpo && \
+	cp /src/vendor/jerboa-net-tcp-static.sls /deps/jerboa/lib/std/net/tcp.sls && \
+	cp /src/vendor/jerboa-net-tcp-raw-static.sls /deps/jerboa/lib/std/net/tcp-raw.sls && \
+	cp /src/vendor/jerboa-net-uri.sls /deps/jerboa/lib/std/net/uri.sls && \
+	rm -f /deps/jerboa/lib/std/net/*.wpo /deps/jerboa/lib/std/net/*.so && \
+	cp /src/vendor/jerboa-crypto-native-static.sls /deps/jerboa/lib/std/crypto/native.sls && \
+	rm -f /deps/jerboa/lib/std/crypto/*.wpo /deps/jerboa/lib/std/crypto/*.so && \
+	mkdir -p /deps/jerboa/lib/std/security && \
+	cp /src/vendor/jerboa-security-capsicum-static.sls /deps/jerboa/lib/std/security/capsicum.sls && \
+	rm -f /deps/jerboa/lib/std/security/*.wpo /deps/jerboa/lib/std/security/*.so && \
+	cp /src/vendor/jerboa-os-landlock-static.sls /deps/jerboa/lib/std/os/landlock.sls && \
+	rm -f /deps/jerboa/lib/std/os/landlock.wpo /deps/jerboa/lib/std/os/landlock.so && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-tcp.ss && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-tcp-raw.ss && \
+	/opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-uri.ss && \
+	rm -f /deps/jerboa/lib/std/net/*.wpo && \
+	cp /src/vendor/jerboa-repl-static.sls /deps/jerboa/lib/std/repl.sls && \
+	rm -f /deps/jerboa/lib/std/repl.wpo /deps/jerboa/lib/std/repl.so && \
+	cd /deps/jerboa/lib && /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-repl.ss && \
+	rm -f /deps/jerboa/lib/std/repl.wpo && cd /src && \
+	rm -f /src/lib/jerboa/*.wpo /src/lib/jerboa/*.so && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme --libdirs /src/lib \
+	  --compile-imported-libraries --script /src/vendor/jerboa-compile-repl-socket.ss && \
+	rm -f /src/lib/jerboa/*.wpo && \
+	echo "Building Scintilla+termbox+Lexilla static archives from source..." && \
+	make -C /deps/sci-vendor/scintilla/termbox/termbox_next && \
+	make -C /deps/sci-vendor/scintilla/termbox && \
+	make -C /deps/sci-vendor/lexilla/src liblexilla.a && \
+	JEMACS_STATIC=1 \
+	CHEZ_DIR=$(CHEZ_MUSL_DIR) \
+	JERBOA_DIR=/deps/jerboa/lib \
+	JSH_DIR=/deps/jsh/src \
+	GHERKIN_DIR=/src/vendor/gherkin-runtime \
+	CHEZ_PCRE2_DIR=/deps/chez-pcre2 \
+	CHEZ_SCINTILLA_DIR=/deps/chez-scintilla/src \
+	SCI_VENDOR_DIR=/deps/sci-vendor \
+	JSH_COREUTILS_LIB=/deps/jsh/libjsh_coreutils.a \
+	/opt/chez/bin/scheme \
+	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/src/vendor/gherkin-runtime:/deps/chez-pcre2:/deps/chez-scintilla/src \
+	  --script build-binary.ss
+
+linux-static-tui-docker:
+	@docker image inspect $(DEPS_IMAGE) >/dev/null 2>&1 || \
+	  { echo "ERROR: Deps image '$(DEPS_IMAGE)' not found. Run 'make docker-deps' first."; exit 1; }
+	@test -d $(SCI_VENDOR_SRC) || \
+	  { echo "ERROR: SCI_VENDOR_SRC='$(SCI_VENDOR_SRC)' not found. Set SCI_VENDOR_SRC to gerbil-scintilla vendor/ path."; exit 1; }
+	docker run --rm \
+	  --ulimit nofile=8192:8192 \
+	  -v $(CURDIR):/src:z \
+	  -v $(SCI_VENDOR_SRC):/deps/sci-vendor:ro \
+	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
+	  -v $(JERBOA)/lib/jerboa:/host-jerboa-core:ro \
+	  -v $(JSH_SRC)/src:/host-jsh-src:ro \
+	  -v $(JSH_COREUTILS_LIB):/host-jsh-coreutils.a:ro \
+	  $(DEPS_IMAGE) \
+	  sh -c "apk add --no-cache libvterm-dev libvterm-static; \
+	         cp /host-jsh-coreutils.a /deps/jsh/libjsh_coreutils.a; \
+	         cp -a /host-jsh-src/. /deps/jsh/src/; \
+	         echo 'SYNC: bulk-copying host jerboa std/ and jerboa/ into container...'; \
+	         cp -a /host-jerboa-std/. /deps/jerboa/lib/std/ && \
+	         cp -a /host-jerboa-core/. /deps/jerboa/lib/jerboa/ && \
+	         find /deps/jerboa/lib -name '*.so' -delete && \
+	         find /deps/jerboa/lib -name '*.wpo' -delete && \
+	         echo '(import (chezscheme)) (compile-imported-libraries #t) (import (jerboa core)) (import (jerboa prelude))' \
+	           > /tmp/compile-jerboa-core.ss && \
+	         cd /deps/jerboa/lib && /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	           -q --script /tmp/compile-jerboa-core.ss && \
+	         rm -f /deps/jerboa/lib/jerboa/*.wpo && \
+	         echo 'COMPILED: jerboa core + prelude'; \
+	         chmod 755 /root && \
+	         chown -R $(UID):$(GID) /opt/ /deps && \
+	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \
+	         exec su-exec $(UID):$(GID) env HOME=/tmp/jemacs-build sh -c '\
+	           cd /src && make build-jemacs-tui-static'"
 
 # =============================================================================
 # Stress testing targets

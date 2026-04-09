@@ -84,6 +84,14 @@ int main(int argc, char *argv[]) {
     /* Build heap from registered boot files (libraries only — no program) */
     Sbuild_heap(NULL, NULL);
 
+#ifdef JEMACS_STATIC_BUILD
+    /* Static builds: register FFI symbols compiled into the binary.
+     * In musl static builds dlopen(NULL) is a stub, so foreign-procedure
+     * can't find symbols by name at runtime. We pre-register them here. */
+    extern void register_static_foreign_symbols(void);
+    register_static_foreign_symbols();
+#endif
+
     /* Run the program via Sscheme_script (NOT Sscheme_start).
      * This avoids the Chez bug where programs in boot files cannot
      * create threads (fork-thread threads block on internal GC futex).

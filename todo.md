@@ -2,14 +2,21 @@
 
 ## Static TUI binary
 
-Add a `make static-tui` target that produces a fully static `jemacs` TUI binary,
+Add `make static-tui` target that produces a fully static `jemacs` TUI binary,
 analogous to `make static-qt` / `jemacs-qt`.
 
-- Write `build-binary.ss` (analogous to `build-binary-qt.ss` but for TUI/ncurses)
-- Add `make binary` target that runs `build-binary.ss` once the file exists
-- Add `make static-tui` using the same Docker-based Alpine musl build as `static-qt`
-- Output: `./jemacs` statically linked, no runtime `.so` dependencies
-- Should work the same as `make run` but as a portable single binary
+**Status: Partially done**
 
-Note: `build-binary.ss` does not exist yet — `make binary` has been removed from
-the Makefile until it is implemented.
+- [x] `build-binary.ss` written (analogous to `build-binary-qt.ss` but for TUI)
+- [x] `jemacs-main.c` exists and works (Linux memfd-based entry point)
+- [x] `make binary` target — produces dynamic `./jemacs` (embeds all Scheme, links system libs)
+  - Verified: `./jemacs --version` works
+  - Requires `CHEZ_SCINTILLA_LIB` and `CHEZ_PCRE2_LIB` at runtime
+- [ ] `make static-tui` — Docker-based Alpine musl static build
+  - Target `linux-static-tui-docker` implemented in Makefile
+  - Requires `jemacs-deps` Docker image (`make docker-deps`)
+  - Scintilla/termbox/Lexilla archives rebuilt from source inside container
+  - `SCI_VENDOR_SRC` must point to gerbil-scintilla vendor/ (default: auto-detected)
+
+**To test `make static-tui`**: requires the `jemacs-deps` Docker image and
+`SCI_VENDOR_SRC=$(HOME)/mine/gerbil-emacs/.gerbil/pkg/github.com/ober/gerbil-scintilla/vendor`.
