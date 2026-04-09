@@ -77,13 +77,14 @@
    qt-label-set-alignment! qt-label-set-pixmap!
    qt-label-set-text! qt-label-text qt-last-key-code
    qt-last-key-modifiers qt-last-key-text
-   qt-last-key-autorepeat? qt-line-edit-create
-   qt-line-edit-set-completer! qt-line-edit-set-text!
-   qt-line-edit-text qt-list-widget-add-item!
-   qt-list-widget-clear! qt-list-widget-create
-   qt-list-widget-current-row qt-list-widget-set-current-row!
-   qt-main-window-add-toolbar! qt-main-window-create
-   qt-main-window-menu-bar qt-main-window-set-central-widget!
+   qt-last-key-autorepeat? qt-last-key-widget
+   qt-line-edit-create qt-line-edit-set-completer!
+   qt-line-edit-set-text! qt-line-edit-text
+   qt-list-widget-add-item! qt-list-widget-clear!
+   qt-list-widget-create qt-list-widget-current-row
+   qt-list-widget-set-current-row! qt-main-window-add-toolbar!
+   qt-main-window-create qt-main-window-menu-bar
+   qt-main-window-set-central-widget!
    qt-main-window-set-status-bar-text!
    qt-main-window-set-title! qt-menu-add-action!
    qt-menu-add-separator! qt-menu-bar-add-menu qt-on-clicked!
@@ -99,7 +100,8 @@
    qt-scintilla-get-text-length qt-scintilla-receive-string
    qt-scintilla-send-message qt-scintilla-send-message-string
    qt-scintilla-set-lexer-language! qt-scintilla-set-text!
-   qt-scintilla-lexer-set-color! qt-scintilla-lexer-set-paper!
+   qt-scintilla-set-utf8! qt-scintilla-lexer-set-color!
+   qt-scintilla-lexer-set-paper!
    qt-scintilla-lexer-set-font-attr! qt-scroll-area-create
    qt-scroll-area-set-widget!
    qt-scroll-area-set-widget-resizable! qt-splitter-add-widget!
@@ -107,8 +109,9 @@
    qt-splitter-insert-widget! qt-splitter-set-handle-width!
    qt-splitter-set-orientation! qt-splitter-set-sizes!
    qt-splitter-size-at qt-stacked-widget-add-widget!
-   qt-stacked-widget-create
-   qt-stacked-widget-set-current-index! qt-timer-create
+   qt-stacked-widget-count qt-stacked-widget-create
+   qt-stacked-widget-set-current-index!
+   qt-stacked-widget-set-current-widget! qt-timer-create
    qt-timer-set-single-shot! qt-timer-start! qt-timer-stop!
    qt-toolbar-add-action! qt-toolbar-add-separator!
    qt-toolbar-create qt-toolbar-set-movable! qt-widget-close!
@@ -133,7 +136,13 @@
    QT_CURSOR_UP QT_CURSOR_DOWN QT_CURSOR_START QT_CURSOR_END
    QT_CURSOR_START_OF_BLOCK QT_CURSOR_END_OF_BLOCK
    QT_CURSOR_NEXT_CHAR QT_CURSOR_NEXT_WORD
-   QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD)
+   QT_CURSOR_PREVIOUS_CHAR QT_CURSOR_PREVIOUS_WORD
+   qt-terminal-create qt-terminal-destroy! qt-terminal-spawn!
+   qt-terminal-connect-fd! qt-terminal-send-key-event!
+   qt-terminal-send-input! qt-terminal-is-running?
+   qt-terminal-interrupt! qt-terminal-set-font!
+   qt-terminal-set-colors! qt-terminal-focus!
+   qt-terminal-widget)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -259,6 +268,12 @@
          void))
   (def (qt-drain-pending-callbacks!)
        (ffi-drain-pending-callbacks))
+  (def ffi-qt-scintilla-set-utf8
+       (foreign-procedure "qt_scintilla_set_utf8"
+         (void* int)
+         void))
+  (def (qt-scintilla-set-utf8! sci enable?)
+       (ffi-qt-scintilla-set-utf8 sci (if enable? 1 0)))
   (define *doc-editor-map*--cell (vector (make-hash-table)))
   (define *doc-buffer-map*--cell (vector (make-hash-table)))
   (def (doc-editor-register! doc editor)
@@ -554,6 +569,75 @@
                    safe-len)))))
          *pending-decorations*)
        (set! *pending-decorations* (list)))
+  (def (qt-terminal-create parent)
+       "Create a QTerminalWidget as child of PARENT (typically a QStackedWidget).\n   Returns an opaque pointer to the widget."
+       ((foreign-procedure "qt_terminal_create" (void*) void*)
+         parent))
+  (def (qt-terminal-destroy! term)
+       "Destroy a QTerminalWidget and clean up its PTY."
+       ((foreign-procedure "qt_terminal_destroy" (void*) void)
+         term))
+  (def (qt-terminal-spawn! term cmd)
+       "Spawn a shell/command in the terminal widget's PTY.\n   CMD is a command string; empty string means default $SHELL."
+       ((foreign-procedure "qt_terminal_spawn" (void* string) void)
+         term
+         cmd))
+  (def (qt-terminal-connect-fd! term master-fd)
+       "Connect QTerminalWidget to an already-open PTY master fd.\n   No fork or exec — for in-process jsh integration."
+       ((foreign-procedure "qt_terminal_connect_fd"
+          (void* int)
+          void)
+         term
+         master-fd))
+  (def (qt-terminal-send-key-event! term key mods text)
+       "Send a synthetic key event to the terminal widget.\n   KEY is the Qt key code, MODS the Qt modifier flags, TEXT the key text."
+       ((foreign-procedure "qt_terminal_send_key_event"
+          (void* int int string)
+          void)
+         term
+         key
+         mods
+         text))
+  (def (qt-terminal-send-input! term str)
+       "Send raw string input to the terminal's PTY."
+       ((foreign-procedure "qt_terminal_send_input"
+          (void* string int)
+          void)
+         term
+         str
+         (string-length str)))
+  (def (qt-terminal-is-running? term)
+       "Check if the terminal's child process is still running."
+       (= 1
+          ((foreign-procedure "qt_terminal_is_running" (void*) int)
+            term)))
+  (def (qt-terminal-interrupt! term)
+       "Send SIGINT to the terminal's child process."
+       ((foreign-procedure "qt_terminal_interrupt" (void*) void)
+         term))
+  (def (qt-terminal-set-font! term family size)
+       "Set the terminal font family and point size."
+       ((foreign-procedure "qt_terminal_set_font"
+          (void* string int)
+          void)
+         term
+         family
+         size))
+  (def (qt-terminal-set-colors! term fg-rgb bg-rgb)
+       "Set default fg/bg colors as 0xRRGGBB integers."
+       ((foreign-procedure "qt_terminal_set_colors"
+          (void* int int)
+          void)
+         term
+         fg-rgb
+         bg-rgb))
+  (def (qt-terminal-focus! term)
+       "Give keyboard focus to the terminal widget."
+       ((foreign-procedure "qt_terminal_focus" (void*) void) term))
+  (def (qt-terminal-widget term)
+       "Return the QWidget* pointer for the terminal (for adding to QStackedWidget)."
+       ((foreign-procedure "qt_terminal_widget" (void*) void*)
+         term))
   (define-syntax *doc-editor-map*
     (identifier-syntax
       [id (vector-ref *doc-editor-map*--cell 0)]

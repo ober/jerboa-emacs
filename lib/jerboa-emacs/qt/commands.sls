@@ -4,33 +4,34 @@
 
 (library (jerboa-emacs qt commands)
   (export qt-register-all-commands! dired-open-directory!
-   qt-open-image-inline! *qt-app-ptr* qt-kill-ring-push!
-   *isearch-active* isearch-handle-key! *qreplace-active*
-   qreplace-handle-key! recent-files-add! recent-files-load!
-   bookmarks-load! session-save! session-restore-files
-   *tab-bar-visible* *auto-revert-tail-buffers* *file-mtimes*
-   file-mtime-record! file-mtime-changed? *eldoc-mode*
-   eldoc-display! *current-theme* *themes* theme-stylesheet
-   load-theme! apply-theme! load-theme define-theme!
-   buffer-touch! custom-keys-load! abbrevs-load!
-   load-init-file! scratch-save! scratch-restore!
-   scratch-update-text! undo-history-record! winner-save!
-   *follow-mode* *view-mode-buffers* *so-long-buffers*
-   check-so-long! savehist-save! savehist-load!
-   gsh-history-save! gsh-history-load! save-place-load!
-   save-place-save! auto-fill-check!
-   *auto-save-disabled-buffers* *require-final-newline*
-   *save-place-enabled* *centered-cursor-mode*
-   uniquify-buffer-name! shell-command-to-string
-   shell-command-to-buffer! register-shell-command!
-   *user-shell-commands* workspace-init! *workspaces*
-   *current-workspace* workspace-add-buffer!
-   workspace-remove-buffer! qt-pulse-line! qt-pulse-tick!
-   qt-pulse-check-jump! qt-idle-highlight-symbol!
-   *diff-hl-active* *qt-describe-key-pending*
-   qt-describe-key-result! *qt-quoted-insert-pending*
-   qt-quoted-insert-handle! qt-record-edit-position!
-   *qt-desktop-save-mode* qt-aggressive-indent-line!)
+   qt-open-image-inline! *qt-app-ptr* *terminal-widget-map*
+   *terminal-container-map* qt-kill-ring-push! *isearch-active*
+   isearch-handle-key! *qreplace-active* qreplace-handle-key!
+   recent-files-add! recent-files-load! bookmarks-load!
+   session-save! session-restore-files *tab-bar-visible*
+   *auto-revert-tail-buffers* *file-mtimes* file-mtime-record!
+   file-mtime-changed? *eldoc-mode* eldoc-display!
+   *current-theme* *themes* theme-stylesheet load-theme!
+   apply-theme! load-theme define-theme! buffer-touch!
+   custom-keys-load! abbrevs-load! load-init-file!
+   scratch-save! scratch-restore! scratch-update-text!
+   undo-history-record! winner-save! *follow-mode*
+   *view-mode-buffers* *so-long-buffers* check-so-long!
+   savehist-save! savehist-load! gsh-history-save!
+   gsh-history-load! save-place-load! save-place-save!
+   auto-fill-check! *auto-save-disabled-buffers*
+   *require-final-newline* *save-place-enabled*
+   *centered-cursor-mode* uniquify-buffer-name!
+   shell-command-to-string shell-command-to-buffer!
+   register-shell-command! *user-shell-commands*
+   workspace-init! *workspaces* *current-workspace*
+   workspace-add-buffer! workspace-remove-buffer!
+   qt-pulse-line! qt-pulse-tick! qt-pulse-check-jump!
+   qt-idle-highlight-symbol! *diff-hl-active*
+   *qt-describe-key-pending* qt-describe-key-result!
+   *qt-quoted-insert-pending* qt-quoted-insert-handle!
+   qt-record-edit-position! *qt-desktop-save-mode*
+   qt-aggressive-indent-line! *snake-active* snake-handle-key!)
   (import
    (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
      getenv path-extension path-absolute? thread? make-mutex
@@ -94,6 +95,7 @@
    (jerboa-emacs qt commands-parity5)
    (jerboa-emacs qt commands-aliases)
    (jerboa-emacs qt commands-aliases2)
+   (jerboa-emacs qt commands-aws)
    (except
      (jerboa-emacs helm-commands)
      cmd-helm-buffers-list
@@ -676,6 +678,47 @@
                  (echo-error!
                    echo
                    (string-append "No buffer: " target-name)))))))
+  (def (cmd-kill-buffer-force app)
+       "Kill current buffer immediately, no prompts. Switches to another buffer first.\n   Used by stress tests and automation where echo-area interaction is not possible."
+       (let* ([echo (app-state-echo app)]
+              [buf (current-qt-buffer app)]
+              [name (buffer-name buf)])
+         (if (<= (length (buffer-list)) 1)
+             (echo-message! echo "Can't kill last buffer")
+             (let* ([fr (app-state-frame app)]
+                    [ed (current-qt-editor app)]
+                    [other (let loop ([bs (buffer-list)])
+                             (cond
+                               [(null? bs) #f]
+                               [(eq? (car bs) buf) (loop (cdr bs))]
+                               [else (car bs)]))])
+               (when other
+                 (qt-buffer-attach! ed other)
+                 (qt-edit-window-buffer-set! (qt-current-window fr) other))
+               (qt-remember-killed-buffer! buf)
+               (run-hooks! 'kill-buffer-hook app buf)
+               (qt-remove-highlighting! buf)
+               (hash-remove! *dired-entries* buf)
+               (hash-remove! *dired-marks* buf)
+               (let ([rs (hash-get *repl-state* buf)])
+                 (when rs (repl-stop! rs) (hash-remove! *repl-state* buf)))
+               (let ([ss (hash-get *shell-state* buf)])
+                 (when ss
+                   (shell-stop! ss)
+                   (hash-remove! *shell-state* buf)))
+               (let ([ts (hash-get *terminal-state* buf)])
+                 (when ts
+                   (terminal-stop! ts)
+                   (hash-remove! *terminal-state* buf)))
+               (let ([cs (hash-get *chat-state* buf)])
+                 (when cs (chat-stop! cs) (hash-remove! *chat-state* buf)))
+               (set! *buffer-recent*
+                 (filter
+                   (lambda (n) (not (string=? n name)))
+                   *buffer-recent*))
+               (lsp-hook-did-close! app buf)
+               (qt-buffer-kill! buf)
+               (echo-message! echo (string-append "Killed " name))))))
   (def (cmd-kill-buffer-and-window app)
        (let ([fr (app-state-frame app)])
          (if (> (length (qt-frame-windows fr)) 1)
@@ -1431,6 +1474,7 @@
    (register-command! 'switch-buffer cmd-switch-buffer)
    (register-command! 'helm-buffers-list cmd-helm-buffers-list)
    (register-command! 'kill-buffer-cmd cmd-kill-buffer-cmd)
+   (register-command! 'kill-buffer-force cmd-kill-buffer-force)
    (register-command! 'list-buffers cmd-list-buffers)
    (register-command! 'split-window cmd-split-window)
    (register-command!
@@ -2216,7 +2260,29 @@
    (qt-register-parity3-toggles!)
    (qt-register-parity4-commands!)
    (qt-register-parity4-toggles!)
-   (qt-register-parity5-commands!)
+   (qt-register-parity5-commands!) (aws-ec2-ssh-setup-mode!)
+   (register-command! 'aws-ec2-ssh cmd-aws-ec2-ssh)
+   (register-command!
+     'aws-ec2-ssh-connect
+     cmd-aws-ec2-ssh-connect)
+   (register-command!
+     'aws-ec2-ssh-refresh
+     cmd-aws-ec2-ssh-refresh)
+   (register-command!
+     'aws-ec2-ssh-force-refresh
+     cmd-aws-ec2-ssh-force-refresh)
+   (register-command!
+     'aws-ec2-ssh-filter
+     cmd-aws-ec2-ssh-filter)
+   (register-command!
+     'aws-ec2-ssh-clear-filter
+     cmd-aws-ec2-ssh-clear-filter)
+   (register-command!
+     'aws-ec2-ssh-sort-name
+     cmd-aws-ec2-ssh-sort-name)
+   (register-command!
+     'aws-ec2-ssh-sort-region
+     cmd-aws-ec2-ssh-sort-region)
    (set-box!
      *modeline-overwrite-provider*
      (lambda () *overwrite-mode*))
@@ -2709,7 +2775,7 @@
   (def *qt-plugin-directory* "~/.jemacs-plugins")
   (def *qt-loaded-plugins* (list))
   (def (cmd-load-plugin app)
-       "Load a Gerbil Scheme plugin file (Qt)."
+       "Load a Jerboa Scheme plugin file (Qt)."
        (let* ([echo (app-state-echo app)]
               [path (qt-echo-read-string app "Load plugin file: ")])
          (when (and path (> (string-length path) 0))
@@ -3964,7 +4030,7 @@
          (if (not file)
              (echo-message! echo "Buffer has no file")
              (if (not (member (path-extension file) '(".ss" ".scm")))
-                 (echo-message! echo "Not a Gerbil/Scheme source file")
+                 (echo-message! echo "Not a Jerboa/Scheme source file")
                  (begin
                    (echo-message!
                      echo
@@ -3983,7 +4049,7 @@
          (if (not file)
              (echo-message! echo "Buffer has no file")
              (if (not (string-suffix? ".ss" file))
-                 (echo-message! echo "Not a Gerbil source file")
+                 (echo-message! echo "Not a Jerboa source file")
                  (begin
                    (echo-message!
                      echo

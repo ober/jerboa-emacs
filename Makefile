@@ -2,8 +2,11 @@ SCHEME = scheme
 JERBOA    = $(HOME)/mine/jerboa
 JSH       = $(if $(wildcard vendor/jerboa-shell/src/jsh),vendor/jerboa-shell/src,$(HOME)/mine/jerboa-shell/src)
 COREUTILS = $(if $(wildcard $(HOME)/mine/jerboa-coreutils/lib),$(HOME)/mine/jerboa-coreutils/lib,$(HOME)/mine/jerboa-shell/vendor/jerboa-coreutils/lib)
-GHERKIN   = $(HOME)/mine/gherkin/src
-LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(COREUTILS):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt
+GHERKIN   = $(if $(wildcard vendor/gherkin-runtime),vendor/gherkin-runtime,$(HOME)/mine/gherkin/src)
+JAWS      = $(if $(wildcard vendor/jerboa-aws),vendor/jerboa-aws,$(HOME)/mine/jerboa-aws)
+CSSL      = $(if $(wildcard vendor/chez-ssl/src),vendor/chez-ssl/src,$(HOME)/mine/chez-ssl/src)
+CHTTPS    = $(if $(wildcard vendor/chez-https/src),vendor/chez-https/src,$(HOME)/mine/chez-https/src)
+LIBDIRS   = --libdirs lib:$(JERBOA)/lib:$(JSH):$(COREUTILS):$(GHERKIN):$(HOME)/mine/chez-pcre2:$(HOME)/mine/chez-scintilla/src:$(HOME)/mine/chez-qt:$(JAWS):$(CSSL):$(CHTTPS)
 JERBUILD  = $(SCHEME) --libdirs $(JERBOA)/lib --script $(JERBOA)/jerbuild.ss
 
 # --- Platform detection -------------------------------------------------------
@@ -50,7 +53,9 @@ endif
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
         test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary binary-qt \
         test-pty test-emacs test-functional test-term-hang \
-        docker-deps static-qt clean-docker check-root build-jemacs-qt-static macos
+        docker-deps static-qt clean-docker check-root build-jemacs-qt-static macos \
+        stress-run stress-run-static stress-test stress-burn stress-burn-static \
+        test-behavioral
 
 all:
 	@echo "Available targets:"
@@ -166,7 +171,7 @@ libqt_shim.$(SHLIB_EXT): vendor/qt_shim.cpp
 	  -I$(QT_INC)/Qsci \
 	  vendor/qt_shim.cpp \
 	  -o libqt_shim.$(SHLIB_EXT) \
-	  $(QT_LIBS) $(QSCI_LIBS)
+	  $(QT_LIBS) $(QSCI_LIBS) -lvterm $(PTY_LINK)
 
 qt_chez_shim.$(SHLIB_EXT): vendor/qt_chez_shim.c vendor/qt_shim.h
 	gcc $(SHLIB_FLAGS) -O2 -o qt_chez_shim.$(SHLIB_EXT) vendor/qt_chez_shim.c -Ivendor -DQT_SCINTILLA_AVAILABLE -Wall
@@ -373,13 +378,18 @@ GID     := $(shell id -g)
 
 # Dependency source directories (all ~/mine/* local checkouts)
 JERBOA_SRC   ?= $(HOME)/mine/jerboa
-GHERKIN_SRC  ?= $(HOME)/mine/gherkin
+GHERKIN_SRC  ?= $(CURDIR)/vendor/gherkin-runtime
 JSH_SRC      ?= $(HOME)/mine/jerboa-shell
 PCRE2_SRC    ?= $(HOME)/mine/chez-pcre2
 SCI_SRC      ?= $(HOME)/mine/chez-scintilla
-QT_SRC       ?= $(HOME)/mine/chez-qt
+QT_SRC       ?= $(CURDIR)/vendor/chez-qt
 QTSHIM_SRC   ?= $(HOME)/mine/gerbil-qt
-COREUTILS_SRC ?= $(HOME)/mine/jerboa-coreutils
+JAWS_SRC     ?= $(HOME)/mine/jerboa-aws/lib
+CSSL_SRC     ?= $(HOME)/mine/chez-ssl
+CHTTPS_SRC   ?= $(HOME)/mine/chez-https
+# Use stub if the Rust musl build hasn't been compiled yet (regular file check)
+_RUST_COREUTILS := $(JSH_SRC)/rust-coreutils/target/x86_64-unknown-linux-musl/release/libjsh_coreutils.a
+JSH_COREUTILS_LIB ?= $(shell test -f $(_RUST_COREUTILS) && echo $(_RUST_COREUTILS) || echo $(CURDIR)/vendor/libjsh_coreutils_stub.a)
 
 DEPS_IMAGE := jemacs-deps:$(ARCH)
 
@@ -398,6 +408,9 @@ docker-deps:
 	  --build-context sci-src=$(SCI_SRC) \
 	  --build-context qt-src=$(QT_SRC) \
 	  --build-context qtshim-src=$(QTSHIM_SRC) \
+	  --build-context jaws-src=$(JAWS_SRC) \
+	  --build-context chez-ssl-src=$(CSSL_SRC) \
+	  --build-context chez-https-src=$(CHTTPS_SRC) \
 	  -t $(DEPS_IMAGE) \
 	  $(CURDIR)
 
@@ -420,6 +433,7 @@ CHEZ_MT ?= ta6le
 CHEZ_MUSL_DIR ?= $(shell ls -d /opt/chez/lib/csv*/$(CHEZ_MT) 2>/dev/null | head -1)
 
 build-jemacs-qt-static: check-root
+	rm -f /src/src/.jerbuild-hashes; \
 	cp /src/vendor/jerboa-shell/embed-crypto.c /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/embed-crypto.h /deps/jsh/ 2>/dev/null; \
 	cp /src/vendor/jerboa-shell/ffi-shim.c /deps/jsh/ 2>/dev/null; \
@@ -428,6 +442,8 @@ build-jemacs-qt-static: check-root
 	  gcc -c -O2 /src/vendor/jerboa-shell/crypto_stub.c -o /tmp/jemacs-build/crypto_stub.o; \
 	fi; \
 	cd /src && find lib -name '*.so' -o -name '*.wpo' | xargs rm -f 2>/dev/null; \
+	find /src/src/jerboa-emacs -name '*.ss' | sed 's|/src/src/|/src/lib/|; s|\.ss$$|.sls|' | xargs rm -f 2>/dev/null; \
+	rm -f /src/src/.jerbuild-hashes 2>/dev/null; \
 	cd /src && make build SCHEME=/opt/chez/bin/scheme JERBOA=/deps/jerboa && \
 	if [ -f /src/vendor/qt_shim.cpp ]; then \
 	  echo "Rebuilding libqt_shim.a from updated qt_shim.cpp..." && \
@@ -442,8 +458,9 @@ build-jemacs-qt-static: check-root
 	  ar rcs /deps/gerbil-qt/vendor/libqt_shim.a \
 	    /deps/gerbil-qt/vendor/qt_shim_static.o; \
 	fi && \
-	cp /src/vendor/chez-qt-ffi-static.ss /deps/chez-qt/chez-qt/ffi.ss && \
-	cp /src/vendor/chez-qt-qt.ss /deps/chez-qt/chez-qt/qt.ss && \
+	cp -a /src/vendor/chez-qt/. /deps/chez-qt/ && \
+	find /deps/chez-qt -name '*.so' -delete && \
+	find /deps/chez-qt -name '*.wpo' -delete && \
 	/opt/chez/bin/scheme --libdirs /deps/chez-qt \
 	  --compile-imported-libraries --script /deps/chez-qt/compile-libs.ss && \
 	rm -f /deps/chez-qt/chez-qt/*.wpo && \
@@ -487,16 +504,36 @@ build-jemacs-qt-static: check-root
 	    /src/support/treesitter_shim.c -Wall && \
 	gcc -c -O2 -o /tmp/jemacs-build/treesitter_queries.o \
 	    /src/support/treesitter_queries.c -Wall && \
+	cp /src/vendor/chez-ssl-static.sls /deps/chez-ssl/src/chez-ssl.sls && \
+	cp /src/vendor/jerboa-aws-crypto-native.sls /deps/jerboa-aws/jerboa-aws/crypto.sls && \
+	find /deps/chez-ssl -name '*.so' -delete && find /deps/chez-ssl -name '*.wpo' -delete && \
+	find /deps/chez-https -name '*.so' -delete && find /deps/chez-https -name '*.wpo' -delete && \
+	find /deps/jerboa-aws -name '*.so' -delete && find /deps/jerboa-aws -name '*.wpo' -delete && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme \
+	  --libdirs /deps/chez-ssl/src:/deps/jerboa/lib \
+	  --compile-imported-libraries -q --script /src/vendor/chez-ssl-compile-libs.ss && \
+	find /deps/chez-ssl -name '*.wpo' -delete && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme \
+	  --libdirs /deps/chez-https/src:/deps/chez-ssl/src \
+	  --compile-imported-libraries -q --script /src/vendor/chez-https-compile-libs.ss && \
+	find /deps/chez-https -name '*.wpo' -delete && \
+	JEMACS_STATIC=1 /opt/chez/bin/scheme \
+	  --libdirs /deps/jerboa-aws:/deps/chez-https/src:/deps/chez-ssl/src:/deps/jerboa/lib \
+	  --compile-imported-libraries -q --script /src/vendor/jerboa-aws-compile-libs.ss && \
+	find /deps/jerboa-aws -name '*.wpo' -delete && \
 	JEMACS_STATIC=1 \
 	CHEZ_DIR=$(CHEZ_MUSL_DIR) \
 	JERBOA_DIR=/deps/jerboa/lib \
 	JSH_DIR=/deps/jsh/src \
-	GHERKIN_DIR=/deps/gherkin/src \
+	GHERKIN_DIR=/src/vendor/gherkin-runtime \
 	CHEZ_PCRE2_DIR=/deps/chez-pcre2 \
 	CHEZ_SCINTILLA_DIR=/deps/chez-scintilla/src \
 	CHEZ_QT_DIR=/deps/chez-qt \
 	CHEZ_QT_SHIM_DIR=/deps/gerbil-qt/vendor \
-	COREUTILS_DIR=/deps/coreutils \
+	JSH_COREUTILS_LIB=/deps/jsh/libjsh_coreutils.a \
+	JAWS_DIR=/deps/jerboa-aws \
+	CHEZ_SSL_DIR=/deps/chez-ssl \
+	CHEZ_HTTPS_DIR=/deps/chez-https/src \
 	TREE_SITTER_INCLUDE=/opt/tree-sitter-include \
 	TREE_SITTER_LIB=/opt/tree-sitter-lib \
 	TREE_SITTER_GRAMMARS=/opt/tree-sitter-grammars \
@@ -504,7 +541,7 @@ build-jemacs-qt-static: check-root
 	TREE_SITTER_QUERIES_OBJ=/tmp/jemacs-build/treesitter_queries.o \
 	PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig \
 	/opt/chez/bin/scheme \
-	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/deps/coreutils:/deps/gherkin/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
+	  --libdirs lib:/deps/jerboa/lib:/deps/jsh/src:/src/vendor/gherkin-runtime:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt:/deps/jerboa-aws:/deps/chez-ssl/src:/deps/chez-https/src \
 	  --script build-binary-qt.ss
 
 linux-static-qt-docker:
@@ -514,48 +551,149 @@ linux-static-qt-docker:
 	  --ulimit nofile=8192:8192 \
 	  -v $(CURDIR):/src:z \
 	  -v $(JERBOA)/lib/std:/host-jerboa-std:ro \
-	  -v $(COREUTILS_SRC)/lib:/host-coreutils:ro \
+	  -v $(JERBOA)/lib/jerboa:/host-jerboa-core:ro \
 	  -v $(JSH_SRC)/src:/host-jsh-src:ro \
+	  -v $(JSH_COREUTILS_LIB):/host-jsh-coreutils.a:ro \
+	  -v $(JAWS_SRC):/host-jaws:ro \
+	  -v $(CSSL_SRC):/host-chez-ssl:ro \
+	  -v $(CHTTPS_SRC):/host-chez-https:ro \
 	  $(DEPS_IMAGE) \
-	  sh -c "apk add --no-cache libvterm-dev libvterm-static >/dev/null 2>&1; \
+	  sh -c "apk add --no-cache libvterm-dev libvterm-static openssl-dev; \
+	         if [ ! -f /usr/lib/libssl.a ]; then \
+	           echo 'Building static OpenSSL (one-time)...' && \
+	           cd /tmp && wget -q https://www.openssl.org/source/openssl-3.3.2.tar.gz && \
+	           tar xf openssl-3.3.2.tar.gz && cd openssl-3.3.2 && \
+	           ./Configure linux-x86_64 no-shared no-tests no-apps -O2 --prefix=/usr && \
+	           make -j$(nproc) && cp libssl.a libcrypto.a /usr/lib/ && \
+	           cd / && rm -rf /tmp/openssl-3.3.2*; \
+	         fi; \
+	         cp /host-jsh-coreutils.a /deps/jsh/libjsh_coreutils.a; \
 	         cp -a /host-jsh-src/. /deps/jsh/src/; \
-	         cp -a /host-coreutils/. /deps/coreutils/; \
-	         find /deps/coreutils -name '*.sls' -exec sed -i 's/(load-shared-object #f)/(void)/g' {} +; \
-	         for f in \
-	           misc/atom.sls misc/channel.sls misc/completion.sls misc/list.sls \
-	           misc/memo.sls misc/number.sls misc/ports.sls misc/process.sls \
-	           misc/rwlock.sls misc/shuffle.sls misc/string.sls misc/terminal.sls \
-	           cli/getopt.sls \
-	           net/request.sls net/uri.sls \
-	           os/fdio.sls os/signal.sls os/tty.sls os/sandbox.sls \
-	           text/base64.sls text/diff.sls text/glob.sls text/hex.sls text/json.sls \
-	           crypto/digest.sls \
-	           engine.sls fiber.sls guardian.sls select.sls stm.sls task.sls \
-	           amb.sls \
-	           misc/thread.sls misc/wg.sls misc/pqueue.sls misc/lru-cache.sls \
-	           misc/channel.sls misc/atom.sls misc/rbtree.sls \
-	           misc/rwlock.sls misc/completion.sls misc/barrier.sls \
-	           result.sls misc/result.sls misc/fmt.sls \
-	           misc/custodian.sls misc/config.sls misc/memoize.sls \
-	           misc/terminal.sls misc/trie.sls \
-	           actor/mpsc.sls actor/core.sls actor/transport.sls \
-	           crypto/random.sls \
-	           format.sls iter.sls pregexp.sls sort.sls sugar.sls \
-	           srfi/srfi-1.sls srfi/srfi-13.sls srfi/srfi-19.sls; do \
-	           if [ -f /host-jerboa-std/\$$f ]; then \
-	             mkdir -p /deps/jerboa/lib/std/$$(dirname \$$f); \
-	             cp /host-jerboa-std/\$$f /deps/jerboa/lib/std/\$$f; \
-	             rm -f /deps/jerboa/lib/std/\$${f%.sls}.so /deps/jerboa/lib/std/\$${f%.sls}.wpo; \
-	             echo SYNC: \$$f; \
-	           else \
-	             echo SKIP: \$$f not found on host; \
-	           fi; \
-	         done; \
+	         echo 'SYNC: bulk-copying host jerboa std/ and jerboa/ into container...'; \
+	         cp -a /host-jerboa-std/. /deps/jerboa/lib/std/ && \
+	         cp -a /host-jerboa-core/. /deps/jerboa/lib/jerboa/ && \
+	         find /deps/jerboa/lib -name '*.so' -delete && \
+	         find /deps/jerboa/lib -name '*.wpo' -delete && \
+	         echo '(import (chezscheme)) (compile-imported-libraries #t) (import (jerboa core)) (import (jerboa prelude))' \
+	           > /tmp/compile-jerboa-core.ss && \
+	         cd /deps/jerboa/lib && /opt/chez/bin/scheme --libdirs /deps/jerboa/lib \
+	           -q --script /tmp/compile-jerboa-core.ss && \
+	         rm -f /deps/jerboa/lib/jerboa/*.wpo && \
+	         echo 'COMPILED: jerboa core + prelude'; \
+	         mkdir -p /deps/jerboa-aws /deps/chez-ssl/src /deps/chez-https/src && \
+	         cp -a /host-jaws/. /deps/jerboa-aws/ && \
+	         cp -a /host-chez-ssl/. /deps/chez-ssl/ && \
+	         cp -a /host-chez-https/. /deps/chez-https/ && \
+	         echo 'SYNC: jerboa-aws, chez-ssl, chez-https copied'; \
 	         chmod 755 /root && \
 	         chown -R $(UID):$(GID) /opt/ /deps && \
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \
 	         exec su-exec $(UID):$(GID) env HOME=/tmp/jemacs-build sh -c '\
 	           cd /src && make build-jemacs-qt-static'"
+
+# =============================================================================
+# Stress testing targets
+# =============================================================================
+
+STRESS_PORT ?= 9999
+
+# Launch jemacs-qt (interpreted) headless with REPL for manual stress testing
+stress-run: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	xvfb-run -a env LD_PRELOAD=./qt_chez_shim.so \
+	  $(SCHEME) $(LIBDIRS) --script qt-main.ss --repl $(STRESS_PORT)
+
+# Launch jemacs-qt (static binary) under gdb with REPL for crash diagnosis
+stress-run-static:
+	xvfb-run -a gdb -batch \
+	  -ex 'handle SIGALRM nostop noprint' \
+	  -ex 'handle SIG34 nostop noprint' \
+	  -ex run \
+	  -ex 'bt full' \
+	  -ex 'thread apply all bt full' \
+	  -ex 'info registers' \
+	  --args ./jemacs-qt --repl $(STRESS_PORT)
+
+# Run the stress test driver against an already-running jemacs-qt REPL
+stress-test:
+	$(SCHEME) $(LIBDIRS) --script tests/stress-test.ss --port $(STRESS_PORT)
+
+# All-in-one: launch interpreted jemacs-qt + run stress test driver
+stress-burn: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	@echo "=== Starting jemacs-qt stress burn-in ==="
+	@rm -f $(HOME)/.jerboa-repl-port stress-test.log
+	@xvfb-run -a env CHEZ_QT_SHIM_DIR=$(CURDIR) \
+	  $(SCHEME) $(LIBDIRS) --script $(CURDIR)/qt-main.ss --repl 0 &
+	@for i in $$(seq 1 30); do \
+	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
+	  sleep 0.5; \
+	done
+	@if [ ! -f $(HOME)/.jerboa-repl-port ]; then \
+	  echo "ERROR: jemacs-qt failed to start (no REPL port file after 15s)"; exit 1; \
+	fi
+	@PORT=$$(grep -oP '\d+' $(HOME)/.jerboa-repl-port); \
+	echo "jemacs-qt running on REPL port $$PORT"; \
+	$(SCHEME) $(LIBDIRS) --script tests/stress-test.ss --port $$PORT; \
+	echo ""; \
+	echo "=== Stress test ended ==="; \
+	if [ -f $(HOME)/.jemacs-crash.log ]; then \
+	  echo "=== CRASH LOG ==="; \
+	  cat $(HOME)/.jemacs-crash.log; \
+	fi; \
+	echo "=== STRESS LOG (last 50 lines) ==="; \
+	tail -50 stress-test.log 2>/dev/null
+
+# All-in-one: launch static jemacs-qt under gdb + run stress test driver
+stress-burn-static:
+	@echo "=== Starting jemacs-qt (static) stress burn-in under gdb ==="
+	@rm -f $(HOME)/.jerboa-repl-port stress-test.log
+	@xvfb-run -a gdb -batch \
+	  -ex 'handle SIGALRM nostop noprint' \
+	  -ex 'handle SIG34 nostop noprint' \
+	  -ex run \
+	  -ex 'bt full' \
+	  -ex 'thread apply all bt full' \
+	  -ex 'info registers' \
+	  --args ./jemacs-qt --repl 0 &
+	@for i in $$(seq 1 30); do \
+	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
+	  sleep 0.5; \
+	done
+	@if [ ! -f $(HOME)/.jerboa-repl-port ]; then \
+	  echo "ERROR: jemacs-qt failed to start (no REPL port file after 15s)"; exit 1; \
+	fi
+	@PORT=$$(grep -oP '\d+' $(HOME)/.jerboa-repl-port); \
+	echo "jemacs-qt (static) running under gdb on REPL port $$PORT"; \
+	$(SCHEME) $(LIBDIRS) --script tests/stress-test.ss --port $$PORT; \
+	echo ""; \
+	echo "=== Stress test ended ==="; \
+	if [ -f $(HOME)/.jemacs-crash.log ]; then \
+	  echo "=== CRASH LOG ==="; \
+	  cat $(HOME)/.jemacs-crash.log; \
+	fi; \
+	echo "=== STRESS LOG (last 50 lines) ==="; \
+	tail -50 stress-test.log 2>/dev/null
+
+# Behavioral regression tests: headless jemacs-qt + deterministic REPL test driver
+# Tests key routing, window splitting, terminal focus, and related invariants.
+test-behavioral: build repl_shim.so libqt_shim.so vterm_shim.so qt_chez_shim.so
+	@echo "=== Starting jemacs-qt behavioral tests ==="
+	@rm -f $(HOME)/.jerboa-repl-port
+	@xvfb-run -a env CHEZ_QT_SHIM_DIR=$(CURDIR) \
+	  $(SCHEME) $(LIBDIRS) --script $(CURDIR)/qt-main.ss --repl 0 &
+	@for i in $$(seq 1 30); do \
+	  [ -f $(HOME)/.jerboa-repl-port ] && break; \
+	  sleep 0.5; \
+	done
+	@if [ ! -f $(HOME)/.jerboa-repl-port ]; then \
+	  echo "ERROR: jemacs-qt failed to start (no REPL port file after 15s)"; exit 1; \
+	fi
+	@PORT=$$(grep -oP '\d+' $(HOME)/.jerboa-repl-port); \
+	echo "jemacs-qt running on REPL port $$PORT"; \
+	$(SCHEME) $(LIBDIRS) --script tests/test-behavioral.ss --port $$PORT; \
+	STATUS=$$?; \
+	pkill -f "qt-main.ss.*--repl" 2>/dev/null; true; \
+	echo "=== Behavioral tests done ==="; \
+	exit $$STATUS
 
 clean:
 	find lib -name '*.so' -delete 2>/dev/null; true

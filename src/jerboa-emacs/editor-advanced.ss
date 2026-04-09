@@ -749,7 +749,7 @@
 
 (def (cmd-eval-buffer app)
   "Evaluate all top-level forms in the current buffer.
-   Full Gerbil syntax supported (def, defstruct, hash, match, etc.)."
+   Full Jerboa syntax supported (def, defstruct, hash, match, etc.)."
   (let* ((ed (current-editor app))
          (echo (app-state-echo app))
          (buf (current-buffer-from-app app))
@@ -764,7 +764,7 @@
                          (if (has-captured-output?) " (see *Output*/*Errors*)" "")))))))
 
 (def (cmd-eval-region app)
-  "Evaluate the selected region as a Gerbil expression."
+  "Evaluate the selected region as a Jerboa expression."
   (let* ((ed (current-editor app))
          (echo (app-state-echo app))
          (buf (current-buffer-from-app app))
@@ -865,7 +865,7 @@
 ;;;============================================================================
 
 (def (cmd-toggle-highlighting app)
-  "Toggle Gerbil syntax highlighting on the current buffer."
+  "Toggle Jerboa syntax highlighting on the current buffer."
   (let* ((ed (current-editor app))
          (echo (app-state-echo app))
          (buf (current-buffer-from-app app)))

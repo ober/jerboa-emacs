@@ -8,6 +8,7 @@
         :std/sort
         :std/srfi/13
         :std/misc/string
+        :std/misc/ports
         :chez-scintilla/constants
         :chez-scintilla/scintilla
         :chez-scintilla/tui
@@ -17,7 +18,12 @@
         :jerboa-emacs/window
         :jerboa-emacs/modeline
         :jerboa-emacs/echo
-        :jerboa-emacs/editor-extra-helpers)
+        :jerboa-emacs/editor-extra-helpers
+        (only-in :jerboa-emacs/editor-core *delete-selection-mode*
+                 string->alien/nul string->alien alien/nul->string
+                 bytevector->alien cons->alien tui-rows tui-cols
+                 SCI_GETTEXTRANGE SCI_GETMARGINLEFT
+                 SCI_SETMARGINLEFT SCI_SETMARGINRIGHT))
 
 ;; Additional VC commands
 (def (cmd-vc-register app)
@@ -648,7 +654,7 @@
         (or out "")))))
 
 (def (cmd-package-list-packages app)
-  "List installed Gerbil packages."
+  "List installed Jerboa packages."
   (let* ((output (run-gerbil-pkg '("list")))
          (fr (app-state-frame app))
          (win (current-window fr))
@@ -661,7 +667,7 @@
     (editor-set-read-only ed #t)))
 
 (def (cmd-package-install app)
-  "Install a Gerbil package by name."
+  "Install a Jerboa package by name."
   (let ((pkg (app-read-string app "Package to install: ")))
     (when (and pkg (not (string-empty? pkg)))
       (echo-message! (app-state-echo app) (string-append "Installing " pkg "..."))
@@ -669,7 +675,7 @@
         (echo-message! (app-state-echo app) (string-append "Install: " result))))))
 
 (def (cmd-package-delete app)
-  "Uninstall a Gerbil package."
+  "Uninstall a Jerboa package."
   (let ((pkg (app-read-string app "Package to remove: ")))
     (when (and pkg (not (string-empty? pkg)))
       (let ((result (run-gerbil-pkg (list "uninstall" pkg))))
@@ -982,7 +988,7 @@
                       ((and mode (or (string=? mode "python") (string=? mode "py")))
                        "# Python scratch buffer\n\n")
                       ((and mode (or (string=? mode "scheme") (string=? mode "gerbil")))
-                       ";; Gerbil Scheme scratch buffer\n\n")
+                       ";; Jerboa Scheme scratch buffer\n\n")
                       ((and mode (or (string=? mode "js") (string=? mode "javascript")))
                        "// JavaScript scratch buffer\n\n")
                       ((and mode (or (string=? mode "c") (string=? mode "cpp")))
@@ -1403,7 +1409,7 @@
 
 ;;; --- Toggle delete-selection mode (typing replaces selection) ---
 
-(def *delete-selection-mode* #t)
+;; *delete-selection-mode* is defined in editor-core.ss
 
 (def (cmd-toggle-delete-selection app)
   "Toggle delete-selection mode (typing replaces active selection)."
@@ -2022,3 +2028,653 @@
 (def (cmd-multi-vterm app)
   "Open a new terminal buffer (delegates to shell command)."
   (execute-command! app 'shell))
+
+;;;============================================================================
+;;; Round 5 batch 1: Features 1-10
+;;;============================================================================
+
+;; --- Feature 1: Restclient (HTTP client for testing APIs) ---
+
+(def (cmd-restclient app)
+  "Open an HTTP restclient buffer for testing APIs."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*restclient*"))
+         (template (string-append
+                     "# HTTP Restclient\n"
+                     "# Lines starting with # are comments\n"
+                     "# Enter URL and press M-x restclient-send\n"
+                     "#\n"
+                     "# Example:\n"
+                     "GET https://httpbin.org/get\n"
+                     "#\n"
+                     "# POST https://httpbin.org/post\n"
+                     "# Content-Type: application/json\n"
+                     "# {\"key\": \"value\"}\n")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed template)
+    (editor-goto-pos ed 0)
+    (echo-message! echo "Restclient buffer ready")))
+
+(def (cmd-restclient-send app)
+  "Send HTTP request from restclient buffer using curl."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (text (editor-get-text ed))
+         (lines (string-split text #\newline))
+         ;; Find first non-comment, non-empty line as the request
+         (req-line (let loop ((ls lines))
+                     (cond ((null? ls) #f)
+                           ((string-empty? (string-trim (car ls))) (loop (cdr ls)))
+                           ((string-prefix? "#" (string-trim (car ls))) (loop (cdr ls)))
+                           (else (string-trim (car ls)))))))
+    (if (not req-line)
+      (echo-error! echo "No request found")
+      (let* ((parts (string-split req-line #\space))
+             (method (if (>= (length parts) 1) (car parts) "GET"))
+             (url (if (>= (length parts) 2) (cadr parts) "")))
+        (when (not (string-empty? url))
+          (echo-message! echo (string-append "Sending " method " " url "..."))
+          (let ((cmd (string-append "curl -s -X " method " \"" url "\" 2>&1")))
+            (let-values (((p-stdin p-stdout p-stderr pid)
+                          (open-process-ports cmd 'block (native-transcoder))))
+              (close-port p-stdin)
+              (let loop ((lines '()))
+                (let ((line (get-line p-stdout)))
+                  (if (eof-object? line)
+                    (begin
+                      (close-port p-stdout)
+                      (close-port p-stderr)
+                      (let* ((response (string-join (reverse lines) "\n"))
+                             (fr (app-state-frame app))
+                             (win (current-window fr))
+                             (ed2 (edit-window-editor win))
+                             (buf (make-buffer "*restclient-response*")))
+                        (buffer-attach! ed2 buf)
+                        (set! (edit-window-buffer win) buf)
+                        (editor-set-text ed2 response)
+                        (editor-goto-pos ed2 0)
+                        (echo-message! echo (string-append method " " url " — done"))))
+                    (loop (cons line lines))))))))))))
+
+;; --- Feature 2: Markdown Preview ---
+
+(def (cmd-markdown-preview app)
+  "Render markdown buffer to plain text approximation."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (md (editor-get-text ed))
+         (lines (string-split md #\newline))
+         ;; Simple markdown to text: headers become UPPERCASE, emphasis stripped
+         (rendered
+           (map (lambda (line)
+                  (let ((trimmed (string-trim line)))
+                    (cond
+                      ((string-prefix? "### " trimmed)
+                       (string-append "\n  " (string-upcase (substring trimmed 4 (string-length trimmed))) "\n"))
+                      ((string-prefix? "## " trimmed)
+                       (string-append "\n" (string-upcase (substring trimmed 3 (string-length trimmed)))
+                                     "\n" (make-string (- (string-length trimmed) 3) #\-)))
+                      ((string-prefix? "# " trimmed)
+                       (string-append "\n" (string-upcase (substring trimmed 2 (string-length trimmed)))
+                                     "\n" (make-string (- (string-length trimmed) 2) #\=)))
+                      ((string-prefix? "- " trimmed)
+                       (string-append "  * " (substring trimmed 2 (string-length trimmed))))
+                      ((string-prefix? "```" trimmed) (make-string 40 #\-))
+                      ((string-prefix? "---" trimmed) (make-string 40 #\-))
+                      (else line))))
+                lines))
+         (result (string-join rendered "\n"))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed2 (edit-window-editor win))
+         (buf (make-buffer "*markdown-preview*")))
+    (buffer-attach! ed2 buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed2 result)
+    (editor-goto-pos ed2 0)
+    (echo-message! echo "Markdown preview rendered")))
+
+;; --- Feature 3: Git Messenger (show git blame for current line) ---
+
+(def (cmd-git-messenger app)
+  "Show git blame information for current line."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf)))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (line (+ 1 (send-message ed SCI_LINEFROMPOSITION
+                       (send-message ed SCI_GETCURRENTPOS 0 0) 0))))
+    (if (not path)
+      (echo-error! echo "Buffer has no file")
+      (let ((cmd (string-append "git blame -L " (number->string line) "," (number->string line)
+                   " --porcelain \"" path "\" 2>&1")))
+        (let-values (((p-stdin p-stdout p-stderr pid)
+                      (open-process-ports cmd 'block (native-transcoder))))
+          (close-port p-stdin)
+          (let loop ((lines '()))
+            (let ((l (get-line p-stdout)))
+              (if (eof-object? l)
+                (begin
+                  (close-port p-stdout)
+                  (close-port p-stderr)
+                  (if (null? lines)
+                    (echo-message! echo "No blame data")
+                    ;; Parse porcelain: extract author, date, summary
+                    (let* ((all (reverse lines))
+                           (author (let find ((ls all))
+                                     (cond ((null? ls) "unknown")
+                                           ((string-prefix? "author " (car ls))
+                                            (substring (car ls) 7 (string-length (car ls))))
+                                           (else (find (cdr ls))))))
+                           (summary (let find ((ls all))
+                                      (cond ((null? ls) "")
+                                            ((string-prefix? "summary " (car ls))
+                                             (substring (car ls) 8 (string-length (car ls))))
+                                            (else (find (cdr ls))))))
+                           (date (let find ((ls all))
+                                   (cond ((null? ls) "")
+                                         ((string-prefix? "author-time " (car ls))
+                                          (substring (car ls) 12 (string-length (car ls))))
+                                         (else (find (cdr ls)))))))
+                      (echo-message! echo
+                        (string-append author ": " summary)))))
+                (loop (cons l lines))))))))))
+
+;; --- Feature 4: YAML Mode (basic YAML syntax highlighting hints) ---
+
+(def (cmd-yaml-mode app)
+  "Enable YAML mode hints for current buffer."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    ;; Set tab width to 2 (YAML standard)
+    (send-message ed SCI_SETTABWIDTH 2 0)
+    (send-message ed SCI_SETUSETABS 0 0) ;; spaces only
+    (echo-message! echo "YAML mode: tab=2, spaces only")))
+
+;; --- Feature 5: Dockerfile Mode ---
+
+(def (cmd-dockerfile-mode app)
+  "Enable Dockerfile mode hints."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (send-message ed SCI_SETTABWIDTH 4 0)
+    (echo-message! echo "Dockerfile mode enabled")))
+
+;; --- Feature 6: Shell Pop (toggle terminal buffer) ---
+
+(def *shell-pop-buffer* #f)
+(def *shell-pop-prev-buffer* #f)
+
+(def (cmd-shell-pop app)
+  "Toggle between current buffer and shell buffer."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (current-buf (edit-window-buffer win)))
+    (if (and current-buf *shell-pop-buffer*
+             (eq? current-buf *shell-pop-buffer*))
+      ;; Currently in shell — switch back
+      (when *shell-pop-prev-buffer*
+        (let ((ed (edit-window-editor win)))
+          (buffer-attach! ed *shell-pop-prev-buffer*)
+          (set! (edit-window-buffer win) *shell-pop-prev-buffer*)
+          (echo-message! echo "Shell popped down")))
+      ;; Not in shell — switch to shell
+      (begin
+        (set! *shell-pop-prev-buffer* current-buf)
+        (let* ((shell-buf (or *shell-pop-buffer*
+                             (let ((b (make-buffer "*shell-pop*")))
+                               (set! *shell-pop-buffer* b)
+                               b)))
+               (ed (edit-window-editor win)))
+          (buffer-attach! ed shell-buf)
+          (set! (edit-window-buffer win) shell-buf)
+          (echo-message! echo "Shell popped up (use shell-pop to toggle back)"))))))
+
+;; --- Feature 7: Scratch Buffer ---
+
+(def *scratch-message*
+  (string-append ";; *scratch* buffer — for temporary notes and experiments\n"
+                 ";; This buffer is not saved. Use it freely.\n"
+                 ";;\n"
+                 ";; Scheme expressions can be evaluated with M-x eros-eval-last-sexp\n\n"))
+
+(def (cmd-scratch-buffer app)
+  "Switch to *scratch* buffer, creating it if needed."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (existing (buffer-by-name "*scratch*")))
+    (if existing
+      (begin
+        (buffer-attach! ed existing)
+        (set! (edit-window-buffer win) existing)
+        (echo-message! echo "*scratch*"))
+      (let ((buf (make-buffer "*scratch*")))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (editor-set-text ed *scratch-message*)
+        (editor-goto-pos ed (string-length *scratch-message*))
+        (echo-message! echo "*scratch* (new)")))))
+
+;; --- Feature 8: Restart Emacs ---
+
+(def (cmd-restart-emacs app)
+  "Restart the editor (save session and exec self)."
+  (let ((echo (app-state-echo app)))
+    (echo-message! echo "Restart not supported in static binary — please relaunch manually")))
+
+;; --- Feature 9: Org Export (basic org to text/HTML) ---
+
+(def (cmd-org-export-as-text app)
+  "Export current org buffer as plain text."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (org-text (editor-get-text ed))
+         (lines (string-split org-text #\newline))
+         (exported
+           (map (lambda (line)
+                  (let ((t (string-trim line)))
+                    (cond
+                      ((string-prefix? "* " t)
+                       (string-append "\n" (string-upcase (substring t 2 (string-length t))) "\n"
+                                     (make-string (- (string-length t) 2) #\=)))
+                      ((string-prefix? "** " t)
+                       (string-append "\n" (substring t 3 (string-length t)) "\n"
+                                     (make-string (- (string-length t) 3) #\-)))
+                      ((string-prefix? "*** " t)
+                       (string-append "\n  " (substring t 4 (string-length t))))
+                      ((string-prefix? "- " t)
+                       (string-append "  * " (substring t 2 (string-length t))))
+                      ((string-prefix? "#+BEGIN_SRC" t) (make-string 40 #\-))
+                      ((string-prefix? "#+END_SRC" t) (make-string 40 #\-))
+                      ((string-prefix? "#+" t) "") ;; skip org directives
+                      (else line))))
+                lines))
+         (result (string-join exported "\n"))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (buf (make-buffer "*org-export*")))
+    (let ((ed2 (edit-window-editor win)))
+      (buffer-attach! ed2 buf)
+      (set! (edit-window-buffer win) buf)
+      (editor-set-text ed2 result)
+      (editor-goto-pos ed2 0)
+      (echo-message! echo "Org exported as text"))))
+
+;; --- Feature 10: Spell Correct (word correction suggestions) ---
+
+(def (cmd-spell-correct app)
+  "Suggest spelling corrections for word at point."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word-len (- word-end word-start)))
+    (if (<= word-len 0)
+      (echo-error! echo "No word at point")
+      (let* ((buf (make-bytevector (+ word-len 1) 0))
+             (_ (send-message ed SCI_GETTEXTRANGE 0
+                  (cons->alien word-start (bytevector->alien buf))))
+             (word (alien/nul->string (bytevector->alien buf)))
+             (row (tui-rows)) (width (tui-cols)))
+        ;; Use aspell for suggestions if available
+        (if (not (file-exists? "/usr/bin/aspell"))
+          (echo-error! echo "aspell not found — install aspell for spell checking")
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports "aspell -a 2>&1" 'block (native-transcoder))))
+            ;; aspell interactive mode: send word, read suggestions
+            (display (string-append word "\n") p-stdin)
+            (flush-output-port p-stdin)
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let* ((suggestions
+                             (filter (lambda (l) (or (string-prefix? "&" l) (string-prefix? "*" l)))
+                                     (reverse lines))))
+                      (if (or (null? suggestions)
+                              (and (not (null? suggestions))
+                                   (string-prefix? "*" (car suggestions))))
+                        (echo-message! echo (string-append "\"" word "\" is correct"))
+                        ;; Parse aspell & line: & word count offset: sugg1, sugg2, ...
+                        (let* ((sug-line (car suggestions))
+                               (colon-pos (string-contains sug-line ":"))
+                               (sug-str (if colon-pos
+                                          (string-trim (substring sug-line (+ colon-pos 1) (string-length sug-line)))
+                                          ""))
+                               (sug-list (map string-trim (string-split sug-str #\,)))
+                               (choice (echo-read-string-with-completion echo
+                                         (string-append "Correct \"" word "\": ")
+                                         (if (> (length sug-list) 10) (list-head sug-list 10) sug-list)
+                                         row width)))
+                          (when (and choice (not (string-empty? choice)))
+                            (send-message ed SCI_SETTARGETSTART word-start 0)
+                            (send-message ed SCI_SETTARGETEND word-end 0)
+                            (send-message ed SCI_REPLACETARGET (string-length choice)
+                              (string->alien/nul choice))
+                            (echo-message! echo (string-append "Corrected: " word " → " choice)))))))
+                  (loop (cons line lines)))))))))))
+
+;;;============================================================================
+;;; Round 6 batch 1: Features 1-10
+;;;============================================================================
+
+;; --- Feature 1: Speed Type (typing speed test) ---
+
+(def *speed-type-text*
+  "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump. The five boxing wizards jump quickly.")
+
+(def (cmd-speed-type app)
+  "Start a typing speed test."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*speed-type*"))
+         (content (string-append "=== Speed Typing Test ===\n\n"
+                    "Type the following text as fast as you can:\n\n"
+                    *speed-type-text* "\n\n"
+                    (make-string 50 #\-) "\n"
+                    "Start typing below this line:\n\n")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed (string-length content))
+    (echo-message! echo "Speed type: start typing! Use speed-type-results when done")))
+
+(def (cmd-speed-type-results app)
+  "Calculate and display speed typing results."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (text (editor-get-text ed))
+         (lines (string-split text #\newline))
+         ;; Find typed text (after the separator line)
+         (typed (let loop ((ls lines) (found #f) (acc '()))
+                  (cond ((null? ls) (string-join (reverse acc) " "))
+                        ((string-prefix? "Start typing" (string-trim (car ls)))
+                         (loop (cdr ls) #t acc))
+                        (found (loop (cdr ls) #t (cons (string-trim (car ls)) acc)))
+                        (else (loop (cdr ls) #f acc)))))
+         (words (length (filter (lambda (w) (not (string-empty? w)))
+                          (string-split typed #\space))))
+         ;; Compare with original
+         (orig-words (filter (lambda (w) (not (string-empty? w)))
+                      (string-split *speed-type-text* #\space)))
+         (correct (let loop ((tw (string-split typed #\space))
+                             (ow orig-words) (n 0))
+                    (cond ((or (null? tw) (null? ow)) n)
+                          ((string=? (string-trim (car tw)) (car ow))
+                           (loop (cdr tw) (cdr ow) (+ n 1)))
+                          (else (loop (cdr tw) (cdr ow) n)))))
+         (accuracy (if (> (length orig-words) 0)
+                     (quotient (* correct 100) (length orig-words))
+                     0)))
+    (echo-message! echo
+      (string-append "Words typed: " (number->string words)
+        " | Correct: " (number->string correct)
+        " | Accuracy: " (number->string accuracy) "%"))))
+
+;; --- Feature 2: Tetris (simple text-based game) ---
+
+(def *tetris-board* #f)
+(def *tetris-score* 0)
+(def *tetris-width* 10)
+(def *tetris-height* 20)
+
+(def (cmd-tetris app)
+  "Start a text-based Tetris game display."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win))
+         (buf (make-buffer "*tetris*"))
+         ;; Generate empty board
+         (board (let loop ((row 0) (lines '()))
+                  (if (>= row *tetris-height*)
+                    (reverse lines)
+                    (loop (+ row 1)
+                      (cons (string-append "|" (make-string *tetris-width* #\space) "|") lines)))))
+         (content (string-append
+                    "=== TETRIS ===\n"
+                    "Score: 0\n\n"
+                    (string-join board "\n") "\n"
+                    "+" (make-string *tetris-width* #\-) "+\n\n"
+                    "Controls: tetris-left, tetris-right, tetris-rotate, tetris-drop\n"
+                    "(This is a display-mode placeholder for a future interactive game)")))
+    (buffer-attach! ed buf)
+    (set! (edit-window-buffer win) buf)
+    (editor-set-text ed content)
+    (editor-goto-pos ed 0)
+    (set! *tetris-score* 0)
+    (echo-message! echo "Tetris started (display mode)")))
+
+;; --- Feature 3: Disk Usage ---
+
+(def (cmd-disk-usage app)
+  "Show disk usage information."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports "df -h 2>&1" 'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (let* ((content (string-append "Disk Usage\n"
+                                (make-string 60 #\=) "\n"
+                                (string-join (reverse lines) "\n")))
+                     (buf (make-buffer "*disk-usage*")))
+                (buffer-attach! ed buf)
+                (set! (edit-window-buffer win) buf)
+                (editor-set-text ed content)
+                (editor-goto-pos ed 0)
+                (echo-message! echo "Disk usage displayed")))
+            (loop (cons line lines))))))))
+
+;; --- Feature 4: Darkroom Mode (distraction-free writing) ---
+
+(def *darkroom-enabled* #f)
+(def *darkroom-saved-margin* 0)
+
+(def (cmd-darkroom-mode app)
+  "Toggle darkroom mode — distraction-free writing environment."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *darkroom-enabled* (not *darkroom-enabled*))
+    (if *darkroom-enabled*
+      (begin
+        ;; Save current margins and set wide margins for centered text
+        (set! *darkroom-saved-margin* (send-message ed SCI_GETMARGINLEFT 0 0))
+        (let ((width (tui-cols)))
+          (let ((margin (max 0 (quotient (- width 80) 2))))
+            (send-message ed SCI_SETMARGINLEFT 0 (* margin 8))
+            (send-message ed SCI_SETMARGINRIGHT 0 (* margin 8))))
+        ;; Hide line numbers
+        (send-message ed SCI_SETMARGINWIDTHN 0 0)
+        ;; Extra line spacing
+        (send-message ed SCI_SETEXTRAASCENT 4 0)
+        (send-message ed SCI_SETEXTRADESCENT 2 0)
+        (echo-message! echo "Darkroom mode: on (distraction-free)"))
+      (begin
+        (send-message ed SCI_SETMARGINLEFT 0 *darkroom-saved-margin*)
+        (send-message ed SCI_SETMARGINRIGHT 0 0)
+        (send-message ed SCI_SETMARGINWIDTHN 0 40) ;; restore line numbers
+        (send-message ed SCI_SETEXTRAASCENT 0 0)
+        (send-message ed SCI_SETEXTRADESCENT 0 0)
+        (echo-message! echo "Darkroom mode: off")))))
+
+;; --- Feature 5: Super Save (auto-save on focus change) ---
+
+(def *super-save-enabled* #f)
+
+(def (cmd-super-save-mode app)
+  "Toggle super-save — auto-save buffer on idle/focus change."
+  (set! *super-save-enabled* (not *super-save-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *super-save-enabled*
+      "Super-save mode: on (buffers saved automatically)"
+      "Super-save mode: off")))
+
+(def (super-save-maybe! app)
+  "Save current buffer if super-save is enabled and buffer is modified."
+  (when *super-save-enabled*
+    (let* ((buf (current-buffer-from-app app))
+           (path (and buf (buffer-file-path buf)))
+           (ed (edit-window-editor (current-window (app-state-frame app))))
+           (modified (not (= (send-message ed SCI_GETMODIFY 0 0) 0))))
+      (when (and path modified)
+        (execute-command! app 'save-buffer)))))
+
+;; --- Feature 6: Beginend (smart beginning/end of buffer) ---
+
+(def (cmd-beginend-beginning app)
+  "Smart beginning of buffer: skip headers/comments."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0)))
+    (if (= pos 0)
+      ;; Already at beginning — go to first non-comment line
+      (let* ((text (editor-get-text ed))
+             (lines (string-split text #\newline)))
+        (let loop ((ls lines) (offset 0))
+          (cond ((null? ls) (editor-goto-pos ed 0))
+                ((string-empty? (string-trim (car ls)))
+                 (loop (cdr ls) (+ offset (string-length (car ls)) 1)))
+                ((string-prefix? ";;" (string-trim (car ls)))
+                 (loop (cdr ls) (+ offset (string-length (car ls)) 1)))
+                ((string-prefix? "#" (string-trim (car ls)))
+                 (loop (cdr ls) (+ offset (string-length (car ls)) 1)))
+                (else (editor-goto-pos ed offset)))))
+      (editor-goto-pos ed 0))))
+
+(def (cmd-beginend-end app)
+  "Smart end of buffer: skip trailing whitespace."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (text (editor-get-text ed))
+         (len (string-length text))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0)))
+    (if (= pos len)
+      ;; Already at end — go to last non-blank line
+      (let loop ((i (- len 1)))
+        (if (<= i 0) (editor-goto-pos ed len)
+          (let ((ch (string-ref text i)))
+            (if (or (char=? ch #\space) (char=? ch #\newline) (char=? ch #\tab))
+              (loop (- i 1))
+              (editor-goto-pos ed (+ i 1))))))
+      (editor-goto-pos ed len))))
+
+;; --- Feature 7: Fancy Battery ---
+
+(def (cmd-fancy-battery app)
+  "Show battery status."
+  (let* ((echo (app-state-echo app)))
+    (if (not (file-exists? "/sys/class/power_supply/BAT0/capacity"))
+      (echo-message! echo "No battery detected")
+      (let* ((capacity (string-trim (read-file-string "/sys/class/power_supply/BAT0/capacity")))
+             (status (if (file-exists? "/sys/class/power_supply/BAT0/status")
+                       (string-trim (read-file-string "/sys/class/power_supply/BAT0/status"))
+                       "Unknown"))
+             (pct (or (string->number capacity) 0))
+             (bar-len 20)
+             (filled (quotient (* pct bar-len) 100))
+             (bar (string-append "[" (make-string filled #\#)
+                    (make-string (- bar-len filled) #\-) "]")))
+        (echo-message! echo
+          (string-append "Battery: " bar " " capacity "% (" status ")"))))))
+
+;; --- Feature 8: Memory Report ---
+
+(def (cmd-memory-report app)
+  "Show system memory usage."
+  (let* ((echo (app-state-echo app))
+         (fr (app-state-frame app))
+         (win (current-window fr))
+         (ed (edit-window-editor win)))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports "free -h 2>&1" 'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (let* ((content (string-append "Memory Report\n"
+                                (make-string 60 #\=) "\n"
+                                (string-join (reverse lines) "\n")))
+                     (buf (make-buffer "*memory-report*")))
+                (buffer-attach! ed buf)
+                (set! (edit-window-buffer win) buf)
+                (editor-set-text ed content)
+                (editor-goto-pos ed 0)
+                (echo-message! echo "Memory report displayed")))
+            (loop (cons line lines))))))))
+
+;; --- Feature 9: Color Picker ---
+
+(def (cmd-color-picker app)
+  "Interactive color picker — browse named colors and insert hex."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (colors '("red=#FF0000" "green=#00FF00" "blue=#0000FF"
+                   "yellow=#FFFF00" "cyan=#00FFFF" "magenta=#FF00FF"
+                   "white=#FFFFFF" "black=#000000" "orange=#FFA500"
+                   "purple=#800080" "pink=#FFC0CB" "brown=#A52A2A"
+                   "gray=#808080" "silver=#C0C0C0" "gold=#FFD700"
+                   "navy=#000080" "teal=#008080" "olive=#808000"
+                   "maroon=#800000" "lime=#00FF00" "aqua=#00FFFF"
+                   "coral=#FF7F50" "salmon=#FA8072" "khaki=#F0E68C"
+                   "plum=#DDA0DD" "orchid=#DA70D6" "sienna=#A0522D"
+                   "tomato=#FF6347" "wheat=#F5DEB3" "ivory=#FFFFF0"))
+         (choice (echo-read-string-with-completion echo "Color: " colors row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((eq (string-contains choice "=")))
+        (when eq
+          (let* ((hex (substring choice (+ eq 1) (string-length choice)))
+                 (ed (edit-window-editor (current-window (app-state-frame app)))))
+            (send-message ed SCI_REPLACESEL 0 (string->alien/nul hex))
+            (echo-message! echo (string-append "Inserted: " hex))))))))
+
+;; --- Feature 10: Insert Timestamp ---
+
+(def (cmd-insert-timestamp app)
+  "Insert current date and time at point."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (now (current-time))
+         (d (time-utc->date now 0))
+         (timestamp (string-append
+                      (number->string (date-year d)) "-"
+                      (let ((m (date-month d))) (if (< m 10) (string-append "0" (number->string m)) (number->string m))) "-"
+                      (let ((day (date-day d))) (if (< day 10) (string-append "0" (number->string day)) (number->string day))) " "
+                      (let ((h (date-hour d))) (if (< h 10) (string-append "0" (number->string h)) (number->string h))) ":"
+                      (let ((mn (date-minute d))) (if (< mn 10) (string-append "0" (number->string mn)) (number->string mn))) ":"
+                      (let ((s (date-second d))) (if (< s 10) (string-append "0" (number->string s)) (number->string s))))))
+    (send-message ed SCI_REPLACESEL 0 (string->alien/nul timestamp))
+    (echo-message! echo (string-append "Inserted: " timestamp))))
+
+(def (cmd-insert-date app)
+  "Insert current date at point (YYYY-MM-DD)."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (now (current-time))
+         (d (time-utc->date now 0))
+         (date-str (string-append
+                     (number->string (date-year d)) "-"
+                     (let ((m (date-month d))) (if (< m 10) (string-append "0" (number->string m)) (number->string m))) "-"
+                     (let ((day (date-day d))) (if (< day 10) (string-append "0" (number->string day)) (number->string day))))))
+    (send-message ed SCI_REPLACESEL 0 (string->alien/nul date-str))
+    (echo-message! (app-state-echo app) (string-append "Inserted: " date-str))))

@@ -53,6 +53,19 @@ RUN cd /tmp && \
     make -j$(nproc) && make install && \
     cd / && rm -rf /tmp/xcb-util-0.4.1*
 
+# Build static OpenSSL (needed by chez-ssl for AWS API calls)
+# Alpine's openssl-dev only ships shared libs; we need .a files for the static binary.
+RUN apk add --no-cache openssl-dev perl && \
+    OPENSSL_VER=$(apk info openssl 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "3.3.2") && \
+    wget -q https://www.openssl.org/source/openssl-${OPENSSL_VER}.tar.gz || \
+    wget -q https://www.openssl.org/source/openssl-3.3.2.tar.gz && \
+    tar xf openssl-*.tar.gz && \
+    cd openssl-*/ && \
+    ./Configure linux-x86_64 no-shared no-tests no-apps -O2 --prefix=/usr && \
+    make -j$(nproc) && \
+    cp libssl.a libcrypto.a /usr/lib/ && \
+    cd / && rm -rf openssl-*/  openssl-*.tar.gz
+
 # ── Phase 2: Build Qt6 qtbase static ────────────────────────────────────
 ARG QT6_VERSION=6.8.3
 RUN wget -q https://download.qt.io/official_releases/qt/6.8/${QT6_VERSION}/submodules/qtbase-everywhere-src-${QT6_VERSION}.tar.xz && \
@@ -252,12 +265,14 @@ COPY --from=pcre2-src . /deps/chez-pcre2
 COPY --from=sci-src . /deps/chez-scintilla
 COPY --from=qt-src . /deps/chez-qt
 COPY --from=qtshim-src . /deps/gerbil-qt
+# qt_chez_shim.c is maintained in vendor/ (not in chez-qt) — copy it in
+COPY vendor/qt_chez_shim.c vendor/qt_shim.h /deps/chez-qt/
 
 # Pre-compile all Chez library dependencies.
 # These .so files are baked into the image so jemacs builds only
 # need to compile jemacs-specific modules.
 RUN /opt/chez/bin/scheme \
-      --libdirs /deps/jerboa/lib:/deps/gherkin/src:/deps/jsh/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
+      --libdirs /deps/jerboa/lib:/deps/gherkin:/deps/jsh/src:/deps/chez-pcre2:/deps/chez-scintilla/src:/deps/chez-qt \
       --compile-imported-libraries \
       --script /dev/stdin <<'EOF'
 #!chezscheme

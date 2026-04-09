@@ -11,6 +11,7 @@
         automation-state
         automation-wait!
         automation-set-qt-app!
+        automation-set-key-target-fn!
         emacs-key->qt-event)
 
 (import :std/sugar
@@ -203,16 +204,34 @@
 ;;; If the minibuffer is active, sends to the minibuffer input widget instead.
 ;;; When drain? is #t, drains the deferred callback queue after each event
 ;;; so the Scheme key handler fires immediately.
+;;;
+;;; Target selection priority:
+;;;   1. Minibuffer input widget (when minibuffer is active)
+;;;   2. *automation-key-target-fn* override (e.g. QTerminalWidget when
+;;;      terminal buffer is active — the QScintilla is hidden behind it in
+;;;      the QStackedWidget and sendEvent to a non-current page is unreliable)
+;;;   3. qt-current-editor (the QScintilla editor for the current window)
 (def (send-one-key! app key-str drain?)
   (let-values (((code mods text) (emacs-key->qt-event key-str)))
     (let* ((fr (app-state-frame app))
-           (target (if *minibuffer-active?*
-                     (and *mb-input* *mb-input*)
-                     (qt-current-editor fr))))
+           (get-target (lambda ()
+                         (cond
+                           (*minibuffer-active?*
+                            (and *mb-input* *mb-input*))
+                           (*automation-key-target-fn*
+                            (*automation-key-target-fn* fr))
+                           (else
+                            (qt-current-editor fr)))))
+           (target (get-target)))
       (when target
         (qt-send-key-press! target code mods text)
         (when drain? (qt-drain-pending-callbacks!))
-        (qt-send-key-release! target code mods text)
+        ;; Re-fetch target after drain: the key handler may have destroyed the
+        ;; pressed window (e.g. C-x 0). Sending key release to a destroyed
+        ;; widget causes a segfault via Qt's sendPostedEvents / event dispatch.
+        (let ((release-target (get-target)))
+          (when release-target
+            (qt-send-key-release! release-target code mods text)))
         (when drain? (qt-drain-pending-callbacks!))))))
 
 ;;;============================================================================
@@ -293,3 +312,14 @@
 
 (def (automation-set-qt-app! app)
   (set! *qt-app-ref* app))
+
+;;; Key-target override: called with (fr) to find the active input widget.
+;;; When #f, falls back to (qt-current-editor fr).
+;;; Set from app.ss after terminal widget map is available.
+;;; Purpose: when a terminal buffer is active, the focused widget is the
+;;; QTerminalWidget (not the hidden QScintilla). Sending key events to a
+;;; hidden widget via sendEvent may not reliably trigger event filters.
+(def *automation-key-target-fn* #f)
+
+(def (automation-set-key-target-fn! fn)
+  (set! *automation-key-target-fn* fn))

@@ -1,0 +1,17 @@
+#!chezscheme
+;; Compile jerboa-aws EC2 modules needed by jemacs
+(import (chezscheme))
+(compile-imported-libraries #t)
+(import (jerboa-aws creds))
+(import (jerboa-aws crypto))
+(import (jerboa-aws xml))
+(import (jerboa-aws json))
+(import (jerboa-aws time))
+(import (jerboa-aws uri))
+(import (jerboa-aws sigv4))
+(import (jerboa-aws request))
+(import (jerboa-aws api))
+(import (jerboa-aws ec2 xml))
+(import (jerboa-aws ec2 params))
+(import (jerboa-aws ec2 api))
+(import (jerboa-aws ec2 instances))

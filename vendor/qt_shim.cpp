@@ -188,6 +188,230 @@ static void vlog_bqc_exit(const char* fn) {
     vlog_write("BQC-EXIT  ", fn);
 }
 
+// ============================================================
+// Crash reporter — FFI call ring buffer + SIGSEGV handler
+// ============================================================
+
+#include <fcntl.h>
+#include <unistd.h>
+
+// execinfo.h (backtrace) is not available on musl (Alpine static builds).
+// Guard with __GLIBC__ so the crash reporter still works without backtraces.
+#ifdef __GLIBC__
+#include <execinfo.h>
+#define HAVE_BACKTRACE 1
+#else
+#define HAVE_BACKTRACE 0
+#endif
+
+#define CRASH_RING_SIZE 64
+
+static struct crash_ring_entry {
+    const char* func_name;
+    int         entering;  // 1 = enter, 0 = exit
+    uint64_t    timestamp_ns;
+} s_crash_ring[CRASH_RING_SIZE];
+
+static std::atomic<int> s_crash_ring_idx{0};
+
+static inline uint64_t crash_now_ns() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (uint64_t)ts.tv_sec * 1000000000ULL + (uint64_t)ts.tv_nsec;
+}
+
+static inline void crash_ring_push(const char* fn, int entering) {
+    int idx = s_crash_ring_idx.fetch_add(1, std::memory_order_relaxed) % CRASH_RING_SIZE;
+    s_crash_ring[idx].func_name    = fn;
+    s_crash_ring[idx].entering     = entering;
+    s_crash_ring[idx].timestamp_ns = crash_now_ns();
+}
+
+// Async-signal-safe integer-to-string (decimal).
+// Returns number of chars written (not including NUL).
+static int safe_itoa(char* buf, int buflen, long val) {
+    if (buflen <= 0) return 0;
+    char tmp[24];
+    int neg = 0, len = 0;
+    unsigned long uval;
+    if (val < 0) { neg = 1; uval = (unsigned long)(-(val + 1)) + 1; }
+    else         { uval = (unsigned long)val; }
+    if (uval == 0) { tmp[len++] = '0'; }
+    else { while (uval > 0 && len < (int)sizeof(tmp)) { tmp[len++] = '0' + (char)(uval % 10); uval /= 10; } }
+    int total = neg + len;
+    if (total >= buflen) total = buflen - 1;
+    int pos = 0;
+    if (neg && pos < total) buf[pos++] = '-';
+    for (int i = len - 1; i >= 0 && pos < total; i--) buf[pos++] = tmp[i];
+    buf[pos] = '\0';
+    return pos;
+}
+
+// Async-signal-safe hex formatter (no "0x" prefix).
+static int safe_hex(char* buf, int buflen, unsigned long val) {
+    if (buflen <= 0) return 0;
+    static const char hexchars[] = "0123456789abcdef";
+    char tmp[20];
+    int len = 0;
+    if (val == 0) { tmp[len++] = '0'; }
+    else { while (val > 0 && len < (int)sizeof(tmp)) { tmp[len++] = hexchars[val & 0xf]; val >>= 4; } }
+    int total = (len < buflen - 1) ? len : buflen - 1;
+    int pos = 0;
+    for (int i = len - 1; i >= 0 && pos < total; i--) buf[pos++] = tmp[i];
+    buf[pos] = '\0';
+    return pos;
+}
+
+// Cached crash log path — set once at install time (not in signal handler).
+static char s_crash_log_path[512] = "";
+
+// Async-signal-safe helper: write a C string to fd.
+static inline void safe_write_str(int fd, const char* s) {
+    if (!s) return;
+    int len = 0;
+    while (s[len]) len++;
+    (void)write(fd, s, len);
+}
+
+static void crash_write_report(int sig, siginfo_t* si) {
+    char numbuf[32];
+
+    // Write to crash log file
+    int fd = open(s_crash_log_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd < 0) fd = STDERR_FILENO;  // fallback to stderr
+
+    safe_write_str(fd, "=== JEMACS CRASH REPORT ===\n");
+    safe_write_str(fd, "Signal: ");
+    safe_itoa(numbuf, sizeof(numbuf), (long)sig);
+    safe_write_str(fd, numbuf);
+    if (sig == SIGSEGV) safe_write_str(fd, " (SIGSEGV)");
+    else if (sig == SIGBUS) safe_write_str(fd, " (SIGBUS)");
+    else if (sig == SIGABRT) safe_write_str(fd, " (SIGABRT)");
+    safe_write_str(fd, "\n");
+
+    if (si) {
+        safe_write_str(fd, "Faulting address: 0x");
+        safe_hex(numbuf, sizeof(numbuf), (unsigned long)si->si_addr);
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, "\n");
+        safe_write_str(fd, "Signal code: ");
+        safe_itoa(numbuf, sizeof(numbuf), (long)si->si_code);
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, "\n");
+    }
+
+    safe_write_str(fd, "\n--- FFI Call Ring Buffer (oldest → newest) ---\n");
+    int head = s_crash_ring_idx.load(std::memory_order_relaxed);
+    int count = (head < CRASH_RING_SIZE) ? head : CRASH_RING_SIZE;
+    int start = (head < CRASH_RING_SIZE) ? 0 : (head % CRASH_RING_SIZE);
+    for (int i = 0; i < count; i++) {
+        int idx = (start + i) % CRASH_RING_SIZE;
+        const struct crash_ring_entry* e = &s_crash_ring[idx];
+        if (!e->func_name) continue;
+
+        safe_write_str(fd, "  [");
+        safe_itoa(numbuf, sizeof(numbuf), (long)i);
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, "] ");
+        safe_write_str(fd, e->entering ? "ENTER " : "EXIT  ");
+        safe_write_str(fd, e->func_name);
+        safe_write_str(fd, " @");
+        // Write timestamp in seconds.nanoseconds
+        uint64_t ts = e->timestamp_ns;
+        safe_itoa(numbuf, sizeof(numbuf), (long)(ts / 1000000000ULL));
+        safe_write_str(fd, numbuf);
+        safe_write_str(fd, ".");
+        // Pad nanoseconds to 9 digits
+        long ns = (long)(ts % 1000000000ULL);
+        char nsbuf[16];
+        safe_itoa(nsbuf, sizeof(nsbuf), ns);
+        int nslen = 0; while (nsbuf[nslen]) nslen++;
+        for (int p = 0; p < 9 - nslen; p++) safe_write_str(fd, "0");
+        safe_write_str(fd, nsbuf);
+        safe_write_str(fd, "\n");
+    }
+
+    safe_write_str(fd, "\n--- Backtrace ---\n");
+#if HAVE_BACKTRACE
+    void* bt_frames[64];
+    int bt_size = backtrace(bt_frames, 64);
+    backtrace_symbols_fd(bt_frames, bt_size, fd);
+#else
+    safe_write_str(fd, "(backtrace not available — musl build)\n");
+#endif
+    safe_write_str(fd, "\n=== END CRASH REPORT ===\n");
+
+    // Also dump to stderr if we wrote to a file
+    if (fd != STDERR_FILENO) {
+        close(fd);
+        safe_write_str(STDERR_FILENO, "\n[jemacs] CRASH — report written to ");
+        safe_write_str(STDERR_FILENO, s_crash_log_path);
+        safe_write_str(STDERR_FILENO, "\n");
+
+        safe_write_str(STDERR_FILENO, "--- Backtrace ---\n");
+#if HAVE_BACKTRACE
+        backtrace_symbols_fd(bt_frames, bt_size, STDERR_FILENO);
+#else
+        safe_write_str(STDERR_FILENO, "(backtrace not available — musl build)\n");
+#endif
+    }
+}
+
+static void segv_handler(int sig, siginfo_t* si, void* ctx) {
+    (void)ctx;
+    crash_write_report(sig, si);
+    // Re-raise with default handler for core dump / gdb attach
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = SIG_DFL;
+    sigaction(sig, &sa, nullptr);
+    raise(sig);
+}
+
+static void crash_reporter_install() {
+    // Cache crash log path (HOME may not be available in signal handler context)
+    const char* home = getenv("HOME");
+    if (home) {
+        int pos = 0;
+        while (home[pos] && pos < (int)sizeof(s_crash_log_path) - 24) {
+            s_crash_log_path[pos] = home[pos];
+            pos++;
+        }
+        const char* suffix = "/.jemacs-crash.log";
+        for (int i = 0; suffix[i] && pos < (int)sizeof(s_crash_log_path) - 1; i++)
+            s_crash_log_path[pos++] = suffix[i];
+        s_crash_log_path[pos] = '\0';
+    } else {
+        // Fallback: write to /tmp
+        const char* fallback = "/tmp/jemacs-crash.log";
+        int pos = 0;
+        while (fallback[pos] && pos < (int)sizeof(s_crash_log_path) - 1) {
+            s_crash_log_path[pos] = fallback[pos];
+            pos++;
+        }
+        s_crash_log_path[pos] = '\0';
+    }
+
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_sigaction = segv_handler;
+    sa.sa_flags = SA_SIGINFO | SA_RESETHAND;  // one-shot
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIGSEGV, &sa, nullptr);
+    sigaction(SIGBUS,  &sa, nullptr);
+    sigaction(SIGABRT, &sa, nullptr);
+}
+
+// Exported accessor for crash log path.
+extern "C" const char* qt_crash_log_path(void) {
+    return s_crash_log_path;
+}
+
+// Exported installer (also called internally from qt_application_create).
+extern "C" void qt_crash_reporter_install(void) {
+    crash_reporter_install();
+}
+
 // Null-pointer guard macros (H1): return safely instead of crashing on nullptr.
 // Use QT_NULL_CHECK_VOID for void functions, QT_NULL_CHECK_RET for returning ones.
 #define QT_NULL_CHECK_VOID(ptr) do { if (!(ptr)) return; } while(0)
@@ -195,7 +419,7 @@ static void vlog_bqc_exit(const char* fn) {
 
 // Storage for argc/argv (Qt requires stable pointers for QApplication lifetime)
 static int    s_argc = 1;
-static char   s_arg0[] = "gerbil-qt";
+static char   s_arg0[] = "jerboa-qt";
 static char*  s_argv[] = { s_arg0, nullptr };
 
 // ============================================================
@@ -249,6 +473,7 @@ static inline bool is_qt_main_thread() {
 // Otherwise: marshals via BlockingQueuedConnection with verbose logging.
 #ifdef JEMACS_CHEZ_SMP
 #define QT_VOID(...) do {                                           \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) { __VA_ARGS__; }                      \
     else {                                                          \
         vlog_bqc_enter(__func__);                                   \
@@ -260,9 +485,11 @@ static inline bool is_qt_main_thread() {
         Sactivate_thread();                                         \
         vlog_bqc_exit(__func__);                                    \
     }                                                               \
+    crash_ring_push(__func__, 0);                                   \
 } while(0)
 #else
 #define QT_VOID(...) do {                                           \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) { __VA_ARGS__; }                      \
     else {                                                          \
         vlog_bqc_enter(__func__);                                   \
@@ -272,13 +499,19 @@ static inline bool is_qt_main_thread() {
             Qt::BlockingQueuedConnection);                          \
         vlog_bqc_exit(__func__);                                    \
     }                                                               \
+    crash_ring_push(__func__, 0);                                   \
 } while(0)
 #endif
 
 // Dispatch a function returning a value.
 #ifdef JEMACS_CHEZ_SMP
 #define QT_RETURN(type, expr) do {                                  \
-    if (is_qt_main_thread()) { return (expr); }                    \
+    crash_ring_push(__func__, 1);                                   \
+    if (is_qt_main_thread()) {                                      \
+        type _r = (expr);                                           \
+        crash_ring_push(__func__, 0);                               \
+        return _r;                                                  \
+    }                                                               \
     vlog_bqc_enter(__func__);                                       \
     type _result{};                                                 \
     Sdeactivate_thread();                                           \
@@ -288,11 +521,17 @@ static inline bool is_qt_main_thread() {
         Qt::BlockingQueuedConnection);                              \
     Sactivate_thread();                                             \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return _result;                                                 \
 } while(0)
 #else
 #define QT_RETURN(type, expr) do {                                  \
-    if (is_qt_main_thread()) { return (expr); }                    \
+    crash_ring_push(__func__, 1);                                   \
+    if (is_qt_main_thread()) {                                      \
+        type _r = (expr);                                           \
+        crash_ring_push(__func__, 0);                               \
+        return _r;                                                  \
+    }                                                               \
     vlog_bqc_enter(__func__);                                       \
     type _result{};                                                 \
     QMetaObject::invokeMethod(                                      \
@@ -300,6 +539,7 @@ static inline bool is_qt_main_thread() {
         [&]() { _result = (expr); },                               \
         Qt::BlockingQueuedConnection);                              \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return _result;                                                 \
 } while(0)
 #endif
@@ -307,8 +547,10 @@ static inline bool is_qt_main_thread() {
 // Dispatch a function returning const char* via s_return_buf.
 #ifdef JEMACS_CHEZ_SMP
 #define QT_RETURN_STRING(expr) do {                                 \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) {                                      \
         s_return_buf = (expr);                                      \
+        crash_ring_push(__func__, 0);                               \
         return s_return_buf.c_str();                                \
     }                                                               \
     vlog_bqc_enter(__func__);                                       \
@@ -321,12 +563,15 @@ static inline bool is_qt_main_thread() {
     Sactivate_thread();                                             \
     s_return_buf = std::move(_str_result);                         \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return s_return_buf.c_str();                                    \
 } while(0)
 #else
 #define QT_RETURN_STRING(expr) do {                                 \
+    crash_ring_push(__func__, 1);                                   \
     if (is_qt_main_thread()) {                                      \
         s_return_buf = (expr);                                      \
+        crash_ring_push(__func__, 0);                               \
         return s_return_buf.c_str();                                \
     }                                                               \
     vlog_bqc_enter(__func__);                                       \
@@ -337,6 +582,7 @@ static inline bool is_qt_main_thread() {
         Qt::BlockingQueuedConnection);                              \
     s_return_buf = std::move(_str_result);                         \
     vlog_bqc_exit(__func__);                                        \
+    crash_ring_push(__func__, 0);                                   \
     return s_return_buf.c_str();                                    \
 } while(0)
 #endif
@@ -355,6 +601,7 @@ static int s_last_key_code = 0;
 static int s_last_key_modifiers = 0;
 static std::string s_last_key_text;
 static int s_last_key_autorepeat = 0;
+static QObject* s_last_key_widget = nullptr;  // which widget fired the last key event
 
 // Storage for QInputDialog ok/cancel flag
 static bool s_last_input_ok = false;
@@ -378,6 +625,7 @@ public:
             s_last_key_modifiers = static_cast<int>(ke->modifiers());
             s_last_key_text = ke->text().toUtf8().toStdString();
             s_last_key_autorepeat = ke->isAutoRepeat() ? 1 : 0;
+            s_last_key_widget = obj;
             m_callback(m_callback_id);
         }
         return QObject::eventFilter(obj, event);
@@ -403,6 +651,7 @@ public:
             s_last_key_modifiers = static_cast<int>(ke->modifiers());
             s_last_key_text = ke->text().toUtf8().toStdString();
             s_last_key_autorepeat = ke->isAutoRepeat() ? 1 : 0;
+            s_last_key_widget = obj;
             m_callback(m_callback_id);
             return true;  // consume the event — widget does NOT see it
         }
@@ -461,6 +710,8 @@ static void* qt_thread_main(void* arg) {
 
 extern "C" qt_application_t qt_application_create(int argc, char** argv) {
     (void)argc; (void)argv;
+    // Install SIGSEGV/SIGBUS/SIGABRT crash reporter before anything else.
+    crash_reporter_install();
 #ifdef __APPLE__
     // macOS/Cocoa requires QApplication to be created on the main thread.
     // The calling thread IS the main thread (Chez primordial thread), so we
@@ -699,8 +950,12 @@ static void qt_cleanup_extra_selections(void* w);
 extern "C" void qt_widget_destroy(qt_widget_t w) {
     QT_NULL_CHECK_VOID(w);  // H1: null guard
     QT_VOID(
+        QWidget* widget = static_cast<QWidget*>(w);
         qt_cleanup_extra_selections(w);  // L1: clean up extra selections
-        delete static_cast<QWidget*>(w)
+        // Use deleteLater() instead of delete to avoid use-after-free:
+        // pending Qt events (resize, paint, focus) may still reference this
+        // widget and will crash if processed after synchronous deletion.
+        widget->deleteLater()
     );
 }
 
@@ -2258,6 +2513,12 @@ extern "C" int qt_last_key_autorepeat(void) {
     QT_RETURN(int, s_last_key_autorepeat);
 }
 
+// Returns the QObject* (widget pointer) that fired the last key event.
+// Lets Chez determine whether a key came from a terminal widget or an editor.
+extern "C" void* qt_last_key_widget(void) {
+    return s_last_key_widget;
+}
+
 extern "C" void qt_send_key_event(qt_widget_t w, int type, int key, int modifiers, const char* text) {
     QT_NULL_CHECK_VOID(w);
     // Capture primitives by value; construct QKeyEvent inside the lambda
@@ -2684,6 +2945,14 @@ extern "C" int qt_stacked_widget_current_index(qt_stacked_widget_t sw) {
 extern "C" int qt_stacked_widget_count(qt_stacked_widget_t sw) {
     QT_NULL_CHECK_RET(sw, 0);
     QT_RETURN(int, static_cast<QStackedWidget*>(sw)->count());
+}
+
+extern "C" void qt_stacked_widget_set_current_widget(qt_stacked_widget_t sw,
+                                                      qt_widget_t widget) {
+    QT_NULL_CHECK_VOID(sw);
+    QT_NULL_CHECK_VOID(widget);
+    QT_VOID(static_cast<QStackedWidget*>(sw)->setCurrentWidget(
+                static_cast<QWidget*>(widget)));
 }
 
 extern "C" void qt_stacked_widget_on_current_changed(qt_stacked_widget_t sw,
@@ -6842,6 +7111,13 @@ extern "C" const char* qt_scintilla_receive_string(qt_scintilla_t sci, unsigned 
     return s_return_buf.c_str();
 }
 
+// Set UTF-8 mode on a QsciScintilla widget using setUtf8() — the authoritative
+// QsciScintilla API for encoding, as opposed to raw SCI_SETCODEPAGE.
+extern "C" void qt_scintilla_set_utf8(qt_scintilla_t sci, int enable) {
+    QT_NULL_CHECK_VOID(sci);
+    QT_VOID(static_cast<QsciScintilla*>(sci)->setUtf8(enable != 0));
+}
+
 extern "C" void qt_scintilla_set_text(qt_scintilla_t sci, const char* text) {
     QT_NULL_CHECK_VOID(sci);
     QT_VOID(
@@ -7180,3 +7456,667 @@ extern "C" void qt_scintilla_on_modified(qt_scintilla_t sci,
 }
 
 #endif /* QT_SCINTILLA_AVAILABLE */
+
+// ============================================================================
+// QTerminalWidget — proper VT100 terminal emulator using libvterm + QPainter
+//
+// A self-contained terminal widget that:
+//   - Owns a PTY (via forkpty) and spawns a child shell/command
+//   - Uses libvterm for VT100/xterm-256color terminal emulation
+//   - Renders cell-by-cell with QPainter (proper fg/bg colors, bold, etc.)
+//   - Handles keyboard input internally (keyPressEvent → libvterm → PTY)
+//   - Polls PTY output via QTimer → libvterm → damage → repaint
+//   - Resizes terminal on widget resize (TIOCSWINSZ + vterm_set_size)
+// ============================================================================
+
+#include <vterm.h>
+#include <pty.h>
+#include <termios.h>
+#include <sys/ioctl.h>
+
+// Forward declaration for VTermScreenCallbacks (C++17 doesn't allow
+// designated initializers, so we initialize fields explicitly).
+static VTermScreenCallbacks s_term_screen_cbs;
+static bool s_term_cbs_initialized = false;
+
+class QTerminalWidget : public QWidget {
+public:
+    VTerm*        m_vt         = nullptr;
+    VTermScreen*  m_screen     = nullptr;
+    int           m_master_fd  = -1;
+    pid_t         m_child_pid  = -1;
+    int           m_rows       = 24;
+    int           m_cols       = 80;
+    int           m_cursor_row = 0;
+    int           m_cursor_col = 0;
+    bool          m_cursor_visible = true;
+    bool          m_running    = false;
+    QFont         m_font;
+    int           m_cell_w     = 8;
+    int           m_cell_h     = 16;
+    int           m_cell_asc   = 13;
+    QTimer*       m_timer      = nullptr;
+    QColor        m_default_fg;
+    QColor        m_default_bg;
+
+    // ── VTerm screen callbacks (static — use void* user to find widget) ────
+
+    static int cb_damage(VTermRect rect, void* user) {
+        auto* w = static_cast<QTerminalWidget*>(user);
+        int x  = rect.start_col * w->m_cell_w;
+        int y  = rect.start_row * w->m_cell_h;
+        int rw = (rect.end_col - rect.start_col) * w->m_cell_w;
+        int rh = (rect.end_row - rect.start_row) * w->m_cell_h;
+        w->update(x, y, rw, rh);
+        return 0;
+    }
+
+    static int cb_movecursor(VTermPos pos, VTermPos oldpos, int visible, void* user) {
+        auto* w = static_cast<QTerminalWidget*>(user);
+        w->m_cursor_row = pos.row;
+        w->m_cursor_col = pos.col;
+        w->m_cursor_visible = visible;
+        w->update(oldpos.col * w->m_cell_w, oldpos.row * w->m_cell_h,
+                  w->m_cell_w, w->m_cell_h);
+        w->update(pos.col * w->m_cell_w, pos.row * w->m_cell_h,
+                  w->m_cell_w, w->m_cell_h);
+        return 0;
+    }
+
+    static int cb_bell(void* user) { (void)user; return 0; }
+
+    static int cb_resize(int rows, int cols, void* user) {
+        (void)rows; (void)cols; (void)user; return 1;
+    }
+
+    static int cb_settermprop(VTermProp prop, VTermValue* val, void* user) {
+        (void)prop; (void)val; (void)user; return 1;
+    }
+
+    static int cb_sb_pushline(int cols, const VTermScreenCell* cells, void* user) {
+        (void)cols; (void)cells; (void)user; return 0; // discard scrollback for now
+    }
+
+    static int cb_sb_popline(int cols, VTermScreenCell* cells, void* user) {
+        (void)cols; (void)cells; (void)user; return 0;
+    }
+
+    // ── Constructor / Destructor ───────────────────────────────────────────
+
+    explicit QTerminalWidget(QWidget* parent = nullptr)
+        : QWidget(parent)
+        , m_default_fg(0xC0, 0xC0, 0xC0)
+        , m_default_bg(0x18, 0x18, 0x18)
+    {
+        setFocusPolicy(Qt::StrongFocus);
+        setAttribute(Qt::WA_OpaquePaintEvent, true);
+
+        m_font = QFont("DejaVu Sans Mono", 11);
+        m_font.setStyleHint(QFont::Monospace);
+        computeCellSize();
+
+        initVterm();
+
+        m_timer = new QTimer(this);
+        QObject::connect(m_timer, &QTimer::timeout, [this]() { pollPty(); });
+    }
+
+    ~QTerminalWidget() override {
+        if (m_timer) m_timer->stop();
+        cleanupPty();
+        if (m_vt) { vterm_free(m_vt); m_vt = nullptr; }
+    }
+
+    // Public alias so qt_terminal_destroy can call PTY cleanup before
+    // the widget is actually deleted (via deleteLater).
+    void cleanupPtyPublic() { cleanupPty(); }
+
+    // Connect to an already-open PTY master fd (no fork, no exec).
+    // Used by the in-process jsh integration: Scheme creates the PTY pair,
+    // runs jsh in a thread on the slave side, and calls this to wire
+    // QTerminalWidget to the master side for VT100 rendering.
+    void connectMasterFd(int master_fd) {
+        if (m_running) return;
+        m_master_fd = master_fd;
+        m_child_pid = -1;   // no child process to wait on
+        m_running   = true;
+        m_timer->start(10);
+    }
+
+    // ── libvterm initialization ────────────────────────────────────────────
+
+    void initVterm() {
+        if (m_vt) vterm_free(m_vt);
+
+        m_vt = vterm_new(m_rows, m_cols);
+        vterm_set_utf8(m_vt, 1);
+        m_screen = vterm_obtain_screen(m_vt);
+
+        // Initialize callbacks struct once
+        if (!s_term_cbs_initialized) {
+            memset(&s_term_screen_cbs, 0, sizeof(s_term_screen_cbs));
+            s_term_screen_cbs.damage      = cb_damage;
+            s_term_screen_cbs.movecursor  = cb_movecursor;
+            s_term_screen_cbs.settermprop = cb_settermprop;
+            s_term_screen_cbs.bell        = cb_bell;
+            s_term_screen_cbs.resize      = cb_resize;
+            s_term_screen_cbs.sb_pushline = cb_sb_pushline;
+            s_term_screen_cbs.sb_popline  = cb_sb_popline;
+            s_term_cbs_initialized = true;
+        }
+
+        vterm_screen_set_callbacks(m_screen, &s_term_screen_cbs, this);
+        vterm_screen_enable_altscreen(m_screen, 1);
+        vterm_screen_set_damage_merge(m_screen, VTERM_DAMAGE_SCROLL);
+        vterm_screen_reset(m_screen, 1);
+    }
+
+    // ── Font / cell metrics ────────────────────────────────────────────────
+
+    void computeCellSize() {
+        QFontMetrics fm(m_font);
+        m_cell_w   = fm.horizontalAdvance('M');
+        m_cell_h   = fm.height();
+        m_cell_asc = fm.ascent();
+        if (m_cell_w <= 0) m_cell_w = 8;
+        if (m_cell_h <= 0) m_cell_h = 16;
+    }
+
+    void setTermFont(const char* family, int size) {
+        m_font = QFont(QString::fromUtf8(family), size);
+        m_font.setStyleHint(QFont::Monospace);
+        computeCellSize();
+        updateTermSize();
+        update();
+    }
+
+    // ── PTY spawn / cleanup ────────────────────────────────────────────────
+
+    void spawnShell(const char* cmd) {
+        if (m_running) return;
+
+        struct winsize ws;
+        ws.ws_row    = m_rows;
+        ws.ws_col    = m_cols;
+        ws.ws_xpixel = m_cols * m_cell_w;
+        ws.ws_ypixel = m_rows * m_cell_h;
+
+        int master_fd = -1;
+        pid_t pid = forkpty(&master_fd, nullptr, nullptr, &ws);
+        if (pid < 0) return;
+
+        if (pid == 0) {
+            // ── Child process ──
+            setenv("TERM", "xterm-256color", 1);
+            setenv("COLORTERM", "truecolor", 1);
+
+            if (cmd && cmd[0]) {
+                execl("/bin/sh", "sh", "-c", cmd, nullptr);
+            } else {
+                const char* shell = getenv("SHELL");
+                if (!shell) shell = "/bin/sh";
+                execl(shell, shell, "-l", nullptr);
+            }
+            _exit(127);
+        }
+
+        // ── Parent ──
+        m_master_fd = master_fd;
+        m_child_pid = pid;
+        m_running   = true;
+
+        // Non-blocking reads
+        int flags = fcntl(m_master_fd, F_GETFL, 0);
+        fcntl(m_master_fd, F_SETFL, flags | O_NONBLOCK);
+
+        m_timer->start(10); // poll every 10ms
+    }
+
+    void cleanupPty() {
+        if (m_timer) m_timer->stop();
+        if (m_child_pid > 0) {
+            // Close master fd first — this sends SIGHUP to the child, which
+            // is gentler than SIGTERM and causes most shells to exit.
+            if (m_master_fd >= 0) {
+                ::close(m_master_fd);
+                m_master_fd = -1;
+            }
+            // Non-blocking check — child may have already exited on SIGHUP.
+            int status;
+            pid_t result = waitpid(m_child_pid, &status, WNOHANG);
+            if (result != m_child_pid) {
+                // Child still alive — escalate to SIGTERM then SIGKILL.
+                kill(m_child_pid, SIGTERM);
+                // Poll for up to 200ms with WNOHANG before giving up.
+                for (int i = 0; i < 20 && result != m_child_pid; ++i) {
+                    struct timespec ts = {0, 10000000}; // 10ms
+                    nanosleep(&ts, nullptr);
+                    result = waitpid(m_child_pid, &status, WNOHANG);
+                }
+                if (result != m_child_pid) {
+                    kill(m_child_pid, SIGKILL);
+                    // One final non-blocking reap; orphan if still alive.
+                    waitpid(m_child_pid, &status, WNOHANG);
+                }
+            }
+            m_child_pid = -1;
+        }
+        if (m_master_fd >= 0) {
+            ::close(m_master_fd);
+            m_master_fd = -1;
+        }
+        m_running = false;
+    }
+
+    // ── Input to PTY ───────────────────────────────────────────────────────
+
+    void sendInput(const char* data, int len) {
+        if (m_master_fd >= 0 && len > 0) {
+            ::write(m_master_fd, data, len);
+        }
+    }
+
+    void interruptChild() {
+        if (m_master_fd >= 0 && m_child_pid > 0) {
+            kill(m_child_pid, SIGINT);
+        }
+    }
+
+    bool isRunning() const { return m_running; }
+
+protected:
+    // ── Painting ───────────────────────────────────────────────────────────
+
+    void paintEvent(QPaintEvent* ev) override {
+        QPainter p(this);
+        p.setFont(m_font);
+
+        QRect r = ev->rect();
+        int start_row = r.top()    / m_cell_h;
+        int end_row   = std::min(m_rows, r.bottom()  / m_cell_h + 1);
+        int start_col = r.left()   / m_cell_w;
+        int end_col   = std::min(m_cols, r.right()   / m_cell_w + 1);
+
+        for (int row = start_row; row < end_row; row++) {
+            for (int col = start_col; col < end_col; col++) {
+                VTermPos pos = { row, col };
+                VTermScreenCell cell;
+                vterm_screen_get_cell(m_screen, pos, &cell);
+
+                // Resolve colors
+                QColor fg = m_default_fg, bg = m_default_bg;
+
+                if (!VTERM_COLOR_IS_DEFAULT_FG(&cell.fg)) {
+                    VTermColor c = cell.fg;
+                    if (VTERM_COLOR_IS_INDEXED(&c))
+                        vterm_screen_convert_color_to_rgb(m_screen, &c);
+                    fg = QColor(c.rgb.red, c.rgb.green, c.rgb.blue);
+                }
+                if (!VTERM_COLOR_IS_DEFAULT_BG(&cell.bg)) {
+                    VTermColor c = cell.bg;
+                    if (VTERM_COLOR_IS_INDEXED(&c))
+                        vterm_screen_convert_color_to_rgb(m_screen, &c);
+                    bg = QColor(c.rgb.red, c.rgb.green, c.rgb.blue);
+                }
+
+                if (cell.attrs.reverse) std::swap(fg, bg);
+                if (cell.attrs.bold)    fg = fg.lighter(150);
+
+                int x = col * m_cell_w;
+                int y = row * m_cell_h;
+                int cw = m_cell_w * (cell.width > 0 ? cell.width : 1);
+
+                // Background
+                p.fillRect(x, y, cw, m_cell_h, bg);
+
+                // Character
+                if (cell.chars[0] != 0) {
+                    QFont df = m_font;
+                    if (cell.attrs.bold)   df.setBold(true);
+                    if (cell.attrs.italic) df.setItalic(true);
+                    if (cell.attrs.bold || cell.attrs.italic) p.setFont(df);
+                    p.setPen(fg);
+
+                    QString ch = QString::fromUcs4(&cell.chars[0], 1);
+                    p.drawText(x, y + m_cell_asc, ch);
+
+                    if (cell.attrs.bold || cell.attrs.italic) p.setFont(m_font);
+                }
+
+                // Underline
+                if (cell.attrs.underline) {
+                    p.setPen(fg);
+                    p.drawLine(x, y + m_cell_h - 1, x + cw - 1, y + m_cell_h - 1);
+                }
+
+                // Strikethrough
+                if (cell.attrs.strike) {
+                    p.setPen(fg);
+                    p.drawLine(x, y + m_cell_h / 2, x + cw - 1, y + m_cell_h / 2);
+                }
+
+                // Skip right half of wide characters
+                if (cell.width > 1) col += cell.width - 1;
+            }
+        }
+
+        // Cursor
+        if (m_cursor_visible && m_cursor_row >= start_row && m_cursor_row < end_row
+            && m_cursor_col >= start_col && m_cursor_col < end_col) {
+            int cx = m_cursor_col * m_cell_w;
+            int cy = m_cursor_row * m_cell_h;
+            if (hasFocus()) {
+                p.setCompositionMode(QPainter::CompositionMode_Difference);
+                p.fillRect(cx, cy, m_cell_w, m_cell_h, Qt::white);
+                p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+            } else {
+                p.setPen(m_default_fg);
+                p.drawRect(cx, cy, m_cell_w - 1, m_cell_h - 1);
+            }
+        }
+
+        // Fill unused area beyond terminal grid
+        int term_w = m_cols * m_cell_w;
+        int term_h = m_rows * m_cell_h;
+        if (width() > term_w)
+            p.fillRect(term_w, 0, width() - term_w, height(), m_default_bg);
+        if (height() > term_h)
+            p.fillRect(0, term_h, width(), height() - term_h, m_default_bg);
+    }
+
+public:
+    // ── Public key forwarding ────────────────────────────────────────────
+    //
+    // Called from qt_terminal_send_key_event() when the jemacs key handler
+    // forwards a non-command key to the terminal widget.
+
+    void handleKeyEvent(int key, int modifiers, const QString& text) {
+        QKeyEvent ev(QEvent::KeyPress,
+                     static_cast<Qt::Key>(key),
+                     static_cast<Qt::KeyboardModifiers>(modifiers),
+                     text);
+        keyPressEvent(&ev);
+    }
+
+protected:
+    // ── Keyboard input ─────────────────────────────────────────────────────
+
+    void keyPressEvent(QKeyEvent* ev) override {
+        if (!m_vt || m_master_fd < 0) return;
+
+        VTermModifier mod = VTERM_MOD_NONE;
+        if (ev->modifiers() & Qt::ShiftModifier)   mod = (VTermModifier)(mod | VTERM_MOD_SHIFT);
+        if (ev->modifiers() & Qt::AltModifier)     mod = (VTermModifier)(mod | VTERM_MOD_ALT);
+        if (ev->modifiers() & Qt::ControlModifier) mod = (VTermModifier)(mod | VTERM_MOD_CTRL);
+
+        VTermKey vtkey = VTERM_KEY_NONE;
+        switch (ev->key()) {
+            case Qt::Key_Return:    case Qt::Key_Enter: vtkey = VTERM_KEY_ENTER;     break;
+            case Qt::Key_Backspace:                     vtkey = VTERM_KEY_BACKSPACE;  break;
+            case Qt::Key_Escape:                        vtkey = VTERM_KEY_ESCAPE;     break;
+            case Qt::Key_Tab:                           vtkey = VTERM_KEY_TAB;        break;
+            case Qt::Key_Up:                            vtkey = VTERM_KEY_UP;         break;
+            case Qt::Key_Down:                          vtkey = VTERM_KEY_DOWN;       break;
+            case Qt::Key_Left:                          vtkey = VTERM_KEY_LEFT;       break;
+            case Qt::Key_Right:                         vtkey = VTERM_KEY_RIGHT;      break;
+            case Qt::Key_Insert:                        vtkey = VTERM_KEY_INS;        break;
+            case Qt::Key_Delete:                        vtkey = VTERM_KEY_DEL;        break;
+            case Qt::Key_Home:                          vtkey = VTERM_KEY_HOME;       break;
+            case Qt::Key_End:                           vtkey = VTERM_KEY_END;        break;
+            case Qt::Key_PageUp:                        vtkey = VTERM_KEY_PAGEUP;     break;
+            case Qt::Key_PageDown:                      vtkey = VTERM_KEY_PAGEDOWN;   break;
+            case Qt::Key_F1:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  1); break;
+            case Qt::Key_F2:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  2); break;
+            case Qt::Key_F3:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  3); break;
+            case Qt::Key_F4:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  4); break;
+            case Qt::Key_F5:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  5); break;
+            case Qt::Key_F6:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  6); break;
+            case Qt::Key_F7:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  7); break;
+            case Qt::Key_F8:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  8); break;
+            case Qt::Key_F9:  vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 +  9); break;
+            case Qt::Key_F10: vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 + 10); break;
+            case Qt::Key_F11: vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 + 11); break;
+            case Qt::Key_F12: vtkey = (VTermKey)(VTERM_KEY_FUNCTION_0 + 12); break;
+            default: break;
+        }
+
+        bool handled = false;
+        if (vtkey != VTERM_KEY_NONE) {
+            vterm_keyboard_key(m_vt, vtkey, mod);
+            handled = true;
+        } else if (!ev->text().isEmpty()) {
+            QString text = ev->text();
+            for (int i = 0; i < text.size(); i++) {
+                uint32_t cp = text.at(i).unicode();
+                if (QChar::isHighSurrogate(cp) && i + 1 < text.size()) {
+                    uint32_t lo = text.at(i + 1).unicode();
+                    if (QChar::isLowSurrogate(lo)) {
+                        cp = QChar::surrogateToUcs4(cp, lo);
+                        i++;
+                    }
+                }
+                vterm_keyboard_unichar(m_vt, cp, mod);
+            }
+            handled = true;
+        }
+
+        if (handled) {
+            flushVtermOutput();
+            ev->accept();
+        } else {
+            QWidget::keyPressEvent(ev);
+        }
+    }
+
+    // ── Resize ─────────────────────────────────────────────────────────────
+
+    void resizeEvent(QResizeEvent* ev) override {
+        QWidget::resizeEvent(ev);
+        updateTermSize();
+    }
+
+    void focusInEvent(QFocusEvent* ev) override {
+        QWidget::focusInEvent(ev);
+        update();
+    }
+
+    void focusOutEvent(QFocusEvent* ev) override {
+        QWidget::focusOutEvent(ev);
+        update();
+    }
+
+private:
+    void flushVtermOutput() {
+        char buf[4096];
+        size_t len;
+        while ((len = vterm_output_read(m_vt, buf, sizeof(buf))) > 0) {
+            if (m_master_fd >= 0) {
+                ssize_t written = 0;
+                while (written < (ssize_t)len) {
+                    ssize_t n = ::write(m_master_fd, buf + written, len - written);
+                    if (n < 0) {
+                        if (errno == EAGAIN || errno == EINTR) continue;
+                        break;
+                    }
+                    written += n;
+                }
+            }
+        }
+    }
+
+    void updateTermSize() {
+        int new_cols = std::max(2, width()  / m_cell_w);
+        int new_rows = std::max(1, height() / m_cell_h);
+
+        if (new_cols != m_cols || new_rows != m_rows) {
+            m_rows = new_rows;
+            m_cols = new_cols;
+
+            if (m_vt) vterm_set_size(m_vt, m_rows, m_cols);
+
+            if (m_master_fd >= 0) {
+                struct winsize ws;
+                ws.ws_row    = m_rows;
+                ws.ws_col    = m_cols;
+                ws.ws_xpixel = width();
+                ws.ws_ypixel = height();
+                ioctl(m_master_fd, TIOCSWINSZ, &ws);
+            }
+
+            update();
+        }
+    }
+
+    void pollPty() {
+        if (m_master_fd < 0) return;
+
+        char buf[8192];
+        ssize_t n = 0;
+        bool got_data = false;
+        // Cap reads per poll to ~64KB so high-output commands (find / -ls, etc.)
+        // don't monopolise the Qt event loop and block M-x / other key events.
+        static const size_t MAX_BYTES_PER_POLL = 65536;
+        size_t total = 0;
+
+        while (total < MAX_BYTES_PER_POLL &&
+               (n = ::read(m_master_fd, buf, sizeof(buf))) > 0) {
+            vterm_input_write(m_vt, buf, (size_t)n);
+            total += (size_t)n;
+            got_data = true;
+        }
+
+        if (n == 0 || (n < 0 && errno != EAGAIN && errno != EINTR)) {
+            checkChildExit();
+        }
+
+        if (got_data) {
+            vterm_screen_flush_damage(m_screen);
+        }
+    }
+
+    void checkChildExit() {
+        if (m_child_pid > 0) {
+            int status;
+            pid_t result = waitpid(m_child_pid, &status, WNOHANG);
+            if (result == m_child_pid || result < 0) {
+                m_running = false;
+                m_timer->stop();
+                ::close(m_master_fd);
+                m_master_fd  = -1;
+                m_child_pid  = -1;
+                update();
+            }
+        }
+    }
+};
+
+// ── C FFI for QTerminalWidget ──────────────────────────────────────────────
+
+typedef void* qt_terminal_t;
+
+extern "C" qt_terminal_t qt_terminal_create(qt_widget_t parent) {
+    QT_RETURN(QTerminalWidget*,
+        new QTerminalWidget(parent ? static_cast<QWidget*>(parent) : nullptr)
+    );
+}
+
+extern "C" void qt_terminal_spawn(qt_terminal_t term, const char* cmd) {
+    QT_NULL_CHECK_VOID(term);
+    std::string cmd_str(cmd ? cmd : "");
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->spawnShell(cmd_str.c_str())
+    );
+}
+
+// Connect QTerminalWidget to an already-open PTY master fd.
+// No fork or exec — used for in-process jsh integration.
+extern "C" void qt_terminal_connect_fd(qt_terminal_t term, int master_fd) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->connectMasterFd(master_fd)
+    );
+}
+
+extern "C" void qt_terminal_send_input(qt_terminal_t term, const char* data, int len) {
+    QT_NULL_CHECK_VOID(term);
+    // Copy data before crossing thread boundary
+    std::string data_copy(data, len);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->sendInput(data_copy.c_str(), data_copy.size())
+    );
+}
+
+// Send a synthetic key event to the terminal widget's keyPressEvent.
+// Called from the Scheme key handler to forward non-command keys.
+extern "C" void qt_terminal_send_key_event(qt_terminal_t term,
+                                            int key, int modifiers,
+                                            const char* text) {
+    QT_NULL_CHECK_VOID(term);
+    std::string text_str(text ? text : "");
+    QT_VOID(
+        auto* w = static_cast<QTerminalWidget*>(term);
+        w->handleKeyEvent(key, modifiers, QString::fromStdString(text_str))
+    );
+}
+
+extern "C" void qt_terminal_interrupt(qt_terminal_t term) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->interruptChild()
+    );
+}
+
+extern "C" int qt_terminal_is_running(qt_terminal_t term) {
+    QT_NULL_CHECK_RET(term, 0);
+    QT_RETURN(int,
+        static_cast<QTerminalWidget*>(term)->isRunning() ? 1 : 0
+    );
+}
+
+// QTerminalWidget IS a QWidget — return it as-is for QStackedWidget::addWidget
+extern "C" qt_widget_t qt_terminal_widget(qt_terminal_t term) {
+    return static_cast<qt_widget_t>(term);
+}
+
+extern "C" void qt_terminal_set_font(qt_terminal_t term, const char* family, int size) {
+    QT_NULL_CHECK_VOID(term);
+    std::string fam(family ? family : "DejaVu Sans Mono");
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->setTermFont(fam.c_str(), size)
+    );
+}
+
+extern "C" void qt_terminal_set_colors(qt_terminal_t term, int fg_rgb, int bg_rgb) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        auto* w = static_cast<QTerminalWidget*>(term);
+        w->m_default_fg = QColor((fg_rgb >> 16) & 0xFF, (fg_rgb >> 8) & 0xFF, fg_rgb & 0xFF);
+        w->m_default_bg = QColor((bg_rgb >> 16) & 0xFF, (bg_rgb >> 8) & 0xFF, bg_rgb & 0xFF);
+        w->update()
+    );
+}
+
+extern "C" void qt_terminal_focus(qt_terminal_t term) {
+    QT_NULL_CHECK_VOID(term);
+    QT_VOID(
+        static_cast<QTerminalWidget*>(term)->setFocus()
+    );
+}
+
+extern "C" void qt_terminal_destroy(qt_terminal_t term) {
+    QT_NULL_CHECK_VOID(term);
+    // 1. Detach from parent (QStackedWidget) so delete-other-windows cannot
+    //    double-free the widget when it later destroys the container.
+    // 2. Schedule deletion via the event loop (deleteLater) to avoid
+    //    "shared QObject deleted directly" crash from pending Qt events.
+    //    The destructor calls cleanupPty() which uses WNOHANG — no blocking.
+    QT_VOID(
+        auto* tw = static_cast<QTerminalWidget*>(term);
+        if (QWidget* p = tw->parentWidget()) {
+            if (auto* stacked = qobject_cast<QStackedWidget*>(p))
+                stacked->removeWidget(tw);
+            tw->setParent(nullptr);
+        }
+        tw->deleteLater()
+    );
+}

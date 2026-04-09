@@ -31,10 +31,90 @@
         :jerboa-emacs/persist)
 
 ;;;============================================================================
+;;; Missing Scintilla constants (used by scaffold commands)
+;;;============================================================================
+
+(def SCI_GETTEXTRANGE 2162)
+(def SCI_DELETEBACK 2326)
+(def SCI_GETMARGINLEFT 2155)
+(def SCI_SETMARGINLEFT 2155)
+(def SCI_SETMARGINRIGHT 2157)
+;; SCI_INDICSETALPHA already defined below (line ~1599)
+(def SCI_MOVESELECTEDLINESUP 2620)
+(def SCI_MOVESELECTEDLINESDOWN 2621)
+(def SCI_SETELEMENTCOLOUR 2753)
+;; SCI_SETSTYLING and SCI_STARTSTYLING already come from terminal.ss
+
+;;;============================================================================
+;;; Utility: string->alien/nul (identity — Scintilla TUI accepts strings directly)
+;;;============================================================================
+
+(def (string->alien/nul s) s)
+(def (string->alien s) s)
+(def (alien/nul->string s) s)
+(def (bytevector->alien bv) bv)
+(def (cons->alien . args) 0)
+
+(def (tui-rows) 24)
+(def (tui-cols) 80)
+
+;;; Aliases for scaffold commands that use non-existent names
+(def (editor-cursor-position ed) (editor-get-current-pos ed))
+(def (editor-line-start ed line) (editor-position-from-line ed line))
+(def (editor-line-end ed line) (editor-get-line-end-position ed line))
+(def (editor-replace-range ed start end text)
+  (editor-delete-range ed start (- end start))
+  (editor-insert-text ed start text))
+
+;;; Global mode-state table (phantom field app-state-modes doesn't exist)
+(def *jemacs-mode-state* (make-hash-table))
+(def (app-state-modes app) *jemacs-mode-state*)
+
+;;; Indicator helpers (phantom functions in scaffold code)
+(def (editor-indicator-fill ed indicator-id start end)
+  (send-message ed SCI_SETINDICATORCURRENT indicator-id 0)
+  (send-message ed SCI_INDICATORFILLRANGE start (- end start)))
+(def (editor-indicator-clear ed indicator-id start len)
+  (send-message ed SCI_SETINDICATORCURRENT indicator-id 0)
+  (send-message ed SCI_INDICATORCLEARRANGE start len))
+
+;;;============================================================================
 ;;; Shared state (used across editor sub-modules)
 ;;;============================================================================
 (def *auto-pair-mode* #t)
 (def *auto-revert-mode* #f)
+(def *aggressive-indent-mode* #f)
+(def *delete-selection-mode* #t)  ;; default on, like Emacs
+(def *electric-quote-mode* #f)
+
+(def (electric-quote-char ch ed)
+  "Return a curly-quote replacement string for CH at the current position in ED,
+   or #f if no replacement should be made.  Uses the character before point to
+   decide opening vs closing: after whitespace/BOL → opening, otherwise → closing."
+  (let* ((pos (editor-get-current-pos ed))
+         (prev-ch (if (> pos 0)
+                    (send-message ed SCI_GETCHARAT (- pos 1) 0)
+                    0))
+         (at-word-boundary? (or (= pos 0)
+                               (= prev-ch 32)    ; space
+                               (= prev-ch 10)    ; newline
+                               (= prev-ch 13)    ; CR
+                               (= prev-ch 9)     ; tab
+                               (= prev-ch 40)    ; (
+                               (= prev-ch 91)    ; [
+                               (= prev-ch 123)))) ; {
+    (cond
+      ;; Double quote → curly double quotes
+      ((= ch 34)  ; "
+       (if at-word-boundary?
+         "\x201C;"   ; left double quotation mark
+         "\x201D;")) ; right double quotation mark
+      ;; Single quote / apostrophe → curly single quotes
+      ((= ch 39)  ; '
+       (if at-word-boundary?
+         "\x2018;"   ; left single quotation mark
+         "\x2019;")) ; right single quotation mark
+      (else #f))))
 
 ;;;============================================================================
 ;;; Pulse/flash highlight on jump (beacon-like)
@@ -78,6 +158,46 @@
   (when (eq? *pulse-editor* ed)
     (set! *pulse-editor* #f)
     (set! *pulse-countdown* 0)))
+
+;;;============================================================================
+;;; Volatile highlights — flash changed regions (yank, undo)
+;;;============================================================================
+(def *volatile-highlights* #f)
+(def *volatile-highlight-indicator* 2)
+(def *volatile-highlight-countdown* 0)
+(def *volatile-highlight-editor* #f)
+
+(def (volatile-highlight! ed start len)
+  "Flash-highlight region [START, START+LEN) briefly when volatile-highlights is on."
+  (when (and *volatile-highlights* (> len 0))
+    ;; Clear any previous volatile highlight
+    (volatile-highlight-clear!)
+    ;; Set up indicator: green-tinted box
+    (send-message ed SCI_INDICSETSTYLE *volatile-highlight-indicator* INDIC_ROUNDBOX)
+    (send-message ed SCI_INDICSETFORE *volatile-highlight-indicator* #x80FF80) ; light green
+    (send-message ed SCI_INDICSETALPHA *volatile-highlight-indicator* 60)
+    (send-message ed SCI_INDICSETUNDER *volatile-highlight-indicator* 1)
+    (send-message ed SCI_SETINDICATORCURRENT *volatile-highlight-indicator* 0)
+    (send-message ed SCI_INDICATORFILLRANGE start len)
+    (set! *volatile-highlight-editor* ed)
+    (set! *volatile-highlight-countdown* 8)))  ; 8 * 50ms = 400ms
+
+(def (volatile-highlight-tick!)
+  "Called each main loop iteration. Decrements volatile highlight countdown."
+  (when (> *volatile-highlight-countdown* 0)
+    (set! *volatile-highlight-countdown* (- *volatile-highlight-countdown* 1))
+    (when (= *volatile-highlight-countdown* 0)
+      (volatile-highlight-clear!))))
+
+(def (volatile-highlight-clear!)
+  "Remove volatile highlight indicator."
+  (when *volatile-highlight-editor*
+    (let ((len (editor-get-text-length *volatile-highlight-editor*)))
+      (send-message *volatile-highlight-editor* SCI_SETINDICATORCURRENT
+                    *volatile-highlight-indicator* 0)
+      (send-message *volatile-highlight-editor* SCI_INDICATORCLEARRANGE 0 len))
+    (set! *volatile-highlight-editor* #f)
+    (set! *volatile-highlight-countdown* 0)))
 
 ;;;============================================================================
 ;;; System clipboard integration (xclip/xsel/wl-copy)
@@ -433,6 +553,12 @@
              (editor-goto-pos ed (+ pos 1))))))
       (else
        (let* ((ed (current-editor app))
+              ;; Delete-selection mode: if there's a selection, delete it first
+              (sel-start (send-message ed SCI_GETSELECTIONSTART 0 0))
+              (sel-end (send-message ed SCI_GETSELECTIONEND 0 0))
+              (_ (when (and *delete-selection-mode* (> sel-end sel-start))
+                   (send-message/string ed SCI_REPLACESEL "")))
+
               (pair-active (or *auto-pair-mode* *electric-pair-mode*))
               (close-ch (and pair-active
                              (if *electric-pair-mode*
@@ -440,6 +566,19 @@
                                (auto-pair-char ch))))
               (n (get-prefix-arg app))) ; Get prefix arg
          (cond
+           ;; Electric quote mode: convert " and ' to curly quotes
+           ((and *electric-quote-mode* (= n 1)
+                 (or (= ch 34) (= ch 39)))  ; " or '
+            (let* ((pos (editor-get-current-pos ed))
+                   (replacement (electric-quote-char ch ed)))
+              (if replacement
+                (let ((rlen (string-length replacement)))
+                  (editor-insert-text ed pos replacement)
+                  (editor-goto-pos ed (+ pos rlen)))
+                ;; Fallback: insert raw char
+                (begin
+                  (editor-insert-text ed pos (string (integer->char ch)))
+                  (editor-goto-pos ed (+ pos 1))))))
            ;; Auto/electric-pair skip-over: typing a closing delimiter when next char matches
            ((and pair-active (= n 1)
                  (if *electric-pair-mode*
@@ -468,9 +607,64 @@
                    (str (make-string n (integer->char ch))))
               (editor-insert-text ed pos str)
               (editor-goto-pos ed (+ pos n)))))
+         ;; Aggressive indent: reindent current line after each insertion
+         (when (and *aggressive-indent-mode*
+                    (not (dired-buffer? buf))
+                    (not (shell-buffer? buf))
+                    (not (terminal-buffer? buf)))
+           (tui-aggressive-indent-line! ed))
          ;; Auto-fill: break line if past fill-column
          (tui-auto-fill-after-insert! app ed))))))
 
+
+;;;============================================================================
+;;; Aggressive indent — reindent current line based on paren depth
+;;;============================================================================
+
+(def (tui-aggressive-indent-line! ed)
+  "Reindent the current line based on paren/bracket depth of preceding text."
+  (let* ((text (editor-get-text ed))
+         (len (string-length text))
+         (pos (min (editor-get-current-pos ed) len)))
+    (when (> len 0)
+      (let* ((line-start (let loop ((i (- pos 1)))
+                           (cond ((< i 0) 0)
+                                 ((char=? (string-ref text i) #\newline) (+ i 1))
+                                 (else (loop (- i 1))))))
+             (depth (let loop ((i 0) (d 0))
+                      (if (>= i line-start) d
+                        (case (string-ref text i)
+                          ((#\( #\[ #\{) (loop (+ i 1) (+ d 1)))
+                          ((#\) #\] #\}) (loop (+ i 1) (max 0 (- d 1))))
+                          (else (loop (+ i 1) d))))))
+             (line-end (let loop ((i line-start))
+                         (cond ((>= i len) i)
+                               ((char=? (string-ref text i) #\newline) i)
+                               (else (loop (+ i 1))))))
+             (line-text (substring text line-start line-end))
+             (trimmed (string-trim line-text))
+             (close-first (let loop ((i 0) (d 0))
+                            (if (>= i (string-length trimmed)) d
+                              (case (string-ref trimmed i)
+                                ((#\) #\] #\}) (loop (+ i 1) (+ d 1)))
+                                (else d)))))
+             (target-depth (max 0 (- depth close-first)))
+             (target-indent (make-string (* target-depth 2) #\space))
+             (current-indent (let loop ((i 0))
+                               (if (>= i (string-length line-text)) ""
+                                 (if (char-whitespace? (string-ref line-text i))
+                                   (loop (+ i 1))
+                                   (substring line-text 0 i))))))
+        (unless (string=? current-indent target-indent)
+          (let ((new-line (string-append target-indent trimmed)))
+            (send-message ed SCI_SETTARGETSTART line-start 0)
+            (send-message ed SCI_SETTARGETEND line-end 0)
+            (send-message/string ed SCI_REPLACETARGET new-line)
+            (let ((new-pos (+ line-start (string-length target-indent)
+                             (max 0 (- pos line-start
+                                       (string-length current-indent))))))
+              (editor-goto-pos ed (min new-pos
+                                       (+ line-start (string-length new-line)))))))))))
 
 ;;;============================================================================
 ;;; Auto-fill check for TUI self-insert
@@ -865,7 +1059,9 @@
     (let ((new-pos (editor-get-current-pos ed)))
       (set! (app-state-last-yank-pos app) pos)
       (set! (app-state-last-yank-len app) (- new-pos pos))
-      (set! (app-state-kill-ring-idx app) 0))))
+      (set! (app-state-kill-ring-idx app) 0)
+      ;; Volatile highlight: flash the yanked region
+      (volatile-highlight! ed pos (- new-pos pos)))))
 
 ;;;============================================================================
 ;;; Mark and region
@@ -1641,7 +1837,7 @@
         ;; Initialize gsh environment for this buffer
         (gsh-eshell-init-buffer! buf)
         ;; Insert welcome message and prompt
-        (let ((welcome (string-append "gsh — Gerbil Shell\n"
+        (let ((welcome (string-append "gsh — Jerboa Shell\n"
                                        "Type commands or 'exit' to close.\n\n"
                                        (gsh-eshell-get-prompt buf))))
           (editor-set-text ed welcome)
@@ -2407,7 +2603,7 @@
       "Configuration\n"
       "=============\n\n"
       "Init file: ~/.jemacs-init\n"
-      "  Gerbil Scheme expressions evaluated at startup.\n\n"
+      "  Jerboa Scheme expressions evaluated at startup.\n\n"
       "Config: ~/.jemacs-config\n"
       "  Directory-local settings (per-project).\n\n"
       "Bookmarks: ~/.jemacs-bookmarks\n"

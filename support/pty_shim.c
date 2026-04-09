@@ -184,3 +184,38 @@ int pty_get_wait_status(void) {
         return 128 + WTERMSIG(g_wait_status);
     return -1;
 }
+
+/* Per-call state for openpty (no fork) */
+static int g_open_master_fd = -1;
+static int g_open_slave_fd  = -1;
+
+/*
+ * Open a PTY pair without spawning a child process.
+ * Returns the master fd on success, -errno on failure.
+ * Caller retrieves slave fd via pty_get_open_slave_fd().
+ * The master fd is made non-blocking for polling.
+ */
+int pty_openpty(int rows, int cols) {
+    struct winsize ws;
+    memset(&ws, 0, sizeof(ws));
+    ws.ws_row = rows;
+    ws.ws_col = cols;
+
+    g_open_master_fd = -1;
+    g_open_slave_fd  = -1;
+
+    int master_fd = -1, slave_fd = -1;
+    if (openpty(&master_fd, &slave_fd, NULL, NULL, &ws) < 0)
+        return -errno;
+
+    /* Non-blocking reads on master side */
+    int flags = fcntl(master_fd, F_GETFL, 0);
+    if (flags >= 0)
+        fcntl(master_fd, F_SETFL, flags | O_NONBLOCK);
+
+    g_open_master_fd = master_fd;
+    g_open_slave_fd  = slave_fd;
+    return master_fd;
+}
+
+int pty_get_open_slave_fd(void)  { return g_open_slave_fd; }

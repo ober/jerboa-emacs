@@ -20,6 +20,8 @@
         :jerboa-emacs/echo
         :jerboa-emacs/editor-extra-helpers
         :jerboa-emacs/editor-extra-editing
+        (only-in :jerboa-emacs/editor-core SCI_DELETEBACK)
+        (only-in :jerboa-emacs/terminal SCI_SETSTYLING SCI_STARTSTYLING)
         (only-in :jerboa-emacs/persist
           *enriched-mode* *picture-mode*))
 

@@ -82,9 +82,7 @@
    (jerboa-emacs qt commands) (jerboa-emacs qt lsp-client)
    (jerboa-emacs qt commands-lsp) (jerboa-emacs qt menubar)
    (jerboa-emacs ipc) (jerboa-emacs vtscreen)
-   (only
-     (jerboa-emacs editor-extra-web)
-     *aggressive-indent-mode*)
+   (only (jerboa-emacs editor-core) *aggressive-indent-mode*)
    (only
      (jerboa-emacs debug-repl)
      start-debug-repl!
@@ -94,6 +92,7 @@
   (def *vterm-render-interval-ms* 33)
   (def *pty-batch-budget* 65536)
   (def *vterm-scrollback-limit* 100000)
+  (def *pty-poll-in-progress?* #f)
   (def *vterm-last-render-time* (make-hash-table-eq))
   (def *vterm-last-rendered* (make-hash-table-eq))
   (def *vterm-initialized* (make-hash-table-eq))
@@ -216,20 +215,28 @@
              [else (count-dirty (+ r 1) n)]))))
   (def *vterm-next-style* 80)
   (def *vterm-color-to-style* (make-hash-table))
-  (def *vterm-max-styles* 128)
-  (def (vterm-get-or-alloc-style! ed packed-rgb)
-       "Get or allocate a Scintilla style for a packed 0x00RRGGBB color.\n   Returns style index, or 0 if we've run out of style slots."
-       (or (hash-ref *vterm-color-to-style* packed-rgb #f)
-           (if (>= *vterm-next-style* *vterm-max-styles*)
-               0
-               (let ([style *vterm-next-style*])
-                 (set! *vterm-next-style* (+ style 1))
-                 (sci-send ed SCI_STYLESETFORE style packed-rgb)
-                 (sci-send ed SCI_STYLESETBACK style 1579032)
-                 (hash-put! *vterm-color-to-style* packed-rgb style)
-                 style))))
+  (def *vterm-max-styles* 250)
+  (def *term-default-bg* 1579032)
+  (def *term-default-fg* 12961990)
+  (def (vterm-get-or-alloc-style! ed fg bg)
+       "Get or allocate a Scintilla style for a (fg, bg) color pair.\n   fg and bg are packed 0x00RRGGBB or -1 for default.\n   Returns style index, or 0 if out of style slots."
+       (let ([key (cons fg bg)])
+         (or (hash-ref *vterm-color-to-style* key #f)
+             (if (>= *vterm-next-style* *vterm-max-styles*)
+                 0
+                 (let ([style *vterm-next-style*])
+                   (set! *vterm-next-style* (+ style 1))
+                   (when (not (= fg -1))
+                     (sci-send ed SCI_STYLESETFORE style fg))
+                   (sci-send
+                     ed
+                     SCI_STYLESETBACK
+                     style
+                     (if (= bg -1) *term-default-bg* bg))
+                   (hash-put! *vterm-color-to-style* key style)
+                   style)))))
   (def (vterm-apply-row-colors! ed vt row doc-line)
-       "Apply per-cell foreground colors to a row using Scintilla styling.\n   Handles bold attribute by shifting color index +8 for indexed colors."
+       "Apply per-cell fg/bg colors and reverse-video to a row using Scintilla styling."
        (let* ([cols (vtscreen-cols vt)]
               [line-start (sci-send ed SCI_POSITIONFROMLINE doc-line)]
               [line-end (sci-send ed SCI_GETLINEENDPOSITION doc-line)]
@@ -247,13 +254,24 @@
                      0)
                    (sci-send ed SCI_SETSTYLING (- c run-start) run-style))
                  (let* ([fg (vtscreen-cell-fg vt row c)]
+                        [bg (vtscreen-cell-bg vt row c)]
                         [attrs (vtscreen-cell-attrs vt row c)]
                         [bold? (not (= 0 (bitwise-and attrs 1)))]
+                        [reverse? (not (= 0 (bitwise-and attrs 16)))]
+                        [eff-fg (if reverse?
+                                    (if (= bg -1) *term-default-bg* bg)
+                                    fg)]
+                        [eff-bg (if reverse?
+                                    (if (= fg -1) *term-default-fg* fg)
+                                    bg)]
                         [style (cond
-                                 [(= fg -1)
+                                 [(and (= eff-fg -1) (= eff-bg -1))
                                   (if bold? (+ *term-style-base* 15) 0)]
                                  [else
-                                  (vterm-get-or-alloc-style! ed fg)])])
+                                  (vterm-get-or-alloc-style!
+                                    ed
+                                    eff-fg
+                                    eff-bg)])])
                    (if (eqv? style run-style)
                        (loop (+ c 1) run-start run-style)
                        (begin
@@ -755,7 +773,8 @@
            "commands registered: "
            (number->string (hash-length *all-commands*))
            " total")
-         (let ([image-key-installed (make-hash-table-eq)])
+         (let ([image-key-installed (make-hash-table-eq)]
+               [terminal-key-installed (make-hash-table-eq)])
            (add-hook!
              'post-buffer-attach-hook
              (lambda (editor buf)
@@ -766,24 +785,39 @@
                      (with-output-to-string
                        (lambda () (display-exception e)))))
                  (lambda ()
-                   (if (image-buffer? buf)
-                       (begin
-                         (qt-show-image-buffer! editor buf)
-                         (let ([win (hash-get *editor-window-map* editor)])
-                           (when (and win
-                                      (qt-edit-window-image-scroll win))
-                             (let ([scroll (qt-edit-window-image-scroll
-                                             win)])
-                               (unless (hash-get
-                                         image-key-installed
-                                         scroll)
-                                 ((app-state-key-handler app) scroll)
-                                 (hash-put! image-key-installed scroll #t))
-                               (qt-widget-set-focus! scroll)))))
-                       (begin
-                         (qt-hide-image-buffer! editor)
-                         (qt-reapply-highlighting! editor buf)
-                         (qt-widget-set-focus! editor))))))))
+                   (cond
+                     [(hash-get *terminal-widget-map* buf) =>
+                      (lambda (term)
+                        (let ([win (hash-get *editor-window-map* editor)])
+                          (when win
+                            (let* ([container (qt-edit-window-container
+                                                win)]
+                                   [count (qt-stacked-widget-count
+                                            container)]
+                                   [tw (qt-terminal-widget term)])
+                              (unless (hash-get terminal-key-installed tw)
+                                ((app-state-key-handler app) tw)
+                                (hash-put! terminal-key-installed tw #t))
+                              (if (> count 1)
+                                  (begin
+                                    (qt-stacked-widget-set-current-widget!
+                                      container
+                                      tw)
+                                    (qt-widget-set-focus! tw))
+                                  (qt-widget-set-focus! editor))))))]
+                     [(image-buffer? buf)
+                      (qt-show-image-buffer! editor buf)
+                      (let ([win (hash-get *editor-window-map* editor)])
+                        (when (and win (qt-edit-window-image-scroll win))
+                          (let ([scroll (qt-edit-window-image-scroll win)])
+                            (unless (hash-get image-key-installed scroll)
+                              ((app-state-key-handler app) scroll)
+                              (hash-put! image-key-installed scroll #t))
+                            (qt-widget-set-focus! scroll))))]
+                     [else
+                      (qt-hide-image-buffer! editor)
+                      (qt-reapply-highlighting! editor buf)
+                      (qt-widget-set-focus! editor)]))))))
          (recent-files-load!)
          (bookmarks-load! app)
          (custom-keys-load!)
@@ -806,7 +840,7 @@
                             ";;   C-x 2     Split window      C-x o     Other window\n"
                             ";;   C-h f     Describe command   C-h k     Describe key\n"
                             ";;\n"
-                            ";; This buffer is for Gerbil Scheme evaluation.\n"
+                            ";; This buffer is for Jerboa Scheme evaluation.\n"
                             ";; Type expressions and use M-x eval-buffer to evaluate.\n\n"))])
            (qt-plain-text-edit-set-text! ed text)
            (qt-text-document-set-modified!
@@ -879,6 +913,12 @@
                                      (qt-echo-draw!
                                        (app-state-echo app)
                                        echo-label)]
+                                    [*snake-active*
+                                     (snake-handle-key!
+                                       app
+                                       code
+                                       mods
+                                       text)]
                                     [else
                                      (letrec ([terminal-pty-intercept? (lambda (code
                                                                                 mods
@@ -1528,210 +1568,299 @@
                                                                                 (app-state-echo
                                                                                   app)
                                                                                 echo-label)))))))])
-                                       (let ([is-printable (and (= (string-length
-                                                                     text)
-                                                                   1)
-                                                                (> (char->integer
-                                                                     (string-ref
-                                                                       text
-                                                                       0))
-                                                                   31))]
-                                             [no-ctrl (zero?
-                                                        (bitwise-and
-                                                          mods
-                                                          QT_MOD_CTRL))]
-                                             [no-alt (zero?
-                                                       (bitwise-and
+                                       (let* ([qt-buf (qt-current-buffer
+                                                        (app-state-frame
+                                                          app))]
+                                              [qt-term (and qt-buf
+                                                            (hash-get
+                                                              *terminal-widget-map*
+                                                              qt-buf))]
+                                              [key-src-widget (qt-last-key-widget)]
+                                              [key-from-terminal? (and qt-term
+                                                                       (equal?
+                                                                         key-src-widget
+                                                                         (qt-terminal-widget
+                                                                           qt-term)))])
+                                         (if (and qt-term
+                                                  key-from-terminal?
+                                                  (null?
+                                                    (key-state-prefix-keys
+                                                      (app-state-key-state
+                                                        app)))
+                                                  (not (and (not (zero?
+                                                                   (bitwise-and
+                                                                     mods
+                                                                     QT_MOD_CTRL)))
+                                                            (zero?
+                                                              (bitwise-and
+                                                                mods
+                                                                QT_MOD_ALT))
+                                                            (= code
+                                                               (+ QT_KEY_A
+                                                                  23))))
+                                                  (not (and (not (zero?
+                                                                   (bitwise-and
+                                                                     mods
+                                                                     QT_MOD_ALT)))
+                                                            (zero?
+                                                              (bitwise-and
+                                                                mods
+                                                                QT_MOD_CTRL))
+                                                            (= code
+                                                               (+ QT_KEY_A
+                                                                  23)))))
+                                             (qt-terminal-send-key-event!
+                                               qt-term
+                                               code
+                                               mods
+                                               (or text ""))
+                                             (let ([is-printable (and (= (string-length
+                                                                           text)
+                                                                         1)
+                                                                      (> (char->integer
+                                                                           (string-ref
+                                                                             text
+                                                                             0))
+                                                                         31))]
+                                                   [no-ctrl (zero?
+                                                              (bitwise-and
+                                                                mods
+                                                                QT_MOD_CTRL))]
+                                                   [no-alt (zero?
+                                                             (bitwise-and
+                                                               mods
+                                                               QT_MOD_ALT))])
+                                               (verbose-log! "CHORD-CHECK pending="
+                                                 (if *chord-pending-char*
+                                                     (string
+                                                       *chord-pending-char*)
+                                                     "#f")
+                                                 " key="
+                                                 (if (and is-printable
+                                                          no-ctrl
+                                                          no-alt)
+                                                     text
+                                                     "non-printable")
+                                                 " chord-start?="
+                                                 (if (and is-printable
+                                                          no-ctrl
+                                                          no-alt)
+                                                     (if (chord-start-char?
+                                                           (string-ref
+                                                             text
+                                                             0))
+                                                         "Y"
+                                                         "N")
+                                                     "N/A")
+                                                 " autorepeat="
+                                                 (if autorepeat? "Y" "N")
+                                                 " prefix="
+                                                 (if (null?
+                                                       (key-state-prefix-keys
+                                                         (app-state-key-state
+                                                           app)))
+                                                     "none"
+                                                     "active"))
+                                               (cond
+                                                 [(and *chord-pending-char*
+                                                       (not *chord-timer-fired*))
+                                                  (let* ([ch1 *chord-pending-char*]
+                                                         [saved-code *chord-pending-code*]
+                                                         [saved-mods *chord-pending-mods*]
+                                                         [saved-text *chord-pending-text*]
+                                                         [ch2 (and (= (string-length
+                                                                        text)
+                                                                      1)
+                                                                   (> (char->integer
+                                                                        (string-ref
+                                                                          text
+                                                                          0))
+                                                                      31)
+                                                                   (zero?
+                                                                     (bitwise-and
+                                                                       mods
+                                                                       QT_MOD_CTRL))
+                                                                   (zero?
+                                                                     (bitwise-and
+                                                                       mods
+                                                                       QT_MOD_ALT))
+                                                                   (string-ref
+                                                                     text
+                                                                     0))])
+                                                    (cond
+                                                      [autorepeat?
+                                                       (verbose-log!
+                                                         "CHORD-AUTOREPEAT ignored ch="
+                                                         (string ch1))
+                                                       (void)]
+                                                      [(and (not ch2)
+                                                            (or (and (>= code
+                                                                         16777248)
+                                                                     (<= code
+                                                                         16777253))
+                                                                (= code
+                                                                   16777299)
+                                                                (= code
+                                                                   16777300)
+                                                                (= code
+                                                                   16781571)))
+                                                       (verbose-log!
+                                                         "CHORD-IGNORE-MODIFIER pending="
+                                                         (string ch1)
+                                                         " code="
+                                                         (number->string
+                                                           code))
+                                                       (void)]
+                                                      [(not ch2)
+                                                       (verbose-log!
+                                                         "CHORD-CANCEL-NONCHORD pending="
+                                                         (string ch1)
+                                                         " code="
+                                                         (number->string
+                                                           code))
+                                                       (qt-timer-stop!
+                                                         *chord-timer*)
+                                                       (set! *chord-pending-char*
+                                                         #f)
+                                                       (do-normal-key!
+                                                         saved-code
+                                                         saved-mods
+                                                         saved-text)
+                                                       (do-normal-key!
+                                                         code
                                                          mods
-                                                         QT_MOD_ALT))])
-                                         (verbose-log! "CHORD-CHECK pending="
-                                           (if *chord-pending-char*
-                                               (string
-                                                 *chord-pending-char*)
-                                               "#f")
-                                           " key="
-                                           (if (and is-printable
-                                                    no-ctrl
-                                                    no-alt)
-                                               text
-                                               "non-printable")
-                                           " chord-start?="
-                                           (if (and is-printable
-                                                    no-ctrl
-                                                    no-alt)
-                                               (if (chord-start-char?
-                                                     (string-ref text 0))
-                                                   "Y"
-                                                   "N")
-                                               "N/A")
-                                           " autorepeat="
-                                           (if autorepeat? "Y" "N")
-                                           " prefix="
-                                           (if (null?
-                                                 (key-state-prefix-keys
-                                                   (app-state-key-state
-                                                     app)))
-                                               "none"
-                                               "active"))
-                                         (cond
-                                           [(and *chord-pending-char*
-                                                 (not *chord-timer-fired*))
-                                            (let* ([ch1 *chord-pending-char*]
-                                                   [saved-code *chord-pending-code*]
-                                                   [saved-mods *chord-pending-mods*]
-                                                   [saved-text *chord-pending-text*]
-                                                   [ch2 (and (= (string-length
-                                                                  text)
-                                                                1)
-                                                             (> (char->integer
-                                                                  (string-ref
-                                                                    text
-                                                                    0))
-                                                                31)
-                                                             (zero?
-                                                               (bitwise-and
+                                                         text)]
+                                                      [else
+                                                       (let ([chord-cmd (chord-lookup
+                                                                          ch1
+                                                                          ch2)])
+                                                         (verbose-log!
+                                                           "CHORD-RESOLVE ch1="
+                                                           (string ch1)
+                                                           " ch2="
+                                                           (string ch2)
+                                                           " cmd="
+                                                           (if chord-cmd
+                                                               (symbol->string
+                                                                 chord-cmd)
+                                                               "#f"))
+                                                         (qt-timer-stop!
+                                                           *chord-timer*)
+                                                         (set! *chord-pending-char*
+                                                           #f)
+                                                         (if chord-cmd
+                                                             (begin
+                                                               (execute-command!
+                                                                 app
+                                                                 chord-cmd)
+                                                               (qt-update-visual-decorations!
+                                                                 (qt-current-editor
+                                                                   (app-state-frame
+                                                                     app)))
+                                                               (qt-update-mark-selection!
+                                                                 app)
+                                                               (qt-modeline-update!
+                                                                 app)
+                                                               (qt-tabbar-update!
+                                                                 app)
+                                                               (qt-update-frame-title!
+                                                                 app)
+                                                               (qt-echo-draw!
+                                                                 (app-state-echo
+                                                                   app)
+                                                                 echo-label))
+                                                             (begin
+                                                               (do-normal-key!
+                                                                 saved-code
+                                                                 saved-mods
+                                                                 saved-text)
+                                                               (do-normal-key!
+                                                                 code
                                                                  mods
-                                                                 QT_MOD_CTRL))
-                                                             (zero?
-                                                               (bitwise-and
-                                                                 mods
-                                                                 QT_MOD_ALT))
-                                                             (string-ref
-                                                               text
-                                                               0))])
-                                              (cond
-                                                [autorepeat?
-                                                 (verbose-log!
-                                                   "CHORD-AUTOREPEAT ignored ch="
-                                                   (string ch1))
-                                                 (void)]
-                                                [(and (not ch2)
-                                                      (or (and (>= code
-                                                                   16777248)
-                                                               (<= code
-                                                                   16777253))
-                                                          (= code 16777299)
-                                                          (= code 16777300)
-                                                          (= code
-                                                             16781571)))
-                                                 (verbose-log!
-                                                   "CHORD-IGNORE-MODIFIER pending="
-                                                   (string ch1)
-                                                   " code="
-                                                   (number->string code))
-                                                 (void)]
-                                                [(not ch2)
-                                                 (verbose-log!
-                                                   "CHORD-CANCEL-NONCHORD pending="
-                                                   (string ch1)
-                                                   " code="
-                                                   (number->string code))
-                                                 (qt-timer-stop!
-                                                   *chord-timer*)
-                                                 (set! *chord-pending-char*
-                                                   #f)
-                                                 (do-normal-key!
-                                                   saved-code
-                                                   saved-mods
-                                                   saved-text)
-                                                 (do-normal-key!
-                                                   code
-                                                   mods
-                                                   text)]
-                                                [else
-                                                 (let ([chord-cmd (chord-lookup
-                                                                    ch1
-                                                                    ch2)])
-                                                   (verbose-log! "CHORD-RESOLVE ch1="
-                                                     (string ch1) " ch2="
-                                                     (string ch2) " cmd="
-                                                     (if chord-cmd
-                                                         (symbol->string
-                                                           chord-cmd)
-                                                         "#f"))
-                                                   (qt-timer-stop!
-                                                     *chord-timer*)
-                                                   (set! *chord-pending-char*
-                                                     #f)
-                                                   (if chord-cmd
-                                                       (begin
-                                                         (execute-command!
-                                                           app
-                                                           chord-cmd)
-                                                         (qt-update-visual-decorations!
-                                                           (qt-current-editor
-                                                             (app-state-frame
-                                                               app)))
-                                                         (qt-update-mark-selection!
-                                                           app)
-                                                         (qt-modeline-update!
-                                                           app)
-                                                         (qt-tabbar-update!
-                                                           app)
-                                                         (qt-update-frame-title!
-                                                           app)
-                                                         (qt-echo-draw!
-                                                           (app-state-echo
-                                                             app)
-                                                           echo-label))
-                                                       (begin
-                                                         (do-normal-key!
-                                                           saved-code
-                                                           saved-mods
-                                                           saved-text)
-                                                         (do-normal-key!
-                                                           code
+                                                                 text))))]))]
+                                                 [(and (not autorepeat?)
+                                                       (= (string-length
+                                                            text)
+                                                          1)
+                                                       (> (char->integer
+                                                            (string-ref
+                                                              text
+                                                              0))
+                                                          31)
+                                                       (zero?
+                                                         (bitwise-and
                                                            mods
-                                                           text))))]))]
-                                           [(and (not autorepeat?)
-                                                 (= (string-length text) 1)
-                                                 (> (char->integer
+                                                           QT_MOD_CTRL))
+                                                       (zero?
+                                                         (bitwise-and
+                                                           mods
+                                                           QT_MOD_ALT))
+                                                       (null?
+                                                         (key-state-prefix-keys
+                                                           (app-state-key-state
+                                                             app)))
+                                                       (chord-start-char?
+                                                         (string-ref
+                                                           text
+                                                           0)))
+                                                  (verbose-log! "CHORD-PENDING ch="
+                                                    (string
                                                       (string-ref text 0))
-                                                    31)
-                                                 (zero?
-                                                   (bitwise-and
-                                                     mods
-                                                     QT_MOD_CTRL))
-                                                 (zero?
-                                                   (bitwise-and
-                                                     mods
-                                                     QT_MOD_ALT))
-                                                 (null?
-                                                   (key-state-prefix-keys
-                                                     (app-state-key-state
-                                                       app)))
-                                                 (chord-start-char?
-                                                   (string-ref text 0)))
-                                            (verbose-log! "CHORD-PENDING ch="
-                                              (string (string-ref text 0))
-                                              " timeout="
-                                              (number->string
-                                                *chord-timeout*)
-                                              "ms")
-                                            (set! *chord-pending-char*
-                                              (string-ref text 0))
-                                            (set! *chord-pending-code*
-                                              code)
-                                            (set! *chord-pending-mods*
-                                              mods)
-                                            (set! *chord-pending-text*
-                                              text)
-                                            (set! *chord-timer-fired* #f)
-                                            (qt-timer-start!
-                                              *chord-timer*
-                                              *chord-timeout*)]
-                                           [else
-                                            (do-normal-key!
-                                              code
-                                              mods
-                                              text)])))]))))])
+                                                    " timeout="
+                                                    (number->string
+                                                      *chord-timeout*)
+                                                    "ms")
+                                                  (set! *chord-pending-char*
+                                                    (string-ref text 0))
+                                                  (set! *chord-pending-code*
+                                                    code)
+                                                  (set! *chord-pending-mods*
+                                                    mods)
+                                                  (set! *chord-pending-text*
+                                                    text)
+                                                  (set! *chord-timer-fired*
+                                                    #f)
+                                                  (qt-timer-start!
+                                                    *chord-timer*
+                                                    *chord-timeout*)]
+                                                 [else
+                                                  (do-normal-key!
+                                                    code
+                                                    mods
+                                                    text)])))))]))))])
            (qt-on-key-press-consuming!
              (qt-current-editor fr)
              key-handler)
            (app-state-key-handler-set!
              app
              (lambda (editor)
-               (qt-on-key-press-consuming! editor key-handler))))
+               (qt-on-key-press-consuming! editor key-handler)))
+           (automation-set-key-target-fn!
+             (lambda (fr)
+               (let* ([buf (qt-current-buffer fr)]
+                      [term (and buf
+                                 (hash-get *terminal-widget-map* buf))])
+                 (if term
+                     (qt-terminal-widget term)
+                     (qt-current-editor fr)))))
+           (qt-window-set-pre-container-destroy-fn!
+             (lambda (container)
+               (let ([bufs-to-remove '()])
+                 (hash-for-each
+                   (lambda (buf stored-container)
+                     (when (equal? stored-container container)
+                       (let ([term (hash-get *terminal-widget-map* buf)])
+                         (when term
+                           (with-catch
+                             (lambda (e) #f)
+                             (lambda () (qt-terminal-destroy! term)))))
+                       (set! bufs-to-remove (cons buf bufs-to-remove))))
+                   *terminal-container-map*)
+                 (for-each
+                   (lambda (buf)
+                     (hash-remove! *terminal-widget-map* buf)
+                     (hash-remove! *terminal-container-map* buf))
+                   bufs-to-remove)))))
          (schedule-periodic!
            'repl-poll
            50
@@ -1765,143 +1894,240 @@
                                        ed))
                                    (loop (cdr wins)))))))))))
                (buffer-list))
-             (for-each
-               (lambda (buf)
-                 (when (shell-buffer? buf)
-                   (let ([ss (hash-get *shell-state* buf)])
-                     (when (and ss (shell-pty-busy? ss))
-                       (let drain ()
-                         (let ([msg (shell-poll-output ss)])
-                           (when msg
-                             (qt-poll-shell-pty-msg! fr buf ss msg)
-                             (when (eq? (car msg) 'data) (drain))))))))
-                 (when (terminal-buffer? buf)
-                   (let ([ts (hash-get *terminal-state* buf)])
-                     (when (and ts (terminal-pty-busy? ts))
-                       (let ([vt (terminal-state-vtscreen ts)])
-                         (when vt
-                           (let ed-loop ([wins (qt-frame-windows fr)])
-                             (when (pair? wins)
-                               (if (eq? (qt-edit-window-buffer (car wins))
-                                        buf)
-                                   (let* ([ed (qt-edit-window-editor
-                                                (car wins))]
-                                          [new-rows (max 2
-                                                         (sci-send
-                                                           ed
-                                                           2370
-                                                           0))]
-                                          [widget-w (qt-widget-width ed)]
-                                          [char-w (max 1
-                                                       (sci-send/string
-                                                         ed
-                                                         2275
-                                                         "0"
-                                                         0))]
-                                          [new-cols (max 20
-                                                         (quotient
-                                                           widget-w
-                                                           char-w))]
-                                          [old-rows (vtscreen-rows vt)]
-                                          [old-cols (vtscreen-cols vt)])
-                                     (when (or (not (= new-rows old-rows))
-                                               (not (= new-cols old-cols)))
-                                       (verbose-log! "PTY-RESIZE: "
-                                         (number->string old-rows) "x"
-                                         (number->string old-cols) " -> "
-                                         (number->string new-rows) "x"
-                                         (number->string new-cols))
-                                       (vtscreen-resize!
-                                         vt
-                                         new-rows
-                                         new-cols)
-                                       (terminal-resize!
-                                         ts
-                                         new-rows
-                                         new-cols)
-                                       (hash-remove! *vterm-row-cache* ts)
-                                       (hash-put!
-                                         *vterm-initialized*
-                                         ts
-                                         #f)))
-                                   (ed-loop (cdr wins))))))))
-                     (when (and ts (terminal-pty-busy? ts))
-                       (let drain ([chunks (list)] [bytes 0] [done-msg #f])
-                         (if (and (> bytes 0)
-                                  (>= bytes *pty-batch-budget*))
-                             (let ([combined (apply
-                                               string-append
-                                               (reverse chunks))])
-                               (verbose-log!
-                                 "PTY-BATCH-CAP: "
-                                 (number->string (string-length combined))
-                                 " bytes (capped)")
-                               (qt-poll-terminal-pty-batch!
-                                 fr
-                                 buf
-                                 ts
-                                 combined))
-                             (let ([msg (terminal-poll-output ts)])
-                               (cond
-                                 [(not msg)
-                                  (if (pair? chunks)
-                                      (let ([combined (apply
-                                                        string-append
-                                                        (reverse chunks))])
-                                        (verbose-log!
-                                          "PTY-BATCH: "
-                                          (number->string
-                                            (string-length combined))
-                                          " bytes")
-                                        (qt-poll-terminal-pty-batch!
+             (unless *pty-poll-in-progress?*
+               (dynamic-wind
+                 (lambda () (set! *pty-poll-in-progress?* #t))
+                 (lambda ()
+                   (for-each
+                     (lambda (buf)
+                       (when (shell-buffer? buf)
+                         (let ([ss (hash-get *shell-state* buf)])
+                           (when (and ss (shell-pty-busy? ss))
+                             (let ([vt (shell-state-vtscreen ss)])
+                               (when vt
+                                 (let ed-loop ([wins (qt-frame-windows
+                                                       fr)])
+                                   (when (pair? wins)
+                                     (if (eq? (qt-edit-window-buffer
+                                                (car wins))
+                                              buf)
+                                         (let* ([ed (qt-edit-window-editor
+                                                      (car wins))]
+                                                [new-rows (max 2
+                                                               (sci-send
+                                                                 ed
+                                                                 2370
+                                                                 0))]
+                                                [widget-w (qt-widget-width
+                                                            ed)]
+                                                [margin-w (sci-send
+                                                            ed
+                                                            SCI_GETMARGINWIDTHN
+                                                            0)]
+                                                [text-w (- widget-w
+                                                           margin-w
+                                                           16)]
+                                                [char-w (let ([w (sci-send/string
+                                                                   ed
+                                                                   2276
+                                                                   "M"
+                                                                   STYLE_DEFAULT)])
+                                                          (if (> w 0)
+                                                              w
+                                                              8))]
+                                                [new-cols (max 20
+                                                               (quotient
+                                                                 text-w
+                                                                 char-w))]
+                                                [old-rows (vtscreen-rows
+                                                            vt)]
+                                                [old-cols (vtscreen-cols
+                                                            vt)])
+                                           (when (or (not (= new-rows
+                                                             old-rows))
+                                                     (not (= new-cols
+                                                             old-cols)))
+                                             (verbose-log! "SHELL-PTY-RESIZE: "
+                                               (number->string old-rows)
+                                               "x"
+                                               (number->string old-cols)
+                                               " -> "
+                                               (number->string new-rows)
+                                               "x"
+                                               (number->string new-cols))
+                                             (vtscreen-resize!
+                                               vt
+                                               new-rows
+                                               new-cols)
+                                             (shell-pty-resize!
+                                               ss
+                                               new-rows
+                                               new-cols)))
+                                         (ed-loop (cdr wins))))))))
+                           (when (and ss (shell-pty-busy? ss))
+                             (let drain ()
+                               (let ([msg (shell-poll-output ss)])
+                                 (when msg
+                                   (qt-poll-shell-pty-msg! fr buf ss msg)
+                                   (when (eq? (car msg) 'data)
+                                     (drain))))))))
+                       (when (terminal-buffer? buf)
+                         (let ([ts (hash-get *terminal-state* buf)])
+                           (when ts
+                             (let ([vt (terminal-state-vtscreen ts)])
+                               (when vt
+                                 (let ed-loop ([wins (qt-frame-windows
+                                                       fr)])
+                                   (when (pair? wins)
+                                     (if (eq? (qt-edit-window-buffer
+                                                (car wins))
+                                              buf)
+                                         (let* ([ed (qt-edit-window-editor
+                                                      (car wins))]
+                                                [new-rows (max 2
+                                                               (sci-send
+                                                                 ed
+                                                                 2370
+                                                                 0))]
+                                                [widget-w (qt-widget-width
+                                                            ed)]
+                                                [margin-w (sci-send
+                                                            ed
+                                                            SCI_GETMARGINWIDTHN
+                                                            0)]
+                                                [text-w (- widget-w
+                                                           margin-w
+                                                           16)]
+                                                [char-w (let ([w (sci-send/string
+                                                                   ed
+                                                                   2276
+                                                                   "M"
+                                                                   STYLE_DEFAULT)])
+                                                          (if (> w 0)
+                                                              w
+                                                              8))]
+                                                [new-cols (max 20
+                                                               (quotient
+                                                                 text-w
+                                                                 char-w))]
+                                                [old-rows (vtscreen-rows
+                                                            vt)]
+                                                [old-cols (vtscreen-cols
+                                                            vt)])
+                                           (when (or (not (= new-rows
+                                                             old-rows))
+                                                     (not (= new-cols
+                                                             old-cols)))
+                                             (verbose-log! "PTY-RESIZE: "
+                                               (number->string old-rows)
+                                               "x"
+                                               (number->string old-cols)
+                                               " -> "
+                                               (number->string new-rows)
+                                               "x"
+                                               (number->string new-cols))
+                                             (vtscreen-resize!
+                                               vt
+                                               new-rows
+                                               new-cols)
+                                             (when (terminal-pty-busy? ts)
+                                               (terminal-resize!
+                                                 ts
+                                                 new-rows
+                                                 new-cols))
+                                             (hash-remove!
+                                               *vterm-row-cache*
+                                               ts)
+                                             (hash-put!
+                                               *vterm-initialized*
+                                               ts
+                                               #f)))
+                                         (ed-loop (cdr wins))))))))
+                           (when (and ts (terminal-pty-busy? ts))
+                             (let drain ([chunks (list)]
+                                         [bytes 0]
+                                         [done-msg #f])
+                               (if (and (> bytes 0)
+                                        (>= bytes *pty-batch-budget*))
+                                   (let ([combined (apply
+                                                     string-append
+                                                     (reverse chunks))])
+                                     (verbose-log!
+                                       "PTY-BATCH-CAP: "
+                                       (number->string
+                                         (string-length combined))
+                                       " bytes (capped)")
+                                     (qt-poll-terminal-pty-batch!
+                                       fr
+                                       buf
+                                       ts
+                                       combined))
+                                   (let ([msg (terminal-poll-output ts)])
+                                     (cond
+                                       [(not msg)
+                                        (if (pair? chunks)
+                                            (let ([combined (apply
+                                                              string-append
+                                                              (reverse
+                                                                chunks))])
+                                              (verbose-log!
+                                                "PTY-BATCH: "
+                                                (number->string
+                                                  (string-length combined))
+                                                " bytes")
+                                              (qt-poll-terminal-pty-batch!
+                                                fr
+                                                buf
+                                                ts
+                                                combined))
+                                            (when (and (terminal-state-vtscreen
+                                                         ts)
+                                                       (hash-ref
+                                                         *vterm-initialized*
+                                                         ts
+                                                         #f)
+                                                       (vterm-render-due?
+                                                         ts))
+                                              (qt-poll-terminal-pty-batch!
+                                                fr
+                                                buf
+                                                ts
+                                                "")))
+                                        (when done-msg
+                                          (qt-poll-terminal-pty-msg!
+                                            fr
+                                            buf
+                                            ts
+                                            done-msg))]
+                                       [(eq? (car msg) 'data)
+                                        (drain
+                                          (cons (cdr msg) chunks)
+                                          (+ bytes
+                                             (string-length (cdr msg)))
+                                          done-msg)]
+                                       [else
+                                        (when (pair? chunks)
+                                          (let ([combined (apply
+                                                            string-append
+                                                            (reverse
+                                                              chunks))])
+                                            (verbose-log!
+                                              "PTY-BATCH+DONE: "
+                                              (number->string
+                                                (string-length combined))
+                                              " bytes")
+                                            (qt-poll-terminal-pty-batch!
+                                              fr
+                                              buf
+                                              ts
+                                              combined)))
+                                        (qt-poll-terminal-pty-msg!
                                           fr
                                           buf
                                           ts
-                                          combined))
-                                      (when (and (terminal-state-vtscreen
-                                                   ts)
-                                                 (hash-ref
-                                                   *vterm-initialized*
-                                                   ts
-                                                   #f)
-                                                 (vterm-render-due? ts))
-                                        (qt-poll-terminal-pty-batch!
-                                          fr
-                                          buf
-                                          ts
-                                          "")))
-                                  (when done-msg
-                                    (qt-poll-terminal-pty-msg!
-                                      fr
-                                      buf
-                                      ts
-                                      done-msg))]
-                                 [(eq? (car msg) 'data)
-                                  (drain
-                                    (cons (cdr msg) chunks)
-                                    (+ bytes (string-length (cdr msg)))
-                                    done-msg)]
-                                 [else
-                                  (when (pair? chunks)
-                                    (let ([combined (apply
-                                                      string-append
-                                                      (reverse chunks))])
-                                      (verbose-log!
-                                        "PTY-BATCH+DONE: "
-                                        (number->string
-                                          (string-length combined))
-                                        " bytes")
-                                      (qt-poll-terminal-pty-batch!
-                                        fr
-                                        buf
-                                        ts
-                                        combined)))
-                                  (qt-poll-terminal-pty-msg!
-                                    fr
-                                    buf
-                                    ts
-                                    msg)]))))))))
-               (buffer-list))
+                                          msg)]))))))))
+                     (buffer-list)))
+                 (lambda () (set! *pty-poll-in-progress?* #f))))
              (for-each
                (lambda (buf)
                  (when (chat-buffer? buf)
@@ -2312,7 +2538,85 @@
                       app
                       (lambda (state)
                         (let ([mb (cdr (assq 'minibuffer state))]) mb))
-                      ms)))))))
+                      ms)))
+                (cons
+                  'test-window-count
+                  (lambda ()
+                    (length (qt-frame-windows (app-state-frame app)))))
+                (cons
+                  'test-window-buffers
+                  (lambda ()
+                    (map (lambda (win)
+                           (let ([buf (qt-edit-window-buffer win)])
+                             (if buf (buffer-name buf) "#<none>")))
+                         (qt-frame-windows (app-state-frame app)))))
+                (cons
+                  'test-window-texts
+                  (lambda ()
+                    (map (lambda (win)
+                           (let ([ed (qt-edit-window-editor win)])
+                             (if ed (qt-plain-text-edit-text ed) "")))
+                         (qt-frame-windows (app-state-frame app)))))
+                (cons
+                  'test-prefix-active?
+                  (lambda ()
+                    (not (null?
+                           (key-state-prefix-keys
+                             (app-state-key-state app))))))
+                (cons
+                  'test-terminal-running?
+                  (lambda ()
+                    (let* ([fr (app-state-frame app)]
+                           [win (qt-current-window fr)]
+                           [buf (qt-edit-window-buffer win)]
+                           [term (and buf
+                                      (hash-get
+                                        *terminal-widget-map*
+                                        buf))])
+                      (and term
+                           (let* ([container (qt-edit-window-container
+                                               win)]
+                                  [count (qt-stacked-widget-count
+                                           container)])
+                             (and (> count 1)
+                                  (> (qt-stacked-widget-current-index
+                                       container)
+                                     0)))))))
+                (cons
+                  'test-reset!
+                  (lambda ()
+                    (app-state-key-state-set! app (make-initial-key-state))
+                    (let ([term-bufs (hash-keys *terminal-widget-map*)])
+                      (for-each
+                        (lambda (buf)
+                          (let ([term (hash-get
+                                        *terminal-widget-map*
+                                        buf)])
+                            (when term
+                              (with-catch
+                                (lambda (e) #f)
+                                (lambda () (qt-terminal-destroy! term)))
+                              (hash-remove! *terminal-widget-map* buf)
+                              (hash-remove!
+                                *terminal-container-map*
+                                buf))))
+                        term-bufs))
+                    (when (> (length
+                               (qt-frame-windows (app-state-frame app)))
+                             1)
+                      (execute-command! app 'delete-other-windows))
+                    'ok))
+                (cons
+                  'test-clear-buffer!
+                  (lambda ()
+                    (let* ([fr (app-state-frame app)]
+                           [ed (qt-current-editor fr)])
+                      (when ed (qt-plain-text-edit-set-text! ed ""))
+                      'ok)))
+                (cons
+                  'test-window-idx
+                  (lambda ()
+                    (qt-frame-current-idx (app-state-frame app))))))))
          (schedule-periodic!
            'treesitter-reparse
            150

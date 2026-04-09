@@ -45,7 +45,12 @@
 
   ;; Configuration
   *helm-candidate-limit*
-  *helm-follow-delay*)
+  *helm-follow-delay*
+  *orderless-mode*
+  initials-match?
+
+  ;; Annotation hook (for marginalia)
+  *helm-annotate-fn*)
 
 (import :std/sugar
         :std/sort
@@ -59,10 +64,16 @@
 ;; *helm-mode* is defined in core.ss
 (def *helm-candidate-limit* 100)
 (def *helm-follow-delay* 0.1)  ;; seconds
+(def *orderless-mode* #f)  ;; when #t, all completion uses orderless+initials
 
 ;; Dynamic parameter: set to current pattern during helm-filter-source.
 ;; Volatile sources (e.g. grep) can read this to use the pattern as a search query.
 (def *helm-current-pattern* (make-parameter ""))
+
+;; Annotation hook for marginalia: (or (-> source-name display-str string) #f)
+;; When set, appends annotation suffix to candidate display strings.
+;; Higher-level code (editor-extra-helpers) sets this based on marginalia-mode.
+(def *helm-annotate-fn* #f)
 
 ;;;============================================================================
 ;;; Data structures
@@ -132,6 +143,28 @@
               (make-match-token word #f #f))))
          words)))
 
+(def (initials-match? pattern candidate)
+  "Check if PATTERN matches the initials of words in CANDIDATE.
+   E.g. 'fb' matches 'find-buffer' or 'forward-backward'."
+  (let* ((pat-lower (string-downcase pattern))
+         (cand-lower (string-downcase candidate))
+         (plen (string-length pat-lower)))
+    (and (> plen 0)
+         (let loop ((pi 0) (ci 0) (at-boundary? #t))
+           (cond
+             ((>= pi plen) #t)  ; all pattern chars matched
+             ((>= ci (string-length cand-lower)) #f)  ; ran out of candidate
+             ((and at-boundary?
+                   (char=? (string-ref pat-lower pi)
+                           (string-ref cand-lower ci)))
+              (loop (+ pi 1) (+ ci 1) #f))
+             (else
+              (let ((c (string-ref cand-lower ci)))
+                (loop pi (+ ci 1)
+                      (or (char=? c #\-) (char=? c #\_)
+                          (char=? c #\/) (char=? c #\space)
+                          (char=? c #\.))))))))))
+
 (def (token-matches? token candidate-str use-fuzzy?)
   "Check if a single match-token matches a candidate string."
   (let* ((text (match-token-text token))
@@ -141,8 +174,11 @@
            (cond
              ((match-token-prefix? token)
               (string-prefix? text-lower target-lower))
-             (use-fuzzy?
-              (fuzzy-match? text candidate-str))
+             ((or use-fuzzy? *orderless-mode*)
+              ;; With orderless: try substring, then fuzzy, then initials
+              (or (string-contains target-lower text-lower)
+                  (fuzzy-match? text candidate-str)
+                  (initials-match? text candidate-str)))
              (else
               (string-contains target-lower text-lower)))))
     (if (match-token-negate? token)
@@ -216,7 +252,10 @@
          (real-fn (helm-source-real-fn source))
          (use-fuzzy? (helm-source-fuzzy? source))
          (limit (or (helm-source-candidate-limit source) *helm-candidate-limit*)))
-    (let* ((scored
+    (let* ((src-name (helm-source-name source))
+           (annotate (and *helm-annotate-fn*
+                          (lambda (s) (*helm-annotate-fn* src-name s))))
+           (scored
              (filter-map
                (lambda (raw)
                  (let* ((display-str (if display-fn (display-fn raw) raw))
@@ -225,7 +264,11 @@
                                  0
                                  (helm-multi-match pattern display-str use-fuzzy?))))
                    (and (>= score 0)
-                        (cons score (make-helm-candidate display-str real-val source)))))
+                        (cons score (make-helm-candidate
+                                      (if annotate
+                                        (string-append display-str (annotate display-str))
+                                        display-str)
+                                      real-val source)))))
                raw-candidates))
            (sorted (if (string=? pattern "")
                      scored  ;; preserve original order when no pattern

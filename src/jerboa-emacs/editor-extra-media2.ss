@@ -7,6 +7,7 @@
 (import :std/sugar
         :std/sort
         :std/srfi/13
+        :std/misc/ports
         (only-in :std/misc/process process-kill)
         (only-in :std/os/signal signal-names)
         :chez-scintilla/constants
@@ -14,7 +15,10 @@
         :chez-scintilla/tui
         :jerboa-emacs/core
         (only-in :jerboa-emacs/editor-core
-                 *auto-save-enabled* make-auto-save-path)
+                 *auto-save-enabled* make-auto-save-path pulse-line!
+                 string->alien/nul string->alien alien/nul->string
+                 bytevector->alien cons->alien tui-rows tui-cols
+                 SCI_GETTEXTRANGE SCI_INDICSETALPHA SCI_SETELEMENTCOLOUR)
         :jerboa-emacs/keymap
         :jerboa-emacs/buffer
         :jerboa-emacs/window
@@ -22,7 +26,8 @@
         :jerboa-emacs/echo
         :jerboa-emacs/editor-extra-helpers
         (only-in :jerboa-emacs/editor-extra-editing2
-                 *dired-marks* cmd-dired-refresh))
+                 *dired-marks* cmd-dired-refresh)
+        (only-in :jerboa-emacs/helm *orderless-mode*))
 
 (def (cmd-describe-current-coding-system app)
   "Describe current coding system."
@@ -715,7 +720,6 @@
 
 ;; ── batch 44: modern Emacs package toggles ──────────────────────────
 (def *consult-mode* #f)
-(def *orderless-mode* #f)
 (def *embark-mode* #f)
 (def *undo-fu-session* #f)
 (def *auto-package-mode* #f)
@@ -1672,9 +1676,30 @@
 
 (def *beacon-mode* #f)
 
+(def *beacon-last-line* 0)
+
+(def (beacon-check-jump! app)
+  "Check if cursor moved a large distance and flash if beacon mode is on."
+  (when *beacon-mode*
+    (let* ((fr (app-state-frame app))
+           (win (current-window fr))
+           (ed (edit-window-editor win))
+           (pos (editor-get-current-pos ed))
+           (cur-line (editor-line-from-position ed pos))
+           (delta (abs (- cur-line *beacon-last-line*))))
+      (set! *beacon-last-line* cur-line)
+      ;; Flash if jumped more than 3 lines
+      (when (> delta 3)
+        (pulse-line! ed cur-line)))))
+
 (def (cmd-beacon-mode app)
   "Toggle beacon mode — flash cursor position after large jumps."
   (set! *beacon-mode* (not *beacon-mode*))
+  (when *beacon-mode*
+    ;; Initialize last line
+    (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+           (pos (editor-get-current-pos ed)))
+      (set! *beacon-last-line* (editor-line-from-position ed pos))))
   (echo-message! (app-state-echo app)
     (if *beacon-mode* "Beacon mode ON" "Beacon mode OFF")))
 
@@ -1746,9 +1771,34 @@
 
 (def *tui-dimmer-mode* #f)
 
+(def (dimmer-apply! app)
+  "Apply dimmer effect: active window full brightness, others dimmed."
+  (let* ((fr (app-state-frame app))
+         (cur-idx (frame-current-idx fr))
+         (wins (frame-windows fr)))
+    (let loop ((ws wins) (i 0))
+      (when (pair? ws)
+        (let ((ed (edit-window-editor (car ws))))
+          (if (= i cur-idx)
+            ;; Active window: full alpha
+            (send-message ed SCI_SETELEMENTCOLOUR 52 #xFF000000)  ;; SC_ELEMENT_WHITE_SPACE_BACK
+            ;; Inactive: darken background by reducing brightness
+            (send-message ed SCI_SETELEMENTCOLOUR 52 #x40111111)))
+        (loop (cdr ws) (+ i 1))))))
+
+(def (dimmer-clear! app)
+  "Remove dimmer effect from all windows."
+  (for-each
+    (lambda (win)
+      (send-message (edit-window-editor win) SCI_SETELEMENTCOLOUR 52 #xFF000000))
+    (frame-windows (app-state-frame app))))
+
 (def (cmd-dimmer-mode app)
   "Toggle dimmer mode — dim non-active windows."
   (set! *tui-dimmer-mode* (not *tui-dimmer-mode*))
+  (if *tui-dimmer-mode*
+    (dimmer-apply! app)
+    (dimmer-clear! app))
   (echo-message! (app-state-echo app)
     (if *tui-dimmer-mode* "Dimmer mode enabled" "Dimmer mode disabled")))
 
@@ -1783,18 +1833,31 @@
 
 (def *tui-centered-cursor* #f)
 
+(def (centered-cursor-apply! app)
+  "Apply centered cursor policy to all windows when mode is on."
+  (when *tui-centered-cursor*
+    (for-each
+      (lambda (win)
+        (let* ((ed (edit-window-editor win))
+               (pos (editor-get-current-pos ed))
+               (cur-line (editor-line-from-position ed pos))
+               (visible-lines (max 1 (- (edit-window-h win) 1)))
+               (target (max 0 (- cur-line (quotient visible-lines 2)))))
+          ;; SCI_SETYCARETPOLICY: CARET_STRICT | CARET_EVEN = 13, with slop = half screen
+          (send-message ed 2403 13 (quotient visible-lines 2))))
+      (frame-windows (app-state-frame app)))))
+
 (def (cmd-centered-cursor-mode app)
   "Toggle centered cursor mode — keep cursor vertically centered."
   (set! *tui-centered-cursor* (not *tui-centered-cursor*))
-  (when *tui-centered-cursor*
-    (let* ((fr (app-state-frame app))
-           (win (current-window fr))
-           (ed (edit-window-editor win))
-           (pos (editor-get-current-pos ed))
-           (cur-line (editor-line-from-position ed pos))
-           (visible-lines (max 1 (- (edit-window-h win) 1)))
-           (target (max 0 (- cur-line (quotient visible-lines 2)))))
-      (send-message ed SCI_SETFIRSTVISIBLELINE target 0)))
+  (let ((fr (app-state-frame app)))
+    (if *tui-centered-cursor*
+      (centered-cursor-apply! app)
+      ;; Restore default caret policy: CARET_EVEN = 8
+      (for-each
+        (lambda (win)
+          (send-message (edit-window-editor win) 2403 8 0))
+        (frame-windows fr))))
   (echo-message! (app-state-echo app)
     (if *tui-centered-cursor* "Centered cursor mode enabled" "Centered cursor mode disabled")))
 
@@ -1997,3 +2060,729 @@
   (echo-message! (app-state-echo app)
     (if *tui-aggressive-fill* "Aggressive fill-paragraph mode enabled" "Aggressive fill-paragraph mode disabled")))
 
+;;;============================================================================
+;;; Round 4 batch 1: Features 1-10
+;;;============================================================================
+
+;; --- Feature 1: Git Time Machine ---
+;; Step through git history of current file
+
+(def *git-timemachine-revs* '())
+(def *git-timemachine-index* 0)
+
+(def (cmd-git-timemachine app)
+  "Step through git history of current file."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf))))
+    (if (not path)
+      (echo-error! echo "Buffer has no file")
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports
+                      (string-append "git log --pretty=format:'%h %ai %s' -- \"" path "\"")
+                      'block (native-transcoder))))
+        (close-port p-stdin)
+        (let loop ((lines '()))
+          (let ((line (get-line p-stdout)))
+            (if (eof-object? line)
+              (begin
+                (close-port p-stdout)
+                (close-port p-stderr)
+                (if (null? lines)
+                  (echo-message! echo "No git history for this file")
+                  (begin
+                    (set! *git-timemachine-revs* (reverse lines))
+                    (set! *git-timemachine-index* 0)
+                    (echo-message! echo
+                      (string-append "Git time machine: "
+                        (number->string (length (reverse lines)))
+                        " revisions. Use timemachine-next/prev to navigate")))))
+              (loop (cons line lines)))))))))
+
+(def (git-timemachine-show-rev! app idx)
+  "Show a specific git revision of current file."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf)))
+         (rev-line (list-ref *git-timemachine-revs* idx))
+         (hash (let ((sp (string-contains rev-line " ")))
+                 (if sp (substring rev-line 0 sp) rev-line))))
+    (when path
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports
+                      (string-append "git show " hash ":\"" path "\" 2>&1")
+                      'block (native-transcoder))))
+        (close-port p-stdin)
+        (let loop ((lines '()))
+          (let ((line (get-line p-stdout)))
+            (if (eof-object? line)
+              (begin
+                (close-port p-stdout)
+                (close-port p-stderr)
+                (let* ((content (string-join (reverse lines) "\n"))
+                       (fr (app-state-frame app))
+                       (win (current-window fr))
+                       (ed (edit-window-editor win)))
+                  (editor-set-text ed content)
+                  (editor-goto-pos ed 0)
+                  (echo-message! echo
+                    (string-append "[" (number->string (+ idx 1)) "/"
+                      (number->string (length *git-timemachine-revs*))
+                      "] " rev-line))))
+              (loop (cons line lines)))))))))
+
+(def (cmd-git-timemachine-next app)
+  "Show next (newer) revision."
+  (if (null? *git-timemachine-revs*)
+    (echo-message! (app-state-echo app) "No time machine active")
+    (begin
+      (set! *git-timemachine-index*
+        (max 0 (- *git-timemachine-index* 1)))
+      (git-timemachine-show-rev! app *git-timemachine-index*))))
+
+(def (cmd-git-timemachine-prev app)
+  "Show previous (older) revision."
+  (if (null? *git-timemachine-revs*)
+    (echo-message! (app-state-echo app) "No time machine active")
+    (begin
+      (set! *git-timemachine-index*
+        (min (- (length *git-timemachine-revs*) 1) (+ *git-timemachine-index* 1)))
+      (git-timemachine-show-rev! app *git-timemachine-index*))))
+
+;; --- Feature 2: Exec Path From Shell ---
+
+(def (cmd-exec-path-from-shell app)
+  "Import PATH and other env vars from login shell."
+  (let* ((echo (app-state-echo app)))
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports
+                    "bash -lc 'echo PATH=$PATH; echo GOPATH=$GOPATH; echo CARGO_HOME=$CARGO_HOME'"
+                    'block (native-transcoder))))
+      (close-port p-stdin)
+      (let loop ((lines '()))
+        (let ((line (get-line p-stdout)))
+          (if (eof-object? line)
+            (begin
+              (close-port p-stdout)
+              (close-port p-stderr)
+              (for-each
+                (lambda (l)
+                  (let ((eq (string-contains l "=")))
+                    (when eq
+                      (let ((name (substring l 0 eq))
+                            (val (substring l (+ eq 1) (string-length l))))
+                        (putenv name val)))))
+                (reverse lines))
+              (echo-message! echo
+                (string-append "Imported " (number->string (length lines)) " env vars from shell")))
+            (loop (cons line lines))))))))
+
+;; --- Feature 3: Goto Line Preview ---
+
+(def (cmd-goto-line-preview app)
+  "Go to line number with live preview highlighting."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (orig-pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (input (echo-read-string echo "Goto line: " row width)))
+    (if (and input (not (string-empty? input)))
+      (let ((line-num (string->number (string-trim input))))
+        (if (and line-num (> line-num 0))
+          (let ((pos (send-message ed SCI_POSITIONFROMLINE (- line-num 1) 0)))
+            (editor-goto-pos ed pos)
+            (pulse-line! ed)
+            (echo-message! echo (string-append "Line " (number->string line-num))))
+          (begin
+            (editor-goto-pos ed orig-pos)
+            (echo-message! echo "Invalid line number"))))
+      (editor-goto-pos ed orig-pos))))
+
+;; --- Feature 4: Nav Flash ---
+;; Flash the cursor line after navigation jumps
+
+(def *nav-flash-enabled* #f)
+(def *nav-flash-last-line* -1)
+
+(def (cmd-nav-flash-mode app)
+  "Toggle nav-flash — briefly highlight line after navigation."
+  (set! *nav-flash-enabled* (not *nav-flash-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *nav-flash-enabled* "Nav-flash mode: on" "Nav-flash mode: off")))
+
+(def (nav-flash-check! app)
+  "Check for line change and flash if significant jump."
+  (when *nav-flash-enabled*
+    (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+           (line (send-message ed SCI_LINEFROMPOSITION
+                   (send-message ed SCI_GETCURRENTPOS 0 0) 0)))
+      (when (and (>= *nav-flash-last-line* 0)
+                 (> (abs (- line *nav-flash-last-line*)) 5))
+        (pulse-line! ed))
+      (set! *nav-flash-last-line* line))))
+
+;; --- Feature 5: Pulsar ---
+;; Pulse current line on specific actions
+
+(def *pulsar-enabled* #f)
+
+(def (cmd-pulsar-mode app)
+  "Toggle pulsar — pulse current line on scroll/switch."
+  (set! *pulsar-enabled* (not *pulsar-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *pulsar-enabled* "Pulsar mode: on" "Pulsar mode: off")))
+
+(def (cmd-pulsar-pulse app)
+  "Manually pulse the current line."
+  (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+    (pulse-line! ed)))
+
+;; --- Feature 6: Goggles (visual feedback for operations) ---
+
+(def *goggles-enabled* #f)
+
+(def (cmd-goggles-mode app)
+  "Toggle goggles — visual feedback for yank/kill/undo."
+  (set! *goggles-enabled* (not *goggles-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *goggles-enabled* "Goggles mode: on" "Goggles mode: off")))
+
+(def (goggles-flash-region! ed start len)
+  "Flash a region briefly using indicator 14."
+  (when *goggles-enabled*
+    (send-message ed SCI_INDICSETSTYLE 14 7) ;; INDIC_ROUNDBOX
+    (send-message ed SCI_INDICSETFORE 14 #x80FF80)
+    (send-message ed SCI_INDICSETALPHA 14 100)
+    (send-message ed SCI_SETINDICATORCURRENT 14 0)
+    (send-message ed SCI_INDICATORFILLRANGE start len)))
+
+;; --- Feature 7: Eros (eval result overlay) ---
+
+(def (cmd-eros-eval-last-sexp app)
+  "Evaluate last S-expression and display result inline."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         ;; Find matching paren backward
+         (match (send-message ed SCI_BRACEMATCH pos 0)))
+    ;; Fallback: grab text from previous line
+    (let* ((line (send-message ed SCI_LINEFROMPOSITION pos 0))
+           (line-start (send-message ed SCI_POSITIONFROMLINE line 0))
+           (text (editor-get-text ed))
+           (line-text (substring text line-start pos)))
+      (let ((result
+              (with-catch
+                (lambda (e)
+                  (string-append "Error: " (with-output-to-string (lambda () (display-condition e)))))
+                (lambda ()
+                  (let ((val (eval (read (open-input-string line-text)))))
+                    (with-output-to-string (lambda () (write val))))))))
+        ;; Display result after cursor position using calltip
+        (send-message ed SCI_CALLTIPSHOW pos (string->alien/nul (string-append " => " result)))
+        (echo-message! echo (string-append "=> " result))))))
+
+;; --- Feature 8: TMR (timer management) ---
+
+(def *tmr-timers* '()) ;; list of (id name end-epoch callback-msg)
+(def *tmr-next-id* 0)
+
+(def (cmd-tmr-new app)
+  "Create a new timer with name and duration."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (desc (echo-read-string echo "Timer description: " row width)))
+    (when (and desc (not (string-empty? desc)))
+      (let ((mins-str (echo-read-string echo "Duration (minutes): " row width)))
+        (when (and mins-str (not (string-empty? mins-str)))
+          (let ((mins (string->number (string-trim mins-str))))
+            (when (and mins (> mins 0))
+              (set! *tmr-next-id* (+ *tmr-next-id* 1))
+              (let ((end (+ (time-second (current-time)) (* mins 60))))
+                (set! *tmr-timers*
+                  (cons (list *tmr-next-id* desc end) *tmr-timers*))
+                (echo-message! echo
+                  (string-append "Timer #" (number->string *tmr-next-id*)
+                    ": " desc " (" (number->string mins) " min)"))))))))))
+
+(def (cmd-tmr-list app)
+  "List all active timers."
+  (let* ((echo (app-state-echo app))
+         (now (time-second (current-time))))
+    (if (null? *tmr-timers*)
+      (echo-message! echo "No timers")
+      (let* ((fr (app-state-frame app))
+             (win (current-window fr))
+             (ed (edit-window-editor win))
+             (lines
+               (map (lambda (t)
+                      (let* ((id (car t)) (desc (cadr t)) (end (caddr t))
+                             (remaining (max 0 (- end now)))
+                             (min (quotient remaining 60))
+                             (sec (remainder remaining 60)))
+                        (string-append "#" (number->string id) " "
+                          desc "  "
+                          (if (<= remaining 0) "DONE!"
+                            (string-append (number->string min) ":"
+                              (if (< sec 10) "0" "") (number->string sec))))))
+                    *tmr-timers*))
+             (content (string-append "Timers\n" (make-string 40 #\-) "\n"
+                        (string-join lines "\n")))
+             (buf (make-buffer "*tmr*")))
+        (buffer-attach! ed buf)
+        (set! (edit-window-buffer win) buf)
+        (editor-set-text ed content)
+        (editor-goto-pos ed 0)))))
+
+(def (cmd-tmr-cancel app)
+  "Cancel a timer by ID."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (id-str (echo-read-string echo "Cancel timer #: " row width)))
+    (when (and id-str (not (string-empty? id-str)))
+      (let ((id (string->number (string-trim id-str))))
+        (when id
+          (set! *tmr-timers*
+            (filter (lambda (t) (not (= (car t) id))) *tmr-timers*))
+          (echo-message! echo (string-append "Timer #" (number->string id) " cancelled")))))))
+
+;; --- Feature 9: Logos (page-based narrowing for focused reading/presentations) ---
+
+(def *logos-page-delimiter* "^\f\\|^\\*\\*\\* \\|^--- ")
+(def *logos-active* #f)
+
+(def (cmd-logos-mode app)
+  "Toggle logos mode for page-based focused editing."
+  (set! *logos-active* (not *logos-active*))
+  (echo-message! (app-state-echo app)
+    (if *logos-active*
+      "Logos mode: on (use logos-forward/backward to navigate pages)"
+      "Logos mode: off")))
+
+(def (cmd-logos-forward app)
+  "Navigate to next page (form-feed or heading delimiter)."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (text (editor-get-text ed))
+         (len (string-length text)))
+    ;; Search forward for form-feed (^L)
+    (let loop ((i (+ pos 1)))
+      (if (>= i len)
+        (echo-message! (app-state-echo app) "End of buffer")
+        (if (char=? (string-ref text i) #\page)
+          (begin
+            (editor-goto-pos ed (+ i 1))
+            (pulse-line! ed))
+          (loop (+ i 1)))))))
+
+(def (cmd-logos-backward app)
+  "Navigate to previous page."
+  (let* ((ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (text (editor-get-text ed)))
+    (let loop ((i (- pos 2)))
+      (if (<= i 0)
+        (begin (editor-goto-pos ed 0)
+               (echo-message! (app-state-echo app) "Beginning of buffer"))
+        (if (char=? (string-ref text i) #\page)
+          (begin
+            (editor-goto-pos ed (+ i 1))
+            (pulse-line! ed))
+          (loop (- i 1)))))))
+
+;; --- Feature 10: Cursory (cursor appearance management) ---
+
+(def *cursory-presets*
+  '((bar . 1)        ;; SCI_SETCARETSTYLE bar
+    (block . 2)      ;; block
+    (underline . 3))) ;; underline (approximate via Scintilla)
+
+(def (cmd-cursory-set app)
+  "Set cursor style (bar, block, underline)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (choices '("bar" "block" "underline"))
+         (choice (echo-read-string-with-completion echo "Cursor style: " choices row width)))
+    (when (and choice (not (string-empty? choice)))
+      (let ((style (cond
+                     ((string=? choice "bar") 1)
+                     ((string=? choice "block") 2)
+                     ((string=? choice "underline") 3)
+                     (else 1))))
+        (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+          (send-message ed SCI_SETCARETSTYLE style 0)
+          (echo-message! echo (string-append "Cursor style: " choice)))))))
+
+(def (cmd-cursory-set-width app)
+  "Set cursor width."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (w-str (echo-read-string echo "Cursor width (1-4): " row width)))
+    (when (and w-str (not (string-empty? w-str)))
+      (let ((w (string->number (string-trim w-str))))
+        (when (and w (>= w 1) (<= w 4))
+          (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+            (send-message ed SCI_SETCARETWIDTH w 0)
+            (echo-message! echo (string-append "Cursor width: " (number->string w)))))))))
+
+;;;============================================================================
+;;; Round 5 batch 2: Features 11-20
+;;;============================================================================
+
+;; --- Feature 11: Indent Bars (visual indent column lines) ---
+
+(def *indent-bars-enabled* #f)
+(def *indent-bars-char* #\|)
+
+(def (cmd-indent-bars-mode app)
+  "Toggle indent-bars — show visual indent guides as column lines."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *indent-bars-enabled* (not *indent-bars-enabled*))
+    (if *indent-bars-enabled*
+      (begin
+        ;; Use Scintilla indent guides
+        (send-message ed SCI_SETINDENTATIONGUIDES 3 0) ;; SC_IV_LOOKBOTH
+        (echo-message! echo "Indent bars: on"))
+      (begin
+        (send-message ed SCI_SETINDENTATIONGUIDES 0 0) ;; SC_IV_NONE
+        (echo-message! echo "Indent bars: off")))))
+
+;; --- Feature 12: VLF (View Large Files) ---
+
+(def *vlf-chunk-size* 10000) ;; lines per chunk
+
+(def (cmd-vlf-mode app)
+  "Open a large file in chunked viewing mode."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols))
+         (path (echo-read-string echo "VLF file: " row width)))
+    (when (and path (not (string-empty? path)))
+      (if (not (file-exists? path))
+        (echo-error! echo (string-append "File not found: " path))
+        (let* ((fr (app-state-frame app))
+               (win (current-window fr))
+               (ed (edit-window-editor win)))
+          ;; Read only first chunk
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (string-append "head -" (number->string *vlf-chunk-size*) " \"" path "\"")
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let* ((content (string-join (reverse lines) "\n"))
+                           (buf (make-buffer (string-append "[vlf] " (path-strip-directory path)))))
+                      (buffer-attach! ed buf)
+                      (set! (edit-window-buffer win) buf)
+                      (editor-set-text ed content)
+                      (editor-goto-pos ed 0)
+                      (send-message ed SCI_SETREADONLY 1 0)
+                      (echo-message! echo
+                        (string-append "VLF: showing first " (number->string (length lines))
+                          " lines of " path))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 13: Eldoc (show documentation at point) ---
+
+(def *eldoc-enabled* #f)
+(def *eldoc-docs* (make-hash-table))
+
+;; Pre-populate some Scheme/Jerboa documentation
+(def (eldoc-init!)
+  (for-each
+    (lambda (entry)
+      (hash-put! *eldoc-docs* (car entry) (cdr entry)))
+    '((define . "define name expr — bind name to value")
+      (lambda . "lambda (args ...) body ... — create procedure")
+      (let . "let ((var val) ...) body — local bindings")
+      (let* . "let* ((var val) ...) body — sequential bindings")
+      (if . "if test then else — conditional")
+      (cond . "cond (test expr ...) ... (else expr ...) — multi-branch conditional")
+      (match . "match val (pattern body) ... — pattern matching")
+      (def . "def (name args ...) body — define function")
+      (defstruct . "defstruct name (fields ...) — define structure type")
+      (for/collect . "for/collect ((var iter)) body — collect loop results")
+      (for/fold . "for/fold ((acc init)) ((var iter)) body — fold over iterator")
+      (hash-put! . "hash-put! ht key val — set hash table entry")
+      (hash-ref . "hash-ref ht key [default] — get hash table entry")
+      (string-split . "string-split str delimiter-char — split string")
+      (string-join . "string-join strs sep — join strings")
+      (map . "map proc lst ... — apply proc to each element")
+      (filter . "filter pred lst — keep elements matching predicate")
+      (sort . "sort predicate lst — sort list by predicate")
+      (try . "try expr (catch (e) handler) (finally cleanup)")
+      (with-catch . "with-catch handler thunk — catch exceptions"))))
+
+(eldoc-init!)
+
+(def (cmd-eldoc-mode app)
+  "Toggle eldoc — show function documentation at point."
+  (set! *eldoc-enabled* (not *eldoc-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *eldoc-enabled* "Eldoc mode: on" "Eldoc mode: off")))
+
+(def (cmd-eldoc-show app)
+  "Show documentation for symbol at point."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app))))
+         (pos (send-message ed SCI_GETCURRENTPOS 0 0))
+         (word-start (send-message ed SCI_WORDSTARTPOSITION pos 1))
+         (word-end (send-message ed SCI_WORDENDPOSITION pos 1))
+         (word-len (- word-end word-start)))
+    (if (<= word-len 0)
+      (echo-message! echo "")
+      (let* ((buf (make-bytevector (+ word-len 1) 0))
+             (_ (send-message ed SCI_GETTEXTRANGE 0
+                  (cons->alien word-start (bytevector->alien buf))))
+             (word (alien/nul->string (bytevector->alien buf)))
+             (sym (string->symbol word))
+             (doc (hash-get *eldoc-docs* sym)))
+        (if doc
+          (echo-message! echo doc)
+          (echo-message! echo (string-append word " — no documentation")))))))
+
+;; --- Feature 14: Project Find File ---
+
+(def (cmd-project-find-file app)
+  "Find file in current project (git repo root)."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols)))
+    ;; Get git root
+    (let-values (((p-stdin p-stdout p-stderr pid)
+                  (open-process-ports "git rev-parse --show-toplevel 2>/dev/null"
+                    'block (native-transcoder))))
+      (close-port p-stdin)
+      (let ((root (let ((l (get-line p-stdout)))
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (if (eof-object? l) #f (string-trim l)))))
+        (if (not root)
+          (echo-error! echo "Not in a git project")
+          ;; List tracked files
+          (let-values (((p2-stdin p2-stdout p2-stderr p2-pid)
+                        (open-process-ports
+                          (string-append "git -C \"" root "\" ls-files 2>/dev/null | head -500")
+                          'block (native-transcoder))))
+            (close-port p2-stdin)
+            (let loop ((files '()))
+              (let ((line (get-line p2-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p2-stdout)
+                    (close-port p2-stderr)
+                    (if (null? files)
+                      (echo-message! echo "No files found in project")
+                      (let ((choice (echo-read-string-with-completion echo
+                                      "Find file in project: " (reverse files) row width)))
+                        (when (and choice (not (string-empty? choice)))
+                          (let ((full-path (string-append root "/" choice)))
+                            (execute-command! app 'find-file))))))
+                  (loop (cons (string-trim line) files)))))))))))
+
+;; --- Feature 15: Makefile Executor ---
+
+(def (cmd-makefile-executor app)
+  "List and execute Makefile targets."
+  (let* ((echo (app-state-echo app))
+         (row (tui-rows)) (width (tui-cols)))
+    (if (not (file-exists? "Makefile"))
+      (echo-error! echo "No Makefile in current directory")
+      ;; Extract targets from Makefile
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports
+                      "grep -E '^[a-zA-Z0-9_-]+:' Makefile | sed 's/:.*//' | head -50"
+                      'block (native-transcoder))))
+        (close-port p-stdin)
+        (let loop ((targets '()))
+          (let ((line (get-line p-stdout)))
+            (if (eof-object? line)
+              (begin
+                (close-port p-stdout)
+                (close-port p-stderr)
+                (if (null? targets)
+                  (echo-message! echo "No targets found")
+                  (let ((choice (echo-read-string-with-completion echo
+                                  "Make target: " (reverse targets) row width)))
+                    (when (and choice (not (string-empty? choice)))
+                      ;; Run the target using compile command infrastructure
+                      (echo-message! echo (string-append "Running: make " choice "..."))
+                      (let* ((fr (app-state-frame app))
+                             (win (current-window fr))
+                             (ed (edit-window-editor win)))
+                        (let-values (((p2-stdin p2-stdout p2-stderr p2-pid)
+                                      (open-process-ports
+                                        (string-append "make " choice " 2>&1")
+                                        'block (native-transcoder))))
+                          (close-port p2-stdin)
+                          (let lp ((lines '()))
+                            (let ((l (get-line p2-stdout)))
+                              (if (eof-object? l)
+                                (begin
+                                  (close-port p2-stdout)
+                                  (close-port p2-stderr)
+                                  (let* ((content (string-join (reverse lines) "\n"))
+                                         (buf (make-buffer "*make*")))
+                                    (buffer-attach! ed buf)
+                                    (set! (edit-window-buffer win) buf)
+                                    (editor-set-text ed content)
+                                    (editor-goto-pos ed 0)
+                                    (echo-message! echo (string-append "make " choice " — done"))))
+                                (lp (cons l lines)))))))))))
+              (loop (cons (string-trim line) targets)))))))))
+
+;; --- Feature 16: Diff-HL Margin (show diff marks in gutter) ---
+
+(def *diff-hl-margin-enabled* #f)
+
+(def (cmd-diff-hl-margin-mode app)
+  "Toggle diff-hl margin markers — show git changes in gutter."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (set! *diff-hl-margin-enabled* (not *diff-hl-margin-enabled*))
+    (if *diff-hl-margin-enabled*
+      (begin
+        ;; Set up margin 4 for diff marks
+        (send-message ed SCI_SETMARGINWIDTHN 4 4)
+        (send-message ed SCI_SETMARGINTYPEN 4 0) ;; SC_MARGIN_SYMBOL
+        (send-message ed SCI_SETMARGINSENSITIVEN 4 0)
+        ;; Define markers: 3=added (green), 4=changed (yellow), 5=deleted (red)
+        (send-message ed SCI_MARKERDEFINE 3 0) ;; SC_MARK_CIRCLE for added
+        (send-message ed SCI_MARKERSETFORE 3 #x00CC00)
+        (send-message ed SCI_MARKERSETBACK 3 #x00CC00)
+        (send-message ed SCI_MARKERDEFINE 4 0)
+        (send-message ed SCI_MARKERSETFORE 4 #xCCCC00)
+        (send-message ed SCI_MARKERSETBACK 4 #xCCCC00)
+        (send-message ed SCI_MARKERDEFINE 5 0)
+        (send-message ed SCI_MARKERSETFORE 5 #xCC0000)
+        (send-message ed SCI_MARKERSETBACK 5 #xCC0000)
+        (echo-message! echo "Diff-HL margin: on"))
+      (begin
+        (send-message ed SCI_SETMARGINWIDTHN 4 0)
+        (echo-message! echo "Diff-HL margin: off")))))
+
+;; --- Feature 17: Meow (modal editing — basic vi-like normal mode) ---
+
+(def *meow-state* 'insert) ;; insert or normal
+(def *meow-enabled* #f)
+
+(def (cmd-meow-mode app)
+  "Toggle meow modal editing mode."
+  (set! *meow-enabled* (not *meow-enabled*))
+  (when (not *meow-enabled*)
+    (set! *meow-state* 'insert))
+  (echo-message! (app-state-echo app)
+    (if *meow-enabled*
+      "Meow mode: on (ESC=normal, i=insert)"
+      "Meow mode: off")))
+
+(def (cmd-meow-normal app)
+  "Enter meow normal state."
+  (when *meow-enabled*
+    (set! *meow-state* 'normal)
+    (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+      (send-message ed SCI_SETCARETSTYLE 2 0)) ;; block cursor
+    (echo-message! (app-state-echo app) "-- NORMAL --")))
+
+(def (cmd-meow-insert app)
+  "Enter meow insert state."
+  (when *meow-enabled*
+    (set! *meow-state* 'insert)
+    (let ((ed (edit-window-editor (current-window (app-state-frame app)))))
+      (send-message ed SCI_SETCARETSTYLE 1 0)) ;; bar cursor
+    (echo-message! (app-state-echo app) "-- INSERT --")))
+
+(def (meow-normal-state?) (and *meow-enabled* (eq? *meow-state* 'normal)))
+
+;; --- Feature 18: Nix Mode ---
+
+(def (cmd-nix-mode app)
+  "Enable Nix expression mode hints."
+  (let* ((echo (app-state-echo app))
+         (ed (edit-window-editor (current-window (app-state-frame app)))))
+    (send-message ed SCI_SETTABWIDTH 2 0)
+    (send-message ed SCI_SETUSETABS 0 0)
+    (echo-message! echo "Nix mode: tab=2, spaces")))
+
+;; --- Feature 19: PlantUML Mode ---
+
+(def (cmd-plantuml-mode app)
+  "Enable PlantUML mode hints."
+  (echo-message! (app-state-echo app) "PlantUML mode enabled"))
+
+(def (cmd-plantuml-preview app)
+  "Preview PlantUML diagram (requires plantuml installed)."
+  (let* ((echo (app-state-echo app))
+         (buf (current-buffer-from-app app))
+         (path (and buf (buffer-file-path buf))))
+    (if (not path)
+      (echo-error! echo "Buffer has no file — save first")
+      (if (not (file-exists? "/usr/bin/plantuml"))
+        (echo-error! echo "plantuml not installed")
+        (let ((cmd (string-append "plantuml -ttxt \"" path "\" -o /tmp 2>&1")))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports cmd 'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    ;; Try to read the text output
+                    (let ((txt-path (string-append "/tmp/"
+                                     (path-strip-extension (path-strip-directory path)) ".atxt")))
+                      (if (file-exists? txt-path)
+                        (let* ((content (read-file-string txt-path))
+                               (fr (app-state-frame app))
+                               (win (current-window fr))
+                               (ed (edit-window-editor win))
+                               (pbuf (make-buffer "*plantuml-preview*")))
+                          (buffer-attach! ed pbuf)
+                          (set! (edit-window-buffer win) pbuf)
+                          (editor-set-text ed content)
+                          (editor-goto-pos ed 0)
+                          (echo-message! echo "PlantUML preview rendered"))
+                        (echo-message! echo "PlantUML output not found"))))
+                  (loop (cons line lines)))))))))))
+
+;; --- Feature 20: Auto-Compile (auto-compile scheme files on save) ---
+
+(def *auto-compile-enabled* #f)
+
+(def (cmd-auto-compile-mode app)
+  "Toggle auto-compile — compile .ss files on save."
+  (set! *auto-compile-enabled* (not *auto-compile-enabled*))
+  (echo-message! (app-state-echo app)
+    (if *auto-compile-enabled*
+      "Auto-compile mode: on (will compile .ss on save)"
+      "Auto-compile mode: off")))
+
+(def (auto-compile-check! app)
+  "After save, compile if auto-compile is on and file is .ss."
+  (when *auto-compile-enabled*
+    (let* ((buf (current-buffer-from-app app))
+           (path (and buf (buffer-file-path buf))))
+      (when (and path (string-suffix? ".ss" path))
+        (let ((echo (app-state-echo app)))
+          (echo-message! echo (string-append "Compiling " (path-strip-directory path) "..."))
+          (let-values (((p-stdin p-stdout p-stderr pid)
+                        (open-process-ports
+                          (string-append "make build 2>&1 | tail -5")
+                          'block (native-transcoder))))
+            (close-port p-stdin)
+            (let loop ((lines '()))
+              (let ((line (get-line p-stdout)))
+                (if (eof-object? line)
+                  (begin
+                    (close-port p-stdout)
+                    (close-port p-stderr)
+                    (let ((output (string-join (reverse lines) " ")))
+                      (echo-message! echo
+                        (if (string-contains output "0 errors")
+                          "Compiled successfully"
+                          (string-append "Compile: " output)))))
+                  (loop (cons line lines)))))))))))

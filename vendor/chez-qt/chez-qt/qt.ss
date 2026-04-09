@@ -212,7 +212,7 @@
     ;; Keyboard Events
     qt-on-key-press! qt-on-key-press-consuming!
     qt-last-key-code qt-last-key-modifiers qt-last-key-text
-    qt-last-key-autorepeat?
+    qt-last-key-autorepeat? qt-last-key-widget
     qt-send-key-press! qt-send-key-release!
 
     ;; Pixmap
@@ -261,6 +261,7 @@
     qt-stacked-widget-create qt-stacked-widget-add-widget!
     qt-stacked-widget-set-current-index! qt-stacked-widget-current-index
     qt-stacked-widget-count qt-on-stacked-current-changed!
+    qt-stacked-widget-set-current-widget!
 
     ;; Dock Widget
     qt-dock-widget-create qt-dock-widget-set-widget! qt-dock-widget-widget
@@ -1565,6 +1566,7 @@
   (define (qt-last-key-modifiers) (ffi-qt-last-key-modifiers))
   (define (qt-last-key-text) (ffi-qt-last-key-text))
   (define (qt-last-key-autorepeat?) (not (zero? (ffi-qt-last-key-autorepeat))))
+  (define (qt-last-key-widget) (ffi-qt-last-key-widget))
 
   (define (qt-send-key-press! w key mods text)
     (ffi-qt-send-key-event w 0 key mods text))
@@ -1729,6 +1731,7 @@
   (define (qt-stacked-widget-set-current-index! sw idx) (ffi-qt-stacked-widget-set-current-index sw idx))
   (define (qt-stacked-widget-current-index sw) (ffi-qt-stacked-widget-current-index sw))
   (define (qt-stacked-widget-count sw) (ffi-qt-stacked-widget-count sw))
+  (define (qt-stacked-widget-set-current-widget! sw widget) (ffi-qt-stacked-widget-set-current-widget sw widget))
 
   (define (qt-on-stacked-current-changed! sw handler)
     (let ([id (register-int-handler! handler)])

@@ -351,7 +351,7 @@ Returns (file line col message) or #f."
 (def *compile-on-save* #f)  ;; off by default
 
 (def (compile-on-save-check! app path)
-  "If compile-on-save is enabled and PATH is a .ss file in a Gerbil project,
+  "If compile-on-save is enabled and PATH is a .ss file in a Jerboa project,
    run gerbil build in the background."
   (when (and *compile-on-save* path
              (string-suffix? ".ss" path))
@@ -514,7 +514,7 @@ Returns (file line col message) or #f."
 
 (def (flycheck-check! app path)
   "Run linter async on a source file, parse errors. Updates *flycheck-errors*.
-Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
+Supports Jerboa (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
   (when (and *flycheck-mode* path)
     (cond
       ;; Gerbil files: use gxc -S
@@ -616,7 +616,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
     (reverse errors)))
 
 (def (cmd-flycheck-mode app)
-  "Toggle flycheck (live syntax checking on save) for Gerbil files."
+  "Toggle flycheck (live syntax checking on save) for Jerboa files."
   (set! *flycheck-mode* (not *flycheck-mode*))
   ;; Clear fringe markers when disabling flycheck
   (when (not *flycheck-mode*)
@@ -694,7 +694,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
       (qt-plain-text-edit-set-cursor-position! ed 0))))
 
 (def (cmd-toggle-compile-on-save app)
-  "Toggle automatic compilation when saving Gerbil files."
+  "Toggle automatic compilation when saving Jerboa files."
   (set! *compile-on-save* (not *compile-on-save*))
   (echo-message! (app-state-echo app)
     (if *compile-on-save*
@@ -918,7 +918,7 @@ Supports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
 
 (def (cmd-eval-buffer app)
   "Evaluate all top-level forms in the current buffer.
-   Full Gerbil syntax supported (def, defstruct, hash, match, etc.)."
+   Full Jerboa syntax supported (def, defstruct, hash, match, etc.)."
   (let* ((echo (app-state-echo app))
          (ed (current-qt-editor app))
          (buf (current-qt-buffer app))

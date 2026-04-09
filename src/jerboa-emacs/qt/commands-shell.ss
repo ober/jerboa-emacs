@@ -15,7 +15,6 @@
         (only-in :jerboa-emacs/vtscreen new-vtscreen)
         (only-in :jerboa-emacs/async schedule-periodic! cancel-periodic!)
         (only-in :jsh/registry builtin-lookup builtin-register!)
-        (rename-in :jerboa-coreutils/top (main cu-top-main))
         (only-in :jerboa-emacs/persist theme-settings-save! theme-settings-load!
                  mx-history-save! mx-history-load!
                  *auto-fill-mode* *fill-column*
@@ -61,6 +60,16 @@
 ;;; Batch 8: Remaining missing commands
 ;;;============================================================================
 
+;; Map buffer → QTerminalWidget pointer for the libvterm-based terminal
+;; Defined here (commands-shell) because commands-config imports commands-shell,
+;; so moving it here makes it visible to both without circular dependency.
+(def *terminal-widget-map* (make-hash-table-eq))
+
+;; Map buffer → QStackedWidget container for the terminal's host window.
+;; Lets the pre-container-destroy hook identify which terminal is in a container
+;; that is about to be destroyed, so it can detach/destroy the terminal first.
+(def *terminal-container-map* (make-hash-table-eq))
+
 ;; --- Font size ---
 ;; Note: Font size state is now in face.ss (*default-font-size*)
 
@@ -78,6 +87,11 @@
           ;; Re-apply theme (STYLECLEARALL resets colors)
           (qt-apply-editor-theme! ed)))
       (qt-frame-windows fr)))
+  ;; Apply font size to QTerminalWidget buffers
+  (hash-for-each
+    (lambda (_buf term)
+      (qt-terminal-set-font! term *default-font-family* *default-font-size*))
+    *terminal-widget-map*)
   ;; Update Qt stylesheet so chrome widgets match
   (when *qt-app-ptr*
     (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))
@@ -1286,8 +1300,8 @@ SPC = page down, DEL = page up, q = quit view-mode."
                      (string-join shown "  "))))))))))))
 
 (def (cmd-completion-at-point app)
-  "Smart completion at point. For Gerbil buffers, combines buffer words
-   with known Gerbil standard library symbols."
+  "Smart completion at point. For Jerboa buffers, combines buffer words
+   with known Jerboa standard library symbols."
   (let* ((ed (current-qt-editor app))
          (buf (current-qt-buffer app))
          (lang (buffer-lexer-lang buf))
@@ -1392,8 +1406,8 @@ SPC = page down, DEL = page up, q = quit view-mode."
   (info-read-topic! app "emacs"))
 
 (def (cmd-info-elisp-manual app)
-  "Show Gerbil documentation."
-  (echo-message! (app-state-echo app) "Gerbil Scheme documentation at https://cons.io"))
+  "Show Jerboa documentation."
+  (echo-message! (app-state-echo app) "Jerboa Scheme documentation at https://jerboa-lang.org"))
 
 (def (cmd-report-bug app)
   "Report a bug."
@@ -1856,20 +1870,19 @@ SPC = page down, DEL = page up, q = quit view-mode."
 (def *top-active* #f)  ;; the app when top is running, or #f
 
 (def (top-capture-output)
-  "Run coreutils top in batch mode (-b -n 1) and capture output as a string.
-   Calls cu-top-main directly (imported from jerboa-coreutils/top)."
-  (with-output-to-string
+  "Run system top in batch mode (-b -n 1) and capture output as a string."
+  (with-catch
+    (lambda (e)
+      (string-append "top: error: "
+        (with-output-to-string (lambda () (display-condition e))) "\n"))
     (lambda ()
-      (with-catch
-        (lambda (e)
-          (display "top: error: ")
-          (display (with-output-to-string (lambda () (display-condition e))))
-          (newline))
-        (lambda ()
-          (call/cc
-            (lambda (k)
-              (parameterize ((exit-handler (lambda (code) (k (void)))))
-                (cu-top-main "-b" "-n" "1")))))))))
+      (let-values (((p-stdin p-stdout p-stderr pid)
+                    (open-process-ports "top -b -n 1" 'block (native-transcoder))))
+        (close-port p-stdin)
+        (let ((output (get-string-all p-stdout)))
+          (close-port p-stdout)
+          (close-port p-stderr)
+          (if (eof-object? output) "" output))))))
 
 (def (top-refresh! app)
   "Refresh the *top* buffer with current coreutils top output."

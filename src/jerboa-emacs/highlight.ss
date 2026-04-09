@@ -184,7 +184,7 @@
 ;;;============================================================================
 
 (def (setup-gerbil-highlighting! ed)
-  "Configure Scintilla's Lisp lexer for Gerbil using face system colors."
+  "Configure Scintilla's Lisp lexer for Jerboa using face system colors."
   ;; Set the Lisp lexer (same as Scheme)
   (editor-set-lexer-language ed "lisp")
 
@@ -976,7 +976,7 @@
 ;;;============================================================================
 
 (def (gerbil-file-extension? path)
-  "Check if a file path has a Gerbil/Scheme extension."
+  "Check if a file path has a Jerboa/Scheme extension."
   (and path
        (let ((ext (path-extension path)))
          (and ext

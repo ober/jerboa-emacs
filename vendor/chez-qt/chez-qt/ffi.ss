@@ -212,7 +212,7 @@
     ;; Keyboard Events
     ffi-qt-install-key-handler ffi-qt-install-key-handler-consuming
     ffi-qt-last-key-code ffi-qt-last-key-modifiers ffi-qt-last-key-text
-    ffi-qt-last-key-autorepeat
+    ffi-qt-last-key-autorepeat ffi-qt-last-key-widget
     ffi-qt-send-key-event
 
     ;; Pixmap
@@ -419,6 +419,7 @@
     ffi-qt-stacked-widget-create ffi-qt-stacked-widget-add-widget
     ffi-qt-stacked-widget-set-current-index ffi-qt-stacked-widget-current-index
     ffi-qt-stacked-widget-count ffi-qt-stacked-widget-on-current-changed
+    ffi-qt-stacked-widget-set-current-widget
 
     ;; Dock Widget
     ffi-qt-dock-widget-create ffi-qt-dock-widget-set-widget
@@ -1656,6 +1657,8 @@
     (foreign-procedure "qt_last_key_text" () string))
   (define ffi-qt-last-key-autorepeat
     (foreign-procedure "qt_last_key_autorepeat" () int))
+  (define ffi-qt-last-key-widget
+    (foreign-procedure "qt_last_key_widget" () void*))
   (define ffi-qt-send-key-event
     (foreign-procedure "qt_send_key_event" (void* int int int string) void))
 
@@ -1827,6 +1830,8 @@
     (foreign-procedure "qt_stacked_widget_count" (void*) int))
   (define ffi-qt-stacked-widget-on-current-changed
     (foreign-procedure "chez_qt_stacked_widget_on_current_changed" (void* long) void))
+  (define ffi-qt-stacked-widget-set-current-widget
+    (foreign-procedure "qt_stacked_widget_set_current_widget" (void* void*) void))
 
   ;; -----------------------------------------------------------------------
   ;; Dock Widget

@@ -1604,6 +1604,10 @@ void qt_scintilla_on_modified(qt_scintilla_t sci,
 
 #endif /* QT_SCINTILLA_AVAILABLE */
 
+/* --- Crash reporter --- */
+void qt_crash_reporter_install(void);
+const char* qt_crash_log_path(void);
+
 #ifdef __cplusplus
 }
 #endif

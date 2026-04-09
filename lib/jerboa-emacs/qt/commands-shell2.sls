@@ -533,7 +533,7 @@
                  (qt-plain-text-edit-ensure-cursor-visible! ed)))
              (echo-message! (app-state-echo app) "Xref: forward"))))
   (def (cmd-eldoc-mode app)
-       "Toggle eldoc mode — shows function signatures in echo area on idle.\nWhen enabled, displays the signature of the enclosing function for\nScheme/Gerbil/Lisp buffers. Also used by LSP for hover information."
+       "Toggle eldoc mode — shows function signatures in echo area on idle.\nWhen enabled, displays the signature of the enclosing function for\nScheme/Jerboa/Lisp buffers. Also used by LSP for hover information."
        (set! *eldoc-mode* (not *eldoc-mode*))
        (echo-message!
          (app-state-echo app)

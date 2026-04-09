@@ -171,7 +171,7 @@
 
 ;;; --- Scheme mode ---
 (def (cmd-scheme-mode app)
-  "Switch to Scheme/Gerbil mode with syntax highlighting."
+  "Switch to Scheme/Jerboa mode with syntax highlighting."
   (qt-set-major-mode! app 'scheme "Scheme mode"))
 
 ;;; --- Check parens ---

@@ -1130,10 +1130,14 @@
                  (echo-message! echo (string-append "Reverted " path))))
              (echo-error! echo "Buffer is not visiting a file"))))
   (def (cmd-select-all app)
-       (qt-plain-text-edit-select-all! (current-qt-editor app))
-       (echo-message!
-         (app-state-echo app)
-         "Mark set (whole buffer)"))
+       (let* ([ed (current-qt-editor app)]
+              [buf (current-qt-buffer app)]
+              [len (qt-plain-text-edit-text-length ed)])
+         (qt-plain-text-edit-set-selection! ed 0 len)
+         (buffer-mark-set! buf 0)
+         (echo-message!
+           (app-state-echo app)
+           "Mark set (whole buffer)")))
   (def (cmd-goto-line app)
        (let* ([echo (app-state-echo app)]
               [input (qt-echo-read-string app "Goto line: ")])

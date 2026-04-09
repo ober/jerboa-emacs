@@ -3,7 +3,8 @@
 ;;; Source: src/jerboa-emacs/qt/commands-shell.ss
 
 (library (jerboa-emacs qt commands-shell)
-  (export directory-exists? apply-font-size-to-all-editors!
+  (export directory-exists? *terminal-widget-map*
+   *terminal-container-map* apply-font-size-to-all-editors!
    cmd-increase-font-size cmd-decrease-font-size
    cmd-reset-font-size cmd-goto-first-non-blank
    cmd-goto-last-non-blank cmd-move-to-window-top
@@ -84,7 +85,6 @@
      schedule-periodic!
      cancel-periodic!)
    (only (jsh registry) builtin-lookup builtin-register!)
-   (rename (jerboa-coreutils top) (main cu-top-main))
    (only (jerboa-emacs persist) theme-settings-save!
      theme-settings-load! mx-history-save! mx-history-load!
      *auto-fill-mode* *fill-column* *abbrev-table*
@@ -116,6 +116,10 @@
    (jerboa runtime))
   (def (directory-exists? path)
        (and (file-exists? path) (file-directory? path)))
+  (define *terminal-widget-map*--cell
+    (vector (make-hash-table-eq)))
+  (define *terminal-container-map*--cell
+    (vector (make-hash-table-eq)))
   (def (apply-font-size-to-all-editors! app)
        "Apply the current global font size to all open editors."
        (let ([fr (app-state-frame app)]
@@ -132,6 +136,13 @@
                (sci-send ed SCI_SETMARGINWIDTHN 0 margin-w)
                (qt-apply-editor-theme! ed)))
            (qt-frame-windows fr)))
+       (hash-for-each
+         (lambda (_buf term)
+           (qt-terminal-set-font!
+             term
+             *default-font-family*
+             *default-font-size*))
+         *terminal-widget-map*)
        (when *qt-app-ptr*
          (qt-app-set-style-sheet! *qt-app-ptr* (theme-stylesheet))))
   (def (cmd-increase-font-size app)
@@ -1441,7 +1452,7 @@
                             (app-state-echo app)
                             (string-join shown "  ")))]))))))))
   (def (cmd-completion-at-point app)
-       "Smart completion at point. For Gerbil buffers, combines buffer words\n   with known Gerbil standard library symbols."
+       "Smart completion at point. For Jerboa buffers, combines buffer words\n   with known Jerboa standard library symbols."
        (let* ([ed (current-qt-editor app)]
               [buf (current-qt-buffer app)]
               [lang (buffer-lexer-lang buf)]
@@ -1571,10 +1582,10 @@
        "Show Emacs manual via Info."
        (info-read-topic! app "emacs"))
   (def (cmd-info-elisp-manual app)
-       "Show Gerbil documentation."
+       "Show Jerboa documentation."
        (echo-message!
          (app-state-echo app)
-         "Gerbil Scheme documentation at https://cons.io"))
+         "Jerboa Scheme documentation at https://jerboa-lang.org"))
   (def (cmd-report-bug app)
        "Report a bug."
        (echo-message!
@@ -2157,21 +2168,24 @@
   (define *top-buffer-name*--cell (vector "*top*"))
   (define *top-active*--cell (vector #f))
   (def (top-capture-output)
-       "Run coreutils top in batch mode (-b -n 1) and capture output as a string.\n   Calls cu-top-main directly (imported from jerboa-coreutils/top)."
-       (with-output-to-string
+       "Run system top in batch mode (-b -n 1) and capture output as a string."
+       (with-catch
+         (lambda (e)
+           (string-append
+             "top: error: "
+             (with-output-to-string (lambda () (display-condition e)))
+             "\n"))
          (lambda ()
-           (with-catch
-             (lambda (e)
-               (display "top: error: ")
-               (display
-                 (with-output-to-string (lambda () (display-condition e))))
-               (newline))
-             (lambda ()
-               (call/cc
-                 (lambda (k)
-                   (parameterize ([exit-handler
-                                   (lambda (code) (k (void)))])
-                     (cu-top-main "-b" "-n" "1")))))))))
+           (let-values ([(p-stdin p-stdout p-stderr pid)
+                         (open-process-ports
+                           "top -b -n 1"
+                           'block
+                           (native-transcoder))])
+             (close-port p-stdin)
+             (let ([output (get-string-all p-stdout)])
+               (close-port p-stdout)
+               (close-port p-stderr)
+               (if (eof-object? output) "" output))))))
   (def (top-refresh! app)
        "Refresh the *top* buffer with current coreutils top output."
        (let* ([ed (current-qt-editor app)]
@@ -2261,6 +2275,20 @@
                 (or (char=? (string-ref str i) #\q)
                     (char=? (string-ref str i) (integer->char 3))
                     (scan (+ i 1)))))))
+  (define-syntax *terminal-widget-map*
+    (identifier-syntax
+      [id (vector-ref *terminal-widget-map*--cell 0)]
+      [(set! id val) (vector-set!
+                       *terminal-widget-map*--cell
+                       0
+                       val)]))
+  (define-syntax *terminal-container-map*
+    (identifier-syntax
+      [id (vector-ref *terminal-container-map*--cell 0)]
+      [(set! id val) (vector-set!
+                       *terminal-container-map*--cell
+                       0
+                       val)]))
   (define-syntax *auto-indent*
     (identifier-syntax
       [id (vector-ref *auto-indent*--cell 0)]

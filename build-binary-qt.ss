@@ -82,10 +82,15 @@
 (define qt-shim-dir
   (or (getenv "CHEZ_QT_SHIM_DIR")
       (format "~a/mine/gerbil-qt/vendor" home)))
-
-(define coreutils-dir
-  (or (getenv "COREUTILS_DIR")
-      "/deps/coreutils"))
+(define jaws-dir
+  (or (getenv "JAWS_DIR")
+      (format "~a/mine/jerboa-aws/lib" home)))
+(define chez-ssl-dir
+  (or (getenv "CHEZ_SSL_DIR")
+      (format "~a/mine/chez-ssl" home)))
+(define chez-https-dir
+  (or (getenv "CHEZ_HTTPS_DIR")
+      (format "~a/mine/chez-https/src" home)))
 
 ;; Static build detection (needed before dep checks)
 (define jemacs-static?
@@ -129,6 +134,9 @@
 (printf "Sci dir:       ~a~n" sci-dir)
 (printf "Qt dir:        ~a~n" qt-dir)
 (printf "Qt shim dir:   ~a~n" qt-shim-dir)
+(printf "jaws dir:      ~a~n" jaws-dir)
+(printf "chez-ssl dir:  ~a~n" chez-ssl-dir)
+(printf "chez-https dir:~a~n" chez-https-dir)
 
 ;; --- Step 1: Compile all modules + entry point ---
 (printf "~n[1/7] Compiling all modules (optimize-level 3, WPO)...~n")
@@ -184,6 +192,9 @@
         "std/misc/terminal"
         "std/misc/trie"
         "std/misc/lru-cache"
+        "std/misc/ports"
+        "std/srfi/srfi-13"
+        "std/text/json"
         "std/actor/mpsc"
         "std/actor/core"
         "std/actor/transport"
@@ -192,9 +203,13 @@
         "std/os/sandbox"
         "std/os/landlock"
         "std/security/capsicum"))
-    ;; Jerboa core + sugar + repl
+    ;; Jerboa core + sugar + repl + dependencies
+    ;; std/typed: jerboa/core imports it
+    ;; std/result: std/sugar imports it
     (map (lambda (m) (format "~a/~a.so" jerboa-dir m))
-      '("jerboa/core"
+      '("std/result"
+        "std/typed"
+        "jerboa/core"
         "std/sugar"
         "std/repl"))
     ;; std/net/tcp and std/net/uri (compiled by step 1)
@@ -260,6 +275,14 @@
       '("ffi" "pcre2"))
     ;; std/net/request (WPO-missing)
     (list (format "~a/std/net/request.so" jerboa-dir))
+    ;; chez-ssl + chez-https (TLS for AWS API)
+    (list (format "~a/src/chez-ssl.so" chez-ssl-dir)
+          (format "~a/chez-https.so" chez-https-dir))
+    ;; jerboa-aws EC2 modules
+    (map (lambda (m) (format "~a/jerboa-aws/~a.so" jaws-dir m))
+      '("creds" "crypto" "xml" "json" "time" "uri" "sigv4" "request" "api"))
+    (map (lambda (m) (format "~a/jerboa-aws/ec2/~a.so" jaws-dir m))
+      '("xml" "params" "api" "instances"))
     ;; chez-scintilla (all modules — WPO-missing)
     (map (lambda (m) (format "~a/chez-scintilla/~a.so" sci-dir m))
       '("ffi" "constants" "style" "lexer" "scintilla" "tui"))
@@ -415,7 +438,7 @@
          ;;   define-foreign name "c-name"  — jsh macro (C name is the second string)
          (gen-cmd
            (format
-             "{ { cat ~a ~a; find ~a ~a/jerboa ~a/chez-scintilla lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; cat ~a/jerboa-coreutils/top.sls 2>/dev/null; } | \
+             "{ { cat ~a ~a; find ~a ~a/jerboa ~a/std/os ~a/std/net ~a/std/crypto ~a/std/security ~a/chez-scintilla lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; } | \
 sed 's/;;.*//' | grep -oE '(foreign-procedure|foreign-entry\\?) \"[^\"]*\"' | sed 's/.* \"//;s/\"//'; \
 { cat ~a ~a; } | sed 's/;;.*//' | grep -o 'define-optional-ffi [^ ]* \"[^\"]*\"' | sed 's/.*define-optional-ffi [^ ]* \"//;s/\"//'; \
 find ~a -name '*.sls' -o -name '*.ss' | \
@@ -426,6 +449,7 @@ sort -u | grep -v '^$' | grep -v '^_NSGetExecutablePath$' | grep -v '^io_uring_'
 grep -v '^jerboa_' | grep -v '^SSL_' | grep -v '^TLS_' | grep -v '^EVP_' | \
 grep -v '^CRYPTO_' | grep -v '^PKCS5_' | grep -v '^RAND_' | \
 grep -v '^QRcode_' | grep -v '^embed_encrypt$' | grep -v '^embed_random_bytes$' | \
+grep -v '^kqueue$' | grep -v '^kevent$' | grep -v '^sandbox_' | \
 grep -v '^__error$' > /tmp/ffi_syms.txt && \
 awk '\
 BEGIN{ print \"/* Auto-generated — do not edit */\"; \
@@ -439,7 +463,7 @@ echo \"}\" >> qt_static_symbols.c && \
 rm /tmp/ffi_syms.txt && \
 echo OK"
              ffi-path pcre2-ffi-path
-             jsh-dir jerboa-dir sci-dir coreutils-dir
+             jsh-dir jerboa-dir jerboa-dir jerboa-dir jerboa-dir jerboa-dir sci-dir
              ffi-path pcre2-ffi-path
              jsh-dir))
          (result (shell-output gen-cmd "")))
@@ -517,6 +541,14 @@ echo OK"
   (let* ((cmd "gcc -c -O2 -o jemacs-qt-sci-stubs.o support/chez_scintilla_stubs.c -Wall 2>&1"))
     (unless (= 0 (system cmd))
       (display "Error: chez_scintilla_stubs.c compilation failed\n")
+      (exit 1))))
+
+;; chez-ssl shim (TLS FFI for jerboa-aws EC2 API calls)
+(when jemacs-static?
+  (let* ((cmd (format "gcc -c -O2 -o jemacs-qt-chez-ssl-shim.o ~a/chez_ssl_shim.c -Wall 2>&1"
+                      chez-ssl-dir)))
+    (unless (= 0 (system cmd))
+      (display "Error: chez_ssl_shim.c compilation failed\n")
       (exit 1))))
 
 ;; pty shim (needed for static builds — pty_* symbols from support/pty_shim.c)
@@ -669,18 +701,26 @@ grep -v '^$' | grep -v '^register_static_foreign_symbols$'")
                           ts-shim-obj ts-queries-obj ts-lib-dir ts-gram-dir))
          (crypto-stub (if (file-exists? "/tmp/jemacs-build/crypto_stub.o")
                        "/tmp/jemacs-build/crypto_stub.o" ""))
+         ;; jsh Rust coreutils static library (musl build, pre-compiled on host)
+         (jsh-coreutils-lib (or (getenv "JSH_COREUTILS_LIB") ""))
+         (ssl-libs (let ((pkgconf (shell-output "pkg-config --static --libs openssl 2>/dev/null" "")))
+                     (if (> (string-length pkgconf) 0)
+                       pkgconf
+                       "-L/usr/lib -lssl -lcrypto")))
          (cmd (format "g++ -static -Wl,--export-dynamic -o jemacs-qt \
 jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o jemacs-qt-jsh-ffi.o \
 jemacs-qt-libcoreutils.o jemacs-qt-jsh-coreutils-stubs.o \
 jemacs-qt-embed-crypto.o jemacs-qt-ssh-agent-stub.o ~a \
 jemacs-qt-pty-shim.o jemacs-qt-vterm-shim.o jemacs-qt-repl-shim.o jemacs-qt-jerboa-landlock.o jemacs-qt-sci-stubs.o \
+jemacs-qt-chez-ssl-shim.o \
 qt_static_symbols.o \
-~a ~a ~a ~a ~a \
+~a ~a ~a ~a ~a ~a \
 -L~a -lkernel -llz4 -lz \
+~a \
 -lvterm -lm -ldl -lpthread -luuid -lncurses -lstdc++ 2>&1"
                       crypto-stub
-                      libqt-shim qt-plugins ts-link qt-libs pcre2-libs
-                      chez-dir)))
+                      libqt-shim qt-plugins ts-link qt-libs pcre2-libs jsh-coreutils-lib
+                      chez-dir ssl-libs)))
     (printf "  ~a~n" cmd)
     (unless (= 0 (system cmd))
       (display "Error: Static link failed\n")
@@ -738,7 +778,8 @@ jemacs-qt-main.o jemacs-qt-chez-shim.o jemacs-qt-pcre2-shim.o \
           "jemacs-qt-ssh-agent-stub.o" "jemacs-qt-ssh-agent-stub.c"
           "jemacs-qt-pty-shim.o" "jemacs-qt-vterm-shim.o"
           "jemacs-qt-jerboa-landlock.o"
-          "jemacs-qt-sci-stubs.o" "qt_static_symbols.o" "qt_static_symbols.c")
+          "jemacs-qt-sci-stubs.o" "jemacs-qt-chez-ssl-shim.o"
+          "qt_static_symbols.o" "qt_static_symbols.c")
         '())))
 
 (printf "~n========================================~n")

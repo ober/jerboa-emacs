@@ -39,7 +39,7 @@
 (def (mode-name-for-buffer buf)
   (let ((lang (buffer-lexer-lang buf)))
     (case lang
-      ((scheme gerbil) "Gerbil")
+      ((scheme gerbil) "Jerboa")
       ((lisp) "Lisp")
       ((python) "Python")
       ((c) "C")

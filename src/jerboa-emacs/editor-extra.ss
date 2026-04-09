@@ -31,15 +31,49 @@
         :jerboa-emacs/editor-extra-helpers
         :jerboa-emacs/editor-extra-org
         :jerboa-emacs/editor-extra-web
-        :jerboa-emacs/editor-extra-vcs
+        (except-in :jerboa-emacs/editor-extra-vcs
+                   cmd-man cmd-markdown-preview cmd-scratch-buffer cmd-tetris)
         :jerboa-emacs/editor-extra-editing
         :jerboa-emacs/editor-extra-editing2
         :jerboa-emacs/editor-extra-tools
         :jerboa-emacs/editor-extra-tools2
         :jerboa-emacs/editor-extra-media
         :jerboa-emacs/editor-extra-media2
-        :jerboa-emacs/editor-extra-modes
-        :jerboa-emacs/editor-extra-final
+        (except-in :jerboa-emacs/editor-extra-modes
+                   cmd-auto-save-mode cmd-browse-url-at-point cmd-comment-dwim
+                   cmd-count-lines-page cmd-customize-group cmd-customize-themes
+                   cmd-customize-variable cmd-cycle-spacing cmd-delete-horizontal-space
+                   cmd-describe-char cmd-diff-mode cmd-display-line-numbers-mode
+                   cmd-dockerfile-mode cmd-eldoc-mode cmd-generate-password
+                   cmd-highlight-regexp cmd-how-many cmd-list-faces-display
+                   cmd-meow-mode cmd-next-error cmd-profiler-start cmd-restart-emacs
+                   cmd-save-buffers-kill-emacs cmd-server-edit cmd-server-start
+                   cmd-set-visited-file-name cmd-snake cmd-string-inflection-cycle
+                   cmd-switch-to-buffer-other-window cmd-titlecase-region
+                   cmd-toggle-quotes cmd-toggle-window-dedicated cmd-unhighlight-regexp
+                   cmd-view-mode cmd-visual-line-mode cmd-yaml-mode
+                   shell-quote cmd-set-variable)
+        (except-in :jerboa-emacs/editor-extra-final
+                   cmd-append-to-file cmd-browse-kill-ring cmd-clone-indirect-buffer
+                   cmd-company-mode cmd-copy-as-format cmd-count-lines-region
+                   cmd-crux-indent-defun cmd-delete-directory cmd-denote
+                   cmd-disable-theme cmd-doctor cmd-doom-modeline-mode cmd-eat
+                   cmd-enlarge-window cmd-enlarge-window-horizontally cmd-enriched-mode
+                   cmd-fido-mode cmd-fill-region cmd-focus-mode cmd-follow-mode
+                   cmd-ibuffer cmd-icomplete-mode cmd-iconify-frame cmd-ido-mode
+                   cmd-iedit-mode cmd-indent-bars-mode cmd-insert-buffer
+                   cmd-insert-lorem-ipsum cmd-kmacro-insert-counter cmd-list-packages
+                   cmd-local-set-key cmd-memory-report cmd-narrow-to-page cmd-next-error
+                   cmd-occur-edit-mode cmd-other-frame cmd-overwrite-mode
+                   cmd-package-delete cmd-package-install cmd-package-refresh-contents
+                   cmd-pop-global-mark cmd-print-buffer cmd-proced cmd-profiler-report
+                   cmd-profiler-stop cmd-recenter-other-window cmd-recover-file
+                   cmd-rename-visited-file cmd-set-goal-column cmd-show-paren-mode
+                   cmd-shrink-window cmd-shrink-window-horizontally cmd-subword-backward
+                   cmd-subword-forward cmd-subword-kill cmd-subword-mode cmd-superword-mode
+                   cmd-tetris cmd-unwrap-region cmd-windmove-down cmd-windmove-left
+                   cmd-windmove-right cmd-windmove-up cmd-winner-redo cmd-winner-undo
+                   cmd-world-clock cmd-xml-format cmd-zone)
         :jerboa-emacs/editor-extra-regs
         :jerboa-emacs/editor-extra-ai
         :jerboa-emacs/editor-extra-regs2)

@@ -1642,12 +1642,12 @@
   (register-command-doc! 'list-bindings "Display all keybindings in a *Help* buffer.")
   (register-command-doc! 'keyboard-quit "Abort the current operation.")
   ;; Shell and REPL
-  (register-command-doc! 'eshell "Open or switch to the built-in Gerbil shell (eshell).")
+  (register-command-doc! 'eshell "Open or switch to the built-in Jerboa shell (eshell).")
   (register-command-doc! 'shell "Open or switch to an external shell buffer.")
   (register-command-doc! 'gerbil-repl "Open or switch to a Chez Scheme REPL buffer.")
-  (register-command-doc! 'eval-expression "Evaluate a Gerbil expression and show the result.")
+  (register-command-doc! 'eval-expression "Evaluate a Jerboa expression and show the result.")
   (register-command-doc! 'eval-buffer "Evaluate all forms in the current buffer.")
-  (register-command-doc! 'load-file "Load and evaluate a Gerbil (.ss) file.")
+  (register-command-doc! 'load-file "Load and evaluate a Jerboa (.ss) file.")
   (register-command-doc! 'compile "Run a compilation command and display results.")
   ;; Dired
   (register-command-doc! 'dired "Open a directory editor (dired) for the given path.")

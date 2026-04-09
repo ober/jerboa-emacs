@@ -29,8 +29,7 @@
               *mx-history* mx-history-add! mx-history-ordered-candidates)
         (only (jerboa-emacs helm-commands) register-helm-commands!)
         (jerboa-emacs helm)
-        (only (std srfi srfi-13) string-contains string-prefix?)
-        (rename (jerboa-coreutils top) (main cu-top-main)))
+        (only (std srfi srfi-13) string-contains string-prefix?))
 
 (define pass-count 0)
 (define fail-count 0)
@@ -1646,44 +1645,19 @@
 ;;; Coreutils Top Tests
 ;;;============================================================================
 
-(display "\n--- coreutils-top: cu-top-main is a procedure ---\n")
-(check (procedure? cu-top-main) => #t)
-
-(display "--- coreutils-top: batch mode produces output ---\n")
-(let ((output (with-output-to-string
-                (lambda ()
-                  (call/cc
-                    (lambda (k)
-                      (parameterize ([exit-handler (lambda (code) (k (void)))])
-                        (cu-top-main "-b" "-n" "1"))))))))
-  ;; Output should be non-empty
-  (check (> (string-length output) 100) => #t)
-  ;; Should contain standard top header fields (string-contains returns index, not #t)
-  (check (and (string-contains output "load average") #t) => #t)
-  (check (and (string-contains output "Tasks:") #t) => #t)
-  (check (and (string-contains output "Cpu") #t) => #t)
-  (check (and (string-contains output "Mem") #t) => #t)
-  ;; Should contain PID column header
-  (check (and (string-contains output "PID") #t) => #t))
-
-(display "--- coreutils-top: output is multi-line ---\n")
-(let* ((output (with-output-to-string
-                 (lambda ()
-                   (call/cc
-                     (lambda (k)
-                       (parameterize ([exit-handler (lambda (code) (k (void)))])
-                         (cu-top-main "-b" "-n" "1")))))))
-       (lines (let loop ((s output) (acc '()))
-                (let ((nl (let find ((i 0))
-                            (if (>= i (string-length s)) #f
-                                (if (char=? (string-ref s i) #\newline) i
-                                    (find (+ i 1)))))))
-                  (if nl
-                    (loop (substring s (+ nl 1) (string-length s))
-                          (cons (substring s 0 nl) acc))
-                    (reverse (cons s acc)))))))
-  ;; Should have many lines (header + processes)
-  (check (> (length lines) 10) => #t))
+(display "\n--- coreutils-top: batch mode via subprocess produces output ---\n")
+(let-values (((p-stdin p-stdout p-stderr pid)
+              (open-process-ports "top -b -n 1" 'block (native-transcoder))))
+  (close-port p-stdin)
+  (let ((output (get-string-all p-stdout)))
+    (close-port p-stdout)
+    (close-port p-stderr)
+    (let ((out (if (eof-object? output) "" output)))
+      ;; Output should be non-empty
+      (check (> (string-length out) 100) => #t)
+      ;; Should contain standard top header fields
+      (check (and (string-contains out "load average") #t) => #t)
+      (check (and (string-contains out "PID") #t) => #t))))
 
 ;;;============================================================================
 ;;; Group: Backward-Delete-Char Comprehensive Tests

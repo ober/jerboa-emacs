@@ -21,7 +21,8 @@
         :jerboa-emacs/echo
         (only-in :jerboa-emacs/persist
           *copilot-mode* *copilot-api-key* *copilot-model*
-          *copilot-api-url* *copilot-suggestion* *copilot-suggestion-pos*))
+          *copilot-api-url* *copilot-suggestion* *copilot-suggestion-pos*)
+        (only-in :jerboa-emacs/helm *helm-annotate-fn*))
 
 ;;;============================================================================
 ;;; Helpers
@@ -934,7 +935,7 @@
 (def *loaded-modules* '())
 
 (def (cmd-load-module app)
-  "Load a compiled Gerbil module (.so or .ss) at runtime."
+  "Load a compiled Jerboa module (.so or .ss) at runtime."
   (let* ((echo (app-state-echo app))
          (fr (app-state-frame app))
          (row (- (frame-height fr) 1))
@@ -1006,18 +1007,67 @@
   "Register an annotator function for a completion CATEGORY."
   (hash-put! *marginalia-annotators* category annotator))
 
+;; Source name → annotator category mapping
+(def *marginalia-source-categories* (make-hash-table))
+(hash-put! *marginalia-source-categories* "Commands" 'command)
+(hash-put! *marginalia-source-categories* "Buffers" 'buffer)
+(hash-put! *marginalia-source-categories* "Recent Files" 'file)
+
 (marginalia-annotate! 'command
-  (lambda (name)
-    (let ((cmd (find-command (string->symbol name))))
-      (if cmd " [command]" ""))))
+  (lambda (display-str)
+    ;; Extract command name (strip keybinding suffix if present)
+    (let* ((space-pos (string-contains display-str "  ("))
+           (name (if space-pos (substring display-str 0 space-pos) display-str))
+           (doc (command-doc (string->symbol name))))
+      (if (and doc (> (string-length doc) 0))
+        (string-append "  " (if (> (string-length doc) 50)
+                               (string-append (substring doc 0 47) "...")
+                               doc))
+        ""))))
 
 (marginalia-annotate! 'buffer
-  (lambda (name)
-    (let ((buf (buffer-by-name name)))
+  (lambda (display-str)
+    ;; Extract buffer name (before modifiers)
+    (let* ((space-pos (string-contains display-str " "))
+           (name (if space-pos (substring display-str 0 space-pos) display-str))
+           (buf (buffer-by-name name)))
       (if buf
-        (let ((file (buffer-file-path buf)))
-          (if file (string-append " " file) " [no file]"))
+        (let ((fp (buffer-file-path buf)))
+          (if fp (string-append "  " fp) ""))
         ""))))
+
+(marginalia-annotate! 'file
+  (lambda (display-str)
+    ;; Show file extension as type hint
+    (let* ((dot-pos (let loop ((i (- (string-length display-str) 1)))
+                      (cond ((< i 0) #f)
+                            ((char=? (string-ref display-str i) #\.) i)
+                            ((char=? (string-ref display-str i) #\/) #f)
+                            (else (loop (- i 1))))))
+           (ext (if dot-pos
+                  (substring display-str (+ dot-pos 1) (string-length display-str))
+                  #f)))
+      (if ext (string-append "  [" ext "]") ""))))
+
+(def (marginalia-helm-annotator source-name display-str)
+  "Helm annotation hook: look up category for source, apply annotator."
+  (let ((category (hash-get *marginalia-source-categories* source-name)))
+    (if category
+      (let ((annotator (hash-get *marginalia-annotators* category)))
+        (if annotator
+          (with-exception-catcher
+            (lambda (e) "")
+            (lambda () (annotator display-str)))
+          ""))
+      "")))
+
+(def (marginalia-enable!)
+  "Enable marginalia annotations in helm."
+  (set! *helm-annotate-fn* marginalia-helm-annotator))
+
+(def (marginalia-disable!)
+  "Disable marginalia annotations in helm."
+  (set! *helm-annotate-fn* #f))
 
 ;;;============================================================================
 ;;; Embark action registry (used by cmd-embark-act in editor-extra-modes.ss)

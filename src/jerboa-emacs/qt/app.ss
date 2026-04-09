@@ -84,7 +84,7 @@
         :jerboa-emacs/qt/menubar
         :jerboa-emacs/ipc
         :jerboa-emacs/vtscreen
-        (only-in :jerboa-emacs/editor-extra-web *aggressive-indent-mode*)
+        (only-in :jerboa-emacs/editor-core *aggressive-indent-mode*)
         (only-in :jerboa-emacs/debug-repl start-debug-repl! stop-debug-repl! debug-repl-bind!)
         :jerboa-emacs/qt/automation)
 
@@ -102,6 +102,11 @@
 
 ;; Maximum number of characters to keep in pre-pty scrollback text
 (def *vterm-scrollback-limit* 100000)
+
+;; Re-entrancy guard: prevent nested PTY polling when qt-app-process-events!
+;; triggers the periodic timer inside qt-poll-terminal-pty-batch!.
+;; Without this, terminal A's output can bleed into terminal B's editor.
+(def *pty-poll-in-progress?* #f)
 
 ;; Per-terminal-state: timestamp (seconds) of last render
 (def *vterm-last-render-time* (make-hash-table-eq))
@@ -251,53 +256,60 @@
 
 ;; Extended styles for 256-color/RGB: we allocate Scintilla styles on demand
 ;; Style 64-79 = standard 16 ANSI colors (already set up in terminal.ss)
-;; Style 80-127 = dynamically allocated for additional fg colors
+;; Style 80-249 = dynamically allocated for (fg, bg) color pairs (170 slots)
 (def *vterm-next-style* 80)
-(def *vterm-color-to-style* (make-hash-table))  ;; packed-rgb -> style-id
-(def *vterm-max-styles* 128)  ;; Scintilla supports styles 0-255
+(def *vterm-color-to-style* (make-hash-table))  ;; (fg . bg) -> style-id
+(def *vterm-max-styles* 250)  ;; Scintilla supports styles 0-255; keep 250-255 as reserve
+(def *term-default-bg* #x181818)  ;; terminal background color
+(def *term-default-fg* #xc5c8c6)  ;; terminal default foreground (for reverse-video substitution)
 
-(def (vterm-get-or-alloc-style! ed packed-rgb)
-  "Get or allocate a Scintilla style for a packed 0x00RRGGBB color.
-   Returns style index, or 0 if we've run out of style slots."
-  (or (hash-ref *vterm-color-to-style* packed-rgb #f)
-      (if (>= *vterm-next-style* *vterm-max-styles*)
-        0  ;; out of style slots, use default
-        (let ((style *vterm-next-style*))
-          (set! *vterm-next-style* (+ style 1))
-          ;; Configure this style
-          (sci-send ed SCI_STYLESETFORE style packed-rgb)
-          (sci-send ed SCI_STYLESETBACK style #x181818)
-          (hash-put! *vterm-color-to-style* packed-rgb style)
-          style))))
+(def (vterm-get-or-alloc-style! ed fg bg)
+  "Get or allocate a Scintilla style for a (fg, bg) color pair.
+   fg and bg are packed 0x00RRGGBB or -1 for default.
+   Returns style index, or 0 if out of style slots."
+  (let ((key (cons fg bg)))
+    (or (hash-ref *vterm-color-to-style* key #f)
+        (if (>= *vterm-next-style* *vterm-max-styles*)
+          0  ;; out of style slots, use default
+          (let ((style *vterm-next-style*))
+            (set! *vterm-next-style* (+ style 1))
+            (when (not (= fg -1))
+              (sci-send ed SCI_STYLESETFORE style fg))
+            (sci-send ed SCI_STYLESETBACK style
+                      (if (= bg -1) *term-default-bg* bg))
+            (hash-put! *vterm-color-to-style* key style)
+            style)))))
 
 (def (vterm-apply-row-colors! ed vt row doc-line)
-  "Apply per-cell foreground colors to a row using Scintilla styling.
-   Handles bold attribute by shifting color index +8 for indexed colors."
+  "Apply per-cell fg/bg colors and reverse-video to a row using Scintilla styling."
   (let* ((cols (vtscreen-cols vt))
          (line-start (sci-send ed SCI_POSITIONFROMLINE doc-line))
          (line-end   (sci-send ed SCI_GETLINEENDPOSITION doc-line))
          (line-len   (if (>= line-start 0) (min (- line-end line-start) cols) 0)))
     (when (> line-len 0)
-      ;; Walk the row and apply styles in runs of same color
+      ;; Walk the row and apply styles in runs of same (fg, bg)
       (let loop ((c 0) (run-start 0) (run-style #f))
         (if (>= c line-len)
           ;; Flush final run
           (when (and run-style (> c run-start))
             (sci-send ed SCI_STARTSTYLING (+ line-start run-start) 0)
             (sci-send ed SCI_SETSTYLING (- c run-start) run-style))
-          (let* ((fg (vtscreen-cell-fg vt row c))
+          (let* ((fg    (vtscreen-cell-fg vt row c))
+                 (bg    (vtscreen-cell-bg vt row c))
                  (attrs (vtscreen-cell-attrs vt row c))
-                 (bold? (not (= 0 (bitwise-and attrs 1))))
+                 (bold?    (not (= 0 (bitwise-and attrs 1))))
+                 (reverse? (not (= 0 (bitwise-and attrs 16))))
+                 ;; Reverse video: swap fg/bg, substituting defaults with concrete colors
+                 (eff-fg (if reverse? (if (= bg -1) *term-default-bg* bg) fg))
+                 (eff-bg (if reverse? (if (= fg -1) *term-default-fg* fg) bg))
                  (style
                   (cond
-                    ;; Default fg — use style 0 (no special color)
-                    ((= fg -1)
-                     (if bold?
-                       (+ *term-style-base* 15)  ;; bright white for bold default
-                       0))
-                    ;; Standard 16 ANSI color (check if it's a known palette color)
+                    ;; Both default — use style 0 or bold variant
+                    ((and (= eff-fg -1) (= eff-bg -1))
+                     (if bold? (+ *term-style-base* 15) 0))
+                    ;; At least one explicit color
                     (else
-                     (vterm-get-or-alloc-style! ed fg)))))
+                     (vterm-get-or-alloc-style! ed eff-fg eff-bg)))))
             ;; If style changed, flush previous run
             (if (eqv? style run-style)
               (loop (+ c 1) run-start run-style)
@@ -810,7 +822,8 @@
       ;; When showing an image, install key handler on the scroll area and
       ;; set focus there — the Scintilla editor is hidden by QStackedWidget
       ;; so it can't receive key events.
-      (let ((image-key-installed (make-hash-table-eq)))
+      (let ((image-key-installed (make-hash-table-eq))
+            (terminal-key-installed (make-hash-table-eq)))
         (add-hook! 'post-buffer-attach-hook
           (lambda (editor buf)
             (with-catch
@@ -818,17 +831,39 @@
                 (verbose-log! "post-buffer-attach-hook ERROR: "
                   (with-output-to-string (lambda () (display-exception e)))))
               (lambda ()
-                (if (image-buffer? buf)
-                  (begin
-                    (qt-show-image-buffer! editor buf)
-                    (let ((win (hash-get *editor-window-map* editor)))
-                      (when (and win (qt-edit-window-image-scroll win))
-                        (let ((scroll (qt-edit-window-image-scroll win)))
-                          (unless (hash-get image-key-installed scroll)
-                            ((app-state-key-handler app) scroll)
-                            (hash-put! image-key-installed scroll #t))
-                          (qt-widget-set-focus! scroll)))))
-                  (begin
+                (cond
+                  ;; QTerminalWidget buffers: switch stacked to terminal view
+                  ((hash-get *terminal-widget-map* buf)
+                   => (lambda (term)
+                        (let ((win (hash-get *editor-window-map* editor)))
+                          (when win
+                            (let* ((container (qt-edit-window-container win))
+                                   (count (qt-stacked-widget-count container))
+                                   (tw (qt-terminal-widget term)))
+                              ;; Always install consuming key filter (idempotent via guard)
+                              (unless (hash-get terminal-key-installed tw)
+                                ((app-state-key-handler app) tw)
+                                (hash-put! terminal-key-installed tw #t))
+                              (if (> count 1)
+                                ;; Terminal widget lives in THIS container — show and focus it
+                                (begin
+                                  (qt-stacked-widget-set-current-widget! container tw)
+                                  (qt-widget-set-focus! tw))
+                                ;; Terminal widget is in another window (e.g. after C-x 2).
+                                ;; Just show the editor in this window — don't steal focus.
+                                (qt-widget-set-focus! editor)))))))
+                  ;; Image buffers
+                  ((image-buffer? buf)
+                   (qt-show-image-buffer! editor buf)
+                   (let ((win (hash-get *editor-window-map* editor)))
+                     (when (and win (qt-edit-window-image-scroll win))
+                       (let ((scroll (qt-edit-window-image-scroll win)))
+                         (unless (hash-get image-key-installed scroll)
+                           ((app-state-key-handler app) scroll)
+                           (hash-put! image-key-installed scroll #t))
+                         (qt-widget-set-focus! scroll)))))
+                  ;; Normal text buffers
+                  (else
                     (qt-hide-image-buffer! editor)
                     ;; Re-apply syntax highlighting to this editor widget.
                     ;; QScintilla lexers are per-widget, so splits need re-setup.
@@ -864,7 +899,7 @@
                         ";;   C-x 2     Split window      C-x o     Other window\n"
                         ";;   C-h f     Describe command   C-h k     Describe key\n"
                         ";;\n"
-                        ";; This buffer is for Gerbil Scheme evaluation.\n"
+                        ";; This buffer is for Jerboa Scheme evaluation.\n"
                         ";; Type expressions and use M-x eval-buffer to evaluate.\n\n"))))
         (qt-plain-text-edit-set-text! ed text)
         (qt-text-document-set-modified! (buffer-doc-pointer
@@ -918,6 +953,8 @@
                   (qreplace-handle-key! app code mods text)
                   (qt-modeline-update! app)
                   (qt-echo-draw! (app-state-echo app) echo-label))
+                 (*snake-active*
+                  (snake-handle-key! app code mods text))
                  (else
                 ;; Normal key processing — with chord detection
                 (letrec
@@ -1222,7 +1259,36 @@
                        (qt-tabbar-update! app)
                        (qt-update-frame-title! app)
                        (qt-echo-draw! (app-state-echo app) echo-label)))))))))  ;; extra parens close begin + repeat-map if + prefix-autorepeat if/let + pty-intercept if
-                  ;; Chord detection logic
+                  ;; QTerminalWidget key forwarding: send non-command keys directly
+                  ;; to the terminal widget, bypassing chord detection and self-insert.
+                  ;; C-x prefix and M-x pass through to jemacs keymap.
+                  ;;
+                  ;; FOCUS GUARD: only forward to the terminal if the key event came
+                  ;; FROM the QTerminalWidget itself. If the user clicked a different
+                  ;; window (so the key came from that window's QScintilla), we must
+                  ;; NOT forward to the terminal even if qt-current-buffer is still
+                  ;; a terminal buffer (Chez state may lag the Qt focus change).
+                  (let* ((qt-buf (qt-current-buffer (app-state-frame app)))
+                         (qt-term (and qt-buf (hash-get *terminal-widget-map* qt-buf)))
+                         (key-src-widget (qt-last-key-widget))
+                         (key-from-terminal? (and qt-term
+                                                   (equal? key-src-widget
+                                                           (qt-terminal-widget qt-term)))))
+                    (if (and qt-term
+                             key-from-terminal?  ;; key must come FROM this terminal widget
+                             ;; Not in a prefix key state (e.g. after C-x)
+                             (null? (key-state-prefix-keys (app-state-key-state app)))
+                             ;; Allow C-x to pass through to jemacs
+                             (not (and (not (zero? (bitwise-and mods QT_MOD_CTRL)))
+                                       (zero? (bitwise-and mods QT_MOD_ALT))
+                                       (= code (+ QT_KEY_A 23))))  ;; C-x
+                             ;; Allow M-x to pass through to jemacs
+                             (not (and (not (zero? (bitwise-and mods QT_MOD_ALT)))
+                                       (zero? (bitwise-and mods QT_MOD_CTRL))
+                                       (= code (+ QT_KEY_A 23))))) ;; M-x
+                      ;; Forward to terminal widget
+                      (qt-terminal-send-key-event! qt-term code mods (or text ""))
+                  ;; Normal: chord detection logic
                   (let ((is-printable (and (= (string-length text) 1)
                                            (> (char->integer (string-ref text 0)) 31)))
                         (no-ctrl (zero? (bitwise-and mods QT_MOD_CTRL)))
@@ -1322,7 +1388,7 @@
 
                     ;; Case 3: Normal key — no chord involvement
                     (else
-                     (do-normal-key! code mods text))))))))))))  ; extra paren closes let + minibuffer-active? when
+                     (do-normal-key! code mods text))))))))))))))  ; extra parens close let + if + let* (terminal) + minibuffer-active? when
 
         ;; Install on the initial editor (consuming — editor doesn't see keys)
         (qt-on-key-press-consuming! (qt-current-editor fr) key-handler)
@@ -1330,7 +1396,43 @@
         ;; Store installer so split-window can install on new editors
         (set! (app-state-key-handler app)
               (lambda (editor)
-                (qt-on-key-press-consuming! editor key-handler))))
+                (qt-on-key-press-consuming! editor key-handler)))
+
+        ;; Tell automation which widget to target for key events.
+        ;; When a terminal buffer is active, the QTerminalWidget is the visible
+        ;; focused widget; the QScintilla editor is hidden behind it in the
+        ;; QStackedWidget. Sending sendEvent to a non-current QStackedWidget
+        ;; page is unreliable — use the visible QTerminalWidget instead.
+        (automation-set-key-target-fn!
+          (lambda (fr)
+            (let* ((buf (qt-current-buffer fr))
+                   (term (and buf (hash-get *terminal-widget-map* buf))))
+              (if term
+                (qt-terminal-widget term)
+                (qt-current-editor fr)))))
+
+        ;; Install pre-container-destroy hook so that when any window container
+        ;; (QStackedWidget) is about to be destroyed (by delete-other-windows,
+        ;; C-x 0, kill-terminal-buffer, etc.), any terminal living inside it
+        ;; is detached and destroyed first — preventing the double-free crash
+        ;; that occurs when Qt auto-deletes the terminal as a child.
+        (qt-window-set-pre-container-destroy-fn!
+          (lambda (container)
+            (let ((bufs-to-remove '()))
+              (hash-for-each
+                (lambda (buf stored-container)
+                  (when (equal? stored-container container)
+                    (let ((term (hash-get *terminal-widget-map* buf)))
+                      (when term
+                        (with-catch (lambda (e) #f)
+                          (lambda () (qt-terminal-destroy! term)))))
+                    (set! bufs-to-remove (cons buf bufs-to-remove))))
+                *terminal-container-map*)
+              (for-each
+                (lambda (buf)
+                  (hash-remove! *terminal-widget-map* buf)
+                  (hash-remove! *terminal-container-map* buf))
+                bufs-to-remove)))))
 
       ;; ================================================================
       ;; Periodic tasks — registered with schedule-periodic!, driven
@@ -1363,10 +1465,43 @@
                               (loop (cdr wins)))))))))))
             (buffer-list))
           ;; Poll Shell/Terminal PTY output
+          ;; Guard against re-entrancy: qt-app-process-events! inside
+          ;; qt-poll-terminal-pty-batch! can fire this timer again, causing
+          ;; terminal output to bleed across buffers.
+          (unless *pty-poll-in-progress?*
+          (dynamic-wind
+            (lambda () (set! *pty-poll-in-progress?* #t))
+            (lambda ()
           (for-each
             (lambda (buf)
               (when (shell-buffer? buf)
                 (let ((ss (hash-get *shell-state* buf)))
+                  ;; Resize shell PTY + vtscreen when editor dimensions change
+                  (when (and ss (shell-pty-busy? ss))
+                    (let ((vt (shell-state-vtscreen ss)))
+                      (when vt
+                        (let ed-loop ((wins (qt-frame-windows fr)))
+                          (when (pair? wins)
+                            (if (eq? (qt-edit-window-buffer (car wins)) buf)
+                              (let* ((ed (qt-edit-window-editor (car wins)))
+                                     (new-rows (max 2 (sci-send ed 2370 0)))
+                                     (widget-w (qt-widget-width ed))
+                                     (margin-w (sci-send ed SCI_GETMARGINWIDTHN 0))
+                                     (text-w (- widget-w margin-w 16))
+                                     (char-w (let ((w (sci-send/string ed 2276 "M" STYLE_DEFAULT)))
+                                               (if (> w 0) w 8)))
+                                     (new-cols (max 20 (quotient text-w char-w)))
+                                     (old-rows (vtscreen-rows vt))
+                                     (old-cols (vtscreen-cols vt)))
+                                (when (or (not (= new-rows old-rows))
+                                          (not (= new-cols old-cols)))
+                                  (verbose-log! "SHELL-PTY-RESIZE: "
+                                    (number->string old-rows) "x" (number->string old-cols)
+                                    " -> "
+                                    (number->string new-rows) "x" (number->string new-cols))
+                                  (vtscreen-resize! vt new-rows new-cols)
+                                  (shell-pty-resize! ss new-rows new-cols)))
+                              (ed-loop (cdr wins))))))))
                   (when (and ss (shell-pty-busy? ss))
                     (let drain ()
                       (let ((msg (shell-poll-output ss)))
@@ -1376,8 +1511,10 @@
                             (drain))))))))
               (when (terminal-buffer? buf)
                 (let ((ts (hash-get *terminal-state* buf)))
-                  ;; Resize PTY + vtscreen when editor dimensions change
-                  (when (and ts (terminal-pty-busy? ts))
+                  ;; Resize PTY + vtscreen when editor dimensions change.
+                  ;; Must run even when PTY is idle so splits/resizes take
+                  ;; effect before the next command is typed.
+                  (when ts
                     (let ((vt (terminal-state-vtscreen ts)))
                       (when vt
                         ;; Find editor widget for this buffer
@@ -1387,10 +1524,11 @@
                               (let* ((ed (qt-edit-window-editor (car wins)))
                                      (new-rows (max 2 (sci-send ed 2370 0)))
                                      (widget-w (qt-widget-width ed))
-                                     ;; Measure actual character width using Scintilla
-                                     ;; SCI_TEXTWIDTH(style, text) = 2275
-                                     (char-w (max 1 (sci-send/string ed 2275 "0" 0)))
-                                     (new-cols (max 20 (quotient widget-w char-w)))
+                                     (margin-w (sci-send ed SCI_GETMARGINWIDTHN 0))
+                                     (text-w (- widget-w margin-w 16))
+                                     (char-w (let ((w (sci-send/string ed 2276 "M" STYLE_DEFAULT)))
+                                               (if (> w 0) w 8)))
+                                     (new-cols (max 20 (quotient text-w char-w)))
                                      (old-rows (vtscreen-rows vt))
                                      (old-cols (vtscreen-cols vt)))
                                 (when (or (not (= new-rows old-rows))
@@ -1400,7 +1538,8 @@
                                     " -> "
                                     (number->string new-rows) "x" (number->string new-cols))
                                   (vtscreen-resize! vt new-rows new-cols)
-                                  (terminal-resize! ts new-rows new-cols)
+                                  (when (terminal-pty-busy? ts)
+                                    (terminal-resize! ts new-rows new-cols))
                                   ;; Invalidate row cache after resize
                                   (hash-remove! *vterm-row-cache* ts)
                                   ;; Force full re-render on next cycle
@@ -1443,7 +1582,8 @@
                                  (verbose-log! "PTY-BATCH+DONE: " (number->string (string-length combined)) " bytes")
                                  (qt-poll-terminal-pty-batch! fr buf ts combined)))
                              (qt-poll-terminal-pty-msg! fr buf ts msg))))))))))
-            (buffer-list))
+            (buffer-list)))
+            (lambda () (set! *pty-poll-in-progress?* #f))))  ;; end re-entrancy guard
           ;; Poll chat buffers (Claude CLI)
           (for-each
             (lambda (buf)
@@ -1800,7 +1940,82 @@
                         (lambda (state)
                           (let ((mb (cdr (assq 'minibuffer state))))
                             mb))
-                        ms)))))))
+                        ms)))
+              ;; ---- Test-infrastructure helpers (test-behavioral.ss) ----
+              ;; Number of open windows
+              (cons 'test-window-count
+                    (lambda ()
+                      (length (qt-frame-windows (app-state-frame app)))))
+              ;; Buffer name for each open window, in order
+              (cons 'test-window-buffers
+                    (lambda ()
+                      (map (lambda (win)
+                             (let ((buf (qt-edit-window-buffer win)))
+                               (if buf (buffer-name buf) "#<none>")))
+                           (qt-frame-windows (app-state-frame app)))))
+              ;; Editor text for each open window, in order (empty string for terminals)
+              (cons 'test-window-texts
+                    (lambda ()
+                      (map (lambda (win)
+                             (let ((ed (qt-edit-window-editor win)))
+                               (if ed (qt-plain-text-edit-text ed) "")))
+                           (qt-frame-windows (app-state-frame app)))))
+              ;; Is a C-x / prefix key currently pending?
+              (cons 'test-prefix-active?
+                    (lambda ()
+                      (not (null? (key-state-prefix-keys (app-state-key-state app))))))
+              ;; Is the current buffer a QTerminalWidget terminal?
+              (cons 'test-terminal-running?
+                    ;; True only if the current window's QStackedWidget is actually
+                    ;; showing the QTerminalWidget page (not just the buffer being a
+                    ;; terminal buffer — after C-x 2, new window shows editor page).
+                    (lambda ()
+                      (let* ((fr  (app-state-frame app))
+                             (win (qt-current-window fr))
+                             (buf (qt-edit-window-buffer win))
+                             (term (and buf (hash-get *terminal-widget-map* buf))))
+                        (and term
+                             (let* ((container (qt-edit-window-container win))
+                                    (count (qt-stacked-widget-count container)))
+                               ;; Terminal widget was added as the last page (index count-1).
+                               ;; If count > 1 and current index > 0, terminal is visible.
+                               (and (> count 1)
+                                    (> (qt-stacked-widget-current-index container) 0)))))))
+              ;; Reset editor to a clean single-window state between tests.
+              ;; Clears key prefix state, collapses to one window, destroys terminals.
+              (cons 'test-reset!
+                    (lambda ()
+                      ;; Clear any pending prefix key (e.g. C-x)
+                      (set! (app-state-key-state app) (make-initial-key-state))
+                      ;; Destroy terminals BEFORE delete-other-windows: qt-terminal-destroy!
+                      ;; detaches the widget from its parent QStackedWidget, preventing the
+                      ;; double-free that occurs when delete-other-windows destroys the
+                      ;; container and Qt auto-deletes its children.
+                      (let ((term-bufs (hash-keys *terminal-widget-map*)))
+                        (for-each
+                          (lambda (buf)
+                            (let ((term (hash-get *terminal-widget-map* buf)))
+                              (when term
+                                (with-catch (lambda (e) #f)
+                                  (lambda () (qt-terminal-destroy! term)))
+                                (hash-remove! *terminal-widget-map* buf)
+                                (hash-remove! *terminal-container-map* buf))))
+                          term-bufs))
+                      ;; Collapse to single window (safe now: terminals detached from containers)
+                      (when (> (length (qt-frame-windows (app-state-frame app))) 1)
+                        (execute-command! app 'delete-other-windows))
+                      'ok))
+              ;; Set current editor text directly (bypasses undo — for test isolation)
+              (cons 'test-clear-buffer!
+                    (lambda ()
+                      (let* ((fr (app-state-frame app))
+                             (ed (qt-current-editor fr)))
+                        (when ed (qt-plain-text-edit-set-text! ed ""))
+                        'ok)))
+              ;; Current window index (0-based, matches test-window-buffers/texts order)
+              (cons 'test-window-idx
+                    (lambda ()
+                      (qt-frame-current-idx (app-state-frame app))))))))
       ;; Tree-sitter debounced re-highlight — re-parse when buffer content changes.
       ;; Tracks last-known text length per buffer to detect modifications.
       (schedule-periodic! 'treesitter-reparse 150

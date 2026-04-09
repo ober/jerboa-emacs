@@ -429,7 +429,7 @@
              (compilation-run-command! app cmd))))
   (define *compile-on-save*--cell (vector #f))
   (def (compile-on-save-check! app path)
-       "If compile-on-save is enabled and PATH is a .ss file in a Gerbil project,\n   run gerbil build in the background."
+       "If compile-on-save is enabled and PATH is a .ss file in a Jerboa project,\n   run gerbil build in the background."
        (when (and *compile-on-save*
                   path
                   (string-suffix? ".ss" path))
@@ -642,7 +642,7 @@
             (reverse errors))]
          [else (flycheck-parse-gcc-format output file)]))
   (def (flycheck-check! app path)
-       "Run linter async on a source file, parse errors. Updates *flycheck-errors*.\nSupports Gerbil (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
+       "Run linter async on a source file, parse errors. Updates *flycheck-errors*.\nSupports Jerboa (.ss), Python, JS/TS, Go, Shell, C/C++, Ruby."
        (when (and *flycheck-mode* path)
          (cond
            [(string-suffix? ".ss" path)
@@ -748,7 +748,7 @@
            lines)
          (reverse errors)))
   (def (cmd-flycheck-mode app)
-       "Toggle flycheck (live syntax checking on save) for Gerbil files."
+       "Toggle flycheck (live syntax checking on save) for Jerboa files."
        (set! *flycheck-mode* (not *flycheck-mode*))
        (when (not *flycheck-mode*)
          (let ([ed (current-qt-editor app)])
@@ -823,7 +823,7 @@
              (qt-text-document-set-modified! (buffer-doc-pointer buf) #f)
              (qt-plain-text-edit-set-cursor-position! ed 0))))
   (def (cmd-toggle-compile-on-save app)
-       "Toggle automatic compilation when saving Gerbil files."
+       "Toggle automatic compilation when saving Jerboa files."
        (set! *compile-on-save* (not *compile-on-save*))
        (echo-message!
          (app-state-echo app)
@@ -1042,7 +1042,7 @@
            (current-qt-editor app)
            date-str)))
   (def (cmd-eval-buffer app)
-       "Evaluate all top-level forms in the current buffer.\n   Full Gerbil syntax supported (def, defstruct, hash, match, etc.)."
+       "Evaluate all top-level forms in the current buffer.\n   Full Jerboa syntax supported (def, defstruct, hash, match, etc.)."
        (let* ([echo (app-state-echo app)]
               [ed (current-qt-editor app)]
               [buf (current-qt-buffer app)]

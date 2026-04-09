@@ -76,71 +76,80 @@
             (string-append dir "/treesitter_shim." shlib-ext)))))))
 
 ;;;============================================================================
-;;; FFI bindings
+;;; FFI bindings — only evaluated when shim is available
+;;;
+;;; IMPORTANT: In Chez Scheme, (foreign-procedure ...) resolves the symbol at
+;;; DEFINITION time (when the form is evaluated), not at call time.  We must
+;;; therefore guard every binding with (if ts-shim-loaded ...) so that the
+;;; foreign-procedure forms are only evaluated after the .so is confirmed loaded.
+;;; Without this guard, loading the module crashes with
+;;; "no entry for ts_shim_parser_new" whenever treesitter_shim.so is absent.
 ;;;============================================================================
 
 ;; Parser lifecycle
 (define ffi-ts-parser-new
-  (foreign-procedure "ts_shim_parser_new" () void*))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_parser_new" () void*) #f))
 (define ffi-ts-parser-delete
-  (foreign-procedure "ts_shim_parser_delete" (void*) void))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_parser_delete" (void*) void) #f))
 (define ffi-ts-parser-set-language
-  (foreign-procedure "ts_shim_parser_set_language" (void* string) int))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_parser_set_language" (void* string) int) #f))
 
 ;; Parsing
 (define ffi-ts-parse-string
-  (foreign-procedure "ts_shim_parse_string" (void* void* string int) void*))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_parse_string" (void* void* string int) void*) #f))
 (define ffi-ts-parse-incremental
-  (foreign-procedure "ts_shim_parse_incremental"
-    (void* void* string int int int int int int int int int int) void*))
+  (if ts-shim-loaded
+    (foreign-procedure "ts_shim_parse_incremental"
+      (void* void* string int int int int int int int int int int) void*)
+    #f))
 (define ffi-ts-tree-delete
-  (foreign-procedure "ts_shim_tree_delete" (void*) void))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_tree_delete" (void*) void) #f))
 
 ;; Node slots
 (define ffi-ts-tree-root-node
-  (foreign-procedure "ts_shim_tree_root_node" (void* int) void))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_tree_root_node" (void* int) void) #f))
 (define ffi-ts-node-start-byte
-  (foreign-procedure "ts_shim_node_start_byte" (int) int))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_node_start_byte" (int) int) #f))
 (define ffi-ts-node-end-byte
-  (foreign-procedure "ts_shim_node_end_byte" (int) int))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_node_end_byte" (int) int) #f))
 (define ffi-ts-node-type
-  (foreign-procedure "ts_shim_node_type" (int) string))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_node_type" (int) string) #f))
 (define ffi-ts-node-is-null
-  (foreign-procedure "ts_shim_node_is_null" (int) int))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_node_is_null" (int) int) #f))
 
 ;; Query
 (define ffi-ts-query-new
-  (foreign-procedure "ts_shim_query_new" (string string int u8* u8*) void*))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_query_new" (string string int u8* u8*) void*) #f))
 (define ffi-ts-query-delete
-  (foreign-procedure "ts_shim_query_delete" (void*) void))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_query_delete" (void*) void) #f))
 
 ;; Query cursor
 (define ffi-ts-query-cursor-new
-  (foreign-procedure "ts_shim_query_cursor_new" () void*))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_query_cursor_new" () void*) #f))
 (define ffi-ts-query-cursor-delete
-  (foreign-procedure "ts_shim_query_cursor_delete" (void*) void))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_query_cursor_delete" (void*) void) #f))
 (define ffi-ts-query-cursor-exec
-  (foreign-procedure "ts_shim_query_cursor_exec" (void* void* int) void))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_query_cursor_exec" (void* void* int) void) #f))
 (define ffi-ts-query-cursor-set-byte-range
-  (foreign-procedure "ts_shim_query_cursor_set_byte_range" (void* int int) void))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_query_cursor_set_byte_range" (void* int int) void) #f))
 
 ;; Batch highlight captures
 (define ffi-ts-highlight-captures
-  (foreign-procedure "ts_shim_highlight_captures" (void* void* u8* int) int))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_highlight_captures" (void* void* u8* int) int) #f))
 
 ;; Capture name lookup
 (define ffi-ts-query-capture-name
-  (foreign-procedure "ts_shim_query_capture_name" (void* int) string))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_query_capture_name" (void* int) string) #f))
 
 ;; Changed ranges
 (define ffi-ts-tree-changed-ranges
-  (foreign-procedure "ts_shim_tree_changed_ranges" (void* void* u8* int) int))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_tree_changed_ranges" (void* void* u8* int) int) #f))
 
 ;; Embedded queries
 (define ffi-ts-get-highlight-query
-  (foreign-procedure "ts_shim_get_highlight_query" (string) string))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_get_highlight_query" (string) string) #f))
 (define ffi-ts-get-highlight-query-len
-  (foreign-procedure "ts_shim_get_highlight_query_len" (string) int))
+  (if ts-shim-loaded (foreign-procedure "ts_shim_get_highlight_query_len" (string) int) #f))
 
 ;;;============================================================================
 ;;; High-level Scheme API
@@ -148,11 +157,13 @@
 
 (def (ts-parser-create lang-name)
   "Create a parser configured for the given language.
-   Returns parser pointer or #f."
-  (let ((p (ffi-ts-parser-new)))
-    (if (= 1 (ffi-ts-parser-set-language p lang-name))
-      p
-      (begin (ffi-ts-parser-delete p) #f))))
+   Returns parser pointer or #f (also #f if tree-sitter shim not available)."
+  (if (not ts-shim-loaded)
+    #f
+    (let ((p (ffi-ts-parser-new)))
+      (if (= 1 (ffi-ts-parser-set-language p lang-name))
+        p
+        (begin (ffi-ts-parser-delete p) #f)))))
 
 (def (ts-parser-delete! parser)
   (when parser (ffi-ts-parser-delete parser)))

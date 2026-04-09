@@ -1441,7 +1441,7 @@
   "Show the jemacs tutorial (C-h t)."
   (let ((text (string-append
     "=== Jemacs Tutorial ===\n\n"
-    "Welcome to Jemacs, a Gerbil Scheme Emacs replacement.\n\n"
+    "Welcome to Jemacs, a Jerboa Scheme Emacs replacement.\n\n"
     "== Basic Movement ==\n"
     "  C-f / C-b    Forward / backward character\n"
     "  M-f / M-b    Forward / backward word\n"
@@ -1491,7 +1491,7 @@
     "  M-x magit-status   Git integration\n"
     "  M-x treemacs       File tree\n"
     "  M-x shell          Shell\n"
-    "  M-x eshell         Gerbil shell\n"
+    "  M-x eshell         Jerboa shell\n"
     "  M-x term           Terminal\n")))
     (open-output-buffer app "*Tutorial*" text)))
 

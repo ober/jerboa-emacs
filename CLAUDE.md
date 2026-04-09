@@ -37,7 +37,7 @@ Common pitfalls when step 3 fails:
 - **`library (std ...) not found`**: The Docker image has a stale jerboa `std/` tree. New modules must be added to the sync list in the `linux-static-qt-docker` Makefile target AND compiled into the WPO step in `build-binary-qt.ss`.
 - **`Dynamic loading not supported`**: Any `load-shared-object` call must be guarded with the `JEMACS_STATIC` env var check (the binary sets `JEMACS_STATIC=1`).
 - **`final:` or other unsupported keywords**: jerbuild doesn't support all Gerbil `defstruct` keywords — remove them.
-- **Dependencies not in gerbil-qt**: This project uses `~/mine/chez-qt`, NOT `~/mine/gerbil-qt`. The `CHEZ_QT_SHIM_DIR` must point to `.` (local project root) for runtime, and `vendor/` for the build header.
+- **Dependencies not in gerbil-qt**: This project uses `vendor/chez-qt` (vendored from `github.com/ober/chez-qt`), NOT `~/mine/gerbil-qt`. The `CHEZ_QT_SHIM_DIR` must point to `.` (local project root) for runtime, and `vendor/` for the build header.
 
 Do NOT rely on `make run-qt` (interpreted mode) as proof the binary works — the static binary has different constraints (no `load-shared-object`, all libraries must be compiled in).
 
@@ -57,6 +57,61 @@ make test-tier5            # Full editor commands
 After modifying `.ss` files, always rebuild before testing:
 ```bash
 make build && make test-functional
+```
+
+## Stress Testing & Crash Reporting
+
+The editor has automated stress testing infrastructure for finding segfaults. See `docs/stress-test.md` for the full design.
+
+### Crash Reporter
+
+`vendor/qt_shim.cpp` includes a SIGSEGV/SIGBUS/SIGABRT crash reporter that:
+- Records the last 64 FFI calls in a lock-free ring buffer
+- On crash, writes a diagnostic report to `~/.jemacs-crash.log` with the FFI ring buffer and native backtrace
+- Re-raises the signal so gdb/core dumps still work
+
+The crash reporter is automatically installed when `qt_application_create()` is called. No configuration needed.
+
+### Stress Test Commands
+
+```bash
+make stress-run              # Launch interpreted jemacs-qt headless with REPL (port 9999)
+make stress-run-static       # Launch static binary under gdb with REPL
+make stress-test             # Run stress driver against already-running REPL
+make stress-burn             # All-in-one: launch interpreted + run stress driver
+make stress-burn-static      # All-in-one: launch static under gdb + run stress driver
+```
+
+Override the REPL port: `make stress-test STRESS_PORT=8888`
+
+### Stress Test Driver (`tests/stress-test.ss`)
+
+Connects to jemacs-qt's `--repl` TCP interface via `nc` subprocess and drives random editor commands in a continuous loop until the editor crashes (connection drops). Runs 10 stress phases per cycle:
+
+1. **Window Chaos** — split/delete/balance windows randomly
+2. **Vterm Storm** — open multiple vterm buffers
+3. **File Churn** — create/open/edit/kill temp files, copy/paste between buffers
+4. **Navigation Stress** — rapid cursor movement and scrolling
+5. **EWW** — web browser buffer
+6. **Edit Storm** — insert/delete/undo/redo
+7. **Buffer Management** — open many buffers, rapid switching
+8. **Combined Chaos** — random mix of all operations
+9. **Window Thrash** — rapid split-then-delete cycles
+10. **Search Operations** — word-motion navigation
+
+All commands are logged to `stress-test.log` with timestamps. When a crash occurs:
+- `~/.jemacs-crash.log` shows the FFI call ring buffer and backtrace
+- `stress-test.log` shows the exact command sequence that triggered it
+- gdb (in `stress-burn-static`) shows the native stack trace
+
+### Typical Debugging Workflow
+
+```bash
+make stress-burn-static      # Run until crash
+# Examine: ~/.jemacs-crash.log, stress-test.log, gdb output
+# Fix the bug
+make static-qt               # Rebuild
+make stress-burn-static      # Run again
 ```
 
 ## jsh Shell Library

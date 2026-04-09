@@ -5,7 +5,8 @@
 (library (jerboa-emacs qt automation)
   (export automation-send-keys! automation-send-keys-async!
     automation-screenshot! automation-state automation-wait!
-    automation-set-qt-app! emacs-key->qt-event)
+    automation-set-qt-app! automation-set-key-target-fn!
+    emacs-key->qt-event)
   (import
     (except (chezscheme) make-hash-table hash-table? iota \x31;+ \x31;-
       getenv path-extension path-absolute? thread? make-mutex
@@ -162,13 +163,20 @@
        (let-values ([(code mods text)
                      (emacs-key->qt-event key-str)])
          (let* ([fr (app-state-frame app)]
-                [target (if *minibuffer-active?*
-                            (and *mb-input* *mb-input*)
-                            (qt-current-editor fr))])
+                [get-target (lambda ()
+                              (cond
+                                [*minibuffer-active?*
+                                 (and *mb-input* *mb-input*)]
+                                [*automation-key-target-fn*
+                                 (*automation-key-target-fn* fr)]
+                                [else (qt-current-editor fr)]))]
+                [target (get-target)])
            (when target
              (qt-send-key-press! target code mods text)
              (when drain? (qt-drain-pending-callbacks!))
-             (qt-send-key-release! target code mods text)
+             (let ([release-target (get-target)])
+               (when release-target
+                 (qt-send-key-release! release-target code mods text)))
              (when drain? (qt-drain-pending-callbacks!))))))
   (def (automation-screenshot! app path)
        (let* ([fr (app-state-frame app)]
@@ -220,4 +228,7 @@
          (+ (* (time-second t) 1000)
             (quotient (time-nanosecond t) 1000000))))
   (def *qt-app-ref* #f)
-  (def (automation-set-qt-app! app) (set! *qt-app-ref* app)))
+  (def (automation-set-qt-app! app) (set! *qt-app-ref* app))
+  (def *automation-key-target-fn* #f)
+  (def (automation-set-key-target-fn! fn)
+       (set! *automation-key-target-fn* fn)))

@@ -1376,7 +1376,7 @@
   (define *gerbil-signatures*--cell
     (vector (make-hash-table)))
   (def (eldoc-init-signatures!)
-   "Populate the signature database with common Gerbil functions."
+   "Populate the signature database with common Jerboa functions."
    (hash-put!
      *gerbil-signatures*
      "hash-get"

@@ -168,7 +168,7 @@
        "Switch to CSS mode with syntax highlighting."
        (qt-set-major-mode! app 'css "CSS mode"))
   (def (cmd-scheme-mode app)
-       "Switch to Scheme/Gerbil mode with syntax highlighting."
+       "Switch to Scheme/Jerboa mode with syntax highlighting."
        (qt-set-major-mode! app 'scheme "Scheme mode"))
   (def (cmd-check-parens app)
        "Check for unbalanced parentheses in the current buffer."
