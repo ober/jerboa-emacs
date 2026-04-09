@@ -153,7 +153,7 @@
 (def (frame-init! width height)
   "Create initial frame with one window and a scratch buffer."
   (let* ((edit-h (max 1 (- height 2)))  ; 1 row modeline, 1 row echo
-         (ed (create-scintilla-editor width: width height: edit-h))
+         (ed (create-scintilla-editor width edit-h))
          (buf (buffer-create-from-editor! buffer-scratch-name ed))
          (win (make-edit-window ed buf 0 0 width (- height 1) 0))
          (root (make-split-leaf win)))
