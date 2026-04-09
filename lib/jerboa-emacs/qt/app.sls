@@ -233,7 +233,9 @@
        (let* ([cols (vtscreen-cols vt)]
               [line-start (sci-send ed SCI_POSITIONFROMLINE doc-line)]
               [line-end (sci-send ed SCI_GETLINEENDPOSITION doc-line)]
-              [line-len (min (- line-end line-start) cols)])
+              [line-len (if (>= line-start 0)
+                            (min (- line-end line-start) cols)
+                            0)])
          (when (> line-len 0)
            (let loop ([c 0] [run-start 0] [run-style #f])
              (if (>= c line-len)
