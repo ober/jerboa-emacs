@@ -552,8 +552,8 @@
        (let ([v (hashtable-ref
                   cache
                   key
-                  '#{miss n10hyshhs5dvwyk4xet3dh5q9-1})])
-         (if (eq? v '#{miss n10hyshhs5dvwyk4xet3dh5q9-2})
+                  '#{miss bcb63ld7l34ufb8flafhv2xj7-1})])
+         (if (eq? v '#{miss bcb63ld7l34ufb8flafhv2xj7-2})
              (if (null? default) #f (car default))
              v)))
   (def (weak-cache-set! cache key value)

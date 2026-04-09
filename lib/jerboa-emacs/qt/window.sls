@@ -338,6 +338,16 @@
               [cur-leaf (split-tree-find-leaf (qt-frame-root fr) cur-win)]
               [parent (split-tree-find-parent (qt-frame-root fr) cur-win)]
               [cur-buf (qt-edit-window-buffer cur-win)]
+              [new-buf (if (eq? (buffer-lexer-lang cur-buf) 'terminal)
+                           (or (find
+                                 (lambda (b)
+                                   (string=?
+                                     (buffer-name b)
+                                     buffer-scratch-name))
+                                 (map qt-edit-window-buffer
+                                      (qt-frame-windows fr)))
+                               cur-buf)
+                           cur-buf)]
               [main-win (qt-frame-main-win fr)]
               [saved-w (and main-win (qt-widget-width main-win))]
               [saved-h (and main-win (qt-widget-height main-win))])
@@ -349,7 +359,7 @@
                           (let* ([parent-spl (split-node-splitter parent)]
                                  [new-win (qt-make-new-window!
                                             parent-spl
-                                            cur-buf)]
+                                            new-buf)]
                                  [new-leaf (make-split-leaf new-win)])
                             (split-node-children-set!
                               parent
@@ -395,7 +405,7 @@
                             orientation)
                           (let* ([new-win (qt-make-new-window!
                                             root-spl
-                                            cur-buf)]
+                                            new-buf)]
                                  [new-leaf (make-split-leaf new-win)]
                                  [new-node (make-split-node
                                              orientation
@@ -441,7 +451,7 @@
                                       cur-container)]
                                  [new-win (qt-make-new-window!
                                             new-spl
-                                            cur-buf)]
+                                            new-buf)]
                                  [new-leaf (make-split-leaf new-win)]
                                  [new-node (make-split-node
                                              orientation

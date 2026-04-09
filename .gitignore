@@ -33,3 +33,5 @@ qt_chez_shim.so
 
 # Vendored repos (cloned, not submodules)
 vendor/jerboa-shell/
+vendor/**/*.so
+vendor/**/*.wpo

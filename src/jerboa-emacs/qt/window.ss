@@ -388,6 +388,13 @@
          (cur-leaf  (split-tree-find-leaf (qt-frame-root fr) cur-win))
          (parent    (split-tree-find-parent (qt-frame-root fr) cur-win))
          (cur-buf   (qt-edit-window-buffer cur-win))
+         ;; Terminal buffers use a QTerminalWidget that can only live in one pane.
+         ;; Use scratch buffer for the new pane instead of the terminal buffer.
+         (new-buf   (if (eq? (buffer-lexer-lang cur-buf) 'terminal)
+                      (or (find (lambda (b) (string=? (buffer-name b) buffer-scratch-name))
+                                (map qt-edit-window-buffer (qt-frame-windows fr)))
+                          cur-buf)
+                      cur-buf))
          ;; Save main window geometry — adding widgets to a QSplitter can cause
          ;; Qt to resize the QMainWindow via sizeHint propagation.
          (main-win  (qt-frame-main-win fr))
@@ -402,7 +409,7 @@
         ;; ── Case A: parent has same orientation — add sibling ─────────────────
         ((and parent (= (split-node-orientation parent) orientation))
          (let* ((parent-spl (split-node-splitter parent))
-                (new-win    (qt-make-new-window! parent-spl cur-buf))
+                (new-win    (qt-make-new-window! parent-spl new-buf))
                 (new-leaf   (make-split-leaf new-win)))
            ;; Insert new-leaf after cur-leaf in parent's children
            (set! (split-node-children parent)
@@ -432,7 +439,7 @@
         ;; ── Case B: root is a leaf (very first split) ─────────────────────────
         ((split-leaf? (qt-frame-root fr))
          (qt-splitter-set-orientation! root-spl orientation)
-         (let* ((new-win  (qt-make-new-window! root-spl cur-buf))
+         (let* ((new-win  (qt-make-new-window! root-spl new-buf))
                 (new-leaf (make-split-leaf new-win))
                 (new-node (make-split-node orientation root-spl (list cur-leaf new-leaf))))
            (set! (qt-frame-root fr) new-node)
@@ -462,7 +469,7 @@
                 ;; Reparent cur-win's container into the new splitter
                 (_ (qt-splitter-add-widget! new-spl cur-container))
                 ;; Create new window in the new splitter
-                (new-win      (qt-make-new-window! new-spl cur-buf))
+                (new-win      (qt-make-new-window! new-spl new-buf))
                 (new-leaf     (make-split-leaf new-win))
                 (new-node     (make-split-node orientation new-spl
                                                (list cur-leaf new-leaf))))

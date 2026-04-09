@@ -51,7 +51,7 @@ endif
 .PHONY: all build rebuild run test-tier0 test-tier2 test-tier3 test-tier4 test-tier5 test-org test-extra test clean clean-generated \
         test-org-duration test-org-element test-org-fold test-org-footnote \
         test-org-lint test-org-num test-org-property test-org-src test-org-tempo \
-        test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary binary-qt \
+        test-vtscreen test-debug-repl test-qt test-qt-e2e build-qt binary-qt \
         test-pty test-emacs test-functional test-term-hang \
         docker-deps static-qt clean-docker check-root build-jemacs-qt-static macos \
         stress-run stress-run-static stress-test stress-burn stress-burn-static \
@@ -361,9 +361,6 @@ test-pty:
 
 test-term-hang:
 	$(SCHEME) $(LIBDIRS) --program tests/test-term-hang.ss
-
-binary: build
-	$(SCHEME) $(LIBDIRS) --script build-binary.ss
 
 binary-qt: build
 	$(SCHEME) $(LIBDIRS) --script build-binary-qt.ss
