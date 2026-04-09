@@ -52,7 +52,23 @@ endif
         test-pty test-emacs test-functional test-term-hang \
         docker-deps static-qt clean-docker check-root build-jemacs-qt-static macos
 
-all: build test
+all:
+	@echo "Available targets:"
+	@echo "  build          Translate src/*.ss → lib/*.sls (incremental)"
+	@echo "  rebuild        Force full retranslation"
+	@echo "  run            Build and run TUI editor"
+	@echo "  run-qt         Build and run Qt editor"
+	@echo "  static-qt      Build static jemacs-qt binary via Docker"
+	@echo "  macos          Build native jemacs-qt binary for macOS"
+	@echo "  test           Full test suite (all tiers + org)"
+	@echo "  test-functional  250 dispatch-chain integration tests"
+	@echo "  test-term-hang   13 subprocess diagnostic tests"
+	@echo "  test-tier0     Core data structures"
+	@echo "  test-tier2     Buffer/window primitives"
+	@echo "  test-tier3     Editor core"
+	@echo "  test-tier4     Shell integration"
+	@echo "  test-tier5     Full editor commands"
+	@echo "  clean          Remove build artifacts"
 
 # Generate lib/jerboa-emacs/*.sls from src/jerboa-emacs/*.ss (incremental)
 build:
