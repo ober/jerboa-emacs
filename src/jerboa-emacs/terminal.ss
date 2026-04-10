@@ -422,23 +422,24 @@
 
 (def (terminal-insert-styled! ed segments start-pos)
   "Insert text segments into editor at end, applying ANSI styles.
-   Returns the total number of bytes inserted."
-  (let loop ((segs segments) (pos start-pos) (total 0))
+   start-pos is a BYTE position (Scintilla uses byte positions).
+   Returns the total number of BYTES inserted."
+  (let loop ((segs segments) (byte-pos start-pos) (total-bytes 0))
     (if (null? segs)
-      total
+      total-bytes
       (let* ((seg (car segs))
              (text (text-segment-text seg))
              (fg (text-segment-fg-color seg))
              (bold? (text-segment-bold? seg))
              (style (color-to-style fg bold?))
-             (text-len (string-length text)))
+             (byte-len (bytevector-length (string->utf8 text))))
         ;; Insert the text
         (editor-append-text ed text)
-        ;; Apply style if not default
+        ;; Apply style if not default — Scintilla uses BYTE positions
         (when (> style 0)
-          (send-message ed SCI_STARTSTYLING pos 0)
-          (send-message ed SCI_SETSTYLING text-len style))
-        (loop (cdr segs) (+ pos text-len) (+ total text-len))))))
+          (send-message ed SCI_STARTSTYLING byte-pos 0)
+          (send-message ed SCI_SETSTYLING byte-len style))
+        (loop (cdr segs) (+ byte-pos byte-len) (+ total-bytes byte-len))))))
 
 ;;;============================================================================
 ;;; Async PTY execution
