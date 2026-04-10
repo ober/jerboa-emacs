@@ -438,6 +438,14 @@
 
         ;; ── Case B: root is a leaf (very first split) ─────────────────────────
         ((split-leaf? (qt-frame-root fr))
+         ;; Force a real orientation change: Qt's setOrientation() early-returns
+         ;; if the value matches the current orientation (Qt src: if d->orient==x return).
+         ;; The root splitter is created with QT_VERTICAL, so for C-x 2 (QT_VERTICAL)
+         ;; a direct setOrientation(QT_VERTICAL) is always a no-op and doResize()
+         ;; is never called. Fix: toggle to opposite first, guaranteeing two real
+         ;; orientation changes so Qt re-lays out the children correctly.
+         (let ((opposite (if (= orientation QT_VERTICAL) QT_HORIZONTAL QT_VERTICAL)))
+           (qt-splitter-set-orientation! root-spl opposite))
          (let* ((new-win  (qt-make-new-window! root-spl new-buf))
                 (new-leaf (make-split-leaf new-win))
                 (new-node (make-split-node orientation root-spl (list cur-leaf new-leaf))))
@@ -447,10 +455,7 @@
            ;; Find new window's index in the rebuilt list
            (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
              (set! (qt-frame-current-idx fr) (or new-idx 0)))
-           ;; Set orientation AFTER adding the widget, then process events so Qt
-           ;; recomputes layout. Setting before addWidget is a no-op when orientation
-           ;; matches the initial splitter (Qt skips relayout on same-value set), which
-           ;; caused C-x 2 to produce a side-by-side split instead of top/bottom.
+           ;; Set to desired orientation — guaranteed to be a real change now
            (qt-splitter-set-orientation! root-spl orientation)
            (qt-window-process-events!)
            (with-catch (lambda (_e) (void)) (lambda () (qt-splitter-set-sizes! root-spl (list 500 500))))
