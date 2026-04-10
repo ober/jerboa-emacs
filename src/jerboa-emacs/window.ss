@@ -222,7 +222,7 @@
              (when (and (pair? cs) (pair? szs))
                (let ((ch (car szs)))
                  (split-tree-layout! (car cs) x cy w ch)
-                 (loop (cdr cs) (cdr szs) (+ cy ch)))))))
+                 (loop (cdr cs) (cdr szs) (+ cy ch))))))
 
          ;; Horizontal: place children left to right
          (let* ((dividers (max 0 (- n 1)))  ; vertical dividers between children
@@ -250,7 +250,7 @@
              (when (and (pair? cs) (pair? szs))
                (let ((cw (car szs)))
                  (split-tree-layout! (car cs) cx y cw h)
-                 (loop (cdr cs) (cdr szs) (+ cx cw 1))))))))))  ; +1 for divider
+                 (loop (cdr cs) (cdr szs) (+ cx cw 1)))))))))))  ; +1 for divider
 
 ;;;============================================================================
 ;;; Resize (terminal size changed)
