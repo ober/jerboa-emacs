@@ -2161,7 +2161,12 @@
                         "")))
           ;; Append newline after user input
           (editor-append-text ed "\n")
-          (let-values (((mode output new-cwd) (terminal-execute-async! input ts)))
+          ;; Pass actual window dimensions to PTY so programs like top use full size
+          (let* ((fr (app-state-frame app))
+                 (win (current-window fr))
+                 (pty-cols (max 80 (edit-window-w win)))
+                 (pty-rows (max 24 (- (edit-window-h win) 1))))  ;; -1 for modeline
+          (let-values (((mode output new-cwd) (terminal-execute-async! input ts pty-rows pty-cols)))
             (case mode
               ((sync)
                ;; Append command output (with ANSI styling)
@@ -2199,7 +2204,7 @@
                   (terminal-stop! ts)
                   (hash-remove! *terminal-state* buf)
                   (cmd-kill-buffer-cmd app)
-                  (echo-message! (app-state-echo app) "Terminal exited")))))))))))
+                  (echo-message! (app-state-echo app) "Terminal exited"))))))))))))
 
 (def (cmd-term-interrupt app)
   "Send SIGINT to running PTY process, or cancel current input."
