@@ -1,0 +1,29 @@
+# Dockerfile.tui — Build jemacs (TUI) static binary using jerboa21/jerboa
+#
+# Produces a fully static jemacs binary with zero runtime dependencies.
+#
+# Usage:
+#   docker build -f Dockerfile.tui -t jemacs-tui-builder .
+#   id=$(docker create jemacs-tui-builder)
+#   docker cp $id:/out/jemacs ./jemacs && docker rm $id
+#   chmod +x jemacs
+
+FROM jerboa21/jerboa AS builder
+
+# ── Copy jerboa-emacs source ────────────────────────────────────────────────
+COPY . /build/mine/jerboa-emacs
+
+# ── Build jemacs-musl ────────────────────────────────────────────────────────
+WORKDIR /build/mine/jerboa-emacs
+RUN make linux-tui-local
+
+# ── Verify ───────────────────────────────────────────────────────────────────
+RUN ./jemacs --version && \
+    file jemacs && \
+    echo "--- Binary info ---" && \
+    ls -lh jemacs
+
+# ── Output ───────────────────────────────────────────────────────────────────
+FROM ubuntu:24.04
+COPY --from=builder /build/mine/jerboa-emacs/jemacs /out/jemacs
+CMD ["cat", "/out/jemacs"]

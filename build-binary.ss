@@ -439,7 +439,7 @@
          (include-dir chez-dir)
          (gen-cmd
            (format
-             "{ { cat ~a; find ~a ~a/jerboa ~a/std/os ~a/std/net ~a/std/crypto ~a/std/security ~a/chez-scintilla lib/jerboa-emacs lib/jerboa vendor -name '*.sls' -o -name '*.ss' | xargs cat 2>/dev/null; } | \
+             "{ { cat ~a; find ~a ~a/jerboa ~a/std/os ~a/std/net ~a/std/crypto ~a/std/security ~a/chez-scintilla lib/jerboa-emacs lib/jerboa vendor -path '*/qt/*' -prune -o -name '*.sls' -print -o -name '*.ss' -print | xargs cat 2>/dev/null; } | \
 sed 's/;;.*//' | grep -oE '(foreign-procedure|foreign-entry\\?) \"[^\"]*\"' | sed 's/.* \"//;s/\"//'; \
 { cat ~a; } | sed 's/;;.*//' | grep -o 'define-optional-ffi [^ ]* \"[^\"]*\"' | sed 's/.*define-optional-ffi [^ ]* \"//;s/\"//'; \
 find ~a -name '*.sls' -o -name '*.ss' | \
@@ -451,7 +451,9 @@ grep -v '^jerboa_' | grep -v '^SSL_' | grep -v '^TLS_' | grep -v '^EVP_' | \
 grep -v '^CRYPTO_' | grep -v '^PKCS5_' | grep -v '^RAND_' | \
 grep -v '^QRcode_' | grep -v '^embed_encrypt$' | grep -v '^embed_random_bytes$' | \
 grep -v '^kqueue$' | grep -v '^kevent$' | grep -v '^sandbox_' | \
-grep -v '^__error$' > /tmp/tui_ffi_syms.txt && \
+grep -v '^__error$' | grep -v '^ts_shim_' | grep -v '^ts_parser_' | grep -v '^ts_tree_' | grep -v '^ts_node_' | \
+grep -v '^ts_query_' | grep -v '^ts_language_' | grep -v '^tree_sitter_' | \
+grep -v '^qt_' | grep -v '^QRcode_' | grep -v '^chez_tcp_' | grep -v '^chez_ssl_' | grep -v '^chez_qt_' | grep -v '^chez_conn_' > /tmp/tui_ffi_syms.txt && \
 awk '\
 BEGIN{ print \"/* Auto-generated — do not edit */\"; \
        print \"#include \\\"scheme.h\\\"\"; print \"\"; } \
@@ -581,12 +583,12 @@ tui_static_symbols.o \
 ~a \
 -L~a -lkernel -llz4 -lz \
 -Wl,--whole-archive ~a ~a ~a -Wl,--no-whole-archive \
-~a ~a \
+~a ~a ~a \
 -lm -ldl -lpthread -luuid -lstdc++ 2>&1"
                       jsh-coreutils-lib
                       chez-dir
                       sci-a lex-a tbx-a
-                      pcre2-libs ncurses-libs)))
+                      pcre2-libs ncurses-libs vterm-libs)))
     (printf "  ~a~n" cmd)
     (unless (= 0 (system cmd))
       (display "Error: Static link failed\n")

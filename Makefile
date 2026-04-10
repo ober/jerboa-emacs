@@ -55,6 +55,8 @@ endif
         test-pty test-emacs test-functional test-term-hang \
         docker-deps static-qt static-tui clean-docker check-root \
         build-jemacs-qt-static build-jemacs-tui-static binary macos \
+        linux-tui linux-tui-local \
+        linux-qt linux-qt-local \
         stress-run stress-run-static stress-test stress-burn stress-burn-static \
         test-behavioral
 
@@ -684,7 +686,7 @@ build-jemacs-tui-static: check-root
 	echo "Building Scintilla+termbox+Lexilla static archives from source..." && \
 	make -C /deps/sci-vendor/scintilla/termbox/termbox_next && \
 	make -C /deps/sci-vendor/scintilla/termbox && \
-	make -C /deps/sci-vendor/lexilla/src liblexilla.a && \
+	make -C /deps/sci-vendor/lexilla/src && \
 	JEMACS_STATIC=1 \
 	CHEZ_DIR=$(CHEZ_MUSL_DIR) \
 	JERBOA_DIR=/deps/jerboa/lib \
@@ -731,6 +733,242 @@ linux-static-tui-docker:
 	         mkdir -p /tmp/jemacs-build && chown $(UID):$(GID) /tmp/jemacs-build && \
 	         exec su-exec $(UID):$(GID) env HOME=/tmp/jemacs-build sh -c '\
 	           cd /src && make build-jemacs-tui-static'"
+
+# =============================================================================
+# Static TUI via jerboa21/jerboa Docker image (like jerboa-gitsafe)
+# =============================================================================
+
+JERBOA_IMAGE ?= jerboa21/jerboa
+MUSL_CHEZ_DIR = $(shell ls -d /build/chez-musl/lib/csv*/ta6le 2>/dev/null | head -1)
+MUSL_SCHEME = /usr/local/bin/scheme
+
+# Docker build: produces ./jemacs static binary
+linux-tui:
+	@echo "=== Building jemacs static TUI binary in Docker ==="
+	docker build --platform linux/amd64 -f Dockerfile.tui -t jemacs-tui-builder .
+	@id=$$(docker create --platform linux/amd64 jemacs-tui-builder) && \
+	docker cp $$id:/out/jemacs ./jemacs && \
+	docker rm $$id >/dev/null
+	@chmod +x jemacs
+	@echo ""
+	@ls -lh jemacs
+	@file jemacs
+
+# In-container build target (called inside jerboa21/jerboa)
+# All deps are pre-installed in the image at /build/mine/ and /build/sci-vendor/
+linux-tui-local:
+	@echo "=== Building jemacs static TUI (in-container) ==="
+	rm -f src/.jerbuild-hashes
+	find lib -name '*.so' -o -name '*.wpo' | xargs rm -f 2>/dev/null; true
+	find src/jerboa-emacs -name '*.ss' | sed 's|src/|lib/|; s|\.ss$$|.sls|' | xargs rm -f 2>/dev/null; true
+	find /build/mine/jerboa/lib -name '*.so' -delete 2>/dev/null; true
+	find /build/mine/jerboa/lib -name '*.wpo' -delete 2>/dev/null; true
+	find /build/mine/chez-scintilla -name '*.so' -delete 2>/dev/null; true
+	find /build/mine/chez-pcre2 -name '*.so' -delete 2>/dev/null; true
+	find /build/mine/jerboa-shell -name '*.wpo' -delete 2>/dev/null; true
+	find vendor/gherkin-runtime -name '*.so' -delete 2>/dev/null; true
+	find vendor/gherkin-runtime -name '*.wpo' -delete 2>/dev/null; true
+	find vendor/jerboa-shell -name '*.so' -delete 2>/dev/null; true
+	find vendor/jerboa-shell -name '*.wpo' -delete 2>/dev/null; true
+	@echo "Recompiling jerboa core + prelude..."
+	echo '(import (chezscheme)) (compile-imported-libraries #t) (import (jerboa core)) (import (jerboa prelude))' \
+	  | $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib -q
+	rm -f /build/mine/jerboa/lib/jerboa/*.wpo
+	$(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib --script /build/mine/jerboa/jerbuild.ss src/ lib/
+	cp vendor/chez-pcre2-ffi-static.ss /build/mine/chez-pcre2/chez-pcre2/ffi.ss
+	$(MUSL_SCHEME) --libdirs /build/mine/chez-pcre2 \
+	  --compile-imported-libraries --script vendor/chez-pcre2-compile-libs.ss
+	rm -f /build/mine/chez-pcre2/chez-pcre2/*.wpo
+	cp vendor/chez-scintilla-ffi-static.sls /build/mine/chez-scintilla/src/chez-scintilla/ffi.sls
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs /build/mine/chez-scintilla/src \
+	  --compile-imported-libraries --script vendor/chez-scintilla-compile-libs.ss
+	rm -f /build/mine/chez-scintilla/src/chez-scintilla/*.wpo
+	cp vendor/jerboa-net-tcp-static.sls /build/mine/jerboa/lib/std/net/tcp.sls
+	cp vendor/jerboa-net-tcp-raw-static.sls /build/mine/jerboa/lib/std/net/tcp-raw.sls
+	cp vendor/jerboa-net-uri.sls /build/mine/jerboa/lib/std/net/uri.sls
+	cp vendor/jerboa-net-tls-rustls-static.sls /build/mine/jerboa/lib/std/net/tls-rustls.sls
+	rm -f /build/mine/jerboa/lib/std/net/*.wpo /build/mine/jerboa/lib/std/net/*.so
+	cp vendor/jerboa-crypto-native-static.sls /build/mine/jerboa/lib/std/crypto/native.sls
+	rm -f /build/mine/jerboa/lib/std/crypto/*.wpo /build/mine/jerboa/lib/std/crypto/*.so
+	mkdir -p /build/mine/jerboa/lib/std/security
+	cp vendor/jerboa-security-capsicum-static.sls /build/mine/jerboa/lib/std/security/capsicum.sls
+	rm -f /build/mine/jerboa/lib/std/security/*.wpo /build/mine/jerboa/lib/std/security/*.so
+	cp vendor/jerboa-os-landlock-static.sls /build/mine/jerboa/lib/std/os/landlock.sls
+	rm -f /build/mine/jerboa/lib/std/os/landlock.wpo /build/mine/jerboa/lib/std/os/landlock.so
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-tcp.ss
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-tcp-raw.ss
+	$(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-uri.ss
+	rm -f /build/mine/jerboa/lib/std/net/*.wpo
+	cp vendor/jerboa-repl-static.sls /build/mine/jerboa/lib/std/repl.sls
+	rm -f /build/mine/jerboa/lib/std/repl.wpo /build/mine/jerboa/lib/std/repl.so
+	cd /build/mine/jerboa/lib && $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script $(CURDIR)/vendor/jerboa-compile-repl.ss
+	rm -f /build/mine/jerboa/lib/std/repl.wpo
+	rm -f lib/jerboa/*.wpo lib/jerboa/*.so
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-repl-socket.ss
+	rm -f lib/jerboa/*.wpo
+	find /build/mine/jerboa-shell -name '*.wpo' -delete 2>/dev/null; true
+	JEMACS_STATIC=1 \
+	CHEZ_DIR=$(MUSL_CHEZ_DIR) \
+	JERBOA_DIR=/build/mine/jerboa/lib \
+	JSH_DIR=vendor/jerboa-shell/src \
+	GHERKIN_DIR=vendor/gherkin-runtime \
+	CHEZ_PCRE2_DIR=/build/mine/chez-pcre2 \
+	CHEZ_SCINTILLA_DIR=/build/mine/chez-scintilla/src \
+	SCI_VENDOR_DIR=/build/sci-vendor \
+	$(MUSL_SCHEME) \
+	  --libdirs lib:/build/mine/jerboa/lib:vendor/jerboa-shell/src:vendor/gherkin-runtime:/build/mine/chez-pcre2:/build/mine/chez-scintilla/src \
+	  --script build-binary.ss
+	@echo ""
+	@echo "=== jemacs static TUI binary built ==="
+	@ls -lh jemacs
+	@file jemacs
+
+# =============================================================================
+# Static Qt binary via jerboa21/jerboa Docker image
+# =============================================================================
+
+# Docker build: produces ./jemacs-qt static binary
+linux-qt:
+	@echo "=== Building jemacs-qt static binary in Docker ==="
+	docker build --platform linux/amd64 -f Dockerfile.qt -t jemacs-qt-builder .
+	@id=$$(docker create --platform linux/amd64 jemacs-qt-builder) && \
+	docker cp $$id:/out/jemacs-qt ./jemacs-qt && \
+	docker rm $$id >/dev/null
+	@chmod +x jemacs-qt
+	@echo ""
+	@ls -lh jemacs-qt
+	@file jemacs-qt
+
+# In-container build target (called inside Dockerfile.qt → jerboa21/jerboa stage)
+# Qt6 static libs are at /opt/qt6-static (copied from Alpine stage).
+# Tree-sitter is at /opt/tree-sitter-* (copied from Alpine stage).
+# Pre-compiled libqt_shim.a is at /opt/qt-shim/ (Alpine-musl g++, ABI-compatible).
+# /opt/chez → /build/chez-musl symlink provides musl Chez Scheme.
+linux-qt-local:
+	@echo "=== Building jemacs-qt static (in-container) ==="
+	rm -f src/.jerbuild-hashes
+	find lib -name '*.so' -o -name '*.wpo' | xargs rm -f 2>/dev/null; true
+	find src/jerboa-emacs -name '*.ss' | sed 's|src/|lib/|; s|\.ss$$|.sls|' | xargs rm -f 2>/dev/null; true
+	find /build/mine/jerboa/lib -name '*.so' -delete 2>/dev/null; true
+	find /build/mine/jerboa/lib -name '*.wpo' -delete 2>/dev/null; true
+	find /build/mine/chez-scintilla -name '*.so' -delete 2>/dev/null; true
+	find /build/mine/chez-pcre2 -name '*.so' -delete 2>/dev/null; true
+	find /build/mine/jerboa-shell -name '*.wpo' -delete 2>/dev/null; true
+	find vendor/gherkin-runtime -name '*.so' -delete 2>/dev/null; true
+	find vendor/gherkin-runtime -name '*.wpo' -delete 2>/dev/null; true
+	find vendor/jerboa-shell -name '*.so' -delete 2>/dev/null; true
+	find vendor/jerboa-shell -name '*.wpo' -delete 2>/dev/null; true
+	find vendor/chez-ssl -name '*.so' -delete 2>/dev/null; true
+	find vendor/chez-ssl -name '*.wpo' -delete 2>/dev/null; true
+	find vendor/chez-https -name '*.so' -delete 2>/dev/null; true
+	find vendor/chez-https -name '*.wpo' -delete 2>/dev/null; true
+	find vendor/jerboa-aws -name '*.so' -delete 2>/dev/null; true
+	find vendor/jerboa-aws -name '*.wpo' -delete 2>/dev/null; true
+	@echo "Recompiling jerboa core + prelude..."
+	echo '(import (chezscheme)) (compile-imported-libraries #t) (import (jerboa core)) (import (jerboa prelude))' \
+	  | $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib -q
+	rm -f /build/mine/jerboa/lib/jerboa/*.wpo
+	$(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib --script /build/mine/jerboa/jerbuild.ss src/ lib/
+	# Set up writable chez-qt copy from vendor (compile Scheme library)
+	mkdir -p /tmp/jemacs-build/chez-qt
+	cp -a vendor/chez-qt/. /tmp/jemacs-build/chez-qt/
+	find /tmp/jemacs-build/chez-qt -name '*.so' -delete 2>/dev/null; true
+	find /tmp/jemacs-build/chez-qt -name '*.wpo' -delete 2>/dev/null; true
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs /tmp/jemacs-build/chez-qt \
+	  --compile-imported-libraries --script /tmp/jemacs-build/chez-qt/compile-libs.ss
+	rm -f /tmp/jemacs-build/chez-qt/chez-qt/*.wpo
+	cp vendor/chez-pcre2-ffi-static.ss /build/mine/chez-pcre2/chez-pcre2/ffi.ss
+	$(MUSL_SCHEME) --libdirs /build/mine/chez-pcre2 \
+	  --compile-imported-libraries --script vendor/chez-pcre2-compile-libs.ss
+	rm -f /build/mine/chez-pcre2/chez-pcre2/*.wpo
+	cp vendor/chez-scintilla-ffi-static.sls /build/mine/chez-scintilla/src/chez-scintilla/ffi.sls
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs /build/mine/chez-scintilla/src \
+	  --compile-imported-libraries --script vendor/chez-scintilla-compile-libs.ss
+	rm -f /build/mine/chez-scintilla/src/chez-scintilla/*.wpo
+	cp vendor/jerboa-net-tcp-static.sls /build/mine/jerboa/lib/std/net/tcp.sls
+	cp vendor/jerboa-net-tcp-raw-static.sls /build/mine/jerboa/lib/std/net/tcp-raw.sls
+	cp vendor/jerboa-net-uri.sls /build/mine/jerboa/lib/std/net/uri.sls
+	cp vendor/jerboa-net-tls-rustls-static.sls /build/mine/jerboa/lib/std/net/tls-rustls.sls
+	rm -f /build/mine/jerboa/lib/std/net/*.wpo /build/mine/jerboa/lib/std/net/*.so
+	cp vendor/jerboa-crypto-native-static.sls /build/mine/jerboa/lib/std/crypto/native.sls
+	rm -f /build/mine/jerboa/lib/std/crypto/*.wpo /build/mine/jerboa/lib/std/crypto/*.so
+	mkdir -p /build/mine/jerboa/lib/std/security
+	cp vendor/jerboa-security-capsicum-static.sls /build/mine/jerboa/lib/std/security/capsicum.sls
+	rm -f /build/mine/jerboa/lib/std/security/*.wpo /build/mine/jerboa/lib/std/security/*.so
+	cp vendor/jerboa-os-landlock-static.sls /build/mine/jerboa/lib/std/os/landlock.sls
+	rm -f /build/mine/jerboa/lib/std/os/landlock.wpo /build/mine/jerboa/lib/std/os/landlock.so
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-tcp.ss
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-tcp-raw.ss
+	$(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-uri.ss
+	rm -f /build/mine/jerboa/lib/std/net/*.wpo
+	cp vendor/jerboa-repl-static.sls /build/mine/jerboa/lib/std/repl.sls
+	rm -f /build/mine/jerboa/lib/std/repl.wpo /build/mine/jerboa/lib/std/repl.so
+	cd /build/mine/jerboa/lib && $(MUSL_SCHEME) --libdirs /build/mine/jerboa/lib \
+	  --compile-imported-libraries --script $(CURDIR)/vendor/jerboa-compile-repl.ss
+	rm -f /build/mine/jerboa/lib/std/repl.wpo
+	rm -f lib/jerboa/*.wpo lib/jerboa/*.so
+	JEMACS_STATIC=1 $(MUSL_SCHEME) --libdirs lib \
+	  --compile-imported-libraries --script vendor/jerboa-compile-repl-socket.ss
+	rm -f lib/jerboa/*.wpo
+	# Compile SSL/HTTPS/AWS
+	cp vendor/chez-ssl-static.sls vendor/chez-ssl/src/chez-ssl.sls
+	cp vendor/jerboa-aws-crypto-native.sls vendor/jerboa-aws/jerboa-aws/crypto.sls
+	find vendor/chez-ssl -name '*.so' -delete; find vendor/chez-ssl -name '*.wpo' -delete
+	find vendor/chez-https -name '*.so' -delete; find vendor/chez-https -name '*.wpo' -delete
+	find vendor/jerboa-aws -name '*.so' -delete; find vendor/jerboa-aws -name '*.wpo' -delete
+	JEMACS_STATIC=1 $(MUSL_SCHEME) \
+	  --libdirs vendor/chez-ssl/src:/build/mine/jerboa/lib \
+	  --compile-imported-libraries -q --script vendor/chez-ssl-compile-libs.ss
+	find vendor/chez-ssl -name '*.wpo' -delete
+	JEMACS_STATIC=1 $(MUSL_SCHEME) \
+	  --libdirs vendor/chez-https/src:vendor/chez-ssl/src \
+	  --compile-imported-libraries -q --script vendor/chez-https-compile-libs.ss
+	find vendor/chez-https -name '*.wpo' -delete
+	JEMACS_STATIC=1 $(MUSL_SCHEME) \
+	  --libdirs vendor/jerboa-aws:vendor/chez-https/src:vendor/chez-ssl/src:/build/mine/jerboa/lib \
+	  --compile-imported-libraries -q --script vendor/jerboa-aws-compile-libs.ss
+	find vendor/jerboa-aws -name '*.wpo' -delete
+	# Build tree-sitter C shim objects
+	mkdir -p /tmp/jemacs-build
+	gcc -c -O2 -I/opt/tree-sitter-include -o /tmp/jemacs-build/treesitter_shim.o \
+	    support/treesitter_shim.c -Wall
+	gcc -c -O2 -o /tmp/jemacs-build/treesitter_queries.o \
+	    support/treesitter_queries.c -Wall
+	# Run the main Qt build script
+	JEMACS_STATIC=1 \
+	CHEZ_DIR=$(MUSL_CHEZ_DIR) \
+	JERBOA_DIR=/build/mine/jerboa/lib \
+	JSH_DIR=vendor/jerboa-shell/src \
+	GHERKIN_DIR=vendor/gherkin-runtime \
+	CHEZ_PCRE2_DIR=/build/mine/chez-pcre2 \
+	CHEZ_SCINTILLA_DIR=/build/mine/chez-scintilla/src \
+	CHEZ_QT_DIR=/tmp/jemacs-build/chez-qt \
+	CHEZ_QT_SHIM_DIR=/opt/qt-shim \
+	JSH_COREUTILS_LIB=vendor/libjsh_coreutils_stub.a \
+	JAWS_DIR=vendor/jerboa-aws \
+	CHEZ_SSL_DIR=vendor/chez-ssl \
+	CHEZ_HTTPS_DIR=vendor/chez-https/src \
+	TREE_SITTER_INCLUDE=/opt/tree-sitter-include \
+	TREE_SITTER_LIB=/opt/tree-sitter-lib \
+	TREE_SITTER_GRAMMARS=/opt/tree-sitter-grammars \
+	TREE_SITTER_SHIM_OBJ=/tmp/jemacs-build/treesitter_shim.o \
+	TREE_SITTER_QUERIES_OBJ=/tmp/jemacs-build/treesitter_queries.o \
+	PKG_CONFIG_PATH=/opt/qt6-static/lib/pkgconfig \
+	$(MUSL_SCHEME) \
+	  --libdirs lib:/build/mine/jerboa/lib:vendor/jerboa-shell/src:vendor/gherkin-runtime:/build/mine/chez-pcre2:/build/mine/chez-scintilla/src:/tmp/jemacs-build/chez-qt:vendor/jerboa-aws:vendor/chez-ssl/src:vendor/chez-https/src \
+	  --script build-binary-qt.ss
+	@echo ""
+	@echo "=== jemacs-qt static binary built ==="
+	@ls -lh jemacs-qt
+	@file jemacs-qt
 
 # =============================================================================
 # Stress testing targets

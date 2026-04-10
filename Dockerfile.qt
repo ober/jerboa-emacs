@@ -1,0 +1,292 @@
+# Dockerfile.qt — Build jemacs-qt static binary using jerboa21/jerboa + Qt6
+#
+# Multi-stage build:
+#   Stage 1 (Alpine):          Build Qt6 static, QScintilla, tree-sitter, libvterm (musl)
+#   Stage 1.5 (Alpine+shim):   Compile libqt_shim.a with musl-compatible g++
+#   Stage 2 (jerboa21/jerboa): Copy Qt artifacts + Jerboa deps, build jemacs-qt
+#
+# Usage:
+#   docker build -f Dockerfile.qt -t jemacs-qt-builder .
+#   id=$(docker create jemacs-qt-builder)
+#   docker cp $id:/out/jemacs-qt ./jemacs-qt && docker rm $id
+#   chmod +x jemacs-qt
+
+# ── Stage 1: Build Qt6 + QScintilla + tree-sitter + libvterm on Alpine ───────
+FROM alpine:3.21 AS qt-alpine
+
+ARG QT6_VERSION=6.8.3
+ARG QSCI_VERSION=2.14.1
+ARG TS_VERSION=0.24.7
+
+# ── Phase 1: Alpine build deps ──────────────────────────────────────────
+RUN apk add --no-cache \
+    cmake samurai perl python3 linux-headers patchelf \
+    libxcb-dev xcb-util-dev xcb-util-image-dev \
+    xcb-util-keysyms-dev xcb-util-renderutil-dev \
+    xcb-util-wm-dev xcb-util-cursor-dev \
+    libx11-dev libxkbcommon-dev \
+    fontconfig-dev freetype-dev harfbuzz-dev \
+    libpng-dev zlib-dev \
+    pcre2-dev \
+    at-spi2-core-dev libdrm-dev \
+    zlib-static libxcb-static \
+    fontconfig-static freetype-static harfbuzz-static \
+    libpng-static bzip2-static expat-static brotli-static \
+    libx11-static graphite2-static libxkbcommon-static \
+    ncurses-dev ncurses-static \
+    util-linux-dev util-linux-static \
+    libvterm-dev libvterm-static \
+    gcc g++ binutils make git curl wget
+
+# Build static libXau (no Alpine -static package available)
+RUN apk add --no-cache libxau-dev && \
+    cd /tmp && \
+    wget -q https://xorg.freedesktop.org/releases/individual/lib/libXau-1.0.12.tar.xz && \
+    tar xf libXau-1.0.12.tar.xz && \
+    cd libXau-1.0.12 && \
+    ./configure --prefix=/usr --enable-static --disable-shared && \
+    make -j$(nproc) && make install && \
+    cd / && rm -rf /tmp/libXau-1.0.12*
+
+# Build static libxcb-util (no Alpine -static package; needed by xcb-image)
+RUN cd /tmp && \
+    wget -q https://xcb.freedesktop.org/dist/xcb-util-0.4.1.tar.xz && \
+    tar xf xcb-util-0.4.1.tar.xz && \
+    cd xcb-util-0.4.1 && \
+    ./configure --prefix=/usr --enable-static --disable-shared && \
+    make -j$(nproc) && make install && \
+    cd / && rm -rf /tmp/xcb-util-0.4.1*
+
+# ── Phase 2: Build Qt6 qtbase static ────────────────────────────────────
+RUN wget -q https://download.qt.io/official_releases/qt/6.8/${QT6_VERSION}/submodules/qtbase-everywhere-src-${QT6_VERSION}.tar.xz && \
+    tar xf qtbase-everywhere-src-${QT6_VERSION}.tar.xz && \
+    rm qtbase-everywhere-src-${QT6_VERSION}.tar.xz && \
+    cmake -S qtbase-everywhere-src-${QT6_VERSION} -B qt6-build -G Ninja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/opt/qt6-static \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DQT_BUILD_EXAMPLES=OFF \
+      -DQT_BUILD_TESTS=OFF \
+      -DQT_BUILD_BENCHMARKS=OFF \
+      -DFEATURE_xcb=ON \
+      -DFEATURE_sql=OFF \
+      -DFEATURE_network=OFF \
+      -DFEATURE_testlib=OFF \
+      -DFEATURE_printsupport=ON \
+      -DFEATURE_dbus=OFF \
+      -DFEATURE_opengl=OFF \
+      -DFEATURE_vulkan=OFF \
+      -DFEATURE_glib=OFF \
+      -DFEATURE_icu=OFF && \
+    cmake --build qt6-build --parallel && \
+    cmake --install qt6-build && \
+    rm -rf qtbase-everywhere-src-${QT6_VERSION} qt6-build
+
+# ── Phase 3: Build QScintilla static ────────────────────────────────────
+RUN wget -q https://www.riverbankcomputing.com/static/Downloads/QScintilla/${QSCI_VERSION}/QScintilla_src-${QSCI_VERSION}.tar.gz && \
+    tar xf QScintilla_src-${QSCI_VERSION}.tar.gz && \
+    rm QScintilla_src-${QSCI_VERSION}.tar.gz && \
+    cd QScintilla_src-${QSCI_VERSION}/src && \
+    /opt/qt6-static/bin/qmake CONFIG+=staticlib && \
+    make -j$(nproc) && \
+    make install && \
+    cd / && rm -rf QScintilla_src-${QSCI_VERSION}
+
+# ── Phase 4: Generate pkg-config files with full transitive deps ─────────
+RUN mkdir -p /opt/qt6-static/lib/pkgconfig && \
+    prl_libs() { \
+      grep '^QMAKE_PRL_LIBS ' "$1" | \
+        sed 's/^QMAKE_PRL_LIBS *= *//' | \
+        tr ' ' '\n' | grep '^-l' | \
+        grep -v '^-lQt6' | tr '\n' ' '; \
+    } && \
+    CORE_PRIVATE=$(prl_libs /opt/qt6-static/lib/libQt6Core.prl) && \
+    GUI_PRL=$(prl_libs /opt/qt6-static/lib/libQt6Gui.prl) && \
+    XCB_PRL=$(prl_libs /opt/qt6-static/plugins/platforms/libqxcb.prl) && \
+    TRANSITIVE="-lgraphite2 -lbz2 -lbrotlidec -lbrotlicommon -lexpat -lXau -lXdmcp" && \
+    GUI_PRIVATE="$GUI_PRL $TRANSITIVE" && \
+    XCB_TRANSITIVE="-lxcb-util -lxcb -lXau -lXdmcp" && \
+    XCB_PRIVATE="$XCB_PRL $TRANSITIVE $XCB_TRANSITIVE" && \
+    printf '%s\n' \
+      'prefix=/opt/qt6-static' \
+      'includedir=${prefix}/include' \
+      'libdir=${prefix}/lib' \
+      '' \
+      'Name: Qt6Core' "Description: Qt6 Core" "Version: ${QT6_VERSION}" \
+      'Cflags: -I${includedir} -I${includedir}/QtCore' \
+      "Libs: -L\${libdir} -lQt6Core" \
+      "Libs.private: $CORE_PRIVATE" \
+      > /opt/qt6-static/lib/pkgconfig/Qt6Core.pc && \
+    printf '%s\n' \
+      'prefix=/opt/qt6-static' \
+      'includedir=${prefix}/include' \
+      'libdir=${prefix}/lib' \
+      '' \
+      'Name: Qt6Gui' "Description: Qt6 Gui" "Version: ${QT6_VERSION}" \
+      'Requires: Qt6Core' \
+      'Cflags: -I${includedir} -I${includedir}/QtGui' \
+      "Libs: -L\${libdir} -lQt6Gui" \
+      "Libs.private: $GUI_PRIVATE" \
+      > /opt/qt6-static/lib/pkgconfig/Qt6Gui.pc && \
+    printf '%s\n' \
+      'prefix=/opt/qt6-static' \
+      'includedir=${prefix}/include' \
+      'libdir=${prefix}/lib' \
+      '' \
+      'Name: Qt6Widgets' "Description: Qt6 Widgets" "Version: ${QT6_VERSION}" \
+      'Requires: Qt6Gui' \
+      'Cflags: -I${includedir} -I${includedir}/QtWidgets -I${includedir}/QtGui -I${includedir}/QtCore' \
+      "Libs: -L\${libdir} -lQt6Widgets" \
+      > /opt/qt6-static/lib/pkgconfig/Qt6Widgets.pc && \
+    printf '%s\n' \
+      'prefix=/opt/qt6-static' \
+      'includedir=${prefix}/include' \
+      'libdir=${prefix}/lib' \
+      '' \
+      'Name: Qt6PrintSupport' "Description: Qt6 PrintSupport" "Version: ${QT6_VERSION}" \
+      'Requires: Qt6Widgets' \
+      'Cflags: -I${includedir} -I${includedir}/QtPrintSupport' \
+      "Libs: -L\${libdir} -lQt6PrintSupport" \
+      > /opt/qt6-static/lib/pkgconfig/Qt6PrintSupport.pc && \
+    printf '%s\n' \
+      'prefix=/opt/qt6-static' \
+      'includedir=${prefix}/include' \
+      'libdir=${prefix}/lib' \
+      'plugindir=${prefix}/plugins' \
+      '' \
+      'Name: Qt6XcbPlugin' "Description: Qt6 XCB platform plugin" "Version: ${QT6_VERSION}" \
+      'Requires: Qt6Gui' \
+      "Libs: -L\${libdir} -L\${plugindir}/platforms -lqxcb -lQt6XcbQpa" \
+      "Libs.private: $XCB_PRIVATE" \
+      > /opt/qt6-static/lib/pkgconfig/Qt6XcbPlugin.pc && \
+    printf '%s\n' \
+      'prefix=/opt/qt6-static' \
+      'includedir=${prefix}/include' \
+      'libdir=${prefix}/lib' \
+      '' \
+      'Name: QScintilla' "Description: QScintilla for Qt6" "Version: ${QSCI_VERSION}" \
+      'Requires: Qt6Widgets Qt6PrintSupport' \
+      'Cflags: -I${includedir} -I${includedir}/Qsci' \
+      "Libs: -L\${libdir} -lqscintilla2_qt6" \
+      > /opt/qt6-static/lib/pkgconfig/QScintilla.pc && \
+    echo "Generated .pc files:" && ls /opt/qt6-static/lib/pkgconfig/
+
+# ── Phase 5: Build tree-sitter + grammars (static) ──────────────────────
+RUN git clone --depth 1 --branch v${TS_VERSION} \
+      https://github.com/tree-sitter/tree-sitter /tmp/tree-sitter && \
+    cd /tmp/tree-sitter && \
+    cc -c -O2 -Ilib/include lib/src/lib.c -o lib/src/lib.o && \
+    mkdir -p /opt/tree-sitter-lib && \
+    ar rcs /opt/tree-sitter-lib/libtree-sitter.a lib/src/lib.o && \
+    mkdir -p /opt/tree-sitter-include/tree_sitter && \
+    cp lib/include/tree_sitter/api.h /opt/tree-sitter-include/tree_sitter/ && \
+    rm -rf /tmp/tree-sitter
+
+RUN mkdir -p /opt/tree-sitter-grammars && \
+    build_grammar() { \
+      name=$1; repo=$2; tag=$3; subdir=${4:-.}; \
+      git clone --depth 1 --branch "$tag" \
+        "https://github.com/$repo" /tmp/ts-$name && \
+      cd /tmp/ts-$name/$subdir && \
+      SRC_DIR=src && \
+      gcc -c -O2 -I/opt/tree-sitter-include -I$SRC_DIR \
+        $SRC_DIR/parser.c -o parser.o && \
+      if [ -f $SRC_DIR/scanner.c ]; then \
+        gcc -c -O2 -I/opt/tree-sitter-include -I$SRC_DIR \
+          $SRC_DIR/scanner.c -o scanner.o && \
+        ar rcs /opt/tree-sitter-grammars/libtree-sitter-$name.a parser.o scanner.o; \
+      else \
+        ar rcs /opt/tree-sitter-grammars/libtree-sitter-$name.a parser.o; \
+      fi && \
+      cd / && rm -rf /tmp/ts-$name; \
+    } && \
+    build_grammar c          tree-sitter/tree-sitter-c          v0.23.5 && \
+    build_grammar cpp        tree-sitter/tree-sitter-cpp        v0.23.4 && \
+    build_grammar python     tree-sitter/tree-sitter-python     v0.23.6 && \
+    build_grammar javascript tree-sitter/tree-sitter-javascript v0.23.1 && \
+    build_grammar rust       tree-sitter/tree-sitter-rust       v0.23.3 && \
+    build_grammar go         tree-sitter/tree-sitter-go         v0.23.4 && \
+    build_grammar bash       tree-sitter/tree-sitter-bash       v0.23.3 && \
+    build_grammar json       tree-sitter/tree-sitter-json       v0.24.8 && \
+    build_grammar ruby       tree-sitter/tree-sitter-ruby       v0.23.1 && \
+    build_grammar java       tree-sitter/tree-sitter-java       v0.23.5 && \
+    build_grammar css        tree-sitter/tree-sitter-css        v0.23.2 && \
+    build_grammar html       tree-sitter/tree-sitter-html       v0.23.2 && \
+    build_grammar lua        tree-sitter-grammars/tree-sitter-lua v0.3.0 && \
+    build_grammar scheme     6cdh/tree-sitter-scheme            main && \
+    echo "Grammars built:" && ls /opt/tree-sitter-grammars/
+
+# ── Stage 1.5: Compile libqt_shim.a with musl-compatible Alpine g++ ──────────
+# Separate stage so Qt6 cache is preserved when qt_shim.cpp changes
+FROM qt-alpine AS qt-shim-alpine
+
+COPY vendor/qt_shim.cpp vendor/qt_shim.h /tmp/qt-shim-src/
+
+RUN mkdir -p /tmp/qt-shim-out && \
+    QT_CFLAGS="-I/opt/qt6-static/include \
+      -I/opt/qt6-static/include/QtCore \
+      -I/opt/qt6-static/include/QtGui \
+      -I/opt/qt6-static/include/QtWidgets" && \
+    QSCI_FLAGS="-DQT_SCINTILLA_AVAILABLE \
+      -I/opt/qt6-static/include \
+      -I/opt/qt6-static/include/Qsci" && \
+    g++ -c -fPIC -std=c++17 -DJEMACS_CHEZ_SMP \
+      $QT_CFLAGS $QSCI_FLAGS \
+      /tmp/qt-shim-src/qt_shim.cpp \
+      -o /tmp/qt-shim-out/qt_shim_static.o && \
+    ar rcs /tmp/qt-shim-out/libqt_shim.a \
+      /tmp/qt-shim-out/qt_shim_static.o && \
+    printf '#include <QtPlugin>\nQ_IMPORT_PLUGIN(QXcbIntegrationPlugin)\n' \
+      > /tmp/qt-shim-out/qt_static_plugins.cpp && \
+    g++ -c -fPIC -std=c++17 $QT_CFLAGS \
+      /tmp/qt-shim-out/qt_static_plugins.cpp \
+      -o /tmp/qt-shim-out/qt_static_plugins.o && \
+    echo "libqt_shim.a built successfully" && \
+    ls -lh /tmp/qt-shim-out/
+
+# ── Stage 2: jerboa21/jerboa + Qt artifacts → build jemacs-qt ────────────────
+FROM jerboa21/jerboa AS builder
+
+# Install Ubuntu build deps needed for jemacs-qt compilation
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    g++ \
+    libncurses-dev \
+    uuid-dev \
+    libssl-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Qt6 static libs and tools from Alpine stage
+COPY --from=qt-alpine /opt/qt6-static /opt/qt6-static
+
+# Copy tree-sitter from Alpine stage
+COPY --from=qt-alpine /opt/tree-sitter-lib /opt/tree-sitter-lib
+COPY --from=qt-alpine /opt/tree-sitter-include /opt/tree-sitter-include
+COPY --from=qt-alpine /opt/tree-sitter-grammars /opt/tree-sitter-grammars
+
+# Copy Alpine-compiled libvterm.a (Ubuntu doesn't ship a static version)
+COPY --from=qt-alpine /usr/lib/libvterm.a /usr/local/lib/
+COPY --from=qt-alpine /usr/include/vterm.h /usr/local/include/
+
+# Copy pre-compiled Qt shim (Alpine-musl g++, so ABI-compatible with musl final link)
+COPY --from=qt-shim-alpine /tmp/qt-shim-out/ /opt/qt-shim/
+
+# Create /opt/chez symlink → /build/chez-musl (musl Chez Scheme)
+RUN ln -s /build/chez-musl /opt/chez
+
+# Copy source and run the in-container build
+COPY . /build/mine/jerboa-emacs
+WORKDIR /build/mine/jerboa-emacs
+
+RUN make linux-qt-local
+
+# Verify
+RUN ./jemacs-qt --version && \
+    file jemacs-qt && \
+    echo "--- Binary info ---" && \
+    ls -lh jemacs-qt
+
+# ── Final stage: extract binary ───────────────────────────────────────────────
+FROM ubuntu:24.04
+COPY --from=builder /build/mine/jerboa-emacs/jemacs-qt /out/jemacs-qt
+CMD ["cat", "/out/jemacs-qt"]

@@ -85,9 +85,10 @@ int main(int argc, char *argv[]) {
     Sbuild_heap(NULL, NULL);
 
 #ifdef JEMACS_STATIC_BUILD
-    /* Static builds: register FFI symbols compiled into the binary.
-     * In musl static builds dlopen(NULL) is a stub, so foreign-procedure
-     * can't find symbols by name at runtime. We pre-register them here. */
+    /* Static builds: tell Scheme not to call load-shared-object, and
+     * register FFI symbols compiled into the binary so foreign-procedure
+     * can find them (dlopen(NULL) is a stub in musl static builds). */
+    setenv("JEMACS_STATIC", "1", 1);
     extern void register_static_foreign_symbols(void);
     register_static_foreign_symbols();
 #endif

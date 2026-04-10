@@ -399,36 +399,6 @@
                                             (+ i 1)
                                             (cons 500 acc))))))))
                             (qt-edit-window-editor new-win))]
-                         [(split-leaf? (qt-frame-root fr))
-                          (qt-splitter-set-orientation!
-                            root-spl
-                            orientation)
-                          (let* ([new-win (qt-make-new-window!
-                                            root-spl
-                                            new-buf)]
-                                 [new-leaf (make-split-leaf new-win)]
-                                 [new-node (make-split-node
-                                             orientation
-                                             root-spl
-                                             (list cur-leaf new-leaf))])
-                            (qt-frame-root-set! fr new-node)
-                            (qt-frame-windows-set!
-                              fr
-                              (split-tree-flatten (qt-frame-root fr)))
-                            (let ([new-idx (list-index
-                                             (lambda (w) (eq? w new-win))
-                                             (qt-frame-windows fr))])
-                              (qt-frame-current-idx-set!
-                                fr
-                                (or new-idx 0)))
-                            (qt-window-process-events!)
-                            (with-catch
-                              (lambda (_e) (void))
-                              (lambda ()
-                                (qt-splitter-set-sizes!
-                                  root-spl
-                                  (list 500 500))))
-                            (qt-edit-window-editor new-win))]
                          [else
                           (let* ([parent-spl (if parent
                                                  (split-node-splitter
