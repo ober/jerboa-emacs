@@ -436,32 +436,15 @@
                        (loop (+ i 1) (cons 500 acc))))))))
            (qt-edit-window-editor new-win)))
 
-        ;; ── Case B: root is a leaf (very first split) ─────────────────────────
-        ((split-leaf? (qt-frame-root fr))
-         ;; Force a real orientation change: Qt's setOrientation() early-returns
-         ;; if the value matches the current orientation (Qt src: if d->orient==x return).
-         ;; The root splitter is created with QT_VERTICAL, so for C-x 2 (QT_VERTICAL)
-         ;; a direct setOrientation(QT_VERTICAL) is always a no-op and doResize()
-         ;; is never called. Fix: toggle to opposite first, guaranteeing two real
-         ;; orientation changes so Qt re-lays out the children correctly.
-         (let ((opposite (if (= orientation QT_VERTICAL) QT_HORIZONTAL QT_VERTICAL)))
-           (qt-splitter-set-orientation! root-spl opposite))
-         (let* ((new-win  (qt-make-new-window! root-spl new-buf))
-                (new-leaf (make-split-leaf new-win))
-                (new-node (make-split-node orientation root-spl (list cur-leaf new-leaf))))
-           (set! (qt-frame-root fr) new-node)
-           ;; Rebuild flat list from tree to maintain depth-first order
-           (set! (qt-frame-windows fr) (split-tree-flatten (qt-frame-root fr)))
-           ;; Find new window's index in the rebuilt list
-           (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
-             (set! (qt-frame-current-idx fr) (or new-idx 0)))
-           ;; Set to desired orientation — guaranteed to be a real change now
-           (qt-splitter-set-orientation! root-spl orientation)
-           (qt-window-process-events!)
-           (with-catch (lambda (_e) (void)) (lambda () (qt-splitter-set-sizes! root-spl (list 500 500))))
-           (qt-edit-window-editor new-win)))
-
         ;; ── Case C: no parent or different orientation — nest with new splitter ─
+        ;; NOTE: Case B (root is a leaf = very first split) is intentionally handled
+        ;; here in Case C rather than as a special case. Case C always creates a fresh
+        ;; sub-splitter with the correct orientation at construction time, which avoids
+        ;; the Qt setOrientation() no-op bug: Qt early-returns without calling doResize()
+        ;; when the new orientation matches the current one. The root splitter is created
+        ;; as QT_VERTICAL, so for C-x 2 (also QT_VERTICAL), any setOrientation call on
+        ;; the root splitter is always a no-op. By creating a new nested splitter instead,
+        ;; the orientation is set correctly from the start.
         (else
          (let* ((parent-spl   (if parent
                                 (split-node-splitter parent)
