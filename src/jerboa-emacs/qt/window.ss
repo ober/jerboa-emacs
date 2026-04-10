@@ -438,7 +438,6 @@
 
         ;; ── Case B: root is a leaf (very first split) ─────────────────────────
         ((split-leaf? (qt-frame-root fr))
-         (qt-splitter-set-orientation! root-spl orientation)
          (let* ((new-win  (qt-make-new-window! root-spl new-buf))
                 (new-leaf (make-split-leaf new-win))
                 (new-node (make-split-node orientation root-spl (list cur-leaf new-leaf))))
@@ -448,7 +447,11 @@
            ;; Find new window's index in the rebuilt list
            (let ((new-idx (list-index (lambda (w) (eq? w new-win)) (qt-frame-windows fr))))
              (set! (qt-frame-current-idx fr) (or new-idx 0)))
-           ;; 50/50 split — process events so Qt layout is computed first
+           ;; Set orientation AFTER adding the widget, then process events so Qt
+           ;; recomputes layout. Setting before addWidget is a no-op when orientation
+           ;; matches the initial splitter (Qt skips relayout on same-value set), which
+           ;; caused C-x 2 to produce a side-by-side split instead of top/bottom.
+           (qt-splitter-set-orientation! root-spl orientation)
            (qt-window-process-events!)
            (with-catch (lambda (_e) (void)) (lambda () (qt-splitter-set-sizes! root-spl (list 500 500))))
            (qt-edit-window-editor new-win)))
