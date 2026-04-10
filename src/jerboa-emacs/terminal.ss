@@ -681,10 +681,6 @@
       ;; export updates env vars in-process (PTY child won't propagate back)
       ((string-prefix? "export " trimmed)
        (terminal-handle-export! trimmed ts))
-      ;; top: run coreutils top inside vterm (not a separate buffer)
-      ((or (string=? trimmed "top")
-           (string-prefix? "top " trimmed))
-       (values 'special 'top trimmed))
       (else
        ;; ALL commands go through PTY async to avoid blocking the UI thread.
        ;; gsh-capture runs synchronously and can deadlock the Chez SMP GC
