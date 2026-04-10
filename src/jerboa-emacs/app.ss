@@ -426,21 +426,17 @@
                (set! (terminal-state-pre-pty-text ts)
                  (editor-get-text ed)))
              (if vt
-               ;; Feed data to VT100 screen buffer, then render
+               ;; Feed data to VT100 screen buffer, then render live
                (begin
                  (vtscreen-feed! vt data)
-                 (if (vtscreen-alt-screen? vt)
-                   ;; Alt-screen (vim, top): replace entire content
-                   (let ((rendered (vtscreen-render vt)))
-                     (editor-set-text ed rendered)
-                     (editor-goto-pos ed (editor-get-text-length ed))
-                     (editor-scroll-caret ed))
-                   ;; Normal command output: vtscreen accumulates it,
-                   ;; but we don't replace text (that nukes styles).
-                   ;; Just scroll to end — 'done handler will append final output.
-                   (begin
-                     (editor-goto-pos ed (editor-get-text-length ed))
-                     (editor-scroll-caret ed))))
+                 (let* ((rendered (vtscreen-render vt))
+                        (full (if (vtscreen-alt-screen? vt)
+                                rendered
+                                (string-append (or (terminal-state-pre-pty-text ts) "")
+                                               rendered))))
+                   (editor-set-text ed full)
+                   (editor-goto-pos ed (editor-get-text-length ed))
+                   (editor-scroll-caret ed)))
                ;; Fallback: strip ANSI and append (no vtscreen)
                (let* ((segments (parse-ansi-segments data))
                       (start-pos (editor-get-text-length ed)))
