@@ -2154,7 +2154,10 @@
                (text-byte-len (bytevector-length text-bytes))
                (prompt-byte-pos (terminal-state-prompt-pos ts))  ;; byte position
                (input (if (< prompt-byte-pos text-byte-len)
-                        (utf8->string (bytevector-copy text-bytes prompt-byte-pos text-byte-len))
+                        (let* ((input-len (- text-byte-len prompt-byte-pos))
+                               (sub (make-bytevector input-len)))
+                          (bytevector-copy! text-bytes prompt-byte-pos sub 0 input-len)
+                          (utf8->string sub))
                         "")))
           ;; Append newline after user input
           (editor-append-text ed "\n")

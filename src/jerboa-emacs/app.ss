@@ -429,14 +429,18 @@
                ;; Feed data to VT100 screen buffer, then render
                (begin
                  (vtscreen-feed! vt data)
-                 (let* ((rendered (vtscreen-render vt))
-                        (full (if (vtscreen-alt-screen? vt)
-                                rendered
-                                (string-append (or (terminal-state-pre-pty-text ts) "")
-                                               rendered))))
-                   (editor-set-text ed full)
-                   (editor-goto-pos ed (editor-get-text-length ed))
-                   (editor-scroll-caret ed)))
+                 (if (vtscreen-alt-screen? vt)
+                   ;; Alt-screen (vim, top): replace entire content
+                   (let ((rendered (vtscreen-render vt)))
+                     (editor-set-text ed rendered)
+                     (editor-goto-pos ed (editor-get-text-length ed))
+                     (editor-scroll-caret ed))
+                   ;; Normal command output: vtscreen accumulates it,
+                   ;; but we don't replace text (that nukes styles).
+                   ;; Just scroll to end — 'done handler will append final output.
+                   (begin
+                     (editor-goto-pos ed (editor-get-text-length ed))
+                     (editor-scroll-caret ed))))
                ;; Fallback: strip ANSI and append (no vtscreen)
                (let* ((segments (parse-ansi-segments data))
                       (start-pos (editor-get-text-length ed)))
@@ -452,16 +456,17 @@
            (when win
              (let ((ed (edit-window-editor win)))
                ;; For full-screen programs: restore pre-PTY text
-               ;; For simple commands: keep output
-               (when pre-text
-                 (if alt-screen?
-                   (editor-set-text ed pre-text)
-                   (let* ((output (or final-render ""))
-                          (sep (if (and (> (string-length output) 0)
-                                       (not (char=? (string-ref output (- (string-length output) 1)) #\newline)))
-                                 "\n" ""))
-                          (full (string-append pre-text output sep)))
-                     (editor-set-text ed full))))
+               ;; For simple commands: append output (preserving existing styles)
+               (if (and pre-text alt-screen?)
+                 ;; Alt-screen (vim, less): restore original text
+                 (editor-set-text ed pre-text)
+                 ;; Normal commands: append rendered output after existing text
+                 ;; Don't use editor-set-text — it nukes all Scintilla styles
+                 (let ((output (or final-render "")))
+                   (when (> (string-length output) 0)
+                     (editor-append-text ed output)
+                     (unless (char=? (string-ref output (- (string-length output) 1)) #\newline)
+                       (editor-append-text ed "\n")))))
                (let* ((raw-prompt (terminal-prompt-raw ts))
                       (segments (parse-ansi-segments raw-prompt))
                       (start-pos (editor-get-text-length ed)))

@@ -525,7 +525,32 @@ echo OK"
   (let* ((cmd "gcc -c -O2 -o jemacs-jsh-coreutils-stubs.o support/jsh_coreutils_stubs.c -Wall 2>&1"))
     (unless (= 0 (system cmd))
       (display "Error: jsh_coreutils_stubs.c (dynamic) compilation failed\n")
-      (exit 1))))
+      (exit 1)))
+  ;; TLS rustls stubs (jerboa_tls_* Rust FFI symbols — jemacs TUI doesn't use HTTPS)
+  (let ((stub-file "jemacs-tls-stubs.c"))
+    (call-with-output-file stub-file
+      (lambda (out)
+        (fprintf out "/* Stub — jemacs TUI doesn't use rustls TLS */~n")
+        (fprintf out "#include <stddef.h>~n#include <stdint.h>~n")
+        (fprintf out "uint64_t jerboa_tls_server_new(const char *c, const char *k) { return 0; }~n")
+        (fprintf out "uint64_t jerboa_tls_server_new_mtls(const char *c, const char *k, const char *ca) { return 0; }~n")
+        (fprintf out "void jerboa_tls_server_free(uint64_t s) {}~n")
+        (fprintf out "uint64_t jerboa_tls_accept(uint64_t s, int fd) { return 0; }~n")
+        (fprintf out "uint64_t jerboa_tls_connect(const char *h, int p) { return 0; }~n")
+        (fprintf out "uint64_t jerboa_tls_connect_pinned(const char *h, int p, const uint8_t *fp, size_t fplen) { return 0; }~n")
+        (fprintf out "uint64_t jerboa_tls_connect_mtls(const char *h, int p, const char *c, const char *k, const char *ca) { return 0; }~n")
+        (fprintf out "int jerboa_tls_read(uint64_t s, uint8_t *buf, uint64_t len) { return -1; }~n")
+        (fprintf out "int jerboa_tls_write(uint64_t s, const uint8_t *buf, uint64_t len) { return -1; }~n")
+        (fprintf out "int jerboa_tls_flush(uint64_t s) { return -1; }~n")
+        (fprintf out "void jerboa_tls_close(uint64_t s) {}~n")
+        (fprintf out "int jerboa_tls_set_nonblock(uint64_t s, int nb) { return -1; }~n")
+        (fprintf out "int jerboa_tls_get_fd(uint64_t s) { return -1; }~n")
+        (fprintf out "size_t jerboa_last_error(uint8_t *buf, size_t len) { return 0; }~n"))
+      'replace)
+    (let ((cmd "gcc -c -O2 -o jemacs-tls-stubs.o jemacs-tls-stubs.c -Wall 2>&1"))
+      (unless (= 0 (system cmd))
+        (display "Error: TLS stubs compilation failed\n")
+        (exit 1)))))
 
 ;; jemacs-main.c
 (let* ((static-flag (if jemacs-static? "-DJEMACS_STATIC_BUILD" ""))
@@ -575,6 +600,7 @@ tui_static_symbols.o \
 jemacs-main.o jemacs-pcre2-shim.o jemacs-repl-shim.o \
 jemacs-jsh-ffi.o jemacs-libcoreutils.o jemacs-embed-crypto.o \
 jemacs-ssh-agent-stub.o jemacs-jsh-coreutils-stubs.o \
+jemacs-tls-stubs.o \
 -L~a -lkernel -llz4 -lz \
 ~a ~a \
 -lm -ldl -lpthread 2>&1"
