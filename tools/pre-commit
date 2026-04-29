@@ -1,0 +1,16 @@
+#!/bin/sh
+# Pre-commit hook: build and test before allowing commit.
+# Install: ln -sf ../../tools/pre-commit .git/hooks/pre-commit
+
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "=== pre-commit: building ==="
+make build
+
+echo "=== pre-commit: running tests ==="
+make test-functional
+
+echo "=== pre-commit: all checks passed ==="
